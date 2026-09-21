@@ -26,14 +26,7 @@ from asc_op_compile_base.common.buildcfg import build_config
 from asc_op_compile_base.common.context import op_context
 from asc_op_compile_base.common.platform import platform_info
 from asc_op_compile_base.common.utils import log as logger
-from constant import (
-    CompileParam,
-    OpcOptions,
-    OpcCompileMode,
-    GraphDefParam,
-    OptionalInOutMode,
-    OpImplType,
-)
+from constant import CompileParam, OpcOptions, OpcCompileMode, GraphDefParam, OptionalInOutMode, OpImplType
 
 from single_op_post_compile import SingleOpPostCompile
 from op_manager import (
@@ -108,9 +101,7 @@ class OpCompilation:
         lock_file = os.path.join(debug_dir, "kernel_meta.lock")
         if os.path.exists(lock_file):
             try:
-                logger.debug(
-                    "Lock file[%s] is existed, try to read pid from it", lock_file
-                )
+                logger.debug("Lock file[%s] is existed, try to read pid from it", lock_file)
                 with open(lock_file, "r") as f:
                     lock_pid = f.readline()
                     logger.debug("Pid of lock file[%s] is [%s]", lock_file, lock_pid)
@@ -129,9 +120,7 @@ class OpCompilation:
                 pass
         else:
             try:
-                logger.debug(
-                    "Lock file[%s] is not existed, try to create it", lock_file
-                )
+                logger.debug("Lock file[%s] is not existed, try to create it", lock_file)
                 with open(lock_file, "w") as f:
                     f.write(str(self.__pid))
                 logger.debug("Lock file[%s] has been created", lock_file)
@@ -151,9 +140,7 @@ class OpCompilation:
 
         if not os.path.exists(debug_dir):
             try:
-                os.makedirs(
-                    debug_dir, stat.S_IRWXU + stat.S_IRGRP + stat.S_IXGRP, exist_ok=True
-                )
+                os.makedirs(debug_dir, stat.S_IRWXU + stat.S_IRGRP + stat.S_IXGRP, exist_ok=True)
                 logger.debug("Debug dir[%s] has been created.", debug_dir)
             except Exception as e:
                 logger.error("Fail to create debug dir[%s].", debug_dir)
@@ -170,14 +157,9 @@ class OpCompilation:
         """
         after compile, write support info and compile info to json file
         """
-        logger.debug(
-            "Single op post compile process, json_file_path is %s.", json_file_path
-        )
+        logger.debug("Single op post compile process, json_file_path is %s.", json_file_path)
         post_compile = SingleOpPostCompile(
-            self.__opc_compile_args,
-            self.__l1_fusion_flag,
-            self.__l2_fusion_flag,
-            self.__l2_mode_flag,
+            self.__opc_compile_args, self.__l1_fusion_flag, self.__l2_fusion_flag, self.__l2_mode_flag
         )
         post_compile.update_info_to_json_file(op, op_info, json_file_path)
         post_compile.copy_compile_res_files_to_output(json_file_path)
@@ -213,9 +195,7 @@ class OpCompilation:
                     os.remove(to_del_file)
                     logger.info("Delete file[%s] success", to_del_file)
                 except Exception as e:
-                    logger.error(
-                        "Delete file[%s] failed, reason: %s.", to_del_file, str(e)
-                    )
+                    logger.error("Delete file[%s] failed, reason: %s.", to_del_file, str(e))
                 finally:
                     pass
 
@@ -240,13 +220,11 @@ class OpCompilation:
         """
         int64_mode = False
         if not op_info[OpcOptions.IS_DYNAMIC]:
-            int64_mode = get_int64_mode(
-                op_info.get(CompileParam.INPUTS)
-            ) or get_int64_mode(op_info.get(CompileParam.OUTPUTS))
+            int64_mode = get_int64_mode(op_info.get(CompileParam.INPUTS)) or get_int64_mode(
+                op_info.get(CompileParam.OUTPUTS)
+            )
         op_info[OpcOptions.INT64_MODE] = int64_mode
-        logger.debug(
-            "int64_mode of Op[%s] is %d.", op_info.get(CompileParam.OP_TYPE), int64_mode
-        )
+        logger.debug("int64_mode of Op[%s] is %d.", op_info.get(CompileParam.OP_TYPE), int64_mode)
 
     @staticmethod
     def __check_update_impl_mode(impl_mode_str, impl_mode_default):
@@ -255,11 +233,7 @@ class OpCompilation:
         if OpImplType.OPTIONAL in impl_mode_str:
             impl_mode_str = normalize_optional_impl_mode(impl_mode_str)
             opt_impl_mode_flag = True
-        elif (
-            impl_mode_default
-            and (impl_mode_default.default != "")
-            and (impl_mode_str == impl_mode_default.default)
-        ):
+        elif impl_mode_default and (impl_mode_default.default != "") and (impl_mode_str == impl_mode_default.default):
             opt_impl_mode_flag = True
         return impl_mode_str, opt_impl_mode_flag
 
@@ -271,22 +245,12 @@ class OpCompilation:
         # else if user not set imple_mode, use op func param default value
         # otherwise use user configed value
         op_func = op_info.get(OpcOptions.OP_FUNC_ATTR)
-        impl_mode_default = inspect.signature(op_func).parameters.get(
-            OpcOptions.IMPL_MODE, None
-        )
+        impl_mode_default = inspect.signature(op_func).parameters.get(OpcOptions.IMPL_MODE, None)
         if impl_mode_default is None:
-            logger.debug(
-                "Op func[%s] not contain arg impl_mode",
-                self.__opc_compile_args.get(OpcOptions.MAIN_FUNC),
-            )
-        elif impl_mode_default.kind not in (
-            inspect.Parameter.KEYWORD_ONLY,
-            inspect.Parameter.POSITIONAL_OR_KEYWORD,
-        ):
+            logger.debug("Op func[%s] not contain arg impl_mode", self.__opc_compile_args.get(OpcOptions.MAIN_FUNC))
+        elif impl_mode_default.kind not in (inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD):
             raise RuntimeError(
-                "impl_mode of op func[%s] is %s",
-                self.__opc_compile_args.get(OpcOptions.MAIN_FUNC),
-                impl_mode_default,
+                "impl_mode of op func[%s] is %s", self.__opc_compile_args.get(OpcOptions.MAIN_FUNC), impl_mode_default
             )
         impl_mode_cfg = op_info.get(OpcOptions.IMPL_MODE, None)
         if impl_mode_cfg is None:
@@ -294,26 +258,17 @@ class OpCompilation:
             if impl_mode_cfg is None:
                 del op_info[OpcOptions.IMPL_MODE]
                 logger.info(
-                    "del IMPL_MODE. impl_mode_cfg [%s]. impl_mode_default: [%s].",
-                    impl_mode_cfg,
-                    impl_mode_default,
+                    "del IMPL_MODE. impl_mode_cfg [%s]. impl_mode_default: [%s].", impl_mode_cfg, impl_mode_default
                 )
                 return
         valid_flag, _ = check_and_normalize_impl_mode(impl_mode_cfg)
         if impl_mode_default is None and valid_flag and not self.__is_ascendc:
-            logger.info(
-                "Op func[%s] not contain arg impl_mode",
-                self.__opc_compile_args.get(OpcOptions.MAIN_FUNC),
-            )
+            logger.info("Op func[%s] not contain arg impl_mode", self.__opc_compile_args.get(OpcOptions.MAIN_FUNC))
             return
         if impl_mode_default is not None:
-            logger.debug(
-                "impl_mode_cfg [%s]. impl_mode_default: [%s].",
-                impl_mode_cfg,
-                impl_mode_default,
-            )
-        op_info[OpcOptions.IMPL_MODE], opt_impl_mode_flag = (
-            self.__check_update_impl_mode(impl_mode_cfg, impl_mode_default)
+            logger.debug("impl_mode_cfg [%s]. impl_mode_default: [%s].", impl_mode_cfg, impl_mode_default)
+        op_info[OpcOptions.IMPL_MODE], opt_impl_mode_flag = self.__check_update_impl_mode(
+            impl_mode_cfg, impl_mode_default
         )
         op_info["optional_impl_mode_flag"] = opt_impl_mode_flag
         logger.debug(
@@ -348,20 +303,16 @@ class OpCompilation:
             op_info_parser = OpInfoParser(op, op_info, self.__opc_compile_args)
             op_info_parser.get_op_info(op_info.get(CompileParam.OP_TYPE))
 
-            op_info[OpcOptions.IS_DYNAMIC] = check_is_dynamic(
-                op_info.get(CompileParam.INPUTS)
-            ) or check_is_dynamic(op_info.get(CompileParam.OUTPUTS))
+            op_info[OpcOptions.IS_DYNAMIC] = check_is_dynamic(op_info.get(CompileParam.INPUTS)) or check_is_dynamic(
+                op_info.get(CompileParam.OUTPUTS)
+            )
             op_func_attr = op_info.get(OpcOptions.OP_FUNC_ATTR)
             if not op_func_attr:
-                op_func_attr = self.__get_single_op_operator(
-                    op_info.get(CompileParam.OP_TYPE), op_info
-                )
+                op_func_attr = self.__get_single_op_operator(op_info.get(CompileParam.OP_TYPE), op_info)
                 if op_func_attr:
                     op_info[OpcOptions.OP_FUNC_ATTR] = op_func_attr
                 else:
-                    logger.error(
-                        "op %s op_func_attr is None.", op_info.get(CompileParam.OP_TYPE)
-                    )
+                    logger.error("op %s op_func_attr is None.", op_info.get(CompileParam.OP_TYPE))
                     self.__compile_res = False
                     return
 
@@ -374,9 +325,7 @@ class OpCompilation:
             op_info[OpcOptions.KERNEL_META_PATH] = debug_dir
 
             logger.debug("call vector_random_buff, debug_dir is %s", debug_dir)
-            tbe_debug_level_value = int(
-                self.__opc_compile_args.get(OpcOptions.OP_DEBUG_LEVEL, 0)
-            )
+            tbe_debug_level_value = int(self.__opc_compile_args.get(OpcOptions.OP_DEBUG_LEVEL, 0))
             if tbe_debug_level_value == 3:
                 tbe_debug_level_value = 0
 
@@ -403,9 +352,7 @@ class OpCompilation:
 
     def __single_op_compile_all_deterministic(self, op, op_info, idx):
         def rename_output_op(output_name, new_output_name):
-            logger.debug(
-                "Rename output kernel name %s to %s.", output_name, new_output_name
-            )
+            logger.debug("Rename output kernel name %s to %s.", output_name, new_output_name)
 
             output_path = self.__opc_compile_args[OpcOptions.OUTPUT]
 
@@ -437,9 +384,7 @@ class OpCompilation:
         output_name = deterministic_op_info[OpcOptions.KERNEL_NAME]
         output_path = self.__opc_compile_args[OpcOptions.OUTPUT]
         output_json = get_file_real_path(output_path, output_name, "json")
-        output_deterministic = read_json_file(output_json)["supportInfo"].get(
-            "deterministic"
-        )
+        output_deterministic = read_json_file(output_json)["supportInfo"].get("deterministic")
         if output_deterministic == "ignore" or output_deterministic is None:
             # Operators do not focus on deterministic.
             # In this case, non-deterministic operators are not compiled.
@@ -468,17 +413,11 @@ class OpCompilation:
         """
         get op func attr from tbe
         """
-        logger.debug(
-            "op_type is {}, main_func is {}, op_path is {}".format(
-                op_type, main_func, op_path
-            )
-        )
+        logger.debug("op_type is {}, main_func is {}, op_path is {}".format(op_type, main_func, op_path))
         opm = is_valid_module_path(op_path)
         if opm is None:
             if "/impl/dynamic/" in op_path:
-                op_module = "impl.dynamic.{}".format(
-                    os.path.splitext(os.path.basename(op_path))[0]
-                )
+                op_module = "impl.dynamic.{}".format(os.path.splitext(os.path.basename(op_path))[0])
             else:
                 last_folder = os.path.basename(os.path.dirname(op_path))
                 op_module = "{}.{}".format(last_folder, op_type)
@@ -491,9 +430,7 @@ class OpCompilation:
             try:
                 opm = importlib.import_module(op_module)
             except ImportError as e:
-                raise RuntimeError(
-                    "import %s error, reason:%s." % (op_module, str(e))
-                ) from e
+                raise RuntimeError("import %s error, reason:%s." % (op_module, str(e))) from e
             finally:
                 pass
 
@@ -525,12 +462,12 @@ class OpCompilation:
         parse op_list of json file to compile op
         """
         comment = json_dict.get("comment")
-        l1_fusion = json_dict.get(
-            CompileParam.SOC_INFO, {CompileParam.L1_FUSION: "false"}
-        ).get(CompileParam.L1_FUSION, "false")
-        l2_fusion = json_dict.get(
-            CompileParam.SOC_INFO, {CompileParam.L2_FUSION: "false"}
-        ).get(CompileParam.L2_FUSION, "false")
+        l1_fusion = json_dict.get(CompileParam.SOC_INFO, {CompileParam.L1_FUSION: "false"}).get(
+            CompileParam.L1_FUSION, "false"
+        )
+        l2_fusion = json_dict.get(CompileParam.SOC_INFO, {CompileParam.L2_FUSION: "false"}).get(
+            CompileParam.L2_FUSION, "false"
+        )
         py_op_path = self.__opc_compile_args.get(OpcOptions.OP_PATH)
         if py_op_path is not None:
             self.__is_ascendc = self.is_ascendc_op(py_op_path)
@@ -564,12 +501,8 @@ class OpCompilation:
                     CompileParam.ENABLE_VECTOR_CORE: enable_vector_core,
                     OpcOptions.IMPL_MODE: op.get(OpcOptions.IMPL_MODE, None),
                     OpcOptions.JIT_COMPILE_MODE: op.get(OpcOptions.JIT_COMPILE_MODE, 0),
-                    CompileParam.EXTRA_SETTINGS: op.get(
-                        CompileParam.EXTRA_SETTINGS, None
-                    ),
-                    OpcOptions.DETERMINISTIC_LEVEL: op.get(
-                        OpcOptions.DETERMINISTIC_LEVEL, ""
-                    ),
+                    CompileParam.EXTRA_SETTINGS: op.get(CompileParam.EXTRA_SETTINGS, None),
+                    OpcOptions.DETERMINISTIC_LEVEL: op.get(OpcOptions.DETERMINISTIC_LEVEL, ""),
                 }
                 deterministic = self.__opc_compile_args.get(OpcOptions.DETERMINISTIC)
                 if deterministic is None:
@@ -580,25 +513,16 @@ class OpCompilation:
                 elif deterministic == "all":
                     self.__single_op_compile_all_deterministic(op, op_info, idx)
         else:
-            logger.warn(
-                "Current opc only support single op compile, comment is %s.",
-                str(comment),
-            )
+            logger.warn("Current opc only support single op compile, comment is %s.", str(comment))
             self.__compile_res = False
 
     def set_optional_and_dynamic_mode(self, json_dict):
         optional_input_mode = json_dict.get(OpcOptions.OPTIONAL_INPUT_MODE)
-        if optional_input_mode in {
-            OptionalInOutMode.DEFAULT,
-            OptionalInOutMode.GEN_PLACEHOLDER,
-        }:
+        if optional_input_mode in {OptionalInOutMode.DEFAULT, OptionalInOutMode.GEN_PLACEHOLDER}:
             self.__opc_compile_args["optional_input_mode"] = optional_input_mode
 
         optional_output_mode = json_dict.get(OpcOptions.OPTIONAL_OUTPUT_MODE)
-        if optional_output_mode in {
-            OptionalInOutMode.DEFAULT,
-            OptionalInOutMode.GEN_PLACEHOLDER,
-        }:
+        if optional_output_mode in {OptionalInOutMode.DEFAULT, OptionalInOutMode.GEN_PLACEHOLDER}:
             self.__opc_compile_args["optional_output_mode"] = optional_output_mode
 
         dynamic_param_mode = json_dict.get(OpcOptions.DYNAMIC_PARAM_MODE)
@@ -608,8 +532,7 @@ class OpCompilation:
     def set_current_compile_soc_info_before_compile(self):
         if self.__opc_compile_args.get(OpcOptions.AICORE_NUM) is None:
             platform_info.set_current_compile_soc_info(
-                self.__opc_compile_args.get(OpcOptions.SOC_VERSION),
-                self.__opc_compile_args.get(OpcOptions.CORE_TYPE),
+                self.__opc_compile_args.get(OpcOptions.SOC_VERSION), self.__opc_compile_args.get(OpcOptions.CORE_TYPE)
             )
         else:
             platform_info.set_current_compile_soc_info(
@@ -654,14 +577,10 @@ class OpCompilation:
         single_op_config_file_compile
         """
         if self.__opc_compile_args.get(OpcOptions.INPUT_PARAM):
-            res, json_dict = check_op_compilation_json(
-                OpcOptions.INPUT_PARAM, self.__opc_compile_args
-            )
+            res, json_dict = check_op_compilation_json(OpcOptions.INPUT_PARAM, self.__opc_compile_args)
             if res is False:
                 return res
-            res = self.check_and_update_core_type(
-                OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict
-            )
+            res = self.check_and_update_core_type(OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict)
             if res is False:
                 return res
             return self.single_op_compilation(json_dict)
@@ -675,14 +594,10 @@ class OpCompilation:
         """
         op_params = self.__opc_compile_args.get(OpcOptions.OP_PARAMS)
         if op_params:
-            res, json_dict = check_op_compilation_dict(
-                op_params, self.__opc_compile_args
-            )
+            res, json_dict = check_op_compilation_dict(op_params, self.__opc_compile_args)
             if res is False:
                 return res
-            res = self.check_and_update_core_type(
-                OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict
-            )
+            res = self.check_and_update_core_type(OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE, json_dict)
             if res is False:
                 return res
             return self.single_op_compilation(json_dict)
@@ -699,9 +614,7 @@ class OpCompilation:
                 OpcCompileMode.SINGLE_OP_CONFIG_FILE_MODE: self.single_op_config_file_compile,
                 OpcCompileMode.SINGLE_OP_DICT_MODE: self.single_op_dict_compile,
             }
-            op_compile_mode = self.__opc_compile_args.get(
-                OpcOptions.OP_COMPILE_MODE
-            )  # Validity has been checked
+            op_compile_mode = self.__opc_compile_args.get(OpcOptions.OP_COMPILE_MODE)  # Validity has been checked
             if op_compile_mode in op_compile_func.keys():
                 compile_func = op_compile_func.get(op_compile_mode)
                 return compile_func()
@@ -724,9 +637,7 @@ class OpCompilation:
                     os.remove(lock_file)
                     logger.debug("Lock file[%s] has been removed.", lock_file)
             except Exception as e:
-                raise RuntimeError(
-                    "Del lock file [%s] field, reason: %s." % (lock_file, str(e))
-                ) from e
+                raise RuntimeError("Del lock file [%s] field, reason: %s." % (lock_file, str(e))) from e
             finally:
                 pass
 
@@ -741,16 +652,11 @@ class OpCompilation:
                     shutil.rmtree(op_debug_dir, True)
                     logger.info("debug_dir [%s] removed.", op_debug_dir)
                 except Exception as e:
-                    raise RuntimeError(
-                        "Del debug_dir [%s] failed, reason: %s."
-                        % (op_debug_dir, str(e))
-                    ) from e
+                    raise RuntimeError("Del debug_dir [%s] failed, reason: %s." % (op_debug_dir, str(e))) from e
                 finally:
                     pass
             else:
-                logger.error(
-                    "debug_dir [%s] is not dir, can't be removed!", op_debug_dir
-                )
+                logger.error("debug_dir [%s] is not dir, can't be removed!", op_debug_dir)
 
     def get_core_type_from_fusion_op_graph(self, json_dict):
         core_type_list = []
@@ -759,9 +665,7 @@ class OpCompilation:
             if op_type != "Data" and op_type != "Constant":
                 core_type = self.get_core_type_by_op_type(op_type)
                 core_type_list.append(core_type)
-                logger.debug(
-                    "add op_type: %s core_type:[%s] op_type_list", op_type, core_type
-                )
+                logger.debug("add op_type: %s core_type:[%s] op_type_list", op_type, core_type)
 
         if len(core_type_list) == 0:
             logger.error("op_type_list is null, json_dict: %s", json_dict)
@@ -784,27 +688,17 @@ class OpCompilation:
                 vector_combine = platform_info.get_soc_spec("cube_vector_combine")
                 if vector_combine == "split":
                     logger.debug(
-                        "return op_type:[%s] core type: VectorCore, vector_combine: %s",
-                        op_type,
-                        vector_combine,
+                        "return op_type:[%s] core type: VectorCore, vector_combine: %s", op_type, vector_combine
                     )
                     return "VectorCore"
                 else:
-                    logger.debug(
-                        "return op_type:[%s] core type: AiCore, vector_combine: %s",
-                        op_type,
-                        vector_combine,
-                    )
+                    logger.debug("return op_type:[%s] core type: AiCore, vector_combine: %s", op_type, vector_combine)
                     return "AiCore"
             else:
                 logger.debug("return op_type:[%s] core type: %s", op_type, core_type)
                 return core_type
         else:
-            logger.info(
-                "Get op_type [%s] core_type is:[%s], OPC set core_type is None",
-                op_type,
-                core_type,
-            )
+            logger.info("Get op_type [%s] core_type is:[%s], OPC set core_type is None", op_type, core_type)
             return None
 
     def check_and_update_core_type(self, compile_type, json_dict):

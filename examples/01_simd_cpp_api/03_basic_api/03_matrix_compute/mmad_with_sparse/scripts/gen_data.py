@@ -44,9 +44,7 @@ def densify_and_generate_index(B):
             else:
                 index_1 = nonzero_positions[0]
                 index_2 = nonzero_positions[1] - 1
-                index_mask_row.extend(
-                    [nonzero_positions[0] + i, nonzero_positions[1] + i]
-                )
+                index_mask_row.extend([nonzero_positions[0] + i, nonzero_positions[1] + i])
 
             # 记录稠密化后的块
             dense_block = [block[pos] for pos in nonzero_positions[:2]]
@@ -92,9 +90,7 @@ def gen_sparse_golden(A, dense_B, index_mask_matrix):
         a_selected = A[:, selected_columns]  # 提取对应列
 
         # 当前 b 第 r 行与提取后的 a_selected 计算矩阵乘法
-        C[:, r] = np.dot(
-            a_selected.astype(result_type), dense_B[r].astype(result_type)
-        ).astype(result_type)
+        C[:, r] = np.dot(a_selected.astype(result_type), dense_B[r].astype(result_type)).astype(result_type)
     return C
 
 
@@ -144,16 +140,8 @@ def gen_golden_data():
     idx_gm = gen_uint2_zn_idx(index_matrix)
 
     c0Size = 32
-    x1_gm = (
-        A_gm.reshape((int(M / 16), 16, int(K / c0Size), c0Size))
-        .transpose(2, 0, 1, 3)
-        .astype(np.int8)
-    )
-    x2_gm = (
-        dense_B.reshape((int(N / 16), 16, int(K / 2 / c0Size), c0Size))
-        .transpose(2, 0, 1, 3)
-        .astype(np.int8)
-    )
+    x1_gm = A_gm.reshape((int(M / 16), 16, int(K / c0Size), c0Size)).transpose(2, 0, 1, 3).astype(np.int8)
+    x2_gm = dense_B.reshape((int(N / 16), 16, int(K / 2 / c0Size), c0Size)).transpose(2, 0, 1, 3).astype(np.int8)
 
     os.system("mkdir -p input")
     os.system("mkdir -p output")

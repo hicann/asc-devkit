@@ -201,8 +201,7 @@ def check_conv_shape(
                 ConvParam.l0a_dma_flag = True
             else:
                 err_man.raise_err_specific(
-                    "conv2d",
-                    "Input range is too large, the minimum tiling may exceed L1_Buffer",
+                    "conv2d", "Input range is too large, the minimum tiling may exceed L1_Buffer"
                 )
 
     def conv1d_split_w_flag_set():
@@ -210,9 +209,7 @@ def check_conv_shape(
         For load2d case and load3d cases, set a conv1d_split_w_flag and
         some checks do not apply to conv1D
         """
-        conv1d_split_w_flag = (
-            shape_in[2] == 1 and shape_w[2] == 1 and pad_top == 0 and pad_bottom == 0
-        )
+        conv1d_split_w_flag = shape_in[2] == 1 and shape_w[2] == 1 and pad_top == 0 and pad_bottom == 0
         return conv1d_split_w_flag
 
     def load2d_split_w_flag_set():
@@ -243,16 +240,12 @@ def check_conv_shape(
 
         if dilateh < DILATE_MIN or dilateh > DMA_MAX_VAL:
             range_value = "".join([str(DILATE_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "dilateh", str(dilateh)
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "dilateh", str(dilateh))
         if dilateh > DILATE_MAX:
             ConvParam.l0a_dma_flag = True
         if dilatew < DILATE_MIN or dilatew > DMA_MAX_VAL:
             range_value = "".join([str(DILATE_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "dilatew", str(dilatew)
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "dilatew", str(dilatew))
         if dilatew > DILATE_MAX:
             ConvParam.l0a_dma_flag = True
 
@@ -263,9 +256,7 @@ def check_conv_shape(
         Check fmap split width flag.
         """
         check_fm_w_flag = False
-        check_fm_w_flag = (
-            int(shape_in[3]) < FMAP_HW_MIN or int(shape_in[3]) > FMAP_W_MAX
-        ) and not conv1d_split_w_flag
+        check_fm_w_flag = (int(shape_in[3]) < FMAP_HW_MIN or int(shape_in[3]) > FMAP_W_MAX) and not conv1d_split_w_flag
         return check_fm_w_flag
 
     def _check_fmap_range():
@@ -275,23 +266,13 @@ def check_conv_shape(
 
         if int(shape_in[2]) < FMAP_HW_MIN or int(shape_in[2]) > DMA_MAX_VAL:
             range_value = "".join([str(FMAP_HW_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "feature map H", shape_in[2]
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "feature map H", shape_in[2])
         if check_fm_w_flag_set():
             range_value = "".join([str(FMAP_HW_MIN), ", ", str(FMAP_W_MAX)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "feature map W", shape_in[3]
-            )
-        if conv1d_split_w_flag and (
-            shape_in[3] < FMAP_W_MIN_SPLIT_W or shape_in[3] > FMAP_W_MAX_SPLIT_W
-        ):
-            range_value = "".join(
-                [str(FMAP_W_MIN_SPLIT_W), ", ", str(FMAP_W_MAX_SPLIT_W)]
-            )
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "feature map W when split w", shape_in[3]
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "feature map W", shape_in[3])
+        if conv1d_split_w_flag and (shape_in[3] < FMAP_W_MIN_SPLIT_W or shape_in[3] > FMAP_W_MAX_SPLIT_W):
+            range_value = "".join([str(FMAP_W_MIN_SPLIT_W), ", ", str(FMAP_W_MAX_SPLIT_W)])
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "feature map W when split w", shape_in[3])
 
     if not ConvParam.dynamic_flag:
         _check_fmap_range()
@@ -300,9 +281,7 @@ def check_conv_shape(
     if not ConvParam.cache_tiling_flag:
         utils.check_shape_rule(shape_w, CONV_SHAPE_DIM, CONV_SHAPE_DIM)
         if shape_in[1] != shape_w[1]:
-            err_man.raise_err_scene_equal_limitation(
-                "conv2d", "input feature map channel", "filter channel"
-            )
+            err_man.raise_err_scene_equal_limitation("conv2d", "input feature map channel", "filter channel")
 
     if optim_dict is None:
         optim_dict = {"c0_optim_flg": False, "use_v200_c04_flg": False}
@@ -329,21 +308,12 @@ def check_conv_shape(
     w_out = (w_i + pad_left + pad_right - wk_dilation) // stridew + 1
     if ConvParam.dynamic_flag:
         if "fmap_h" not in dynamic_para["var_map"] and int(h_out) < 1:
-            err_man.raise_err_specific(
-                "conv2d",
-                "output shape should greater than 0, please check the input shape.\n",
-            )
+            err_man.raise_err_specific("conv2d", "output shape should greater than 0, please check the input shape.\n")
         if "fmap_w" not in dynamic_para["var_map"] and int(w_out) < 1:
-            err_man.raise_err_specific(
-                "conv2d",
-                "output shape should greater than 0, please check the input shape.\n",
-            )
+            err_man.raise_err_specific("conv2d", "output shape should greater than 0, please check the input shape.\n")
     else:
         if int(w_out) < 1 or int(h_out) < 1:
-            err_man.raise_err_specific(
-                "conv2d",
-                "output shape should greater than 0, please check the input shape.\n",
-            )
+            err_man.raise_err_specific("conv2d", "output shape should greater than 0, please check the input shape.\n")
 
     def _check_pad():
         """
@@ -357,34 +327,15 @@ def check_conv_shape(
             or isinstance(pad_right, tvm.tir.PrimExpr)
         ):
             return
-        if (
-            pad_top < PAD_MIN
-            or pad_bottom < PAD_MIN
-            or pad_top > DMA_MAX_VAL
-            or pad_bottom > DMA_MAX_VAL
-        ):
+        if pad_top < PAD_MIN or pad_bottom < PAD_MIN or pad_top > DMA_MAX_VAL or pad_bottom > DMA_MAX_VAL:
             range_value = "".join([str(PAD_MIN), ", ", str(DMA_MAX_VAL)])
             actual_value = "".join([str(pad_top), ", ", str(pad_bottom)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "pad_top or pad_bottom", actual_value
-            )
-        if (
-            pad_left < PAD_MIN
-            or pad_right < PAD_MIN
-            or pad_left > DMA_MAX_VAL
-            or pad_right > DMA_MAX_VAL
-        ):
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "pad_top or pad_bottom", actual_value)
+        if pad_left < PAD_MIN or pad_right < PAD_MIN or pad_left > DMA_MAX_VAL or pad_right > DMA_MAX_VAL:
             range_value = "".join([str(PAD_MIN), ", ", str(DMA_MAX_VAL)])
             actual_value = "".join([str(pad_left), ", ", str(pad_right)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "pad_left or pad_right", actual_value
-            )
-        if (
-            pad_top > PAD_MAX
-            or pad_bottom > PAD_MAX
-            or pad_left > PAD_MAX
-            or pad_right > PAD_MAX
-        ):
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "pad_left or pad_right", actual_value)
+        if pad_top > PAD_MAX or pad_bottom > PAD_MAX or pad_left > PAD_MAX or pad_right > PAD_MAX:
             ConvParam.l0a_dma_flag = True
 
     w_block_size_n = CUBE_MKN[w_dtype]["mac"][2]
@@ -398,32 +349,20 @@ def check_conv_shape(
         if ConvParam.dynamic_flag:
             if shape_w[2] > FILTER_HW_MAX:
                 range_value = "".join([str(FILTER_HW_MIN), ", ", str(FILTER_HW_MAX)])
-                err_man.raise_err_attr_range_invalid(
-                    "conv2d", range_value, "kernel H", str(shape_w[2])
-                )
+                err_man.raise_err_attr_range_invalid("conv2d", range_value, "kernel H", str(shape_w[2]))
             if shape_w[3] > FILTER_HW_MAX:
                 range_value = "".join([str(FILTER_HW_MIN), ", ", str(FILTER_HW_MAX)])
-                err_man.raise_err_attr_range_invalid(
-                    "conv2d", range_value, "kernel W", str(shape_w[3])
-                )
+                err_man.raise_err_attr_range_invalid("conv2d", range_value, "kernel W", str(shape_w[3]))
         if shape_w[2] < FILTER_HW_MIN or shape_w[2] > DMA_MAX_VAL:
             range_value = "".join([str(FILTER_HW_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "kernel H", str(shape_w[2])
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "kernel H", str(shape_w[2]))
         if shape_w[3] < FILTER_HW_MIN or shape_w[3] > DMA_MAX_VAL:
             range_value = "".join([str(FILTER_HW_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "kernel W", str(shape_w[3])
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "kernel W", str(shape_w[3]))
         if shape_w[2] > FILTER_HW_MAX or shape_w[3] > FILTER_HW_MAX:
             ConvParam.l0a_dma_flag = True
         temp = 4 * shape_w[2] * shape_w[3]
-        if (
-            optim_dict.get("use_v200_c04_flg")
-            and is_support_v200()
-            and (temp > HK_WK_C04_V200)
-        ):
+        if optim_dict.get("use_v200_c04_flg") and is_support_v200() and (temp > HK_WK_C04_V200):
             err_man.raise_err_specific(
                 "conv2d",
                 "In v200, small channel case, the 4*Hk*Wk must be smaller than "
@@ -438,16 +377,12 @@ def check_conv_shape(
         """
         if strideh < STRIDE_MIN or strideh > DMA_MAX_VAL:
             range_value = "".join([str(STRIDE_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "strideh", str(strideh)
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "strideh", str(strideh))
         if strideh > STRIDE_MAX:
             ConvParam.l0a_dma_flag = True
         if stridew < STRIDE_MIN or stridew > DMA_MAX_VAL:
             range_value = "".join([str(STRIDE_MIN), ", ", str(DMA_MAX_VAL)])
-            err_man.raise_err_attr_range_invalid(
-                "conv2d", range_value, "stridew", str(stridew)
-            )
+            err_man.raise_err_attr_range_invalid("conv2d", range_value, "stridew", str(stridew))
         if stridew > STRIDE_MAX:
             ConvParam.l0a_dma_flag = True
 
@@ -455,9 +390,7 @@ def check_conv_shape(
         """
         Check load3dv2 instr postk range
         """
-        if is_support_fixpipe() and check_load3dv2_postk_params_invalid(
-            h_k, w_k, in_dtype
-        ):
+        if is_support_fixpipe() and check_load3dv2_postk_params_invalid(h_k, w_k, in_dtype):
             ConvParam.l0a_dma_flag = True
 
     if not ConvParam.cache_tiling_flag:
@@ -478,13 +411,7 @@ def check_conv_shape(
         check for not bigger than L1
         """
 
-        m_bit_ratio = {
-            "float16": 2,
-            "int8": 1,
-            "float32": 4,
-            "bfloat16": 2,
-            "int4": 0.5,
-        }
+        m_bit_ratio = {"float16": 2, "int8": 1, "float32": 4, "bfloat16": 2, "int4": 0.5}
         if "fmap_w" in ConvParam.dyn_var_map and ConvParam.dynamic_flag:
             fmap_w_upper = get_te_var("fmap_w").get_bound()[1]
             if fmap_w_upper:
@@ -497,21 +424,13 @@ def check_conv_shape(
                 if isinstance(pad_left, tvm.tir.PrimExpr):
                     wo_upper = int_ceil_div(fmap_w_upper, stridew)
                 else:
-                    wo_upper = (
-                        math.floor(
-                            (fmap_w_upper - wk_dilation + pad_left + pad_right)
-                            / stridew
-                        )
-                        + 1
-                    )
+                    wo_upper = math.floor((fmap_w_upper - wk_dilation + pad_left + pad_right) / stridew) + 1
                 ho_upper = math.floor(config["mac"][0] / wo_upper) + 2
             l1_m = ((ho_upper - 1) * strideh + hk_dilation) * fmap_w_upper
             max_feature_map_l1 = ci0 * l1_m * m_bit_ratio.get(w_dtype)
             _l1_buffer_size_check(max_feature_map_l1, ConvParam.dynamic_flag)
         elif not is_support_fixpipe():
-            point_per_w = (
-                math.floor((w_i - wk_dilation + pad_left + pad_right) / stridew) + 1
-            )
+            point_per_w = math.floor((w_i - wk_dilation + pad_left + pad_right) / stridew) + 1
             w_in = math.floor(config["mac"][0] / point_per_w) + 2
             tmp = ((int(w_in) - 1) * strideh + hk_dilation) * w_i
             max_feature_map_l1 = ci0 * tmp * m_bit_ratio.get(w_dtype)
@@ -526,9 +445,7 @@ def check_conv_shape(
             ho_upper = int_ceil_div(config["mac"][0], w_out)
             hi_infer_by_ho = min(h_i, ((ho_upper - 1) * strideh + hk_dilation))
             wi_infer_by_wo = min(w_i, ((config["mac"][0] - 1) * stridew + wk_dilation))
-            max_feature_map_l1 = (
-                ci0 * hi_infer_by_ho * wi_infer_by_wo * m_bit_ratio.get(w_dtype)
-            )
+            max_feature_map_l1 = ci0 * hi_infer_by_ho * wi_infer_by_wo * m_bit_ratio.get(w_dtype)
             _l1_buffer_size_check(max_feature_map_l1)
 
     if not ConvParam.cache_tiling_flag:
@@ -543,13 +460,7 @@ def check_conv_shape(
             m_bit_ratio = {"float32": 4, "float16": 2, "bfloat16": 2, "int8": 1}
             block_size_m = config["mac"][0]
             block_size_k = config["mac"][1]
-            min_feature_map_l1_size = (
-                hk_dilation
-                * wk_dilation
-                * block_size_m
-                * block_size_k
-                * m_bit_ratio.get(w_dtype)
-            )
+            min_feature_map_l1_size = hk_dilation * wk_dilation * block_size_m * block_size_k * m_bit_ratio.get(w_dtype)
             l1_buffer_size = get_soc_spec("L1_SIZE")
             if is_support_fixpipe():
                 l1_buffer_size = update_l1_size(l1_buffer_size)
@@ -660,9 +571,7 @@ class ConvParam:
         cls.dynamic_flag = False
         cls.binary_mode = False
         cls.has_padding = False
-        cls.dequant_doubleout_flag = (
-            False  # mark v100 v200 conv_dequant_*_quant doubleout
-        )
+        cls.dequant_doubleout_flag = False  # mark v100 v200 conv_dequant_*_quant doubleout
         cls.input_nd_flag = False
         cls.input_nd_mode = None
         cls.weight_nd_flag = False
@@ -1073,9 +982,7 @@ class ConvParam:
         log.debug("ConvParam.l0a_load2d_flag: {}".format(cls.l0a_load2d_flag))
         log.debug("ConvParam.l0a_dma_flag: {}".format(cls.l0a_dma_flag))
         log.debug("ConvParam.split_w_flag: {}".format(cls.split_w_flag))
-        log.debug(
-            "ConvParam.v200_width_out_1_flag: {}".format(cls.v200_width_out_1_flag)
-        )
+        log.debug("ConvParam.v200_width_out_1_flag: {}".format(cls.v200_width_out_1_flag))
 
     @classmethod
     def get_tensor_map(cls):
@@ -1124,21 +1031,13 @@ def _fmap_c0_check_value(dtype, optim_dict):
     """
     This is fmap c0 check value.
     """
-    fmap_c0_check_value = (
-        4 if optim_dict["use_v200_c04_flg"] else CUBE_MKN[dtype]["mac"][1]
-    )
+    fmap_c0_check_value = 4 if optim_dict["use_v200_c04_flg"] else CUBE_MKN[dtype]["mac"][1]
 
     return fmap_c0_check_value
 
 
 def conv_compress_unzip_weight(
-    inputs,
-    weight_compress,
-    compress_index,
-    compress_index_shape,
-    para_dict,
-    optim_dict=None,
-    dsl_flag=True,
+    inputs, weight_compress, compress_index, compress_index_shape, para_dict, optim_dict=None, dsl_flag=True
 ):
     """
     unzip_weight compute
@@ -1157,12 +1056,7 @@ def conv_compress_unzip_weight(
         weight_compress_shape,
         lambda i, j, k, l: tvm.unzip(
             compress_index(
-                (
-                    j // compress_tiling_n * compress_tiling_n_frac
-                    + i // compress_tiling_k
-                )
-                * compress_tiling_frac
-                * 8
+                (j // compress_tiling_n * compress_tiling_n_frac + i // compress_tiling_k) * compress_tiling_frac * 8
             ),
             weight_compress(i, j, k, l),
         ),
@@ -1173,13 +1067,7 @@ def conv_compress_unzip_weight(
 
 
 def conv_compress_sparse(
-    inputs,
-    weight_compress,
-    compress_index,
-    compress_index_shape,
-    para_dict,
-    optim_dict=None,
-    dsl_flag=True,
+    inputs, weight_compress, compress_index, compress_index_shape, para_dict, optim_dict=None, dsl_flag=True
 ):
     """
     sparse 4to2 compute
@@ -1190,36 +1078,18 @@ def conv_compress_sparse(
 
 @tvm.target.generic_func
 def conv_compress(
-    inputs,
-    weight_compress,
-    compress_index,
-    compress_index_shape,
-    para_dict,
-    optim_dict=None,
-    dsl_flag=True,
+    inputs, weight_compress, compress_index, compress_index_shape, para_dict, optim_dict=None, dsl_flag=True
 ):
     """
     This is conv compress compute.
     """
     if para_dict.get("alg", WEIGHT_UNZIP) == WEIGHT_UNZIP:
         return conv_compress_unzip_weight(
-            inputs,
-            weight_compress,
-            compress_index,
-            compress_index_shape,
-            para_dict,
-            optim_dict,
-            dsl_flag,
+            inputs, weight_compress, compress_index, compress_index_shape, para_dict, optim_dict, dsl_flag
         )
 
     return conv_compress_sparse(
-        inputs,
-        weight_compress,
-        compress_index,
-        compress_index_shape,
-        para_dict,
-        optim_dict,
-        dsl_flag,
+        inputs, weight_compress, compress_index, compress_index_shape, para_dict, optim_dict, dsl_flag
     )
 
 
@@ -1253,9 +1123,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         group = ConvParam.para_dict.get("group")
         config = CUBE_MKN[in_dtype]
         block_size_m = config["mac"][0]
-        howo_mad = (
-            (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
-        )
+        howo_mad = (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
 
         cout1_opt = ConvParam.para_dict.get("cout1_opt")
 
@@ -1268,11 +1136,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         c_ub = tvm.compute(
             final_c_ub_shape,
             lambda batch, cout1, howo, cout0: c_col(
-                0 if group == 1 else cout1 // cout1_opt,
-                batch,
-                cout1 if group == 1 else cout1 % cout1_opt,
-                howo,
-                cout0,
+                0 if group == 1 else cout1 // cout1_opt, batch, cout1 if group == 1 else cout1 % cout1_opt, howo, cout0
             ).astype(res_dtype),
             name=get_name_with_suffix_num("C_UB"),
             tag=OP_TAG + "C_UB",
@@ -1302,11 +1166,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 fmap_l1 = tvm.compute(
                     fmap_al1_shape,
                     lambda group0, n, c1, h, w, c0: fmap(
-                        n,
-                        c1 + group0 * ConvParam.para_dict.get("c1_opt"),
-                        h * stride_h,
-                        w,
-                        c0,
+                        n, c1 + group0 * ConvParam.para_dict.get("c1_opt"), h * stride_h, w, c0
                     ),
                     name=get_name_with_suffix_num("fmap_l1"),
                 )
@@ -1337,12 +1197,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         fmap_ub_for_dma_im2col = tvm.compute(
             fmap_ub_shape,
             lambda n, c1, h, w, c0: tvm.select(
-                tvm.any(
-                    h < padding[0],
-                    h > fmap_h + padding[0] - 1,
-                    w < padding[2],
-                    w > fmap_w + padding[2] - 1,
-                ),
+                tvm.any(h < padding[0], h > fmap_h + padding[0] - 1, w < padding[2], w > fmap_w + padding[2] - 1),
                 tvm.const(offset_x, fmap.dtype),
                 fmap(n, c1, h - padding[0], w - padding[2], c0),
             ),
@@ -1367,33 +1222,15 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         if strideh_opti_flag:
             fmap_im2col_row_major_res = im2col_row_major(
-                fmap_im2col_row_major_shape,
-                fmap_l1,
-                filter_w,
-                padding,
-                (1, stride_w),
-                dilate,
-                fmap.dtype,
+                fmap_im2col_row_major_shape, fmap_l1, filter_w, padding, (1, stride_w), dilate, fmap.dtype
             )
         elif ConvParam.l0a_dma_flag and ConvParam.has_padding:
             fmap_im2col_row_major_res = im2col_row_major(
-                fmap_im2col_row_major_shape,
-                fmap_l1,
-                filter_w,
-                (0, 0, 0, 0),
-                stride,
-                dilate,
-                fmap.dtype,
+                fmap_im2col_row_major_shape, fmap_l1, filter_w, (0, 0, 0, 0), stride, dilate, fmap.dtype
             )
         else:
             fmap_im2col_row_major_res = im2col_row_major(
-                fmap_im2col_row_major_shape,
-                fmap,
-                filter_w,
-                padding,
-                stride,
-                dilate,
-                fmap.dtype,
+                fmap_im2col_row_major_shape, fmap, filter_w, padding, stride, dilate, fmap.dtype
             )
         TENSOR_MAP["fmap_im2col_row_major_res"] = fmap_im2col_row_major_res
         return fmap_im2col_row_major_res
@@ -1434,14 +1271,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             height_out = ConvParam.h_out
             width_out = ConvParam.w_out
 
-            return (
-                fmap_shape,
-                height_out,
-                width_out,
-                batch_size,
-                feature_map_h,
-                feature_map_w,
-            )
+            return (fmap_shape, height_out, width_out, batch_size, feature_map_h, feature_map_w)
 
         def _mad_res(l0a_load2d_flag):
             """
@@ -1458,9 +1288,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 )
                 al1_load2d = tvm.compute(
                     shape_al1_load2d,
-                    lambda n, c1, m, c0: fmap(
-                        n, c1, m // feature_map_w, m % feature_map_w, c0
-                    ),
+                    lambda n, c1, m, c0: fmap(n, c1, m // feature_map_w, m % feature_map_w, c0),
                     name=get_name_with_suffix_num(OP_TAG + "al1_load2d"),
                 )
                 TENSOR_MAP["al1_load2d"] = al1_load2d
@@ -1468,9 +1296,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 shape_al0_load2d = (
                     ConvParam.para_dict.get("group_opt"),
                     batch_size,
-                    int_ceil_div(
-                        feature_map_h * feature_map_w, CUBE_MKN[fmap.dtype]["mac"][0]
-                    ),
+                    int_ceil_div(feature_map_h * feature_map_w, CUBE_MKN[fmap.dtype]["mac"][0]),
                     in_channel_c1,
                     CUBE_MKN[fmap.dtype]["mac"][0],
                     in_channel_c0,
@@ -1490,9 +1316,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
                 c_col = mad(mad_shape, al0_load2d, weight, config, mad_dtype)
             else:
-                c_col = mad(
-                    mad_shape, fmap_im2col_fractal_res, weight, config, mad_dtype
-                )
+                c_col = mad(mad_shape, fmap_im2col_fractal_res, weight, config, mad_dtype)
             return c_col
 
         def _get_l0a_load2d_flag():
@@ -1523,12 +1347,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             if (
                 ConvParam.groupopt_flag
                 and is_support_v200()
-                and (
-                    ConvParam.para_dict.get("group_opt")
-                    * ConvParam.para_dict.get("c1_opt")
-                    * cin0
-                    != cin_ori
-                )
+                and (ConvParam.para_dict.get("group_opt") * ConvParam.para_dict.get("c1_opt") * cin0 != cin_ori)
             ):
                 l0a_load2d_flag = False
             # when data h size is 1, use conv1d(load3d)
@@ -1561,23 +1380,14 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                     in_channel_c0_row_major_res,
                 )
                 fmap_im2col_row_major_res = _v100_cal_im2col_row_major(
-                    fmap,
-                    fmap_im2col_row_major_shape,
-                    fmap_l1,
-                    [filter_w, padding, stride, dilate, strideh_opti_flag],
+                    fmap, fmap_im2col_row_major_shape, fmap_l1, [filter_w, padding, stride, dilate, strideh_opti_flag]
                 )
 
                 # im2col
                 # small-z-big-Z
-                howo_mad = (
-                    (height_out * width_out + block_size_m - 1)
-                    // block_size_m
-                    * block_size_m
-                )
+                howo_mad = (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
                 k_size = (
-                    in_channel_c0_row_major_res * in_channel_c1 * filter_h * filter_w
-                    + block_size_k
-                    - 1
+                    in_channel_c0_row_major_res * in_channel_c1 * filter_h * filter_w + block_size_k - 1
                 ) // block_size_k
                 fmap_im2col_fractal_shape = (
                     ConvParam.para_dict.get("group_opt"),
@@ -1588,24 +1398,13 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                     block_size_k,
                 )
                 fmap_im2col_fractal_res = im2col_fractal(
-                    fmap_im2col_fractal_shape,
-                    fmap_im2col_row_major_res,
-                    config,
-                    fmap.dtype,
+                    fmap_im2col_fractal_shape, fmap_im2col_row_major_res, config, fmap.dtype
                 )
 
-                if (
-                    is_support_v200()
-                    and not c04_v100_flag
-                    and not ConvParam.l0a_dma_flag
-                ):
+                if is_support_v200() and not c04_v100_flag and not ConvParam.l0a_dma_flag:
                     in_channel_c0 = data.shape[4].value
                     input_k_block = (
-                        (
-                            in_channel_c1 * filter_h * filter_w * in_channel_c0
-                            + block_size_k
-                            - 1
-                        )
+                        (in_channel_c1 * filter_h * filter_w * in_channel_c0 + block_size_k - 1)
                         // block_size_k
                         * block_size_k
                     )
@@ -1625,11 +1424,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 TENSOR_MAP["fmap_im2col_fractal_res"] = fmap_im2col_fractal_res
             else:
                 in_channel_c1 = ConvParam.para_dict.get("c1_opt")
-                howo_mad = (
-                    (height_out * width_out + block_size_m - 1)
-                    // block_size_m
-                    * block_size_m
-                )
+                howo_mad = (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
                 fmap_im2col_fractal_shape = (
                     ConvParam.para_dict.get("group_opt"),
                     ConvParam.para_dict.get("a_shape")[0],
@@ -1653,47 +1448,17 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                         fmap_al1 = tvm.compute(
                             fmap_l1_shape,
                             lambda group0, n, c1, h, w, c0: fmap(
-                                n,
-                                c1 + group0 * ConvParam.para_dict.get("c1_opt"),
-                                h,
-                                w,
-                                c0,
+                                n, c1 + group0 * ConvParam.para_dict.get("c1_opt"), h, w, c0
                             ),
                             name=get_name_with_suffix_num("fmap_l1"),
                         )
-                        img2col_para = (
-                            fmap_al1,
-                            filter_h,
-                            filter_w,
-                            padding,
-                            stride,
-                            dilate,
-                            width_out,
-                        )
+                        img2col_para = (fmap_al1, filter_h, filter_w, padding, stride, dilate, width_out)
                         TENSOR_MAP["fmap_l1"] = fmap_al1
                     else:
-                        img2col_para = (
-                            fmap,
-                            filter_h,
-                            filter_w,
-                            padding,
-                            stride,
-                            dilate,
-                            width_out,
-                        )
+                        img2col_para = (fmap, filter_h, filter_w, padding, stride, dilate, width_out)
                 else:
-                    img2col_para = (
-                        fmap_l1,
-                        filter_h,
-                        filter_w,
-                        padding,
-                        (1, stride_w),
-                        dilate,
-                        width_out,
-                    )
-                fmap_im2col_fractal_res = img2col(
-                    fmap_im2col_fractal_shape, img2col_para
-                )
+                    img2col_para = (fmap_l1, filter_h, filter_w, padding, (1, stride_w), dilate, width_out)
+                fmap_im2col_fractal_res = img2col(fmap_im2col_fractal_shape, img2col_para)
                 TENSOR_MAP["fmap_im2col_fractal_res"] = fmap_im2col_fractal_res
 
             return howo_mad, fmap_im2col_fractal_res
@@ -1707,9 +1472,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             bias_32byte_align_shape = []
             bias_32byte_align_shape.append(ceil(bias_tensor.shape[0], 8))
             bias_ub = tvm.compute(
-                bias_32byte_align_shape,
-                lambda *indice: bias_tensor(*indice),
-                name=get_name_with_suffix_num("bias_ub"),
+                bias_32byte_align_shape, lambda *indice: bias_tensor(*indice), name=get_name_with_suffix_num("bias_ub")
             )
             if bias_optimize_flag:
                 bias_ub_brc_shape = list(mad_shape)
@@ -1717,17 +1480,13 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 bias_ub_brc = tvm.compute(
                     bias_ub_brc_shape,
                     lambda group, i, j, k, l: bias_ub(
-                        group * bias_ub_brc_shape[2] * config["mac"][2]
-                        + j * config["mac"][2]
-                        + l
+                        group * bias_ub_brc_shape[2] * config["mac"][2] + j * config["mac"][2] + l
                     ),
                     name=get_name_with_suffix_num(OP_TAG + "bias_ub_brc"),
                 )
                 bias_l0c = tvm.compute(
                     mad_shape,
-                    lambda group, i1, j1, k_1, l1: bias_ub_brc(
-                        group, i1, j1, k_1 // 16, l1
-                    ),
+                    lambda group, i1, j1, k_1, l1: bias_ub_brc(group, i1, j1, k_1 // 16, l1),
                     name=get_name_with_suffix_num(OP_TAG + "bias_l0c"),
                 )
                 TENSOR_MAP["bias_ub_brc"] = bias_ub_brc
@@ -1736,9 +1495,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 bias_l0c = tvm.compute(
                     mad_shape,
                     lambda group, i1, j1, k_1, l1: bias_ub(
-                        group * mad_shape[2] * config["mac"][2]
-                        + j1 * config["mac"][2]
-                        + l1
+                        group * mad_shape[2] * config["mac"][2] + j1 * config["mac"][2] + l1
                     ),
                     name=get_name_with_suffix_num(OP_TAG + "bias_l0c"),
                 )
@@ -1770,23 +1527,15 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             or isinstance(ConvParam.para_dict.get("pad_w")[1], tvm.tir.PrimExpr)
         )
         if pad_expr_flag:
-            strideh_opti_flag = (filter_h == 1 and stride_h > 1) and not optim_dict.get(
-                "c0_optim_flg"
-            )
+            strideh_opti_flag = (filter_h == 1 and stride_h > 1) and not optim_dict.get("c0_optim_flg")
         else:
             strideh_opti_flag = (
                 (filter_h == 1 and stride_h > 1)
                 and not optim_dict.get("c0_optim_flg")
-                and sum(
-                    ConvParam.para_dict.get("pad_h") + ConvParam.para_dict.get("pad_w")
-                )
-                == 0
+                and sum(ConvParam.para_dict.get("pad_h") + ConvParam.para_dict.get("pad_w")) == 0
             )
 
-        if (
-            ConvParam.fusion_para.get("l1_fusion_type") == 1
-            or ConvParam.fusion_para.get("input_memory_type")[0] == 1
-        ):
+        if ConvParam.fusion_para.get("l1_fusion_type") == 1 or ConvParam.fusion_para.get("input_memory_type")[0] == 1:
             # for L1 breadth fusion, fmap must load all at once
             strideh_opti_flag = False
 
@@ -1795,14 +1544,8 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         padding = ConvParam.padding
         stride = (stride_h, stride_w)
-        c04_v100_flag = optim_dict["c0_optim_flg"] and not (
-            is_support_v200() and optim_dict["use_v200_c04_flg"]
-        )
-        c04_v200_flag = (
-            optim_dict["c0_optim_flg"]
-            and is_support_v200()
-            and optim_dict["use_v200_c04_flg"]
-        )
+        c04_v100_flag = optim_dict["c0_optim_flg"] and not (is_support_v200() and optim_dict["use_v200_c04_flg"])
+        c04_v200_flag = optim_dict["c0_optim_flg"] and is_support_v200() and optim_dict["use_v200_c04_flg"]
         TENSOR_MAP["strideh_opti_flag"] = strideh_opti_flag
         TENSOR_MAP["c0_optim_flg"] = c04_v100_flag
         TENSOR_MAP["c04_v200_flag"] = c04_v200_flag
@@ -1810,9 +1553,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         l0a_load2d_flag = _get_l0a_load2d_flag()
         TENSOR_MAP["l0a_load2d_flag"] = l0a_load2d_flag
 
-        fmap_shape, height_out, width_out, batch_size, feature_map_h, feature_map_w = (
-            _config_mmad_shape()
-        )
+        fmap_shape, height_out, width_out, batch_size, feature_map_h, feature_map_w = _config_mmad_shape()
         config = CUBE_MKN[in_dtype]
         block_size_k = config["mac"][1]
         block_size_m = config["mac"][0]
@@ -1857,9 +1598,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             16,
         )
 
-        if (
-            ConvParam.v200_width_out_1_flag
-        ):  # in special case, actual out size is only half
+        if ConvParam.v200_width_out_1_flag:  # in special case, actual out size is only half
             DIM_MAP["out_img_shape"] = (
                 ConvParam.para_dict.get("a_shape")[0],
                 int_ceil_div(ConvParam.para_dict.get("weight_ori_shape_nchw")[0], 16),
@@ -1869,12 +1608,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         ConvParam.conv_shape = DIM_MAP.get("out_img_shape")
         filter_shape = [out_channel, filter_h, filter_w, 1]
         dim_map1 = im2col_dim(
-            shape_to_list(fmap.shape),
-            filter_shape,
-            list(padding),
-            list(stride),
-            list(dilate),
-            config,
+            shape_to_list(fmap.shape), filter_shape, list(padding), list(stride), list(dilate), config
         )
         dim_map_copy = DIM_MAP.copy()
         dim_map_copy.update(dim_map1)
@@ -1890,9 +1624,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         if ConvParam.dynamic_flag:
             bias_optimize_flag = False
 
-        howo_mad = (
-            (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
-        )
+        howo_mad = (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
 
         mad_shape = (
             ConvParam.para_dict.get("group_opt"),
@@ -1990,9 +1722,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         c_col = _cube_compute(fmap, weight, mad_dtype, tiling, optim_dict, bias)
 
-        howo_mad = (
-            (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
-        )
+        howo_mad = (height_out * width_out + block_size_m - 1) // block_size_m * block_size_m
         cout1_opt = ConvParam.para_dict.get("cout1_opt")
         final_c_ub_shape = (
             ConvParam.para_dict.get("a_shape")[0],
@@ -2007,11 +1737,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         c_ub = tvm.compute(
             final_c_ub_shape,
             lambda batch, cout1, howo, cout0: c_col(
-                0 if group == 1 else cout1 // cout1_opt,
-                batch,
-                cout1 if group == 1 else cout1 % cout1_opt,
-                howo,
-                cout0,
+                0 if group == 1 else cout1 // cout1_opt, batch, cout1 if group == 1 else cout1 % cout1_opt, howo, cout0
             ).astype(res_dtype),
             name=get_name_with_suffix_num("C_UB"),
             tag=OP_TAG + "C_UB",
@@ -2031,12 +1757,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         filter_shape = [out_channel, filter_h, filter_w, 1]
         dim_map1 = im2col_dim(
-            shape_to_list(fmap.shape),
-            filter_shape,
-            list(padding),
-            list(stride),
-            list(dilate),
-            config,
+            shape_to_list(fmap.shape), filter_shape, list(padding), list(stride), list(dilate), config
         )
         dim_map_copy = DIM_MAP.copy()
         dim_map_copy.update(dim_map1)
@@ -2083,9 +1804,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             dilate_h, dilate_w = dilate
 
             back_c1 = virtual_w // block_size_k // kernel_w // kernel_h
-            back_h = (virtual_h // fmap_wo) * stride[0] + (
-                col_w // kernel_w % kernel_h
-            ) * dilate_h
+            back_h = (virtual_h // fmap_wo) * stride[0] + (col_w // kernel_w % kernel_h) * dilate_h
             back_w = (virtual_h % fmap_wo) * stride[1] + (col_w % kernel_w) * dilate_w
 
             if len(fmap.shape) == len(ConvParam.para_dict.get("a_shape")):
@@ -2113,14 +1832,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                     back_w > fmap.shape[4] + padding[2] - 1,
                 ),
                 tvm.const(0, fmap.dtype),
-                fmap(
-                    group,
-                    n_batch,
-                    back_c1,
-                    back_h - padding[0],
-                    back_w - padding[2],
-                    block_size_w,
-                ),
+                fmap(group, n_batch, back_c1, back_h - padding[0], back_w - padding[2], block_size_w),
             )
 
         return tvm.compute(
@@ -2161,27 +1873,18 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         batch = img_shape[0]
         if "fmap_h" not in ConvParam.dyn_var_map:
-            out_h = (
-                (img_shape[-3] + pad[2] + pad[3])
-                - ((filter_shape[-3] - 1) * dilate[0] + 1)
-            ) // stride[0] + 1
+            out_h = ((img_shape[-3] + pad[2] + pad[3]) - ((filter_shape[-3] - 1) * dilate[0] + 1)) // stride[0] + 1
         else:
             out_h = ConvParam.dyn_var_map.get("ho")
         if "fmap_w" not in ConvParam.dyn_var_map:
-            out_w = (
-                (img_shape[-2] + pad[0] + pad[1])
-                - ((filter_shape[-2] - 1) * dilate[1] + 1)
-            ) // stride[1] + 1
+            out_w = ((img_shape[-2] + pad[0] + pad[1]) - ((filter_shape[-2] - 1) * dilate[1] + 1)) // stride[1] + 1
         else:
             out_w = ConvParam.dyn_var_map.get("wo")
 
         fmap_valid_dim = (
             batch,
             out_h * out_w,
-            ConvParam.para_dict.get("c1_opt")
-            * img_shape[-1]
-            * filter_shape[-2]
-            * filter_shape[-3],
+            ConvParam.para_dict.get("c1_opt") * img_shape[-1] * filter_shape[-2] * filter_shape[-3],
         )
 
         fmap_matrix_dim = (
@@ -2193,10 +1896,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         )
 
         filter_valid_dim = (
-            ConvParam.para_dict.get("c1_opt")
-            * filter_shape[-3]
-            * filter_shape[-2]
-            * img_shape[-1],
+            ConvParam.para_dict.get("c1_opt") * filter_shape[-3] * filter_shape[-2] * img_shape[-1],
             filter_shape[-4] * filter_shape[-1],
         )
 
@@ -2215,9 +1915,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             "filter_matrix_dim": filter_matrix_dim,
         }
 
-    def im2col_row_major(
-        fmap_im2col_vm_shape, fmap, kernel_w, padding, stride, dilate, compute_dtype
-    ):
+    def im2col_row_major(fmap_im2col_vm_shape, fmap, kernel_w, padding, stride, dilate, compute_dtype):
         """
         calculate im2col_row_major tensor
 
@@ -2243,18 +1941,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         """
 
         def __im2col_row_major_indices(
-            group,
-            batch,
-            howo,
-            cin_1,
-            k_h,
-            k_w,
-            cin_0,
-            fmap,
-            kernel_w,
-            padding,
-            stride,
-            dilate,
+            group, batch, howo, cin_1, k_h, k_w, cin_0, fmap, kernel_w, padding, stride, dilate
         ):
             """
             calculate im2col_row_major tvm lambda function
@@ -2278,12 +1965,9 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             stride_h, stride_w = stride
             dilate_h, dilate_w = dilate
             padding_top, _, padding_left, padding_right = padding
-            width_out = (
-                input_w.value
-                + padding_left
-                + padding_right
-                - ((kernel_w - 1) * dilate_w + 1)
-            ) // (stride_w) + 1
+            width_out = (input_w.value + padding_left + padding_right - ((kernel_w - 1) * dilate_w + 1)) // (
+                stride_w
+            ) + 1
 
             h_index = (howo // width_out) * stride_h + k_h * dilate_h
             w_index = (howo % width_out) * stride_w + k_w * dilate_w
@@ -2331,15 +2015,9 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         }
 
         if ConvParam.fusion_para.get("l1_fusion_type") == 1:
-            (
-                fmap_vm_group_opt,
-                fmap_vm_batch,
-                fmap_vm_howo,
-                fmap_vm_c1_opt,
-                fmap_vm_kh,
-                fmap_vm_kw,
-                fmap_vm_c0,
-            ) = fmap_im2col_vm_shape
+            (fmap_vm_group_opt, fmap_vm_batch, fmap_vm_howo, fmap_vm_c1_opt, fmap_vm_kh, fmap_vm_kw, fmap_vm_c0) = (
+                fmap_im2col_vm_shape
+            )
             fmap_im2col_vm_shape_new = [
                 fmap_vm_batch,
                 fmap_vm_howo,
@@ -2351,18 +2029,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             return tvm.compute(
                 fmap_im2col_vm_shape_new,
                 lambda batch, howo, cin_1, k_h, k_w, cin_0: __im2col_row_major_indices(
-                    0,
-                    batch,
-                    howo,
-                    cin_1,
-                    k_h,
-                    k_w,
-                    cin_0,
-                    fmap,
-                    kernel_w,
-                    padding,
-                    stride,
-                    dilate,
+                    0, batch, howo, cin_1, k_h, k_w, cin_0, fmap, kernel_w, padding, stride, dilate
                 ),
                 name=get_name_with_suffix_num("im2col_row_major"),
                 tag=OP_TAG + "im2col_row_major",
@@ -2371,25 +2038,8 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         return tvm.compute(
             fmap_im2col_vm_shape,
-            lambda group,
-            batch,
-            howo,
-            cin_1,
-            k_h,
-            k_w,
-            cin_0: __im2col_row_major_indices(
-                group,
-                batch,
-                howo,
-                cin_1,
-                k_h,
-                k_w,
-                cin_0,
-                fmap,
-                kernel_w,
-                padding,
-                stride,
-                dilate,
+            lambda group, batch, howo, cin_1, k_h, k_w, cin_0: __im2col_row_major_indices(
+                group, batch, howo, cin_1, k_h, k_w, cin_0, fmap, kernel_w, padding, stride, dilate
             ),
             name=get_name_with_suffix_num("im2col_row_major"),
             tag=OP_TAG + "im2col_row_major",
@@ -2436,13 +2086,9 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
             hw_index = m_1 * block_size_m + m_0
 
-            c1_index = (
-                ((k_1 * block_size + k_0) // block_size) // kernel_w.value
-            ) // kernel_h.value
+            c1_index = (((k_1 * block_size + k_0) // block_size) // kernel_w.value) // kernel_h.value
 
-            kh_index = (
-                ((k_1 * block_size + k_0) // block_size) // kernel_w.value
-            ) % kernel_h.value
+            kh_index = (((k_1 * block_size + k_0) // block_size) // kernel_w.value) % kernel_h.value
 
             kw_index = ((k_1 * block_size + k_0) // block_size) % kernel_w.value
 
@@ -2456,10 +2102,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             dtype = compute_dtype
             if ConvParam.l0a_dma_flag:
                 return tvm.select(
-                    hw_index <= howo.value - 1,
-                    fmap(
-                        group, batch, hw_index, c1_index, kh_index, kw_index, c0_index
-                    ),
+                    hw_index <= howo.value - 1, fmap(group, batch, hw_index, c1_index, kh_index, kw_index, c0_index)
                 )
 
             if ConvParam.fusion_para.get("l1_fusion_type") == 1:
@@ -2484,9 +2127,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         return tvm.compute(
             fmap_im2col_shape,
-            lambda group, batch, m_1, k_1, m_0, k_0: __im2col_fractal_indices(
-                group, batch, m_1, k_1, m_0, k_0, fmap
-            ),
+            lambda group, batch, m_1, k_1, m_0, k_0: __im2col_fractal_indices(group, batch, m_1, k_1, m_0, k_0, fmap),
             name=get_name_with_suffix_num("im2col_fractal"),
             tag=OP_TAG + "im2col_fractal",
         )
@@ -2567,9 +2208,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 row_major_reshape = tvm.compute(
                     fmap_im2col_shape,
                     lambda group, i, j, k: tvm.select(
-                        tvm.all(
-                            k < input_c1 * filter_h * filter_w * input_c0, j < howo
-                        ),
+                        tvm.all(k < input_c1 * filter_h * filter_w * input_c0, j < howo),
                         fmap_row_major(
                             group,
                             i,
@@ -2614,9 +2253,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             res_im2col_fractal = tvm.compute(
                 fmap_im2col_shape,
                 lambda group, i, j, k, l, m: im2col_row_major_reshape(
-                    i,
-                    j * block_size_m + l,
-                    group * group_reduce_offset + k * block_size_k + m,
+                    i, j * block_size_m + l, group * group_reduce_offset + k * block_size_k + m
                 ),
                 name=get_name_with_suffix_num("_im2col_fractal"),
                 tag=OP_TAG + "_im2col_fractal",
@@ -2672,50 +2309,24 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         if TENSOR_MAP.get("c0_optim_flg"):
             reduce_c1hwc0 = fmap_c1 * kernel_h * kernel_w * 4
         if not ConvParam.v200_width_out_1_flag:
-            remove_pad_m = (
-                DIM_MAP.get("out_img_height_width")[0]
-                * DIM_MAP.get("out_img_height_width")[1]
-            )
+            remove_pad_m = DIM_MAP.get("out_img_height_width")[0] * DIM_MAP.get("out_img_height_width")[1]
         else:  # invliad_data_rm uses removed_pad_m as the shape of UB tensor, so modify it to N*1 here
-            remove_pad_m = (
-                DIM_MAP.get("out_img_height_width")[0]
-                * DIM_MAP.get("out_img_height_width")[1]
-                // 2
-            )
+            remove_pad_m = DIM_MAP.get("out_img_height_width")[0] * DIM_MAP.get("out_img_height_width")[1] // 2
         if ConvParam.int4_width_out_align_flag:
-            remove_pad_m = DIM_MAP.get("out_img_height_width")[
-                0
-            ] * ConvParam.para_dict.get("int4_ori_wout")
+            remove_pad_m = DIM_MAP.get("out_img_height_width")[0] * ConvParam.para_dict.get("int4_ori_wout")
 
         offset_d = offset_x if is_support_v200() else 0
         if TENSOR_MAP.get("c0_optim_flg") or (
-            ConvParam.para_dict.get("group_opt") > 1
-            and is_support_v200()
-            and not TENSOR_MAP.get("l0a_load2d_flag")
+            ConvParam.para_dict.get("group_opt") > 1 and is_support_v200() and not TENSOR_MAP.get("l0a_load2d_flag")
         ):
             c_col = tvm.compute(
                 mad_shape,
                 lambda group, batch, cout_1, howo, cout_0: tvm.sum(
                     tvm.select(
-                        tvm.all(
-                            (group * reduce_k1 + axis_k1) * block_size + axis_k0
-                            < reduce_c1hwc0
-                        ),
+                        tvm.all((group * reduce_k1 + axis_k1) * block_size + axis_k0 < reduce_c1hwc0),
                         (
-                            (
-                                fmap[
-                                    group,
-                                    batch,
-                                    howo // block_size_m,
-                                    axis_k1,
-                                    howo % block_size_m,
-                                    axis_k0,
-                                ]
-                                - offset_d
-                            )
-                            * weight[
-                                group * reduce_k1 + axis_k1, cout_1, cout_0, axis_k0
-                            ]
+                            (fmap[group, batch, howo // block_size_m, axis_k1, howo % block_size_m, axis_k0] - offset_d)
+                            * weight[group * reduce_k1 + axis_k1, cout_1, cout_0, axis_k0]
                         ).astype(mad_dtype),
                     ),
                     axis=[axis_k1, axis_k0],
@@ -2733,17 +2344,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 mad_shape,
                 lambda group, batch, cout_1, howo, cout_0: tvm.sum(
                     (
-                        (
-                            fmap[
-                                group,
-                                batch,
-                                howo // block_size_m,
-                                axis_k1,
-                                howo % block_size_m,
-                                axis_k0,
-                            ]
-                            - offset_d
-                        )
+                        (fmap[group, batch, howo // block_size_m, axis_k1, howo % block_size_m, axis_k0] - offset_d)
                         * weight[group * reduce_k1 + axis_k1, cout_1, cout_0, axis_k0]
                     ).astype(mad_dtype),
                     axis=[axis_k1, axis_k0],
@@ -2784,18 +2385,14 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             # move bias from ddr to ub
             bias_ub = tvm.compute(
                 bias_32byte_align_shape,
-                lambda bias_index: tvm.select(
-                    bias_index < bias_real_dim_len, in_tensor1(bias_index)
-                ),
+                lambda bias_index: tvm.select(bias_index < bias_real_dim_len, in_tensor1(bias_index)),
                 name=get_name_with_suffix_num("bias_ub"),
             )
             # set bias align data to zero
             init_value = tvm.const(0, dtype=in_tensor1.dtype)
             bias_init_align_dim_ub = tvm.compute(
                 bias_32byte_align_shape,
-                lambda bias_index: tvm.select(
-                    bias_index >= bias_real_dim_len, init_value
-                ),
+                lambda bias_index: tvm.select(bias_index >= bias_real_dim_len, init_value),
                 name=get_name_with_suffix_num(OP_TAG + "bias_init_align_dim_ub"),
             )
             # use virtual add tensor connect bias tensor and init value tensor in ub
@@ -2815,9 +2412,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             bias_32byte_align_shape.append(bias_real_dim_len)
             # move bias from ddr to ub
             bias_ub = tvm.compute(
-                bias_32byte_align_shape,
-                lambda *indice: in_tensor1(*indice),
-                name=get_name_with_suffix_num("bias_ub"),
+                bias_32byte_align_shape, lambda *indice: in_tensor1(*indice), name=get_name_with_suffix_num("bias_ub")
             )
             # save bias tensor in TENSOR MAP
             TENSOR_MAP["bias_ub"] = bias_ub
@@ -2827,9 +2422,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 out_shape,
                 lambda *indice: in_tensor0(*indice)
                 + bias_ub(indice[1] * CUBE_MKN[in_tensor0.dtype]["mac"][2] + indice[3]),
-                name=get_name_with_suffix_num(
-                    "bias_add_vector_cc_" + str(NAME_INDEX[0])
-                ),
+                name=get_name_with_suffix_num("bias_add_vector_cc_" + str(NAME_INDEX[0])),
                 attrs={"width_out": in_tensor0.op.attrs["width_out"]},
             )
         return c_add_vector
@@ -2953,9 +2546,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         """
         res_tensor = tvm.compute(
             res_shape,
-            lambda batch, cout1, howo, cout0: padded_tensor(
-                batch, cout1, howo * 2, cout0
-            ),
+            lambda batch, cout1, howo, cout0: padded_tensor(batch, cout1, howo * 2, cout0),
             name=get_name_with_suffix_num("remove_padded_column"),
             tag=OP_TAG + "remove_padded_column",
             attrs={"width_out": ConvParam.w_out},
@@ -2985,11 +2576,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             c0_value = _fmap_c0_check_value(weight.dtype, optim_dict)
             if not c04_v200_flag and weight.dtype == "int8":
                 return False
-            if (
-                data.shape[1].value != 1
-                or data.shape[4].value != c0_value
-                or weight.shape[3].value != block_size_k
-            ):
+            if data.shape[1].value != 1 or data.shape[4].value != c0_value or weight.shape[3].value != block_size_k:
                 return False
             if kernel_one_one:
                 return False
@@ -3006,11 +2593,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
         kernel_one_one = (para_dict["filter_h"] == 1) and (para_dict["filter_w"] == 1)
 
-        c04_v200_flag = (
-            optim_dict["c0_optim_flg"]
-            and is_support_v200()
-            and optim_dict["use_v200_c04_flg"]
-        )
+        c04_v200_flag = optim_dict["c0_optim_flg"] and is_support_v200() and optim_dict["use_v200_c04_flg"]
         block_size_k = 16
         if weight.dtype == "int8":
             block_size_k = 32
@@ -3018,9 +2601,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             if check_c04_vaild():
                 pass
             else:
-                err_man.raise_err_specific(
-                    "conv2d", "Invalid config for c0=4 optimize feature."
-                )
+                err_man.raise_err_specific("conv2d", "Invalid config for c0=4 optimize feature.")
 
     def check_data(data, optim_dict):
         """
@@ -3045,22 +2626,15 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 if optim_dict.get("enable_input_4channel"):
                     return True
                 # conv2d fusion input 4 channel
-                if (
-                    "format" in data.op.attrs
-                    and data.op.attrs["format"] == "NC1HWC0_C04"
-                ):
+                if "format" in data.op.attrs and data.op.attrs["format"] == "NC1HWC0_C04":
                     return True
             return False
 
         if not isinstance(data, tvm.Tensor):
-            err_man.raise_err_specific(
-                "conv2d", "the first Input parameter must be a tvm.Tensor"
-            )
+            err_man.raise_err_specific("conv2d", "the first Input parameter must be a tvm.Tensor")
         nhwc_input_flag = is_support_fixpipe() and data.op.attrs.get("format") == "NHWC"
         if len(data.shape) != 5 and not nhwc_input_flag:
-            err_man.raise_err_specific(
-                "conv2d", "the first Input parameter must be a 5 dim tvm.Tensor"
-            )
+            err_man.raise_err_specific("conv2d", "the first Input parameter must be a 5 dim tvm.Tensor")
         check_dtype_list = ("int4", "int8", "float16", "bfloat16", "float32")
         utils.check_dtype_rule(data.dtype, check_dtype_list)
 
@@ -3085,13 +2659,9 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         Check conv weight param.
         """
         if not isinstance(weight, tvm.Tensor):
-            err_man.raise_err_specific(
-                "conv2d", "the first Input parameter must be a tvm.Tensor"
-            )
+            err_man.raise_err_specific("conv2d", "the first Input parameter must be a tvm.Tensor")
         if len(weight.shape) != 4:
-            err_man.raise_err_specific(
-                "conv2d", "the first Input parameter must be a 4 dim tvm.Tensor"
-            )
+            err_man.raise_err_specific("conv2d", "the first Input parameter must be a 4 dim tvm.Tensor")
         check_dtype_list = ("int4", "int8", "float16", "bfloat16", "float32")
 
         utils.check_dtype_rule(weight.dtype, check_dtype_list)
@@ -3158,30 +2728,12 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             cout_align = ceil(cout_ori, cout0)
             group_opt = para_dict["group_opt"]
             ConvParam.dim_map["weight_ori_nchw_shape"] = [cout_ori, cin_ori, h_k, w_k]
-            ConvParam.dim_map["weight_align_nchw_shape"] = [
-                cout_align,
-                cin_align,
-                h_k,
-                w_k,
-            ]
-            ConvParam.dim_map["weight_fracz_shape"] = [
-                gopt_c1opt_hk_wk,
-                cout1_opt,
-                cout0,
-                cin0,
-            ]
+            ConvParam.dim_map["weight_align_nchw_shape"] = [cout_align, cin_align, h_k, w_k]
+            ConvParam.dim_map["weight_fracz_shape"] = [gopt_c1opt_hk_wk, cout1_opt, cout0, cin0]
             tiling_b_cin1_opt = cin1_opt
             if sparse_4to2_flag:
-                tiling_b_cin1_opt = int_ceil_div(
-                    cin1_opt, 2
-                )  # 2: cin in sparse_4_to_2 is ceil(cin/2)
-            ConvParam.dim_map["weight_tiling_b_shape"] = [
-                cout1_opt * cout0,
-                tiling_b_cin1_opt,
-                h_k,
-                w_k,
-                cin0,
-            ]
+                tiling_b_cin1_opt = int_ceil_div(cin1_opt, 2)  # 2: cin in sparse_4_to_2 is ceil(cin/2)
+            ConvParam.dim_map["weight_tiling_b_shape"] = [cout1_opt * cout0, tiling_b_cin1_opt, h_k, w_k, cin0]
             # calculate fmap shape
             batch, cin1, hin, win, _ = para_dict["a_shape"]
 
@@ -3206,54 +2758,19 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                     dsl_fmap_shape[index_w],
                     4,
                 ]
-                ConvParam.dim_map["weight_tiling_b_shape"] = [
-                    cout1_opt * cout0,
-                    1,
-                    h_k,
-                    w_k,
-                    4,
-                ]
+                ConvParam.dim_map["weight_tiling_b_shape"] = [cout1_opt * cout0, 1, h_k, w_k, 4]
             # calculate mad/output shape
             hout = ConvParam.h_out
             wout = ConvParam.w_out
 
-            ConvParam.dim_map["output_5hd_shape"] = [
-                batch,
-                int_ceil_div(cout_ori, cout0),
-                hout,
-                wout,
-                cout0,
-            ]
-            ConvParam.dim_map["output_conv_res_shape"] = [
-                batch,
-                int_ceil_div(cout_ori, cout0),
-                hout * wout,
-                cout0,
-            ]
-            ConvParam.dim_map["output_mad_res_shape"] = [
-                group_opt,
-                batch,
-                cout1_opt,
-                ceil(hout * wout, 16),
-                cout0,
-            ]
-            ConvParam.dim_map["output_tiling_c_shape"] = [
-                batch,
-                cout1_opt,
-                hout,
-                wout,
-                cout0,
-            ]
+            ConvParam.dim_map["output_5hd_shape"] = [batch, int_ceil_div(cout_ori, cout0), hout, wout, cout0]
+            ConvParam.dim_map["output_conv_res_shape"] = [batch, int_ceil_div(cout_ori, cout0), hout * wout, cout0]
+            ConvParam.dim_map["output_mad_res_shape"] = [group_opt, batch, cout1_opt, ceil(hout * wout, 16), cout0]
+            ConvParam.dim_map["output_tiling_c_shape"] = [batch, cout1_opt, hout, wout, cout0]
 
             if ConvParam.para_dict.get("int4_ori_wout"):
                 ori_wout = ConvParam.para_dict.get("int4_ori_wout")
-                ConvParam.dim_map["output_5hd_shape"] = [
-                    batch,
-                    int_ceil_div(cout_ori, cout0),
-                    hout,
-                    ori_wout,
-                    cout0,
-                ]
+                ConvParam.dim_map["output_5hd_shape"] = [batch, int_ceil_div(cout_ori, cout0), hout, ori_wout, cout0]
                 ConvParam.dim_map["output_conv_res_shape"] = [
                     batch,
                     int_ceil_div(cout_ori, cout0),
@@ -3293,12 +2810,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             else:
                 ConvParam.w_in = data.shape[index_w]
 
-            ConvParam.padding = [
-                ConvParam.pad_h[0],
-                ConvParam.pad_h[1],
-                ConvParam.pad_w[0],
-                ConvParam.pad_w[1],
-            ]
+            ConvParam.padding = [ConvParam.pad_h[0], ConvParam.pad_h[1], ConvParam.pad_w[0], ConvParam.pad_w[1]]
 
             if ConvParam.padding != [0, 0, 0, 0]:
                 ConvParam.has_padding = True
@@ -3311,9 +2823,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                 ConvParam.h_out = ConvParam.dyn_var_map.get("ho")
             else:
                 ConvParam.h_out = (
-                    ConvParam.h_in
-                    + (ConvParam.pad_h[0] + ConvParam.pad_h[1])
-                    - filter_h_dilation
+                    ConvParam.h_in + (ConvParam.pad_h[0] + ConvParam.pad_h[1]) - filter_h_dilation
                 ) // ConvParam.stride_h + 1
 
             if "wo" in ConvParam.dyn_var_map:
@@ -3323,9 +2833,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
                     ConvParam.w_out += 1
             else:
                 ConvParam.w_out = (
-                    ConvParam.w_in
-                    + (ConvParam.pad_w[0] + ConvParam.pad_w[1])
-                    - filter_w_dilation
+                    ConvParam.w_in + (ConvParam.pad_w[0] + ConvParam.pad_w[1]) - filter_w_dilation
                 ) // ConvParam.stride_w + 1
 
         def _config_tiling_query_param():
@@ -3424,9 +2932,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         # step 1. In binary mode, consider different compute mode.[load2d, load3d, dma, nx1...]
         # step 2. Process
         if optim_dict.get(BinaryInfoKey.Nx1_FLAG, False):
-            para_dict["pad_w"][1] += para_dict[
-                "stride_w"
-            ]  # ConvParam padw modify in save params function.
+            para_dict["pad_w"][1] += para_dict["stride_w"]  # ConvParam padw modify in save params function.
 
     def _v200_width_out_1_flag_set_static_dynamic_mode():
         """
@@ -3447,29 +2953,21 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         hk_dilation = (para_dict["filter_h"] - 1) * para_dict["dilate_h"] + 1
         wk_dilation = (para_dict["filter_w"] - 1) * para_dict["dilate_w"] + 1
         if "value" in dir(data.shape[2]):
-            h_out = (
-                data.shape[2].value
-                + (para_dict["pad_h"][0] + para_dict["pad_h"][1])
-                - hk_dilation
-            ) // para_dict["stride_h"] + 1
+            h_out = (data.shape[2].value + (para_dict["pad_h"][0] + para_dict["pad_h"][1]) - hk_dilation) // para_dict[
+                "stride_h"
+            ] + 1
         else:
-            h_out = (
-                data.shape[2]
-                + (para_dict["pad_h"][0] + para_dict["pad_h"][1])
-                - hk_dilation
-            ) // para_dict["stride_h"] + 1
+            h_out = (data.shape[2] + (para_dict["pad_h"][0] + para_dict["pad_h"][1]) - hk_dilation) // para_dict[
+                "stride_h"
+            ] + 1
         if "value" in dir(data.shape[3]):
-            w_out = (
-                data.shape[3].value
-                + (para_dict["pad_w"][0] + para_dict["pad_w"][1])
-                - wk_dilation
-            ) // para_dict["stride_w"] + 1
+            w_out = (data.shape[3].value + (para_dict["pad_w"][0] + para_dict["pad_w"][1]) - wk_dilation) // para_dict[
+                "stride_w"
+            ] + 1
         else:
-            w_out = (
-                data.shape[3]
-                + (para_dict["pad_w"][0] + para_dict["pad_w"][1])
-                - wk_dilation
-            ) // para_dict["stride_w"] + 1
+            w_out = (data.shape[3] + (para_dict["pad_w"][0] + para_dict["pad_w"][1]) - wk_dilation) // para_dict[
+                "stride_w"
+            ] + 1
         l0a_load2d_flag = False
         if get_l0a_load2d_flag():
             l0a_load2d_flag = True
@@ -3487,9 +2985,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             and w_out == 1
             and not l0a_load2d_flag
         ):
-            para_dict["pad_w"][1] += para_dict[
-                "stride_w"
-            ]  # increasing pad right, N*1 -> N*2
+            para_dict["pad_w"][1] += para_dict["stride_w"]  # increasing pad right, N*1 -> N*2
             ConvParam.v200_width_out_1_flag = True
         else:
             ConvParam.v200_width_out_1_flag = False
@@ -3502,38 +2998,25 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             wk_dilation = (para_dict["filter_w"] - 1) * para_dict["dilate_w"] + 1
             if "value" in dir(data.shape[3]):
                 w_out = (
-                    data.shape[3].value
-                    + (para_dict["pad_w"][0] + para_dict["pad_w"][1])
-                    - wk_dilation
+                    data.shape[3].value + (para_dict["pad_w"][0] + para_dict["pad_w"][1]) - wk_dilation
                 ) // para_dict["stride_w"] + 1
             else:
-                w_out = (
-                    data.shape[3]
-                    + (para_dict["pad_w"][0] + para_dict["pad_w"][1])
-                    - wk_dilation
-                ) // para_dict["stride_w"] + 1
+                w_out = (data.shape[3] + (para_dict["pad_w"][0] + para_dict["pad_w"][1]) - wk_dilation) // para_dict[
+                    "stride_w"
+                ] + 1
             wout_align_val = ceil(w_out, 16) - w_out
             if wout_align_val:
                 para_dict["pad_w"][1] += para_dict["stride_w"] * wout_align_val
                 if para_dict["pad_w"][1] > PAD_MAX:
                     err_man.raise_err_specific_input_shape(
                         "conv2d",
-                        "int4 wout align, pad align val({}) cannot be greater than 255".format(
-                            para_dict["pad_w"][1]
-                        ),
+                        "int4 wout align, pad align val({}) cannot be greater than 255".format(para_dict["pad_w"][1]),
                     )
                 para_dict.update({"int4_ori_wout": w_out})
                 ConvParam.int4_width_out_align_flag = True
 
     def _save_tiling_info_dict(
-        shape_fmap_nc1hwc0,
-        shape_w_nc1hwc0,
-        c_ub_shape,
-        in_dtype,
-        w_dtype,
-        res_dtype,
-        bias_flag,
-        kernel_name,
+        shape_fmap_nc1hwc0, shape_w_nc1hwc0, c_ub_shape, in_dtype, w_dtype, res_dtype, bias_flag, kernel_name
     ):
         """
         Save tiling_info_dict for dynamic.
@@ -3561,9 +3044,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             ConvParam.tiling_info_dict = {
                 "op_type": "conv2d",
                 "a_shape": list(shape_fmap_nc1hwc0),
-                "placeholder_fmap_5hd_shape": list(
-                    ConvParam.dim_map.get("fmap_5hd_shape")
-                ),
+                "placeholder_fmap_5hd_shape": list(ConvParam.dim_map.get("fmap_5hd_shape")),
                 "b_shape": list(shape_w_nc1hwc0),
                 "c_shape": c_shape,
                 "a_dtype": in_dtype,
@@ -3663,9 +3144,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         TENSOR_MAP["filter"] = weight
         # save fmap
         if ConvParam.strided_read_flag or ConvParam.aipp_fuse_flag:
-            TENSOR_MAP["fmap"] = data.op.input_tensors[
-                0
-            ]  # fmap stands for the data in out memory
+            TENSOR_MAP["fmap"] = data.op.input_tensors[0]  # fmap stands for the data in out memory
         else:
             TENSOR_MAP["fmap"] = data
 
@@ -3686,18 +3165,12 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             optim_dict = {"c0_optim_flg": False, "use_v200_c04_flg": False}
 
         if not isinstance(para_dict, dict):
-            err_man.raise_err_check_type(
-                "conv2d", "the third Input", "dict", "not dict"
-            )
+            err_man.raise_err_check_type("conv2d", "the third Input", "dict", "not dict")
 
         if "mad_dtype" not in para_dict:
             if weight.dtype in ("int4", "int8"):
                 mad_dtype = "int32"
-            elif get_soc_spec("SHORT_SOC_VERSION") in (
-                "Hi3796CV300ES",
-                "Hi3796CV300CS",
-                "SD3403",
-            ):
+            elif get_soc_spec("SHORT_SOC_VERSION") in ("Hi3796CV300ES", "Hi3796CV300CS", "SD3403"):
                 mad_dtype = "float16"
             else:
                 mad_dtype = "float32"
@@ -3713,30 +3186,22 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             if "padh" in para_dict:
                 para_dict["pad_h"] = para_dict["padh"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain pad_h"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain pad_h")
         if "pad_w" not in para_dict:
             if "padw" in para_dict:
                 para_dict["pad_w"] = para_dict["padw"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain pad_w"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain pad_w")
         if "stride_h" not in para_dict:
             if "strideh" in para_dict:
                 para_dict["stride_h"] = para_dict["strideh"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain stride_h"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain stride_h")
         if "stride_w" not in para_dict:
             if "stridew" in para_dict:
                 para_dict["stride_w"] = para_dict["stridew"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain stride_w"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain stride_w")
         if "dilate_h" not in para_dict:
             if "dilateh" in para_dict:
                 para_dict["dilate_h"] = para_dict["dilateh"]
@@ -3751,16 +3216,12 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             if "filterh" in para_dict:
                 para_dict["filter_h"] = para_dict["filterh"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain filter_h"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain filter_h")
         if "filter_w" not in para_dict:
             if "filterw" in para_dict:
                 para_dict["filter_w"] = para_dict["filterw"]
             else:
-                err_man.raise_err_specific_input_shape(
-                    "conv2d", "para_dict must contain filter_w"
-                )
+                err_man.raise_err_specific_input_shape("conv2d", "para_dict must contain filter_w")
 
         pad_h = para_dict["pad_h"]
         pad_w = para_dict["pad_w"]
@@ -3779,9 +3240,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         """
         calculate res of bias_add in fp16
         """
-        if bias_tensor_flag and (
-            (not ConvParam.dynamic_flag) or (ConvParam.dynamic_flag and not dsl_flag)
-        ):
+        if bias_tensor_flag and ((not ConvParam.dynamic_flag) or (ConvParam.dynamic_flag and not dsl_flag)):
             res = bias_add(conv_res, bias_tensor)
             return res
         return conv_res
@@ -3800,17 +3259,13 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
     ConvParam.set_default()
     ConvParam.dynamic_para, ConvParam.dynamic_flag = _get_dynamic_para()
     ConvParam.dyn_var_map = ConvParam.dynamic_para.get("var_map")
-    sparse_4to2_flag = (
-        True if para_dict.get("alg", WEIGHT_UNZIP) == WEIGHT_SPARSE_4_2 else False
-    )
+    sparse_4to2_flag = True if para_dict.get("alg", WEIGHT_UNZIP) == WEIGHT_SPARSE_4_2 else False
     if para_dict.get("multi_conv2d_fusion_flag"):
         _, _, _, ori_wi, _ = data.op.attrs["current_shape"]
         # conv + conv fusion, the second conv fmap is [n, c1, h*w, c0],
         data_5hd = tvm.compute(
             data.op.attrs["current_shape"],
-            lambda n_idx, ci1_idx, hi_idx, wi_idx, ci0_idx: data[
-                n_idx, ci1_idx, hi_idx * ori_wi + wi_idx, ci0_idx
-            ],
+            lambda n_idx, ci1_idx, hi_idx, wi_idx, ci0_idx: data[n_idx, ci1_idx, hi_idx * ori_wi + wi_idx, ci0_idx],
             name=get_name_with_suffix_num("fmap_5hd_data"),
             attrs=data.op.attrs,
             tag="conv_l1fuse_reshape",
@@ -3828,9 +3283,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
 
     # complete required keys of para_dict and necessary check
     # input parameters can only be modified here
-    dsl_flag, optim_dict = _input_parameters_completion_and_modification(
-        dsl_flag, optim_dict
-    )
+    dsl_flag, optim_dict = _input_parameters_completion_and_modification(dsl_flag, optim_dict)
     ConvParam.single_op_flag = dsl_flag
 
     in_dtype = data.dtype
@@ -3858,10 +3311,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         res_dtype = "int32"
     # ====================fetch L1fusion information from pass interface=============
     l1_fusion_enable_flag = get_current_build_config("enable_L1_fusion")
-    l2_fusion_enable_flag = (
-        get_current_build_config("enable_L2_fusion")
-        and get_current_build_config("l2_mode") == 1
-    )
+    l2_fusion_enable_flag = get_current_build_config("enable_L2_fusion") and get_current_build_config("l2_mode") == 1
     lxfusion_enable_flag = l1_fusion_enable_flag or l2_fusion_enable_flag
 
     if lxfusion_enable_flag:  # lxfusion enabled
@@ -3883,24 +3333,15 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             input_scope = "global"
 
         if input_scope == "global":
-            ConvParam.fusion_para.get("input_memory_type").append(
-                DDR_SCOPE
-            )  # 0 from DDR 1 from L1
+            ConvParam.fusion_para.get("input_memory_type").append(DDR_SCOPE)  # 0 from DDR 1 from L1
         elif input_scope == "local.L1_Fusion":
             if l1_fusion_type == -1:
-                err_man.raise_err_specific(
-                    "conv2d",
-                    "input buffer scope must be global when l1_fusion_type is -1.",
-                )
+                err_man.raise_err_specific("conv2d", "input buffer scope must be global when l1_fusion_type is -1.")
             if optim_dict.get("c0_optim_flg"):
-                err_man.raise_err_specific(
-                    "conv2d", "fmap from L1 is not supported in c04 optimization."
-                )
+                err_man.raise_err_specific("conv2d", "fmap from L1 is not supported in c04 optimization.")
             ConvParam.fusion_para.get("input_memory_type").append(L1_FUSION_SCOPE)
         else:
-            err_man.raise_err_specific(
-                "conv2d", "input buffer scope must be global or local.L1_Fusion."
-            )
+            err_man.raise_err_specific("conv2d", "input buffer scope must be global or local.L1_Fusion.")
 
         if (l2_fusion_enable_flag or (not l1_fusion_enable_flag)) and (
             input_scope == "local.L1_Fusion" or l1_fusion_type != -1
@@ -3915,25 +3356,17 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
     else:  # lxfusion disabled
         ConvParam.fusion_para.get("input_memory_type").append(DDR_SCOPE)
 
-    ConvParam.fusion_para["fmap_l1_addr_flag"] = para_dict["fusion_para"].get(
-        "fmap_l1_addr_flag", "nothing"
-    )
-    ConvParam.fusion_para["fmap_l1_valid_size"] = para_dict["fusion_para"].get(
-        "fmap_l1_valid_size", -1
-    )
+    ConvParam.fusion_para["fmap_l1_addr_flag"] = para_dict["fusion_para"].get("fmap_l1_addr_flag", "nothing")
+    ConvParam.fusion_para["fmap_l1_valid_size"] = para_dict["fusion_para"].get("fmap_l1_valid_size", -1)
     ConvParam.fusion_para["lxfusion_enable_flag"] = lxfusion_enable_flag
     ConvParam.option_dict = optim_dict
 
     slice_offset = para_dict["fusion_para"]["slice_offset"]
-    ConvParam.fusion_para["slice_offset"] = (
-        slice_offset if slice_offset else (0, 0, 0, 0, 0)
-    )
+    ConvParam.fusion_para["slice_offset"] = slice_offset if slice_offset else (0, 0, 0, 0, 0)
     ConvParam.cache_tiling_flag = para_dict.get("cache_tiling_flag", False)
     ConvParam.binary_mode = ConvParam.cache_tiling_flag
     ConvParam.groupopt_flag = get_groupopt_flag()
-    ConvParam.set_tiny_weight_fractal_flag(
-        optim_dict.get("op_option_dict", {}).get("tiny_weight_fractal_flag", False)
-    )
+    ConvParam.set_tiny_weight_fractal_flag(optim_dict.get("op_option_dict", {}).get("tiny_weight_fractal_flag", False))
     # ===========================================================================================
     _int4_width_out_align_flag_set()
     _v200_width_out_1_flag_set()
@@ -3987,14 +3420,10 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
         ConvParam.sparse_4to2_flag = True
         ConvParam.compress_index = para_dict.get("compress_index", None)
         if ConvParam.compress_index is None:
-            err_man.raise_err_message_cube(
-                "compress_index cannot be None in sparse 4to2 scene."
-            )
+            err_man.raise_err_message_cube("compress_index cannot be None in sparse 4to2 scene.")
 
     if is_support_version_v2():
-        conv_res = conv_v220_compute(
-            data, weight, para_dict, optim_dict, dsl_flag, ConvParam
-        )
+        conv_res = conv_v220_compute(data, weight, para_dict, optim_dict, dsl_flag, ConvParam)
         if lxfusion_enable_flag and not dsl_flag:
             tensor_list[-1] = conv_res
             buffer_manager.set_tensor_list(tensor_list)
@@ -4003,21 +3432,11 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
     if in_dtype in ("int4", "int8"):  # quant
         if dsl_flag:  # quant fusion
             conv_res = _cube_compute(
-                data,
-                weight,
-                mad_dtype,
-                tiling=ConvParam.tiling,
-                optim_dict=optim_dict,
-                bias=bias_tensor,
+                data, weight, mad_dtype, tiling=ConvParam.tiling, optim_dict=optim_dict, bias=bias_tensor
             )
-            remove_pad_params = calculate_remove_pad_params(
-                conv_shape, ConvParam.v200_width_out_1_flag
-            )
+            remove_pad_params = calculate_remove_pad_params(conv_shape, ConvParam.v200_width_out_1_flag)
             res_remove_pad = remove_pad_quant_dsl(
-                conv_res,
-                conv_shape,
-                invalid_data_rm_flag,
-                params_dict=remove_pad_params,
+                conv_res, conv_shape, invalid_data_rm_flag, params_dict=remove_pad_params
             )
             _save_tiling_info_dict(
                 shape_fmap_nc1hwc0,
@@ -4032,12 +3451,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             return res_remove_pad
         # quant single op
         conv_res = _cube_compute(
-            data,
-            weight,
-            mad_dtype,
-            tiling=ConvParam.tiling,
-            optim_dict=optim_dict,
-            bias=bias_tensor,
+            data, weight, mad_dtype, tiling=ConvParam.tiling, optim_dict=optim_dict, bias=bias_tensor
         )
         res = _quant_l0c2ub_compute(conv_res, res_dtype)
         if ConvParam.v200_width_out_1_flag:
@@ -4045,9 +3459,7 @@ def conv(data, weight, para_dict, optim_dict=None, dsl_flag=True):
             remove_padded_column_shape[-2] = remove_padded_column_shape[-2] // 2
             res = remove_padded_column(res, remove_padded_column_shape)
     else:  # float
-        no_vector_flag = (not dsl_flag) and (
-            not bias_tensor_flag
-        )  # no vec calculation in UB
+        no_vector_flag = (not dsl_flag) and (not bias_tensor_flag)  # no vec calculation in UB
         conv_res = cub_fp16_compute(
             data,
             weight,

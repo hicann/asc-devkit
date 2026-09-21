@@ -30,30 +30,18 @@ def get_tolerance(scenario_num):
 
 
 def verify_result(scenario_num, output_path, golden_path):
-    output_dtype = (
-        np.float32
-        if scenario_num == 7
-        else (np.float16 if scenario_num in (1, 2) else np.int8)
-    )
+    output_dtype = np.float32 if scenario_num == 7 else (np.float16 if scenario_num in (1, 2) else np.int8)
     output = np.fromfile(output_path, dtype=output_dtype).reshape(-1)
     golden = np.fromfile(golden_path, dtype=output_dtype).reshape(-1)
     if output.size != golden.size:
-        print(
-            "element count mismatch: expected %d, actual %d"
-            % (golden.size, output.size)
-        )
+        print("element count mismatch: expected %d, actual %d" % (golden.size, output.size))
         return False
 
     relative_tol, absolute_tol = get_tolerance(scenario_num)
-    match = np.isclose(
-        output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True
-    )
+    match = np.isclose(output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True)
     mismatch_indices = np.where(~match)[0]
     for index in mismatch_indices[:101]:
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f"
-            % (index, golden[index], output[index])
-        )
+        print("data index: %06d, expected: %-.9f, actual: %-.9f" % (index, golden[index], output[index]))
     error_ratio = float(mismatch_indices.size) / golden.size
     return error_ratio <= ERROR_TOL
 

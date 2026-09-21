@@ -31,11 +31,6 @@ setup(
     version="0.1.0",
     description="asc_opc_tool: asc op complication tool",
     zip_safe=False,
-    install_requires=[
-        "numpy",
-        "decorator",
-        "attrs",
-        "psutil",
-    ],
+    install_requires=["numpy", "decorator", "attrs", "psutil"],
     packages=find_packages(),
 )

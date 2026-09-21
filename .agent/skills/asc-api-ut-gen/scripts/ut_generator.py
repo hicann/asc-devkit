@@ -48,9 +48,7 @@ SKILL_DIR = SCRIPT_DIR.parent
 SKILLS_DIR = SKILL_DIR.parent
 REPO_ROOT = SKILL_DIR.parents[2]
 NPU_ARCH_FACTS_PATH = SKILLS_DIR / "asc-npu-arch" / "references" / "npu-arch-facts.json"
-GENERATION_CONSTRAINTS_PATH = (
-    SKILL_DIR / "references" / "foundations" / "generation-constraints.json"
-)
+GENERATION_CONSTRAINTS_PATH = SKILL_DIR / "references" / "foundations" / "generation-constraints.json"
 REFERENCE_CONSTRAINT_FILES = {
     "npu_arch_facts": str(NPU_ARCH_FACTS_PATH),
     "generation_constraints": str(GENERATION_CONSTRAINTS_PATH),
@@ -88,9 +86,7 @@ def get_npu_arch_facts() -> Dict[str, Any]:
 
 def get_generation_constraints() -> Dict[str, Any]:
     """Return UT generation constraints from the structured reference."""
-    return _load_reference_json_safe(
-        "generation_constraints", GENERATION_CONSTRAINTS_PATH
-    )
+    return _load_reference_json_safe("generation_constraints", GENERATION_CONSTRAINTS_PATH)
 
 
 def ensure_reference_constraints_loaded() -> None:
@@ -98,9 +94,7 @@ def ensure_reference_constraints_loaded() -> None:
     if not _REFERENCE_LOAD_ERRORS:
         return
 
-    details = "; ".join(
-        f"{name}: {exc}" for name, exc in sorted(_REFERENCE_LOAD_ERRORS.items())
-    )
+    details = "; ".join(f"{name}: {exc}" for name, exc in sorted(_REFERENCE_LOAD_ERRORS.items()))
     raise RuntimeError(f"failed to load structured references: {details}")
 
 
@@ -109,9 +103,7 @@ def _enum_member_name(value: str) -> str:
     return re.sub(r"[^A-Z0-9]+", "_", value.upper()).strip("_")
 
 
-def _enum_members_from_reference(
-    facts: Dict[str, Any], fallback: Dict[str, str]
-) -> Dict[str, str]:
+def _enum_members_from_reference(facts: Dict[str, Any], fallback: Dict[str, str]) -> Dict[str, str]:
     """Build Enum members from a reference object, keeping import usable on failure."""
     members = {
         fact.get("enum_name", _enum_member_name(item_name)): item_name
@@ -134,26 +126,18 @@ C_API_GENERATION_FACTS = GENERATION_CONSTRAINTS.get("c_api_generation", {})
 UTILS_GENERATION_FACTS = GENERATION_CONSTRAINTS.get("utils_generation", {})
 
 
-ApiType = Enum(
-    "ApiType",
-    _enum_members_from_reference(API_TYPE_FACTS, {"UNAVAILABLE": "unavailable"}),
-)
+ApiType = Enum("ApiType", _enum_members_from_reference(API_TYPE_FACTS, {"UNAVAILABLE": "unavailable"}))
 
 
 API_TYPE_MAP = {api_type.value: api_type for api_type in ApiType}
 API_TYPE_CHOICES = list(API_TYPE_MAP.keys())
 API_RESTRICTIONS = GENERATION_CONSTRAINTS.get("api_restrictions", {})
-AIV_GENERIC_BINARY_APIS = frozenset(
-    name.lower() for name in AIV_GENERATION_FACTS.get("generic_binary_apis", [])
-)
+AIV_GENERIC_BINARY_APIS = frozenset(name.lower() for name in AIV_GENERATION_FACTS.get("generic_binary_apis", []))
 AIV_GENERIC_SCALAR_TENSOR_DISPATCH_APIS = frozenset(
-    name.lower()
-    for name in AIV_GENERATION_FACTS.get("generic_scalar_tensor_dispatch_apis", [])
+    name.lower() for name in AIV_GENERATION_FACTS.get("generic_scalar_tensor_dispatch_apis", [])
 )
 AIV_EXPLICIT_TEMPLATES = frozenset(AIV_GENERATION_FACTS.get("explicit_templates", []))
-AIC_GENERIC_MMAD_LIKE_APIS = frozenset(
-    name.lower() for name in AIC_GENERATION_FACTS.get("generic_mmad_like_apis", [])
-)
+AIC_GENERIC_MMAD_LIKE_APIS = frozenset(name.lower() for name in AIC_GENERATION_FACTS.get("generic_mmad_like_apis", []))
 AIC_EXPLICIT_TEMPLATES = frozenset(AIC_GENERATION_FACTS.get("explicit_templates", []))
 REG_GENERIC_TEMPLATES = frozenset(REG_GENERATION_FACTS.get("generic_templates", []))
 SIMT_GENERIC_TEMPLATES = frozenset(SIMT_GENERATION_FACTS.get("generic_templates", []))
@@ -161,32 +145,11 @@ C_API_GENERIC_TEMPLATES = frozenset(C_API_GENERATION_FACTS.get("generic_template
 UTILS_GENERIC_TEMPLATES = frozenset(UTILS_GENERATION_FACTS.get("generic_templates", []))
 
 
-ChipArch = Enum(
-    "ChipArch",
-    _enum_members_from_reference(CHIP_FACTS, {"UNAVAILABLE": "unavailable"}),
-)
+ChipArch = Enum("ChipArch", _enum_members_from_reference(CHIP_FACTS, {"UNAVAILABLE": "unavailable"}))
 CHIP_ARCH_BY_NAME = {chip.value: chip for chip in ChipArch}
-ARCH_DIR_MAP = dict(
-    (
-        CHIP_ARCH_BY_NAME[chip_name],
-        fact["arch_dir"],
-    )
-    for chip_name, fact in CHIP_FACTS.items()
-)
-NPU_ARCH_MAP = dict(
-    (
-        CHIP_ARCH_BY_NAME[chip_name],
-        str(fact["npu_arch"]),
-    )
-    for chip_name, fact in CHIP_FACTS.items()
-)
-SOC_VERSION_MAP = dict(
-    (
-        CHIP_ARCH_BY_NAME[chip_name],
-        fact["soc_version"],
-    )
-    for chip_name, fact in CHIP_FACTS.items()
-)
+ARCH_DIR_MAP = dict((CHIP_ARCH_BY_NAME[chip_name], fact["arch_dir"]) for chip_name, fact in CHIP_FACTS.items())
+NPU_ARCH_MAP = dict((CHIP_ARCH_BY_NAME[chip_name], str(fact["npu_arch"])) for chip_name, fact in CHIP_FACTS.items())
+SOC_VERSION_MAP = dict((CHIP_ARCH_BY_NAME[chip_name], fact["soc_version"]) for chip_name, fact in CHIP_FACTS.items())
 DTYPE_MAP = dict(
     (
         dtype_name,
@@ -200,12 +163,7 @@ DTYPE_MAP = dict(
     for dtype_name, fact in DTYPE_FACTS.items()
 )
 GENERATOR_DTYPE_MAP = dict(
-    (
-        dtype_name,
-        fact,
-    )
-    for dtype_name, fact in DTYPE_MAP.items()
-    if fact.get("generic_ut_generation", False)
+    (dtype_name, fact) for dtype_name, fact in DTYPE_MAP.items() if fact.get("generic_ut_generation", False)
 )
 
 
@@ -262,9 +220,7 @@ def _load_adv_profile_entry(api_name: str, raw_profile: Any) -> AdvApiProfile:
     return AdvApiProfile(source=source, output=output)
 
 
-def get_adv_api_profile(
-    api_name: str, kernel_params: Dict[str, Any]
-) -> Optional[AdvApiProfile]:
+def get_adv_api_profile(api_name: str, kernel_params: Dict[str, Any]) -> Optional[AdvApiProfile]:
     """Return an executable high-level API profile explicitly supplied by this run."""
     kernel_params = kernel_params or {}
     profile = kernel_params.get("adv_profile", {})
@@ -273,9 +229,7 @@ def get_adv_api_profile(
     return _load_adv_profile_entry(normalize_adv_api_name(api_name), profile)
 
 
-def get_adv_profile_output_path(
-    api_name: str, kernel_params: Dict[str, Any]
-) -> Optional[str]:
+def get_adv_profile_output_path(api_name: str, kernel_params: Dict[str, Any]) -> Optional[str]:
     """Return the output path for an explicitly supplied high-level API profile."""
     profile = get_adv_api_profile(api_name, kernel_params)
     return profile.output if profile is not None else None
@@ -293,15 +247,12 @@ def normalize_generated_cpp(code: str) -> str:
     return normalized
 
 
-def render_gtest_values_instantiation(
-    api_name: str, api_name_upper: str, test_params: List[str]
-) -> str:
+def render_gtest_values_instantiation(api_name: str, api_name_upper: str, test_params: List[str]) -> str:
     """Render gtest value instantiation in the repository clang-format style."""
     testsuite = f"{api_name}Testsuite"
     if len(test_params) == 1:
         return (
-            "INSTANTIATE_TEST_CASE_P(\n"
-            f"    TEST_{api_name_upper}, {testsuite}, ::testing::Values({test_params[0]}));"
+            f"INSTANTIATE_TEST_CASE_P(\n    TEST_{api_name_upper}, {testsuite}, ::testing::Values({test_params[0]}));"
         )
 
     values = ",\n        ".join(test_params)
@@ -1128,19 +1079,14 @@ class AIVUTGenerator(UTGenerator):
         )
 
     def _validate_binary_cases(self) -> None:
-        non_binary_cases = [
-            tc.name for tc in self.config.test_cases if tc.input_count != 2
-        ]
+        non_binary_cases = [tc.name for tc in self.config.test_cases if tc.input_count != 2]
         if non_binary_cases:
             raise ValueError(
-                "binary AIV template requires input_count=2 for every test case; "
-                f"non-binary cases: {non_binary_cases}"
+                f"binary AIV template requires input_count=2 for every test case; non-binary cases: {non_binary_cases}"
             )
 
     def _validate_scalar_tensor_dispatch_cases(self) -> None:
-        invalid_cases = [
-            tc.name for tc in self.config.test_cases if tc.input_count != 1
-        ]
+        invalid_cases = [tc.name for tc in self.config.test_cases if tc.input_count != 1]
         if invalid_cases:
             raise ValueError(
                 "scalar_tensor_dispatch AIV template requires input_count=1 for every test case; "
@@ -1168,9 +1114,7 @@ class AIVUTGenerator(UTGenerator):
                 f"{dtype_info['size']}, {func_name}, {init_func_name}}}"
             )
         variables["INSTANTIATION"] = render_gtest_values_instantiation(
-            self.config.api_name,
-            self.config.api_name.upper(),
-            test_params,
+            self.config.api_name, self.config.api_name.upper(), test_params
         )
 
         # 渲染各部分
@@ -1208,14 +1152,9 @@ class AIVUTGenerator(UTGenerator):
             if tc.additional_params.get("tensor_trait", False):
                 dtype_name = f"TensorTrait<{tc.dtype}>"
             func_name = f"main_{self.config.api_name}<{dtype_name}>"
-            test_params.append(
-                f"{self.config.api_name}TestParams{{{tc.data_size}, "
-                f"{dtype_info['size']}, {func_name}}}"
-            )
+            test_params.append(f"{self.config.api_name}TestParams{{{tc.data_size}, {dtype_info['size']}, {func_name}}}")
         variables["INSTANTIATION"] = render_gtest_values_instantiation(
-            self.config.api_name,
-            self.config.api_name.upper(),
-            test_params,
+            self.config.api_name, self.config.api_name.upper(), test_params
         )
 
         return (
@@ -1223,24 +1162,12 @@ class AIVUTGenerator(UTGenerator):
                 "aiv_scalar_tensor_dispatch_basic",
                 {
                     **variables,
-                    "KERNEL_CLASS": self.render(
-                        "aiv_scalar_tensor_dispatch_kernel_class", variables
-                    ),
-                    "MAIN_FUNCTION": self.render(
-                        "aiv_scalar_tensor_dispatch_main_function", variables
-                    ),
-                    "PARAM_STRUCT": self.render(
-                        "aiv_scalar_tensor_dispatch_param_struct", variables
-                    ),
-                    "TEST_CLASS": self.render(
-                        "aiv_scalar_tensor_dispatch_test_class", variables
-                    ),
-                    "INSTANTIATION": self.render(
-                        "aiv_scalar_tensor_dispatch_instantiation", variables
-                    ),
-                    "TEST_CASE": self.render(
-                        "aiv_scalar_tensor_dispatch_test_case", variables
-                    ),
+                    "KERNEL_CLASS": self.render("aiv_scalar_tensor_dispatch_kernel_class", variables),
+                    "MAIN_FUNCTION": self.render("aiv_scalar_tensor_dispatch_main_function", variables),
+                    "PARAM_STRUCT": self.render("aiv_scalar_tensor_dispatch_param_struct", variables),
+                    "TEST_CLASS": self.render("aiv_scalar_tensor_dispatch_test_class", variables),
+                    "INSTANTIATION": self.render("aiv_scalar_tensor_dispatch_instantiation", variables),
+                    "TEST_CASE": self.render("aiv_scalar_tensor_dispatch_test_case", variables),
                 },
             ).rstrip()
             + "\n"
@@ -1347,8 +1274,7 @@ class ADVUTGenerator(UTGenerator):
         source_path = REPO_ROOT / profile.source
         if not source_path.is_file():
             raise FileNotFoundError(
-                f"ADV executable profile for {self.config.api_name!r} points to "
-                f"a missing reference UT: {source_path}"
+                f"ADV executable profile for {self.config.api_name!r} points to a missing reference UT: {source_path}"
             )
 
         return normalize_generated_cpp(source_path.read_text(encoding="utf-8"))

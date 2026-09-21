@@ -28,9 +28,7 @@ def read_result_file(file_path, label, expected_size):
 
     data = np.fromfile(path, dtype=np.float32)
     if data.size != expected_size:
-        raise ValueError(
-            f"{label} file size error: expected {expected_size} float32 values, got {data.size}"
-        )
+        raise ValueError(f"{label} file size error: expected {expected_size} float32 values, got {data.size}")
     return data
 
 

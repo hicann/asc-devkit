@@ -25,12 +25,8 @@ def gen_golden_data_simple():
     input_y = np.ones(total_length, dtype=input_type)
     golden = np.zeros(total_length, dtype=output_type)
     input_sync = np.zeros(total_length // 2, dtype=sync_type)
-    golden[0 : total_length // 2] = (
-        input_x[0 : total_length // 2] + input_y[0 : total_length // 2]
-    )
-    golden[total_length // 2 :] = (
-        golden[0 : total_length // 2] + input_y[total_length // 2 :]
-    )
+    golden[0 : total_length // 2] = input_x[0 : total_length // 2] + input_y[0 : total_length // 2]
+    golden[total_length // 2 :] = golden[0 : total_length // 2] + input_y[total_length // 2 :]
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     input_x.tofile("./input/input_x.bin")

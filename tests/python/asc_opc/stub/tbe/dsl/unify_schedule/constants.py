@@ -333,21 +333,13 @@ SUPPORT_SCALAR_INSNS = [
 ]
 
 # need a block save scalar
-NEED_TEMP_SPACE_INSNS = [
-    "elewise_single_VS_max",
-    "elewise_single_VS_min",
-]
+NEED_TEMP_SPACE_INSNS = ["elewise_single_VS_max", "elewise_single_VS_min"]
 
 # need a node as temp space
-NEED_EXTENT_NODE_INSNS = [
-    "unknown_broadcast",
-]
+NEED_EXTENT_NODE_INSNS = ["unknown_broadcast"]
 
 # need a block save scalar while dtype is s32
-NEED_SPACE_WITH_DIFF_TYPE = [
-    "elewise_single_VS_add",
-    "elewise_single_VS_mul",
-]
+NEED_SPACE_WITH_DIFF_TYPE = ["elewise_single_VS_add", "elewise_single_VS_mul"]
 
 VCMP_INSNS = [
     "elewise_binary_vcmpv_gt",
@@ -369,11 +361,7 @@ VCMPSEL_INSNS = [
     "elewise_binary_cmpsel_ne",
 ]
 
-BROADCAST_INSNS = [
-    "broadcast",
-    "unified_broadcast",
-    "unknown_broadcast",
-]
+BROADCAST_INSNS = ["broadcast", "unified_broadcast", "unknown_broadcast"]
 
 DTYPE_BYTE_MAPPING = {
     "uint1": 0.125,
@@ -391,14 +379,7 @@ DTYPE_BYTE_MAPPING = {
     "bfloat16": 2,
 }
 
-AtomicSupportMap910 = {
-    "support_dtype": [
-        "float32",
-    ],
-    "support_insn": [
-        "reduce_sum",
-    ],
-}
+AtomicSupportMap910 = {"support_dtype": ["float32"], "support_insn": ["reduce_sum"]}
 
 AtomicSupportMap920A = {
     "support_dtype": ["float32", "float16", "int32", "int16", "int8", "bfloat16"],

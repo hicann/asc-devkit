@@ -21,12 +21,8 @@ def gen_golden_data_simple():
     output_dtype = np.float32
     input_shape = [16, 31]
     output_shape = [16, 32]
-    input_x = np.arange(0, input_shape[0] * input_shape[1], 1, input_dtype).reshape(
-        input_shape[0], input_shape[1]
-    )
-    golden = np.arange(0, output_shape[0] * output_shape[1], 1, output_dtype).reshape(
-        output_shape[0], output_shape[1]
-    )
+    input_x = np.arange(0, input_shape[0] * input_shape[1], 1, input_dtype).reshape(input_shape[0], input_shape[1])
+    golden = np.arange(0, output_shape[0] * output_shape[1], 1, output_dtype).reshape(output_shape[0], output_shape[1])
 
     height = input_shape[0]
     width = input_shape[1]

@@ -152,35 +152,25 @@ def main():
     all_merge_list = []
 
     if args.normal_dir:
-        normal_objs, merge_normal = get_normal_obj_info(
-            args.normal_dir, "mix_build.flag", args.output
-        )
+        normal_objs, merge_normal = get_normal_obj_info(args.normal_dir, "mix_build.flag", args.output)
         all_source_list.extend(normal_objs)
         all_merge_list.extend(merge_normal)
     else:
-        aic_objs, merge_aic = get_normal_obj_info(
-            args.aic_dir, "aic_build.flag", args.output
-        )
+        aic_objs, merge_aic = get_normal_obj_info(args.aic_dir, "aic_build.flag", args.output)
         all_source_list.extend(aic_objs)
         all_merge_list.extend(merge_aic)
 
-        aiv_objs, merge_aiv = get_normal_obj_info(
-            args.aiv_dir, "aiv_build.flag", args.output
-        )
+        aiv_objs, merge_aiv = get_normal_obj_info(args.aiv_dir, "aiv_build.flag", args.output)
         all_source_list.extend(aiv_objs)
         all_merge_list.extend(merge_aiv)
 
-        mix_objs, merge_mix = get_mix_obj_info(
-            args.aic_dir, args.aiv_dir, "mix_build.flag", args.output
-        )
+        mix_objs, merge_mix = get_mix_obj_info(args.aic_dir, args.aiv_dir, "mix_build.flag", args.output)
         all_source_list.extend(mix_objs)
         all_merge_list.extend(merge_mix)
 
     if args.fatbin:
         output_file = os.path.join(args.output, args.name)
-        run_merge_cmd(
-            args.script, args.linker, args.build_type, all_source_list, output_file
-        )
+        run_merge_cmd(args.script, args.linker, args.build_type, all_source_list, output_file)
     else:
         single_obj_merge(args.script, args.linker, args.build_type, all_merge_list)
 

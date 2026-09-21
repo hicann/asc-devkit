@@ -26,18 +26,14 @@ from asc_op_compile_base.asc_op_compiler.get_op_tiling import (
     generate_dynamic_tiling_struct_file,
     generate_static_tiling_struct_file,
 )
-from asc_op_compile_base.common.platform.platform_info import (
-    set_current_compile_soc_info,
-)
+from asc_op_compile_base.common.platform.platform_info import set_current_compile_soc_info
 
 
 def load_json(op_type, json_file):
     try:
         if not os.path.exists(json_file):
             LogUtil.print_compile_log(
-                op_type,
-                f"[Sub process] isolate tiling json file {json_file} not existed.",
-                AscendCLogLevel.LOG_ERROR,
+                op_type, f"[Sub process] isolate tiling json file {json_file} not existed.", AscendCLogLevel.LOG_ERROR
             )
             return None
 
@@ -68,9 +64,7 @@ class IsolateTilingInfo:
             self.run_info["tiling_data"] = bytes.fromhex(self.run_info["tiling_data"])
         self.tiling_key_list = tiling_info_dict["tiling_key_list"]
         self.tiling_key_group_map = tiling_info_dict["tiling_key_group_map"]
-        self.tiling_const_propagation = tiling_info_dict.get(
-            "tiling_const_propagation", False
-        )
+        self.tiling_const_propagation = tiling_info_dict.get("tiling_const_propagation", False)
         self.tiling_info = TilingInfo()
 
     def dump_json(self):
@@ -92,9 +86,7 @@ def load_op_tiling_lib(isolate_tiling_info):
     try:
         if isolate_tiling_info.is_build_in_op:
             LogUtil.print_compile_log(
-                isolate_tiling_info.op_type,
-                "[Sub process]load build-in op tiling lib",
-                AscendCLogLevel.LOG_INFO,
+                isolate_tiling_info.op_type, "[Sub process]load build-in op tiling lib", AscendCLogLevel.LOG_INFO
             )
             return load_build_in_lib()
         else:
@@ -148,57 +140,33 @@ def parse_input_args():
 if __name__ == "__main__":
     args = parse_input_args()
     set_current_compile_soc_info(args.soc_version)
-    LogUtil.print_compile_log(
-        args.op_type,
-        "[Sub process] begin load isolate tiling info.",
-        AscendCLogLevel.LOG_INFO,
-    )
+    LogUtil.print_compile_log(args.op_type, "[Sub process] begin load isolate tiling info.", AscendCLogLevel.LOG_INFO)
     tiling_info_dict = load_json(args.op_type, args.isolate_json)
     if tiling_info_dict is None:
         LogUtil.print_compile_log(
-            args.op_type,
-            "[Sub process] load isolate tiling info failed.",
-            AscendCLogLevel.LOG_WARNING,
+            args.op_type, "[Sub process] load isolate tiling info failed.", AscendCLogLevel.LOG_WARNING
         )
         sys.exit(1)
 
     isolate_tiling_info = IsolateTilingInfo(tiling_info_dict, args.isolate_json)
-    LogUtil.print_compile_log(
-        args.op_type, "[Sub process] begin load tiling so.", AscendCLogLevel.LOG_INFO
-    )
+    LogUtil.print_compile_log(args.op_type, "[Sub process] begin load tiling so.", AscendCLogLevel.LOG_INFO)
     res = load_op_tiling_lib(isolate_tiling_info)
     if not res:
         LogUtil.print_compile_log(
-            args.op_type,
-            "[Sub process] load isolate tiling so failed.",
-            AscendCLogLevel.LOG_WARNING,
+            args.op_type, "[Sub process] load isolate tiling so failed.", AscendCLogLevel.LOG_WARNING
         )
         sys.exit(1)
 
-    LogUtil.print_compile_log(
-        args.op_type,
-        "[Sub process] begin generate tiling info.",
-        AscendCLogLevel.LOG_INFO,
-    )
+    LogUtil.print_compile_log(args.op_type, "[Sub process] begin generate tiling info.", AscendCLogLevel.LOG_INFO)
     generate_tiling_info(isolate_tiling_info)
     if isolate_tiling_info.tiling_info.tiling_info_completed is False:
-        LogUtil.print_compile_log(
-            args.op_type,
-            "[Sub process] generate tiling so failed.",
-            AscendCLogLevel.LOG_WARNING,
-        )
+        LogUtil.print_compile_log(args.op_type, "[Sub process] generate tiling so failed.", AscendCLogLevel.LOG_WARNING)
         sys.exit(1)
-    LogUtil.print_compile_log(
-        args.op_type,
-        "[Sub process] begin dump isolate tiling info.",
-        AscendCLogLevel.LOG_INFO,
-    )
+    LogUtil.print_compile_log(args.op_type, "[Sub process] begin dump isolate tiling info.", AscendCLogLevel.LOG_INFO)
     res = isolate_tiling_info.dump_json()
     if not res:
         LogUtil.print_compile_log(
-            args.op_type,
-            "[Sub process] dump isolate tiling info failed.",
-            AscendCLogLevel.LOG_WARNING,
+            args.op_type, "[Sub process] dump isolate tiling info failed.", AscendCLogLevel.LOG_WARNING
         )
         sys.exit(1)
     sys.exit(0)

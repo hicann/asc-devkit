@@ -59,15 +59,8 @@ def gen_golden_data_pack():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate golden data for data_relayout sample"
-    )
-    parser.add_argument(
-        "-scenarioNum",
-        type=int,
-        default=1,
-        help="Scenario number: 1=Interleave, 2=Pack",
-    )
+    parser = argparse.ArgumentParser(description="Generate golden data for data_relayout sample")
+    parser.add_argument("-scenarioNum", type=int, default=1, help="Scenario number: 1=Interleave, 2=Pack")
     args = parser.parse_args()
     if args.scenarioNum == 1:
         gen_golden_data_interleave()

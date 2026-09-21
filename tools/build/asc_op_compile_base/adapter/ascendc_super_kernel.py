@@ -16,9 +16,7 @@ ascendc super kernel
 from .super_kernel import compile
 
 
-def ascendc_super_kernel_plus(
-    kernel_infos, called_kernel_name="ascendc_super_kernel_plus", impl_mode=""
-):
+def ascendc_super_kernel_plus(kernel_infos, called_kernel_name="ascendc_super_kernel_plus", impl_mode=""):
     """entry of super kernel compile
 
     Args:

@@ -25,9 +25,7 @@ def gen_golden_data():
 
     x1_gm = np.random.uniform(1, 10, [M, K]).astype(np.float16)
     x2_gm = np.random.uniform(1, 10, [K, N]).astype(np.float16)
-    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
 
     if kRound > 1:
         # 将K轴外移

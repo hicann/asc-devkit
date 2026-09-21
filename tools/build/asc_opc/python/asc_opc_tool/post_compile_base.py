@@ -29,14 +29,7 @@ class PostCompilation:
     class PostCompilation
     """
 
-    def __init__(
-        self,
-        opc_compile_args,
-        l1_fusion_flag,
-        l2_fusion_flag,
-        l2_mode_flag,
-        fusion_op_impl_mode=None,
-    ):
+    def __init__(self, opc_compile_args, l1_fusion_flag, l2_fusion_flag, l2_mode_flag, fusion_op_impl_mode=None):
         self._opc_compile_args = opc_compile_args
         self._l1_fusion_flag = l1_fusion_flag
         self._l2_fusion_flag = l2_fusion_flag
@@ -60,10 +53,7 @@ class PostCompilation:
         if inputs is None:
             return False
         for input_desc in inputs:
-            if (
-                CompileParam.NAME not in input_desc
-                or input_desc[CompileParam.NAME] != ""
-            ):
+            if CompileParam.NAME not in input_desc or input_desc[CompileParam.NAME] != "":
                 return False
 
         outputs = cur_op.get(CompileParam.OUTPUTS, None)
@@ -118,10 +108,7 @@ class PostCompilation:
         """
         get build_options from graph as statickey format
         """
-        logger.debug(
-            "Generate graph support json_dict static[%s] key build options.",
-            str(json_dict),
-        )
+        logger.debug("Generate graph support json_dict static[%s] key build options.", str(json_dict))
         build_options = {}
         soc_info = json_dict.get(CompileParam.SOC_INFO)
         logger.debug("Current soc_info is [%s]", str(soc_info))
@@ -142,11 +129,7 @@ class PostCompilation:
             build_options[CompileParam.STATUS_CHECK] = status_check
 
         else:
-            logger.debug(
-                "graph {}'s soc_info is null.".format(
-                    json_dict.get(GraphDefParam.GRAPH_NAME)
-                )
-            )
+            logger.debug("graph {}'s soc_info is null.".format(json_dict.get(GraphDefParam.GRAPH_NAME)))
 
         if len(build_options) == 0:
             return None
@@ -158,9 +141,7 @@ class PostCompilation:
             """delete ori format when its value is ALL"""
             if tensor_info.get(CompileParam.ORI_FORMAT) == "ALL":
                 del tensor_info[CompileParam.ORI_FORMAT]
-                logger.debug(
-                    "Delete support info ori format key when its value is ALL."
-                )
+                logger.debug("Delete support info ori format key when its value is ALL.")
 
         if inputoutput is None:
             return
@@ -194,17 +175,13 @@ class PostCompilation:
 
                 # copy .o file
                 object_file_path = os.path.join(
-                    os.path.dirname(json_file_path),
-                    json_file["binFileName"] + json_file["binFileSuffix"],
+                    os.path.dirname(json_file_path), json_file["binFileName"] + json_file["binFileSuffix"]
                 )
                 logger.debug("object_file_path is %s.", object_file_path)
                 os.chmod(object_file_path, stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR)
                 file_copy(os.path.realpath(object_file_path), output_path)
         except Exception as e:
-            raise RuntimeError(
-                "Copy [%s] to [%s] field, reason: %s."
-                % (json_file_path, output_path, str(e))
-            ) from e
+            raise RuntimeError("Copy [%s] to [%s] field, reason: %s." % (json_file_path, output_path, str(e))) from e
         finally:
             pass
 
@@ -219,12 +196,8 @@ class PostCompilation:
         try:
             with open(json_file_path, "r") as f:
                 build_res = json.load(f)
-                if (
-                    "jsonList" not in build_res
-                ):  # traditional pattern with one json file and one object file
-                    PostCompilation.copy_one_json_file_with_one_obj_file(
-                        json_file_path, output_path
-                    )
+                if "jsonList" not in build_res:  # traditional pattern with one json file and one object file
+                    PostCompilation.copy_one_json_file_with_one_obj_file(json_file_path, output_path)
                     return
 
                 # three .json files with two .o files
@@ -234,23 +207,16 @@ class PostCompilation:
                     file_copy(os.path.realpath(json_file_path), output_path)
                 except Exception as e:
                     raise RuntimeError(
-                        "Failed to copy [%s] to [%s], reason: %s."
-                        % (json_file_path, output_path, str(e))
+                        "Failed to copy [%s] to [%s], reason: %s." % (json_file_path, output_path, str(e))
                     ) from e
                 finally:
                     pass
 
                 # copy sub .json/.o files
                 for item in build_res["jsonList"]:
-                    sub_json_file_path = os.path.join(
-                        os.path.dirname(json_file_path), item["jsonFileName"]
-                    )
-                    PostCompilation.copy_one_json_file_with_one_obj_file(
-                        sub_json_file_path, output_path
-                    )
+                    sub_json_file_path = os.path.join(os.path.dirname(json_file_path), item["jsonFileName"])
+                    PostCompilation.copy_one_json_file_with_one_obj_file(sub_json_file_path, output_path)
         except Exception as e:
-            raise RuntimeError(
-                "File [%s] doesn't exist, reason: %s." % (json_file_path, str(e))
-            ) from e
+            raise RuntimeError("File [%s] doesn't exist, reason: %s." % (json_file_path, str(e))) from e
         finally:
             pass

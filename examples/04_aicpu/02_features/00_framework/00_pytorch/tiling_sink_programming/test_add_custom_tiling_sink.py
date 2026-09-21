@@ -31,32 +31,17 @@ def add_custom_tiling_sink_meta(x, y):
 
 
 def add_custom_tiling_sink_impl(x, y):
-    raise NotImplementedError(
-        "torch.ops.ascendc_ops.add_custom_tiling_sink is not implemented!"
-    )
+    raise NotImplementedError("torch.ops.ascendc_ops.add_custom_tiling_sink is not implemented!")
 
 
 torch.library.impl(m, "add_custom_tiling_sink", "CPU")(add_custom_tiling_sink_impl)
-torch.library.impl(m, "add_custom_tiling_sink", "PrivateUse1")(
-    add_custom_tiling_sink_impl
-)
+torch.library.impl(m, "add_custom_tiling_sink", "PrivateUse1")(add_custom_tiling_sink_impl)
 
 
 # Map the Torch op to GE so torchair can lower it.
-@torchair.register_fx_node_ge_converter(
-    torch.ops.ascendc_ops.add_custom_tiling_sink.default
-)
-def convert_npu_add_custom(
-    x: Tensor, y: Tensor, z: Tensor = None, meta_outputs: Any = None
-):
-    return torchair.ge.custom_op(
-        "AddCustomTilingSink",
-        inputs={
-            "x": x,
-            "y": y,
-        },
-        outputs=["z"],
-    )
+@torchair.register_fx_node_ge_converter(torch.ops.ascendc_ops.add_custom_tiling_sink.default)
+def convert_npu_add_custom(x: Tensor, y: Tensor, z: Tensor = None, meta_outputs: Any = None):
+    return torchair.ge.custom_op("AddCustomTilingSink", inputs={"x": x, "y": y}, outputs=["z"])
 
 
 class SingleOpModel(torch.nn.Module):
@@ -73,9 +58,7 @@ class TestCustomAdd(TestCase):
         config = torchair.CompilerConfig()
         config.experimental_config.tiling_schedule_optimize = True
         npu_backend = torchair.get_npu_backend(compiler_config=config)
-        model = torch.compile(
-            SingleOpModel().npu(), fullgraph=True, backend=npu_backend, dynamic=False
-        )
+        model = torch.compile(SingleOpModel().npu(), fullgraph=True, backend=npu_backend, dynamic=False)
 
         length = [8, 48]
         x = torch.rand(length, device="cpu", dtype=torch.float)

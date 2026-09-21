@@ -91,7 +91,7 @@ class TestErrMgr(unittest.TestCase):
                 "errCode": "TEST001",
                 "argList": "arg1,arg2,arg3",
                 "errMessage": "error type: %s, reason: %s, soulution: %s",
-            },
+            }
         ]
 
         mock_json_data = self.mock_error_data

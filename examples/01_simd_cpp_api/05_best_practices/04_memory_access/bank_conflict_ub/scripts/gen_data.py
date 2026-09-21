@@ -49,9 +49,7 @@ def _build_src0_pattern(x_data, scenario_num):
         for k in range(NUM_BLOCKS_PER_REPEAT):
             src_idx = r * src0RepS * DATABLOCK_FLOATS + k * src0BlkS * DATABLOCK_FLOATS
             dst_start = r * ITEMS_PER_ITER + k * DATABLOCK_FLOATS
-            src0[dst_start : dst_start + DATABLOCK_FLOATS] = x_data[
-                src_idx : src_idx + DATABLOCK_FLOATS
-            ]
+            src0[dst_start : dst_start + DATABLOCK_FLOATS] = x_data[src_idx : src_idx + DATABLOCK_FLOATS]
     return src0
 
 
@@ -89,23 +87,13 @@ def gen_golden_data(scenario_num):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate test data for bank_conflict_ub"
-    )
+    parser = argparse.ArgumentParser(description="Generate test data for bank_conflict_ub")
     parser.add_argument(
-        "--scenario",
-        "-s",
-        type=int,
-        default=None,
-        help="scenario number (1-8), overrides SCENARIO_NUM env",
+        "--scenario", "-s", type=int, default=None, help="scenario number (1-8), overrides SCENARIO_NUM env"
     )
     args = parser.parse_args()
 
-    scenario_num = (
-        args.scenario
-        if args.scenario is not None
-        else int(os.environ.get("SCENARIO_NUM", "1"))
-    )
+    scenario_num = args.scenario if args.scenario is not None else int(os.environ.get("SCENARIO_NUM", "1"))
     if scenario_num not in STRIDE_CONFIGS:
         print(f"[ERROR] Invalid scenario_num={scenario_num}. Valid range: 1-8")
         exit(1)

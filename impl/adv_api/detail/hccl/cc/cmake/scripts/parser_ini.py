@@ -71,17 +71,13 @@ class IniParser(object):
                 if opt_sec not in self.aicpu_ops_info.get(op):
                     self.aicpu_ops_info.get(op)[opt_sec] = {opt_subsec: cfg[op][opt]}
                 else:
-                    self.aicpu_ops_info.get(op)[opt_sec].update(
-                        {opt_subsec: cfg[op][opt]}
-                    )
+                    self.aicpu_ops_info.get(op)[opt_sec].update({opt_subsec: cfg[op][opt]})
 
     def check_custom_op_info(self, op_name, op_info):
         """
         Check aicpu_cust_kernel.ini op definition
         """
-        missing_keys = [
-            k for k in self.required_custom_op_info_keys if k not in op_info
-        ]
+        missing_keys = [k for k in self.required_custom_op_info_keys if k not in op_info]
         if len(missing_keys) > 0:
             print("op: " + op_name + " opInfo missing: " + ",".join(missing_keys))
             raise KeyError("bad key value")
@@ -151,17 +147,11 @@ class IniParser(object):
                     raise KeyError("bad key value")
             if not op_info_flag:
                 if self.warn_print:
-                    print(
-                        "%s\t## OP %s: defined missing opInfo section %s"
-                        % (COLOR_RED, op_name, COLOR_END)
-                    )
+                    print("%s\t## OP %s: defined missing opInfo section %s" % (COLOR_RED, op_name, COLOR_END))
                 self.warning_ops["opInfo"].append(op_name)
             if not op_io_flag:
                 if self.warn_print:
-                    print(
-                        "%s\t## OP %s: defined missing input/output section %s"
-                        % (COLOR_CYAN, op_name, COLOR_END)
-                    )
+                    print("%s\t## OP %s: defined missing input/output section %s" % (COLOR_CYAN, op_name, COLOR_END))
                 self.warning_ops["io"].append(op_name)
         # if custom flag is set, we will push all custom op in the aicpu_op_info
         # else we will remove them, and push into individual custom json
@@ -178,33 +168,20 @@ class IniParser(object):
         def _write(info, file):
             with open(file, "w") as f:
                 # Only the owner and group have rights
-                os.chmod(
-                    file, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR
-                )
+                os.chmod(file, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR)
                 json.dump(info, f, sort_keys=True, indent=4, separators=(",", ":"))
 
         json_file_real_path = os.path.realpath(json_file_path)
         _write(self.aicpu_ops_info, json_file_real_path)
-        print(
-            ">>>> Found %s AICPU ops, write into: %s"
-            % (len(self.aicpu_ops_info), json_file_real_path)
-        )
+        print(">>>> Found %s AICPU ops, write into: %s" % (len(self.aicpu_ops_info), json_file_real_path))
 
         if not self.custom_flag:
             file_path, file_name = os.path.split(json_file_real_path)
-            custom_file_path = os.path.join(
-                file_path, "%s_custom%s" % os.path.splitext(file_name)
-            )
+            custom_file_path = os.path.join(file_path, "%s_custom%s" % os.path.splitext(file_name))
             _write(self.custom_ops_info, custom_file_path)
-            print(
-                ">>>> Found %s custom AICPU ops, write into: %s"
-                % (len(self.custom_ops_info), custom_file_path)
-            )
+            print(">>>> Found %s custom AICPU ops, write into: %s" % (len(self.custom_ops_info), custom_file_path))
         else:
-            print(
-                "### Custom flag is set, all custom ops have been integrated into: %s"
-                % json_file_real_path
-            )
+            print("### Custom flag is set, all custom ops have been integrated into: %s" % json_file_real_path)
 
     def parse(self, ini_paths: list, out_file_path, custom=False):
         """
@@ -221,10 +198,7 @@ class IniParser(object):
         try:
             self.check_op_info_setting()
         except KeyError as e:
-            print(
-                "bad format key value, failed to generate json file, detail info: \n%s"
-                % e
-            )
+            print("bad format key value, failed to generate json file, detail info: \n%s" % e)
         finally:
             self.write(out_file_path)
             if self.warning_ops and self.warn_print:
@@ -242,9 +216,7 @@ def main():
         description="Parser ini info and check tool",
         add_help=True,
     )
-    parser.add_argument(
-        "-c", "--custom", action="store_true", help="Custom op compiled in"
-    )
+    parser.add_argument("-c", "--custom", action="store_true", help="Custom op compiled in")
     parser.add_argument("FILES", nargs="*", help=argparse.SUPPRESS)
     args = parser.parse_args()
     outfile_path = "tf_kernel.json"

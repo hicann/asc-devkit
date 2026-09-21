@@ -40,12 +40,8 @@ def test_decode_fp32(input_float):
 
     float_binary = _float_to_binary(input_float)
     f_sign_bin_str = _get_binary_pos_str(float_binary, sign_start_pos, sign_end_pos)
-    f_exponent_bin_str = _get_binary_pos_str(
-        float_binary, exponent_start_pos, exponent_end_pos
-    )
-    f_fraction_bin_str = _get_binary_pos_str(
-        float_binary, fraction_start_pos, fraction_end_pos
-    )
+    f_exponent_bin_str = _get_binary_pos_str(float_binary, exponent_start_pos, exponent_end_pos)
+    f_fraction_bin_str = _get_binary_pos_str(float_binary, fraction_start_pos, fraction_end_pos)
     f_exponent_bin_int = _binary_to_int(f_exponent_bin_str)
     f_fraction_bin_int = _binary_to_int(f_fraction_bin_str)
 
@@ -215,13 +211,7 @@ def get_over_flow_res(sign, over_mode):
 
 Hif8Collection = namedtuple(
     "Hif8Collection",
-    [
-        "dot_hif8_value",
-        "sign_int_value",
-        "hif8_frac_value",
-        "exponent_hif8_bits",
-        "fraction_hif8_bits",
-    ],
+    ["dot_hif8_value", "sign_int_value", "hif8_frac_value", "exponent_hif8_bits", "fraction_hif8_bits"],
 )
 
 
@@ -251,33 +241,21 @@ def cvt_float16_to_hifuint8(x, round_mode="round", over_mode=True):
     cut_bit_type = get_cut_bit_type(round_mode, exponent)
     # precheck
     fraction_int = int(x_abs * pow(2, 10) * pow(2, -exponent) - pow(2, 10))
-    dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits = (
-        _get_hif8_fraction_bits_number(exponent)
-    )
+    dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits = _get_hif8_fraction_bits_number(exponent)
     if cut_bit_type == "TA":
-        carry_exp_status, hif8_frac_value = _fp16_ta_round_to_hif8(
-            fraction_int, fraction_hif8_bits
-        )
+        carry_exp_status, hif8_frac_value = _fp16_ta_round_to_hif8(fraction_int, fraction_hif8_bits)
     elif cut_bit_type == "SSR":
-        carry_exp_status, hif8_frac_value = _fp16_ssr_round_to_hif8(
-            fraction_int, fraction_hif8_bits
-        )
+        carry_exp_status, hif8_frac_value = _fp16_ssr_round_to_hif8(fraction_int, fraction_hif8_bits)
     elif cut_bit_type == "SR":
         random_t = 0
-        carry_exp_status, hif8_frac_value = _fp16_sr_round_to_hif8(
-            fraction_int, fraction_hif8_bits, random_t
-        )
+        carry_exp_status, hif8_frac_value = _fp16_sr_round_to_hif8(fraction_int, fraction_hif8_bits, random_t)
     else:
         logging.info("[ERROR] unknown round type")
         return 0
     if carry_exp_status:
         exponent += 1
-        dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits_new = (
-            _get_hif8_fraction_bits_number(exponent)
-        )
-        hif8_frac_value = hif8_frac_value >> (
-            fraction_hif8_bits - fraction_hif8_bits_new
-        )
+        dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits_new = _get_hif8_fraction_bits_number(exponent)
+        hif8_frac_value = hif8_frac_value >> (fraction_hif8_bits - fraction_hif8_bits_new)
         fraction_hif8_bits = fraction_hif8_bits_new
     if fraction_hif8_bits == -1:
         # overflow
@@ -288,11 +266,7 @@ def cvt_float16_to_hifuint8(x, round_mode="round", over_mode=True):
         # small than dmz
         return 0
     hif8_collect = Hif8Collection(
-        dot_hif8_value,
-        sign_int_value,
-        hif8_frac_value,
-        exponent_hif8_bits,
-        fraction_hif8_bits,
+        dot_hif8_value, sign_int_value, hif8_frac_value, exponent_hif8_bits, fraction_hif8_bits
     )
     return get_hif8_int_value(exponent, hif8_collect)
 
@@ -306,9 +280,7 @@ def get_hif8_int_value(exponent, hif8_collect):
     if hif8_collect.dot_hif8_value == 1:
         # d0
         dot_int_value = hif8_collect.dot_hif8_value << 3
-        hif8_int_value = (
-            hif8_collect.sign_int_value + dot_int_value + hif8_collect.hif8_frac_value
-        )
+        hif8_int_value = hif8_collect.sign_int_value + dot_int_value + hif8_collect.hif8_frac_value
     elif hif8_collect.dot_hif8_value == 0:
         # dml
         hif8_int_value = hif8_collect.sign_int_value + exponent + 23
@@ -316,16 +288,10 @@ def get_hif8_int_value(exponent, hif8_collect):
         abs_exponent = abs(exponent)
         abs_exponent = abs_exponent - pow(2, hif8_collect.exponent_hif8_bits - 1)
         exponent_int_value = abs_exponent << hif8_collect.fraction_hif8_bits
-        sig_exp = sig_exp << (
-            hif8_collect.exponent_hif8_bits - 1 + hif8_collect.fraction_hif8_bits
-        )
+        sig_exp = sig_exp << (hif8_collect.exponent_hif8_bits - 1 + hif8_collect.fraction_hif8_bits)
         dot_int_value = hif8_collect.dot_hif8_value << 3
         hif8_int_value = (
-            hif8_collect.sign_int_value
-            + dot_int_value
-            + sig_exp
-            + exponent_int_value
-            + hif8_collect.hif8_frac_value
+            hif8_collect.sign_int_value + dot_int_value + sig_exp + exponent_int_value + hif8_collect.hif8_frac_value
         )
     return hif8_int_value
 
@@ -356,40 +322,26 @@ def cvt_float32_to_hifuint8(x, round_mode="round", over_mode=True):
 
     # precheck
     fraction_int = int(x_abs * pow(2, 23) * pow(2, -exponent) - pow(2, 23))
-    dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits = (
-        _get_hif8_fraction_bits_number(exponent)
-    )
+    dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits = _get_hif8_fraction_bits_number(exponent)
     if cut_bit_type == "TA":
-        carry_exp_status, hif8_frac_value = _fp32_ta_round_to_hif8(
-            fraction_int, fraction_hif8_bits
-        )
+        carry_exp_status, hif8_frac_value = _fp32_ta_round_to_hif8(fraction_int, fraction_hif8_bits)
     elif cut_bit_type == "SSR":
-        carry_exp_status, hif8_frac_value = _fp32_ssr_round_to_hif8(
-            fraction_int, fraction_hif8_bits
-        )
+        carry_exp_status, hif8_frac_value = _fp32_ssr_round_to_hif8(fraction_int, fraction_hif8_bits)
     elif cut_bit_type == "SR":
         random_t = 0
-        carry_exp_status, hif8_frac_value = _fp32_sr_round_to_hif8(
-            fraction_int, fraction_hif8_bits, random_t
-        )
+        carry_exp_status, hif8_frac_value = _fp32_sr_round_to_hif8(fraction_int, fraction_hif8_bits, random_t)
     else:
         logging.info("[ERROR] unknown round type")
         return 0
     if carry_exp_status:
         exponent += 1
-        dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits_new = (
-            _get_hif8_fraction_bits_number(exponent)
-        )
+        dot_hif8_value, exponent_hif8_bits, fraction_hif8_bits_new = _get_hif8_fraction_bits_number(exponent)
         fraction_hif8_bits = fraction_hif8_bits_new
     if exponent < -22:
         # zero b00000000
         return 0
     hif8_collect = Hif8Collection(
-        dot_hif8_value,
-        sign_int_value,
-        hif8_frac_value,
-        exponent_hif8_bits,
-        fraction_hif8_bits,
+        dot_hif8_value, sign_int_value, hif8_frac_value, exponent_hif8_bits, fraction_hif8_bits
     )
     return get_hif8_int_value(exponent, hif8_collect)
 

@@ -68,7 +68,7 @@ def v310_mode_vec_ofile(little_endian, binary_32) -> int:
     }
     # DMA
     vec_high_low_map = {
-        "0110101010": "1",  # ND_DMA_DCI
+        "0110101010": "1"  # ND_DMA_DCI
     }
     vec_high_map = {
         "0110111001",  # ND_DMA_OUT_TO_UB
@@ -76,7 +76,7 @@ def v310_mode_vec_ofile(little_endian, binary_32) -> int:
         "0111010011",  # MOV_UB_TO_OUT_ALIGN_V2
     }
     vec_high_mid_map = {
-        "011100001": "0100",  # MOV_UB_TO_L1
+        "011100001": "0100"  # MOV_UB_TO_L1
     }
     high_9 = binary_32[:9]
     high_10 = binary_32[:10]
@@ -88,17 +88,10 @@ def v310_mode_vec_ofile(little_endian, binary_32) -> int:
         (
             little_endian[0] == "1"
             and little_endian[1] == "5"
-            and not (
-                binary_32[:11] == "00010101110"
-                and binary_32[16:26] == "0000000000"
-                and binary_32[27:] == "10011"
-            )
+            and not (binary_32[:11] == "00010101110" and binary_32[16:26] == "0000000000" and binary_32[27:] == "10011")
         ),
         # set, wait
-        (
-            binary_32[:17] in vf_high_low_map
-            and binary_32[30:] == vf_high_low_map[binary_32[:17]]
-        ),
+        (binary_32[:17] in vf_high_low_map and binary_32[30:] == vf_high_low_map[binary_32[:17]]),
         # DMA
         (high_10 in vec_high_low_map and low_1 == vec_high_low_map[high_10]),
         (high_10 in vec_high_map),
@@ -144,31 +137,14 @@ def v310_mode_cube_ofile(little_endian, binary_32) -> int:
         # Fixpipe
         (little_endian[0] == "c" and little_endian[1] in "0123"),
         # matrix instr
-        (
-            little_endian[0] == "e"
-            and little_endian[1] in "012345"
-            and binary_32[30:] == "00"
-        ),
+        (little_endian[0] == "e" and little_endian[1] in "012345" and binary_32[30:] == "00"),
         (little_endian[0] == "f" and little_endian[1] in "01"),
-        (
-            little_endian[0] == "f"
-            and little_endian[1] == "6"
-            and binary_32[30:] == "00"
-        ),
-        (
-            little_endian[0] == "f"
-            and little_endian[1] in "2345abcd"
-            and binary_32[30] == "0"
-        ),
+        (little_endian[0] == "f" and little_endian[1] == "6" and binary_32[30:] == "00"),
+        (little_endian[0] == "f" and little_endian[1] in "2345abcd" and binary_32[30] == "0"),
         # DMA
-        (
-            high_9 == "011100100" and mid_36 in ("0001", "0101")
-        ),  # DMA move inst, include MOV L1 TO UB
+        (high_9 == "011100100" and mid_36 in ("0001", "0101")),  # DMA move inst, include MOV L1 TO UB
         (high_10 in cube_high_low_map and binary_32[30:] == cube_high_low_map[high_10]),
-        (
-            high_10 in cube_high_low2_map
-            and binary_32[31] == cube_high_low2_map[high_10]
-        ),
+        (high_10 in cube_high_low2_map and binary_32[31] == cube_high_low2_map[high_10]),
         (high_10 in cube_high_map),
     ]
 
@@ -185,24 +161,16 @@ def v310_mode(inst, cubemode) -> int:
     little_endian = f"{int.from_bytes(int(inst, 16).to_bytes(4, 'little'), 'big'):08x}"
     binary_32 = bin(int(little_endian, 16))[2:].zfill(32)
 
-    return (
-        v310_mode_cube_ofile(little_endian, binary_32)
-        if cubemode
-        else v310_mode_vec_ofile(little_endian, binary_32)
-    )
+    return v310_mode_cube_ofile(little_endian, binary_32) if cubemode else v310_mode_vec_ofile(little_endian, binary_32)
 
 
-def get_code_channel(
-    dst_file: str, c310mode_cubemode_tuple: Tuple
-) -> Tuple[bool, int, str]:
+def get_code_channel(dst_file: str, c310mode_cubemode_tuple: Tuple) -> Tuple[bool, int, str]:
     c310mode, cubemode = c310mode_cubemode_tuple
     if not os.path.isfile(dst_file):
         return False, CODE_DEFAULT, f"file {dst_file} doesn't exist."
 
     objdump_cmd = ["llvm-objdump", "-s", "-j", ".text", dst_file]
-    proc = subprocess.run(
-        objdump_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False
-    )
+    proc = subprocess.run(objdump_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
     out = proc.stdout.decode()
     if proc.returncode != 0:
         return False, CODE_DEFAULT, f"llvm-objdump error, message is {out}"

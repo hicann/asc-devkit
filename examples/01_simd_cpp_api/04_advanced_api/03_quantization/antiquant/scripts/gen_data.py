@@ -32,9 +32,7 @@ def gen_golden_data_simple(npu_arch):
         dst = np.zeros([8, 128]).astype(np.float32)
         for i in range(0, K):
             for j in range(0, N):
-                dst[i][j] = scale[i // groupSize][j] * (
-                    src[i][j] + offset[i // groupSize][j]
-                )
+                dst[i][j] = scale[i // groupSize][j] * (src[i][j] + offset[i // groupSize][j])
         dst = dst.astype(np.float16)
     elif npu_arch == "dav-3510":
         src_fp32 = src.astype(np.float32)
@@ -43,9 +41,7 @@ def gen_golden_data_simple(npu_arch):
         dst = np.zeros([8, 128]).astype(np.float32)
         for i in range(0, K):
             for j in range(0, N):
-                dst[i][j] = scale_fp32[i // groupSize][j] * (
-                    src_fp32[i][j] + offset_fp32[i // groupSize][j]
-                )
+                dst[i][j] = scale_fp32[i // groupSize][j] * (src_fp32[i][j] + offset_fp32[i // groupSize][j])
         dst = dst.astype(np.float16)
     else:
         raise ValueError(f"Unsupported NPU architecture: {npu_arch}")

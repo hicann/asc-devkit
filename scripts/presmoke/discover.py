@@ -27,10 +27,7 @@ def discover_examples(examples_root: Path) -> List[Path]:
 
 
 def filter_examples(
-    paths: Iterable[Path],
-    includes: Iterable[str],
-    excludes: Iterable[str],
-    exact_includes: Iterable[str] | None = None,
+    paths: Iterable[Path], includes: Iterable[str], excludes: Iterable[str], exact_includes: Iterable[str] | None = None
 ) -> List[Path]:
     include_terms = [x for x in includes if x]
     exact_include_terms = {x for x in (exact_includes or []) if x}
@@ -38,9 +35,7 @@ def filter_examples(
     result: List[Path] = []
     for path in paths:
         text = path.as_posix()
-        exact_match = any(
-            text == term or text.endswith(f"/{term}") for term in exact_include_terms
-        )
+        exact_match = any(text == term or text.endswith(f"/{term}") for term in exact_include_terms)
         if exact_include_terms and not exact_match:
             continue
         if include_terms and not any(term in text for term in include_terms):

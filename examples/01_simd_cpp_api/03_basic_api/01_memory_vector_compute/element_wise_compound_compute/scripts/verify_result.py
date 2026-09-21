@@ -31,17 +31,12 @@ def verify_result(output_path, golden_path, dtype=np.float16):
         different_element_indexes = np.where(output != golden)[0]
         for index in range(len(different_element_indexes)):
             real_index = different_element_indexes[index]
-            print(
-                "data index: %06d, expected: %d, actual: %d"
-                % (real_index, golden[real_index], output[real_index])
-            )
+            print("data index: %06d, expected: %d, actual: %d" % (real_index, golden[real_index], output[real_index]))
             if index == 100:
                 break
     else:
         # 浮点类型使用isclose比较
-        different_element_results = np.isclose(
-            output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-        )
+        different_element_results = np.isclose(output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
         different_element_indexes = np.where(different_element_results == False)[0]
         for index in range(len(different_element_indexes)):
             real_index = different_element_indexes[index]
@@ -68,13 +63,7 @@ def verify_result(output_path, golden_path, dtype=np.float16):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-scenario",
-        type=int,
-        default=1,
-        choices=[1, 2],
-        help="Scenario number: 1=AddRelu, 2=Axpy",
-    )
+    parser.add_argument("-scenario", type=int, default=1, choices=[1, 2], help="Scenario number: 1=AddRelu, 2=Axpy")
     parser.add_argument("output", help="Output file path")
     parser.add_argument("golden", help="Golden file path")
     args = parser.parse_args()

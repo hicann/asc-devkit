@@ -25,55 +25,36 @@ def gen_golden_data(scenario_num=1):
         x1_gm = np.random.randint(1, 10, [m, k]).astype(np.int8)
         x2_gm = np.random.randint(1, 10, [k, n]).astype(np.int8)
         bias_gm = np.random.randint(1, 10, [n]).astype(np.int32)
-        golden = (
-            np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32)
-            + bias_gm
-        )
+        golden = np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32) + bias_gm
     elif scenario_num == 2:
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(bfloat16)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(bfloat16)
-        golden = (
-            np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-                np.float32
-            )
-            * 2
-        )
+        golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) * 2
         x2_gm = x2_gm.transpose()
     elif scenario_num == 3:
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(np.float32)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(np.float32)
         bias_gm = np.random.uniform(1, 10, [n]).astype(np.float32)
-        golden = (
-            np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-                np.float32
-            )
-            + bias_gm
-        )
+        golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) + bias_gm
         x1_gm = x1_gm.transpose()
         x2_gm = x2_gm.transpose()
     else:
         x1_gm_int8 = np.random.randint(1, 7, [m, k]).astype(np.int8)
         x2_gm_int8 = np.random.randint(1, 7, [k, n]).astype(np.int8)
 
-        golden = np.matmul(
-            x1_gm_int8.astype(np.int32), x2_gm_int8.astype(np.int32)
-        ).astype(np.int32)
+        golden = np.matmul(x1_gm_int8.astype(np.int32), x2_gm_int8.astype(np.int32)).astype(np.int32)
         x2_gm_int8 = x2_gm_int8.transpose()
 
         x1_gm = np.zeros(shape=[m, k // 2]).astype(np.int8)
         for i in range(m):
             for j in range(k):
                 if j % 2 == 0:
-                    x1_gm[i][j // 2] = (x1_gm_int8[i][j + 1] << 4) + (
-                        x1_gm_int8[i][j] & 0x0F
-                    )
+                    x1_gm[i][j // 2] = (x1_gm_int8[i][j + 1] << 4) + (x1_gm_int8[i][j] & 0x0F)
         x2_gm = np.zeros(shape=[n, k // 2]).astype(np.int8)
         for i in range(n):
             for j in range(k):
                 if j % 2 == 0:
-                    x2_gm[i][j // 2] = (x2_gm_int8[i][j + 1] << 4) + (
-                        x2_gm_int8[i][j] & 0x0F
-                    )
+                    x2_gm[i][j // 2] = (x2_gm_int8[i][j + 1] << 4) + (x2_gm_int8[i][j] & 0x0F)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

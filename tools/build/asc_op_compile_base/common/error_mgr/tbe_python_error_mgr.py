@@ -63,11 +63,5 @@ def raise_tbe_python_err(err_code, msg):
     if isinstance(msg, tuple) and len(msg) >= 2:
         if hasattr(msg[1], "errorinfo") and isinstance(msg[1].errorinfo, dict):
             msg = "{}\n{}".format(msg[0], msg[1].errorinfo.get("message"))
-    args_dict = {
-        "errCode": err_code,
-        "message": msg,
-        "errClass": "",
-        "errPcause": "",
-        "errSolution": "",
-    }
+    args_dict = {"errCode": err_code, "message": msg, "errClass": "", "errPcause": "", "errSolution": ""}
     raise TBEPythonError(args_dict)

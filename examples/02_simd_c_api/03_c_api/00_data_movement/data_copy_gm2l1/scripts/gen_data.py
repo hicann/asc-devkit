@@ -51,9 +51,7 @@ def saturate_and_round(value, minimum, maximum, dtype):
 
 
 def quantize_f32_to_i8(value, quant_pre, relu_pre):
-    quant_alpha, offset, signed_output, n_shift, mode_control_bit = (
-        extract_quant_params(quant_pre)
-    )
+    quant_alpha, offset, signed_output, n_shift, mode_control_bit = extract_quant_params(quant_pre)
     if mode_control_bit:
         value = saturate_and_round(value / (2**n_shift), -32768, 32767, np.int16)
     value = np.float32(value)
@@ -67,18 +65,14 @@ def quantize_f32_to_i8(value, quant_pre, relu_pre):
 def vector_quantize_to_i8(data):
     quant_scalar = np.float32(2.0)
     relu_pre = struct.unpack("!I", struct.pack("!f", quant_scalar))[0]
-    quant_pre = (
-        np.full(N, quant_scalar, dtype=np.float32).view(np.uint32).astype(np.uint64)
-    )
+    quant_pre = np.full(N, quant_scalar, dtype=np.float32).view(np.uint32).astype(np.uint64)
     # Bit 46 selects signed int8 output in the Fixpipe vector-quant parameter format.
     quant_pre |= np.uint64(0x400000000000)
 
     quantized = np.empty((M, N), dtype=np.int8)
     for row in range(M):
         for column in range(N):
-            quantized[row, column] = quantize_f32_to_i8(
-                data[row, column], quant_pre[column], relu_pre
-            )
+            quantized[row, column] = quantize_f32_to_i8(data[row, column], quant_pre[column], relu_pre)
     return quantized, quant_pre
 
 
@@ -86,9 +80,7 @@ def gen_golden_data(scenario_num=1):
     np.random.seed(9)
     x1_gm = np.random.uniform(-1, 3, [M, K]).astype(np.float16)
     x2_gm = np.random.uniform(-1, 3, [K, N]).astype(np.float16)
-    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -103,9 +95,7 @@ def gen_golden_data(scenario_num=1):
         x2_gm = x2_gm.transpose(1, 0)
     elif scenario_num == 4:
         golden, quant_pre = vector_quantize_to_i8(golden)
-        quant_pre_padded = np.zeros(
-            QUANT_TRANSFER_BYTES // np.dtype(np.uint64).itemsize, dtype=np.uint64
-        )
+        quant_pre_padded = np.zeros(QUANT_TRANSFER_BYTES // np.dtype(np.uint64).itemsize, dtype=np.uint64)
         quant_pre_padded[:N] = quant_pre
         quant_pre_padded.tofile("./input/quant_pre.bin")
 

@@ -28,9 +28,7 @@ RTOL = 0.001
 
 def main(unused_argv):
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    custom_op_lib = tf.load_op_library(
-        os.path.join(base_dir, "outputs", "libcustom_ops.so")
-    )
+    custom_op_lib = tf.load_op_library(os.path.join(base_dir, "outputs", "libcustom_ops.so"))
 
     shape_params = (8, 2048)
     dtype_params = np.float16

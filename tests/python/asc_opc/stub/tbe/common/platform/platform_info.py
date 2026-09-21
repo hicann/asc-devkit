@@ -9,9 +9,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
-def set_current_compile_soc_info(
-    soc_version, core_type="AiCore", aicore_num=None, l1_fusion=None
-):
+def set_current_compile_soc_info(soc_version, core_type="AiCore", aicore_num=None, l1_fusion=None):
     print("Set current compile soc info")
     return
 
@@ -20,11 +18,7 @@ def intrinsic_check_support(var):
     return False
 
 
-platform_info_dict = {
-    "core_type": "VectorCore",
-    "cube_vector_combine": "split",
-    "SHORT_SOC_VERSION": "ascend910",
-}
+platform_info_dict = {"core_type": "VectorCore", "cube_vector_combine": "split", "SHORT_SOC_VERSION": "ascend910"}
 
 
 def get_soc_spec(key):

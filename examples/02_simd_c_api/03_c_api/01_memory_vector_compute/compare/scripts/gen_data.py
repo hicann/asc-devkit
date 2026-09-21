@@ -29,9 +29,7 @@ def pack_mask(mask):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate deterministic compare input and golden data."
-    )
+    parser = argparse.ArgumentParser(description="Generate deterministic compare input and golden data.")
     parser.add_argument("-scenario_num", type=int, choices=[1, 2, 3], default=1)
     args = parser.parse_args()
 

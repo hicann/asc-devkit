@@ -179,14 +179,7 @@ def add_op_config(op_file, bin_info, config):
 
 
 def gen_ops_config(json_file, soc, binary_info_config, config):
-    core_type_map = {
-        "MIX": 0,
-        "AiCore": 1,
-        "VectorCore": 2,
-        "MIX_AICORE": 3,
-        "MIX_VECTOR_CORE": 4,
-        "MIX_AIV": 4,
-    }
+    core_type_map = {"MIX": 0, "AiCore": 1, "VectorCore": 2, "MIX_AICORE": 3, "MIX_VECTOR_CORE": 4, "MIX_AIV": 4}
     contents = load_json(json_file)
     if ("binFileName" not in contents) or ("supportInfo" not in contents):
         return
@@ -216,11 +209,7 @@ def gen_ops_config(json_file, soc, binary_info_config, config):
         bin_info["simplifiedKey"] = simplified_key
         obj_file = os.path.join(soc, op_dir, bin_file_name)
         op_info = OpConfig(
-            op_type=op_type,
-            support_info=support_info,
-            core_type=core_type,
-            task_ration=task_ration,
-            obj_file=obj_file,
+            op_type=op_type, support_info=support_info, core_type=core_type, task_ration=task_ration, obj_file=obj_file
         )
         add_simplified_config(op_info, binary_info_config, config)
 
@@ -235,9 +224,7 @@ def gen_ops_config(json_file, soc, binary_info_config, config):
     add_dict_key(bin_info, "optionalInputMode", support_info.get("optionalInputMode"))
     add_dict_key(bin_info, "deterministic", support_info.get("deterministic"))
     if support_info.get("optionalOutputMode") is not None:
-        add_dict_key(
-            bin_info, "optionalOutputMode", support_info.get("optionalOutputMode")
-        )
+        add_dict_key(bin_info, "optionalOutputMode", support_info.get("optionalOutputMode"))
 
     bin_info["binInfo"] = {"jsonFilePath": os.path.join(soc, op_dir, json_base_name)}
     add_op_config(op_file, bin_info, config)
@@ -259,15 +246,11 @@ def check_single_op_is_void(root_dir, skip_error=False):
 def write_jsons(out_dir, file_list, config):
     for json_name in file_list:
         json_file = os.path.join(out_dir, json_name)
-        with os.fdopen(
-            os.open(json_file, const_var.WFLAGS, const_var.WMODES), "w"
-        ) as fd:
+        with os.fdopen(os.open(json_file, const_var.WFLAGS, const_var.WMODES), "w") as fd:
             json.dump(config.get(json_name), fd, indent="  ")
 
 
-def generate_operator_cfg_file(
-    json_files, binary_info_config, soc, out_dir, gen_json_status
-):
+def generate_operator_cfg_file(json_files, binary_info_config, soc, out_dir, gen_json_status):
     if not json_files:
         return
 
@@ -280,9 +263,7 @@ def generate_operator_cfg_file(
         gen_ops_config(_json, soc, binary_info_config, config)
 
     if gen_json_status == "single_json":
-        file_list = [
-            json_file for json_file in config.keys() if json_file != binary_info_config
-        ]
+        file_list = [json_file for json_file in config.keys() if json_file != binary_info_config]
     elif gen_json_status == "summary_json":
         file_list = [binary_info_config]
     else:
@@ -291,9 +272,7 @@ def generate_operator_cfg_file(
     write_jsons(out_dir, file_list, config)
 
 
-def gen_all_config(
-    root_dir, soc, out_dir, skip_binary_info_config, op_range="all", skip_error=False
-):
+def gen_all_config(root_dir, soc, out_dir, skip_binary_info_config, op_range="all", skip_error=False):
     if op_range != "relocatable":
         flag = check_single_op_is_void(root_dir, skip_error)
         if flag is False:
@@ -322,20 +301,12 @@ def gen_all_config(
     # normal kernel
     if op_range == "all" or op_range == "normal":
         binary_info_config = "binary_info_config.json"
-        generate_operator_cfg_file(
-            normal_json_files, binary_info_config, soc, out_dir, gen_normale_json
-        )
+        generate_operator_cfg_file(normal_json_files, binary_info_config, soc, out_dir, gen_normale_json)
 
     # relocatable kernel
     if op_range == "all" or op_range == "relocatable":
         binary_info_config = "relocatable_kernel_info_config.json"
-        generate_operator_cfg_file(
-            relocatable_json_files,
-            binary_info_config,
-            soc,
-            out_dir,
-            gen_relocatable_json,
-        )
+        generate_operator_cfg_file(relocatable_json_files, binary_info_config, soc, out_dir, gen_relocatable_json)
     return True
 
 
@@ -359,24 +330,14 @@ def gen_all_soc_config(all_path):
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-p",
-        "--path",
-        nargs="?",
-        required=True,
-        help="Parse the path of the json file.",
-    )
+    parser.add_argument("-p", "--path", nargs="?", required=True, help="Parse the path of the json file.")
 
-    parser.add_argument(
-        "-s", "--soc", nargs="?", required=True, help="Parse the soc_version of ops."
-    )
+    parser.add_argument("-s", "--soc", nargs="?", required=True, help="Parse the soc_version of ops.")
 
     parser.add_argument("-o", "--out", nargs="?", help="Output directory.")
 
     parser.add_argument(
-        "--skip-binary-info-config",
-        action="store_true",
-        help="binary_info_config.json file is not parsed.",
+        "--skip-binary-info-config", action="store_true", help="binary_info_config.json file is not parsed."
     )
 
     parser.add_argument(
@@ -387,9 +348,7 @@ def args_parse():
         help="all operators/normal operators/relocatable operators.",
     )
 
-    parser.add_argument(
-        "--skip-error", nargs="?", default=False, help="skip error msg."
-    )
+    parser.add_argument("--skip-error", nargs="?", default=False, help="skip error msg.")
 
     return parser.parse_args()
 
@@ -401,14 +360,7 @@ def main():
     else:
         out_dir = args.out
 
-    flag = gen_all_config(
-        args.path,
-        args.soc,
-        out_dir,
-        args.skip_binary_info_config,
-        args.op_range,
-        args.skip_error,
-    )
+    flag = gen_all_config(args.path, args.soc, out_dir, args.skip_binary_info_config, args.op_range, args.skip_error)
     if flag is False:
         sys.exit(1)
 

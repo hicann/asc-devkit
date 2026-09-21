@@ -144,29 +144,17 @@ def get_dynamic_compile_static(op_type, op_info):
     get_dynamic_compile_static
     """
     dynamic_compile_static = get_dynamic_compile_static_from_opstore(op_type)
-    logger.debug(
-        "Op {} dynamic_compile_static is {}.".format(op_type, dynamic_compile_static)
-    )
+    logger.debug("Op {} dynamic_compile_static is {}.".format(op_type, dynamic_compile_static))
 
     if dynamic_compile_static == "tune":
-        dynamic_compile_static_update, _ = get_dynamic_compile_static_from_kb(
-            op_type, op_info
-        )
+        dynamic_compile_static_update, _ = get_dynamic_compile_static_from_kb(op_type, op_info)
         if dynamic_compile_static_update not in {"true", "false", None}:
-            logger.error(
-                "Op {} dynamic_compile_static {} invalid.".format(
-                    op_type, dynamic_comiple_static
-                )
-            )
+            logger.error("Op {} dynamic_compile_static {} invalid.".format(op_type, dynamic_comiple_static))
             return None
         elif dynamic_compile_static_update is None:
             return dynamic_compile_static
         else:
-            logger.debug(
-                "{}'s dynamic_compile_static update to {}.".format(
-                    op_type, dynamic_compile_static_update
-                )
-            )
+            logger.debug("{}'s dynamic_compile_static update to {}.".format(op_type, dynamic_compile_static_update))
             return dynamic_compile_static_update
     else:
         return dynamic_compile_static
@@ -194,9 +182,7 @@ def get_mode_name_from_vendors_path(vendor_path):
     index = vendor_path.find("vendors/") + len("vendors/")
     op_mode_name = vendor_path[index:]
     op_mode_name = op_mode_name + "_impl"
-    logger.info(
-        "vendor_path is {}, op_mode_name is {}.".format(vendor_path, op_mode_name)
-    )
+    logger.info("vendor_path is {}, op_mode_name is {}.".format(vendor_path, op_mode_name))
     return op_mode_name
 
 
@@ -210,32 +196,18 @@ def find_mode_file_from_custom(op_type, custom_opp_path_list):
         index = op_path_custom.rfind("/") + 1
         op_mode_name = op_path_custom[index:]
         if not op_mode_name:
-            logger.info(
-                "{} find op op_mode_name from {} is None.".format(
-                    op_type, op_path_custom
-                )
-            )
+            logger.info("{} find op op_mode_name from {} is None.".format(op_type, op_path_custom))
             continue
         logger.info("op {} op_mode_name is {}.".format(op_type, op_mode_name))
         for middle_path in MIDDLE_PATH_LIST:
             middle_path = "{}/{}".format(middle_path, op_mode_name)
             py_module_path = "{}/{}".format(op_path_custom, middle_path)
-            op_py_file = get_file_real_path(
-                op_path_custom, op_type_name, "py", middle_path
-            )
-            logger.debug(
-                "op: {} op file is {}, py_module_path is {}.".format(
-                    op_type, op_py_file, py_module_path
-                )
-            )
+            op_py_file = get_file_real_path(op_path_custom, op_type_name, "py", middle_path)
+            logger.debug("op: {} op file is {}, py_module_path is {}.".format(op_type, op_py_file, py_module_path))
             if op_py_file is not None and Path(op_py_file).is_file():
                 ogger.debug("op: {} op file is {}.".format(op_type, op_py_file))
                 if py_module_path not in sys.path:
-                    logger.debug(
-                        "op: {} add py_module_path is {}.".format(
-                            op_type, py_module_path
-                        )
-                    )
+                    logger.debug("op: {} add py_module_path is {}.".format(op_type, py_module_path))
                     sys.path.append(py_module_path)
                 return op_mode_name, op_py_file
 
@@ -251,24 +223,14 @@ def find_mode_file_from_vendors(op_type, vendors_opp_path_list):
     for op_path_custom in vendors_opp_path_list:
         op_mode_name = get_mode_name_from_vendors_path(op_path_custom)
         if not op_mode_name:
-            logger.debug(
-                "{} find op op_mode_name from {} is None.".format(
-                    op_type, op_path_custom
-                )
-            )
+            logger.debug("{} find op op_mode_name from {} is None.".format(op_type, op_path_custom))
             continue
         logger.debug("op {} op_mode_name is {}.".format(op_type, op_mode_name))
         for middle_path in MIDDLE_PATH_LIST:
             py_module_path = "{}/{}".format(op_path_custom, middle_path)
             middle_file_path = "{}/{}".format(middle_path, op_mode_name)
-            op_py_file = get_file_real_path(
-                op_path_custom, op_type_name, "py", middle_file_path
-            )
-            logger.debug(
-                "op: {} op file is {}, py_module_path is {}.".format(
-                    op_type, op_py_file, py_module_path
-                )
-            )
+            op_py_file = get_file_real_path(op_path_custom, op_type_name, "py", middle_file_path)
+            logger.debug("op: {} op file is {}, py_module_path is {}.".format(op_type, op_py_file, py_module_path))
             if op_py_file is not None and Path(op_py_file).is_file():
                 logger.debug("op: {} op file is {}.".format(op_type, op_py_file))
                 if py_module_path not in sys.path:
@@ -278,14 +240,8 @@ def find_mode_file_from_vendors(op_type, vendors_opp_path_list):
             # dynamic
             py_module_path = "{}/{}".format(op_path_custom, middle_path)
             middle_file_path = "{}/{}/dynamic".format(middle_path, op_mode_name)
-            op_py_file = get_file_real_path(
-                op_path_custom, op_type_name, "py", middle_file_path
-            )
-            logger.debug(
-                "op: {} op file is {}, py_module_path is {}.".format(
-                    op_type, op_py_file, py_module_path
-                )
-            )
+            op_py_file = get_file_real_path(op_path_custom, op_type_name, "py", middle_file_path)
+            logger.debug("op: {} op file is {}, py_module_path is {}.".format(op_type, op_py_file, py_module_path))
             if op_py_file is not None and Path(op_py_file).is_file():
                 if py_module_path not in sys.path:
                     sys.path.append(py_module_path)
@@ -313,11 +269,7 @@ def get_built_in_op_operator(op_type, dynamic_compile_static, is_dynamic):
             logger.debug("{}'s op_operator is not null.".format(op_type))
             return op_operator.get_func()
         else:
-            logger.debug(
-                "{}'s op_compute is None, this is an unregistered operator.".format(
-                    op_type
-                )
-            )
+            logger.debug("{}'s op_compute is None, this is an unregistered operator.".format(op_type))
             return op_register_get_func(SubOpInfoStore(), op_type, "impl.dynamic")
     elif dynamic_compile_static == "false":
         return op_register_get_func(SubOpInfoStore(), op_type, "impl")
@@ -333,14 +285,8 @@ def get_single_op_operator(op_type, dynamic_compile_static, is_dynamic):
     op_type_name = normalize_func_name(op_type)
     custom_opp_path_list = OpPathParse().get_custom_opp_path_list()
     if custom_opp_path_list:
-        op_mode_name, op_py_file = find_mode_file_from_custom(
-            op_type, custom_opp_path_list
-        )
-        logger.debug(
-            "{}'s op_mode_name is {}, op_py_file is {}.".format(
-                op_type, op_mode_name, op_py_file
-            )
-        )
+        op_mode_name, op_py_file = find_mode_file_from_custom(op_type, custom_opp_path_list)
+        logger.debug("{}'s op_mode_name is {}, op_py_file is {}.".format(op_type, op_mode_name, op_py_file))
         if op_py_file is not None and Path(op_py_file).is_file():
             op_mode = "{}.{}".format(op_mode_name, op_type_name)
             logger.debug("{} op module {}.".format(op_type, op_mode))
@@ -349,14 +295,8 @@ def get_single_op_operator(op_type, dynamic_compile_static, is_dynamic):
 
     vendors_opp_path_list = OpPathParse().get_vendors_opp_path_list()
     if vendors_opp_path_list:
-        op_mode_name, op_py_file = find_mode_file_from_vendors(
-            op_type, vendors_opp_path_list
-        )
-        logger.debug(
-            "{}'s op_mode_name is {}, op_py_file is {}.".format(
-                op_type, op_mode_name, op_py_file
-            )
-        )
+        op_mode_name, op_py_file = find_mode_file_from_vendors(op_type, vendors_opp_path_list)
+        logger.debug("{}'s op_mode_name is {}, op_py_file is {}.".format(op_type, op_mode_name, op_py_file))
         if op_py_file is not None and Path(op_py_file).is_file():
             op_mode = "{}.{}".format(op_mode_name, op_type_name)
             logger.debug("{} op module {}.".format(op_type, op_mode))

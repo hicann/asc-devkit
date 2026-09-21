@@ -23,9 +23,7 @@ def gen_golden_data():
     x1_gm = np.random.uniform(1, 10, [B, M, K]).astype(input_type)
     x2_gm = np.random.uniform(1, 10, [B, K, N]).astype(input_type)
     bias_gm = np.random.uniform(1, 10, [B, 1, N]).astype(input_type)
-    golden = np.matmul(
-        x1_gm.astype(np.float32), x2_gm.astype(np.float32)
-    ) + bias_gm.astype(np.float32)
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)) + bias_gm.astype(np.float32)
     golden = golden.astype(np.half)
     os.system("mkdir -p input")
     os.system("mkdir -p output")

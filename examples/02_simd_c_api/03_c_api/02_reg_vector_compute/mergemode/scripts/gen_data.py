@@ -25,9 +25,7 @@ def gen_golden_data_simple():
     half_rep_size = one_rep_size // 2
     for i in range(0, total_length, one_rep_size):
         golden[i : i + half_rep_size] = x[i : i + half_rep_size]
-        golden[i + half_rep_size : i + one_rep_size] = y[
-            i + half_rep_size : i + one_rep_size
-        ]
+        golden[i + half_rep_size : i + one_rep_size] = y[i + half_rep_size : i + one_rep_size]
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

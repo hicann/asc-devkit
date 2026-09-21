@@ -22,12 +22,8 @@ def args_parse():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--auto-gen-path", required=True, help="auto gen path")
     parser.add_argument("-n", "--target-name", required=True, help="kernel target name")
-    parser.add_argument(
-        "-s", "--kernel-base-dir", required=True, help="kernel base dir"
-    )
-    parser.add_argument(
-        "-d", "--copy-dst-dir", required=True, help="copy kernel file dst dir"
-    )
+    parser.add_argument("-s", "--kernel-base-dir", required=True, help="kernel base dir")
+    parser.add_argument("-d", "--copy-dst-dir", required=True, help="copy kernel file dst dir")
     return parser.parse_args()
 
 
@@ -67,18 +63,12 @@ def copy_dir(src_dir, dst_dir, exclude_dir=None):
                 continue
             for item in items + dirs:
                 src_item = os.path.abspath(os.path.join(dir_path, item))
-                dst_item = os.path.abspath(
-                    os.path.join(dst_dir, dir_path.replace(src_dir, "."), item)
-                )
+                dst_item = os.path.abspath(os.path.join(dst_dir, dir_path.replace(src_dir, "."), item))
                 if os.path.islink(src_item):
-                    raise ValueError(
-                        f"unsupport soft link file, please check it. {os.path.abspath(src_item)}"
-                    )
+                    raise ValueError(f"unsupport soft link file, please check it. {os.path.abspath(src_item)}")
                 elif os.path.isdir(src_item):
                     continue
-                if not check_file_extension(
-                    src_item, ["", ".txt", ".h", ".hpp", ".cpp", ".c"]
-                ):
+                if not check_file_extension(src_item, ["", ".txt", ".h", ".hpp", ".cpp", ".c"]):
                     warnings.warn(
                         f"\n[Warning]: Unexpected file type found in {os.path.abspath(src_item)}"
                         f"\n[Warning]: Please check dir is required and correct : {os.path.abspath(dir_path)}",
@@ -92,15 +82,11 @@ def copy_dir(src_dir, dst_dir, exclude_dir=None):
 def copy_file(src_file, dst_file):
     try:
         if not os.path.exists(src_file):
-            raise FileNotFoundError(
-                f"kernel src file {os.path.abspath(src_file)} not found, please check it."
-            )
+            raise FileNotFoundError(f"kernel src file {os.path.abspath(src_file)} not found, please check it.")
         os.makedirs(os.path.dirname(dst_file), exist_ok=True)
         if (not src_file.endswith(".txt")) and (not os.path.exists(dst_file)):
             if os.path.islink(src_file):
-                raise ValueError(
-                    f"unsupport soft link file, please check it. {os.path.abspath(src_file)}"
-                )
+                raise ValueError(f"unsupport soft link file, please check it. {os.path.abspath(src_file)}")
             elif os.path.isfile(src_file):
                 shutil.copy2(src_file, dst_file)
             else:
@@ -139,21 +125,13 @@ def is_safe_relative_path(path: str) -> bool:
 
 
 def copy_kernel_src_file(args):
-    kernel_source_ini_file_path = os.path.join(
-        args.auto_gen_path, args.target_name + "_custom_source_files.ini"
-    )
+    kernel_source_ini_file_path = os.path.join(args.auto_gen_path, args.target_name + "_custom_source_files.ini")
     if os.path.exists(args.copy_dst_dir):
         shutil.rmtree(args.copy_dst_dir)
     suffixes_to_ignore = [".txt"]
-    cmake_current_binary_path = os.path.abspath(
-        os.path.join(args.copy_dst_dir, "..", "..", "..")
-    )
+    cmake_current_binary_path = os.path.abspath(os.path.join(args.copy_dst_dir, "..", "..", ".."))
     if not os.path.exists(kernel_source_ini_file_path):
-        copy_dir(
-            args.kernel_base_dir,
-            args.copy_dst_dir,
-            exclude_dir=cmake_current_binary_path,
-        )
+        copy_dir(args.kernel_base_dir, args.copy_dst_dir, exclude_dir=cmake_current_binary_path)
     kernel_src_config = configparser.ConfigParser()
     kernel_src_config.read(kernel_source_ini_file_path)
     sections = kernel_src_config.sections()

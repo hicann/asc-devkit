@@ -66,18 +66,13 @@ class MatmulGenData:
         tf.compat.v1.disable_eager_execution()
         x1 = tf.compat.v1.placeholder(np.float32, shape=x1_gm_fp32.shape)
         x2 = tf.compat.v1.placeholder(np.float32, shape=x2_gm_fp32.shape)
-        res_tf = tf.matmul(
-            x1, x2, transpose_a=self.is_trans_a, transpose_b=self.is_trans_b
-        )
+        res_tf = tf.matmul(x1, x2, transpose_a=self.is_trans_a, transpose_b=self.is_trans_b)
         if self.is_bias:
             bias = tf.compat.v1.placeholder(np.float32, shape=bias_gm_fp32.shape)
             res_tf = tf.add(res_tf, bias)
 
         with tf.compat.v1.Session() as sess:
-            feed_dict = {
-                x1: x1_gm_fp32,
-                x2: x2_gm_fp32,
-            }
+            feed_dict = {x1: x1_gm_fp32, x2: x2_gm_fp32}
             if self.is_bias:
                 feed_dict[bias] = bias_gm_fp32
             res_tf = sess.run(res_tf, feed_dict=feed_dict)
@@ -106,35 +101,13 @@ class MatmulGenData:
         if self.is_bias:
             bias_gm.tofile(work_dir + "/input/bias_gm.bin")
 
-    def savetxtfile(
-        self, work_dir, x1_gm_fp32, x2_gm_fp32, y_gm_fp32, bias_gm_fp32=None
-    ):
+    def savetxtfile(self, work_dir, x1_gm_fp32, x2_gm_fp32, y_gm_fp32, bias_gm_fp32=None):
         if IS_OUTPUT_TXT:
-            np.savetxt(
-                work_dir + "/input/x1_gm.txt",
-                x1_gm_fp32.flatten(),
-                fmt="%f",
-                newline="\n",
-            )
-            np.savetxt(
-                work_dir + "/input/x2_gm.txt",
-                x2_gm_fp32.flatten(),
-                fmt="%f",
-                newline="\n",
-            )
-            np.savetxt(
-                work_dir + "/output/golden.txt",
-                y_gm_fp32.astype(np.float32).flatten(),
-                fmt="%f",
-                newline="\n",
-            )
+            np.savetxt(work_dir + "/input/x1_gm.txt", x1_gm_fp32.flatten(), fmt="%f", newline="\n")
+            np.savetxt(work_dir + "/input/x2_gm.txt", x2_gm_fp32.flatten(), fmt="%f", newline="\n")
+            np.savetxt(work_dir + "/output/golden.txt", y_gm_fp32.astype(np.float32).flatten(), fmt="%f", newline="\n")
             if self.is_bias:
-                np.savetxt(
-                    work_dir + "/input/bias_gm.txt",
-                    bias_gm_fp32.flatten(),
-                    fmt="%f",
-                    newline="\n",
-                )
+                np.savetxt(work_dir + "/input/bias_gm.txt", bias_gm_fp32.flatten(), fmt="%f", newline="\n")
 
     def gen_golden_data_fp16(self, work_dir, dst_type=np.float32):
         src_type = np.float16
@@ -206,9 +179,7 @@ class MatmulGenData:
 
 
 if __name__ == "__main__":
-    matmul_gen_data = MatmulGenData(
-        64, 256, 384, 1, False, False, False, "float16_float32"
-    )
+    matmul_gen_data = MatmulGenData(64, 256, 384, 1, False, False, False, "float16_float32")
     os.makedirs("./input", exist_ok=True)
     os.makedirs("./output", exist_ok=True)
     matmul_gen_data.gen_golden_data(".")

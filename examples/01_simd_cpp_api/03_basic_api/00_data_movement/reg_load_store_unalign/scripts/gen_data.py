@@ -33,9 +33,7 @@ def gen_golden_data_scenario1():
     golden = np.zeros(count, dtype=np.float32)
     golden[1:129] = x[1:129].copy()  # indices 1-128 inclusive
     golden.tofile("./output/golden.bin")
-    print(
-        f"Scenario 1: Generated input_x.bin ({count} floats) and golden.bin ({count} floats)"
-    )
+    print(f"Scenario 1: Generated input_x.bin ({count} floats) and golden.bin ({count} floats)")
 
 
 def gen_golden_data_scenario2():
@@ -70,9 +68,7 @@ def gen_golden_data_scenario2():
             golden[row * results_per_row + block_idx] = block_max
 
     golden.tofile("./output/golden.bin")
-    print(
-        f"Scenario 2: Generated input_x.bin ({total_elements} uint16) and golden.bin ({len(golden)} uint16)"
-    )
+    print(f"Scenario 2: Generated input_x.bin ({total_elements} uint16) and golden.bin ({len(golden)} uint16)")
 
 
 if __name__ == "__main__":

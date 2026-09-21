@@ -23,15 +23,9 @@ import tempfile
 from typing import Optional, Tuple
 
 if __package__:
-    from .static_compile_resource_id import (
-        ResourceIdError,
-        generate_and_write_resource_id,
-    )
+    from .static_compile_resource_id import ResourceIdError, generate_and_write_resource_id
 else:
-    from static_compile_resource_id import (
-        ResourceIdError,
-        generate_and_write_resource_id,
-    )
+    from static_compile_resource_id import ResourceIdError, generate_and_write_resource_id
 
 _TILING_DATA_TEMPLATE = "@@STATIC_VALUE_tiling_data@@"
 _LINK_OPTION = ("-m", "aicorelinux", "-Ttext=0", "-q", "-x")
@@ -129,23 +123,17 @@ def build_tiling_key_group_index(*compile_contexts):
             for slave in slaves:
                 slave = str(slave)
                 if slave == master:
-                    raise ManifestCommandError(
-                        f"tiling key {master} cannot be both master and slave"
-                    )
+                    raise ManifestCommandError(f"tiling key {master} cannot be both master and slave")
                 previous_master = slave_to_master.get(slave)
                 if previous_master is not None and previous_master != master:
-                    raise ManifestCommandError(
-                        f"tiling key {slave} belongs to multiple masters"
-                    )
+                    raise ManifestCommandError(f"tiling key {slave} belongs to multiple masters")
                 slave_to_master[slave] = master
                 if slave not in known_slaves:
                     known_slaves.append(slave)
             master_to_slaves[master] = tuple(known_slaves)
     for master in master_to_slaves:
         if master in slave_to_master:
-            raise ManifestCommandError(
-                f"tiling key {master} cannot be both master and slave"
-            )
+            raise ManifestCommandError(f"tiling key {master} cannot be both master and slave")
     return master_to_slaves, slave_to_master
 
 
@@ -156,13 +144,9 @@ def _logical_symbol(compile_symbol, compile_tiling_key, logical_tiling_key):
     for core_suffix in ("", "_mix_aic", "_mix_aiv"):
         master_suffix = f"_{compile_tiling_key}{core_suffix}"
         if compile_symbol.endswith(master_suffix):
-            return (
-                compile_symbol[: -len(master_suffix)]
-                + f"_{logical_tiling_key}{core_suffix}"
-            )
+            return compile_symbol[: -len(master_suffix)] + f"_{logical_tiling_key}{core_suffix}"
     raise ManifestCommandError(
-        f"compile symbol {compile_symbol} does not end with master tiling key "
-        f"{compile_tiling_key}"
+        f"compile symbol {compile_symbol} does not end with master tiling key {compile_tiling_key}"
     )
 
 
@@ -173,9 +157,7 @@ class _KernelCompileRecordBuilder:
         self._snapshot = snapshot
         self._constant_infos = tuple(constant_infos)
         self._constant_info_size_by_tiling_key = constant_info_size_by_tiling_key
-        self._constant_info_files = tuple(
-            dict.fromkeys(item.template_path for item in self._constant_infos)
-        )
+        self._constant_info_files = tuple(dict.fromkeys(item.template_path for item in self._constant_infos))
 
     @staticmethod
     def _resolve_tiling_key(item, logical_keys):
@@ -184,24 +166,17 @@ class _KernelCompileRecordBuilder:
             return str(tiling_key_value)
         try:
             return next(
-                key
-                for key in sorted(logical_keys, key=len, reverse=True)
-                if item["kernelName"].endswith("_" + key)
+                key for key in sorted(logical_keys, key=len, reverse=True) if item["kernelName"].endswith("_" + key)
             )
         except StopIteration as error:
-            raise ManifestCommandError(
-                f"cannot determine tiling key for kernel {item['kernelName']}"
-            ) from error
+            raise ManifestCommandError(f"cannot determine tiling key for kernel {item['kernelName']}") from error
 
     def build(self) -> Tuple[KernelCompileRecord, ...]:
         compile_info = self._snapshot.compile_info
-        metadata_json_path = os.path.join(
-            os.path.dirname(compile_info.dst_file), compile_info.kernel_name + ".json"
-        )
+        metadata_json_path = os.path.join(os.path.dirname(compile_info.dst_file), compile_info.kernel_name + ".json")
         metadata = json.loads(Path(metadata_json_path).read_text(encoding="utf-8"))
         _, slave_to_master = build_tiling_key_group_index(
-            self._snapshot.basic_compile_info,
-            self._snapshot.sk_compile_info,
+            self._snapshot.basic_compile_info, self._snapshot.sk_compile_info
         )
         # Physical commands are indexed before slave keys are expanded.
         commands_by_key = self._group_commands_by_tiling_key()
@@ -210,52 +185,34 @@ class _KernelCompileRecordBuilder:
             for name, sizes in (self._constant_info_size_by_tiling_key or {}).items()
         }
         return tuple(
-            self._build_record(
-                item,
-                commands_by_key,
-                slave_to_master,
-                exact_sizes,
-            )
-            for item in metadata["kernelList"]
+            self._build_record(item, commands_by_key, slave_to_master, exact_sizes) for item in metadata["kernelList"]
         )
 
     def _group_commands_by_tiling_key(self):
         snapshot = self._snapshot
-        all_commands = list(
-            self._build_context_commands(snapshot.basic_compile_info, "basic")
-        )
+        all_commands = list(self._build_context_commands(snapshot.basic_compile_info, "basic"))
         if snapshot.sk_compile_info is not None:
-            all_commands.extend(
-                self._build_context_commands(snapshot.sk_compile_info, "sk")
-            )
+            all_commands.extend(self._build_context_commands(snapshot.sk_compile_info, "sk"))
         commands_by_key = {}
         for command in all_commands:
             commands_by_key.setdefault(command.tiling_key, []).append(command)
         return commands_by_key
 
     def _build_record(self, item, commands_by_key, slave_to_master, exact_sizes):
-        tiling_key = self._resolve_tiling_key(
-            item,
-            set(commands_by_key) | set(slave_to_master),
-        )
+        tiling_key = self._resolve_tiling_key(item, set(commands_by_key) | set(slave_to_master))
         compile_tiling_key = slave_to_master.get(tiling_key, tiling_key)
         try:
             physical_commands = commands_by_key[compile_tiling_key]
         except KeyError as error:
             raise ManifestCommandError(
-                f"master tiling key {compile_tiling_key} has no physical "
-                "compile command"
+                f"master tiling key {compile_tiling_key} has no physical compile command"
             ) from error
         commands = tuple(
             replace(
                 command,
                 tiling_key=tiling_key,
                 compile_tiling_key=compile_tiling_key,
-                compiled_symbol=_logical_symbol(
-                    command.compile_symbol,
-                    compile_tiling_key,
-                    tiling_key,
-                ),
+                compiled_symbol=_logical_symbol(command.compile_symbol, compile_tiling_key, tiling_key),
             )
             for command in physical_commands
         )
@@ -263,9 +220,7 @@ class _KernelCompileRecordBuilder:
             kernel_name=item["kernelName"],
             tiling_key=tiling_key,
             compile_tiling_key=compile_tiling_key,
-            constant_infos=self._resolve_constant_infos(
-                tiling_key, compile_tiling_key, exact_sizes
-            ),
+            constant_infos=self._resolve_constant_infos(tiling_key, compile_tiling_key, exact_sizes),
             commands=commands,
             link_options=_LINK_OPTION,
         )
@@ -274,20 +229,14 @@ class _KernelCompileRecordBuilder:
         resolved = []
         for constant_info in self._constant_infos:
             sizes = exact_sizes.get(constant_info.name, {})
-            byte_size = sizes.get(
-                tiling_key,
-                sizes.get(compile_tiling_key, constant_info.byte_size),
-            )
+            byte_size = sizes.get(tiling_key, sizes.get(compile_tiling_key, constant_info.byte_size))
             resolved.append(replace(constant_info, byte_size=byte_size))
         return tuple(resolved)
 
     def _build_context_commands(self, compile_info, object_type):
         recorded_commands = compile_info.compile_command_session.records
         if not recorded_commands:
-            raise ManifestCommandError(
-                f"{object_type} Manifest generation requires recorded "
-                "dynamic compile commands"
-            )
+            raise ManifestCommandError(f"{object_type} Manifest generation requires recorded dynamic compile commands")
         return tuple(
             replace(
                 spec,
@@ -363,11 +312,7 @@ def _portable_wrapper_text(source_content, original_source_path, sk_slave_symbol
     # Remove host-specific paths and restore the ABI expected by logical SK slaves.
     wrapper_text = source_content.decode("utf-8")
     absolute_include = f'#include "{original_source_path}"'
-    wrapper_text = wrapper_text.replace(
-        absolute_include,
-        f'#include "{os.path.basename(original_source_path)}"',
-        1,
-    )
+    wrapper_text = wrapper_text.replace(absolute_include, f'#include "{os.path.basename(original_source_path)}"', 1)
     for symbol in sk_slave_symbols:
         pattern = (
             rf"(\bvoid\s+{re.escape(symbol)}\s*\(\s*)"
@@ -414,9 +359,7 @@ def _parse_include_option(argv, index):
     return None, 1
 
 
-def _normalize_source_include_options(
-    argv, source_file_path, replacement, insertion_before=None
-):
+def _normalize_source_include_options(argv, source_file_path, replacement, insertion_before=None):
     source_dir = os.path.dirname(source_file_path)
     normalized = []
     source_include_added = False
@@ -475,17 +418,13 @@ def _factor_common_compile(commands, resource_path):
     for command in commands:
         argv = command["cmd"]
         source_index = next(
-            index
-            for index, value in enumerate(argv)
-            if value.startswith("${resource}/" + resource_path + "/src/")
+            index for index, value in enumerate(argv) if value.startswith("${resource}/" + resource_path + "/src/")
         )
         prefixes.append(argv[1:source_index])
     common = list(prefixes[0])
     for prefix in prefixes[1:]:
         length = 0
-        while (
-            length < min(len(common), len(prefix)) and common[length] == prefix[length]
-        ):
+        while length < min(len(common), len(prefix)) and common[length] == prefix[length]:
             length += 1
         common = common[:length]
     for command in commands:
@@ -566,12 +505,8 @@ class ManifestPackageWriter:
                 template=_TILING_DATA_TEMPLATE,
             ),
         )
-        constant_info_sizes = snapshot.constant_info_size_by_tiling_key or {
-            "tiling_data": manifest_tiling_sizes
-        }
-        self._kernels = _KernelCompileRecordBuilder(
-            snapshot, constant_infos, constant_info_sizes
-        ).build()
+        constant_info_sizes = snapshot.constant_info_size_by_tiling_key or {"tiling_data": manifest_tiling_sizes}
+        self._kernels = _KernelCompileRecordBuilder(snapshot, constant_infos, constant_info_sizes).build()
         self._source_file_path = compile_info.src_file
         self._origin_func_name = compile_info.origin_func_name
         self._manifest_name = f"{compile_info.kernel_name}_manifest.json"
@@ -588,13 +523,7 @@ class ManifestPackageWriter:
 
     @staticmethod
     def _append_sk_objcopy_commands(commands, rename_specs, split_specs):
-        for (
-            dynamic_symbol,
-            static_symbol,
-            compile_symbol,
-            source,
-            output,
-        ) in rename_specs:
+        for dynamic_symbol, static_symbol, compile_symbol, source, output in rename_specs:
             commands.append(
                 {
                     "type": "objcopy",
@@ -613,8 +542,7 @@ class ManifestPackageWriter:
                     "type": "objcopy",
                     "cmd": [
                         "${env:ASCEND_HOME_PATH}/bin/llvm-objcopy",
-                        f"--redefine-sym={static_symbol}="
-                        f"{static_symbol}_split{split_index}",
+                        f"--redefine-sym={static_symbol}={static_symbol}_split{split_index}",
                         sk_output,
                         _output_placeholder(split_name),
                     ],
@@ -622,31 +550,23 @@ class ManifestPackageWriter:
             )
 
     @staticmethod
-    def _build_sk_split_specs(
-        kernel, core_suffix, static_symbol, final_output, multiple_cores
-    ):
+    def _build_sk_split_specs(kernel, core_suffix, static_symbol, final_output, multiple_cores):
         specs = []
         for split_index in range(1, 4):
             split_name = f"{kernel.kernel_name}.sk_split{split_index}.o"
             if multiple_cores:
-                split_name = (
-                    f"{kernel.kernel_name}.{core_suffix}.sk_split{split_index}.o"
-                )
+                split_name = f"{kernel.kernel_name}.{core_suffix}.sk_split{split_index}.o"
             specs.append((static_symbol, final_output, split_index, split_name))
         return tuple(specs)
 
     def write(self) -> str:
         os.makedirs(self._parent_dir, exist_ok=True)
-        lock_path = os.path.join(
-            self._parent_dir, f".{self._kernel_name}.manifest.lock"
-        )
+        lock_path = os.path.join(self._parent_dir, f".{self._kernel_name}.manifest.lock")
         with open(lock_path, "a+", encoding="utf-8") as lock_file:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
             try:
                 # Build the complete package outside the visible target directory.
-                self._stage_dir = tempfile.mkdtemp(
-                    prefix=f".{self._kernel_name}.stage.", dir=self._parent_dir
-                )
+                self._stage_dir = tempfile.mkdtemp(prefix=f".{self._kernel_name}.stage.", dir=self._parent_dir)
                 self._collect_resources()
                 manifest = self._build_manifest()
                 _write_resources(self._stage_dir, self._resource_path, self._resources)
@@ -658,10 +578,7 @@ class ManifestPackageWriter:
                 _fsync_tree(self._stage_dir)
                 _publish_directory(self._stage_dir, self._target_dir)
                 self._stage_dir = ""
-                return os.path.join(
-                    self._target_dir,
-                    self._manifest_name,
-                )
+                return os.path.join(self._target_dir, self._manifest_name)
             finally:
                 if self._stage_dir and os.path.isdir(self._stage_dir):
                     shutil.rmtree(self._stage_dir)
@@ -687,26 +604,18 @@ class ManifestPackageWriter:
                 if record.tiling_key == record.compile_tiling_key:
                     continue
                 sk_slave_symbols.append(record.compiled_symbol)
-            wrapper = _portable_wrapper_text(
-                source_content,
-                self._source_file_path,
-                tuple(sk_slave_symbols),
-            ).encode("utf-8")
-            self._wrapper_paths[source_path] = _add_resource(
-                self._resources, logical, content=wrapper
+            wrapper = _portable_wrapper_text(source_content, self._source_file_path, tuple(sk_slave_symbols)).encode(
+                "utf-8"
             )
+            self._wrapper_paths[source_path] = _add_resource(self._resources, logical, content=wrapper)
 
         # Constant templates are shared resources with per-Kernel logical values.
         templates_by_path = {}
         for kernel in self._kernels:
             for constant_info in kernel.constant_infos:
-                templates_by_path.setdefault(constant_info.template_path, set()).add(
-                    constant_info.template
-                )
+                templates_by_path.setdefault(constant_info.template_path, set()).add(constant_info.template)
         for path, template_markers in templates_by_path.items():
-            source_text = _read_regular_file(path, "constant info template").decode(
-                "utf-8"
-            )
+            source_text = _read_regular_file(path, "constant info template").decode("utf-8")
             logical = "include/" + os.path.basename(path)
             if _TILING_DATA_TEMPLATE in template_markers:
                 source_text = static_tiling_template_text(source_text)
@@ -738,10 +647,7 @@ class ManifestPackageWriter:
                             "parameter_index": constant_info.parameter_index,
                             "byte_size": constant_info.byte_size,
                             "file": _resource_placeholder(
-                                self._resource_path,
-                                self._constant_info_logicals[
-                                    constant_info.template_path
-                                ],
+                                self._resource_path, self._constant_info_logicals[constant_info.template_path]
                             ),
                             "template": constant_info.template,
                         }
@@ -752,9 +658,7 @@ class ManifestPackageWriter:
                 }
             )
 
-        common_compile = _factor_common_compile(
-            self._wrapper_commands, self._resource_path
-        )
+        common_compile = _factor_common_compile(self._wrapper_commands, self._resource_path)
         return {
             "soc_version": self._snapshot.soc_version,
             "resource_id": self._snapshot.resource_id,
@@ -769,19 +673,11 @@ class ManifestPackageWriter:
         outputs = []
         for record in records:
             output_name = f"{kernel.kernel_name}.{_core_suffix(record.core_type)}.o"
-            command = {
-                "type": "compile",
-                "cmd": self._normalize_compile_command(record, output_name),
-            }
+            command = {"type": "compile", "cmd": self._normalize_compile_command(record, output_name)}
             commands.append(command)
             self._wrapper_commands.append(command)
             outputs.append(_output_placeholder(output_name))
-        return {
-            "object_name": "basic",
-            "object_type": "basic",
-            "commands": commands,
-            "outputs": outputs,
-        }
+        return {"object_name": "basic", "object_type": "basic", "commands": commands, "outputs": outputs}
 
     def _build_sk_object(self, kernel, basic_records, sk_records):
         basic_by_core = {record.core_type: record for record in basic_records}
@@ -793,13 +689,8 @@ class ManifestPackageWriter:
         multiple_cores = len(sk_records) > 1
         for record in sk_records:
             basic_record = basic_by_core[record.core_type]
-            command, final_output, rename_spec, record_splits, bind_pair = (
-                self._plan_sk_compile(
-                    kernel,
-                    basic_record,
-                    record,
-                    multiple_cores,
-                )
+            command, final_output, rename_spec, record_splits, bind_pair = self._plan_sk_compile(
+                kernel, basic_record, record, multiple_cores
             )
             commands.append(command)
             self._wrapper_commands.append(command)
@@ -810,43 +701,22 @@ class ManifestPackageWriter:
             bind_pairs.append(bind_pair)
 
         # SK compile outputs are followed by bind and symbol-rewrite commands.
-        bind_output_name = self._append_sk_bind_command(
-            kernel,
-            bind_pairs,
-            commands,
-        )
-        self._append_sk_objcopy_commands(
-            commands,
-            logical_rename_specs,
-            split_specs,
-        )
-        outputs.extend(
-            _output_placeholder(split_name) for _, _, _, split_name in split_specs
-        )
+        bind_output_name = self._append_sk_bind_command(kernel, bind_pairs, commands)
+        self._append_sk_objcopy_commands(commands, logical_rename_specs, split_specs)
+        outputs.extend(_output_placeholder(split_name) for _, _, _, split_name in split_specs)
         outputs.append(_output_placeholder(bind_output_name))
-        return {
-            "object_name": "sk",
-            "object_type": "sk",
-            "commands": commands,
-            "outputs": outputs,
-        }
+        return {"object_name": "sk", "object_type": "sk", "commands": commands, "outputs": outputs}
 
     def _plan_sk_compile(self, kernel, basic_record, record, multiple_cores):
         static_sk_symbol = basic_record.compiled_symbol + "_static_sk"
         compile_static_sk_symbol = basic_record.compile_symbol + "_static_sk"
         core_suffix = _core_suffix(record.core_type)
         final_output_name = (
-            f"{kernel.kernel_name}.{core_suffix}.sk.o"
-            if multiple_cores
-            else f"{kernel.kernel_name}.sk.o"
+            f"{kernel.kernel_name}.{core_suffix}.sk.o" if multiple_cores else f"{kernel.kernel_name}.sk.o"
         )
         # A slave compiles the master key and then renames the resulting symbols.
         is_slave = kernel.tiling_key != kernel.compile_tiling_key
-        compile_output_name = (
-            final_output_name.replace(".sk.o", ".sk_source.o")
-            if is_slave
-            else final_output_name
-        )
+        compile_output_name = final_output_name.replace(".sk.o", ".sk_source.o") if is_slave else final_output_name
         command = {
             "type": "compile",
             "cmd": self._normalize_compile_command(
@@ -867,13 +737,7 @@ class ManifestPackageWriter:
                 compile_output,
                 final_output,
             )
-        split_specs = self._build_sk_split_specs(
-            kernel,
-            core_suffix,
-            static_sk_symbol,
-            final_output,
-            multiple_cores,
-        )
+        split_specs = self._build_sk_split_specs(kernel, core_suffix, static_sk_symbol, final_output, multiple_cores)
         bind_pair = (basic_record.compiled_symbol, static_sk_symbol)
         return command, final_output, rename_spec, split_specs, bind_pair
 
@@ -885,39 +749,18 @@ class ManifestPackageWriter:
             self._resources,
             "src/" + bind_name,
             content=_static_bind_source(
-                bind_pairs,
-                basic_attribute or sk_attribute,
-                sk_attribute,
-                self._snapshot.sk_cap_bitmap,
+                bind_pairs, basic_attribute or sk_attribute, sk_attribute, self._snapshot.sk_cap_bitmap
             ),
         )
         output_name = f"{kernel.kernel_name}.sk_bind.o"
-        commands.append(
-            {
-                "type": "compile",
-                "cmd": self._build_bind_command(bind_logical, output_name),
-            }
-        )
+        commands.append({"type": "compile", "cmd": self._build_bind_command(bind_logical, output_name)})
         return output_name
 
-    def _normalize_compile_command(
-        self,
-        record,
-        output_name,
-        target_symbol=None,
-        tiling_key=None,
-    ):
+    def _normalize_compile_command(self, record, output_name, target_symbol=None, tiling_key=None):
         # Convert a recorded host compile command into a relocatable Manifest command.
         argv = self._prepare_compile_argv(record)
-        source_reference = _resource_placeholder(
-            self._resource_path, self._wrapper_paths[record.source_path]
-        )
-        normalized = self._replace_compile_paths(
-            argv,
-            record,
-            output_name,
-            source_reference,
-        )
+        source_reference = _resource_placeholder(self._resource_path, self._wrapper_paths[record.source_path])
+        normalized = self._replace_compile_paths(argv, record, output_name, source_reference)
         self._rewrite_static_sk_symbols(normalized, target_symbol, tiling_key)
         source_index = normalized.index(source_reference)
         if "-DCONST_TILING" not in normalized:
@@ -926,30 +769,17 @@ class ManifestPackageWriter:
 
     def _prepare_compile_argv(self, record):
         argv = _normalize_source_include_options(
-            list(record.argv),
-            self._source_file_path,
-            "${source_file_path}",
-            insertion_before=record.source_path,
+            list(record.argv), self._source_file_path, "${source_file_path}", insertion_before=record.source_path
         )
-        argv = [
-            value
-            for value in argv
-            if not value.startswith("-D__SUPER_KERNEL_DYNAMIC_BLOCK_NUM__")
-        ]
-        compiler_index = next(
-            index
-            for index, value in enumerate(argv)
-            if os.path.basename(value) == "bisheng"
-        )
+        argv = [value for value in argv if not value.startswith("-D__SUPER_KERNEL_DYNAMIC_BLOCK_NUM__")]
+        compiler_index = next(index for index, value in enumerate(argv) if os.path.basename(value) == "bisheng")
         argv = argv[compiler_index:]
         argv[0] = "${env:ASCEND_HOME_PATH}/bin/bisheng"
         return argv
 
     def _replace_compile_paths(self, argv, record, output_name, source_reference):
         constant_info_references = {
-            path: _resource_placeholder(
-                self._resource_path, self._constant_info_logicals[path]
-            )
+            path: _resource_placeholder(self._resource_path, self._constant_info_logicals[path])
             for path in record.constant_info_files
         }
         output_reference = _output_placeholder(output_name)
@@ -984,26 +814,18 @@ class ManifestPackageWriter:
             if value.startswith(auto_gen_prefix):
                 argv[index] = auto_gen_prefix + target_symbol
             elif value.startswith(origin_prefix):
-                argv[index] = (
-                    origin_prefix + f"{origin_func_name}_{tiling_key}_tilingkey"
-                )
+                argv[index] = origin_prefix + f"{origin_func_name}_{tiling_key}_tilingkey"
 
     def _build_bind_command(self, source_logical, output_name):
         sk_compile_info = self._snapshot.sk_compile_info
         recorded_commands = sk_compile_info.compile_command_session.sk_bind_records
         recorded = recorded_commands[0] if recorded_commands else None
         if recorded is None:
-            raise ManifestCommandError(
-                "SK Manifest generation requires a recorded sk-bind command"
-            )
+            raise ManifestCommandError("SK Manifest generation requires a recorded sk-bind command")
         source_reference = _resource_placeholder(self._resource_path, source_logical)
         output_reference = _output_placeholder(output_name)
         argv = list(recorded.argv)
-        compiler_index = next(
-            index
-            for index, value in enumerate(argv)
-            if os.path.basename(value) == "bisheng"
-        )
+        compiler_index = next(index for index, value in enumerate(argv) if os.path.basename(value) == "bisheng")
         argv = argv[compiler_index:]
         argv[0] = "${env:ASCEND_HOME_PATH}/bin/bisheng"
         argv = _normalize_source_include_options(argv, self._source_file_path, None)
@@ -1013,13 +835,9 @@ class ManifestPackageWriter:
             if value == recorded.source_path:
                 value = source_reference
             else:
-                value = _replace_path_token(
-                    value, recorded.source_path, source_reference
-                )
+                value = _replace_path_token(value, recorded.source_path, source_reference)
             value = _replace_path_token(value, recorded.output_path, output_reference)
-            if value == "-DCONST_TILING" or value.startswith(
-                "-D__SUPER_KERNEL_DYNAMIC_BLOCK_NUM__"
-            ):
+            if value == "-DCONST_TILING" or value.startswith("-D__SUPER_KERNEL_DYNAMIC_BLOCK_NUM__"):
                 continue
             if cann_root and cann_root in value:
                 value = value.replace(cann_root, "${env:ASCEND_HOME_PATH}")
@@ -1047,23 +865,15 @@ class KernelSpecCompilation:
         self.sk_cap_bitmap = None
         self._cleaned = False
         # Save process-global SK state before the record-only replay changes it.
-        self._global_state = {
-            name: global_var_storage.get_variable(name)
-            for name in self._GLOBAL_STATE_NAMES
-        }
+        self._global_state = {name: global_var_storage.get_variable(name) for name in self._GLOBAL_STATE_NAMES}
         is_sk_double_compile = (
             context.get_addition("super_kernel_sub_combine") is True
             and self._global_state["ascendc_enable_super_kernel"] is True
         )
         self._kernel_spec_mode = context.get_addition("kernel_spec_mode") or "None"
-        self.enabled = (
-            self._kernel_spec_mode in {"Normal", "SK"}
-            and not tiling_info.static_shape_flag
-        )
+        self.enabled = self._kernel_spec_mode in {"Normal", "SK"} and not tiling_info.static_shape_flag
         self._validate_configuration()
-        self.record_sk_commands = (
-            self.enabled and self._kernel_spec_mode == "SK" and is_sk_double_compile
-        )
+        self.record_sk_commands = self.enabled and self._kernel_spec_mode == "SK" and is_sk_double_compile
         self.sk_compile_info = None
         self.sk_compile_option_tuple = None
         self._initialize_sk_recording(compile_option_tuple)
@@ -1094,10 +904,8 @@ class KernelSpecCompilation:
         if self.enabled:
             # Execute the Normal compile and retain its commands for the Manifest.
             _, _, utility_module, _ = _kernel_spec_runtime()
-            self.basic_compile_info.compile_command_session = (
-                utility_module.CompileCommandSession(
-                    utility_module.CompileCommandMode.EXECUTE_AND_RECORD
-                )
+            self.basic_compile_info.compile_command_session = utility_module.CompileCommandSession(
+                utility_module.CompileCommandMode.EXECUTE_AND_RECORD
             )
 
     def attach_resource_id(self):
@@ -1105,13 +913,10 @@ class KernelSpecCompilation:
             return
         _, error_mgr, utility_module, _ = _kernel_spec_runtime()
         try:
-            self.resource_id = generate_and_write_resource_id(
-                self.compile_info.dst_file
-            )
+            self.resource_id = generate_and_write_resource_id(self.compile_info.dst_file)
         except ResourceIdError as error:
             utility_module.CommonUtility.ascendc_raise_python_err(
-                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE,
-                f"generate Resource ID failed, reason is: {error}",
+                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE, f"generate Resource ID failed, reason is: {error}"
             )
 
     def begin_sk_recording(self):
@@ -1120,8 +925,7 @@ class KernelSpecCompilation:
         # Restore SK state only for the record-only replay.
         _, _, _, storage_module = _kernel_spec_runtime()
         self.basic_compile_info.global_kernel_symbols = [
-            command.compiled_symbol
-            for command in self.basic_compile_info.compile_command_session.records
+            command.compiled_symbol for command in self.basic_compile_info.compile_command_session.records
         ]
         global_var_storage = storage_module.global_var_storage
         global_var_storage.set_variable("ascendc_enable_super_kernel", True)
@@ -1140,9 +944,7 @@ class KernelSpecCompilation:
         try:
             ManifestPackageWriter(
                 ManifestInputSnapshot(
-                    soc_version=storage_module.global_var_storage.get_variable(
-                        "ascendc_short_soc_version"
-                    ),
+                    soc_version=storage_module.global_var_storage.get_variable("ascendc_short_soc_version"),
                     kernel_spec_dir=self.kernel_spec_dir,
                     resource_id=self.resource_id,
                     compile_info=self.compile_info,
@@ -1155,8 +957,7 @@ class KernelSpecCompilation:
             ).write()
         except ManifestGenerationError as error:
             utility_module.CommonUtility.ascendc_raise_python_err(
-                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE,
-                f"generate Manifest failed, reason is: {error}",
+                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE, f"generate Manifest failed, reason is: {error}"
             )
 
     def cleanup(self):
@@ -1167,13 +968,9 @@ class KernelSpecCompilation:
         if (
             self.record_sk_commands
             and self.sk_compile_info.gen_kernel_func_file
-            and not storage_module.global_var_storage.get_variable(
-                "ascendc_compile_debug_config"
-            )
+            and not storage_module.global_var_storage.get_variable("ascendc_compile_debug_config")
         ):
-            utility_module.CommonUtility.remove_temp_file(
-                self.sk_compile_info.gen_kernel_func_file
-            )
+            utility_module.CommonUtility.remove_temp_file(self.sk_compile_info.gen_kernel_func_file)
 
     def _validate_configuration(self):
         if not self.enabled:
@@ -1182,8 +979,7 @@ class KernelSpecCompilation:
         common_utility = utility_module.CommonUtility
         if not (common_utility.is_v220() or common_utility.is_c310()):
             error_mgr.raise_tbe_python_err(
-                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE,
-                "Kernel Spec only supports v220 and c310 architectures.",
+                error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE, "Kernel Spec only supports v220 and c310 architectures."
             )
         if not self.kernel_spec_dir:
             error_mgr.raise_tbe_python_err(
@@ -1197,10 +993,8 @@ class KernelSpecCompilation:
         _, _, utility_module, storage_module = _kernel_spec_runtime()
         self.sk_compile_info = copy.deepcopy(self.compile_info)
         self.sk_compile_option_tuple = copy.deepcopy(compile_option_tuple)
-        self.sk_compile_info.compile_command_session = (
-            utility_module.CompileCommandSession(
-                utility_module.CompileCommandMode.RECORD_ONLY
-            )
+        self.sk_compile_info.compile_command_session = utility_module.CompileCommandSession(
+            utility_module.CompileCommandMode.RECORD_ONLY
         )
         # Compile the normal object first, then replay the SK workflow to
         # record commands without producing a second set of objects.

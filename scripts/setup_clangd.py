@@ -36,39 +36,19 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate a clangd config from ASCEND_HOME_PATH for a local CANN installation."
     )
-    parser.add_argument(
-        "--npu-arch",
-        default="2201",
-        choices=("2201", "3510"),
-        help="Value for __NPU_ARCH__.",
-    )
-    parser.add_argument(
-        "--output",
-        default=str(DEFAULT_OUTPUT),
-        help="Output config path. Default: .clangd.local",
-    )
-    parser.add_argument(
-        "-f",
-        "--force",
-        action="store_true",
-        help="Overwrite the output file if it already exists.",
-    )
+    parser.add_argument("--npu-arch", default="2201", choices=("2201", "3510"), help="Value for __NPU_ARCH__.")
+    parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Output config path. Default: .clangd.local")
+    parser.add_argument("-f", "--force", action="store_true", help="Overwrite the output file if it already exists.")
     return parser.parse_args()
 
 
 def missing_required_dirs(ascend_home_path: Path) -> list[str]:
-    return [
-        rel_path
-        for rel_path in REQUIRED_DIRS
-        if not (ascend_home_path / rel_path).is_dir()
-    ]
+    return [rel_path for rel_path in REQUIRED_DIRS if not (ascend_home_path / rel_path).is_dir()]
 
 
 def render_template(ascend_home_path: Path, npu_arch: str) -> str:
     template = TEMPLATE.read_text(encoding="utf-8")
-    return template.replace("@ASCEND_HOME_PATH@", ascend_home_path.as_posix()).replace(
-        "@NPU_ARCH@", npu_arch
-    )
+    return template.replace("@ASCEND_HOME_PATH@", ascend_home_path.as_posix()).replace("@NPU_ARCH@", npu_arch)
 
 
 def configure_logging() -> None:
@@ -80,9 +60,7 @@ def main() -> int:
     args = parse_args()
     ascend_home_env = os.environ.get("ASCEND_HOME_PATH")
     if not ascend_home_env:
-        logging.error(
-            "ASCEND_HOME_PATH is not set. Please source CANN set_env.sh and retry."
-        )
+        logging.error("ASCEND_HOME_PATH is not set. Please source CANN set_env.sh and retry.")
         return 1
 
     ascend_home_path = Path(ascend_home_env).expanduser().resolve()
@@ -103,13 +81,9 @@ def main() -> int:
         return 1
 
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        render_template(ascend_home_path, args.npu_arch), encoding="utf-8"
-    )
+    output.write_text(render_template(ascend_home_path, args.npu_arch), encoding="utf-8")
     logging.info("Generated %s using ASCEND_HOME_PATH=%s", output, ascend_home_path)
-    logging.info(
-        "Copy it to .clangd or point clangd user config to these flags if you want clangd to load it."
-    )
+    logging.info("Copy it to .clangd or point clangd user config to these flags if you want clangd to load it.")
     return 0
 
 

@@ -31,11 +31,7 @@ def verify_result(output, golden):
     total_elements = golden.size
 
     different_element_results = np.isclose(
-        output.astype(np.float32),
-        golden.astype(np.float32),
-        rtol=RELATIVE_TOL,
-        atol=ABSOLUTE_TOL,
-        equal_nan=True,
+        output.astype(np.float32), golden.astype(np.float32), rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
     )
     different_element_indexes = np.where(different_element_results == False)[0]
 
@@ -53,12 +49,7 @@ def verify_result(output, golden):
         denom = abs(golden_data) if abs(golden_data) > 1e-12 else 1.0
         print(
             "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f"
-            % (
-                real_index,
-                golden_data,
-                output_data,
-                abs(output_data - golden_data) / denom,
-            )
+            % (real_index, golden_data, output_data, abs(output_data - golden_data) / denom)
         )
         if index == 100:
             break

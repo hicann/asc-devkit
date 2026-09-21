@@ -81,21 +81,15 @@ def gen_tiling(tiling_header_file):
             elif line.startswith("TILING_DATA_FIELD_DEF_ARR"):
                 field_params = re.findall(pattern, line)[0]
                 fds = field_params.split(",")
-                single_tiling_source += "    {} {}[{}] = {{}};\n".format(
-                    fds[0].strip(), fds[2].strip(), fds[1].strip()
-                )
+                single_tiling_source += "    {} {}[{}] = {{}};\n".format(fds[0].strip(), fds[2].strip(), fds[1].strip())
             elif line.startswith("TILING_DATA_FIELD_DEF_STRUCT"):
                 field_params = re.findall(pattern, line)[0]
                 fds = field_params.split(",")
-                single_tiling_source += "    {} {};\n".format(
-                    fds[0].strip(), fds[1].strip()
-                )
+                single_tiling_source += "    {} {};\n".format(fds[0].strip(), fds[1].strip())
             elif line.startswith("TILING_DATA_FIELD_DEF"):
                 field_params = re.findall(pattern, line)[0]
                 fds = field_params.split(",")
-                single_tiling_source += "    {} {} = 0;\n".format(
-                    fds[0].strip(), fds[1].strip()
-                )
+                single_tiling_source += "    {} {} = 0;\n".format(fds[0].strip(), fds[1].strip())
             elif line.startswith("END_TILING_DATA_DEF"):
                 single_tiling_source += "};\n"
                 single_tiling_source += "#pragma pack(pop)\n"
@@ -141,7 +135,5 @@ if __name__ == "__main__":
     if not os.path.exists(generate_dir):
         os.makedirs(generate_dir, exist_ok=True)
 
-    with os.fdopen(
-        os.open(absolute_file, os.O_RDWR | os.O_CREAT | os.O_TRUNC), "w"
-    ) as ofd:
+    with os.fdopen(os.open(absolute_file, os.O_RDWR | os.O_CREAT | os.O_TRUNC), "w") as ofd:
         ofd.write(res)

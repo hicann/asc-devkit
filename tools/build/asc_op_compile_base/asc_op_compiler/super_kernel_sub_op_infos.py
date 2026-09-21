@@ -20,12 +20,7 @@ import subprocess
 import math
 import threading
 from contextlib import contextmanager
-from .super_kernel_utility import (
-    get_soc_spec,
-    CommonUtility,
-    AscendCLogLevel,
-    CompileStage,
-)
+from .super_kernel_utility import get_soc_spec, CommonUtility, AscendCLogLevel, CompileStage
 from .super_kernel_constants import (
     SuperKernelEarlyStartMode,
     SubOperatorType,
@@ -55,26 +50,20 @@ def change_dir(path):
 
 
 class SubOperatorInfos:
-    def __init__(
-        self, index, info_dict, stream_index: int, op_options, compile_log_path=None
-    ):
+    def __init__(self, index, info_dict, stream_index: int, op_options, compile_log_path=None):
         keys_list = list(info_dict.keys())
         self.json_path: str = info_dict["json_path"]
         self.bin_path: list = info_dict["bin_path"]
         self.compile_log_path: str = compile_log_path
         self.start_block_idx = 0
         self.stream_index = stream_index  # true stream id
-        self.sub_op_task_type: SubOperatorType = STR_TO_SUPER_TASK_TYPE[
-            info_dict.get("task_type", "normal")
-        ]
+        self.sub_op_task_type: SubOperatorType = STR_TO_SUPER_TASK_TYPE[info_dict.get("task_type", "normal")]
         self.index: int = index
         self.kernel_name: str = ""
         # stream fusion option will use kernel name for sync instr optiomization,
         # kernel name will be the same when fusing multi layer in one sk, separate them by index
         self.kernel_name_for_multi_stream: str = ""
-        self.notify_before_call_event_list = info_dict.get(
-            "notify_before_call_event_list", []
-        )
+        self.notify_before_call_event_list = info_dict.get("notify_before_call_event_list", [])
         self.send_event_list = info_dict.get("send_event_list", [])
         self.recv_event_list = info_dict.get("recv_event_list", [])
         self.send_info: dict = {}
@@ -100,9 +89,7 @@ class SubOperatorInfos:
             "feed-sync-all", SuperKernelFeedSyncAllMode.FeedSyncAllDisable
         )
 
-        self.profiling_mode = op_options.get(
-            "profiling", SuperKernelProfilingMode.ProfilingDisable
-        )
+        self.profiling_mode = op_options.get("profiling", SuperKernelProfilingMode.ProfilingDisable)
         self.early_start_set_flag: bool = False
         self.early_start_wait_flag: bool = False
         self.aiv_bin: str = None
@@ -119,19 +106,13 @@ class SubOperatorInfos:
         self.call_dcci_disable_on_kernel: bool = False
         # For dynamic operators, decide whether to add DCCI options during the final superkernel compilation
         self.dcci_before_kernel_start_op_list = [
-            part_op.strip()
-            for part_op in op_options.get("dcci-before-kernel-start", "").split(",")
-            if part_op.strip()
+            part_op.strip() for part_op in op_options.get("dcci-before-kernel-start", "").split(",") if part_op.strip()
         ]
         self.dcci_after_kernel_end_op_list = [
-            part_op.strip()
-            for part_op in op_options.get("dcci-after-kernel-end", "").split(",")
-            if part_op.strip()
+            part_op.strip() for part_op in op_options.get("dcci-after-kernel-end", "").split(",") if part_op.strip()
         ]
         self.dcci_disable_on_kernel_op_list = [
-            part_op.strip()
-            for part_op in op_options.get("dcci-disable-on-kernel", "").split(",")
-            if part_op.strip()
+            part_op.strip() for part_op in op_options.get("dcci-disable-on-kernel", "").split(",") if part_op.strip()
         ]
         # code_gen of dynamic op
         self._gen_code_for_dynamic_op()
@@ -197,9 +178,7 @@ class SubOperatorInfos:
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
         ]
 
-    def _gen_notify_block_for_core(
-        self, inner_event_id_set, is_aic, event_list=None, notify_param_offset=None
-    ):
+    def _gen_notify_block_for_core(self, inner_event_id_set, is_aic, event_list=None, notify_param_offset=None):
         if event_list is None:
             event_list = self.send_event_list
         if notify_param_offset is None:
@@ -214,10 +193,8 @@ class SubOperatorInfos:
                     self.compile_log_path,
                 )
                 param_offset = notify_param_offset + index
-                notify_block += (
-                    f"    // kernel={self.kernel_name}, ev={event_list[index]}, \
+                notify_block += f"    // kernel={self.kernel_name}, ev={event_list[index]}, \
 param_offset={param_offset}\n"
-                )
                 notify_block += self.gen_profiling_for_notify(send_index, False)
                 notify_block += f"    NotifyFunc<{str(is_aic).lower()}>("
                 notify_block += f"param_base[{param_offset}]);\n"
@@ -228,33 +205,21 @@ param_offset={param_offset}\n"
 
     def gen_notify_before_call(self, enable_double_stream):
         if len(self.notify_before_call_event_list) == 0:
-            self.notify_before_call_block = (
-                {"aic": "", "aiv": ""} if enable_double_stream else ""
-            )
+            self.notify_before_call_block = {"aic": "", "aiv": ""} if enable_double_stream else ""
             return
 
         notify_block_aic, found_aic = self._gen_notify_block_for_core(
-            set(),
-            True,
-            self.notify_before_call_event_list,
-            self.notify_before_call_param_offset,
+            set(), True, self.notify_before_call_event_list, self.notify_before_call_param_offset
         )
         notify_block_aiv, found_aiv = self._gen_notify_block_for_core(
-            set(),
-            False,
-            self.notify_before_call_event_list,
-            self.notify_before_call_param_offset,
+            set(), False, self.notify_before_call_event_list, self.notify_before_call_param_offset
         )
         if enable_double_stream:
             self.notify_before_call_block = {"aic": "", "aiv": ""}
             if self._is_aic_kernel_type():
-                self.notify_before_call_block["aic"] = (
-                    notify_block_aic if found_aic else ""
-                )
+                self.notify_before_call_block["aic"] = notify_block_aic if found_aic else ""
             else:
-                self.notify_before_call_block["aiv"] = (
-                    notify_block_aiv if found_aiv else ""
-                )
+                self.notify_before_call_block["aiv"] = notify_block_aiv if found_aiv else ""
         elif self._is_aic_kernel_type():
             self.notify_before_call_block = notify_block_aic if found_aic else ""
         else:
@@ -265,17 +230,13 @@ param_offset={param_offset}\n"
             return self.notify_before_call_block.get(arch, "")
         return self.notify_before_call_block
 
-    def _set_notify_block_single_stream(
-        self, notify_block_aic, notify_block_aiv, found_aic, found_aiv
-    ):
+    def _set_notify_block_single_stream(self, notify_block_aic, notify_block_aiv, found_aic, found_aiv):
         if self._is_aic_kernel_type():
             self.notify_block = notify_block_aic if found_aic else ""
         else:
             self.notify_block = notify_block_aiv if found_aiv else ""
 
-    def _set_notify_block_double_stream(
-        self, notify_block_aic, notify_block_aiv, found_aic, found_aiv
-    ):
+    def _set_notify_block_double_stream(self, notify_block_aic, notify_block_aiv, found_aic, found_aiv):
         if self._is_aic_kernel_type():
             self.notify_block["aic"] = notify_block_aic if found_aic else ""
             self.notify_block["aiv"] = ""
@@ -289,21 +250,13 @@ param_offset={param_offset}\n"
         if len(self.send_event_list) == 0:
             return
 
-        notify_block_aic, found_aic = self._gen_notify_block_for_core(
-            inner_event_id_set, True
-        )
-        notify_block_aiv, found_aiv = self._gen_notify_block_for_core(
-            inner_event_id_set, False
-        )
+        notify_block_aic, found_aic = self._gen_notify_block_for_core(inner_event_id_set, True)
+        notify_block_aiv, found_aiv = self._gen_notify_block_for_core(inner_event_id_set, False)
 
         if enable_double_stream:
-            self._set_notify_block_double_stream(
-                notify_block_aic, notify_block_aiv, found_aic, found_aiv
-            )
+            self._set_notify_block_double_stream(notify_block_aic, notify_block_aiv, found_aic, found_aiv)
         else:
-            self._set_notify_block_single_stream(
-                notify_block_aic, notify_block_aiv, found_aic, found_aiv
-            )
+            self._set_notify_block_single_stream(notify_block_aic, notify_block_aiv, found_aic, found_aiv)
 
     def gen_wait_from_outside(self, inner_event_id_set, enable_double_stream):
         if len(self.recv_event_list) != 0:
@@ -354,27 +307,20 @@ param_offset={self.wait_param_offset + index}\n"
         notify_before_call_event_num = len(self.notify_before_call_event_list)
         send_event_num = len(self.send_event_list)
         notify_before_call_params = [
-            f"__ac_notify_lock_{self.index}_{index}"
-            for index in range(notify_before_call_event_num)
+            f"__ac_notify_lock_{self.index}_{index}" for index in range(notify_before_call_event_num)
         ]
         notify_param_end = notify_before_call_event_num + send_event_num
         notify_params = [
-            f"__ac_notify_lock_{self.index}_{index}"
-            for index in range(notify_before_call_event_num, notify_param_end)
+            f"__ac_notify_lock_{self.index}_{index}" for index in range(notify_before_call_event_num, notify_param_end)
         ]
         if notify_before_call_event_num:
-            self.notify_before_call_param_offset = (
-                self.param_offset - notify_before_call_event_num
-            )
+            self.notify_before_call_param_offset = self.param_offset - notify_before_call_event_num
         self.params_before_kernel += notify_before_call_params
-        self.notify_param_offset = (
-            self.param_offset + len(self.kernel_params) + len(self.extra_kernel_params)
-        )
+        self.notify_param_offset = self.param_offset + len(self.kernel_params) + len(self.extra_kernel_params)
         self.wait_param_offset = self.notify_param_offset + send_event_num
         self.extra_kernel_params += notify_params
         self.extra_kernel_params += [
-            f"__ac_wait_lock_{self.index}_{index}"
-            for index in range(len(self.recv_event_list))
+            f"__ac_wait_lock_{self.index}_{index}" for index in range(len(self.recv_event_list))
         ]
         self.gen_notify_before_call(enable_double_stream)
         self.gen_notify_from_outside(inner_event_id_set, enable_double_stream)
@@ -403,57 +349,36 @@ param_offset={self.wait_param_offset + index}\n"
             self.call_dcci_after_kernel_end = False
             self.call_dcci_disable_on_kernel = True
         else:
-            self.call_dcci_before_kernel_start = (
-                self.sub_operator_op_type in self.dcci_before_kernel_start_op_list
-            )
-            self.call_dcci_after_kernel_end = (
-                self.sub_operator_op_type in self.dcci_after_kernel_end_op_list
-            )
+            self.call_dcci_before_kernel_start = self.sub_operator_op_type in self.dcci_before_kernel_start_op_list
+            self.call_dcci_after_kernel_end = self.sub_operator_op_type in self.dcci_after_kernel_end_op_list
 
     def init_of_sub_operator_info(self):
         try:
             with open(self.json_path, "r") as fd:
                 sub_operater_infos = json.load(fd)
                 self.kernel_name: str = sub_operater_infos["kernelName"]
-                self.kernel_name_for_multi_stream: str = (
-                    self.kernel_name + "_" + str(self.index)
-                )
-                self.called_kernel_name: dict = sub_operater_infos[
-                    "sub_operator_kernel_name"
-                ]
+                self.kernel_name_for_multi_stream: str = self.kernel_name + "_" + str(self.index)
+                self.called_kernel_name: dict = sub_operater_infos["sub_operator_kernel_name"]
                 self.split_mode_in_json = sub_operater_infos.get("split_mode")
-                self.origin_kernel_type_str: str = sub_operater_infos[
-                    "sub_operator_kernel_type"
-                ]
-                self.kernel_type: SuperKernelKernelType = STR_TO_SK_KERNEL_TYPE[
-                    self.origin_kernel_type_str
-                ]
+                self.origin_kernel_type_str: str = sub_operater_infos["sub_operator_kernel_type"]
+                self.kernel_type: SuperKernelKernelType = STR_TO_SK_KERNEL_TYPE[self.origin_kernel_type_str]
                 self.block_num: int = sub_operater_infos["blockDim"]
                 self.timestamp_option: bool = (
                     "timestamp" in sub_operater_infos.get("debugOptions", "")
                     or "printf" in sub_operater_infos.get("debugOptions", "")
                     or "assert" in sub_operater_infos.get("debugOptions", "")
                 )
-                self.with_sync_all: bool = sub_operater_infos.get(
-                    "sub_op_with_sync_all", False
-                )
+                self.with_sync_all: bool = sub_operater_infos.get("sub_op_with_sync_all", False)
                 # disable timestamp until GE support printf assert
                 if self.timestamp_option == True:
                     self.debug_option: str = sub_operater_infos["debugOptions"]
                     self.debug_size: int = sub_operater_infos["debugBufSize"]
-                self.sub_operator_op_type = sub_operater_infos.get(
-                    "sub_operator_op_type", ""
-                )
+                self.sub_operator_op_type = sub_operater_infos.get("sub_operator_op_type", "")
                 self.kernel_params: list = [
-                    param + f"_{self.index}"
-                    for param in sub_operater_infos["sub_operator_params"]
+                    param + f"_{self.index}" for param in sub_operater_infos["sub_operator_params"]
                 ]
-                self.early_start_set_flag = sub_operater_infos[
-                    "sub_operator_early_start_set_flag"
-                ]
-                self.early_start_wait_flag = sub_operater_infos[
-                    "sub_operator_early_start_wait_flag"
-                ]
+                self.early_start_set_flag = sub_operater_infos["sub_operator_early_start_set_flag"]
+                self.early_start_wait_flag = sub_operater_infos["sub_operator_early_start_wait_flag"]
                 self.call_dcci_before_kernel_start = sub_operater_infos.get(
                     "sub_operator_call_dcci_before_kernel_start", False
                 )
@@ -464,10 +389,8 @@ param_offset={self.wait_param_offset + index}\n"
                     "sub_operator_call_dcci_disable_on_kernel", False
                 )
                 self.update_dynamic_op_dcci_options()
-                if (
-                    self.early_start_mode.value
-                    == SuperKernelEarlyStartMode.EarlyStartDisable.value
-                    and (self.early_start_set_flag or self.early_start_wait_flag)
+                if self.early_start_mode.value == SuperKernelEarlyStartMode.EarlyStartDisable.value and (
+                    self.early_start_set_flag or self.early_start_wait_flag
                 ):
                     CommonUtility().ascendc_raise_python_err(
                         ERR_CODE,
@@ -477,10 +400,7 @@ wait:{self.early_start_wait_flag}, donot match with super kernel early-start mod
 operator inherits super kernel opton."
                         ),
                     )
-                if (
-                    self.split_mode_in_json is not None
-                    and self.split_mode_in_json != self.split_mode
-                ):
+                if self.split_mode_in_json is not None and self.split_mode_in_json != self.split_mode:
                     CommonUtility().ascendc_raise_python_err(
                         ERR_CODE,
                         (
@@ -491,11 +411,7 @@ operator inherits super kernel opton."
                     )
         except Exception as err:
             CommonUtility().ascendc_raise_python_err(
-                ERR_CODE,
-                (
-                    f"read sub op json file failed, json name {self.json_path}, reason is:",
-                    err,
-                ),
+                ERR_CODE, (f"read sub op json file failed, json name {self.json_path}, reason is:", err)
             )
 
     def gen_select_addr_code(self, func_addr_str, aicore_kernel_name):
@@ -505,13 +421,9 @@ operator inherits super kernel opton."
                 result += f"\n    {func_addr_str}_split{i} = (uint64_t)({aicore_kernel_name}_split{i});"
         return result
 
-    def gen_switch_case_block_of_dynamic_op(
-        self, kernel_info_of_tiling_key, tiling_key, kernel_type
-    ):
+    def gen_switch_case_block_of_dynamic_op(self, kernel_info_of_tiling_key, tiling_key, kernel_type):
         chip_version = CommonUtility.get_chip_version()
-        params_with_type = ", ".join(
-            [f"GM_ADDR {param}" for param in self.kernel_params]
-        )
+        params_with_type = ", ".join([f"GM_ADDR {param}" for param in self.kernel_params])
         if kernel_type is SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY:
             aicore_kernel_name = kernel_info_of_tiling_key["AiCore"]
             case_block = f"""
@@ -519,9 +431,7 @@ operator inherits super kernel opton."
 dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 """
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
         elif kernel_type is SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY:
             aicore_kernel_name = kernel_info_of_tiling_key["AiCore"]
             case_block = f"""
@@ -529,9 +439,7 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 """
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
         elif kernel_type is SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0:
             aicore_kernel_name = kernel_info_of_tiling_key[f"dav-{chip_version}-vec"]
             case_block = f"""
@@ -539,9 +447,7 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 """
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
         elif kernel_type is SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0:
             aicore_kernel_name = kernel_info_of_tiling_key[f"dav-{chip_version}-cube"]
             case_block = f"""
@@ -549,9 +455,7 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 """
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
         elif kernel_type in [
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1,
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2,
@@ -564,17 +468,11 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
 """
             self.sub_kernel_names.append(aiv_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aiv_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aiv_kernel_name, params_with_type)
             self.sub_kernel_names.append(aic_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aic_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aic_kernel_name, params_with_type)
         else:
-            CommonUtility().ascendc_raise_python_err(
-                ERR_CODE, (f"kernel type {kernel_type} do not support!")
-            )
+            CommonUtility().ascendc_raise_python_err(ERR_CODE, (f"kernel type {kernel_type} do not support!"))
         return case_block
 
     def gen_param_code(self, param_str):
@@ -599,12 +497,8 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
             return block_str
         else:
             total_length = len(input_blocks)
-            left_block_str = self.gen_binary_search_block(
-                input_blocks[0 : total_length // 2]
-            )
-            right_block_str = self.gen_binary_search_block(
-                input_blocks[total_length // 2 :]
-            )
+            left_block_str = self.gen_binary_search_block(input_blocks[0 : total_length // 2])
+            right_block_str = self.gen_binary_search_block(input_blocks[total_length // 2 :])
             block_str = f"""if (*tilingKeyAddr < {input_blocks[total_length // 2][1]}) {{
 {indent_code_func(left_block_str)}
 }} else {{
@@ -618,12 +512,8 @@ dy_block_num = ((uint64_t){kernel_type.value}) << 32 | (*blockNumAddr);
         origin_switch_block = []
         for tiling_key in dynamic_func_names:
             kernel_info_of_tiling_key = dynamic_func_names[tiling_key]
-            kernel_type = STR_TO_SK_KERNEL_TYPE[
-                kernel_info_of_tiling_key["kernel_type"]
-            ]
-            case_block = self.gen_switch_case_block_of_dynamic_op(
-                kernel_info_of_tiling_key, tiling_key, kernel_type
-            )
+            kernel_type = STR_TO_SK_KERNEL_TYPE[kernel_info_of_tiling_key["kernel_type"]]
+            case_block = self.gen_switch_case_block_of_dynamic_op(kernel_info_of_tiling_key, tiling_key, kernel_type)
             origin_switch_block.append([case_block, tiling_key])
         origin_switch_block.sort(key=lambda x: int(x[1]))
         switch_code = self.gen_binary_search_block(origin_switch_block)
@@ -674,7 +564,9 @@ GM_ADDR __ac_dynamic_block_num_{self.index}, GM_ADDR __ac_wait_lock_{self.index}
         aiv_func_addr = self.gen_param_code("aiv_func_addr")
         aic_func_addr = self.gen_param_code("aic_func_addr")
         self.kernel_call_block += self.gen_dcci_before_kernel_start_call_block()
-        self.kernel_call_block += f"call_func_of_{self.kernel_name}({self.param_offset}, {aiv_func_addr}, {aic_func_addr}, dy_blockNum);\n"
+        self.kernel_call_block += (
+            f"call_func_of_{self.kernel_name}({self.param_offset}, {aiv_func_addr}, {aic_func_addr}, dy_blockNum);\n"
+        )
         self.kernel_call_block += self.gen_dcci_after_kernel_end_call_block()
         if self.kernel_type in [
             SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY,
@@ -684,9 +576,7 @@ GM_ADDR __ac_dynamic_block_num_{self.index}, GM_ADDR __ac_wait_lock_{self.index}
         else:
             self.kernel_call_block += "if ASCEND_IS_AIC {\n"
         wait_lock_offset = (
-            self.param_offset
-            + len(self.kernel_params)
-            + self.extra_kernel_params.index(f"__ac_wait_lock_{self.index}")
+            self.param_offset + len(self.kernel_params) + self.extra_kernel_params.index(f"__ac_wait_lock_{self.index}")
         )
         self.kernel_call_block += f"""
     if (AscendC::GetBlockIdx() == 0) {{
@@ -757,8 +647,7 @@ kernelType == {SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0.value}) {{
         self.dynamic_impl_func_block += dynamic_impl_func_block
         if self.early_start_set_flag or self.early_start_wait_flag:
             CommonUtility().ascendc_raise_python_err(
-                ERR_CODE,
-                (f"{self.kernel_name} is dynamic op, do not support early start"),
+                ERR_CODE, (f"{self.kernel_name} is dynamic op, do not support early start")
             )
         # for hard sync of dynamic op
         self.set_early_start_complement_blocks("ASCEND_IS_AIV", "true")
@@ -796,9 +685,7 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
 
     def get_text_section_size(self, binary_file):
         command = ["llvm-objdump", "-h", binary_file]
-        result = subprocess.run(
-            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         if result.returncode != 0:
             CommonUtility.print_compile_log(
@@ -816,10 +703,7 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
                     return min(size, 2048 * 8)
 
         CommonUtility().ascendc_raise_python_err(
-            ERR_CODE,
-            (
-                f"The binary {binary_file} of {self.kernel_name} do not found .text section"
-            ),
+            ERR_CODE, (f"The binary {binary_file} of {self.kernel_name} do not found .text section")
         )
         return 0
 
@@ -829,123 +713,80 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
                 if os.path.exists(os.path.join(kernel_meta_dir, bin_file_name)):
                     return
                 CommonUtility.dump_compile_log(
-                    ["cd", f"{kernel_meta_dir};", "ar", "x", self.bin_path],
-                    CompileStage.UNPACK,
-                    self.compile_log_path,
+                    ["cd", f"{kernel_meta_dir};", "ar", "x", self.bin_path], CompileStage.UNPACK, self.compile_log_path
                 )
                 subprocess.run(["ar", "x", self.bin_path])
             except Exception as err:
-                CommonUtility().ascendc_raise_python_err(
-                    ERR_CODE, ("ar extract files or mv files failed", err)
-                )
+                CommonUtility().ascendc_raise_python_err(ERR_CODE, ("ar extract files or mv files failed", err))
 
-    def extract_sub_bin_file_of_mix_kernel(
-        self, kernel_meta_dir, aiv_bin_file_name, aic_bin_file_name
-    ):
+    def extract_sub_bin_file_of_mix_kernel(self, kernel_meta_dir, aiv_bin_file_name, aic_bin_file_name):
         with change_dir(kernel_meta_dir):
             try:
-                if os.path.exists(
-                    os.path.join(kernel_meta_dir, aiv_bin_file_name)
-                ) and os.path.exists(os.path.join(kernel_meta_dir, aic_bin_file_name)):
+                if os.path.exists(os.path.join(kernel_meta_dir, aiv_bin_file_name)) and os.path.exists(
+                    os.path.join(kernel_meta_dir, aic_bin_file_name)
+                ):
                     return
                 CommonUtility.dump_compile_log(
-                    ["cd", f"{kernel_meta_dir};", "ar", "x", self.bin_path],
-                    CompileStage.UNPACK,
-                    self.compile_log_path,
+                    ["cd", f"{kernel_meta_dir};", "ar", "x", self.bin_path], CompileStage.UNPACK, self.compile_log_path
                 )
                 subprocess.run(["ar", "x", self.bin_path])
             except Exception as err:
-                CommonUtility().ascendc_raise_python_err(
-                    ERR_CODE, ("ar extract files or mv files failed", err)
-                )
+                CommonUtility().ascendc_raise_python_err(ERR_CODE, ("ar extract files or mv files failed", err))
 
     def extract_sub_op_bin_files(self):
         chip_version = CommonUtility.get_chip_version()
-        kernel_meta_dir_with_thread_id = os.path.join(
-            CommonUtility.get_kernel_meta_dir(), str(threading.get_ident())
-        )
+        kernel_meta_dir_with_thread_id = os.path.join(CommonUtility.get_kernel_meta_dir(), str(threading.get_ident()))
         if not os.path.exists(kernel_meta_dir_with_thread_id):
             os.makedirs(kernel_meta_dir_with_thread_id)
         if self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY:
-            bin_file_name = os.path.basename(
-                self.called_kernel_name["AiCore"]["obj_files"]
-            )
+            bin_file_name = os.path.basename(self.called_kernel_name["AiCore"]["obj_files"])
             if self.split_mode_in_json is None:
                 self.aiv_bin = self.bin_path
             else:
                 self.extract_sub_bin_file(kernel_meta_dir_with_thread_id, bin_file_name)
-                self.aiv_bin = os.path.join(
-                    kernel_meta_dir_with_thread_id, bin_file_name
-                )
+                self.aiv_bin = os.path.join(kernel_meta_dir_with_thread_id, bin_file_name)
             self.aiv_text_len = self.get_text_section_size(self.aiv_bin)
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY:
-            bin_file_name = os.path.basename(
-                self.called_kernel_name["AiCore"]["obj_files"]
-            )
+            bin_file_name = os.path.basename(self.called_kernel_name["AiCore"]["obj_files"])
             if self.split_mode_in_json is None:
                 self.aic_bin = self.bin_path
             else:
                 self.extract_sub_bin_file(kernel_meta_dir_with_thread_id, bin_file_name)
-                self.aic_bin = os.path.join(
-                    kernel_meta_dir_with_thread_id, bin_file_name
-                )
+                self.aic_bin = os.path.join(kernel_meta_dir_with_thread_id, bin_file_name)
             self.aic_text_len = self.get_text_section_size(self.aic_bin)
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0:
-            aiv_bin_file_name = os.path.basename(
-                self.called_kernel_name[f"dav-{chip_version}-vec"]["obj_files"]
-            )
+            aiv_bin_file_name = os.path.basename(self.called_kernel_name[f"dav-{chip_version}-vec"]["obj_files"])
             if self.split_mode_in_json is None:
                 self.aiv_bin = self.bin_path
             else:
-                self.extract_sub_bin_file(
-                    kernel_meta_dir_with_thread_id, aiv_bin_file_name
-                )
-                self.aiv_bin = os.path.join(
-                    kernel_meta_dir_with_thread_id, aiv_bin_file_name
-                )
+                self.extract_sub_bin_file(kernel_meta_dir_with_thread_id, aiv_bin_file_name)
+                self.aiv_bin = os.path.join(kernel_meta_dir_with_thread_id, aiv_bin_file_name)
             self.aiv_text_len = self.get_text_section_size(self.aiv_bin)
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0:
-            aic_bin_file_name = os.path.basename(
-                self.called_kernel_name[f"dav-{chip_version}-cube"]["obj_files"]
-            )
+            aic_bin_file_name = os.path.basename(self.called_kernel_name[f"dav-{chip_version}-cube"]["obj_files"])
             if self.split_mode_in_json is None:
                 self.aic_bin = self.bin_path
             else:
-                self.extract_sub_bin_file(
-                    kernel_meta_dir_with_thread_id, aic_bin_file_name
-                )
-                self.aic_bin = os.path.join(
-                    kernel_meta_dir_with_thread_id, aic_bin_file_name
-                )
+                self.extract_sub_bin_file(kernel_meta_dir_with_thread_id, aic_bin_file_name)
+                self.aic_bin = os.path.join(kernel_meta_dir_with_thread_id, aic_bin_file_name)
             self.aic_text_len = self.get_text_section_size(self.aic_bin)
         elif (
             self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1
             or self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2
         ):
-            aiv_bin_file_name = os.path.basename(
-                self.called_kernel_name[f"dav-{chip_version}-vec"]["obj_files"]
-            )
-            aic_bin_file_name = os.path.basename(
-                self.called_kernel_name[f"dav-{chip_version}-cube"]["obj_files"]
-            )
+            aiv_bin_file_name = os.path.basename(self.called_kernel_name[f"dav-{chip_version}-vec"]["obj_files"])
+            aic_bin_file_name = os.path.basename(self.called_kernel_name[f"dav-{chip_version}-cube"]["obj_files"])
             self.extract_sub_bin_file_of_mix_kernel(
                 kernel_meta_dir_with_thread_id, aiv_bin_file_name, aic_bin_file_name
             )
-            self.aiv_bin = os.path.join(
-                kernel_meta_dir_with_thread_id, aiv_bin_file_name
-            )
+            self.aiv_bin = os.path.join(kernel_meta_dir_with_thread_id, aiv_bin_file_name)
             self.aiv_text_len = self.get_text_section_size(self.aiv_bin)
-            self.aic_bin = os.path.join(
-                kernel_meta_dir_with_thread_id, aic_bin_file_name
-            )
+            self.aic_bin = os.path.join(kernel_meta_dir_with_thread_id, aic_bin_file_name)
             self.aic_text_len = self.get_text_section_size(self.aic_bin)
 
     def sub_op_gen_feed_sync_all_code(self, end_flag):
         code = ""
-        if (
-            self.feed_sync_all_mode.value
-            == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value
-        ):
+        if self.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value:
             return code
         if end_flag is False:
             code += "AscendC::SuperKernelAutoSyncAllEndImpl();\n"
@@ -961,9 +802,7 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
         split_times = len(indent_code)
         block_num = self.block_num
         if not is_preload:
-            vector_call_func_block += indent_code_func(
-                self.gen_dcci_before_kernel_start_call_block(), "  "
-            )
+            vector_call_func_block += indent_code_func(self.gen_dcci_before_kernel_start_call_block(), "  ")
         vector_call_func_block += f"  if ({block_type}() < {block_num}) {{\n"
 
         if split_times > 1:
@@ -971,23 +810,17 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
             vector_call_func_block += f"    if ((coreid % {split_times}) == 0) {{\n"
             vector_call_func_block += indent_code_func(indent_code[0], "      ")
             for i in range(1, split_times - 1):
-                vector_call_func_block += (
-                    "    } " + f"else if ((coreid % {split_times}) == {i}) {{\n"
-                )
+                vector_call_func_block += "    } " + f"else if ((coreid % {split_times}) == {i}) {{\n"
                 vector_call_func_block += indent_code_func(indent_code[i], "      ")
             vector_call_func_block += "    } " + "else {\n"
-            vector_call_func_block += indent_code_func(
-                indent_code[split_times - 1], "      "
-            )
+            vector_call_func_block += indent_code_func(indent_code[split_times - 1], "      ")
             vector_call_func_block += "    }\n\n"
         else:
             vector_call_func_block += indent_code_func(indent_code[0], "      ")
 
         vector_call_func_block += "  }\n\n"
         if not is_preload:
-            vector_call_func_block += indent_code_func(
-                self.gen_dcci_after_kernel_end_call_block(), "  "
-            )
+            vector_call_func_block += indent_code_func(self.gen_dcci_after_kernel_end_call_block(), "  ")
         vector_call_func_block += "}\n\n"
         return vector_call_func_block
 
@@ -995,79 +828,50 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
         vector_call_func_block = f"if {core_type} {{\n"
         split_times = len(indent_code)
         block_num = self.block_num
-        vector_call_func_block += indent_code_func(
-            self.gen_dcci_before_kernel_start_call_block(), "  "
-        )
+        vector_call_func_block += indent_code_func(self.gen_dcci_before_kernel_start_call_block(), "  ")
         vector_call_func_block += f"  if ({block_type}() < {block_num}) {{\n"
 
         if split_times > 1:
             vector_call_func_block += "    uint8_t coreid = (uint8_t)get_coreid();\n"
             vector_call_func_block += f"    if ((coreid % {split_times}) == 0) {{\n"
             vector_call_func_block += indent_code_func(indent_code[0], "      ")
-            vector_call_func_block += indent_code_func(
-                self.sub_op_gen_feed_sync_all_code(False), "      "
-            )
+            vector_call_func_block += indent_code_func(self.sub_op_gen_feed_sync_all_code(False), "      ")
             for i in range(1, split_times - 1):
-                vector_call_func_block += (
-                    "    } " + f"else if ((coreid % {split_times}) == {i}) {{\n"
-                )
+                vector_call_func_block += "    } " + f"else if ((coreid % {split_times}) == {i}) {{\n"
                 vector_call_func_block += indent_code_func(indent_code[i], "      ")
-                vector_call_func_block += indent_code_func(
-                    self.sub_op_gen_feed_sync_all_code(False), "      "
-                )
+                vector_call_func_block += indent_code_func(self.sub_op_gen_feed_sync_all_code(False), "      ")
             vector_call_func_block += "    } " + "else {\n"
-            vector_call_func_block += indent_code_func(
-                indent_code[split_times - 1], "      "
-            )
-            vector_call_func_block += indent_code_func(
-                self.sub_op_gen_feed_sync_all_code(False), "      "
-            )
+            vector_call_func_block += indent_code_func(indent_code[split_times - 1], "      ")
+            vector_call_func_block += indent_code_func(self.sub_op_gen_feed_sync_all_code(False), "      ")
             vector_call_func_block += "    }\n\n"
         else:
             vector_call_func_block += indent_code_func(indent_code[0], "      ")
 
         vector_call_func_block += "  } "
-        vector_call_func_block += indent_code_func(
-            self.gen_dcci_after_kernel_end_call_block(), "  "
-        )
+        vector_call_func_block += indent_code_func(self.gen_dcci_after_kernel_end_call_block(), "  ")
         vector_call_func_block += self.sub_op_gen_feed_sync_all_code(True)
         vector_call_func_block += "}\n\n"
         return vector_call_func_block
 
-    def gen_early_start_complement_func(
-        self, core_type, condition_code, gen_set_flag: bool, sub_block: bool = True
-    ):
+    def gen_early_start_complement_func(self, core_type, condition_code, gen_set_flag: bool, sub_block: bool = True):
         vector_call_func_block = f"if {core_type} {{\n"
         vector_call_func_block += f"    if ({condition_code}) {{\n"
         if gen_set_flag:
-            if (
-                self.early_start_mode.value
-                == SuperKernelEarlyStartMode.EarlyStartEnableV1.value
-            ):
+            if self.early_start_mode.value == SuperKernelEarlyStartMode.EarlyStartEnableV1.value:
                 vector_call_func_block += "        AscendC::SetNextTaskStart();\n"
             else:
                 if (
                     self.kernel_type
-                    in [
-                        SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY,
-                        SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0,
-                    ]
+                    in [SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY, SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0]
                     and core_type == "ASCEND_IS_AIC"
                 ):
-                    vector_call_func_block += (
-                        "        // AIV only, no complement early start set flag.\n"
-                    )
+                    vector_call_func_block += "        // AIV only, no complement early start set flag.\n"
                 elif (
                     self.kernel_type
-                    in [
-                        SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY,
-                        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
-                    ]
+                    in [SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY, SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0]
                     and core_type == "ASCEND_IS_AIV"
                 ):
-                    vector_call_func_block += (
-                        "        // AIC only, no complement early start set flag.\n"
-                    )
+                    vector_call_func_block += "        // AIC only, no complement early start set flag.\n"
                 else:
                     vector_call_func_block += "        AscendC::SetNextTaskStart();\n"
         else:
@@ -1076,31 +880,23 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
         vector_call_func_block += "}\n\n"
         return vector_call_func_block
 
-    def set_early_start_complement_blocks(
-        self, core_type, condition_code, sub_block: bool = True
-    ):
+    def set_early_start_complement_blocks(self, core_type, condition_code, sub_block: bool = True):
         if self.early_start_set_flag:
-            self.early_start_complement_set_flag_block += (
-                self.gen_early_start_complement_func(
-                    core_type, condition_code, True, sub_block
-                )
+            self.early_start_complement_set_flag_block += self.gen_early_start_complement_func(
+                core_type, condition_code, True, sub_block
             )
         else:
-            self.early_start_complement_set_flag_block += (
-                self.gen_early_start_complement_func(core_type, "true", True, sub_block)
+            self.early_start_complement_set_flag_block += self.gen_early_start_complement_func(
+                core_type, "true", True, sub_block
             )
 
         if self.early_start_wait_flag:
-            self.early_start_complement_wait_flag_block += (
-                self.gen_early_start_complement_func(
-                    core_type, condition_code, False, sub_block
-                )
+            self.early_start_complement_wait_flag_block += self.gen_early_start_complement_func(
+                core_type, condition_code, False, sub_block
             )
         else:
-            self.early_start_complement_wait_flag_block += (
-                self.gen_early_start_complement_func(
-                    core_type, "true", False, sub_block
-                )
+            self.early_start_complement_wait_flag_block += self.gen_early_start_complement_func(
+                core_type, "true", False, sub_block
             )
         return
 
@@ -1108,259 +904,163 @@ param_base[{dynamic_extra_param_offset + 1}], param_base[{dynamic_extra_param_of
         kernel_declare = f'extern "C"  __aicore__ void {aicore_kernel_name}(uint64_t args_offset);\n\n'
         if self.split_mode > 1:
             for j in range(1, self.split_mode):
-                kernel_declare += f'extern "C"  __aicore__ void {aicore_kernel_name}_split{j}(uint64_t args_offset);\n\n'
+                kernel_declare += (
+                    f'extern "C"  __aicore__ void {aicore_kernel_name}_split{j}(uint64_t args_offset);\n\n'
+                )
         return kernel_declare
 
     def _gen_func_call_list(self, aicore_kernel_name, params):
         fun_call_list = [f"{aicore_kernel_name}({self.param_offset});\n"]
         if self.split_mode > 1:
             for j in range(1, self.split_mode):
-                fun_call_list.append(
-                    f"{aicore_kernel_name}_split{j}({self.param_offset});\n"
-                )
+                fun_call_list.append(f"{aicore_kernel_name}_split{j}({self.param_offset});\n")
         return fun_call_list
 
     def _gen_preload_list_with_num(self, aicore_kernel_name, num):
         preload_list = [f"preload((const void *){aicore_kernel_name}, {num});\n"]
         if self.split_mode > 1:
             for j in range(1, self.split_mode):
-                preload_list.append(
-                    f"preload((const void *){aicore_kernel_name}_split{j}, {num});\n"
-                )
+                preload_list.append(f"preload((const void *){aicore_kernel_name}_split{j}, {num});\n")
         return preload_list
 
     def _gen_preload_list(self, aicore_kernel_name, text_len):
-        return self._gen_preload_list_with_num(
-            aicore_kernel_name, math.ceil(text_len / 2048)
-        )
+        return self._gen_preload_list_with_num(aicore_kernel_name, math.ceil(text_len / 2048))
 
     def gen_sub_kernel_declare_and_call_func(self):
-        params_with_type = ", ".join(
-            [f"GM_ADDR {param}" for param in self.kernel_params]
-        )
+        params_with_type = ", ".join([f"GM_ADDR {param}" for param in self.kernel_params])
         chip_version = CommonUtility.get_chip_version()
 
         # generate date cache preload for sub operator
-        self.data_cache_preload_call += (
-            f"// begin add dc preload of sub_operator: {self.kernel_name}\n"
-        )
+        self.data_cache_preload_call += f"// begin add dc preload of sub_operator: {self.kernel_name}\n"
         len_of_param = len(self.kernel_params)
         if self.index == 0 and not CommonUtility.is_c310():
             len_of_param += 1
         for index in range(0, len_of_param, 8):
-            self.data_cache_preload_call += (
-                "dc_preload((__gm__ uint64_t *)(param_base), 0); \n"
-            )
-            self.data_cache_preload_call += (
-                f"param_base += {min(8, len_of_param - index)}; \n"
-            )
+            self.data_cache_preload_call += "dc_preload((__gm__ uint64_t *)(param_base), 0); \n"
+            self.data_cache_preload_call += f"param_base += {min(8, len_of_param - index)}; \n"
 
         if self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY:
             aicore_kernel_name = self.called_kernel_name["AiCore"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aiv_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aiv_text_len)
             self.preload_call_block = self.gen_call_func(
-                preload_call_block,
-                "ASCEND_IS_AIV",
-                "AscendC::GetBlockIdx",
-                is_preload=True,
+                preload_call_block, "ASCEND_IS_AIV", "AscendC::GetBlockIdx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIV", f"AscendC::GetBlockIdx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIV", f"AscendC::GetBlockIdx() >= {self.block_num}")
             self.set_early_start_complement_blocks("ASCEND_IS_AIC", "true")
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY:
             aicore_kernel_name = self.called_kernel_name["AiCore"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIC", "get_block_idx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIC", "get_block_idx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIC", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aic_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aic_text_len)
             self.preload_call_block = self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIC", "get_block_idx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}")
             self.set_early_start_complement_blocks("ASCEND_IS_AIV", "true")
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0:
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIV", "AscendC::GetBlockIdx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aiv_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aiv_text_len)
             self.preload_call_block = self.gen_call_func(
-                preload_call_block,
-                "ASCEND_IS_AIV",
-                "AscendC::GetBlockIdx",
-                is_preload=True,
+                preload_call_block, "ASCEND_IS_AIV", "AscendC::GetBlockIdx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIV", f"AscendC::GetBlockIdx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIV", f"AscendC::GetBlockIdx() >= {self.block_num}")
             self.set_early_start_complement_blocks("ASCEND_IS_AIC", "true")
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0:
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIC", "get_block_idx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIC", "get_block_idx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIC", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aic_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aic_text_len)
             self.preload_call_block = self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIC", "get_block_idx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}")
             self.set_early_start_complement_blocks("ASCEND_IS_AIV", "true")
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1:
             # need check of sub block id
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIC", "get_block_idx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIC", "get_block_idx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIC", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aic_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aic_text_len)
             self.preload_call_block = self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIC", "get_block_idx", is_preload=True
             )
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block += self.gen_call_func(
-                func_call, "ASCEND_IS_AIV", "get_block_idx"
-            )
+            self.kernel_call_block += self.gen_call_func(func_call, "ASCEND_IS_AIV", "get_block_idx")
             self.kernel_call_block_with_syncall += self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIV", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aiv_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aiv_text_len)
             self.preload_call_block += self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIV", "get_block_idx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}"
-            )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIV", f"get_block_idx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}")
+            self.set_early_start_complement_blocks("ASCEND_IS_AIV", f"get_block_idx() >= {self.block_num}")
         elif self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2:
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-cube"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare = self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare = self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block = self.gen_call_func(
-                func_call, "ASCEND_IS_AIC", "get_block_idx"
-            )
+            self.kernel_call_block = self.gen_call_func(func_call, "ASCEND_IS_AIC", "get_block_idx")
             self.kernel_call_block_with_syncall = self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIC", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aic_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aic_text_len)
             self.preload_call_block = self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIC", "get_block_idx", is_preload=True
             )
-            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"][
-                "func_name"
-            ]
+            aicore_kernel_name = self.called_kernel_name[f"dav-{chip_version}-vec"]["func_name"]
             self.sub_kernel_names.append(aicore_kernel_name)
-            self.kernel_declare += self._gen_sub_kernel_decare_once(
-                aicore_kernel_name, params_with_type
-            )
+            self.kernel_declare += self._gen_sub_kernel_decare_once(aicore_kernel_name, params_with_type)
             params = ", ".join([f"{param}" for param in self.kernel_params])
             func_call = self._gen_func_call_list(aicore_kernel_name, params)
-            self.kernel_call_block += self.gen_call_func(
-                func_call, "ASCEND_IS_AIV", "get_block_idx"
-            )
+            self.kernel_call_block += self.gen_call_func(func_call, "ASCEND_IS_AIV", "get_block_idx")
             self.kernel_call_block_with_syncall += self.gen_call_func_with_syncall(
                 func_call, "ASCEND_IS_AIV", "get_block_idx"
             )
-            preload_call_block = self._gen_preload_list(
-                aicore_kernel_name, self.aiv_text_len
-            )
+            preload_call_block = self._gen_preload_list(aicore_kernel_name, self.aiv_text_len)
             self.preload_call_block += self.gen_call_func(
                 preload_call_block, "ASCEND_IS_AIV", "get_block_idx", is_preload=True
             )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}"
-            )
-            self.set_early_start_complement_blocks(
-                "ASCEND_IS_AIV", f"get_block_idx() >= {self.block_num}"
-            )
+            self.set_early_start_complement_blocks("ASCEND_IS_AIC", f"get_block_idx() >= {self.block_num}")
+            self.set_early_start_complement_blocks("ASCEND_IS_AIV", f"get_block_idx() >= {self.block_num}")
         else:
-            CommonUtility().ascendc_raise_python_err(
-                ERR_CODE, (f"kernel type {self.kernel_type} do not support!")
-            )
+            CommonUtility().ascendc_raise_python_err(ERR_CODE, (f"kernel type {self.kernel_type} do not support!"))

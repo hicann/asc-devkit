@@ -67,12 +67,8 @@ class SparseMatmulGenData:
                 # random choose two position to put none-zero-value element
                 none_zero_positions = np.random.choice(4, 2, replace=False)
                 # generate random none-zero-value
-                block[none_zero_positions[0]] = np.random.choice(
-                    [i for i in range(-5, 6) if i != 0]
-                )
-                block[none_zero_positions[1]] = np.random.choice(
-                    [i for i in range(-5, 6) if i != 0]
-                )
+                block[none_zero_positions[0]] = np.random.choice([i for i in range(-5, 6) if i != 0])
+                block[none_zero_positions[1]] = np.random.choice([i for i in range(-5, 6) if i != 0])
                 # put none-zero-value element to current row
                 b_matrix[row, i : i + 4] = block
         return b_matrix
@@ -89,9 +85,7 @@ class SparseMatmulGenData:
         n, k = self.n, self.k
         b_matrix_dense = np.zeros((n, k // 2), dtype=b_matrix.dtype)
         index_matrix = np.zeros((n, k // 8), dtype=np.uint8)  # k / 2 / 4 -> k / 8
-        index_matrix_mask = np.zeros(
-            (n, k // 2), dtype=np.uint32
-        )  # index matrix mask, use for matrix A when mmad
+        index_matrix_mask = np.zeros((n, k // 2), dtype=np.uint32)  # index matrix mask, use for matrix A when mmad
 
         for row in range(n):
             dense_row = []
@@ -108,19 +102,13 @@ class SparseMatmulGenData:
                     index_2 = 0
                     index_mask_row.extend([i, i])
                 elif len(none_zero_positions) == 1:
-                    index_1 = (
-                        none_zero_positions[0] if none_zero_positions[0] < 3 else 0
-                    )  # the first three elements
-                    index_2 = (
-                        0 if none_zero_positions[0] < 3 else 2
-                    )  # the last three elements
+                    index_1 = none_zero_positions[0] if none_zero_positions[0] < 3 else 0  # the first three elements
+                    index_2 = 0 if none_zero_positions[0] < 3 else 2  # the last three elements
                     index_mask_row.extend([none_zero_positions[0] + i, i])
                 else:
                     index_1 = none_zero_positions[0]
                     index_2 = none_zero_positions[1] - 1
-                    index_mask_row.extend(
-                        [none_zero_positions[0] + i, none_zero_positions[1] + i]
-                    )
+                    index_mask_row.extend([none_zero_positions[0] + i, none_zero_positions[1] + i])
                 index_row.extend([index_1, index_2])
                 dense_block = [block[pos] for pos in none_zero_positions[:2]]
                 if len(dense_block) < 2:
@@ -150,9 +138,7 @@ class SparseMatmulGenData:
 
         # generate input x1, x2
         x1_gm = np.random.randint(-5, 5, x1_shape).astype(src_type)
-        x2_gm = self.gen_sparse_matrix_b().astype(
-            src_type
-        )  # sparse matrix b is transposed, [n, k]
+        x2_gm = self.gen_sparse_matrix_b().astype(src_type)  # sparse matrix b is transposed, [n, k]
         x2_gm_dense, index_matrix, index_matrix_mask = self.densify_and_gen_index(x2_gm)
         if self.is_bias:
             bias_gm = np.random.randint(-2, 2, [1, self.n]).astype(dst_type)
@@ -162,9 +148,9 @@ class SparseMatmulGenData:
         for r in range(self.n):
             selected_columns = index_matrix_mask[r]
             selected_a_matrix = x1_gm[:, selected_columns]
-            y_gm_int32[:, r] = np.dot(
-                selected_a_matrix.astype(dst_type), x2_gm_dense[r].astype(dst_type)
-            ).astype(dst_type)
+            y_gm_int32[:, r] = np.dot(selected_a_matrix.astype(dst_type), x2_gm_dense[r].astype(dst_type)).astype(
+                dst_type
+            )
         index_matrix = SparseMatmulGenData.index_matrix_nd_to_nz(index_matrix)
         os.makedirs("input", exist_ok=True)
         os.makedirs("output", exist_ok=True)
@@ -180,7 +166,5 @@ class SparseMatmulGenData:
 
 
 if __name__ == "__main__":
-    gen_data = SparseMatmulGenData(
-        m=128, n=7680, k=64, is_trans_a=False, is_trans_b=True, is_bias=False
-    )
+    gen_data = SparseMatmulGenData(m=128, n=7680, k=64, is_trans_a=False, is_trans_b=True, is_bias=False)
     gen_data.gen_golden_data()

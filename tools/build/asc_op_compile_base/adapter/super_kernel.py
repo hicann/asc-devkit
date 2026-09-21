@@ -16,12 +16,7 @@ super kernel
 import os
 import stat
 from .global_storage import global_var_storage
-from .super_kernel_utility import (
-    CommonUtility,
-    gen_func_align_attribute,
-    get_wait_flag_for_chip,
-    AscendCLogLevel,
-)
+from .super_kernel_utility import CommonUtility, gen_func_align_attribute, get_wait_flag_for_chip, AscendCLogLevel
 from .super_kernel_op_compile import compile_super_kernel, gen_file_header
 from .super_kernel_constants import (
     SuperKernelPreLoadMode,
@@ -41,18 +36,9 @@ from .super_kernel_op_infos import SuperOperatorInfos
 
 
 def kernel_meta_type_to_device_type(kernel_type: SuperKernelKernelType):
-    aiv_configs = [
-        SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY,
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0,
-    ]
-    aic_configs = [
-        SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY,
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
-    ]
-    mix_configs = [
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1,
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2,
-    ]
+    aiv_configs = [SuperKernelKernelType.KERNEL_TYPE_AIV_ONLY, SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0]
+    aic_configs = [SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY, SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0]
+    mix_configs = [SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1, SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2]
 
     if kernel_type in aiv_configs:
         return SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value
@@ -63,28 +49,15 @@ def kernel_meta_type_to_device_type(kernel_type: SuperKernelKernelType):
     return SuperKernelDeviceType.KERNEL_DEVICE_TYPE_MAX.value
 
 
-def gen_early_start_config(
-    pre_sub_operator: SubOperatorInfos, sub_operator: SubOperatorInfos
-):
-    pre_sub_operator_device_type = kernel_meta_type_to_device_type(
-        pre_sub_operator.kernel_type
-    )
+def gen_early_start_config(pre_sub_operator: SubOperatorInfos, sub_operator: SubOperatorInfos):
+    pre_sub_operator_device_type = kernel_meta_type_to_device_type(pre_sub_operator.kernel_type)
     sub_operator_device_type = kernel_meta_type_to_device_type(sub_operator.kernel_type)
 
-    if (
-        pre_sub_operator_device_type
-        == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value
-    ):
+    if pre_sub_operator_device_type == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value:
         prev_sub_kernel_config = 0
-    elif (
-        pre_sub_operator_device_type
-        == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value
-    ):
+    elif pre_sub_operator_device_type == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value:
         prev_sub_kernel_config = 1
-    elif (
-        pre_sub_operator_device_type
-        == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_MIX.value
-    ):
+    elif pre_sub_operator_device_type == SuperKernelDeviceType.KERNEL_DEVICE_TYPE_MIX.value:
         prev_sub_kernel_config = 2
     else:
         CommonUtility().ascendc_raise_python_err(
@@ -106,14 +79,10 @@ def gen_early_start_config(
                 Should be AIC, AIV or MIX.",
         )
 
-    super_kernel_early_start_config = (
-        prev_sub_kernel_config << 2
-    ) | cur_sub_kernel_config
+    super_kernel_early_start_config = (prev_sub_kernel_config << 2) | cur_sub_kernel_config
     # sub_operator.elf.early_start_complement_wait_flag_block
-    sub_operator.early_start_complement_wait_flag_block = (
-        sub_operator.early_start_complement_wait_flag_block.replace(
-            "__placehoder__earlay_config__", f"{super_kernel_early_start_config}"
-        )
+    sub_operator.early_start_complement_wait_flag_block = sub_operator.early_start_complement_wait_flag_block.replace(
+        "__placehoder__earlay_config__", f"{super_kernel_early_start_config}"
     )
     return f"g_super_kernel_early_start_config = {super_kernel_early_start_config};\n"
 
@@ -165,15 +134,9 @@ __aicore__ inline void WaitFunc(GM_ADDR wait_lock_addr)
 
 
 def get_sync_code_by_kernel_type(kernel_type):
-    if kernel_type in [
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1,
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2,
-    ]:
+    if kernel_type in [SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1, SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2]:
         return "AscendC::SyncAll<false>();\n\n"
-    elif kernel_type in [
-        SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY,
-        SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
-    ]:
+    elif kernel_type in [SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY, SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0]:
         return f"""
 ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG));
 {get_wait_flag_for_chip("AscendC::SYNC_AIC_FLAG")}
@@ -186,21 +149,14 @@ ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIV_ONLY_
 
 
 def gen_inter_ops_barrier(
-    super_operator: SuperOperatorInfos,
-    pre_sub_operator: SubOperatorInfos,
-    sub_operator: SubOperatorInfos,
+    super_operator: SuperOperatorInfos, pre_sub_operator: SubOperatorInfos, sub_operator: SubOperatorInfos
 ):
     inter_ops_bar = "// begin inter ops barrier\n"
-    if (
-        super_operator.early_start_mode.value
-        != SuperKernelEarlyStartMode.EarlyStartDisable.value
-    ):
+    if super_operator.early_start_mode.value != SuperKernelEarlyStartMode.EarlyStartDisable.value:
         inter_ops_bar += pre_sub_operator.early_start_complement_set_flag_block
         if (
-            super_operator.early_start_mode.value
-            == SuperKernelEarlyStartMode.EarlyStartEnableV2.value
-            or super_operator.early_start_mode.value
-            == SuperKernelEarlyStartMode.EarlyStartV2DisableSubKernel.value
+            super_operator.early_start_mode.value == SuperKernelEarlyStartMode.EarlyStartEnableV2.value
+            or super_operator.early_start_mode.value == SuperKernelEarlyStartMode.EarlyStartV2DisableSubKernel.value
         ):
             inter_ops_bar += gen_early_start_config(pre_sub_operator, sub_operator)
         inter_ops_bar += sub_operator.early_start_complement_wait_flag_block
@@ -213,10 +169,7 @@ def gen_inter_ops_barrier(
 
 def gen_op_end_debug_dcci_all(super_operator: SuperOperatorInfos):
     op_end_debug_dcci_all = ""
-    if (
-        super_operator.debug_dcci_all_mode.value
-        == SuperKernelDebugDcciAllMode.DebugDcciAllEnable.value
-    ):
+    if super_operator.debug_dcci_all_mode.value == SuperKernelDebugDcciAllMode.DebugDcciAllEnable.value:
         op_end_debug_dcci_all += "// op end debug dcci all.\n"
         op_end_debug_dcci_all += "pipe_barrier(PIPE_ALL);\n\
 dcci((__gm__ uint64_t*)0, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);\n\n"
@@ -225,25 +178,15 @@ dcci((__gm__ uint64_t*)0, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE
 
 def gen_op_end_debug_sync_all(super_operator: SuperOperatorInfos):
     op_end_debug_sync_all = ""
-    if (
-        super_operator.debug_sync_all_mode.value
-        == SuperKernelDebugSyncAllMode.DebugSyncAllEnable.value
-    ):
+    if super_operator.debug_sync_all_mode.value == SuperKernelDebugSyncAllMode.DebugSyncAllEnable.value:
         op_end_debug_sync_all += "// op end debug sync all.\n"
-        op_end_debug_sync_all += get_sync_code_by_kernel_type(
-            super_operator.kernel_type
-        )
+        op_end_debug_sync_all += get_sync_code_by_kernel_type(super_operator.kernel_type)
     return op_end_debug_sync_all
 
 
-def gen_2_real_stream_op_end_debug_sync_all_by_arch(
-    super_operator: SuperOperatorInfos, arch
-):
+def gen_2_real_stream_op_end_debug_sync_all_by_arch(super_operator: SuperOperatorInfos, arch):
     op_end_debug_sync_all = ""
-    if (
-        super_operator.debug_sync_all_mode.value
-        == SuperKernelDebugSyncAllMode.DebugSyncAllEnable.value
-    ):
+    if super_operator.debug_sync_all_mode.value == SuperKernelDebugSyncAllMode.DebugSyncAllEnable.value:
         op_end_debug_sync_all += "// op end debug sync all.\n"
         if arch == "aiv":
             op_end_debug_sync_all += f"pipe_barrier(PIPE_ALL);\n\
@@ -275,34 +218,22 @@ def tpl_of_gen_switch_case_call(block_idx, dynamic_operator, super_operator):
         SuperKernelKernelType.KERNEL_TYPE_MIX_AIV_1_0,
     ]:
         aiv_codes = indent_code_func(
-            dynamic_operator.gen_call_func(
-                aiv_func_list, "ASCEND_IS_AIV", "AscendC::GetBlockIdx"
-            )
+            dynamic_operator.gen_call_func(aiv_func_list, "ASCEND_IS_AIV", "AscendC::GetBlockIdx")
         )
         call_dynamic_switch_func = f"""
     {dynamic_operator.call_dynamic_switch_func}
 {aiv_codes}
 """
     else:
-        aiv_codes = indent_code_func(
-            dynamic_operator.gen_call_func(
-                aiv_func_list, "ASCEND_IS_AIV", "get_block_idx"
-            )
-        )
-        aic_codes = indent_code_func(
-            dynamic_operator.gen_call_func(
-                aic_func_list, "ASCEND_IS_AIC", "get_block_idx"
-            )
-        )
+        aiv_codes = indent_code_func(dynamic_operator.gen_call_func(aiv_func_list, "ASCEND_IS_AIV", "get_block_idx"))
+        aic_codes = indent_code_func(dynamic_operator.gen_call_func(aic_func_list, "ASCEND_IS_AIC", "get_block_idx"))
         call_dynamic_switch_func = f"""
     {dynamic_operator.call_dynamic_switch_func}
 """
     return call_dynamic_switch_func
 
 
-def gen_switch_case_call_block_of_dynamic_op(
-    super_operator, next_sub_operator, sub_operator, pre_sub_operator
-):
+def gen_switch_case_call_block_of_dynamic_op(super_operator, next_sub_operator, sub_operator, pre_sub_operator):
     switch_case_call_block = ""
 
     # if can not find free core before dynamic, wait for get tilingkey and block num
@@ -348,9 +279,7 @@ def gen_clear_wait_sync_addr_code(super_operator):
                     result += indent_code_func("    if (get_block_idx() == 0) {\n")
                 else:
                     result += indent_code_func("if ASCEND_IS_AIV {\n")
-                    result += indent_code_func(
-                        "    if (AscendC::GetBlockIdx() == 0) {\n"
-                    )
+                    result += indent_code_func("    if (AscendC::GetBlockIdx() == 0) {\n")
                 recv_wait_lock_offset = op.wait_param_offset + index
                 result += indent_code_func(
                     f"\
@@ -392,9 +321,7 @@ def gen_2_real_stream_send_code(super_operator, op, arch):
         return super_kernel_file
     if arch == "aic":
         code = f"// Rule 1 : sync all {arch} must be insert behind each {arch} sub operator, when has real send info\n"
-        code += (
-            f"// sync all C->C kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
-        )
+        code += f"// sync all C->C kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
         code += "ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG));\n"
         code += f"{get_wait_flag_for_chip('AscendC::SYNC_AIC_FLAG')}\n\n"
 
@@ -403,10 +330,8 @@ def gen_2_real_stream_send_code(super_operator, op, arch):
             if "cub:cub" in info_pairs or "vec:cub" in info_pairs:
                 need_sync_self = True
             if "cub:vec" in info_pairs:
-                code += (
-                    f"// Rule 3.1 : sync all c2v must be insert when sendinfo has c2v, \
+                code += f"// Rule 3.1 : sync all c2v must be insert when sendinfo has c2v, \
 kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
-                )
                 code += "// send sync of C->V;\n"
                 code += "ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x02, AscendC::SYNC_AIC_AIV_FLAG));\n\n"
                 need_sync_self = True
@@ -416,9 +341,7 @@ kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
         )
     else:
         code = f"// Rule 1 : sync all {arch} must be insert behind each {arch} sub operator, when has real send info\n"
-        code += (
-            f"// sync all V->V kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
-        )
+        code += f"// sync all V->V kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
         code += "ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIV_ONLY_ALL));\n"
         code += f"{get_wait_flag_for_chip('AscendC::SYNC_AIV_ONLY_ALL')}\n\n"
 
@@ -427,10 +350,8 @@ kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
             if "vec:vec" in info_pairs or "cub:vec" in info_pairs:
                 need_sync_self = True
             if "vec:cub" in info_pairs:
-                code += (
-                    f"// Rule 3.1 : sync all v2c must be insert when sendinfo has v2c, \
+                code += f"// Rule 3.1 : sync all v2c must be insert when sendinfo has v2c, \
 kernel_name:{op.kernel_name}, send_info:{op.send_info}\n"
-                )
                 code += "// send sync of V->C;\n"
                 code += "ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x02, AscendC::SYNC_AIV_FLAG));\n\n"
                 need_sync_self = True
@@ -446,25 +367,17 @@ def gen_2_real_stream_recv_code(op, arch):
     if arch == "aic":
         for single in op.recv_info:
             if "vec:cub" in op.recv_info[single].split(";"):
-                super_kernel_file += (
-                    f"// Rule 3.2 : sync all v2c must be insert when recvinfo has v2c, \
+                super_kernel_file += f"// Rule 3.2 : sync all v2c must be insert when recvinfo has v2c, \
 kernel_name:{op.kernel_name}, send_info:{op.recv_info}\n"
-                )
                 super_kernel_file += "// receive sync of V->C;\n"
-                super_kernel_file += (
-                    f"{get_wait_flag_for_chip('AscendC::SYNC_AIV_FLAG')}\n"
-                )
+                super_kernel_file += f"{get_wait_flag_for_chip('AscendC::SYNC_AIV_FLAG')}\n"
     else:
         for single in op.recv_info:
             if "cub:vec" in op.recv_info[single].split(";"):
-                super_kernel_file += (
-                    f"// Rule 3.2 : sync all c2v must be insert when recvinfo has c2v, \
+                super_kernel_file += f"// Rule 3.2 : sync all c2v must be insert when recvinfo has c2v, \
 kernel_name:{op.kernel_name}, send_info:{op.recv_info}\n"
-                )
                 super_kernel_file += "// receive sync of C->V;\n"
-                super_kernel_file += (
-                    f"{get_wait_flag_for_chip('AscendC::SYNC_AIC_AIV_FLAG')}\n"
-                )
+                super_kernel_file += f"{get_wait_flag_for_chip('AscendC::SYNC_AIC_AIV_FLAG')}\n"
     return super_kernel_file
 
 
@@ -478,23 +391,17 @@ def gen_2_real_stream_sync_code(super_operator, pre_op, cur_op, arch):
     return super_kernel_file
 
 
-def gen_sync_and_event_code_for_two_stream(
-    super_operator, pre_sub_operator, sub_operator, arch
-):
+def gen_sync_and_event_code_for_two_stream(super_operator, pre_sub_operator, sub_operator, arch):
     sync_and_event_code = ""
     if len(sub_operator.recv_event_list) != 0:
         # pre op send inter-core sync, cur op recv inter-core sync
         sync_and_event_code += indent_code_func(
-            gen_2_real_stream_sync_code(
-                super_operator, pre_sub_operator, sub_operator, arch
-            )
+            gen_2_real_stream_sync_code(super_operator, pre_sub_operator, sub_operator, arch)
         )
         # pre op send to outside
         if pre_sub_operator is not None:
             if len(pre_sub_operator.send_event_list) != 0:
-                sync_and_event_code += indent_code_func(
-                    pre_sub_operator.notify_block[arch]
-                )
+                sync_and_event_code += indent_code_func(pre_sub_operator.notify_block[arch])
         # current op wait for outside
         if pre_sub_operator is not None:
             if len(sub_operator.wait_block) != 0:
@@ -514,42 +421,32 @@ def gen_sync_and_event_code_for_two_stream(
                     SuperKernelKernelType.KERNEL_TYPE_AIC_ONLY,
                     SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
                 ]:
+                    sync_and_event_code += "// reason3: for continues notify/wait event\n"
                     sync_and_event_code += (
-                        "// reason3: for continues notify/wait event\n"
+                        "ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG));\n"
                     )
-                    sync_and_event_code += "ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG));\n"
-                    sync_and_event_code += (
-                        f"{get_wait_flag_for_chip('AscendC::SYNC_AIC_FLAG')}\n\n"
-                    )
+                    sync_and_event_code += f"{get_wait_flag_for_chip('AscendC::SYNC_AIC_FLAG')}\n\n"
                 else:
+                    sync_and_event_code += "// reason3: for continues notify/wait event\n"
                     sync_and_event_code += (
-                        "// reason3: for continues notify/wait event\n"
+                        "ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIV_ONLY_ALL));\n"
                     )
-                    sync_and_event_code += "ffts_cross_core_sync(PIPE_MTE3, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIV_ONLY_ALL));\n"
-                    sync_and_event_code += (
-                        f"{get_wait_flag_for_chip('AscendC::SYNC_AIV_ONLY_ALL')}\n\n"
-                    )
+                    sync_and_event_code += f"{get_wait_flag_for_chip('AscendC::SYNC_AIV_ONLY_ALL')}\n\n"
     else:
         # pre op send inter-core sync, cur op recv inter-core sync
         sync_and_event_code += indent_code_func(
-            gen_2_real_stream_sync_code(
-                super_operator, pre_sub_operator, sub_operator, arch
-            )
+            gen_2_real_stream_sync_code(super_operator, pre_sub_operator, sub_operator, arch)
         )
 
         # pre op send to outside
         if pre_sub_operator is not None:
             if len(pre_sub_operator.send_event_list) != 0:
-                sync_and_event_code += indent_code_func(
-                    pre_sub_operator.notify_block[arch]
-                )
+                sync_and_event_code += indent_code_func(pre_sub_operator.notify_block[arch])
 
     return sync_and_event_code
 
 
-def gen_2_real_stream_code_by_arch(
-    super_operator, arch, super_kernel_params_str, exits_dynamic_op, sub_ops
-):
+def gen_2_real_stream_code_by_arch(super_operator, arch, super_kernel_params_str, exits_dynamic_op, sub_ops):
     super_kernel_file = f"__aicore__ inline __attribute__((always_inline)) void \
 auto_gen_{super_operator.kernel_name}_kernel_{arch}(void) {{\n"
     super_kernel_file += "    GM_ADDR *param_base = (GM_ADDR *)get_para_base();\n"
@@ -565,15 +462,9 @@ auto_gen_{super_operator.kernel_name}_kernel_{arch}(void) {{\n"
     if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreLoadByWhole.value:
         super_kernel_file += indent_code_func("AscendC::PreLoad(8);\n")
 
-    for pre_sub_operator, sub_operator, next_sub_operator in zip(
-        [None] + sub_ops[:-1], sub_ops, sub_ops[1:] + [None]
-    ):
-        super_kernel_file += indent_code_func(
-            f"//begin func call of sub operator {sub_operator.kernel_name}\n"
-        )
-        super_kernel_file += indent_code_func(
-            sub_operator.get_notify_before_call_block(arch)
-        )
+    for pre_sub_operator, sub_operator, next_sub_operator in zip([None] + sub_ops[:-1], sub_ops, sub_ops[1:] + [None]):
+        super_kernel_file += indent_code_func(f"//begin func call of sub operator {sub_operator.kernel_name}\n")
+        super_kernel_file += indent_code_func(sub_operator.get_notify_before_call_block(arch))
 
         # generate switch case func of dynamic
         super_kernel_file += gen_switch_case_call_block_of_dynamic_op(
@@ -581,43 +472,24 @@ auto_gen_{super_operator.kernel_name}_kernel_{arch}(void) {{\n"
         )
 
         # add preload of current func
-        if (
-            super_operator.preload_mode.value
-            == SuperKernelPreLoadMode.PreLoadStepByStep.value
-        ):
+        if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreLoadStepByStep.value:
             super_kernel_file += indent_code_func(sub_operator.preload_call_block)
 
         # add preload of next func, when n+1 preload instr；
-        if (
-            super_operator.preload_mode.value
-            == SuperKernelPreLoadMode.PreloadByAdanvanceStep.value
-        ):
+        if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreloadByAdanvanceStep.value:
             if pre_sub_operator is None:
                 super_kernel_file += indent_code_func(sub_operator.preload_call_block)
             if next_sub_operator is not None:
-                super_kernel_file += indent_code_func(
-                    next_sub_operator.preload_call_block
-                )
+                super_kernel_file += indent_code_func(next_sub_operator.preload_call_block)
 
-        if (
-            super_operator.datacache_mode.value
-            == SuperKernelDataCacheMode.DataCacheLoadAdancanceStep.value
-        ):
+        if super_operator.datacache_mode.value == SuperKernelDataCacheMode.DataCacheLoadAdancanceStep.value:
             if pre_sub_operator is None:
-                super_kernel_file += indent_code_func(
-                    sub_operator.data_cache_preload_call
-                )
+                super_kernel_file += indent_code_func(sub_operator.data_cache_preload_call)
             if next_sub_operator is not None:
-                super_kernel_file += indent_code_func(
-                    next_sub_operator.data_cache_preload_call
-                )
+                super_kernel_file += indent_code_func(next_sub_operator.data_cache_preload_call)
             super_kernel_file += "\n"
 
-        if (
-            pre_sub_operator is None
-            and len(sub_operator.recv_event_list) != 0
-            and sub_operator.index == 0
-        ):
+        if pre_sub_operator is None and len(sub_operator.recv_event_list) != 0 and sub_operator.index == 0:
             CommonUtility().ascendc_raise_python_err(
                 ERR_CODE,
                 f"first op of super kernel must not have any recv event, op:{sub_operator.kernel_name}, \
@@ -628,32 +500,20 @@ event_list:{sub_operator.recv_event_list}",
             super_operator, pre_sub_operator, sub_operator, arch
         )
 
-        tmp_code, enable_syncall_flag = gen_feed_syncall_var_init_code(
-            super_operator, sub_operator
-        )
+        tmp_code, enable_syncall_flag = gen_feed_syncall_var_init_code(super_operator, sub_operator)
         super_kernel_file += indent_code_func(tmp_code)
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             super_kernel_file += indent_code_func(
                 f"RecordProfiling({super_operator.info_base.index(sub_operator) + 1}, 0x8, true);\n"
             )
         if enable_syncall_flag is False:
             super_kernel_file += indent_code_func(sub_operator.kernel_call_block)
         else:
-            super_kernel_file += indent_code_func(
-                sub_operator.kernel_call_block_with_syncall
-            )
+            super_kernel_file += indent_code_func(sub_operator.kernel_call_block_with_syncall)
         super_kernel_file += indent_code_func(gen_op_end_debug_dcci_all(super_operator))
-        super_kernel_file += indent_code_func(
-            gen_2_real_stream_op_end_debug_sync_all_by_arch(super_operator, arch)
-        )
+        super_kernel_file += indent_code_func(gen_2_real_stream_op_end_debug_sync_all_by_arch(super_operator, arch))
 
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             super_kernel_file += indent_code_func(
                 f"RecordProfiling({super_operator.info_base.index(sub_operator) + 1}, 0x8, false);\n"
             )
@@ -663,10 +523,7 @@ event_list:{sub_operator.recv_event_list}",
             # allow send // lack : need check not last op dfx
             # last op send inter-core sync but not last op
             send_code = gen_2_real_stream_send_code(super_operator, sub_operator, arch)
-            if (
-                sub_operator.index == super_operator.info_base[-1].index
-                and send_code != ""
-            ):
+            if sub_operator.index == super_operator.info_base[-1].index and send_code != "":
                 CommonUtility().ascendc_raise_python_err(
                     ERR_CODE,
                     f"last op of super kernel must not have any send info, op:{sub_operator.kernel_name}, \
@@ -688,10 +545,7 @@ event_list:{sub_operator.send_event_list}",
 
 def gen_profling_func_code(super_operator):
     profiling_code = ""
-    if (
-        super_operator.profiling_mode.value
-        == SuperKernelProfilingMode.ProfilingEnable.value
-    ):
+    if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
         profiling_code = """
 __BLOCK_LOCAL__ __inline__ uint32_t g_profiling_task_id;
 __BLOCK_LOCAL__ __inline__ __gm__ uint8_t* g_profiling_base_addr;
@@ -779,10 +633,7 @@ __aicore__ inline void InitProfiling(uint32_t taskId, GM_ADDR profilingPtr)
 
 def gen_profiling_start_and_end_record(super_operator, is_start):
     code = ""
-    if (
-        super_operator.profiling_mode.value
-        == SuperKernelProfilingMode.ProfilingEnable.value
-    ):
+    if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
         if is_start:
             code = "RecordProfiling(0, 0, true);\n"
         else:
@@ -792,9 +643,7 @@ def gen_profiling_start_and_end_record(super_operator, is_start):
 
 def gen_2_real_stream_super_kernel_file(super_operator):
     super_kernel_file = ""
-    super_kernel_file += gen_file_header(
-        super_operator.kernel_type, super_operator.split_mode
-    )
+    super_kernel_file += gen_file_header(super_operator.kernel_type, super_operator.split_mode)
     super_kernel_file += gen_profling_func_code(super_operator)
     super_kernel_file += gen_notify_wait_func()
     super_kernel_params = []
@@ -814,12 +663,8 @@ def gen_2_real_stream_super_kernel_file(super_operator):
             super_kernel_params += sub_operator.extra_kernel_params
         super_operator.sub_decl_list[sub_operator.kernel_name] = "1"
 
-    super_kernel_params_str = ", ".join(
-        [f"GM_ADDR {param}" for param in super_kernel_params]
-    )
-    for sub_ops, arch in zip(
-        [super_operator.cub_op_list, super_operator.vec_op_list], ["aic", "aiv"]
-    ):
+    super_kernel_params_str = ", ".join([f"GM_ADDR {param}" for param in super_kernel_params])
+    for sub_ops, arch in zip([super_operator.cub_op_list, super_operator.vec_op_list], ["aic", "aiv"]):
         if len(sub_ops) == 0:
             continue
         super_kernel_file += gen_2_real_stream_code_by_arch(
@@ -834,93 +679,63 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
     super_kernel_file += "    GM_ADDR *param_base = (GM_ADDR *)get_para_base();\n"
     if (
         super_operator.timestamp_option
-        or super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
+        or super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
     ):
         ws_offset = len(super_operator.super_kernel_params) + 1
         super_kernel_file += f"    GM_ADDR workspace = param_base[{ws_offset}];\n"
-    if (
-        super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
-    ):
-        super_kernel_file += (
-            "    AscendC::g_superKernelAutoSyncAllConfigGmBaseAddr = workspace;\n"
-        )
+    if super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value:
+        super_kernel_file += "    AscendC::g_superKernelAutoSyncAllConfigGmBaseAddr = workspace;\n"
     if super_operator.timestamp_option:
         is_mix = super_operator.kernel_type in [
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1,
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2,
         ]
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             profiling_offset = ws_offset + 1
+            super_kernel_file += f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
             super_kernel_file += (
-                f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
+                f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             )
-            super_kernel_file += f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             super_kernel_file += "    InitProfiling(taskId, profilingPtr);\n"
     else:
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             profiling_offset = len(super_operator.super_kernel_params) + 1
+            super_kernel_file += f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
             super_kernel_file += (
-                f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
+                f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             )
-            super_kernel_file += f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             super_kernel_file += "    InitProfiling(taskId, profilingPtr);\n"
 
     super_kernel_file += "    GM_ADDR ffts_addr = param_base[0];\n"
     super_kernel_file += "    if (ffts_addr != nullptr) {\n"
     super_kernel_file += "        set_ffts_base_addr((uint64_t)ffts_addr);\n"
     super_kernel_file += "    }\n\n"
-    super_kernel_file += indent_code_func(
-        gen_profiling_start_and_end_record(super_operator, True)
-    )
+    super_kernel_file += indent_code_func(gen_profiling_start_and_end_record(super_operator, True))
     super_kernel_file += indent_code_func(gen_clear_syncall_worskspace(super_operator))
-    for sub_ops, arch in zip(
-        [super_operator.cub_op_list, super_operator.vec_op_list], ["aic", "aiv"]
-    ):
+    for sub_ops, arch in zip([super_operator.cub_op_list, super_operator.vec_op_list], ["aic", "aiv"]):
         if len(sub_ops) == 0:
             continue
         super_kernel_file += indent_code_func(f"if ASCEND_IS_{arch.upper()} {{\n")
-        super_kernel_file += indent_code_func(
-            f"    auto_gen_{super_operator.kernel_name}_kernel_{arch}();\n"
-        )
+        super_kernel_file += indent_code_func(f"    auto_gen_{super_operator.kernel_name}_kernel_{arch}();\n")
         super_kernel_file += indent_code_func("}\n")
 
     super_kernel_file += gen_clear_wait_sync_addr_code(super_operator)
-    super_kernel_file += indent_code_func(
-        gen_profiling_start_and_end_record(super_operator, False)
-    )
+    super_kernel_file += indent_code_func(gen_profiling_start_and_end_record(super_operator, False))
     super_kernel_file += "}\n\n"
 
     try:
         with os.fdopen(
-            os.open(
-                super_operator.kernel_file,
-                os.O_RDWR | os.O_CREAT,
-                stat.S_IWUSR | stat.S_IRUSR,
-            ),
-            "w",
+            os.open(super_operator.kernel_file, os.O_RDWR | os.O_CREAT, stat.S_IWUSR | stat.S_IRUSR), "w"
         ) as ofd:
             ofd.write(super_kernel_file)
     except Exception as err:
-        CommonUtility().ascendc_raise_python_err(
-            ERR_CODE, "gen super kernel func file failed, reason is:", err
-        )
+        CommonUtility().ascendc_raise_python_err(ERR_CODE, "gen super kernel func file failed, reason is:", err)
 
 
 def judge_need_feed_sync_all(super_operator, sub_op):
     if sub_op.with_sync_all is False:
         return False
-    if (
-        super_operator.block_num == sub_op.block_num
-        and super_operator.kernel_type == sub_op.kernel_type
-    ):
+    if super_operator.block_num == sub_op.block_num and super_operator.kernel_type == sub_op.kernel_type:
         return False
     if super_operator.kernel_type in [
         SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0,
@@ -949,10 +764,7 @@ def judge_need_feed_sync_all(super_operator, sub_op):
 
 def gen_feed_syncall_var_init_code(super_operator, sub_op):
     code = ""
-    if (
-        super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value
-    ):
+    if super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value:
         return code, False
     sub_op_index = super_operator.info_base.index(sub_op)
     total_op_num = len(super_operator.info_base)
@@ -977,10 +789,7 @@ AscendC::g_superKernelAutoSyncAllConfigGmBaseAddr + {total_op_num} * 64 + {sub_o
 
 def gen_clear_syncall_worskspace(super_operator):
     gen_code = ""
-    if (
-        super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value
-    ):
+    if super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllDisable.value:
         return gen_code
     if super_operator.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_0:
         gen_code += f"""
@@ -1073,41 +882,27 @@ if ASCEND_IS_AIC {{
 
 
 def gen_wait_block_extra_sync(super_operator, pre_sub_operator, sub_operator):
-    pre_sub_operator_device_type = kernel_meta_type_to_device_type(
-        pre_sub_operator.kernel_type
-    )
+    pre_sub_operator_device_type = kernel_meta_type_to_device_type(pre_sub_operator.kernel_type)
     sub_operator_device_type = kernel_meta_type_to_device_type(sub_operator.kernel_type)
 
     extra_sync = ""
     # When wait block runs on aiv block 0 and inter op barrier does not contain aiv only syncall,
     # extra aiv syncall will be needed to ensure next op runs after wait block finishes.
     extra_aiv_sync_pairs = {
-        (
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value,
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value,
-        ),
-        (
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value,
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_MIX.value,
-        ),
+        (SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value, SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value),
+        (SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value, SuperKernelDeviceType.KERNEL_DEVICE_TYPE_MIX.value),
     }
 
     # When wait block runs on aic block 0 and inter op barrier does not contain aic only syncall,
     # extra aic syncall will be needed to ensure next op runs after wait block finishes.
     extra_aic_sync_pairs = {
-        (
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value,
-            SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value,
-        )
+        (SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIV.value, SuperKernelDeviceType.KERNEL_DEVICE_TYPE_AIC.value)
     }
 
     if (pre_sub_operator_device_type, sub_operator_device_type) in extra_aiv_sync_pairs:
         extra_sync += "// extra sync for wait event\n"
         extra_sync += "AscendC::SyncAll<true>();\n\n"
-    elif (
-        pre_sub_operator_device_type,
-        sub_operator_device_type,
-    ) in extra_aic_sync_pairs:
+    elif (pre_sub_operator_device_type, sub_operator_device_type) in extra_aic_sync_pairs:
         extra_sync += f"""
 // extra sync for wait event
 ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG));
@@ -1119,32 +914,21 @@ ffts_cross_core_sync(PIPE_FIX, AscendC::GetffstMsg(0x0, AscendC::SYNC_AIC_FLAG))
 
 def gen_sync_and_event_code(super_operator, pre_sub_operator, sub_operator):
     sync_and_event_code = ""
-    if (
-        len(sub_operator.recv_event_list) != 0
-        and len(pre_sub_operator.send_event_list) != 0
-    ):
-        sync_and_event_code += indent_code_func(
-            gen_inter_ops_barrier(super_operator, pre_sub_operator, sub_operator)
-        )
+    if len(sub_operator.recv_event_list) != 0 and len(pre_sub_operator.send_event_list) != 0:
+        sync_and_event_code += indent_code_func(gen_inter_ops_barrier(super_operator, pre_sub_operator, sub_operator))
         sync_and_event_code += indent_code_func(pre_sub_operator.notify_block)
         if len(sub_operator.wait_block) != 0:
             sync_and_event_code += indent_code_func(sub_operator.wait_block)
             # add sync with sub_operator and sub_operator
             sync_and_event_code += "// reason3: for continues notify/wait event\n"
-            sync_and_event_code += indent_code_func(
-                get_sync_code_by_kernel_type(super_operator.kernel_type)
-            )
+            sync_and_event_code += indent_code_func(get_sync_code_by_kernel_type(super_operator.kernel_type))
     else:
         if len(sub_operator.recv_event_list) != 0:
             sync_and_event_code += indent_code_func(sub_operator.wait_block)
             sync_and_event_code += indent_code_func(
-                gen_wait_block_extra_sync(
-                    super_operator, pre_sub_operator, sub_operator
-                )
+                gen_wait_block_extra_sync(super_operator, pre_sub_operator, sub_operator)
             )
-        sync_and_event_code += indent_code_func(
-            gen_inter_ops_barrier(super_operator, pre_sub_operator, sub_operator)
-        )
+        sync_and_event_code += indent_code_func(gen_inter_ops_barrier(super_operator, pre_sub_operator, sub_operator))
         if len(pre_sub_operator.send_event_list) != 0:
             sync_and_event_code += indent_code_func(pre_sub_operator.notify_block)
     return sync_and_event_code
@@ -1155,9 +939,7 @@ def gen_super_kernel_file(super_operator):
         gen_2_real_stream_super_kernel_file(super_operator)
         return
     super_kernel_file = ""
-    super_kernel_file += gen_file_header(
-        super_operator.kernel_type, super_operator.split_mode
-    )
+    super_kernel_file += gen_file_header(super_operator.kernel_type, super_operator.split_mode)
     super_kernel_file += gen_profling_func_code(super_operator)
     super_kernel_file += gen_notify_wait_func()
     sub_ops = super_operator.info_base
@@ -1178,46 +960,34 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
     super_kernel_file += "    GM_ADDR *param_base = (GM_ADDR *)get_para_base();\n"
     if (
         super_operator.timestamp_option
-        or super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
+        or super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
     ):
         if CommonUtility.is_c310():
             ws_offset = len(super_operator.super_kernel_params)
         else:
             ws_offset = len(super_operator.super_kernel_params) + 1
         super_kernel_file += f"    GM_ADDR workspace = param_base[{ws_offset}];\n"
-    if (
-        super_operator.feed_sync_all_mode.value
-        == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value
-    ):
-        super_kernel_file += (
-            "    AscendC::g_superKernelAutoSyncAllConfigGmBaseAddr = workspace;\n"
-        )
+    if super_operator.feed_sync_all_mode.value == SuperKernelFeedSyncAllMode.FeedSyncAllEnable.value:
+        super_kernel_file += "    AscendC::g_superKernelAutoSyncAllConfigGmBaseAddr = workspace;\n"
     if super_operator.timestamp_option:
         is_mix = super_operator.kernel_type in [
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1,
             SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_2,
         ]
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             profiling_offset = ws_offset + 1
+            super_kernel_file += f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
             super_kernel_file += (
-                f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
+                f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             )
-            super_kernel_file += f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             super_kernel_file += "    InitProfiling(taskId, profilingPtr);\n"
     else:
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             profiling_offset = len(super_operator.super_kernel_params) + 1
+            super_kernel_file += f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
             super_kernel_file += (
-                f"    GM_ADDR profilingPtr = param_base[{profiling_offset}];\n"
+                f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             )
-            super_kernel_file += f"    uint32_t taskId = *((__gm__ uint32_t*)(get_para_base() + 8 * {profiling_offset + 1}));\n"
             super_kernel_file += "    InitProfiling(taskId, profilingPtr);\n"
 
     if not CommonUtility.is_c310():
@@ -1237,18 +1007,10 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
 
     if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreLoadByWhole.value:
         super_kernel_file += indent_code_func("AscendC::PreLoad(8);\n")
-    super_kernel_file += indent_code_func(
-        gen_profiling_start_and_end_record(super_operator, True)
-    )
-    for pre_sub_operator, sub_operator, next_sub_operator in zip(
-        [None] + sub_ops[:-1], sub_ops, sub_ops[1:] + [None]
-    ):
-        super_kernel_file += indent_code_func(
-            f"//begin func call of sub operator {sub_operator.kernel_name}\n"
-        )
-        super_kernel_file += indent_code_func(
-            sub_operator.get_notify_before_call_block()
-        )
+    super_kernel_file += indent_code_func(gen_profiling_start_and_end_record(super_operator, True))
+    for pre_sub_operator, sub_operator, next_sub_operator in zip([None] + sub_ops[:-1], sub_ops, sub_ops[1:] + [None]):
+        super_kernel_file += indent_code_func(f"//begin func call of sub operator {sub_operator.kernel_name}\n")
+        super_kernel_file += indent_code_func(sub_operator.get_notify_before_call_block())
 
         # generatre switch case func of dynamic
         super_kernel_file += gen_switch_case_call_block_of_dynamic_op(
@@ -1256,36 +1018,21 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
         )
 
         # add preload of current func
-        if (
-            super_operator.preload_mode.value
-            == SuperKernelPreLoadMode.PreLoadStepByStep.value
-        ):
+        if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreLoadStepByStep.value:
             super_kernel_file += indent_code_func(sub_operator.preload_call_block)
 
         # add preload of next func, when n+1 preload instr
-        if (
-            super_operator.preload_mode.value
-            == SuperKernelPreLoadMode.PreloadByAdanvanceStep.value
-        ):
+        if super_operator.preload_mode.value == SuperKernelPreLoadMode.PreloadByAdanvanceStep.value:
             if pre_sub_operator is None:
                 super_kernel_file += indent_code_func(sub_operator.preload_call_block)
             if next_sub_operator is not None:
-                super_kernel_file += indent_code_func(
-                    next_sub_operator.preload_call_block
-                )
+                super_kernel_file += indent_code_func(next_sub_operator.preload_call_block)
 
-        if (
-            super_operator.datacache_mode.value
-            == SuperKernelDataCacheMode.DataCacheLoadAdancanceStep.value
-        ):
+        if super_operator.datacache_mode.value == SuperKernelDataCacheMode.DataCacheLoadAdancanceStep.value:
             if pre_sub_operator is None:
-                super_kernel_file += indent_code_func(
-                    sub_operator.data_cache_preload_call
-                )
+                super_kernel_file += indent_code_func(sub_operator.data_cache_preload_call)
             if next_sub_operator is not None:
-                super_kernel_file += indent_code_func(
-                    next_sub_operator.data_cache_preload_call
-                )
+                super_kernel_file += indent_code_func(next_sub_operator.data_cache_preload_call)
             super_kernel_file += "\n"
 
         if pre_sub_operator is None and len(sub_operator.recv_event_list) != 0:
@@ -1297,34 +1044,22 @@ not have any recv event, op:{sub_operator.kernel_name}, event_list:{sub_operator
 
         # gen sync/notify/wait between operators
         if pre_sub_operator is not None:
-            super_kernel_file += gen_sync_and_event_code(
-                super_operator, pre_sub_operator, sub_operator
-            )
+            super_kernel_file += gen_sync_and_event_code(super_operator, pre_sub_operator, sub_operator)
 
-        tmp_code, enable_syncall_flag = gen_feed_syncall_var_init_code(
-            super_operator, sub_operator
-        )
+        tmp_code, enable_syncall_flag = gen_feed_syncall_var_init_code(super_operator, sub_operator)
         super_kernel_file += indent_code_func(tmp_code)
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             super_kernel_file += indent_code_func(
                 f"RecordProfiling({super_operator.info_base.index(sub_operator) + 1}, 0x8, true);\n"
             )
         if enable_syncall_flag is False:
             super_kernel_file += indent_code_func(sub_operator.kernel_call_block)
         else:
-            super_kernel_file += indent_code_func(
-                sub_operator.kernel_call_block_with_syncall
-            )
+            super_kernel_file += indent_code_func(sub_operator.kernel_call_block_with_syncall)
         super_kernel_file += indent_code_func(gen_op_end_debug_dcci_all(super_operator))
         super_kernel_file += indent_code_func(gen_op_end_debug_sync_all(super_operator))
 
-        if (
-            super_operator.profiling_mode.value
-            == SuperKernelProfilingMode.ProfilingEnable.value
-        ):
+        if super_operator.profiling_mode.value == SuperKernelProfilingMode.ProfilingEnable.value:
             super_kernel_file += indent_code_func(
                 f"RecordProfiling({super_operator.info_base.index(sub_operator) + 1}, 0x8, false);\n"
             )
@@ -1339,30 +1074,19 @@ not have any send event, op:{sub_operator.kernel_name}, event_list:{sub_operator
 
     super_kernel_file += gen_clear_wait_sync_addr_code(super_operator)
 
-    super_kernel_file += indent_code_func(
-        gen_profiling_start_and_end_record(super_operator, False)
-    )
+    super_kernel_file += indent_code_func(gen_profiling_start_and_end_record(super_operator, False))
 
     super_kernel_file += "}\n\n"
     try:
         with os.fdopen(
-            os.open(
-                super_operator.kernel_file,
-                os.O_RDWR | os.O_CREAT,
-                stat.S_IWUSR | stat.S_IRUSR,
-            ),
-            "w",
+            os.open(super_operator.kernel_file, os.O_RDWR | os.O_CREAT, stat.S_IWUSR | stat.S_IRUSR), "w"
         ) as ofd:
             ofd.write(super_kernel_file)
     except Exception as err:
-        CommonUtility().ascendc_raise_python_err(
-            ERR_CODE, ("gen super kernel func file failed, reason is:", err)
-        )
+        CommonUtility().ascendc_raise_python_err(ERR_CODE, ("gen super kernel func file failed, reason is:", err))
 
 
-def compile(
-    kernel_infos, called_kernel_name="ascendc_super_kernel_plus", compile_infos=None
-):
+def compile(kernel_infos, called_kernel_name="ascendc_super_kernel_plus", compile_infos=None):
     """entry of super kernel compile
 
     Args:
@@ -1384,18 +1108,14 @@ def compile(
         )
 
     if compile_infos is not None:
-        CommonUtility.print_compile_log(
-            "[SuperKernel]", f"compile_infos: {compile_infos}", AscendCLogLevel.LOG_INFO
-        )
+        CommonUtility.print_compile_log("[SuperKernel]", f"compile_infos: {compile_infos}", AscendCLogLevel.LOG_INFO)
 
     kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
     if os.path.exists(os.path.join(kernel_meta_dir, called_kernel_name + ".o")):
         return
 
     if kernel_infos.get("op_list", "") == "":
-        CommonUtility().ascendc_raise_python_err(
-            ERR_CODE, ("super kernel compile must provide op lists")
-        )
+        CommonUtility().ascendc_raise_python_err(ERR_CODE, ("super kernel compile must provide op lists"))
     super_operator = SuperOperatorInfos(kernel_infos, called_kernel_name)
     gen_super_kernel_file(super_operator)
     compile_super_kernel(super_operator.compile_info, super_operator.compile_log_path)

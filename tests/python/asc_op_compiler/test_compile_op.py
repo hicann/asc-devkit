@@ -32,10 +32,7 @@ FRAMEWORK_PATH = os.path.join(TOP_PATH, "tools/build/")
 KERNEL_SPEC_ROOT = os.path.join(TOP_PATH, "kernel_meta", "kernel_spec")
 sys.path.insert(0, FRAMEWORK_PATH)
 import asc_op_compile_base
-from asc_op_compile_base.common.platform import (
-    set_current_compile_soc_info,
-    get_soc_spec,
-)
+from asc_op_compile_base.common.platform import set_current_compile_soc_info, get_soc_spec
 from asc_op_compile_base.common import register
 from asc_op_compile_base.common import buildcfg
 from asc_op_compile_base.asc_op_compiler.global_storage import global_var_storage
@@ -50,9 +47,7 @@ from asc_op_compile_base.common.context import get_context
 
 def SetCurrentSocInfo(soc: str):
     set_current_compile_soc_info(soc)
-    global_var_storage.set_variable(
-        "ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION")
-    )
+    global_var_storage.set_variable("ascendc_short_soc_version", get_soc_spec("SHORT_SOC_VERSION"))
 
 
 from asc_op_compile_base.asc_op_compiler.compile_op import *
@@ -86,31 +81,19 @@ from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
     v310_mode,
 )
 from asc_op_compile_base.asc_op_compiler.ascendc_compile_dfx import DFXSectionGenerator
-from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import (
-    call_bisheng_v200_static,
-)
+from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import call_bisheng_v200_static
 from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import (
     skip_mc2_context_size,
     add_op_param_to_workspace,
     get_value,
 )
-from asc_op_compile_base.asc_op_compiler.super_kernel_constants import (
-    SuperKernelStreamFusionMode,
-    SuperKernelLinkMode,
-)
-from asc_op_compile_base.asc_op_compiler.ascendc_constants import (
-    InferChannelParamsFromIFile,
-    KernelMetaType,
-)
+from asc_op_compile_base.asc_op_compiler.super_kernel_constants import SuperKernelStreamFusionMode, SuperKernelLinkMode
+from asc_op_compile_base.asc_op_compiler.ascendc_constants import InferChannelParamsFromIFile, KernelMetaType
 
 import importlib
 
-compile_op_module = importlib.import_module(
-    "asc_op_compile_base.asc_op_compiler.compile_op"
-)
-super_kernel_compile_module = importlib.import_module(
-    "asc_op_compile_base.asc_op_compiler.super_kernel_op_compile"
-)
+compile_op_module = importlib.import_module("asc_op_compile_base.asc_op_compiler.compile_op")
+super_kernel_compile_module = importlib.import_module("asc_op_compile_base.asc_op_compiler.super_kernel_op_compile")
 from unittest.mock import Mock, patch
 from tempfile import TemporaryDirectory
 
@@ -137,13 +120,7 @@ def make_test_tiling_def(_name):
     definitions = {
         "AddCustomUnalign": (
             "TilingDataUnalign",
-            (
-                "formerNum",
-                "tailNum",
-                "formerLength",
-                "tailLength",
-                "alignNum",
-            ),
+            ("formerNum", "tailNum", "formerLength", "tailLength", "alignNum"),
             24,
         ),
         "CubeCustom": ("TilingData", ("totalLength", "tileNum"), 8),
@@ -151,16 +128,8 @@ def make_test_tiling_def(_name):
     if _name not in definitions:
         return None
     class_name, field_names, data_size = definitions[_name]
-    fields = [
-        {"classType": "0", "name": name, "dtype": "uint32_t"} for name in field_names
-    ]
-    return TilingDef(
-        {
-            "class_name": class_name,
-            "data_size": data_size,
-            "fields": fields,
-        }
-    )
+    fields = [{"classType": "0", "name": name, "dtype": "uint32_t"} for name in field_names]
+    return TilingDef({"class_name": class_name, "data_size": data_size, "fields": fields})
 
 
 def manifest_compile_include_options():
@@ -178,11 +147,7 @@ def manifest_compile_include_options():
         "-I" + os.path.join(api_root, "impl/simt_api"),
         "-I" + os.path.join(api_root, "include/adv_api"),
         "-I" + os.path.join(api_root, "impl/adv_api"),
-        "-I"
-        + os.path.join(
-            ascend_home,
-            "aarch64-linux/ascendc/include/highlevel_api",
-        ),
+        "-I" + os.path.join(ascend_home, "aarch64-linux/ascendc/include/highlevel_api"),
     ]
 
 
@@ -191,12 +156,7 @@ def read_resource_id_section_for_test(binary_file):
     with TemporaryDirectory() as temp_dir:
         dump_file = os.path.join(temp_dir, "resource_id")
         result = subprocess.run(
-            [
-                objcopy,
-                "--dump-section",
-                f".ascend.resource_id={dump_file}",
-                binary_file,
-            ],
+            [objcopy, "--dump-section", f".ascend.resource_id={dump_file}", binary_file],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             check=False,
@@ -210,9 +170,7 @@ def read_resource_id_section_for_test(binary_file):
 def compile_manifest_resources(manifest, manifest_dir, source_file_path):
     with TemporaryDirectory() as temp_dir:
         resource_root = os.path.join(temp_dir, manifest["resource_path"])
-        shutil.copytree(
-            os.path.join(manifest_dir, manifest["resource_path"]), resource_root
-        )
+        shutil.copytree(os.path.join(manifest_dir, manifest["resource_path"]), resource_root)
         output_root = os.path.join(temp_dir, "outputs")
         os.makedirs(output_root)
 
@@ -220,14 +178,9 @@ def compile_manifest_resources(manifest, manifest_dir, source_file_path):
             for constant_info in kernel["constant_infos"]:
                 template_path = constant_info["file"].replace("${resource}", temp_dir)
                 template = Path(template_path).read_text(encoding="utf-8")
-                static_value = (
-                    "{"
-                    + ", ".join("0" for _ in range(constant_info["byte_size"]))
-                    + "}"
-                )
+                static_value = "{" + ", ".join("0" for _ in range(constant_info["byte_size"])) + "}"
                 Path(template_path).write_text(
-                    template.replace(constant_info["template"], static_value),
-                    encoding="utf-8",
+                    template.replace(constant_info["template"], static_value), encoding="utf-8"
                 )
 
             for obj in kernel["objects"]:
@@ -240,29 +193,18 @@ def compile_manifest_resources(manifest, manifest_dir, source_file_path):
                             else [argument]
                         )
                         for value in values:
+                            value = value.replace("${env:ASCEND_HOME_PATH}", os.environ["ASCEND_HOME_PATH"])
                             value = value.replace(
-                                "${env:ASCEND_HOME_PATH}",
-                                os.environ["ASCEND_HOME_PATH"],
-                            )
-                            value = value.replace(
-                                "${source_file_path}",
-                                os.path.dirname(os.path.realpath(source_file_path)),
+                                "${source_file_path}", os.path.dirname(os.path.realpath(source_file_path))
                             )
                             value = value.replace("${resource}", temp_dir)
                             value = value.replace("${output}", output_root)
                             argv.append(value)
                     result = subprocess.run(
-                        argv,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        check=False,
-                        text=True,
+                        argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False, text=True
                     )
                     if result.returncode != 0:
-                        raise AssertionError(
-                            f"Manifest command failed: {' '.join(argv)}\n"
-                            f"{result.stdout}"
-                        )
+                        raise AssertionError(f"Manifest command failed: {' '.join(argv)}\n{result.stdout}")
                 for output in obj["outputs"]:
                     output_name = output[len("${output}/") :]
                     if not os.path.isfile(os.path.join(output_root, output_name)):
@@ -282,78 +224,42 @@ class TestCompileOp(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        generated_file_path = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "../../../kernel_meta"
-        )
+        generated_file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../../kernel_meta")
         if os.path.isdir(generated_file_path):
             shutil.rmtree(generated_file_path)
 
     def reset_global_var(self):
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_compile_debug_config", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_dump_disable_compile_options", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_debug_compile_options", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_sanitizer", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_dump_disable_compile_options", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_debug_compile_options", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_sanitizer", False)
         compile_op_module.global_var_storage.set_variable("ascendc_compiler_path", None)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_ccache", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", False)
         compile_op_module.global_var_storage.set_variable("ascendc_asan_obj_path", {})
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_build_log", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_coverage", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_build_log_path", None
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_build_log", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_coverage", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_build_log_path", None)
         compile_op_module.global_var_storage.set_variable("ascendc_build_log_list", [])
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_time_stamp_compile_options", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_sub_super_kernel_params", []
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_sub_super_kernel_type", ""
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_sub_super_kernel_fun_names", {}
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "super_kenel_save_sub_op_files", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_recognize_simtvf", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_time_stamp_compile_options", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_sub_super_kernel_params", [])
+        compile_op_module.global_var_storage.set_variable("ascendc_sub_super_kernel_type", "")
+        compile_op_module.global_var_storage.set_variable("ascendc_sub_super_kernel_fun_names", {})
+        compile_op_module.global_var_storage.set_variable("super_kenel_save_sub_op_files", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_recognize_simtvf", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", False)
 
     def _assert_manifest_identity(self, op_info):
         kernel_meta_dir = os.path.join(TOP_PATH, "kernel_meta")
         binary_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         json_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".json")
         manifest_dir = os.path.join(KERNEL_SPEC_ROOT, op_info.kernel_name)
-        manifest_file = os.path.join(
-            manifest_dir, op_info.kernel_name + "_manifest.json"
-        )
+        manifest_file = os.path.join(manifest_dir, op_info.kernel_name + "_manifest.json")
         self.assertTrue(os.path.isfile(binary_file))
         resource_id = read_resource_id_section_for_test(binary_file)
         with open(json_file, "r", encoding="utf-8") as file_obj:
             kernel_json = json.load(file_obj)
         with open(binary_file, "rb") as file_obj:
-            self.assertEqual(
-                kernel_json["sha256"], hashlib.sha256(file_obj.read()).hexdigest()
-            )
+            self.assertEqual(kernel_json["sha256"], hashlib.sha256(file_obj.read()).hexdigest())
         with open(manifest_file, "r", encoding="utf-8") as file_obj:
             manifest = json.load(file_obj)
         self.assertEqual(manifest["resource_id"], resource_id)
@@ -375,9 +281,7 @@ class TestCompileOp(unittest.TestCase):
         register_tiling_struct=None,
         tpl_tiling_struct=None,
     ):
-        op_info = OpInfo(
-            kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[]
-        )
+        op_info = OpInfo(kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[])
         infered_info = InferChannelParamsFromIFile(
             tiling_key_list=[0],
             code_channel=CORE_TYPE_VEC,
@@ -410,118 +314,59 @@ class TestCompileOp(unittest.TestCase):
                     ctx.add_addition("super_kernel_sub_combine", True)
                 with ExitStack() as stack:
                     stack.enter_context(
-                        mock.patch.object(
-                            CommonUtility,
-                            "get_kernel_meta_dir",
-                            return_value="/tmp/kernel_meta",
-                        )
+                        mock.patch.object(CommonUtility, "get_kernel_meta_dir", return_value="/tmp/kernel_meta")
                     )
                     stack.enter_context(
-                        mock.patch.object(
-                            CommonUtility,
-                            "get_distinct_filename_tag",
-                            return_value="_tag",
-                        )
+                        mock.patch.object(CommonUtility, "get_distinct_filename_tag", return_value="_tag")
+                    )
+                    stack.enter_context(mock.patch.object(CommonUtility, "is_v220", return_value=supported_arch))
+                    stack.enter_context(mock.patch.object(CommonUtility, "is_c310", return_value=False))
+                    stack.enter_context(mock.patch.object(CommonUtility, "get_chip_version", return_value="c220"))
+                    stack.enter_context(mock.patch.object(CommonUtility, "remove_temp_file"))
+                    stack.enter_context(
+                        mock.patch.object(compile_op_module, "check_if_gen_placehoder", return_value=False)
                     )
                     stack.enter_context(
-                        mock.patch.object(
-                            CommonUtility, "is_v220", return_value=supported_arch
-                        )
-                    )
-                    stack.enter_context(
-                        mock.patch.object(CommonUtility, "is_c310", return_value=False)
-                    )
-                    stack.enter_context(
-                        mock.patch.object(
-                            CommonUtility, "get_chip_version", return_value="c220"
-                        )
-                    )
-                    stack.enter_context(
-                        mock.patch.object(CommonUtility, "remove_temp_file")
-                    )
-                    stack.enter_context(
-                        mock.patch.object(
-                            compile_op_module,
-                            "check_if_gen_placehoder",
-                            return_value=False,
-                        )
-                    )
-                    stack.enter_context(
-                        mock.patch.object(
-                            compile_op_module,
-                            "get_tiling_info_by_tiling",
-                            return_value=tiling_info,
-                        )
+                        mock.patch.object(compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info)
                     )
                     stack.enter_context(mock.patch.object(tiling_info, "save_file"))
                     stack.enter_context(mock.patch.object(tiling_info, "remove_file"))
-                    stack.enter_context(
-                        mock.patch.object(
-                            compile_op_module, "handle_sk_codegen_options"
-                        )
-                    )
-                    stack.enter_context(
-                        mock.patch.object(
-                            compile_op_module,
-                            "gen_op_stub_kernel_func",
-                            return_value=0,
-                        )
-                    )
-                    stack.enter_context(
-                        mock.patch.object(compile_op_module, "handle_compile_options")
-                    )
+                    stack.enter_context(mock.patch.object(compile_op_module, "handle_sk_codegen_options"))
+                    stack.enter_context(mock.patch.object(compile_op_module, "gen_op_stub_kernel_func", return_value=0))
+                    stack.enter_context(mock.patch.object(compile_op_module, "handle_compile_options"))
                     compile_states = []
 
                     def record_compile_state(compile_info, *_args, **_kwargs):
                         state = (
-                            global_var_storage.get_variable(
-                                "ascendc_enable_super_kernel"
-                            ),
-                            global_var_storage.get_variable(
-                                "ascendc_sk_double_compile"
-                            ),
-                            global_var_storage.get_variable(
-                                "ascendc_sk_sub_combine_norm_workflow"
-                            ),
+                            global_var_storage.get_variable("ascendc_enable_super_kernel"),
+                            global_var_storage.get_variable("ascendc_sk_double_compile"),
+                            global_var_storage.get_variable("ascendc_sk_sub_combine_norm_workflow"),
                         )
                         compile_states.append(state)
-                        if (
-                            compile_info.compile_command_session.mode
-                            is not CompileCommandMode.EXECUTE
-                        ):
+                        if compile_info.compile_command_session.mode is not CompileCommandMode.EXECUTE:
                             symbol_type = "sk" if state[0] else "basic"
                             compile_info.compile_command_session.submit(
                                 mock.Mock(compiled_symbol=f"{symbol_type}_symbol")
                             )
                         if state[1]:
                             symbol_type = "sk" if state[0] else "basic"
-                            compile_info.global_kernel_symbols.append(
-                                f"{symbol_type}_symbol"
-                            )
+                            compile_info.global_kernel_symbols.append(f"{symbol_type}_symbol")
 
                     mock_compile_kernel = stack.enter_context(
                         mock.patch.object(
-                            compile_op_module,
-                            "compile_kernel_and_meta",
-                            side_effect=record_compile_state,
+                            compile_op_module, "compile_kernel_and_meta", side_effect=record_compile_state
                         )
                     )
-                    mock_link_kernel = stack.enter_context(
-                        mock.patch.object(compile_op_module, "link_kernel_obj")
-                    )
+                    mock_link_kernel = stack.enter_context(mock.patch.object(compile_op_module, "link_kernel_obj"))
                     mock_compile_sk_bind = stack.enter_context(
                         mock.patch.object(
-                            compile_op_module,
-                            "compile_sk_bind",
-                            return_value="/tmp/kernel_meta/sk_bind.o",
+                            compile_op_module, "compile_sk_bind", return_value="/tmp/kernel_meta/sk_bind.o"
                         )
                     )
                     mock_link_sk_norm = stack.enter_context(
                         mock.patch.object(compile_op_module, "link_sk_norm_combine")
                     )
-                    stack.enter_context(
-                        mock.patch.object(compile_op_module, "_json_post_process")
-                    )
+                    stack.enter_context(mock.patch.object(compile_op_module, "_json_post_process"))
                     mock_write_resource_id = stack.enter_context(
                         mock.patch.object(
                             static_compile_resource_generator,
@@ -529,9 +374,7 @@ class TestCompileOp(unittest.TestCase):
                             return_value="resource-id",
                         )
                     )
-                    record_sk_function = (
-                        compile_op_module._record_kernel_spec_sk_commands
-                    )
+                    record_sk_function = compile_op_module._record_kernel_spec_sk_commands
                     mock_record_sk = stack.enter_context(
                         mock.patch.object(
                             compile_op_module,
@@ -541,24 +384,12 @@ class TestCompileOp(unittest.TestCase):
                         )
                     )
                     mock_generate_manifest = stack.enter_context(
-                        mock.patch.object(
-                            static_compile_resource_generator,
-                            "ManifestPackageWriter",
-                        )
+                        mock.patch.object(static_compile_resource_generator, "ManifestPackageWriter")
                     )
-                    compile_op_common_part(
-                        "test.cpp",
-                        "test",
-                        op_info,
-                        CompileOptionTuple([], []),
-                        infered_info,
-                        {},
-                    )
+                    compile_op_common_part("test.cpp", "test", op_info, CompileOptionTuple([], []), infered_info, {})
         finally:
             global_var_storage.set_variable("ascendc_enable_super_kernel", False)
-            global_var_storage.set_variable(
-                "ascendc_sk_sub_combine_norm_workflow", False
-            )
+            global_var_storage.set_variable("ascendc_sk_sub_combine_norm_workflow", False)
 
         return {
             "compile_kernel": mock_compile_kernel,
@@ -581,9 +412,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_kernel_spec_none_preserves_original_sk_post_state(self):
         global_var_storage.set_variable("ascendc_sk_double_compile", False)
-        self.addCleanup(
-            global_var_storage.set_variable, "ascendc_sk_double_compile", False
-        )
+        self.addCleanup(global_var_storage.set_variable, "ascendc_sk_double_compile", False)
 
         calls = self._run_kernel_spec_common_part("None", enable_sk=True)
 
@@ -599,9 +428,7 @@ class TestCompileOp(unittest.TestCase):
 
         calls["compile_kernel"].assert_called_once()
         calls["link_kernel"].assert_called_once()
-        calls["write_resource_id"].assert_called_once_with(
-            "/tmp/kernel_meta/TestKernel.o"
-        )
+        calls["write_resource_id"].assert_called_once_with("/tmp/kernel_meta/TestKernel.o")
         calls["record_sk"].assert_not_called()
         calls["compile_sk_bind"].assert_not_called()
         calls["link_sk_norm"].assert_not_called()
@@ -619,18 +446,9 @@ class TestCompileOp(unittest.TestCase):
         self.assertEqual(calls["compile_kernel"].call_count, 2)
         basic_compile_info = calls["compile_kernel"].call_args_list[0].args[0]
         sk_compile_info = calls["compile_kernel"].call_args_list[1].args[0]
-        self.assertEqual(
-            basic_compile_info.compile_command_session.mode,
-            CompileCommandMode.EXECUTE_AND_RECORD,
-        )
-        self.assertEqual(
-            sk_compile_info.compile_command_session.mode,
-            CompileCommandMode.RECORD_ONLY,
-        )
-        self.assertEqual(
-            calls["compile_states"],
-            [(False, False, True), (True, True, False)],
-        )
+        self.assertEqual(basic_compile_info.compile_command_session.mode, CompileCommandMode.EXECUTE_AND_RECORD)
+        self.assertEqual(sk_compile_info.compile_command_session.mode, CompileCommandMode.RECORD_ONLY)
+        self.assertEqual(calls["compile_states"], [(False, False, True), (True, True, False)])
         calls["link_kernel"].assert_called_once()
         calls["compile_sk_bind"].assert_called_once()
         self.assertIs(calls["compile_sk_bind"].call_args.args[0], sk_compile_info)
@@ -638,9 +456,7 @@ class TestCompileOp(unittest.TestCase):
         self.assertEqual(calls["compile_sk_bind"].call_args.args[3], "/tmp/kernel_meta")
         self.assertEqual(basic_compile_info.global_kernel_symbols, ["basic_symbol"])
         calls["link_sk_norm"].assert_not_called()
-        calls["write_resource_id"].assert_called_once_with(
-            "/tmp/kernel_meta/TestKernel.o"
-        )
+        calls["write_resource_id"].assert_called_once_with("/tmp/kernel_meta/TestKernel.o")
         record_context = calls["record_sk"].call_args.args[0]
         self.assertIsInstance(record_context, compile_op_module.KernelSpecCompilation)
         self.assertEqual(len(calls["record_sk"].call_args.args), 5)
@@ -678,9 +494,7 @@ class TestCompileOp(unittest.TestCase):
         sk_compile_info.compile_log_path = "/tmp/compile.log"
         sk_compile_info.global_kernel_symbols = ["test_sk"]
         sk_compile_info.global_kernel_attribute = "__global__ __sk__"
-        sk_compile_info.compile_command_session = CompileCommandSession(
-            CompileCommandMode.RECORD_ONLY
-        )
+        sk_compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.RECORD_ONLY)
         basic_compile_info = CompileInfo()
         basic_compile_info.global_kernel_symbols = ["test_basic"]
         basic_compile_info.global_kernel_attribute = "__global__ [aicore]"
@@ -692,19 +506,12 @@ class TestCompileOp(unittest.TestCase):
                 mock.patch.object(CommonUtility, "is_v220", return_value=True),
                 mock.patch.object(CommonUtility, "run_cmd_inner") as run_cmd,
             ):
-                output_path = compile_sk_bind(
-                    sk_compile_info,
-                    basic_compile_info,
-                    compile_options,
-                    kernel_meta_dir,
-                )
+                output_path = compile_sk_bind(sk_compile_info, basic_compile_info, compile_options, kernel_meta_dir)
 
             source_path = os.path.join(kernel_meta_dir, "sk_bind.cpp")
             self.assertEqual(output_path, os.path.join(kernel_meta_dir, "sk_bind.o"))
             self.assertTrue(os.path.isfile(source_path))
-            self.assertEqual(
-                len(sk_compile_info.compile_command_session.sk_bind_records), 1
-            )
+            self.assertEqual(len(sk_compile_info.compile_command_session.sk_bind_records), 1)
             recorded = sk_compile_info.compile_command_session.sk_bind_records[0]
             self.assertEqual(recorded.source_path, source_path)
             self.assertEqual(recorded.output_path, output_path)
@@ -722,9 +529,7 @@ class TestCompileOp(unittest.TestCase):
         calls["generate_manifest"].assert_not_called()
 
     def test_kernel_spec_static_shape_keeps_original_sk_workflow(self):
-        calls = self._run_kernel_spec_common_part(
-            "SK", static_shape=True, enable_sk=True
-        )
+        calls = self._run_kernel_spec_common_part("SK", static_shape=True, enable_sk=True)
 
         self.assertEqual(calls["compile_kernel"].call_count, 2)
         calls["compile_sk_bind"].assert_called_once()
@@ -738,9 +543,7 @@ class TestCompileOp(unittest.TestCase):
 
         calls["compile_kernel"].assert_called_once()
         calls["link_kernel"].assert_called_once()
-        calls["write_resource_id"].assert_called_once_with(
-            "/tmp/kernel_meta/TestKernel.o"
-        )
+        calls["write_resource_id"].assert_called_once_with("/tmp/kernel_meta/TestKernel.o")
         calls["record_sk"].assert_not_called()
         calls["generate_manifest"].assert_called_once()
         context = calls["generate_manifest"].call_args.args[0]
@@ -752,14 +555,8 @@ class TestCompileOp(unittest.TestCase):
         self.assertEqual(calls["compile_kernel"].call_count, 2)
         sk_compile_info = calls["compile_kernel"].call_args_list[0].args[0]
         basic_compile_info = calls["compile_kernel"].call_args_list[1].args[0]
-        self.assertEqual(
-            sk_compile_info.compile_command_session.mode,
-            CompileCommandMode.EXECUTE,
-        )
-        self.assertEqual(
-            basic_compile_info.compile_command_session.mode,
-            CompileCommandMode.EXECUTE_AND_RECORD,
-        )
+        self.assertEqual(sk_compile_info.compile_command_session.mode, CompileCommandMode.EXECUTE)
+        self.assertEqual(basic_compile_info.compile_command_session.mode, CompileCommandMode.EXECUTE_AND_RECORD)
         calls["link_kernel"].assert_called_once()
         calls["compile_sk_bind"].assert_called_once()
         calls["link_sk_norm"].assert_called_once()
@@ -797,9 +594,7 @@ class TestCompileOp(unittest.TestCase):
                 mock.patch.object(
                     static_compile_resource_generator,
                     "generate_and_write_resource_id",
-                    side_effect=static_compile_resource_generator.ResourceIdError(
-                        "resource failed"
-                    ),
+                    side_effect=static_compile_resource_generator.ResourceIdError("resource failed"),
                 ),
                 lambda: kernel_spec.attach_resource_id(),
                 "generate Resource ID failed, reason is: resource failed",
@@ -809,9 +604,7 @@ class TestCompileOp(unittest.TestCase):
                 mock.patch.object(
                     static_compile_resource_generator,
                     "ManifestPackageWriter",
-                    side_effect=static_compile_resource_generator.ManifestGenerationError(
-                        "manifest failed"
-                    ),
+                    side_effect=static_compile_resource_generator.ManifestGenerationError("manifest failed"),
                 ),
                 lambda: kernel_spec.publish_manifest(TilingInfo(), 0),
                 "generate Manifest failed, reason is: manifest failed",
@@ -821,16 +614,11 @@ class TestCompileOp(unittest.TestCase):
             with self.subTest(stage=stage):
                 with producer_patch:
                     with mock.patch.object(
-                        CommonUtility,
-                        "ascendc_raise_python_err",
-                        side_effect=RuntimeError("converted error"),
+                        CommonUtility, "ascendc_raise_python_err", side_effect=RuntimeError("converted error")
                     ) as raise_error:
                         with self.assertRaisesRegex(RuntimeError, "converted error"):
                             action()
-                raise_error.assert_called_once_with(
-                    TBE_DEFAULT_PYTHON_ERROR_CODE,
-                    expected_message,
-                )
+                raise_error.assert_called_once_with(TBE_DEFAULT_PYTHON_ERROR_CODE, expected_message)
 
     def test_kernel_spec_compilation_restores_state_on_failures(self):
         variable_names = (
@@ -839,21 +627,10 @@ class TestCompileOp(unittest.TestCase):
             "ascendc_sk_sub_combine_norm_workflow",
         )
         entry_values = (True, True, False)
-        self.addCleanup(
-            global_var_storage.set_variable, "ascendc_enable_super_kernel", False
-        )
-        self.addCleanup(
-            global_var_storage.set_variable, "ascendc_sk_double_compile", False
-        )
-        self.addCleanup(
-            global_var_storage.set_variable,
-            "ascendc_sk_sub_combine_norm_workflow",
-            False,
-        )
-        cases = (
-            ("body", RuntimeError, "recording failed"),
-            ("cleanup", OSError, "cleanup failed"),
-        )
+        self.addCleanup(global_var_storage.set_variable, "ascendc_enable_super_kernel", False)
+        self.addCleanup(global_var_storage.set_variable, "ascendc_sk_double_compile", False)
+        self.addCleanup(global_var_storage.set_variable, "ascendc_sk_sub_combine_norm_workflow", False)
+        cases = (("body", RuntimeError, "recording failed"), ("cleanup", OSError, "cleanup failed"))
         for failure_stage, error_type, message in cases:
             with self.subTest(failure_stage=failure_stage):
                 for name, value in zip(variable_names, entry_values):
@@ -867,44 +644,23 @@ class TestCompileOp(unittest.TestCase):
                     ctx.add_addition("kernel_spec_dir", "/tmp/kernel_spec")
                     ctx.add_addition("super_kernel_sub_combine", True)
                     with ExitStack() as stack:
-                        stack.enter_context(
-                            mock.patch.object(
-                                CommonUtility, "is_v220", return_value=True
-                            )
-                        )
-                        stack.enter_context(
-                            mock.patch.object(
-                                CommonUtility, "is_c310", return_value=False
-                            )
-                        )
+                        stack.enter_context(mock.patch.object(CommonUtility, "is_v220", return_value=True))
+                        stack.enter_context(mock.patch.object(CommonUtility, "is_c310", return_value=False))
                         if failure_stage == "cleanup":
                             stack.enter_context(
-                                mock.patch.object(
-                                    CommonUtility,
-                                    "remove_temp_file",
-                                    side_effect=OSError(message),
-                                )
+                                mock.patch.object(CommonUtility, "remove_temp_file", side_effect=OSError(message))
                             )
                         with self.assertRaisesRegex(error_type, message):
                             with compile_op_module.KernelSpecCompilation.create(
-                                compile_info,
-                                CompileOptionTuple([], []),
-                                tiling_info,
+                                compile_info, CompileOptionTuple([], []), tiling_info
                             ) as kernel_spec:
-                                current_values = tuple(
-                                    global_var_storage.get_variable(name)
-                                    for name in variable_names
-                                )
+                                current_values = tuple(global_var_storage.get_variable(name) for name in variable_names)
                                 self.assertEqual(current_values, (False, False, True))
                                 if failure_stage == "body":
                                     raise RuntimeError(message)
-                                kernel_spec.sk_compile_info.gen_kernel_func_file = (
-                                    "/tmp/sk.cpp"
-                                )
+                                kernel_spec.sk_compile_info.gen_kernel_func_file = "/tmp/sk.cpp"
 
-                restored_values = tuple(
-                    global_var_storage.get_variable(name) for name in variable_names
-                )
+                restored_values = tuple(global_var_storage.get_variable(name) for name in variable_names)
                 self.assertEqual(restored_values, entry_values)
 
     def test_decode_mode(self):
@@ -919,39 +675,22 @@ class TestCompileOp(unittest.TestCase):
         compile_info = CompileInfo()
         compile_info.no_set_kernel_type = False
         compile_info.code_channel = CORE_TYPE_MIX
-        compile_info.tiling_key_kernel_type = {
-            "1": KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
-        }
-        compile_info.raw_tiling_key_kernel_type = dict(
-            compile_info.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = {"1": KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC}
+        compile_info.raw_tiling_key_kernel_type = dict(compile_info.tiling_key_kernel_type)
 
         self.assertEqual(get_compile_core_types(compile_info, "1"), ("cube",))
+        self.assertNotIn(f"-D{MIX_CORE_MACRO}=1", get_compile_target_options(compile_info, "1", True))
         self.assertNotIn(
-            f"-D{MIX_CORE_MACRO}=1",
-            get_compile_target_options(compile_info, "1", True),
-        )
-        self.assertNotIn(
-            "-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__",
-            get_compile_target_options(compile_info, "1", True),
+            "-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__", get_compile_target_options(compile_info, "1", True)
         )
 
     def test_global_storage(self):
-        self.assertRaises(
-            Exception,
-            compile_op_module.global_var_storage.set_variable,
-            "test_var",
-            True,
-        )
-        self.assertRaises(
-            Exception, compile_op_module.global_var_storage.get_variable, "test_var"
-        )
+        self.assertRaises(Exception, compile_op_module.global_var_storage.set_variable, "test_var", True)
+        self.assertRaises(Exception, compile_op_module.global_var_storage.get_variable, "test_var")
 
     def test_compile_op_dynamic(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         origin_func_name = "add_custom_unalign"
         code_channel = 0
         op_info = OpInfo(
@@ -1067,25 +806,15 @@ class TestCompileOp(unittest.TestCase):
             ctx.add_addition("super_kernel_sub_combine", True)
             ctx.add_addition("kernel_spec_mode", "SK")
             ctx.add_addition("kernel_spec_dir", KERNEL_SPEC_ROOT)
-            with buildcfg.build_config(
-                enable_super_kernel=True, kernel_meta_parent_dir=TOP_PATH
-            ):
+            with buildcfg.build_config(enable_super_kernel=True, kernel_meta_parent_dir=TOP_PATH):
                 with (
                     mock.patch.object(
-                        compile_op_module,
-                        "compile_kernel_and_meta",
-                        wraps=compile_op_module.compile_kernel_and_meta,
+                        compile_op_module, "compile_kernel_and_meta", wraps=compile_op_module.compile_kernel_and_meta
                     ) as mock_compile_kernel,
                     mock.patch.object(
-                        compile_op_module,
-                        "compile_sk_bind",
-                        wraps=compile_op_module.compile_sk_bind,
+                        compile_op_module, "compile_sk_bind", wraps=compile_op_module.compile_sk_bind
                     ) as mock_compile_sk_bind,
-                    mock.patch.object(
-                        ascendc_common_utilityop_module,
-                        "is_enable_ascendc_cov",
-                        return_value=True,
-                    ),
+                    mock.patch.object(ascendc_common_utilityop_module, "is_enable_ascendc_cov", return_value=True),
                     mock.patch(
                         "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
                         side_effect=make_test_tiling_def,
@@ -1094,32 +823,20 @@ class TestCompileOp(unittest.TestCase):
                         "asc_op_compile_base.asc_op_compiler.kernel_info_infer.check_exist_instrinsic_when_super_kernel"
                     ),
                 ):
-                    compile_op(
-                        cce_file,
-                        origin_func_name,
-                        op_info,
-                        compile_options,
-                        code_channel,
-                        op_compile_option,
-                    )
+                    compile_op(cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option)
 
         binary_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".o")
         self.assertEqual(mock_compile_kernel.call_count, 2)
         basic_compile_info = mock_compile_kernel.call_args_list[0].args[0]
         sk_compile_info = mock_compile_kernel.call_args_list[1].args[0]
-        self.assertEqual(
-            os.path.realpath(basic_compile_info.dst_file),
-            os.path.realpath(binary_file),
-        )
+        self.assertEqual(os.path.realpath(basic_compile_info.dst_file), os.path.realpath(binary_file))
         self.assertTrue(basic_compile_info.compile_command_session.should_execute)
         self.assertFalse(sk_compile_info.compile_command_session.should_execute)
         self.assertTrue(sk_compile_info.compile_command_session.records)
         mock_compile_sk_bind.assert_called_once()
         json_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".json")
         manifest_dir = os.path.join(KERNEL_SPEC_ROOT, op_info.kernel_name)
-        manifest_file = os.path.join(
-            manifest_dir, op_info.kernel_name + "_manifest.json"
-        )
+        manifest_file = os.path.join(manifest_dir, op_info.kernel_name + "_manifest.json")
         self.assertTrue(os.path.exists(binary_file))
         resource_id = read_resource_id_section_for_test(binary_file)
         with open(binary_file, "rb") as file_obj:
@@ -1134,28 +851,16 @@ class TestCompileOp(unittest.TestCase):
         self.assertEqual(manifest["resource_id"], resource_id)
         self.assertNotIn("intermediates", manifest)
         self.assertFalse(
-            os.path.exists(
-                os.path.join(
-                    manifest_dir,
-                    manifest["resource_path"],
-                    "src",
-                    manifest["source_file"],
-                )
-            )
+            os.path.exists(os.path.join(manifest_dir, manifest["resource_path"], "src", manifest["source_file"]))
         )
         objects = manifest["kernels"][0]["objects"]
         self.assertEqual({obj["object_name"] for obj in objects}, {"basic", "sk"})
         sk_object = next(obj for obj in objects if obj["object_name"] == "sk")
-        self.assertTrue(
-            all("stage" not in command for command in sk_object["commands"])
-        )
+        self.assertTrue(all("stage" not in command for command in sk_object["commands"]))
         constant_info = manifest["kernels"][0]["constant_infos"][0]
         self.assertEqual(constant_info["template"], "@@STATIC_VALUE_tiling_data@@")
         template_ref = constant_info["file"]
-        template_file = os.path.join(
-            manifest_dir,
-            template_ref.replace("${resource}/", ""),
-        )
+        template_file = os.path.join(manifest_dir, template_ref.replace("${resource}/", ""))
         with open(template_file, "r", encoding="utf-8") as file_obj:
             self.assertEqual(file_obj.read().count(constant_info["template"]), 1)
         compile_argv = [
@@ -1169,8 +874,7 @@ class TestCompileOp(unittest.TestCase):
         self.assertTrue(
             any(argument == "-include" + template_ref for argument in compile_argv)
             or any(
-                compile_argv[index : index + 2] == ["-include", template_ref]
-                for index in range(len(compile_argv) - 1)
+                compile_argv[index : index + 2] == ["-include", template_ref] for index in range(len(compile_argv) - 1)
             )
         )
         wrapper_refs = {
@@ -1180,9 +884,7 @@ class TestCompileOp(unittest.TestCase):
         }
         self.assertTrue(wrapper_refs)
         for wrapper_ref in wrapper_refs:
-            wrapper_file = os.path.join(
-                manifest_dir, wrapper_ref.replace("${resource}/", "")
-            )
+            wrapper_file = os.path.join(manifest_dir, wrapper_ref.replace("${resource}/", ""))
             with open(wrapper_file, "r", encoding="utf-8") as file_obj:
                 self.assertNotIn(constant_info["template"], file_obj.read())
         compile_manifest_resources(manifest, manifest_dir, cce_file)
@@ -1191,9 +893,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_compile_op_dynamic_with_inferinfo(self):
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         origin_func_name = "add_custom_unalign"
         code_channel = 0
         op_info = OpInfo(
@@ -1311,10 +1011,7 @@ class TestCompileOp(unittest.TestCase):
         tiling_struct_expr_map = {}
         set_task_bar = False
         wait_task_bar = False
-        tiling_key_kernel_type = {
-            "1": KernelMetaType.KERNEL_TYPE_AIV_ONLY,
-            "2": KernelMetaType.KERNEL_TYPE_AIV_ONLY,
-        }
+        tiling_key_kernel_type = {"1": KernelMetaType.KERNEL_TYPE_AIV_ONLY, "2": KernelMetaType.KERNEL_TYPE_AIV_ONLY}
         tiling_key_deterministic = {}
         default_kernel_type = KernelMetaType.KERNEL_TYPE_MAX
         dump_info = {}
@@ -1323,16 +1020,10 @@ class TestCompileOp(unittest.TestCase):
         tiling_key_struct_map = {}
         tiling_key_group_map = {}
 
-        from asc_op_compile_base.asc_op_compiler.ascendc_constants import (
-            TilingKeyConfig,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_constants import TilingKeyConfig
 
-        tiling_key_infos = {
-            "1": TilingKeyConfig(kernel_type=KernelMetaType.KERNEL_TYPE_AIV_ONLY)
-        }
-        customized_config = CustomizedConfig(
-            default_kernel_type, default_tiling_struct, tiling_key_infos
-        )
+        tiling_key_infos = {"1": TilingKeyConfig(kernel_type=KernelMetaType.KERNEL_TYPE_AIV_ONLY)}
+        customized_config = CustomizedConfig(default_kernel_type, default_tiling_struct, tiling_key_infos)
 
         op_compile_option = "{}"
         extend_options = {"customized_tiling_key_list": ["1"]}
@@ -1344,11 +1035,7 @@ class TestCompileOp(unittest.TestCase):
             ctx.add_addition("kernel_spec_dir", KERNEL_SPEC_ROOT)
             with buildcfg.build_config():
                 with (
-                    mock.patch.object(
-                        ascendc_common_utilityop_module,
-                        "is_enable_ascendc_cov",
-                        return_value=True,
-                    ),
+                    mock.patch.object(ascendc_common_utilityop_module, "is_enable_ascendc_cov", return_value=True),
                     mock.patch(
                         "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
                         side_effect=make_test_tiling_def,
@@ -1369,9 +1056,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_compile_op_dynamic_c310(self):
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         origin_func_name = "add_custom_unalign"
         code_channel = 0
         op_info = OpInfo(
@@ -1483,20 +1168,14 @@ class TestCompileOp(unittest.TestCase):
         ascendc_common_utilityop_module = importlib.import_module(
             "asc_op_compile_base.asc_op_compiler.ascendc_common_utility"
         )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_recognize_simtvf", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_recognize_simtvf", True)
         original_search = re.search
         with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
             ctx.add_addition("kernel_spec_mode", "Normal")
             ctx.add_addition("kernel_spec_dir", KERNEL_SPEC_ROOT)
             with buildcfg.build_config():
                 with (
-                    mock.patch.object(
-                        ascendc_common_utilityop_module,
-                        "is_enable_ascendc_cov",
-                        return_value=True,
-                    ),
+                    mock.patch.object(ascendc_common_utilityop_module, "is_enable_ascendc_cov", return_value=True),
                     mock.patch(
                         "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
                         side_effect=make_test_tiling_def,
@@ -1511,20 +1190,12 @@ class TestCompileOp(unittest.TestCase):
 
                         mock_search.side_effect = custom_search
                         compile_op(
-                            cce_file,
-                            origin_func_name,
-                            op_info,
-                            compile_options,
-                            code_channel,
-                            op_compile_option,
-                            {},
+                            cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option, {}
                         )
         self._assert_manifest_identity(op_info)
 
     def test_compile_op_dynamic_no_tiling_register(self):
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         origin_func_name = "add_custom_unalign"
         code_channel = 0
         op_info = OpInfo(
@@ -1627,10 +1298,7 @@ class TestCompileOp(unittest.TestCase):
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
         ]
@@ -1665,15 +1333,9 @@ class TestCompileOp(unittest.TestCase):
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config(),
             mock.patch.object(CommonUtility, "is_c310", return_value=False),
-            mock.patch.object(
-                compile_op_module, "_compile_ascendc_cce", return_value=None
-            ),
+            mock.patch.object(compile_op_module, "_compile_ascendc_cce", return_value=None),
             mock.patch.object(CommonUtility, "is_v220", return_value=False),
-            mock.patch.object(
-                compile_op_module,
-                "get_tiling_info_by_tiling",
-                return_value=TilingInfo(),
-            ),
+            mock.patch.object(compile_op_module, "get_tiling_info_by_tiling", return_value=TilingInfo()),
             mock.patch.object(
                 KernelInfoInfer,
                 "get_tiling_key_list_and_simple_infer_code_channel",
@@ -1699,46 +1361,19 @@ class TestCompileOp(unittest.TestCase):
                     tiling_key_group_map,
                 ),
             ),
-            mock.patch.object(
-                compile_op_module,
-                "_get_tiling_struct_without_register_size",
-                return_value=None,
-            ),
-            mock.patch.object(
-                compile_op_module,
-                "gen_tiling_struct_size_and_dfx_section_file",
-                return_value=None,
-            ),
-            mock.patch.object(
-                compile_op_module, "link_relocatable_meta_file", return_value=None
-            ),
-            mock.patch.object(
-                compile_op_module, "gen_compile_cmd_for_meta_info", return_value=None
-            ),
-            mock.patch.object(
-                compile_op_module, "_json_post_process", return_value=None
-            ),
+            mock.patch.object(compile_op_module, "_get_tiling_struct_without_register_size", return_value=None),
+            mock.patch.object(compile_op_module, "gen_tiling_struct_size_and_dfx_section_file", return_value=None),
+            mock.patch.object(compile_op_module, "link_relocatable_meta_file", return_value=None),
+            mock.patch.object(compile_op_module, "gen_compile_cmd_for_meta_info", return_value=None),
+            mock.patch.object(compile_op_module, "_json_post_process", return_value=None),
             mock.patch.object(CommonUtility, "run_cmd_inner", return_value=None),
-            mock.patch(
-                "asc_op_compile_base.asc_op_compiler.global_storage.global_var_storage.global_storage_reset"
-            ),
+            mock.patch("asc_op_compile_base.asc_op_compiler.global_storage.global_var_storage.global_storage_reset"),
         ):
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_tiling_no_register", True
-            )
-            compile_op(
-                cce_file,
-                origin_func_name,
-                op_info,
-                compile_options,
-                code_channel,
-                op_compile_option,
-            )
+            compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", True)
+            compile_op(cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option)
 
     def test_sk_sub_combine_links_no_register_meta_file(self):
-        op_info = OpInfo(
-            kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[]
-        )
+        op_info = OpInfo(kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[])
         compile_option_tuple = CompileOptionTuple([], [])
         infered_info = InferChannelParamsFromIFile(
             tiling_key_list=[0],
@@ -1770,57 +1405,24 @@ class TestCompileOp(unittest.TestCase):
             with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
                 ctx.add_addition("super_kernel_sub_combine", True)
                 with (
-                    mock.patch.object(
-                        CommonUtility,
-                        "get_kernel_meta_dir",
-                        return_value="/tmp/kernel_meta",
-                    ),
-                    mock.patch.object(
-                        CommonUtility,
-                        "get_distinct_filename_tag",
-                        return_value="_tag",
-                    ),
-                    mock.patch.object(
-                        compile_op_module,
-                        "check_if_gen_placehoder",
-                        return_value=False,
-                    ),
-                    mock.patch.object(
-                        compile_op_module,
-                        "get_tiling_info_by_tiling",
-                        return_value=tiling_info,
-                    ),
+                    mock.patch.object(CommonUtility, "get_kernel_meta_dir", return_value="/tmp/kernel_meta"),
+                    mock.patch.object(CommonUtility, "get_distinct_filename_tag", return_value="_tag"),
+                    mock.patch.object(compile_op_module, "check_if_gen_placehoder", return_value=False),
+                    mock.patch.object(compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info),
                     mock.patch.object(tiling_info, "save_file"),
                     mock.patch.object(tiling_info, "remove_file"),
                     mock.patch.object(compile_op_module, "handle_sk_codegen_options"),
-                    mock.patch.object(
-                        compile_op_module,
-                        "gen_op_stub_kernel_func",
-                        return_value=0,
-                    ),
+                    mock.patch.object(compile_op_module, "gen_op_stub_kernel_func", return_value=0),
                     mock.patch.object(compile_op_module, "handle_compile_options"),
                     mock.patch.object(compile_op_module, "compile_kernel_and_meta"),
                     mock.patch.object(compile_op_module, "link_kernel_obj"),
-                    mock.patch.object(
-                        compile_op_module,
-                        "compile_sk_bind",
-                        return_value="/tmp/kernel_meta/sk_bind.o",
-                    ),
-                    mock.patch.object(
-                        compile_op_module, "link_sk_norm_combine"
-                    ) as mock_link,
+                    mock.patch.object(compile_op_module, "compile_sk_bind", return_value="/tmp/kernel_meta/sk_bind.o"),
+                    mock.patch.object(compile_op_module, "link_sk_norm_combine") as mock_link,
                     mock.patch.object(compile_op_module, "_json_post_process"),
                     mock.patch.object(dfx_generator, "dfx_info_reset"),
                     mock.patch.object(dfx_generator, "update_is_support"),
                 ):
-                    compile_op_common_part(
-                        "test.cpp",
-                        "test",
-                        op_info,
-                        compile_option_tuple,
-                        infered_info,
-                        {},
-                    )
+                    compile_op_common_part("test.cpp", "test", op_info, compile_option_tuple, infered_info, {})
         finally:
             global_var_storage.set_variable("ascendc_tiling_no_register", False)
             global_var_storage.set_variable("ascendc_enable_super_kernel", False)
@@ -1835,9 +1437,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_compile_op_dynamic_c310_cube(self):
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/cube_custom.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/cube_custom.cpp")
         origin_func_name = "cube_custom"
         code_channel = 0
         op_info = OpInfo(
@@ -1956,42 +1556,24 @@ class TestCompileOp(unittest.TestCase):
             with buildcfg.build_config(enable_super_kernel=True):
                 with (
                     mock.patch.object(
-                        compile_op_module,
-                        "compile_kernel_and_meta",
-                        wraps=compile_op_module.compile_kernel_and_meta,
+                        compile_op_module, "compile_kernel_and_meta", wraps=compile_op_module.compile_kernel_and_meta
                     ) as mock_compile_kernel,
                     mock.patch.object(
-                        compile_op_module,
-                        "compile_sk_bind",
-                        wraps=compile_op_module.compile_sk_bind,
+                        compile_op_module, "compile_sk_bind", wraps=compile_op_module.compile_sk_bind
                     ) as mock_compile_sk_bind,
-                    mock.patch.object(
-                        ascendc_common_utilityop_module,
-                        "is_enable_ascendc_cov",
-                        return_value=True,
-                    ),
+                    mock.patch.object(ascendc_common_utilityop_module, "is_enable_ascendc_cov", return_value=True),
                     mock.patch(
                         "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
                         side_effect=make_test_tiling_def,
                     ),
                 ):
-                    compile_op(
-                        cce_file,
-                        origin_func_name,
-                        op_info,
-                        compile_options,
-                        code_channel,
-                        op_compile_option,
-                    )
+                    compile_op(cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option)
 
         binary_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".o")
         self.assertEqual(mock_compile_kernel.call_count, 2)
         basic_compile_info = mock_compile_kernel.call_args_list[0].args[0]
         sk_compile_info = mock_compile_kernel.call_args_list[1].args[0]
-        self.assertEqual(
-            os.path.realpath(basic_compile_info.dst_file),
-            os.path.realpath(binary_file),
-        )
+        self.assertEqual(os.path.realpath(basic_compile_info.dst_file), os.path.realpath(binary_file))
         self.assertTrue(basic_compile_info.compile_command_session.should_execute)
         self.assertFalse(sk_compile_info.compile_command_session.should_execute)
         self.assertTrue(sk_compile_info.compile_command_session.records)
@@ -2088,25 +1670,17 @@ class TestCompileOp(unittest.TestCase):
 
         dump_size = 1024
         old_source = ""
-        new_source = add_op_param_to_workspace(
-            op_info, tiling_info, old_source, compile_options, compile_info
-        )
+        new_source = add_op_param_to_workspace(op_info, tiling_info, old_source, compile_options, compile_info)
         self.assertNotEqual(new_source, old_source)
         tiling_info.static_shape_flag = True
         compile_info.tiling_key_struct_map = {"1": 96, "2": 100}
-        new_source = add_op_param_to_workspace(
-            op_info, tiling_info, old_source, compile_options, compile_info
-        )
+        new_source = add_op_param_to_workspace(op_info, tiling_info, old_source, compile_options, compile_info)
         self.assertNotEqual(new_source, old_source)
         tiling_info.tiling_key_data_size = {}
-        new_source = add_op_param_to_workspace(
-            op_info, tiling_info, old_source, compile_options, compile_info
-        )
+        new_source = add_op_param_to_workspace(op_info, tiling_info, old_source, compile_options, compile_info)
         self.assertNotEqual(new_source, old_source)
         tiling_info.tiling_key_data_size = {"0": 96}
-        new_source = add_op_param_to_workspace(
-            op_info, tiling_info, old_source, compile_options, compile_info
-        )
+        new_source = add_op_param_to_workspace(op_info, tiling_info, old_source, compile_options, compile_info)
         self.assertNotEqual(new_source, old_source)
 
         op_info_neg = OpInfo(
@@ -2192,21 +1766,12 @@ class TestCompileOp(unittest.TestCase):
             ],
             param_type_dynamic=False,
             mc2_ctx=None,
-            param_type_list=[
-                "dynamic",
-                "required",
-                "dynamic",
-                "required",
-                "dynamic",
-                "dynamic",
-            ],
+            param_type_list=["dynamic", "required", "dynamic", "required", "dynamic", "dynamic"],
             init_value_list=[None],
             output_shape_depend_on_compute=[0],
         )
 
-        new_source = add_op_param_to_workspace(
-            op_info_neg, tiling_info, old_source, compile_options, compile_info
-        )
+        new_source = add_op_param_to_workspace(op_info_neg, tiling_info, old_source, compile_options, compile_info)
         self.assertNotEqual(new_source, old_source)
 
         value = get_value("DT_INT8")
@@ -2214,26 +1779,14 @@ class TestCompileOp(unittest.TestCase):
 
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     def test_get_ascendc_compiler_path(self):
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         self.assertRaises(Exception, CommonUtility.get_ascendc_compiler_path)
         compile_op_module.global_var_storage.set_variable("ascendc_compiler_path", ".")
         CommonUtility.get_ascendc_compiler_path()
 
     def test_trans_compile_cmds_to_precompile(self):
-        cmd_i = [
-            "ccec",
-            "-c",
-            "-O3",
-            "--cce-aicore-arch=dav-c220-cube",
-            "--cce-aicore-only",
-            "/tmp/add_custom.o",
-        ]
-        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import (
-            _trans_compile_cmds_to_precompile,
-        )
+        cmd_i = ["ccec", "-c", "-O3", "--cce-aicore-arch=dav-c220-cube", "--cce-aicore-only", "/tmp/add_custom.o"]
+        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import _trans_compile_cmds_to_precompile
 
         _trans_compile_cmds_to_precompile(cmd_i)
         self.assertEqual(len(cmd_i), 7)
@@ -2243,46 +1796,26 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_v200(self, mock_shutil):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import (
-            gen_compile_cmd_v200,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import gen_compile_cmd_v200
 
         mock_shutil.return_value = "/tmp/ascendc_compiler"
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
         src_file = "/tmp/add_custom.cpp"
         dst_file = "/tmp/add_custom.o"
         tiling_file = "/tmp/tiling_data.h"
         compile_option_tuple = CompileOptionTuple(["opt"], ["opt"])
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_sanitizer", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_sanitizer", True)
         compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", True)
-        compile_cmd = gen_compile_cmd_v200(
-            src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file
-        )
+        compile_cmd = gen_compile_cmd_v200(src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file)
         self.assertEqual(compile_cmd[0], "/usr/bin/ccache")
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_sanitizer", False
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_ccache", False
-        )
-        compile_cmd = gen_compile_cmd_v200(
-            src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file
-        )
-        self.assertEqual(
-            compile_cmd[0],
-            compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"),
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_sanitizer", False)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", False)
+        compile_cmd = gen_compile_cmd_v200(src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file)
+        self.assertEqual(compile_cmd[0], compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"))
         with buildcfg.build_config() as cfg:
             cfg.current()["tir.op_debug_config"] = ["oom"]
-            gen_compile_cmd_v200(
-                src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file
-            )
+            gen_compile_cmd_v200(src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file)
 
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
@@ -2291,34 +1824,20 @@ class TestCompileOp(unittest.TestCase):
 
         SetCurrentSocInfo("Ascend910B1")
         mock_shutil.return_value = "/tmp/ascendc_compiler"
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
         src_file = "/tmp/add_custom.cpp"
         dst_file = "/tmp/add_custom.o"
         tiling_file = "/tmp/tiling_data.h"
         compile_option_tuple = CompileOptionTuple(["opt"], ["opt"])
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_sanitizer", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_sanitizer", True)
         compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", True)
-        compile_cmd = gen_compile_cmd_v220(
-            src_file, dst_file, compile_option_tuple, "dav-c220", tiling_file, True
-        )
+        compile_cmd = gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, "dav-c220", tiling_file, True)
         self.assertIn("--cce-enable-sanitizer", compile_cmd)
         self.assertEqual(compile_cmd[0], "/usr/bin/ccache")
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_ccache", False
-        )
-        compile_cmd = gen_compile_cmd_v220(
-            src_file, dst_file, compile_option_tuple, "dav-c220", tiling_file, True
-        )
-        self.assertEqual(
-            compile_cmd[0],
-            compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"),
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", False)
+        compile_cmd = gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, "dav-c220", tiling_file, True)
+        self.assertEqual(compile_cmd[0], compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"))
 
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
@@ -2327,48 +1846,30 @@ class TestCompileOp(unittest.TestCase):
 
         SetCurrentSocInfo("Ascend950PR_9599")
         mock_shutil.return_value = "/tmp/ascendc_compiler"
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
         src_file = "/tmp/add_custom.cpp"
         dst_file = "/tmp/add_custom.o"
         tiling_file = "/tmp/tiling_data.h"
         compile_option_tuple = CompileOptionTuple(["opt"], ["opt"])
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_sanitizer", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_sanitizer", True)
         compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", True)
-        compile_cmd = gen_compile_cmd_v220(
-            src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True
-        )
+        compile_cmd = gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True)
         self.assertIn("--cce-enable-sanitizer", compile_cmd)
         self.assertEqual(compile_cmd[0], "/usr/bin/ccache")
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_ccache", False
-        )
-        compile_cmd = gen_compile_cmd_v220(
-            src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True
-        )
-        self.assertEqual(
-            compile_cmd[0],
-            compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"),
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_ccache", False)
+        compile_cmd = gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True)
+        self.assertEqual(compile_cmd[0], compile_op_module.global_var_storage.get_variable("ascendc_compiler_path"))
         with buildcfg.build_config() as cfg:
             cfg.current()["tir.op_debug_config"] = ["oom"]
-            compile_cmd = gen_compile_cmd_v220(
-                src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True
-            )
+            compile_cmd = gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, "dav-c310", tiling_file, True)
             self.assertIn("-cce-block-local-relocate=false", compile_cmd)
             self.assertIn("-DASCENDC_OOM=1", compile_cmd)
 
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     def test_gen_compile_cmd_for_meta_info(self):
         global_var_storage.set_variable("ascendc_enable_ccache", True)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_compiler_path", "/usr/local/ASC"
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_compiler_path", "/usr/local/ASC")
 
         original_is_c310 = CommonUtility.is_c310
 
@@ -2382,9 +1883,7 @@ class TestCompileOp(unittest.TestCase):
         compile_option_tuple = CompileOptionTuple(["opt"], ["opt"])
         sub_arch = "dav-c310"
 
-        cmd = gen_compile_cmd_for_meta_info(
-            src_file, dst_file, compile_option_tuple, sub_arch
-        )
+        cmd = gen_compile_cmd_for_meta_info(src_file, dst_file, compile_option_tuple, sub_arch)
 
         expected_cmd = [
             os.environ.get("ASCENDC_CCACHE_EXECUTABLE", "ccache"),
@@ -2413,9 +1912,7 @@ class TestCompileOp(unittest.TestCase):
         CommonUtility.is_c310 = mock_is_c310
         sub_arch = "dav-c220"
 
-        cmd = gen_compile_cmd_for_meta_info(
-            src_file, dst_file, compile_option_tuple, sub_arch
-        )
+        cmd = gen_compile_cmd_for_meta_info(src_file, dst_file, compile_option_tuple, sub_arch)
 
         expected_cmd = [
             "/usr/local/ASC",
@@ -2441,28 +1938,19 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_regbase(self, mock_shutil):
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _gen_compile_cmd_regbase,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _gen_compile_cmd_regbase
 
         mock_shutil.return_value = "/tmp/ascendc_compiler"
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
         src_file = "/tmp/add_custom.cpp"
         dst_file = "/tmp/add_custom.o"
         tiling_file = "/tmp/tiling_data.h"
         compile_option_tuple = CompileOptionTuple([], [])
-        compile_cmd = _gen_compile_cmd_regbase(
-            src_file, dst_file, compile_option_tuple, "dav-m300", tiling_file
-        )
+        compile_cmd = _gen_compile_cmd_regbase(src_file, dst_file, compile_option_tuple, "dav-m300", tiling_file)
         self.assertEqual(compile_cmd[0], "/usr/bin/ccache")
         self.reset_global_var()
-        compile_cmd = _gen_compile_cmd_regbase(
-            src_file, dst_file, compile_option_tuple, "dav-m300", tiling_file
-        )
+        compile_cmd = _gen_compile_cmd_regbase(src_file, dst_file, compile_option_tuple, "dav-m300", tiling_file)
         self.assertEqual(compile_cmd[0], None)
 
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
@@ -2471,29 +1959,16 @@ class TestCompileOp(unittest.TestCase):
         from asc_op_compile_base.asc_op_compiler.compile_op import _gen_compile_cmd
 
         mock_shutil.return_value = "/tmp/ascendc_compiler"
-        op_info = OpInfo(
-            kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97",
-            op_type="AddCustom",
-        )
+        op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
         src_file = "/tmp/add_custom.cpp"
         dst_file = "/tmp/add_custom.o"
         tiling_file = "/tmp/tiling_data.h"
         compile_option_tuple = CompileOptionTuple([], [])
-        with mock.patch.object(
-            CommonUtility,
-            "ascendc_build_aicore_compile_cmd",
-            return_value=["ccec", "-x", "-c"],
-        ):
-            compile_cmd = _gen_compile_cmd(
-                src_file, dst_file, compile_option_tuple, tiling_file
-            )
+        with mock.patch.object(CommonUtility, "ascendc_build_aicore_compile_cmd", return_value=["ccec", "-x", "-c"]):
+            compile_cmd = _gen_compile_cmd(src_file, dst_file, compile_option_tuple, tiling_file)
         self.assertEqual(compile_cmd[0], "/usr/bin/ccache")
-        with mock.patch.object(
-            CommonUtility,
-            "ascendc_build_aicore_compile_cmd",
-            return_value=["ccec", "-x", "-c"],
-        ):
+        with mock.patch.object(CommonUtility, "ascendc_build_aicore_compile_cmd", return_value=["ccec", "-x", "-c"]):
             with buildcfg.build_config() as cfg:
                 cfg.current()["tir.op_debug_config"] = ["oom"]
                 _gen_compile_cmd(src_file, dst_file, compile_option_tuple, tiling_file)
@@ -2561,8 +2036,8 @@ class TestCompileOp(unittest.TestCase):
             output_shape_depend_on_compute=[0],
         )
         tiling_info = TilingInfo()
-        kernel_func_desc, idx, called_func_params, called_func_params_type = (
-            _gen_kernel_func_declare_head(True, True, op_info, tiling_info)
+        kernel_func_desc, idx, called_func_params, called_func_params_type = _gen_kernel_func_declare_head(
+            True, True, op_info, tiling_info
         )
         print(kernel_func_desc)
         self.assertEqual(
@@ -2573,9 +2048,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_compile_ascendc_cce(self):
         SetCurrentSocInfo("Ascend310P1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp")
         compile_info = CompileInfo()
         compile_info.dst_file = os.path.join(TOP_PATH, "kernel_meta", "test.o")
         compile_info.kernel_name = "test"
@@ -2584,9 +2057,7 @@ class TestCompileOp(unittest.TestCase):
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel_ascendc_cce.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, "test" + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, "test" + file_name_tag)
         compile_option_tuple = CompileOptionTuple([], [])
         compile_info.tiling_key_list = ["1"]
 
@@ -2674,10 +2145,8 @@ class TestCompileOp(unittest.TestCase):
                         "-I" + os.path.join(API_ROOT_PATH, "impl"),
                         "-I" + os.path.join(API_ROOT_PATH, "include/basic_api"),
                         "-I" + os.path.join(API_ROOT_PATH, "impl/basic_api"),
-                        "-I"
-                        + os.path.join(API_ROOT_PATH, "include/basic_api/reg_compute"),
-                        "-I"
-                        + os.path.join(API_ROOT_PATH, "impl/basic_api/reg_compute"),
+                        "-I" + os.path.join(API_ROOT_PATH, "include/basic_api/reg_compute"),
+                        "-I" + os.path.join(API_ROOT_PATH, "impl/basic_api/reg_compute"),
                         "-I" + os.path.join(API_ROOT_PATH, "include/simt_api"),
                         "-I" + os.path.join(API_ROOT_PATH, "impl/simt_api"),
                         "-I" + os.path.join(API_ROOT_PATH, "include/adv_api"),
@@ -2699,58 +2168,36 @@ class TestCompileOp(unittest.TestCase):
                     CommonUtility.get_kernel_meta_dir()
                     DFXSectionGenerator().dfx_info_reset(op_info)
                     gen_kernel_fun(
-                        compile_info,
-                        compile_info.origin_func_name,
-                        op_info,
-                        tiling_info,
-                        CompileOptionTuple([], []),
+                        compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
                     )
-                    _compile_ascendc_cce(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
+                    _compile_ascendc_cce(compile_info, compile_option_tuple, tiling_info)
         self.assertTrue(os.path.exists(compile_info.dst_file))
         os.remove(compile_info.dst_file)
         os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
 
     def test_get_ktype_section_variable(self):
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_AIV_ONLY
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_AIV_ONLY)
         self.assertTrue("K_TYPE_AIV" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_AIC_ONLY
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_AIC_ONLY)
         self.assertTrue("K_TYPE_AIC" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC)
         self.assertTrue("K_TYPE_MIX_AIV_MAIN" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC)
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0)
         self.assertTrue("K_TYPE_MIX_AIV_MAIN" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0)
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1)
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
-        section_context = get_ktype_section_variable(
-            "test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-        )
+        section_context = get_ktype_section_variable("test", "test", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2)
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
         section_context = get_ktype_section_variable(
@@ -2777,47 +2224,23 @@ class TestCompileOp(unittest.TestCase):
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config() as cfg:
                 _gen_dynamic_json_for_v200(compile_info, tiling_info, "VectorCore")
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                _gen_static_json_for_mix_v200(
-                    compile_info,
-                    tiling_info,
-                    KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
-                )
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                _gen_static_json_for_mix_v200(compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE)
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                _gen_static_json_for_no_mix_v200(
-                    compile_info,
-                    tiling_info,
-                    KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
-                )
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                _gen_static_json_for_no_mix_v200(compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE)
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
                 _gen_non_mix_sub_json(compile_info, tiling_info, "VectorCore")
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
                 _gen_mix_sub_json(compile_info, tiling_info)
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
                 cfg.current()["tir.enable_vector_core"] = 1
-                _gen_static_json_for_mix_v200(
-                    compile_info,
-                    tiling_info,
-                    KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
-                )
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                _gen_static_json_for_mix_v200(compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE)
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
 
     def test_gen_meta_info_section(self):
@@ -2905,9 +2328,7 @@ class TestCompileOp(unittest.TestCase):
 
     def test_gen_kernel_fun(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         op_info = OpInfo(
             kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97",
@@ -3011,28 +2432,21 @@ class TestCompileOp(unittest.TestCase):
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
         ]
         op_compile_option = "{}"
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = ["1", "2", "3"]
 
@@ -3049,9 +2463,7 @@ class TestCompileOp(unittest.TestCase):
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -3067,12 +2479,8 @@ class TestCompileOp(unittest.TestCase):
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_aicore_exception_restart", True
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_aicore_exception_restart", True)
 
         if os.path.exists(compile_info.gen_kernel_func_file):
             os.remove(compile_info.gen_kernel_func_file)
@@ -3082,25 +2490,14 @@ class TestCompileOp(unittest.TestCase):
         global_var_storage.set_variable("ascendc_recognize_simtvf", True)
         DFXSectionGenerator().dfx_info_reset(op_info)
         kernel_options = CompileOptionTuple(compile_options, [])
-        gen_kernel_fun(
-            compile_info,
-            origin_func_name,
-            op_info,
-            tiling_info,
-            kernel_options,
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, kernel_options)
         global_var_storage.set_variable("ascendc_recognize_simtvf", False)
         assert os.path.exists(compile_info.gen_kernel_func_file) == True, (
             "Problems Occurred during Kernel Function Generation!!!"
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
-        wrapper_text = Path(compile_info.gen_kernel_func_file).read_text(
-            encoding="utf-8"
-        )
-        self.assertNotIn(
-            "__ASCENDC_SUPER_KERNEL_DEBUG__",
-            wrapper_text,
-        )
+        wrapper_text = Path(compile_info.gen_kernel_func_file).read_text(encoding="utf-8")
+        self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", wrapper_text)
         self.assertIn(f'#include "{cce_file}"', wrapper_text)
         source_include = ["-I", os.path.dirname(os.path.realpath(cce_file))]
         self.assertEqual(
@@ -3114,13 +2511,7 @@ class TestCompileOp(unittest.TestCase):
         # compile_info.dump_info["dump_type"]= "assert"
         # assert global_var_storage.get_variable("ascendc_dump_assert_only") is True
         assert "-DASCENDC_DUMP=0" not in compile_option_tuple.compile_options
-        gen_kernel_fun(
-            compile_info,
-            origin_func_name,
-            op_info,
-            tiling_info,
-            CompileOptionTuple(compile_options, []),
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple(compile_options, []))
         assert os.path.exists(compile_info.gen_kernel_func_file) == True, (
             "Problems Occurred during Kernel Function Generation!!!"
         )
@@ -3128,13 +2519,7 @@ class TestCompileOp(unittest.TestCase):
         os.remove(compile_info.gen_kernel_func_file)
         # global_var_storage.set_variable("ascendc_dump_assert_only", True)
         compile_info.code_channel = 1
-        gen_kernel_fun(
-            compile_info,
-            origin_func_name,
-            op_info,
-            tiling_info,
-            CompileOptionTuple(compile_options, []),
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple(compile_options, []))
         # global_var_storage.set_variable("ascendc_dump_assert_only", False)
         compile_info.dump_info = infered_info_from_ifile.dump_info
         assert os.path.exists(compile_info.gen_kernel_func_file) == True, (
@@ -3144,9 +2529,7 @@ class TestCompileOp(unittest.TestCase):
         os.remove(compile_info.gen_kernel_func_file)
         compile_info.dump_info = infered_info_from_ifile.dump_info
         compile_info.code_channel = code_channel
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_aicore_exception_restart", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_aicore_exception_restart", False)
 
     def test_gen_tiling_struct_size_and_dfx_section_file(self):
         compile_info_old = CompileInfo()
@@ -3161,16 +2544,12 @@ class TestCompileOp(unittest.TestCase):
             mock.patch("os.fdopen", return_value=mock.MagicMock()) as mock_fdopen,
         ):
             with mock.patch.object(
-                DFXSectionGenerator(),
-                "generate_dfx_section_without_tiling_register",
-                return_value=mock_dfx_return,
+                DFXSectionGenerator(), "generate_dfx_section_without_tiling_register", return_value=mock_dfx_return
             ) as mock_method:
                 # static_shape_flag = True
                 tiling_info_old.static_shape_flag = True
                 tiling_info_old.tiling_key = "1"
-                compile_info_old.tiling_key_kernel_type["1"] = (
-                    KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1
-                )
+                compile_info_old.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1
                 # KERNEL_TYPE_MIX_AIC_1_1
                 gen_tiling_struct_size_and_dfx_section_file(
                     compile_info=compile_info_old,
@@ -3181,9 +2560,7 @@ class TestCompileOp(unittest.TestCase):
                     "DFXSectionGenerator.generate_dfx_section_without_tiling_register should be called"
                 )
 
-                compile_info_old.tiling_key_kernel_type["1"] = (
-                    KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0
-                )
+                compile_info_old.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0
                 # KERNEL_TYPE_MIX_AIC_1_0
                 gen_tiling_struct_size_and_dfx_section_file(
                     compile_info=compile_info_old,
@@ -3196,9 +2573,7 @@ class TestCompileOp(unittest.TestCase):
 
                 # static_shape_flag = False
                 tiling_info_old.static_shape_flag = False
-                compile_info_old.tiling_key_kernel_type["2"] = (
-                    KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-                )
+                compile_info_old.tiling_key_kernel_type["2"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
                 gen_tiling_struct_size_and_dfx_section_file(
                     compile_info=compile_info_old,
                     tiling_info=tiling_info_old,
@@ -3207,12 +2582,8 @@ class TestCompileOp(unittest.TestCase):
                 assert mock_method.call_count > 0, (
                     "DFXSectionGenerator.generate_dfx_section_without_tiling_register should be called"
                 )
-                compile_info_old.tiling_key_kernel_type["1"] = (
-                    KernelMetaType.KERNEL_TYPE_AIV_ONLY
-                )
-                compile_info_old.tiling_key_kernel_type["2"] = (
-                    KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0
-                )
+                compile_info_old.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AIV_ONLY
+                compile_info_old.tiling_key_kernel_type["2"] = KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0
                 gen_tiling_struct_size_and_dfx_section_file(
                     compile_info=compile_info_old,
                     tiling_info=tiling_info_old,
@@ -3279,9 +2650,7 @@ class TestCompileOp(unittest.TestCase):
 
     @patch("subprocess.Popen")
     def test_get_tiling_struct_without_register_size(self, mock_popen):
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _get_tiling_struct_without_register_size,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _get_tiling_struct_without_register_size
 
         section_list = """
 Sections:
@@ -3299,20 +2668,14 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         mock_popen.return_value = mock_proc
         compile_info_old = CompileInfo()
         compile_info_old.dst_file = "/tmp/add_custom.o"
-        tiling_key_struct_size_map = _get_tiling_struct_without_register_size(
-            compile_info_old
-        )
+        tiling_key_struct_size_map = _get_tiling_struct_without_register_size(compile_info_old)
         self.assertEqual(tiling_key_struct_size_map, {"1234": ("struct1", 80)})
         self.assertEqual(compile_info_old.max_tiling_size, 80)
-        self.assertEqual(
-            compile_info_old.compiled_tiling_key_data_size_map, {"1234": 80}
-        )
+        self.assertEqual(compile_info_old.compiled_tiling_key_data_size_map, {"1234": 80})
 
     def test_get_code_channel_v220_by_first_tiling_key(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -3416,10 +2779,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -3427,19 +2787,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-api-deps-filter",
         ]
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -3449,13 +2805,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         ret_code_channel, _ = get_code_channel_v220_by_first_tiling_key(
             InferChannelParams(
@@ -3526,15 +2878,8 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             self.assertEqual(result, golden_result)
 
     def test_is_hard_sync_instr(self):
-        cases = {
-            "00000000": False,
-            "0000e541": True,
-            "0000f741": True,
-            "00000041": False,
-        }
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
-            _is_hard_sync_instr,
-        )
+        cases = {"00000000": False, "0000e541": True, "0000f741": True, "00000041": False}
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import _is_hard_sync_instr
 
         for inst, golden_result in cases.items():
             result = _is_hard_sync_instr(inst)
@@ -3542,9 +2887,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
     def test_dynamic_kernel_list_to_json_for_kernel_type(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -3648,10 +2991,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -3660,19 +3000,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -3682,19 +3018,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -3704,79 +3034,48 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         compile_info.tiling_key_deterministic = {}
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         final_kernel_type = 1
         from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_json import (
             _dynamic_kernel_list_to_json_for_kernel_type,
         )
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_deterministic_mode,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_deterministic_mode
 
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config() as cfg,
-            mock.patch(
-                "builtins.open", new_callable=mock.mock_open, read_data="{}"
-            ) as mock_open,
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}") as mock_open,
             mock.patch("json.dump") as mock_dump,
             mock.patch("os.chmod"),
         ):
             enable_deterministic = False
             compile_info.tiling_key_deterministic = {"1": True}
             _dynamic_kernel_list_to_json_for_kernel_type(
-                compile_info,
-                op_info.kernel_name,
-                tiling_key_list,
-                enable_deterministic,
-                final_kernel_type,
+                compile_info, op_info.kernel_name, tiling_key_list, enable_deterministic, final_kernel_type
             )
-            _dynamic_kernel_list_to_json(
-                op_info.kernel_name, tiling_key_list, enable_deterministic, {"1": True}
-            )
+            _dynamic_kernel_list_to_json(op_info.kernel_name, tiling_key_list, enable_deterministic, {"1": True})
             enable_deterministic = True
             cfg.current()[enable_deterministic_mode] = 1
             _dynamic_kernel_list_to_json_for_kernel_type(
-                compile_info,
-                op_info.kernel_name,
-                tiling_key_list,
-                enable_deterministic,
-                final_kernel_type,
+                compile_info, op_info.kernel_name, tiling_key_list, enable_deterministic, final_kernel_type
             )
-            _dynamic_kernel_list_to_json(
-                op_info.kernel_name, tiling_key_list, enable_deterministic, {}
-            )
+            _dynamic_kernel_list_to_json(op_info.kernel_name, tiling_key_list, enable_deterministic, {})
             cfg.current()[enable_deterministic_mode] = False
             _dynamic_kernel_list_to_json_for_kernel_type(
-                compile_info,
-                op_info.kernel_name,
-                tiling_key_list,
-                enable_deterministic,
-                final_kernel_type,
+                compile_info, op_info.kernel_name, tiling_key_list, enable_deterministic, final_kernel_type
             )
-            _dynamic_kernel_list_to_json(
-                op_info.kernel_name, tiling_key_list, enable_deterministic, {}
-            )
+            _dynamic_kernel_list_to_json(op_info.kernel_name, tiling_key_list, enable_deterministic, {})
             self.assertEqual(compile_info.hard_sync, False)
             mock_dump.side_effect = RuntimeError()
             self.assertRaises(
-                Exception,
-                _dynamic_kernel_list_to_json,
-                op_info.kernel_name,
-                tiling_key_list,
-                enable_deterministic,
-                {},
+                Exception, _dynamic_kernel_list_to_json, op_info.kernel_name, tiling_key_list, enable_deterministic, {}
             )
             self.assertRaises(
                 Exception,
@@ -3797,19 +3096,12 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             final_kernel_type,
         )
         self.assertRaises(
-            Exception,
-            _dynamic_kernel_list_to_json,
-            op_info.kernel_name,
-            tiling_key_list,
-            enable_deterministic,
-            {},
+            Exception, _dynamic_kernel_list_to_json, op_info.kernel_name, tiling_key_list, enable_deterministic, {}
         )
 
     def test_call_bisheng_regbase(self):
         SetCurrentSocInfo("Ascend310B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -3913,10 +3205,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -3925,20 +3214,16 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
         with buildcfg.build_config():
-            infered_info_from_ifile = (
-                KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                    op_info,
-                    cce_file,
-                    os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                    compile_option_tuple,
-                    compile_log_path,
-                    origin_func_name,
-                )
+            infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+                op_info,
+                cce_file,
+                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+                compile_option_tuple,
+                compile_log_path,
+                origin_func_name,
             )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -3946,19 +3231,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.tiling_key_data_size = []
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -3968,17 +3247,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         arch = "dav-m300"
 
         from asc_op_compile_base.asc_op_compiler.compile_op import _call_bisheng_regbase
@@ -3987,27 +3262,17 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config(),
-            mock.patch.object(
-                CommonUtility,
-                "ascendc_build_aicore_compile_cmd",
-                return_value=["ccec", "-x", "-c"],
-            ),
+            mock.patch.object(CommonUtility, "ascendc_build_aicore_compile_cmd", return_value=["ccec", "-x", "-c"]),
             mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""),
             mock.patch("os.remove"),
         ):
             tiling_info.static_shape_flag = False
             DFXSectionGenerator().dfx_info_reset(op_info)
             gen_kernel_fun(
-                compile_info,
-                compile_info.origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
+                compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
             )
 
-            ret = _call_bisheng_regbase(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            ret = _call_bisheng_regbase(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["1"])
 
             with open(compile_info.gen_kernel_func_file, "w") as temp_file:
@@ -4016,23 +3281,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             tiling_info.static_shape_flag = True
             DFXSectionGenerator().dfx_info_reset(op_info)
             gen_kernel_fun(
-                compile_info,
-                compile_info.origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
+                compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
             )
-            ret = _call_bisheng_regbase(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            ret = _call_bisheng_regbase(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, None)
         os.remove(compile_info.gen_kernel_func_file)
 
     def test_call_bisheng_v220(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -4136,10 +3393,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -4148,19 +3402,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -4168,19 +3418,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.tiling_key_data_size = []
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -4190,21 +3434,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         arch = "dav-c220-vec"
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
-            call_bisheng_v220,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import call_bisheng_v220
 
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
@@ -4214,37 +3452,19 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ):
             DFXSectionGenerator().dfx_info_reset(op_info)
             tiling_info.static_shape_flag = True
-            gen_kernel_fun(
-                compile_info,
-                origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
-            )
+            gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
             code_channel = 0
-            ret = call_bisheng_v220(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["0"])
             code_channel = 1
-            ret = call_bisheng_v220(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["0"])
             DFXSectionGenerator().dfx_info_reset(op_info)
             os.system(f"cat {compile_info.gen_kernel_func_file}")
             os.remove(compile_info.gen_kernel_func_file)
             tiling_info.static_shape_flag = False
-            gen_kernel_fun(
-                compile_info,
-                origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
-            )
-            ret = call_bisheng_v220(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["1"])
 
     def test_compile_command_session_modes_control_recording_and_execution(self):
@@ -4274,34 +3494,18 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.tiling_key_list = ["7"]
         compile_info.code_channel = CORE_TYPE_CUBE
         compile_info.no_set_kernel_type = True
-        compile_info.compile_command_session = CompileCommandSession(
-            CompileCommandMode.RECORD_ONLY
-        )
+        compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.RECORD_ONLY)
 
         tiling_info = TilingInfo()
         tiling_info.static_shape_flag = False
         compile_option_tuple = CompileOptionTuple([], [])
-        compile_command = (
-            "bisheng",
-            "-c",
-            "record_kernel.cpp",
-            "-o",
-            "/tmp/record_kernel_7.o",
-        )
+        compile_command = ("bisheng", "-c", "record_kernel.cpp", "-o", "/tmp/record_kernel_7.o")
 
         global_var_storage.set_variable("ascendc_meta_info", "// meta info\n")
         with (
-            mock.patch.object(
-                CommonUtility,
-                "ascendc_read_file",
-                return_value="#if 1\n#endif\n",
-            ),
+            mock.patch.object(CommonUtility, "ascendc_read_file", return_value="#if 1\n#endif\n"),
             mock.patch.object(CommonUtility, "ascendc_write_file") as write_file,
-            mock.patch.object(
-                DFXSectionGenerator(),
-                "generate_dfx_section",
-                return_value="",
-            ),
+            mock.patch.object(DFXSectionGenerator(), "generate_dfx_section", return_value=""),
             mock.patch(
                 "asc_op_compile_base.asc_op_compiler.ascendc_compile_v220.compile_single_tiling_v220",
                 return_value=(list(compile_command), "record_kernel_7"),
@@ -4309,17 +3513,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             mock.patch(
                 "asc_op_compile_base.asc_op_compiler.ascendc_compile_v220.compile_multi_tilingkey"
             ) as compile_multi,
-            mock.patch(
-                "asc_op_compile_base.asc_op_compiler.ascendc_compile_v220.fatbin_objs"
-            ) as fatbin,
+            mock.patch("asc_op_compile_base.asc_op_compiler.ascendc_compile_v220.fatbin_objs") as fatbin,
         ):
-            ret = call_bisheng_v220(
-                compile_info,
-                compile_option_tuple,
-                tiling_info,
-                "dav-c220-cube",
-                CORE_TYPE_CUBE,
-            )
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, "dav-c220-cube", CORE_TYPE_CUBE)
             self.assertEqual(ret, ["7"])
             self.assertEqual(len(compile_info.compile_command_session.records), 1)
             recorded = compile_info.compile_command_session.records[0]
@@ -4330,28 +3526,12 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             compile_multi.assert_not_called()
             fatbin.assert_not_called()
 
-            compile_info.compile_command_session = CompileCommandSession(
-                CompileCommandMode.EXECUTE_AND_RECORD
-            )
-            ret = call_bisheng_v220(
-                compile_info,
-                compile_option_tuple,
-                tiling_info,
-                "dav-c220-cube",
-                CORE_TYPE_CUBE,
-            )
+            compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.EXECUTE_AND_RECORD)
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, "dav-c220-cube", CORE_TYPE_CUBE)
 
-            compile_info.compile_command_session = CompileCommandSession(
-                CompileCommandMode.RECORD_ONLY
-            )
+            compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.RECORD_ONLY)
             compile_info.code_channel = CORE_TYPE_MIX
-            ret = call_bisheng_v220(
-                compile_info,
-                compile_option_tuple,
-                tiling_info,
-                "dav-c220-vec",
-                CORE_TYPE_MIX,
-            )
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, "dav-c220-vec", CORE_TYPE_MIX)
 
         self.assertEqual(ret, ["7"])
         self.assertEqual(len(compile_info.compile_command_session.records), 1)
@@ -4368,13 +3548,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.dst_file = "/tmp/typed_record_kernel.o"
         compile_info.tiling_key_list = ["7"]
         compile_info.tiling_key_kernel_type = {"7": KernelMetaType.KERNEL_TYPE_AIC_ONLY}
-        compile_info.raw_tiling_key_kernel_type = dict(
-            compile_info.tiling_key_kernel_type
-        )
+        compile_info.raw_tiling_key_kernel_type = dict(compile_info.tiling_key_kernel_type)
         compile_info.no_set_kernel_type = False
-        compile_info.compile_command_session = CompileCommandSession(
-            CompileCommandMode.RECORD_ONLY
-        )
+        compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.RECORD_ONLY)
 
         tiling_info = TilingInfo()
         tiling_info.static_shape_flag = False
@@ -4382,34 +3558,19 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         global_var_storage.set_variable("ascendc_meta_info", "")
         global_var_storage.set_variable("ascendc_enable_super_kernel", True)
-        self.addCleanup(
-            global_var_storage.set_variable, "ascendc_enable_super_kernel", False
-        )
+        self.addCleanup(global_var_storage.set_variable, "ascendc_enable_super_kernel", False)
         with (
-            mock.patch.object(
-                CommonUtility,
-                "ascendc_read_file",
-                return_value="#if 1\n#endif\n",
-            ),
+            mock.patch.object(CommonUtility, "ascendc_read_file", return_value="#if 1\n#endif\n"),
             mock.patch.object(CommonUtility, "ascendc_write_file"),
             mock.patch.object(
                 compile_op_module,
                 "gen_compile_cmd_v220",
                 return_value=["bisheng", "-o", "/tmp/typed_record_kernel_7.o"],
             ),
-            mock.patch.object(
-                compile_op_module, "get_compile_target_options", return_value=()
-            ),
-            mock.patch.object(
-                compile_op_module,
-                "set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group",
-            ),
-            mock.patch.object(
-                compile_op_module, "_generate_section_content", return_value=""
-            ),
-            mock.patch.object(
-                compile_op_module, "compile_multi_tilingkey"
-            ) as compile_multi,
+            mock.patch.object(compile_op_module, "get_compile_target_options", return_value=()),
+            mock.patch.object(compile_op_module, "set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group"),
+            mock.patch.object(compile_op_module, "_generate_section_content", return_value=""),
+            mock.patch.object(compile_op_module, "compile_multi_tilingkey") as compile_multi,
             mock.patch.object(compile_op_module, "fatbin_objs") as fatbin,
             mock.patch.object(compile_op_module, "_generate_final_json") as final_json,
         ):
@@ -4431,9 +3592,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.kernel_name = "record_kernel"
         compile_info.dst_file = "/tmp/record_kernel.o"
         compile_info.code_channel = CORE_TYPE_MIX
-        compile_info.compile_command_session = CompileCommandSession(
-            CompileCommandMode.RECORD_ONLY
-        )
+        compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.RECORD_ONLY)
 
         tiling_info = TilingInfo()
         tiling_info.static_shape_flag = False
@@ -4441,22 +3600,16 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         with (
             mock.patch.object(CommonUtility, "get_chip_version", return_value="c220"),
-            mock.patch.object(
-                compile_op_module, "call_bisheng_v220", return_value=["7"]
-            ),
+            mock.patch.object(compile_op_module, "call_bisheng_v220", return_value=["7"]),
             mock.patch.object(compile_op_module, "set_soc_spec") as set_soc_spec_mock,
         ):
-            compile_op_module._compile_ascendc_cce_v220(
-                compile_info, compile_option_tuple, tiling_info
-            )
+            compile_op_module._compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
 
         self.assertEqual(set_soc_spec_mock.call_args.args[0], "AiCore")
 
     def test_call_bisheng_c310(self):
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -4560,10 +3713,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -4572,19 +3722,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -4592,19 +3738,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.tiling_key_data_size = []
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -4614,21 +3754,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         arch = "dav-c310-vec"
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
-            call_bisheng_v220,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import call_bisheng_v220
 
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
@@ -4638,29 +3772,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ):
             DFXSectionGenerator().dfx_info_reset(op_info)
             tiling_info.static_shape_flag = True
-            gen_kernel_fun(
-                compile_info,
-                origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
-            )
+            gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
             code_channel = 0
-            ret = call_bisheng_v220(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["0"])
             tiling_info.static_shape_flag = False
-            gen_kernel_fun(
-                compile_info,
-                origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
-            )
-            ret = call_bisheng_v220(
-                compile_info, compile_option_tuple, tiling_info, arch, code_channel
-            )
+            gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+            ret = call_bisheng_v220(compile_info, compile_option_tuple, tiling_info, arch, code_channel)
             self.assertEqual(ret, ["1"])
 
     def test_mssanitizer_link(self):
@@ -4670,9 +3788,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_log_path = None
         from asc_op_compile_base.asc_op_compiler.compile_op import _mssanitizer_link
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_asan_obj_path", {"Ascend910B": ""}
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_asan_obj_path", {"Ascend910B": ""})
         with mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""):
             _mssanitizer_link(src_file, dst_file, compile_log_path)
         self.assertEqual(src_file, "/tmp/add_custom.cpp")
@@ -4683,32 +3799,19 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info = CompileInfo()
         compile_info.kernel_name = "test"
         compile_info.dst_file = "test.o"
-        compile_info.compile_command_session = CompileCommandSession(
-            CompileCommandMode.EXECUTE_AND_RECORD
-        )
+        compile_info.compile_command_session = CompileCommandSession(CompileCommandMode.EXECUTE_AND_RECORD)
         compile_info.compile_command_session.submit("cube command")
         kernel_type = 0
         sub_compile_info = _get_sub_compile_info(compile_info, kernel_type)
         self.assertEqual(sub_compile_info.dst_file, "test_mix_aiv.o")
-        self.assertEqual(
-            sub_compile_info.compile_command_session.mode,
-            compile_info.compile_command_session.mode,
-        )
+        self.assertEqual(sub_compile_info.compile_command_session.mode, compile_info.compile_command_session.mode)
         self.assertEqual(sub_compile_info.compile_command_session.records, ())
-        self.assertEqual(
-            compile_info.compile_command_session.records,
-            ("cube command",),
-        )
-        self.assertIsNot(
-            sub_compile_info.compile_command_session,
-            compile_info.compile_command_session,
-        )
+        self.assertEqual(compile_info.compile_command_session.records, ("cube command",))
+        self.assertIsNot(sub_compile_info.compile_command_session, compile_info.compile_command_session)
 
     def test_compile_ascendc_cce_regbase(self):
         SetCurrentSocInfo("Ascend310B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -4812,10 +3915,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -4824,20 +3924,16 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
         with buildcfg.build_config():
-            infered_info_from_ifile = (
-                KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                    op_info,
-                    cce_file,
-                    os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                    compile_option_tuple,
-                    compile_log_path,
-                    origin_func_name,
-                )
+            infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+                op_info,
+                cce_file,
+                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+                compile_option_tuple,
+                compile_log_path,
+                origin_func_name,
             )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -4845,19 +3941,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.tiling_key_data_size = []
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -4867,47 +3957,31 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         arch = "dav-m300"
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _compile_ascendc_cce_regbase,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _compile_ascendc_cce_regbase
 
         os.mknod(compile_info.gen_kernel_func_file)
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config(),
-            mock.patch.object(
-                CommonUtility,
-                "ascendc_build_aicore_compile_cmd",
-                return_value=["ccec", "-x", "-c"],
-            ),
+            mock.patch.object(CommonUtility, "ascendc_build_aicore_compile_cmd", return_value=["ccec", "-x", "-c"]),
             mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""),
             mock.patch("os.remove"),
         ):
             tiling_info.static_shape_flag = True
             DFXSectionGenerator().dfx_info_reset(op_info)
             gen_kernel_fun(
-                compile_info,
-                compile_info.origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
+                compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
             )
-            _compile_ascendc_cce_regbase(
-                compile_info, compile_option_tuple, tiling_info
-            )
+            _compile_ascendc_cce_regbase(compile_info, compile_option_tuple, tiling_info)
 
             with open(compile_info.gen_kernel_func_file, "w") as temp_file:
                 temp_file.write("")
@@ -4915,23 +3989,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             tiling_info.static_shape_flag = False
             DFXSectionGenerator().dfx_info_reset(op_info)
             gen_kernel_fun(
-                compile_info,
-                compile_info.origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
+                compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
             )
-            _compile_ascendc_cce_regbase(
-                compile_info, compile_option_tuple, tiling_info
-            )
+            _compile_ascendc_cce_regbase(compile_info, compile_option_tuple, tiling_info)
         os.remove(compile_info.gen_kernel_func_file)
         self.assertEqual(compile_info.tiling_key_list, ["1"])
 
     def test_dynamic_regbase_kernel_list_to_json(self):
         SetCurrentSocInfo("Ascend310P1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom.cpp")
         origin_func_name = "add_custom"
         code_channel = 0
         op_info = OpInfo(
@@ -5098,11 +4164,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "include/adv_api"),
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
-            "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_tiling.h",
-            ),
+            "-include" + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
         ]
@@ -5122,9 +4184,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.tiling_key_data_size = {"1": 96, "2": 100}
         tiling_info.default_tiling_size = 0
         tiling_info.clear_atomic = True
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _dynamic_regbase_kernel_list_to_json,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _dynamic_regbase_kernel_list_to_json
 
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config():
@@ -5140,9 +4200,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                     enable_mix_for_profiling,
                     {},
                 )
-                with mock.patch(
-                    "builtins.open", new_callable=mock.mock_open, read_data="{}"
-                ):
+                with mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}"):
                     with mock.patch("json.dump") as mock_dump:
                         with mock.patch("os.chmod"):
                             mock_dump.side_effect = RuntimeError()
@@ -5174,9 +4232,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
     def test_compile_ascendc_cce_v220(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -5280,10 +4336,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -5292,19 +4345,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -5314,19 +4363,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -5336,94 +4379,48 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _compile_ascendc_cce_v220,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _compile_ascendc_cce_v220
 
         with mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with buildcfg.build_config():
                     CommonUtility.get_kernel_meta_dir()
                     DFXSectionGenerator().dfx_info_reset(op_info)
-                    gen_kernel_fun(
-                        compile_info,
-                        origin_func_name,
-                        op_info,
-                        tiling_info,
-                        CompileOptionTuple([], []),
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}"
-                    )
-                    _compile_ascendc_cce_v220(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")
-                        )
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")
-                        )
-                    )
+                    gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}")
+                    _compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")))
                     compile_info.hard_sync = True
                     compile_info.code_channel = 1
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-                    )
-                    _compile_ascendc_cce_v220(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+                    _compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
                     compile_info.hard_sync = False
-                    _compile_ascendc_cce_v220(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    with mock.patch.object(
-                        compile_op_module, "call_bisheng_v220", return_value=["1"]
-                    ):
-                        with mock.patch.object(
-                            compile_op_module, "fatbin_objs", return_value=["1"]
-                        ):
+                    _compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
+                    with mock.patch.object(compile_op_module, "call_bisheng_v220", return_value=["1"]):
+                        with mock.patch.object(compile_op_module, "fatbin_objs", return_value=["1"]):
                             tiling_info.static_shape_flag = False
                             compile_info.code_channel = CORE_TYPE_MIX
-                            _compile_ascendc_cce_v220(
-                                compile_info, compile_option_tuple, tiling_info
-                            )
+                            _compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
                             compile_info.hard_sync = True
                             compile_info.code_channel = CORE_TYPE_VEC
-                            _compile_ascendc_cce_v220(
-                                compile_info, compile_option_tuple, tiling_info
-                            )
+                            _compile_ascendc_cce_v220(compile_info, compile_option_tuple, tiling_info)
 
     @mock.patch("shutil.which")
     def test_compile_ascendc_cce_v200_with_kernel_type_for_static(self, mock_shutil):
         SetCurrentSocInfo("Ascend310P1")
         mock_shutil.return_value = "bisheng"
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp")
         compile_info = CompileInfo()
         compile_info.dst_file = os.path.join(TOP_PATH, "kernel_meta", "test.o")
         compile_info.kernel_name = "test"
@@ -5431,17 +4428,11 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.dump_info = {"dump_type": "", "dump_size": 1048576}
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         distinct_tag = CommonUtility.get_distinct_filename_tag()
-        file_name_tag = (
-            distinct_tag + "_kernel_ascendc_cce_v200_with_kernel_type_for_static.cpp"
-        )
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, "test" + file_name_tag
-        )
+        file_name_tag = distinct_tag + "_kernel_ascendc_cce_v200_with_kernel_type_for_static.cpp"
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, "test" + file_name_tag)
         compile_option_tuple = CompileOptionTuple([], [])
         compile_info.tiling_key_list = ["1"]
-        compile_info.tiling_key_kernel_type["1"] = (
-            KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
-        )
+        compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
 
         op_info = OpInfo(
             kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97",
@@ -5525,39 +4516,19 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             CommonUtility.get_kernel_meta_dir()
             DFXSectionGenerator().dfx_info_reset(op_info)
             gen_kernel_fun(
-                compile_info,
-                compile_info.origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple([], []),
+                compile_info, compile_info.origin_func_name, op_info, tiling_info, CompileOptionTuple([], [])
             )
-            os.system(
-                f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-            )
-            os.system(
-                f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}"
-            )
-            compile_info.tiling_key_kernel_type["1"] = (
-                KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
-            )
+            os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+            os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}")
+            compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
             # _compile_ascendc_cce_v200_with_kernel_type_for_static(
             #     compile_info, compile_option_tuple, tiling_info)
-            _compile_ascendc_cce_v200_with_kernel_type(
-                compile_info, compile_option_tuple, tiling_info
-            )
-            self.assertFalse(
-                os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o"))
-            )
-            self.assertFalse(
-                os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o"))
-            )
+            _compile_ascendc_cce_v200_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+            self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
+            self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")))
             compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AICORE
-            _compile_ascendc_cce_v200_with_kernel_type_for_static(
-                compile_info, compile_option_tuple, tiling_info
-            )
-            compile_info.tiling_key_kernel_type["1"] = (
-                KernelMetaType.KERNEL_TYPE_AIV_ONLY
-            )
+            _compile_ascendc_cce_v200_with_kernel_type_for_static(compile_info, compile_option_tuple, tiling_info)
+            compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AIV_ONLY
             self.assertRaises(
                 Exception,
                 _compile_ascendc_cce_v200_with_kernel_type_for_static,
@@ -5577,26 +4548,20 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.block_dim = 8
         tiling_info.static_shape_flag = False
 
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_vector_core,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_vector_core
 
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config() as cfg:
                 with mock.patch("os.rename"):
                     cfg.current()[enable_vector_core] = True
                     _gen_static_json_for_no_mix_v200(
-                        compile_info,
-                        tiling_info,
-                        KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
+                        compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
                     )
         self.assertEqual(tiling_info.task_ration, 2)
 
     def test_compile_ascendc_cce_v220_with_kernel_type(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -5700,10 +4665,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -5712,19 +4674,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -5734,19 +4692,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -5756,21 +4708,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _compile_ascendc_cce_v220_with_kernel_type,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _compile_ascendc_cce_v220_with_kernel_type
 
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config() as cfg:
@@ -5780,170 +4726,62 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                     mock.patch("os.remove", return_value=0),
                 ):
                     DFXSectionGenerator().dfx_info_reset(op_info)
-                    gen_kernel_fun(
-                        compile_info,
-                        origin_func_name,
-                        op_info,
-                        tiling_info,
-                        CompileOptionTuple([], []),
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', op_info.kernel_name + file_name_tag)}"
-                    )
+                    gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', op_info.kernel_name + file_name_tag)}")
                     # _compile_ascendc_cce_v220_with_kernel_type_for_static
                     tiling_info.static_shape_flag = True
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-                    )
-                    compile_info.raw_tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")
-                        )
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}")
+                    compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
+                    compile_info.raw_tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")))
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}")
+                    compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")))
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+                    compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
 
-                    compile_info.tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_AIV_ONLY
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
+                    compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_AIV_ONLY
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
 
                     # _compile_ascendc_cce_v220_with_kernel_type_for_dynamic
                     tiling_info.static_shape_flag = False
                     DFXSectionGenerator().dfx_info_reset(op_info)
-                    gen_kernel_fun(
-                        compile_info,
-                        origin_func_name,
-                        op_info,
-                        tiling_info,
-                        CompileOptionTuple([], []),
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}"
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic_1.o")
-                        )
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv_1.o")
-                        )
-                    )
+                    gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}")
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic_1.o")))
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv_1.o")))
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv_1.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv_1.o")))
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic_1.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic_1.o")))
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_AIV_ONLY
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AIV_ONLY
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_AIC_ONLY
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AIC_ONLY
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
 
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["1"] = (
-                        KernelMetaType.KERNEL_TYPE_MAX
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}")
+                    compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MAX
                     self.assertRaises(
                         Exception,
                         _compile_ascendc_cce_v220_with_kernel_type,
@@ -5952,17 +4790,11 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                         tiling_info,
                     )
 
-                    os.remove(
-                        os.path.join(
-                            TOP_PATH, "kernel_meta", op_info.kernel_name + file_name_tag
-                        )
-                    )
+                    os.remove(os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + file_name_tag))
 
     def test_compile_ascendc_cce_c310_with_kernel_type(self):
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -6066,10 +4898,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -6078,19 +4907,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -6100,19 +4925,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -6122,76 +4941,40 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _compile_ascendc_cce_v220_with_kernel_type,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _compile_ascendc_cce_v220_with_kernel_type
 
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config() as cfg:
                 with mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""):
                     DFXSectionGenerator().dfx_info_reset(op_info)
-                    gen_kernel_fun(
-                        compile_info,
-                        origin_func_name,
-                        op_info,
-                        tiling_info,
-                        CompileOptionTuple([], []),
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', op_info.kernel_name + file_name_tag)}"
-                    )
+                    gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple([], []))
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', op_info.kernel_name + file_name_tag)}")
                     tiling_info.static_shape_flag = True
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}"
-                    )
-                    os.system(
-                        f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}"
-                    )
-                    compile_info.tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-                    )
-                    compile_info.raw_tiling_key_kernel_type["0"] = (
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
-                    )
-                    _compile_ascendc_cce_v220_with_kernel_type(
-                        compile_info, compile_option_tuple, tiling_info
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")
-                        )
-                    )
-                    self.assertFalse(
-                        os.path.exists(
-                            os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")
-                        )
-                    )
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic.o')}")
+                    os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv.o')}")
+                    compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
+                    compile_info.raw_tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
+                    _compile_ascendc_cce_v220_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aic.o")))
+                    self.assertFalse(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test_mix_aiv.o")))
 
     def test_get_kernel_type_dict(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_json import (
-            _get_kernel_type_dict,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_json import _get_kernel_type_dict
 
         compile_info = CompileInfo()
         tiling_key = "0"
         for kernel_type in list(KernelMetaType):
             compile_info.tiling_key_kernel_type["0"] = kernel_type
             if kernel_type == KernelMetaType.KERNEL_TYPE_MAX:
-                self.assertRaises(
-                    Exception, _get_kernel_type_dict, compile_info, tiling_key
-                )
+                self.assertRaises(Exception, _get_kernel_type_dict, compile_info, tiling_key)
             else:
                 _get_kernel_type_dict(compile_info, tiling_key)
 
@@ -6200,9 +4983,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         task_ration_str = ""
         core_type = 0
         no_set_kernel_type = True
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _gen_mix_json_from_seperate_json_for_kernel_type,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _gen_mix_json_from_seperate_json_for_kernel_type
 
         self.assertRaises(
             Exception,
@@ -6214,12 +4995,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         )
         with mock.patch("os.rename", return_value=0):
             self.assertRaises(
-                Exception,
-                _gen_mix_json_from_seperate_json,
-                kernel_name,
-                task_ration_str,
-                core_type,
-                no_set_kernel_type,
+                Exception, _gen_mix_json_from_seperate_json, kernel_name, task_ration_str, core_type, no_set_kernel_type
             )
 
         with (
@@ -6254,137 +5030,59 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         cmds_list = ["cmd"]
         dstfile_name = "test"
         compile_log_path = None
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            compile_multi_tilingkey,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import compile_multi_tilingkey
 
         with (
-            mock.patch.object(
-                CommonUtility, "get_build_file_name", return_value=["", "", ""]
-            ),
+            mock.patch.object(CommonUtility, "get_build_file_name", return_value=["", "", ""]),
             mock.patch("builtins.open", new_callable=mock.mock_open),
             mock.patch("os.chmod"),
             mock.patch("os.system", return_value=1),
             mock.patch("os.rename"),
         ):
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_enable_build_log", True
-            )
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "1",
-                    "TILINGKEY_PAR_COMPILE": "1",
-                },
-            ):
+            compile_op_module.global_var_storage.set_variable("ascendc_enable_build_log", True)
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "1", "TILINGKEY_PAR_COMPILE": "1"}):
                 self.assertRaises(
-                    Exception,
-                    compile_multi_tilingkey,
-                    tiling_key_list,
-                    cmds_list,
-                    dstfile_name,
-                    compile_log_path,
+                    Exception, compile_multi_tilingkey, tiling_key_list, cmds_list, dstfile_name, compile_log_path
                 )
 
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "1",
-                    "TILINGKEY_PAR_COMPILE": "0",
-                },
-            ):
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "1", "TILINGKEY_PAR_COMPILE": "0"}):
                 self.assertRaises(
-                    Exception,
-                    compile_multi_tilingkey,
-                    tiling_key_list,
-                    cmds_list,
-                    dstfile_name,
-                    compile_log_path,
+                    Exception, compile_multi_tilingkey, tiling_key_list, cmds_list, dstfile_name, compile_log_path
                 )
 
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "1",
-                    "TILINGKEY_PAR_COMPILE": "0",
-                },
-            ):
-                compile_op_module.global_var_storage.set_variable(
-                    "ascendc_compile_debug_config", True
-                )
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "1", "TILINGKEY_PAR_COMPILE": "0"}):
+                compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", True)
                 self.assertRaises(
-                    Exception,
-                    compile_multi_tilingkey,
-                    tiling_key_list,
-                    cmds_list,
-                    dstfile_name,
-                    compile_log_path,
+                    Exception, compile_multi_tilingkey, tiling_key_list, cmds_list, dstfile_name, compile_log_path
                 )
 
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "0",
-                    "TILINGKEY_PAR_COMPILE": "0",
-                },
-            ):
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "0", "TILINGKEY_PAR_COMPILE": "0"}):
                 self.assertRaises(
-                    Exception,
-                    compile_multi_tilingkey,
-                    tiling_key_list,
-                    cmds_list,
-                    dstfile_name,
-                    compile_log_path,
+                    Exception, compile_multi_tilingkey, tiling_key_list, cmds_list, dstfile_name, compile_log_path
                 )
         with (
-            mock.patch.object(
-                CommonUtility, "get_build_file_name", return_value=["", "", ""]
-            ),
+            mock.patch.object(CommonUtility, "get_build_file_name", return_value=["", "", ""]),
             mock.patch("builtins.open", new_callable=mock.mock_open),
             mock.patch("os.chmod"),
             mock.patch("os.system", return_value=0),
             mock.patch("os.rename"),
         ):
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_compile_debug_config", False
-            )
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "1",
-                    "TILINGKEY_PAR_COMPILE": "0",
-                },
-            ):
-                compile_multi_tilingkey(
-                    tiling_key_list, [["cmd", "test"]], dstfile_name, compile_log_path
-                )
+            compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", False)
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "1", "TILINGKEY_PAR_COMPILE": "0"}):
+                compile_multi_tilingkey(tiling_key_list, [["cmd", "test"]], dstfile_name, compile_log_path)
         with (
-            mock.patch.object(
-                CommonUtility, "get_build_file_name", return_value=["", "", ""]
-            ),
+            mock.patch.object(CommonUtility, "get_build_file_name", return_value=["", "", ""]),
             mock.patch("builtins.open", new_callable=mock.mock_open),
             mock.patch("os.chmod"),
             mock.patch("os.system", return_value=0),
             mock.patch("os.rename"),
         ):
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_compile_debug_config", False
-            )
-            with mock.patch(
-                "os.environ",
-                {
-                    "ASCENDC_PAR_COMPILE_JOB": "1",
-                    "TILINGKEY_PAR_COMPILE": "2",
-                },
-            ):
-                compile_multi_tilingkey(
-                    tiling_key_list, [["cmd", "test"]], dstfile_name, compile_log_path
-                )
+            compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", False)
+            with mock.patch("os.environ", {"ASCENDC_PAR_COMPILE_JOB": "1", "TILINGKEY_PAR_COMPILE": "2"}):
+                compile_multi_tilingkey(tiling_key_list, [["cmd", "test"]], dstfile_name, compile_log_path)
 
     def test_judge_valid_for_v200(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import (
-            judge_valid_for_v200,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v200 import judge_valid_for_v200
 
         ValidKernelMetaType = [
             KernelMetaType.KERNEL_TYPE_AICORE,
@@ -6403,18 +5101,14 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
     @mock.patch("os.environ", {"ASCENDC_COV": "1"})
     def test_is_enable_ascendc_cov(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import (
-            is_enable_ascendc_cov,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import is_enable_ascendc_cov
 
         self.assertTrue(is_enable_ascendc_cov())
 
     @mock.patch("os.environ", {"ASCEND_HOME_PATH": ""})
     def test_is_enable_sanitizer(self):
         set_current_compile_soc_info("Ascend910B")
-        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import (
-            is_enable_sanitizer,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import is_enable_sanitizer
 
         compile_options = []
         self.assertFalse(is_enable_sanitizer(compile_options))
@@ -6422,9 +5116,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             compile_options = ["-sanitizer"]
             self.assertFalse(is_enable_sanitizer(compile_options))
         with mock.patch("os.path.exists") as mock_exists:
-            with mock.patch.dict(
-                "os.environ", {"ASCEND_HOME_PATH": os.environ.get("ASCEND_HOME_PATH")}
-            ):
+            with mock.patch.dict("os.environ", {"ASCEND_HOME_PATH": os.environ.get("ASCEND_HOME_PATH")}):
                 mock_exists.return_value = True
                 compile_options = ["-sanitizer"]
                 self.assertTrue(is_enable_sanitizer(compile_options))
@@ -6434,9 +5126,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                     mock_soc.return_value = "Ascend950"
                     self.assertFalse(is_enable_sanitizer(compile_options))
         with mock.patch("os.path.exists") as mock_exists:
-            with mock.patch.dict(
-                "os.environ", {"ASCEND_HOME_PATH": "/usr/local/Ascend/cann"}
-            ):
+            with mock.patch.dict("os.environ", {"ASCEND_HOME_PATH": "/usr/local/Ascend/cann"}):
                 mock_exists.return_value = False
                 compile_options = ["-sanitizer"]
                 self.assertRaises(Exception, is_enable_sanitizer, compile_options)
@@ -6445,29 +5135,16 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         SetCurrentSocInfo("Ascend910B1")
         compile_option_tuple = CompileOptionTuple([], [])
         op_compile_option = ""
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _add_op_compile_options_by_customized_json,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _add_op_compile_options_by_customized_json
 
         with mock.patch("json.loads") as mock_json:
-            js = {
-                "compile_options": {
-                    "__ALL__": ["-mllvm test", "test"],
-                    "ascend910b": ["-mllvm test", "test"],
-                }
-            }
+            js = {"compile_options": {"__ALL__": ["-mllvm test", "test"], "ascend910b": ["-mllvm test", "test"]}}
             mock_json.return_value = js
-            _add_op_compile_options_by_customized_json(
-                op_compile_option, compile_option_tuple
-            )
-        self.assertEqual(
-            compile_option_tuple.mllvm_options, ["-mllvm", "test", "-mllvm", "test"]
-        )
+            _add_op_compile_options_by_customized_json(op_compile_option, compile_option_tuple)
+        self.assertEqual(compile_option_tuple.mllvm_options, ["-mllvm", "test", "-mllvm", "test"])
 
     def test_get_code_for_l2_cache(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import (
-            get_code_for_l2_cache,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import get_code_for_l2_cache
 
         compile_info = CompileInfo()
         compile_info.tiling_key_list = ["0"]
@@ -6481,36 +5158,28 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         with mock.patch.object(CommonUtility, "is_v220", return_value=True):
             compile_info.no_set_kernel_type = False
-            compile_info.tiling_key_kernel_type["0"] = (
-                KernelMetaType.KERNEL_TYPE_AIC_ONLY
-            )
+            compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_AIC_ONLY
             source = ""
             result = get_code_for_l2_cache(compile_info, source, tiling_info)
             self.assertNotEqual(source, result)
 
             compile_info.no_set_kernel_type = True
             compile_info.code_channel = 1
-            compile_info.tiling_key_kernel_type["0"] = (
-                KernelMetaType.KERNEL_TYPE_AIC_ONLY
-            )
+            compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_AIC_ONLY
             source = ""
             result = get_code_for_l2_cache(compile_info, source, tiling_info)
             self.assertNotEqual(source, result)
 
         with mock.patch.object(CommonUtility, "is_v200", return_value=True):
             compile_info.no_set_kernel_type = False
-            compile_info.tiling_key_kernel_type["0"] = (
-                KernelMetaType.KERNEL_TYPE_VECTORCORE
-            )
+            compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_VECTORCORE
             source = ""
             result = get_code_for_l2_cache(compile_info, source, tiling_info)
             self.assertNotEqual(source, result)
 
             compile_info.no_set_kernel_type = True
             compile_info.code_channel = 1
-            compile_info.tiling_key_kernel_type["0"] = (
-                KernelMetaType.KERNEL_TYPE_AIC_ONLY
-            )
+            compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_AIC_ONLY
             source = ""
             result = get_code_for_l2_cache(compile_info, source, tiling_info)
             self.assertNotEqual(source, result)
@@ -6518,9 +5187,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with mock.patch.object(CommonUtility, "is_v220", return_value=False):
             with mock.patch.object(CommonUtility, "is_v200", return_value=False):
                 compile_info.no_set_kernel_type = False
-                compile_info.tiling_key_kernel_type["0"] = (
-                    KernelMetaType.KERNEL_TYPE_VECTORCORE
-                )
+                compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_VECTORCORE
                 source = ""
                 result = get_code_for_l2_cache(compile_info, source, tiling_info)
                 self.assertNotEqual(source, result)
@@ -6557,24 +5224,16 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             output_shape_depend_on_compute=[],
         )
         origin_input = op_info.origin_inputs
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import (
-            gen_usr_origin_kernel_function_call,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import gen_usr_origin_kernel_function_call
 
         tiling_info.static_shape_flag = True
-        self.assertNotEqual(
-            gen_usr_origin_kernel_function_call(func_name, op_info, tiling_info), ""
-        )
+        self.assertNotEqual(gen_usr_origin_kernel_function_call(func_name, op_info, tiling_info), "")
         tiling_info.static_shape_flag = False
-        self.assertNotEqual(
-            gen_usr_origin_kernel_function_call(func_name, op_info, tiling_info), ""
-        )
+        self.assertNotEqual(gen_usr_origin_kernel_function_call(func_name, op_info, tiling_info), "")
 
     def test_gen_set_workspace_codes(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -6678,10 +5337,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -6690,19 +5346,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -6712,19 +5364,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -6734,49 +5380,28 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            _gen_set_workspace_codes,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import _gen_set_workspace_codes
 
         is_mix = True
         is_single_and_using_hard_sync = True
         dump_size = 0
         compile_info.dump_info["dump_type"] = ["printf"]
         result = _gen_set_workspace_codes(
-            is_mix,
-            is_single_and_using_hard_sync,
-            op_info,
-            tiling_info,
-            compile_options,
-            compile_info,
+            is_mix, is_single_and_using_hard_sync, op_info, tiling_info, compile_options, compile_info
         )
         self.assertNotEqual(result, "")
-        self.assertIn(
-            "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n",
-            result,
-        )
-        with mock.patch.object(
-            CommonUtility, "is_support_workspace_offset", return_value=True
-        ):
+        self.assertIn("    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n", result)
+        with mock.patch.object(CommonUtility, "is_support_workspace_offset", return_value=True):
             result = _gen_set_workspace_codes(
-                is_mix,
-                is_single_and_using_hard_sync,
-                op_info,
-                tiling_info,
-                compile_options,
-                compile_info,
+                is_mix, is_single_and_using_hard_sync, op_info, tiling_info, compile_options, compile_info
             )
         self.assertIn(
             "#if ENABLE_CV_COMM_VIA_SSBUF != 0 && __MIX_CORE_AIC_RATION__ != 1\n"
@@ -6789,12 +5414,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with buildcfg.build_config() as cfg:
             cfg.current()["tir.op_debug_config"] = ["oom"]
             result = _gen_set_workspace_codes(
-                is_mix,
-                is_single_and_using_hard_sync,
-                op_info,
-                tiling_info,
-                compile_options,
-                compile_info,
+                is_mix, is_single_and_using_hard_sync, op_info, tiling_info, compile_options, compile_info
             )
         self.assertNotEqual(result, "")
 
@@ -6807,9 +5427,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                     log_file = ""
                     CommonUtility.dump_compile_log(cmd, stage, log_file)
                     mock_fdopen.side_effect = RuntimeError()
-                    self.assertRaises(
-                        Exception, CommonUtility.dump_compile_log, cmd, stage, log_file
-                    )
+                    self.assertRaises(Exception, CommonUtility.dump_compile_log, cmd, stage, log_file)
 
     def test_dump_log(self):
         log_str = "test"
@@ -6819,17 +5437,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                 with mock.patch("os.fdopen") as mock_fdopen:
                     CommonUtility.dump_log(log_str, log_file)
                     mock_fdopen.side_effect = RuntimeError()
-                    self.assertRaises(
-                        Exception, CommonUtility.dump_log, log_str, log_file
-                    )
+                    self.assertRaises(Exception, CommonUtility.dump_log, log_str, log_file)
 
     def test_run_cmd_stack_spill_case_ascendc(self):
         cmd = []
         cmd_type = ""
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 result = CommonUtility.run_cmd_stack_spill_case_ascendc(cmd, cmd_type)
                 self.assertEqual(result[0], None)
 
@@ -6837,9 +5451,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         cmd = []
         cmd_type = ""
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 SetCurrentSocInfo("Ascend310P1")
                 result = CommonUtility.run_cmd_stackoverflow_ascnendc(cmd, cmd_type)
                 self.assertEqual(result[0], None)
@@ -6847,9 +5459,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
     def test_run_cmd_ascendc(self):
         cmd_type = "compile"
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 SetCurrentSocInfo("Ascend310P1")
                 cmd = ["--cce-aicore-only", "-O0", "-g"]
                 result = CommonUtility.run_cmd_ascendc(cmd, cmd_type)
@@ -6860,69 +5470,39 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
     def test_run_cmd_inner(self):
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 SetCurrentSocInfo("Ascend310P1")
                 cmd = ["--cce-aicore-only", "-O0", "-g", ".o"]
-                compile_op_module.global_var_storage.set_variable(
-                    "ascendc_compile_debug_config", True
-                )
+                compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", True)
                 s = "unsupported API".encode("utf-8")
-                with mock.patch.object(
-                    CommonUtility, "run_cmd_ascendc", return_value=[s, 0]
-                ):
-                    with mock.patch.object(
-                        CommonUtility, "dump_build_log", return_value=[s, 0]
-                    ):
-                        result = CommonUtility.run_cmd_inner(
-                            cmd, CompileStage.COMPILE, None
-                        )
+                with mock.patch.object(CommonUtility, "run_cmd_ascendc", return_value=[s, 0]):
+                    with mock.patch.object(CommonUtility, "dump_build_log", return_value=[s, 0]):
+                        result = CommonUtility.run_cmd_inner(cmd, CompileStage.COMPILE, None)
                         self.assertEqual(result, None)
 
     def test_run_cmd_inner_c310(self):
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 SetCurrentSocInfo("Ascend950PR_9599")
                 cmd = ["--cce-aicore-only", "-O0", "-g", ".o"]
-                compile_op_module.global_var_storage.set_variable(
-                    "ascendc_compile_debug_config", True
-                )
+                compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", True)
                 s = "unsupported API".encode("utf-8")
-                with mock.patch.object(
-                    CommonUtility, "run_cmd_ascendc", return_value=[s, 0]
-                ):
-                    with mock.patch.object(
-                        CommonUtility, "dump_build_log", return_value=[s, 0]
-                    ):
-                        result = CommonUtility.run_cmd_inner(
-                            cmd, CompileStage.COMPILE, None
-                        )
+                with mock.patch.object(CommonUtility, "run_cmd_ascendc", return_value=[s, 0]):
+                    with mock.patch.object(CommonUtility, "dump_build_log", return_value=[s, 0]):
+                        result = CommonUtility.run_cmd_inner(cmd, CompileStage.COMPILE, None)
                         self.assertEqual(result, None)
 
     def test_run_cmd_inner_jump(self):
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]):
                 SetCurrentSocInfo("Ascend310P1")
                 cmd = ["--cce-aicore-only", "-O0", "-g", ".o"]
-                compile_op_module.global_var_storage.set_variable(
-                    "ascendc_compile_debug_config", True
-                )
+                compile_op_module.global_var_storage.set_variable("ascendc_compile_debug_config", True)
                 s = "unsupported API".encode("utf-8")
-                with mock.patch.object(
-                    CommonUtility, "run_cmd_ascendc"
-                ) as mock_run_cmd_ascendc:
+                with mock.patch.object(CommonUtility, "run_cmd_ascendc") as mock_run_cmd_ascendc:
                     mock_run_cmd_ascendc.side_effect = [(s, 1), (s, 1), (s, 0)]
-                    with mock.patch.object(
-                        CommonUtility, "dump_build_log", return_value=[s, 0]
-                    ):
-                        result = CommonUtility.run_cmd_inner(
-                            cmd, CompileStage.COMPILE, None
-                        )
+                    with mock.patch.object(CommonUtility, "dump_build_log", return_value=[s, 0]):
+                        result = CommonUtility.run_cmd_inner(cmd, CompileStage.COMPILE, None)
                         self.assertEqual(result, None)
 
     def test_write_mk_v200(self):
@@ -6936,13 +5516,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         with (
             mock.patch("subprocess.Popen"),
-            mock.patch.object(
-                CommonUtility, "get_build_file_name", return_value=["", "", ""]
-            ),
+            mock.patch.object(CommonUtility, "get_build_file_name", return_value=["", "", ""]),
             mock.patch.object(CommonUtility, "is_v200", return_value=True),
-            mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[None, None]
-            ),
+            mock.patch.object(subprocess.Popen(), "communicate", return_value=[None, None]),
             mock.patch.object(CommonUtility, "dump_build_log", return_value=[s, 0]),
             mock.patch("builtins.open", new_callable=mock.mock_open),
             mock.patch("os.chmod"),
@@ -7001,46 +5577,30 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             cmds = ["test.o"]
             stage = CompileStage.PRECOMPILE
             output = "ret_code=1, ascendc_enable_build_log is False"
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_enable_build_log", False
-            )
+            compile_op_module.global_var_storage.set_variable("ascendc_enable_build_log", False)
             ret_code = 1
-            self.assertRaises(
-                Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code
-            )
+            self.assertRaises(Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code)
             output = "ret_code=1, ascendc_enable_build_log is True"
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_enable_build_log", True
-            )
-            self.assertRaises(
-                Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code
-            )
+            compile_op_module.global_var_storage.set_variable("ascendc_enable_build_log", True)
+            self.assertRaises(Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code)
             output = "ret_code=0, ascendc_enable_build_log is True"
-            compile_op_module.global_var_storage.set_variable(
-                "ascendc_enable_build_log", True
-            )
+            compile_op_module.global_var_storage.set_variable("ascendc_enable_build_log", True)
             ret_code = 0
             CommonUtility.dump_build_log(output, cmds, stage, ret_code)
             output = "WARNING: ret_code=0 ascendc_enable_build_log is True"
             CommonUtility.dump_build_log(output, cmds, stage, ret_code)
             stage = CompileStage.FATBIN
-            output = (
-                "stage=CompileStage.FATBIN, ret_code=0 ascendc_enable_build_log is True"
-            )
+            output = "stage=CompileStage.FATBIN, ret_code=0 ascendc_enable_build_log is True"
             CommonUtility.dump_build_log(output, cmds, stage, ret_code)
             stage = CompileStage.LINKRELOCATE
             output = "stage=CompileStage.LINKRELOCATE, ret_code=0 ascendc_enable_build_log is True"
             CommonUtility.dump_build_log(output, cmds, stage, ret_code)
             mock_open.side_effect = RuntimeError()
-            self.assertRaises(
-                Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code
-            )
+            self.assertRaises(Exception, CommonUtility.dump_build_log, output, cmds, stage, ret_code)
 
     def test_get_v220_kernel_type_mix_flag(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         origin_func_name = "add_custom_unalign"
         code_channel = 0
@@ -7144,10 +5704,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
@@ -7156,19 +5713,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         ]
 
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = infered_info_from_ifile.tiling_key_list
         tiling_info = TilingInfo()
@@ -7178,19 +5731,13 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.static_shape_flag = True
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_tiling_data.h"
-        tiling_data_file_path = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        tiling_data_file_path = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
         tiling_info.save_file(tiling_data_file_path)
-        dst_file_header = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + "_infer_channel"
-        )
+        dst_file_header = os.path.join(kernel_meta_dir, op_info.kernel_name + "_infer_channel")
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -7200,21 +5747,15 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.compile_log_path = compile_log_path
         compile_info.hard_sync = infered_info_from_ifile.hard_sync
         compile_info.enable_deterministic = infered_info_from_ifile.enable_deterministic
-        compile_info.tiling_key_kernel_type = (
-            infered_info_from_ifile.tiling_key_kernel_type
-        )
+        compile_info.tiling_key_kernel_type = infered_info_from_ifile.tiling_key_kernel_type
         compile_info.no_set_kernel_type = infered_info_from_ifile.no_set_kernel_type
         compile_info.default_kernel_type = infered_info_from_ifile.default_kernel_type
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
 
-        from asc_op_compile_base.asc_op_compiler.compile_op import (
-            get_v220_kernel_type_mix_flag,
-        )
+        from asc_op_compile_base.asc_op_compiler.compile_op import get_v220_kernel_type_mix_flag
 
         with mock.patch.object(CommonUtility, "is_v220", return_value=False):
             result = get_v220_kernel_type_mix_flag(compile_info, tiling_info)
@@ -7228,14 +5769,10 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_AIC_ONLY
         result = get_v220_kernel_type_mix_flag(compile_info, tiling_info)
         self.assertEqual(result, (False, False))
-        compile_info.tiling_key_kernel_type["0"] = (
-            KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
-        )
+        compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC
         result = get_v220_kernel_type_mix_flag(compile_info, tiling_info)
         self.assertEqual(result, (True, compile_info.hard_sync))
-        compile_info.tiling_key_kernel_type["0"] = (
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
-        )
+        compile_info.tiling_key_kernel_type["0"] = KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC
         result = get_v220_kernel_type_mix_flag(compile_info, tiling_info)
         self.assertEqual(result, (True, compile_info.hard_sync))
 
@@ -7243,41 +5780,26 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_log_path = None
         with mock.patch.object(CommonUtility, "is_v220", return_value=True):
             kernel_type = "KERNEL_TYPE_AIV_ONLY"
-            kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(
-                kernel_type, compile_log_path
-            )
+            kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
             self.assertEqual(kernel_type_enum, KernelMetaType.KERNEL_TYPE_AIV_ONLY)
             kernel_type = "KERNEL_TYPE_AICORE"
-            kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(
-                kernel_type, compile_log_path
-            )
+            kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
             self.assertEqual(kernel_type_enum, None)
         with mock.patch.object(CommonUtility, "is_v220", return_value=False):
             with mock.patch.object(CommonUtility, "is_v200", return_value=True):
                 kernel_type = "KERNEL_TYPE_AICORE"
-                kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(
-                    kernel_type, compile_log_path
-                )
+                kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
                 self.assertEqual(kernel_type_enum, KernelMetaType.KERNEL_TYPE_AICORE)
                 kernel_type = "KERNEL_TYPE_AIV_ONLY"
-                kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(
-                    kernel_type, compile_log_path
-                )
+                kernel_type_enum = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
                 self.assertEqual(kernel_type_enum, None)
         with mock.patch.object(CommonUtility, "is_v220", return_value=False):
             with mock.patch.object(CommonUtility, "is_v200", return_value=False):
-                self.assertRaises(
-                    Exception,
-                    KernelInfoInfer.get_kernel_type_enum,
-                    kernel_type,
-                    compile_log_path,
-                )
+                self.assertRaises(Exception, KernelInfoInfer.get_kernel_type_enum, kernel_type, compile_log_path)
 
     def test_is_enable_build_log(self):
         SetCurrentSocInfo("Ascend910B1")
-        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import (
-            is_enable_build_log,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_common_utility import is_enable_build_log
 
         with mock.patch("os.environ", {"ASCENDC_BUILD_LOG_DIR": None}):
             result = is_enable_build_log()
@@ -7316,9 +5838,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                 result = check_if_gen_placehoder(op_info, True)
                 self.assertFalse(result)
                 with mock.patch.object(
-                    asc_op_compile_base.common.context.get_context(),
-                    "get_addition",
-                    return_value=GEN_PLACE_HOLDER_STR,
+                    asc_op_compile_base.common.context.get_context(), "get_addition", return_value=GEN_PLACE_HOLDER_STR
                 ):
                     result = check_if_gen_placehoder(op_info, True)
                     self.assertFalse(result)
@@ -7467,13 +5987,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             impl_mode="",
             param_type_dynamic=True,
             mc2_ctx=["aaa"],
-            param_type_list=[
-                "required",
-                "required",
-                "required",
-                "required",
-                "required",
-            ],
+            param_type_list=["required", "required", "required", "required", "required"],
             init_value_list=["1", "a", None],
             output_shape_depend_on_compute=[],
         )
@@ -7498,9 +6012,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         need_gen_placehoder = True
         enable_deterministic = True
         dump_info = {"dump_type": "test", "dump_size": 0}
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_deterministic_mode,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_deterministic_mode
 
         compile_info = CompileInfo()
         compile_info.kernel_name = kernel_name
@@ -7535,23 +6047,14 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config() as cfg,
-            mock.patch(
-                "builtins.open", new_callable=mock.mock_open, read_data="{}"
-            ) as mock_open,
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}") as mock_open,
             mock.patch("json.load") as mock_load,
             mock.patch("json.loads") as mock_loads,
             mock.patch("hashlib.sha256", return_value=hashlib.sha256()) as mock_hash,
             mock.patch("os.chmod"),
             mock.patch("json.dump") as mock_dump,
         ):
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_load.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -7565,23 +6068,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             )
             mock_load.side_effect = None
             cfg.current()[enable_deterministic_mode] = True
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             cfg.current()["tir.op_debug_config"] = ["oom"]
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_loads.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -7595,14 +6084,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             )
             mock_loads.side_effect = None
             tiling_info.clear_atomic = False
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_hash.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -7739,13 +6221,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             impl_mode="",
             param_type_dynamic=True,
             mc2_ctx=["aaa"],
-            param_type_list=[
-                "required",
-                "required",
-                "required",
-                "required",
-                "required",
-            ],
+            param_type_list=["required", "required", "required", "required", "required"],
             init_value_list=["1", "a", None],
             output_shape_depend_on_compute=[],
         )
@@ -7770,9 +6246,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         need_gen_placehoder = True
         enable_deterministic = True
         dump_info = {"dump_type": "test", "dump_size": 0}
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_deterministic_mode,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_deterministic_mode
 
         compile_info = CompileInfo()
         compile_info.kernel_name = kernel_name
@@ -7780,9 +6254,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.dump_info = {"dump_type": ""}
         compile_info.super_kernel_info["timestamp_option"] = True
         compile_info.super_kernel_info["kernel_name"] = kernel_name
-        compile_info.super_kernel_info["sp_options"] = {
-            "stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable
-        }
+        compile_info.super_kernel_info["sp_options"] = {"stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable}
         compile_info.super_kernel_info["op_list"] = [
             {
                 "bin_path": "./te_addcustom_c3ddf0b6b7cfcb0fa81511155a4d588722c7b8412920ecfe1b049dec430667c5.o",
@@ -7807,23 +6279,14 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config() as cfg,
-            mock.patch(
-                "builtins.open", new_callable=mock.mock_open, read_data="{}"
-            ) as mock_open,
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}") as mock_open,
             mock.patch("json.load") as mock_load,
             mock.patch("json.loads") as mock_loads,
             mock.patch("hashlib.sha256", return_value=hashlib.sha256()) as mock_hash,
             mock.patch("os.chmod"),
             mock.patch("json.dump") as mock_dump,
         ):
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_load.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -7837,23 +6300,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             )
             mock_load.side_effect = None
             cfg.current()[enable_deterministic_mode] = True
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             cfg.current()["tir.op_debug_config"] = ["oom"]
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_loads.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -7867,14 +6316,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             )
             mock_loads.side_effect = None
             tiling_info.clear_atomic = False
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
             mock_hash.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -8011,13 +6453,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             impl_mode="",
             param_type_dynamic=True,
             mc2_ctx=["aaa"],
-            param_type_list=[
-                "required",
-                "required",
-                "required",
-                "required",
-                "required",
-            ],
+            param_type_list=["required", "required", "required", "required", "required"],
             init_value_list=["1", "a", None],
             output_shape_depend_on_compute=[],
         )
@@ -8042,9 +6478,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         need_gen_placehoder = True
         enable_deterministic = True
         dump_info = {"dump_type": "test", "dump_size": 0}
-        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-            enable_deterministic_mode,
-        )
+        from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_deterministic_mode
 
         compile_info = CompileInfo()
         compile_info.kernel_name = kernel_name
@@ -8080,9 +6514,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
             buildcfg.build_config() as cfg,
-            mock.patch(
-                "builtins.open", new_callable=mock.mock_open, read_data="{}"
-            ) as mock_open,
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}") as mock_open,
             mock.patch("json.load") as mock_load,
             mock.patch("json.loads") as mock_loads,
             mock.patch("hashlib.sha256", return_value=hashlib.sha256()) as mock_hash,
@@ -8090,14 +6522,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             mock.patch("json.dump") as mock_dump,
         ):
             global_var_storage.set_variable("ascendc_tiling_no_register", True)
-            _json_post_process(
-                compile_info,
-                op_info,
-                tiling_info,
-                need_gen_placehoder,
-                need_gen_placehoder,
-                dump_info,
-            )
+            _json_post_process(compile_info, op_info, tiling_info, need_gen_placehoder, need_gen_placehoder, dump_info)
         self.assertEqual(compile_info.max_tiling_size, 96)
 
     def test_json_except_info(self):
@@ -8108,9 +6533,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         compile_info.super_kernel_info["kernel_name"] = (
             "te_addcustom_c3ddf0b6b7cfcb0fa81511155a4d588722c7b8412920ecfe1b049dec430667c5"
         )
-        compile_info.super_kernel_info["sp_options"] = {
-            "stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable
-        }
+        compile_info.super_kernel_info["sp_options"] = {"stream-fusion": SuperKernelStreamFusionMode.StreamFusionEnable}
         compile_info.super_kernel_info["op_list"] = [
             {
                 "bin_path": "./te_addcustom_c3ddf0b6b7cfcb0fa81511155a4d588722c7b8412920ecfe1b049dec430667c5.o",
@@ -8135,7 +6558,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         from asc_op_compile_base.asc_op_compiler.compile_op import _json_except_info
 
         json_file_path_1 = "./te_addcustom_c3ddf0b6b7cfcb0fa81511155a4d588722c7b8412920ecfe1b049dec430667c5.json"
-        json_file_path_2 = "./te_dequantswigluquant_c15e5bac0a77649656269990f41afcf1d0bf6e714342f104a6682f80963ca17e.json"
+        json_file_path_2 = (
+            "./te_dequantswigluquant_c15e5bac0a77649656269990f41afcf1d0bf6e714342f104a6682f80963ca17e.json"
+        )
         os.makedirs(os.path.dirname(json_file_path_1), exist_ok=True)
         os.makedirs(os.path.dirname(json_file_path_2), exist_ok=True)
         content_1 = {
@@ -8408,9 +6833,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             buildcfg.build_config(),
             mock.patch(
                 "asc_op_compile_base.asc_op_compiler.get_op_tiling.get_tiling_def",
-                return_value=TilingDef(
-                    {"class_name": "add_custiom", "data_size": 0, "fields": []}
-                ),
+                return_value=TilingDef({"class_name": "add_custiom", "data_size": 0, "fields": []}),
             ),
             mock.patch(
                 "asc_op_compile_base.asc_op_compiler.get_op_tiling.do_op_tiling",
@@ -8462,30 +6885,20 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         extend_options = {"opp_kernel_hidden_dat_path": os.path.join(TOP_PATH, "tmp")}
 
         def custom_exists(path):
-            if (
-                path
-                == "/usr/local/Ascend/cann/compiler/tikcpp/../../include/version/asc_devkit_version.h"
-            ):
+            if path == "/usr/local/Ascend/cann/compiler/tikcpp/../../include/version/asc_devkit_version.h":
                 return True
             else:
                 return mock.DEFAULT
 
         mock_exist.side_effect = custom_exists
 
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
-        _update_compile_option(
-            "my_test", compile_option_tuple.compile_options, extend_options
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
+        _update_compile_option("my_test", compile_option_tuple.compile_options, extend_options)
         self.assertTrue("-cce-vfs" in compile_option_tuple.compile_options)
 
     def test_compile_op_template(self):
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH,
-            "tests/python/asc_op_compiler/stub_kernels/add_custom_template.cpp",
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_template.cpp")
         origin_func_name = "add_custom_template"
         code_channel = 0
         op_info = OpInfo(
@@ -8597,14 +7010,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config():
-                compile_op(
-                    cce_file,
-                    origin_func_name,
-                    op_info,
-                    compile_options,
-                    code_channel,
-                    op_compile_option,
-                )
+                compile_op(cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option)
 
         binary_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".o")
         json_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".json")
@@ -8618,9 +7024,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
     def test_compile_op_static(self):
         SetCurrentSocInfo("Ascend310P1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom.cpp")
         origin_func_name = "add_custom"
         code_channel = 0
         op_info = OpInfo(
@@ -8787,11 +7191,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             "-I" + os.path.join(API_ROOT_PATH, "include/adv_api"),
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
-            "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_tiling.h",
-            ),
+            "-include" + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
         ]
@@ -8813,19 +7213,10 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_info.clear_atomic = True
         module_name = "asc_op_compile_base.asc_op_compiler.compile_op"
         compile_op_module = importlib.import_module(module_name)
-        with mock.patch.object(
-            compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info
-        ):
+        with mock.patch.object(compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with buildcfg.build_config():
-                    compile_op(
-                        cce_file,
-                        origin_func_name,
-                        op_info,
-                        compile_options,
-                        code_channel,
-                        op_compile_option,
-                    )
+                    compile_op(cce_file, origin_func_name, op_info, compile_options, code_channel, op_compile_option)
 
         binary_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".o")
         json_file = os.path.join(TOP_PATH, "kernel_meta", op_info.kernel_name + ".json")
@@ -8833,15 +7224,11 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         os.remove(binary_file)
         os.remove(json_file)
 
-        with mock.patch.object(
-            compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info
-        ):
+        with mock.patch.object(compile_op_module, "get_tiling_info_by_tiling", return_value=tiling_info):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with buildcfg.build_config():
                     with mock.patch.object(
-                        asc_op_compile_base.common.context.get_context(),
-                        "get_addition",
-                        return_value=["2"],
+                        asc_op_compile_base.common.context.get_context(), "get_addition", return_value=["2"]
                     ):
                         self.assertRaises(
                             Exception,
@@ -8854,9 +7241,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             op_compile_option,
                         )
                     with mock.patch.object(
-                        asc_op_compile_base.common.context.get_context(),
-                        "get_addition",
-                        return_value=["3"],
+                        asc_op_compile_base.common.context.get_context(), "get_addition", return_value=["3"]
                     ):
                         self.assertRaises(
                             SystemExit,
@@ -8942,21 +7327,12 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         DFXSectionGenerator().insert_param(y_in)
         DFXSectionGenerator().insert_param(z_out)
         DFXSectionGenerator().insert_param(tiling)
-        DFXSectionGenerator()._generate_binary_section_for_dynamic(
-            compile_info, op_info, tiling_info
-        )
+        DFXSectionGenerator()._generate_binary_section_for_dynamic(compile_info, op_info, tiling_info)
 
-        self.assertEqual(
-            DFXSectionGenerator().get_param("z_out_").param_type, DFXParamType.OUTPUT
-        )
-        self.assertEqual(
-            DFXSectionGenerator().get_param("z_out_").point_type,
-            DFXPointType.LEVEL_2_WITH_SHAPE,
-        )
+        self.assertEqual(DFXSectionGenerator().get_param("z_out_").param_type, DFXParamType.OUTPUT)
+        self.assertEqual(DFXSectionGenerator().get_param("z_out_").point_type, DFXPointType.LEVEL_2_WITH_SHAPE)
 
-        DFXSectionGenerator()._generate_binary_for_input_and_output(
-            DFXSectionGenerator().get_param("z_out_")
-        )
+        DFXSectionGenerator()._generate_binary_for_input_and_output(DFXSectionGenerator().get_param("z_out_"))
         golden_dfx_info = [
             0,
             0,
@@ -8999,9 +7375,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             0,
             4,
         ]
-        self.assertEqual(
-            DFXSectionGenerator().get_param("z_out_").args_dfx_info, golden_dfx_info
-        )
+        self.assertEqual(DFXSectionGenerator().get_param("z_out_").args_dfx_info, golden_dfx_info)
 
         tiling_info = TilingInfo()
         tiling_info.block_dim = 8
@@ -9020,71 +7394,45 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         compile_info = CompileInfo()
         compile_info.tiling_key_struct_map = {}
-        DFXSectionGenerator()._generate_binary_for_tiling(
-            "1", tiling_info, compile_info
-        )
+        DFXSectionGenerator()._generate_binary_for_tiling("1", tiling_info, compile_info)
 
         # check tiling size of tilingkey 1
         golden_dfx_info = [0, 0, 0, 0, 0, 1, 0, 7, 0, 0, 0, 0, 0, 0, 0, 108]
-        self.assertEqual(
-            DFXSectionGenerator().get_param("tiling").args_dfx_info, golden_dfx_info
-        )
+        self.assertEqual(DFXSectionGenerator().get_param("tiling").args_dfx_info, golden_dfx_info)
 
         module_name = "asc_op_compile_base.asc_op_compiler.compile_op"
         compile_op_module = importlib.import_module(module_name)
-        with mock.patch.object(
-            compile_op_module, "get_current_build_config", return_value=["oom"]
-        ):
-            DFXSectionGenerator()._generate_binary_for_tiling(
-                "1", tiling_info, compile_info
-            )
+        with mock.patch.object(compile_op_module, "get_current_build_config", return_value=["oom"]):
+            DFXSectionGenerator()._generate_binary_for_tiling("1", tiling_info, compile_info)
 
         compile_info = CompileInfo()
         compile_info.sub_core_type = CORE_TYPE_CUBE
-        DFXSectionGenerator().generate_dfx_section(
-            "1", tiling_info, "test", compile_info
-        )
+        DFXSectionGenerator().generate_dfx_section("1", tiling_info, "test", compile_info)
         self.assertEqual(DFXSectionGenerator().param_placeholder_num, 2)
 
         compile_info.sub_core_type = CORE_TYPE_VEC
-        DFXSectionGenerator().generate_dfx_section(
-            "1", tiling_info, "test", compile_info
-        )
-        _generate_section_content(
-            "test",
-            "1",
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2,
-            tiling_info,
-            compile_info,
-        )
+        DFXSectionGenerator().generate_dfx_section("1", tiling_info, "test", compile_info)
+        _generate_section_content("test", "1", KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2, tiling_info, compile_info)
         self.assertEqual(DFXSectionGenerator().param_placeholder_num, 2)
 
     def test_dfx_generate_kernel_type_section(self):
         SetCurrentSocInfo("Ascend910B1")
         compile_info = CompileInfo()
         compile_info.code_channel = CORE_TYPE_MIX
-        section_context = DFXSectionGenerator().generate_kernel_type_section(
-            compile_info, "test"
-        )
+        section_context = DFXSectionGenerator().generate_kernel_type_section(compile_info, "test")
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
         compile_info.code_channel = CORE_TYPE_CUBE
-        section_context = DFXSectionGenerator().generate_kernel_type_section(
-            compile_info, "test"
-        )
+        section_context = DFXSectionGenerator().generate_kernel_type_section(compile_info, "test")
         self.assertTrue("K_TYPE_AIC" in section_context)
 
         compile_info.hard_sync = True
         compile_info.code_channel = CORE_TYPE_VEC
-        section_context = DFXSectionGenerator().generate_kernel_type_section(
-            compile_info, "test"
-        )
+        section_context = DFXSectionGenerator().generate_kernel_type_section(compile_info, "test")
         self.assertTrue("K_TYPE_MIX_AIV_MAIN" in section_context)
 
         compile_info.code_channel = CORE_TYPE_CUBE
-        section_context = DFXSectionGenerator().generate_kernel_type_section(
-            compile_info, "test"
-        )
+        section_context = DFXSectionGenerator().generate_kernel_type_section(compile_info, "test")
         self.assertTrue("K_TYPE_MIX_AIC_MAIN" in section_context)
 
     def test_get_sub_kernel_name(self):
@@ -9107,75 +7455,39 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         with asc_op_compile_base.common.context.op_context.OpContext():
             with buildcfg.build_config():
                 _gen_dynamic_json_for_v200(compile_info, tiling_info, "VectorCore")
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                _gen_static_json_for_mix_v200(
-                    compile_info,
-                    tiling_info,
-                    KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
-                )
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                _gen_static_json_for_mix_v200(compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE)
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                _gen_static_json_for_no_mix_v200(
-                    compile_info,
-                    tiling_info,
-                    KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
-                )
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                _gen_static_json_for_no_mix_v200(compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE)
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
                 _gen_non_mix_sub_json(compile_info, tiling_info, "VectorCore")
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
                 _gen_mix_sub_json(compile_info, tiling_info)
-                self.assertTrue(
-                    os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                )
+                self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                 os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                from asc_op_compile_base.common.buildcfg.buildcfg_mapping import (
-                    enable_vector_core,
-                )
+                from asc_op_compile_base.common.buildcfg.buildcfg_mapping import enable_vector_core
 
                 with asc_op_compile_base.common.context.op_context.OpContext():
                     with buildcfg.build_config() as cfg:
                         cfg.current()[enable_vector_core] = True
                         self.assertRaises(
-                            Exception,
-                            _gen_dynamic_json_for_v200,
-                            compile_info,
-                            tiling_info,
-                            "VectorCore",
+                            Exception, _gen_dynamic_json_for_v200, compile_info, tiling_info, "VectorCore"
                         )
                         _gen_static_json_for_mix_v200(
-                            compile_info,
-                            tiling_info,
-                            KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE,
+                            compile_info, tiling_info, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
                         )
-                        self.assertTrue(
-                            os.path.exists(
-                                os.path.join(TOP_PATH, "kernel_meta", "test.json")
-                            )
-                        )
+                        self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
                         os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-                with mock.patch(
-                    "builtins.open", new_callable=mock.mock_open, read_data="{}"
-                ) as mock_open:
+                with mock.patch("builtins.open", new_callable=mock.mock_open, read_data="{}") as mock_open:
                     with mock.patch("json.load") as mock_load:
                         with mock.patch("os.chmod"):
                             mock_load.side_effect = RuntimeError()
                             self.assertRaises(
-                                Exception,
-                                _gen_dynamic_json_for_v200,
-                                compile_info,
-                                tiling_info,
-                                "VectorCore",
+                                Exception, _gen_dynamic_json_for_v200, compile_info, tiling_info, "VectorCore"
                             )
                             self.assertRaises(
                                 Exception,
@@ -9187,11 +7499,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             mock_load.side_effect = None
                         with mock.patch("os.chmod"):
                             self.assertRaises(
-                                Exception,
-                                _gen_dynamic_json_for_v200,
-                                compile_info,
-                                tiling_info,
-                                "VectorCore",
+                                Exception, _gen_dynamic_json_for_v200, compile_info, tiling_info, "VectorCore"
                             )
                             self.assertRaises(
                                 Exception,
@@ -9202,9 +7510,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             )
 
     def test_raise_python_error(self):
-        with mock.patch.object(
-            CommonUtility, "ascendc_raise_python_err", return_value=""
-        ):
+        with mock.patch.object(CommonUtility, "ascendc_raise_python_err", return_value=""):
             arg_info = DFXArgInfo("test", DFXParamType.DEFAULT)
             DFXSectionGenerator().get_param("test")
             SetCurrentSocInfo("Ascend910B1")
@@ -9219,9 +7525,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
     def test_compile_ascendc_cce_v200_with_kernel_type_for_dynamic(self, mock_shutil):
         SetCurrentSocInfo("Ascend310P1")
         mock_shutil.return_value = "bisheng"
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp")
         compile_info = CompileInfo()
         compile_info.dst_file = os.path.join(TOP_PATH, "kernel_meta", "test.o")
         compile_info.kernel_name = "test"
@@ -9229,14 +7533,10 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, "test" + file_name_tag
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, "test" + file_name_tag)
         compile_option_tuple = CompileOptionTuple([], [])
         compile_info.tiling_key_list = ["1"]
-        compile_info.tiling_key_kernel_type["1"] = (
-            KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
-        )
+        compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE
         compile_info.dump_info = {"dump_type": "", "dump_size": 1048576}
 
         tiling_info = TilingInfo()
@@ -9315,9 +7615,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                     mock.patch("os.system", return_value=0),
                     mock.patch("os.remove", return_value=0),
                 ):
-                    with mock.patch.object(
-                        DFXSectionGenerator(), "generate_dfx_section", return_value=""
-                    ):
+                    with mock.patch.object(DFXSectionGenerator(), "generate_dfx_section", return_value=""):
                         CommonUtility.get_kernel_meta_dir()
                         DFXSectionGenerator().dfx_info_reset(op_info)
                         gen_kernel_fun(
@@ -9327,21 +7625,11 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             tiling_info,
                             CompileOptionTuple([], []),
                         )
-                        os.system(
-                            f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}"
-                        )
-                        os.system(
-                            f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}"
-                        )
-                        _compile_ascendc_cce_v200_with_kernel_type(
-                            compile_info, compile_option_tuple, tiling_info
-                        )
-                        compile_info.tiling_key_kernel_type["1"] = (
-                            KernelMetaType.KERNEL_TYPE_AICORE
-                        )
-                        os.system(
-                            f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}"
-                        )
+                        os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aic_1.o')}")
+                        os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_mix_aiv_1.o')}")
+                        _compile_ascendc_cce_v200_with_kernel_type(compile_info, compile_option_tuple, tiling_info)
+                        compile_info.tiling_key_kernel_type["1"] = KernelMetaType.KERNEL_TYPE_AICORE
+                        os.system(f"touch {os.path.join(TOP_PATH, 'kernel_meta', 'test_1.o')}")
                         tiling_info.static_shape_flag = True
                         _compile_ascendc_cce_v200_with_kernel_type_for_dynamic(
                             compile_info, compile_option_tuple, tiling_info, "AiCore"
@@ -9361,22 +7649,12 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             KernelMetaType.KERNEL_TYPE_AICORE,
                         )
                         call_bisheng_v220(
-                            compile_info,
-                            compile_option_tuple,
-                            tiling_info,
-                            "dav-c220-vec",
-                            CORE_TYPE_MIX,
+                            compile_info, compile_option_tuple, tiling_info, "dav-c220-vec", CORE_TYPE_MIX
                         )
                         call_bisheng_v220(
-                            compile_info,
-                            compile_option_tuple,
-                            tiling_info,
-                            "dav-c220-vec",
-                            CORE_TYPE_VEC,
+                            compile_info, compile_option_tuple, tiling_info, "dav-c220-vec", CORE_TYPE_VEC
                         )
-        self.assertTrue(
-            os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(TOP_PATH, "kernel_meta", "test.json")))
         os.remove(os.path.join(TOP_PATH, "kernel_meta", "test.json"))
 
     def test_parser_uint64_hex_num(self):
@@ -9385,9 +7663,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         self.assertTrue(hex_num_str, "0000000000000020")
 
     def test_find_tiling_struct_and_expression(self):
-        re_str = (
-            'auto __enable_custom_tiling optiling::TilingData = "TILING_KEY_VAR == 1";'
-        )
+        re_str = 'auto __enable_custom_tiling optiling::TilingData = "TILING_KEY_VAR == 1";'
         struct, experssion = KernelInfoInfer.find_tiling_struct_and_expression(re_str)
         self.assertTrue(struct, "optiling::TilingData")
         self.assertTrue(experssion, "TILING_KEY_VAR == 1")
@@ -9399,13 +7675,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
 
         module_name = "asc_op_compile_base.asc_op_compiler.kernel_info_infer"
         compile_op_module = importlib.import_module(module_name)
-        with mock.patch.object(
-            compile_op_module, "raise_tbe_python_err", return_value=None
-        ):
+        with mock.patch.object(compile_op_module, "raise_tbe_python_err", return_value=None):
             re_str = "auto __enable_custom_tiling optiling::TilingData_A = ;"
-            struct, experssion = KernelInfoInfer.find_tiling_struct_and_expression(
-                re_str
-            )
+            struct, experssion = KernelInfoInfer.find_tiling_struct_and_expression(re_str)
             self.assertEqual(struct, None)
             self.assertEqual(experssion, None)
 
@@ -9414,9 +7686,7 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
         tiling_key_list = ["1"]
         tiling_struct_expr_map = {"optiling::TilingData_B": {"(TILING_KEY_VAR == 3)"}}
 
-        KernelInfoInfer.gen_tiling_struct_macro_src_file(
-            tiling_key_list, tiling_struct_expr_map, src_file
-        )
+        KernelInfoInfer.gen_tiling_struct_macro_src_file(tiling_key_list, tiling_struct_expr_map, src_file)
         with open(src_file) as file:
             content = file.read()
             compare_str = """#if defined(TILING_KEY_VAR_1) && (TILING_KEY_VAR_1 == 3)
@@ -9426,12 +7696,8 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             self.assertEqual(content, compare_str)
         os.remove(src_file)
 
-        with mock.patch.object(
-            compile_op_module, "raise_tbe_python_err", return_value=None
-        ):
-            KernelInfoInfer.gen_tiling_struct_macro_src_file(
-                tiling_key_list, tiling_struct_expr_map, src_file
-            )
+        with mock.patch.object(compile_op_module, "raise_tbe_python_err", return_value=None):
+            KernelInfoInfer.gen_tiling_struct_macro_src_file(tiling_key_list, tiling_struct_expr_map, src_file)
 
     def test_get_tiling_key_corresponding_struct(self):
         tiling_key_list = ["1"]
@@ -9452,24 +7718,14 @@ auto __ascendc_custom_tiling_struct = (1, optiling::TilingData_A);
         compile_log_path = "/tmp/log.txt"
         with (
             mock.patch.object(CommonUtility, "run_cmd_inner", return_value=""),
-            mock.patch.object(
-                compile_op_module, "raise_tbe_python_err", return_value=None
-            ),
+            mock.patch.object(compile_op_module, "raise_tbe_python_err", return_value=None),
         ):
             tiling_key_struct_map = KernelInfoInfer.get_tiling_key_corresponding_struct(
-                tiling_key_list,
-                default_tiling_struct,
-                src_tiling_file,
-                src_tiling_file,
-                compile_log_path,
+                tiling_key_list, default_tiling_struct, src_tiling_file, src_tiling_file, compile_log_path
             )
             self.assertEqual(
                 tiling_key_struct_map,
-                {
-                    "1": "optiling::TilingData_A",
-                    "3": "optiling::TilingData_B",
-                    "4": "optiling::TilingData_B",
-                },
+                {"1": "optiling::TilingData_A", "3": "optiling::TilingData_B", "4": "optiling::TilingData_B"},
             )
 
     def test_infer_info_from_ifile(self):
@@ -9488,15 +7744,9 @@ void add_custom();
 
         get_soc = global_var_storage.get_variable("ascendc_short_soc_version")
         global_var_storage.set_variable("ascendc_short_soc_version", "Ascend910B")
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
-            kernel_info = KernelInfoInfer.infer_info_from_ifile(
-                None, src_file, src_file, src_file, "add_custom"
-            )
-            self.assertEqual(
-                kernel_info.default_tiling_struct, "optiling::TilingData_A"
-            )
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
+            kernel_info = KernelInfoInfer.infer_info_from_ifile(None, src_file, src_file, src_file, "add_custom")
+            self.assertEqual(kernel_info.default_tiling_struct, "optiling::TilingData_A")
 
         with open(src_file, "w") as file:
             context = """
@@ -9508,17 +7758,11 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
             with buildcfg.build_config() as cfg:
                 cfg.current()["tir.enable_vector_core"] = True
-                kernel_info = KernelInfoInfer.infer_info_from_ifile(
-                    None, src_file, src_file, src_file, "add_custom"
-                )
-                self.assertEqual(
-                    kernel_info.default_tiling_struct, "optiling::TilingData_A"
-                )
+                kernel_info = KernelInfoInfer.infer_info_from_ifile(None, src_file, src_file, src_file, "add_custom")
+                self.assertEqual(kernel_info.default_tiling_struct, "optiling::TilingData_A")
         global_var_storage.set_variable("ascendc_short_soc_version", get_soc)
 
     def test_infer_info_from_ifile_template_tiling(self):
@@ -9532,21 +7776,16 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with mock.patch.object(
-                    asc_op_compile_base.common.context.get_context(),
-                    "get_addition",
-                    return_value="",
+                    asc_op_compile_base.common.context.get_context(), "get_addition", return_value=""
                 ):
                     kernel_info = KernelInfoInfer.infer_info_from_ifile(
                         None, src_file, src_file, src_file, "add_custom"
                     )
                     self.assertEqual(
-                        kernel_info.tiling_key_kernel_type["17435146"],
-                        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2,
+                        kernel_info.tiling_key_kernel_type["17435146"], KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2
                     )
                     self.assertEqual(kernel_info.no_set_kernel_type, False)
 
@@ -9558,14 +7797,10 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with mock.patch.object(
-                    asc_op_compile_base.common.context.get_context(),
-                    "get_addition",
-                    return_value="",
+                    asc_op_compile_base.common.context.get_context(), "get_addition", return_value=""
                 ):
                     kernel_info = KernelInfoInfer.infer_info_from_ifile(
                         None, src_file, src_file, src_file, "add_custom"
@@ -9580,23 +7815,15 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with mock.patch.object(
-                    asc_op_compile_base.common.context.get_context(),
-                    "get_addition",
-                    return_value="",
+                    asc_op_compile_base.common.context.get_context(), "get_addition", return_value=""
                 ):
                     try:
-                        KernelInfoInfer.infer_info_from_ifile(
-                            None, src_file, src_file, src_file, "add_custom"
-                        )
+                        KernelInfoInfer.infer_info_from_ifile(None, src_file, src_file, src_file, "add_custom")
                     except Exception as e:
-                        assert str(e) == "must provide default kernel type", (
-                            f"msg is :{e}"
-                        )
+                        assert str(e) == "must provide default kernel type", f"msg is :{e}"
 
     def test_infer_info_from_ifile_key_none_type_exists(self):
         get_soc = global_var_storage.get_variable("ascendc_short_soc_version")
@@ -9614,15 +7841,9 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
-            kernel_info = KernelInfoInfer.infer_info_from_ifile(
-                None, src_file, src_file, src_file, "add_custom"
-            )
-            self.assertEqual(
-                kernel_info.default_tiling_struct, "optiling::TilingData_A"
-            )
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
+            kernel_info = KernelInfoInfer.infer_info_from_ifile(None, src_file, src_file, src_file, "add_custom")
+            self.assertEqual(kernel_info.default_tiling_struct, "optiling::TilingData_A")
         global_var_storage.set_variable("ascendc_short_soc_version", get_soc)
 
     def test_infer_info_from_ifile_no_tiling_register(self):
@@ -9635,15 +7856,9 @@ void add_custom();
 """
             file.write(context)
 
-        with mock.patch.object(
-            KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}
-        ):
-            kernel_info = KernelInfoInfer.infer_info_from_ifile(
-                None, src_file, src_file, src_file, "add_custom"
-            )
-            ascendc_tiling_no_register = global_var_storage.get_variable(
-                "ascendc_tiling_no_register"
-            )
+        with mock.patch.object(KernelInfoInfer, "get_tiling_key_corresponding_struct", return_value={}):
+            kernel_info = KernelInfoInfer.infer_info_from_ifile(None, src_file, src_file, src_file, "add_custom")
+            ascendc_tiling_no_register = global_var_storage.get_variable("ascendc_tiling_no_register")
             self.assertEqual(ascendc_tiling_no_register, True)
 
     def test_get_hard_sync_instr_from_i_file(self):
@@ -9659,9 +7874,7 @@ void add_custom();
 SyncAll<false>();
 """
             file.write(context)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_time_stamp_compile_options", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_time_stamp_compile_options", True)
         res = KernelInfoInfer.get_hard_sync_instr_from_i_file(context)
         self.assertEqual(res, True)
         os.remove(os.path.join(TOP_PATH, "kernel_meta", "add_custom.i"))
@@ -9681,9 +7894,7 @@ SyncAll();
 SyncAll();
 """
             file.write(context)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_time_stamp_compile_options", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_time_stamp_compile_options", True)
         res = KernelInfoInfer.get_hard_sync_instr_from_i_file(context)
         self.assertEqual(res, True)
         os.remove(os.path.join(TOP_PATH, "kernel_meta", "add_custom.i"))
@@ -9696,9 +7907,7 @@ SyncAll();
 auto __enable_feature_for_compile_deterministic = 1;
 """
             file.write(context)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_time_stamp_compile_options", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_time_stamp_compile_options", True)
         res = KernelInfoInfer.get_enable_deterministic_var_from_i_file(context)
         self.assertEqual(res, True)
         os.remove(os.path.join(TOP_PATH, "kernel_meta", "add_custom.i"))
@@ -9720,9 +7929,7 @@ SetNextTaskStart();
 WaitPreTaskEnd();
 """
             file.write(context)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_time_stamp_compile_options", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_time_stamp_compile_options", True)
         res1, res2 = KernelInfoInfer.get_sync_task_start_end_instr_from_i_file(context)
         self.assertEqual(res1, False)
         self.assertEqual(res2, False)
@@ -9771,12 +7978,7 @@ void add_custom()
 """
         with open(dst_i_file, "w") as file:
             file.write(context)
-        op_info = OpInfo(
-            kernel_name="AclgraphForceOp",
-            op_type="AclgraphForceOp",
-            inputs=[],
-            outputs=[],
-        )
+        op_info = OpInfo(kernel_name="AclgraphForceOp", op_type="AclgraphForceOp", inputs=[], outputs=[])
         global_var_storage.set_variable("ascendc_enable_super_kernel", True)
         global_var_storage.set_variable("ascendc_compile_debug_config", True)
         try:
@@ -9785,9 +7987,7 @@ void add_custom()
                 with (
                     mock.patch.object(CommonUtility, "is_v220", return_value=False),
                     mock.patch.object(CommonUtility, "is_c310", return_value=False),
-                    mock.patch.object(
-                        KernelInfoInfer, "_gen_tiling_key_struct_map", return_value={}
-                    ),
+                    mock.patch.object(KernelInfoInfer, "_gen_tiling_key_struct_map", return_value={}),
                 ):
                     result = KernelInfoInfer.infer_info_from_ifile(
                         op_info, dst_i_file, None, "add_custom.cpp", "add_custom"
@@ -9810,19 +8010,12 @@ void add_custom()
         }
         binary = b"\n/home/y00611406/tikcpp_smoke/external_tik2_demo/acl_invocation/aclnn_online_model/custom_op/build_out/op_kernel/binary/ascend910b/kernel_meta_AddCustom_6b4edd934cf3a660c0cd2e16b3659524/kernel_meta/AddCustom_6b4edd934cf3a660c0cd2e16b3659524.o:\tfile format elf64-hiipu\nContents of section .ascendc_tiling.TilingData_C:\n 1790 28000000 00000000                    (.......\n"
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[binary, None]
-            ):
-                from asc_op_compile_base.asc_op_compiler.compile_op import (
-                    _get_tiling_struct_size,
-                )
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[binary, None]):
+                from asc_op_compile_base.asc_op_compiler.compile_op import _get_tiling_struct_size
 
                 max_tiling_size = _get_tiling_struct_size(compile_info)
                 self.assertEqual(max_tiling_size, 40)
-                self.assertEqual(
-                    compile_info.compiled_tiling_key_data_size_map,
-                    {"1": 40, "3": 40, "6": 40},
-                )
+                self.assertEqual(compile_info.compiled_tiling_key_data_size_map, {"1": 40, "3": 40, "6": 40})
 
     def test_get_tiling_struct_size_c310(self):
         compile_info = CompileInfo()
@@ -9834,13 +8027,9 @@ void add_custom()
         }
         binary = b"\n/home/y00611406/tikcpp_smoke/external_tik2_demo/acl_invocation/aclnn_online_model/custom_op/build_out/op_kernel/binary/ascend910b/kernel_meta_AddCustom_6b4edd934cf3a660c0cd2e16b3659524/kernel_meta/AddCustom_6b4edd934cf3a660c0cd2e16b3659524.o:\tfile format elf64-hiipu\nContents of section .ascendc_tiling.TilingData_C:\n 1790 28000000 00000000                    (.......\n"
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[binary, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[binary, None]):
                 with mock.patch.object(CommonUtility, "is_c310", return_value=True):
-                    from asc_op_compile_base.asc_op_compiler.compile_op import (
-                        _get_tiling_struct_size,
-                    )
+                    from asc_op_compile_base.asc_op_compiler.compile_op import _get_tiling_struct_size
 
                     max_tiling_size = _get_tiling_struct_size(compile_info)
                     self.assertEqual(max_tiling_size, 40)
@@ -9854,24 +8043,16 @@ void add_custom()
             "6": "optiling::TilingData_C",
         }
         compile_info.is_super_kernel_compile = False
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", True)
         binary = b"\n/home/y00611406/tikcpp_smoke/external_tik2_demo/acl_invocation/aclnn_online_model/custom_op/build_out/op_kernel/binary/ascend910b/kernel_meta_AddCustom_6b4edd934cf3a660c0cd2e16b3659524/kernel_meta/AddCustom_6b4edd934cf3a660c0cd2e16b3659524.o:\tfile format elf64-hiipu\nContents of section .ascendc_tiling.TilingData_C:\n 1790 28000000 00000000                    (.......\n"
         with mock.patch("subprocess.Popen"):
-            with mock.patch.object(
-                subprocess.Popen(), "communicate", return_value=[binary, None]
-            ):
+            with mock.patch.object(subprocess.Popen(), "communicate", return_value=[binary, None]):
                 with mock.patch.object(CommonUtility, "is_c310", return_value=True):
-                    from asc_op_compile_base.asc_op_compiler.compile_op import (
-                        _get_tiling_struct_size,
-                    )
+                    from asc_op_compile_base.asc_op_compiler.compile_op import _get_tiling_struct_size
 
                     max_tiling_size = _get_tiling_struct_size(compile_info)
                     self.assertEqual(max_tiling_size, 40)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", False)
 
     def test_tran_dfx_info_to_string(self):
         dfx_string = DFXSectionGenerator()._tran_dfx_info_to_string("tiling")
@@ -10047,9 +8228,7 @@ void add_custom()
         with buildcfg.build_config() as cfg:
             cfg.current()["tir.op_debug_config"] = ["oom"]
             size_value = 16
-            value_string = DFXSectionGenerator()._tran_dfx_info_to_value_string(
-                size_value
-            )
+            value_string = DFXSectionGenerator()._tran_dfx_info_to_value_string(size_value)
 
             aligned_size = ((size_value + 7) // 8) * 8  # 16 -> 16
             total_size = aligned_size + 8 + 8 * 0  # 16 + 8 + 0 = 24
@@ -10072,30 +8251,19 @@ void add_custom()
         tiling_info = TilingInfo()
         compile_info = CompileInfo()
         compile_info.tiling_key_struct_map = {"1": "tiling"}
-        DFXSectionGenerator()._generate_binary_for_tiling(
-            tiling_key, tiling_info, compile_info
-        )
+        DFXSectionGenerator()._generate_binary_for_tiling(tiling_key, tiling_info, compile_info)
 
-        op_info = OpInfo(
-            kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97"
-        )
+        op_info = OpInfo(kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97")
         InferedInfoFromIfile = namedtuple(
-            "InferedInfoFromIfile",
-            ["default_tiling_struct", "tiling_key_list", "tiling_key_struct_map"],
+            "InferedInfoFromIfile", ["default_tiling_struct", "tiling_key_list", "tiling_key_struct_map"]
         )
         infered_info_from_ifile = InferedInfoFromIfile(
-            default_tiling_struct="tiling",
-            tiling_key_list=["1"],
-            tiling_key_struct_map={"1": "tiling"},
+            default_tiling_struct="tiling", tiling_key_list=["1"], tiling_key_struct_map={"1": "tiling"}
         )
         module_name = "asc_op_compile_base.asc_op_compiler.compile_op"
         compile_op_module = importlib.import_module(module_name)
         self.assertRaises(
-            Exception,
-            compile_op_module.get_tiling_info_by_tiling,
-            op_info,
-            infered_info_from_ifile,
-            "add_custom",
+            Exception, compile_op_module.get_tiling_info_by_tiling, op_info, infered_info_from_ifile, "add_custom"
         )
 
     def test_check_func_name_exist(self):
@@ -10128,28 +8296,18 @@ void add_custom()
         cce_file = "tmp.cpp"
         origin_func_name = "add_custom"
         func_name_exist = False
-        self.assertRaises(
-            Exception,
-            KernelInfoInfer.dfx_for_func_name,
-            cce_file,
-            origin_func_name,
-            func_name_exist,
-        )
+        self.assertRaises(Exception, KernelInfoInfer.dfx_for_func_name, cce_file, origin_func_name, func_name_exist)
 
     def test_get_kernel_type_enum(self):
         kernel_type = "TEST_KERNEL_TYPE"
         compile_log_path = "test.log"
         with mock.patch.object(CommonUtility, "is_v220", return_value=True):
             with mock.patch.object(CommonUtility, "is_v200", return_value=False):
-                res = KernelInfoInfer.get_kernel_type_enum(
-                    kernel_type, compile_log_path
-                )
+                res = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
                 self.assertEqual(res, None)
         with mock.patch.object(CommonUtility, "is_v220", return_value=False):
             with mock.patch.object(CommonUtility, "is_v200", return_value=True):
-                res = KernelInfoInfer.get_kernel_type_enum(
-                    kernel_type, compile_log_path
-                )
+                res = KernelInfoInfer.get_kernel_type_enum(kernel_type, compile_log_path)
                 self.assertEqual(res, None)
 
     def test_find_tilingkey(self):
@@ -10158,35 +8316,21 @@ void add_custom()
         self.assertEqual(re, (None, False))
 
     def test_set_dynamic_sub_func_names_of_super_kernel(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
-            set_dynamic_sub_func_names_of_super_kernel,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import set_dynamic_sub_func_names_of_super_kernel
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", False)
         compile_info = CompileInfo()
         compile_info.code_channel = CORE_TYPE_MIX
         tiling_key = "0"
         arch = "AiCore"
         kernel_func_name = "test"
-        set_dynamic_sub_func_names_of_super_kernel(
-            tiling_key, compile_info, arch, kernel_func_name
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", True
-        )
-        set_dynamic_sub_func_names_of_super_kernel(
-            tiling_key, compile_info, arch, kernel_func_name
-        )
+        set_dynamic_sub_func_names_of_super_kernel(tiling_key, compile_info, arch, kernel_func_name)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", True)
+        set_dynamic_sub_func_names_of_super_kernel(tiling_key, compile_info, arch, kernel_func_name)
         compile_info.code_channel = CORE_TYPE_CUBE
         compile_info.hard_sync = 0
-        set_dynamic_sub_func_names_of_super_kernel(
-            tiling_key, compile_info, arch, kernel_func_name
-        )
-        res = compile_op_module.global_var_storage.get_variable(
-            "ascendc_sub_super_kernel_fun_names"
-        )
+        set_dynamic_sub_func_names_of_super_kernel(tiling_key, compile_info, arch, kernel_func_name)
+        res = compile_op_module.global_var_storage.get_variable("ascendc_sub_super_kernel_fun_names")
         self.assertEqual(res["dynamic_func_names"]["0"]["AiCore"], "test")
 
     def test_super_kernel_compile(self):
@@ -10205,32 +8349,21 @@ void add_custom()
         }
         with (
             asc_op_compile_base.common.context.op_context.OpContext(),
+            mock.patch("asc_op_compile_base.asc_op_compiler.ascendc_compile_base", "gen_super_kernel_compile_info"),
             mock.patch(
-                "asc_op_compile_base.asc_op_compiler.ascendc_compile_base",
-                "gen_super_kernel_compile_info",
-            ),
-            mock.patch(
-                "asc_op_compile_base.asc_op_compiler.ascendc_compile_base",
-                "gen_super_kernel_link_obj_sequence",
+                "asc_op_compile_base.asc_op_compiler.ascendc_compile_base", "gen_super_kernel_link_obj_sequence"
             ),
             mock.patch.object(super_kernel_compile_module, "fatbin_objs"),
             mock.patch.object(super_kernel_compile_module, "link_relocatable"),
-            mock.patch.object(
-                super_kernel_compile_module, "localization_sub_op_func_sym"
-            ),
-            mock.patch.object(
-                super_kernel_compile_module,
-                "_compile_ascendc_cce_v220_with_kernel_type_for_static",
-            ),
+            mock.patch.object(super_kernel_compile_module, "localization_sub_op_func_sym"),
+            mock.patch.object(super_kernel_compile_module, "_compile_ascendc_cce_v220_with_kernel_type_for_static"),
             mock.patch.object(super_kernel_compile_module, "_json_post_process"),
         ):
             with open(os.devnull, "a") as file:
                 with mock.patch("os.open", return_value=file):
                     with mock.patch("os.fdopen") as mock_fdopen:
                         compile_log_path = "./tmp"
-                        super_kernel_compile_module.super_kernel_compile(
-                            kernel_info, compile_log_path
-                        )
+                        super_kernel_compile_module.super_kernel_compile(kernel_info, compile_log_path)
 
     def test_infer_info_from_ifile_spk(self):
         global_var_storage.global_storage_reset()
@@ -10240,27 +8373,17 @@ void add_custom()
 # 27 "/usr/local/Ascend/CANN-7.3/opp/built-in/op_impl/ai_core/tbe/impl/dynamic/../ascendc/common/../conv_forward/conv2d/../conv_common/conv_util.h"
 const static uint64_t L0A_SIZE = 65536 * block_idx;
 """
-        with mock.patch(
-            "builtins.open", new_callable=mock.mock_open, read_data=data
-        ) as mock_open:
+        with mock.patch("builtins.open", new_callable=mock.mock_open, read_data=data) as mock_open:
             dst_i_file = "./a.i"
             self.assertRaises(
-                Exception,
-                KernelInfoInfer.infer_info_from_ifile,
-                None,
-                src_file,
-                src_file,
-                src_file,
-                "add_custom",
+                Exception, KernelInfoInfer.infer_info_from_ifile, None, src_file, src_file, src_file, "add_custom"
             )
         global_var_storage.global_storage_reset()
 
     def test_gen_kernel_func_enable_sk_mc2(self):
         global_var_storage.global_storage_reset()
         SetCurrentSocInfo("Ascend910B1")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         op_info = OpInfo(
             kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97",
@@ -10364,28 +8487,21 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
             "--cce-auto-sync",
         ]
         CommonUtility.get_ascendc_compiler_path()
-        compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options, []
-        )
+        compile_option_tuple = CompileOptionTuple([] if compile_options is None else compile_options, [])
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = ["1", "2", "3"]
 
@@ -10402,9 +8518,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -10422,29 +8536,17 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_aicore_exception_restart", True
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_aicore_exception_restart", True)
 
         if os.path.exists(compile_info.gen_kernel_func_file):
             os.remove(compile_info.gen_kernel_func_file)
         assert os.path.exists(compile_info.gen_kernel_func_file) == False
         self.assertFalse(os.path.exists(compile_info.gen_kernel_func_file))
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", True)
 
         DFXSectionGenerator().dfx_info_reset(op_info)
-        gen_kernel_fun(
-            compile_info,
-            origin_func_name,
-            op_info,
-            tiling_info,
-            CompileOptionTuple(compile_options, []),
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple(compile_options, []))
         assert os.path.exists(compile_info.gen_kernel_func_file) == True, (
             "Problems Occurred during Kernel Function Generation!!!"
         )
@@ -10456,11 +8558,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
             ctx.add_addition("super_kernel_sub_combine", True)
             gen_kernel_fun(
-                compile_info,
-                origin_func_name,
-                op_info,
-                tiling_info,
-                CompileOptionTuple(compile_options, []),
+                compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple(compile_options, [])
             )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         with open(compile_info.gen_kernel_func_file, "r") as file:
@@ -10600,9 +8698,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
     def test_gen_kernel_function_c310_dcci_false(self):
         global_var_storage.global_storage_reset()
         SetCurrentSocInfo("Ascend950PR_9599")
-        cce_file = os.path.join(
-            TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp"
-        )
+        cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign.cpp")
         kernel_meta_dir = CommonUtility.get_kernel_meta_dir()
         op_info = OpInfo(
             kernel_name="AddCustomUnalign_0904bc1781946e62d385bfc6e6f99d97",
@@ -10706,28 +8802,22 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
             "-I" + os.path.join(API_ROOT_PATH, "impl/adv_api"),
             "-I" + os.path.join(TOP_PATH, "build"),
             "-include"
-            + os.path.join(
-                TOP_PATH,
-                "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h",
-            ),
+            + os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/add_custom_unalign_tiling.h"),
             "-DHIGH_PERFORMANCE=1",
             "-DDETERMINISTIC_MODE=1",
         ]
         CommonUtility.get_ascendc_compiler_path()
         compile_option_tuple = CompileOptionTuple(
-            [] if compile_options is None else compile_options,
-            ["-mllvm", "-cce-aicore-dcci-before-kernel-end=false"],
+            [] if compile_options is None else compile_options, ["-mllvm", "-cce-aicore-dcci-before-kernel-end=false"]
         )
         compile_log_path = None
-        infered_info_from_ifile = (
-            KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
-                op_info,
-                cce_file,
-                os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
-                compile_option_tuple,
-                compile_log_path,
-                origin_func_name,
-            )
+        infered_info_from_ifile = KernelInfoInfer.get_tiling_key_list_and_simple_infer_code_channel(
+            op_info,
+            cce_file,
+            os.path.join(kernel_meta_dir, op_info.kernel_name + ".i"),
+            compile_option_tuple,
+            compile_log_path,
+            origin_func_name,
         )
         tiling_key_list = ["1", "2", "3"]
 
@@ -10744,9 +8834,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
         compile_info = CompileInfo()
         compile_info.src_file = cce_file
-        compile_info.dst_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + ".o"
-        )
+        compile_info.dst_file = os.path.join(kernel_meta_dir, op_info.kernel_name + ".o")
         compile_info.kernel_name = op_info.kernel_name
         compile_info.origin_func_name = origin_func_name
         compile_info.op_type = op_info.op_type
@@ -10762,33 +8850,21 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         compile_info.dump_info = infered_info_from_ifile.dump_info
         distinct_tag = CommonUtility.get_distinct_filename_tag()
         file_name_tag = distinct_tag + "_kernel.cpp"
-        compile_info.gen_kernel_func_file = os.path.join(
-            kernel_meta_dir, op_info.kernel_name + file_name_tag
-        )
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_aicore_exception_restart", True
-        )
+        compile_info.gen_kernel_func_file = os.path.join(kernel_meta_dir, op_info.kernel_name + file_name_tag)
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_aicore_exception_restart", True)
 
         if os.path.exists(compile_info.gen_kernel_func_file):
             os.remove(compile_info.gen_kernel_func_file)
         assert os.path.exists(compile_info.gen_kernel_func_file) == False
         self.assertFalse(os.path.exists(compile_info.gen_kernel_func_file))
         global_var_storage.set_variable("ascendc_recognize_simtvf", True)
-        gen_kernel_fun(
-            compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple)
         compile_option_tuple.mllvm_options.append("-mllvm")
-        compile_option_tuple.mllvm_options.append(
-            "-cce-aicore-dcci-before-kernel-end=true"
-        )
-        gen_kernel_fun(
-            compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple
-        )
+        compile_option_tuple.mllvm_options.append("-cce-aicore-dcci-before-kernel-end=true")
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple)
         compile_option_tuple.mllvm_options.append("-mllvm")
         compile_option_tuple.mllvm_options.append("-cce-aicore-dcci-before-kernel-end=")
-        gen_kernel_fun(
-            compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple
-        )
+        gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, compile_option_tuple)
         global_var_storage.global_storage_reset()
 
     def test_delete_tiling_section(self):
@@ -10796,23 +8872,15 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
         compile_info = CompileInfo()
         compile_info.is_super_kernel_compile = False
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", True)
         delete_tiling_section(compile_info)
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_enable_super_kernel", False
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_enable_super_kernel", False)
         delete_tiling_section(compile_info)
 
     def test_update_tiling_size_for_oom(self):
-        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import (
-            update_tiling_size_for_oom,
-        )
+        from asc_op_compile_base.asc_op_compiler.ascendc_compile_gen_code import update_tiling_size_for_oom
 
-        compile_op_module.global_var_storage.set_variable(
-            "ascendc_tiling_no_register", True
-        )
+        compile_op_module.global_var_storage.set_variable("ascendc_tiling_no_register", True)
         compile_info = CompileInfo()
         tiling_info = TilingInfo()
         tiling_info.tiling_key_list = ["1", "2"]
@@ -10963,9 +9031,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
     def test_get_dcci_disable_cap_bitmap_patterns_not_list(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": "not_a_list"}
-        }
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": "not_a_list"}}
         result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
         self.assertEqual(result, 0)
 
@@ -10977,25 +9043,19 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
     def test_get_dcci_disable_cap_bitmap_matched(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": ["kernel_a", "kernel_b"]}
-        }
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_a", "kernel_b"]}}
         result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
         self.assertEqual(result, 4)
 
     def test_get_dcci_disable_cap_bitmap_not_matched(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": ["kernel_x", "kernel_y"]}
-        }
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_x", "kernel_y"]}}
         result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
         self.assertEqual(result, 0)
 
     def test_get_dcci_disable_cap_bitmap_wildcard_match(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": ["kernel_.*", ".*_test"]}
-        }
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_.*", ".*_test"]}}
         result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_abc"])
         self.assertEqual(result, 4)
         result = _get_dcci_disable_cap_bitmap(compile_info, ["op_test"])
@@ -11003,22 +9063,14 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
 
     def test_get_dcci_disable_cap_bitmap_multi_symbols_first_match(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": ["kernel_b"]}
-        }
-        result = _get_dcci_disable_cap_bitmap(
-            compile_info, ["kernel_a", "kernel_b", "kernel_c"]
-        )
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_b"]}}
+        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a", "kernel_b", "kernel_c"])
         self.assertEqual(result, 4)
 
     def test_get_dcci_disable_cap_bitmap_multi_symbols_no_match(self):
         compile_info = CompileInfo()
-        compile_info.super_kernel_info = {
-            "sp_options": {"dcci-disable-on-kernel": ["kernel_x"]}
-        }
-        result = _get_dcci_disable_cap_bitmap(
-            compile_info, ["kernel_a", "kernel_b", "kernel_c"]
-        )
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_x"]}}
+        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a", "kernel_b", "kernel_c"])
         self.assertEqual(result, 0)
 
     def test_get_dcci_disable_cap_bitmap_no_sp_options(self):

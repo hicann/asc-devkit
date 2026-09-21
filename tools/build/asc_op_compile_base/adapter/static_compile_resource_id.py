@@ -30,16 +30,12 @@ class ResourceIdError(RuntimeError):
 
 def _validate_elf(dynamic_object_path):
     if not os.path.isfile(dynamic_object_path) or os.path.islink(dynamic_object_path):
-        raise ResourceIdError(
-            f"ELF object is not a regular file: {dynamic_object_path}"
-        )
+        raise ResourceIdError(f"ELF object is not a regular file: {dynamic_object_path}")
     try:
         with open(dynamic_object_path, "rb") as file_obj:
             magic = file_obj.read(4)
     except OSError as error:
-        raise ResourceIdError(
-            f"failed to read ELF object: {dynamic_object_path}"
-        ) from error
+        raise ResourceIdError(f"failed to read ELF object: {dynamic_object_path}") from error
     if magic != b"\x7fELF":
         raise ResourceIdError(f"input is not an ELF object: {dynamic_object_path}")
 
@@ -59,13 +55,7 @@ def _find_tool(*names):
 
 def _run_tool(command):
     try:
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            check=False,
-            text=True,
-        )
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False, text=True)
     except OSError as error:
         raise ResourceIdError(f"failed to execute ELF tool: {command[0]}") from error
     if result.returncode != 0:
@@ -83,16 +73,12 @@ def calculate_resource_id(dynamic_object_path: str) -> str:
             for chunk in iter(lambda: file_obj.read(1024 * 1024), b""):
                 digest.update(chunk)
     except OSError as error:
-        raise ResourceIdError(
-            f"failed to hash ELF object: {dynamic_object_path}"
-        ) from error
+        raise ResourceIdError(f"failed to hash ELF object: {dynamic_object_path}") from error
     return digest.hexdigest()
 
 
 def write_resource_id_section(dynamic_object_path: str, resource_id: str) -> None:
-    if not isinstance(resource_id, str) or not _RESOURCE_ID_PATTERN.fullmatch(
-        resource_id
-    ):
+    if not isinstance(resource_id, str) or not _RESOURCE_ID_PATTERN.fullmatch(resource_id):
         raise ResourceIdError("resource_id must be 64 lowercase hex characters")
     objcopy = _find_tool("llvm-objcopy")
     directory = os.path.dirname(os.path.realpath(dynamic_object_path))
@@ -102,14 +88,10 @@ def write_resource_id_section(dynamic_object_path: str, resource_id: str) -> Non
     payload_path = None
     try:
         # Keep temporary files beside the ELF so the final replacement is atomic.
-        object_fd, temporary_object = tempfile.mkstemp(
-            prefix=".resource_id.object.", suffix=".o", dir=directory
-        )
+        object_fd, temporary_object = tempfile.mkstemp(prefix=".resource_id.object.", suffix=".o", dir=directory)
         os.close(object_fd)
         object_fd = None
-        payload_fd, payload_path = tempfile.mkstemp(
-            prefix=".resource_id.payload.", dir=directory
-        )
+        payload_fd, payload_path = tempfile.mkstemp(prefix=".resource_id.payload.", dir=directory)
         payload_file = os.fdopen(payload_fd, "wb")
         payload_fd = None
         with payload_file:

@@ -17,10 +17,7 @@ import os
 import numpy as np
 
 
-ARCH_ADDR_CONFLICT_SHAPE = {
-    "dav-2201": (6144, 512),
-    "dav-3510": (8192, 512),
-}
+ARCH_ADDR_CONFLICT_SHAPE = {"dav-2201": (6144, 512), "dav-3510": (8192, 512)}
 
 SCENARIO_CONFIG = {
     "UB": {
@@ -47,9 +44,7 @@ SCENARIO_CONFIG = {
 
 def get_shape(copy_dst, scenario_num, arch):
     try:
-        if (copy_dst == "UB" and scenario_num in (7, 8)) or (
-            copy_dst == "L1" and scenario_num in (6, 7)
-        ):
+        if (copy_dst == "UB" and scenario_num in (7, 8)) or (copy_dst == "L1" and scenario_num in (6, 7)):
             return ARCH_ADDR_CONFLICT_SHAPE[arch]
         return SCENARIO_CONFIG[copy_dst][scenario_num]
     except KeyError as exc:
@@ -64,9 +59,7 @@ def gen_golden_data(scenario_num, copy_dst, arch):
     os.makedirs("output", exist_ok=True)
 
     rng = np.random.default_rng(0)
-    input_data = rng.integers(-2, 3, size=element_count, dtype=np.int16).astype(
-        np.float16
-    )
+    input_data = rng.integers(-2, 3, size=element_count, dtype=np.int16).astype(np.float16)
     input_data.tofile("./input/input.bin")
 
     if copy_dst == "UB":
@@ -84,9 +77,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-scenarioNum", type=int, default=1)
     parser.add_argument("-copyDst", type=str, default="UB", choices=["UB", "L1"])
-    parser.add_argument(
-        "-arch", type=str, default="dav-2201", choices=["dav-2201", "dav-3510"]
-    )
+    parser.add_argument("-arch", type=str, default="dav-2201", choices=["dav-2201", "dav-3510"])
     args = parser.parse_args()
 
     gen_golden_data(args.scenarioNum, args.copyDst, args.arch)

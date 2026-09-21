@@ -77,9 +77,7 @@ def update_json_file(key, value, json_path):
         # read json file
         with open(json_path, "r") as file_in:
             # Only the owner and group have rights
-            os.chmod(
-                json_path, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR
-            )
+            os.chmod(json_path, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR)
             json_info = json.load(file_in)
 
         # update value
@@ -109,12 +107,8 @@ def copy_compile_res_files_to_output(kernel_name):
     test_root_dir = os.path.abspath(os.path.join(test_file_dir, "../.."))
 
     debug_dir = test_root_dir + "/debug_dir"  # same as testcase
-    json_output_path = (
-        debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta/" + json_file_name
-    )
-    o_output_path = (
-        debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta/" + o_file_name
-    )
+    json_output_path = debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta/" + json_file_name
+    o_output_path = debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta/" + o_file_name
     print("json_res_path:")
     print(json_res_path)
     print("json_output_path:")
@@ -123,9 +117,7 @@ def copy_compile_res_files_to_output(kernel_name):
     print(current_dir)
 
     try:
-        if not os.path.exists(
-            debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta"
-        ):
+        if not os.path.exists(debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta"):
             os.makedirs(debug_dir + "/kernel_meta_" + kernel_name + "/kernel_meta")
 
         copy(os.path.realpath(json_res_path), json_output_path)
@@ -133,10 +125,7 @@ def copy_compile_res_files_to_output(kernel_name):
 
         update_json_file("binFileName", kernel_name, json_output_path)
     except Exception as e:
-        raise RuntimeError(
-            "Copy [%s] to [%s] field, reason: %s."
-            % (json_res_path, json_output_path, str(e))
-        )
+        raise RuntimeError("Copy [%s] to [%s] field, reason: %s." % (json_res_path, json_output_path, str(e)))
     finally:
         pass
 

@@ -109,9 +109,7 @@ def parse_hexdump_to_tlv(hexdump: str) -> str:
                 hex_parts.append(hex_chars[i : i + 8])
 
         formatted_hex = " ".join(hex_parts)
-        tlv_lines.append(
-            f"{address} {formatted_hex.ljust(39)} {ascii_part}"
-        )  # 39 width for hex data
+        tlv_lines.append(f"{address} {formatted_hex.ljust(39)} {ascii_part}")  # 39 width for hex data
 
     """
     tlv_lines:
@@ -128,9 +126,7 @@ def parse_hexdump_to_tlv(hexdump: str) -> str:
 
 
 # Generate TLV info from .o file
-def generate_tlv_from_object_file(
-    object_file_path: str, kernel_name: str
-) -> Optional[str]:
+def generate_tlv_from_object_file(object_file_path: str, kernel_name: str) -> Optional[str]:
     """
     Generate TLV (Type-Length-Value) format info from object file
 
@@ -138,27 +134,15 @@ def generate_tlv_from_object_file(
         llvm-objdump -s -j .ascend.meta.kernel_name object_file.o
     """
     if not os.path.exists(object_file_path):
-        raise FileNotFoundError(
-            f"object file {object_file_path} not found, please check it."
-        )
+        raise FileNotFoundError(f"object file {object_file_path} not found, please check it.")
     section_name = ".ascend.meta." + kernel_name
-    generate_cmd = [
-        "llvm-objdump",
-        "-s",
-        "-j",
-        "{}".format(section_name),
-        "{}".format(object_file_path),
-    ]
-    LogUtil.print_compile_log(
-        kernel_name, "start generate tlv info ...", AscendCLogLevel.LOG_INFO
-    )
+    generate_cmd = ["llvm-objdump", "-s", "-j", "{}".format(section_name), "{}".format(object_file_path)]
+    LogUtil.print_compile_log(kernel_name, "start generate tlv info ...", AscendCLogLevel.LOG_INFO)
     try:
         proc = subprocess.Popen(generate_cmd, stdout=subprocess.PIPE, stderr=None)
         (tlv_info, _) = proc.communicate()
     except Exception as e:
-        LogUtil.print_compile_log(
-            kernel_name, f"generate tlv info failed: {e}", AscendCLogLevel.LOG_WARNING
-        )
+        LogUtil.print_compile_log(kernel_name, f"generate tlv info failed: {e}", AscendCLogLevel.LOG_WARNING)
         return None
 
     """
@@ -185,18 +169,14 @@ def parse_tlv_get_simt_value(tlv_string: str, kernel_name: str):
         str: hex string of SIMT type value (e.g., "0x00000003"), None if failed
     """
     try:
-        LogUtil.print_compile_log(
-            kernel_name, "start parse tlv info ...", AscendCLogLevel.LOG_INFO
-        )
+        LogUtil.print_compile_log(kernel_name, "start parse tlv info ...", AscendCLogLevel.LOG_INFO)
         hex_data = extract_hex_data(tlv_string)
         if not hex_data:
             return None
         data = bytes.fromhex(hex_data)
         return _parse_simt_value_from_bytes(data)
     except Exception as e:
-        LogUtil.print_compile_log(
-            kernel_name, "parse TLV data failed", AscendCLogLevel.LOG_WARNING
-        )
+        LogUtil.print_compile_log(kernel_name, "parse TLV data failed", AscendCLogLevel.LOG_WARNING)
         return None
 
 
@@ -295,19 +275,13 @@ def check_op_type_is_simt(object_file_path: str, kernel_name: str):
     tlv_string = generate_tlv_from_object_file(object_file_path, kernel_name)
     simt_value = parse_tlv_get_simt_value(tlv_string, kernel_name)
     if not simt_value:
-        LogUtil.print_compile_log(
-            kernel_name, "simt type in section is None", AscendCLogLevel.LOG_WARNING
-        )
+        LogUtil.print_compile_log(kernel_name, "simt type in section is None", AscendCLogLevel.LOG_WARNING)
         return False
     else:
         decimal_val = int(simt_value.lstrip("0x"), 16)
         target_values = {AIV_TYPE_SIMD_SIMT_MIX_VF, AIV_TYPE_SIMT_VF_ONLY}
         if decimal_val in target_values:
-            LogUtil.print_compile_log(
-                kernel_name, f"{kernel_name} is simt op", AscendCLogLevel.LOG_INFO
-            )
+            LogUtil.print_compile_log(kernel_name, f"{kernel_name} is simt op", AscendCLogLevel.LOG_INFO)
             return True
-        LogUtil.print_compile_log(
-            kernel_name, f"{kernel_name} is not simt op", AscendCLogLevel.LOG_INFO
-        )
+        LogUtil.print_compile_log(kernel_name, f"{kernel_name} is not simt op", AscendCLogLevel.LOG_INFO)
         return False

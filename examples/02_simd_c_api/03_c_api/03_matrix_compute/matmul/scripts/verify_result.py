@@ -30,23 +30,15 @@ def verify_result(output, golden):
     golden = np.fromfile(golden, dtype=np.float32).reshape(-1)
     if output.size != golden.size:
         raise ValueError(
-            "[ERROR] output and golden have different element counts: %d vs %d"
-            % (output.size, golden.size)
+            "[ERROR] output and golden have different element counts: %d vs %d" % (output.size, golden.size)
         )
-    different_element_results = np.isclose(
-        output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True
-    )
+    different_element_results = np.isclose(output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(min(len(different_element_indexes), 100)):
         real_index = different_element_indexes[index]
         print(
             "data index: %06d, expected: %-.9f, actual: %-.9f, adiff: %-.9f"
-            % (
-                real_index,
-                golden[real_index],
-                output[real_index],
-                abs(output[real_index] - golden[real_index]),
-            )
+            % (real_index, golden[real_index], output[real_index], abs(output[real_index] - golden[real_index]))
         )
     error_ratio = float(different_element_indexes.size) / golden.size
     print("error ratio: %.4f, tolerance: %.4f" % (error_ratio, error_tol))

@@ -162,49 +162,17 @@ struct   AddCustomTilingData
                 return_type="uint32_t",
                 func_name="aclrtlaunch_add_custom",
                 func_params=(
-                    FuncParam(
-                        parts=("uint32_t", "numBlocks"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
-                    FuncParam(
-                        parts=("aclrtStream", "stream"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
-                    FuncParam(
-                        parts=("bool", "bool_1"), cce_global=False, tiling_struct=False
-                    ),
-                    FuncParam(
-                        parts=("bool", "bool_2"), cce_global=False, tiling_struct=False
-                    ),
-                    FuncParam(
-                        parts=("uint32_t", "uint32_1"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
-                    FuncParam(
-                        parts=("A*", "tmpStruct"), cce_global=False, tiling_struct=True
-                    ),
-                    FuncParam(
-                        parts=("uint16_t", "uint16_1"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
-                    FuncParam(
-                        parts=("void*", "x"), cce_global=True, tiling_struct=False
-                    ),
-                    FuncParam(
-                        parts=("void*", "y"), cce_global=True, tiling_struct=False
-                    ),
-                    FuncParam(
-                        parts=("void*", "z"), cce_global=True, tiling_struct=False
-                    ),
-                    FuncParam(
-                        parts=("AddCustomTilingData*", "tiling"),
-                        cce_global=False,
-                        tiling_struct=True,
-                    ),
+                    FuncParam(parts=("uint32_t", "numBlocks"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("aclrtStream", "stream"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("bool", "bool_1"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("bool", "bool_2"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("uint32_t", "uint32_1"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("A*", "tmpStruct"), cce_global=False, tiling_struct=True),
+                    FuncParam(parts=("uint16_t", "uint16_1"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("void*", "x"), cce_global=True, tiling_struct=False),
+                    FuncParam(parts=("void*", "y"), cce_global=True, tiling_struct=False),
+                    FuncParam(parts=("void*", "z"), cce_global=True, tiling_struct=False),
+                    FuncParam(parts=("AddCustomTilingData*", "tiling"), cce_global=False, tiling_struct=True),
                 ),
                 func_template_decl="",
                 func_template_specialization_args=(),
@@ -229,9 +197,7 @@ struct AddCustomTilingData {
     uint32_t tileNum;
 };"""
 
-        func_signs_list = [
-            FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)
-        ]
+        func_signs_list = [FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)]
         host_stub_code = generate_host_stub_code(func_signs_list, type_definition)
 
         soc_version = "ascend910b1"
@@ -247,11 +213,7 @@ struct AddCustomTilingData {
         host_stub_code = re.sub(_file_str, str(file_size), host_stub_code)
 
         with open(
-            os.path.join(
-                TOP_PATH,
-                "tests/python/aclrt_launch_kernel/stub_files/test_gen_host_stup_code.cpp",
-            ),
-            "r",
+            os.path.join(TOP_PATH, "tests/python/aclrt_launch_kernel/stub_files/test_gen_host_stup_code.cpp"), "r"
         ) as f:
             golden_code = f.read()
             f.close()
@@ -259,26 +221,16 @@ struct AddCustomTilingData {
 
         dump_info = {"dump_type": "", "dump_size": 1048576}
         mode = CodeMode.MIX
-        func_signs_list = [
-            FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)
-        ]
+        func_signs_list = [FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)]
         host_stub_code = generate_host_stub_code(func_signs_list, type_definition)
 
         dump_info = {"dump_type": "", "dump_size": 1048576}
         mode = CodeMode.MIX_VECTOR_CORE
-        func_signs_list = [
-            FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)
-        ]
+        func_signs_list = [FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)]
         host_stub_code = generate_host_stub_code(func_signs_list, type_definition)
 
-        func_signs_list = [
-            FuncSignGroupWithModeBase(
-                file_path, func_signs, dump_info, "MODE_MAX", base_key
-            )
-        ]
-        self.assertRaises(
-            Exception, generate_host_stub_code, func_signs_list, type_definition
-        )
+        func_signs_list = [FuncSignGroupWithModeBase(file_path, func_signs, dump_info, "MODE_MAX", base_key)]
+        self.assertRaises(Exception, generate_host_stub_code, func_signs_list, type_definition)
 
     def test_gen_host_stub_code_template(self):
         # dummy file path
@@ -292,16 +244,8 @@ struct AddCustomTilingData {
                 return_type="uint32_t",
                 func_name="aclrtlaunch_hello_world",
                 func_params=(
-                    FuncParam(
-                        parts=("uint32_t", "numBlocks"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
-                    FuncParam(
-                        parts=("aclrtStream", "stream"),
-                        cce_global=False,
-                        tiling_struct=False,
-                    ),
+                    FuncParam(parts=("uint32_t", "numBlocks"), cce_global=False, tiling_struct=False),
+                    FuncParam(parts=("aclrtStream", "stream"), cce_global=False, tiling_struct=False),
                 ),
                 func_template_decl="int a",
                 func_template_specialization_args=["35", "45"],
@@ -315,9 +259,7 @@ struct AddCustomTilingData {
 
         type_definition = ""
 
-        func_signs_list = [
-            FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)
-        ]
+        func_signs_list = [FuncSignGroupWithModeBase(file_path, func_signs, dump_info, mode, base_key)]
         host_stub_code = generate_host_stub_code(func_signs_list, type_definition)
 
         soc_version = "ascend910b1"
@@ -336,10 +278,7 @@ struct AddCustomTilingData {
         print(host_stub_code)
 
         with open(
-            os.path.join(
-                TOP_PATH,
-                "tests/python/aclrt_launch_kernel/stub_files/test_gen_host_stub_code_template.cpp",
-            ),
+            os.path.join(TOP_PATH, "tests/python/aclrt_launch_kernel/stub_files/test_gen_host_stub_code_template.cpp"),
             "r",
         ) as f:
             golden_code = f.read()
@@ -417,31 +356,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -460,31 +379,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom1",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -503,31 +402,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom2",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -546,31 +425,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom3",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -589,31 +448,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom4",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -632,31 +471,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom5",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -675,31 +494,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -718,31 +517,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -763,31 +542,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -798,7 +557,7 @@ struct AddCustomTilingData {
                 dump_info={"dump_type": "", "dump_size": 1048576},
                 kernel_type=CodeMode.KERNEL_TYPE_AIV_ONLY,
                 structs={},
-            ),
+            )
         ]
         func_groups_template_mix = [
             FuncSignGroupWithModeBase(
@@ -808,31 +567,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="int a",
                         func_template_specialization_args=["20", "30"],
@@ -843,7 +582,7 @@ struct AddCustomTilingData {
                 dump_info={"dump_type": "", "dump_size": 1048576},
                 mode=CodeMode.KERNEL_TYPE_MIX_AIC_1_2,
                 base_key=1,
-            ),
+            )
         ]
         func_groups_template = [
             FuncSignGroupWithModeBase(
@@ -853,31 +592,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="int a",
                         func_template_specialization_args=["20", "30"],
@@ -888,11 +607,9 @@ struct AddCustomTilingData {
                 dump_info={"dump_type": "", "dump_size": 1048576},
                 mode=CodeMode.KERNEL_TYPE_AIV_ONLY,
                 base_key=1,
-            ),
+            )
         ]
-        modes = [
-            CodeMode.KERNEL_TYPE_AIV_ONLY,
-        ]
+        modes = [CodeMode.KERNEL_TYPE_AIV_ONLY]
         base_keys = list(get_base_keys(func_groups_simple, modes))
         aiv_sources = [
             "add_custom.cpp",
@@ -928,9 +645,7 @@ struct AddCustomTilingData {
         extract_host_stub.IS_V220_MODE = True
         extract_host_stub.RUN_MODE = "npu"
         generate_definition = True
-        with mock.patch(
-            "builtins.open", new_callable=mock.mock_open, read_data=""
-        ) as mock_open:
+        with mock.patch("builtins.open", new_callable=mock.mock_open, read_data="") as mock_open:
             mock_open.side_effect = RuntimeError()
             self.assertRaises(
                 Exception,
@@ -941,32 +656,17 @@ struct AddCustomTilingData {
                 generate_definition,
             )
             self.assertRaises(
-                Exception,
-                save_aic_aiv_config_cmake,
-                func_groups_template,
-                source_mapping,
-                dst_dir,
-                generate_definition,
+                Exception, save_aic_aiv_config_cmake, func_groups_template, source_mapping, dst_dir, generate_definition
             )
-        save_device_kernel_function(
-            func_groups_template, source_mapping, dst_dir, generate_definition
-        )
-        save_device_kernel_function(
-            func_groups_template_mix, source_mapping, dst_dir, generate_definition
-        )
-        save_aic_aiv_config_cmake(
-            func_groups_template, source_mapping, dst_dir, generate_definition
-        )
-        save_device_kernel_function(
-            func_groups, source_mapping, dst_dir, generate_definition
-        )
+        save_device_kernel_function(func_groups_template, source_mapping, dst_dir, generate_definition)
+        save_device_kernel_function(func_groups_template_mix, source_mapping, dst_dir, generate_definition)
+        save_aic_aiv_config_cmake(func_groups_template, source_mapping, dst_dir, generate_definition)
+        save_device_kernel_function(func_groups, source_mapping, dst_dir, generate_definition)
         cpp_path_assert_only = os.path.join(dst_dir, "auto_gen_add_custom.cpp")
         assert os.path.exists(cpp_path_assert_only)
         with open(cpp_path_assert_only, "r", encoding="utf-8") as file:
             content = file.read()
-        save_aic_aiv_config_cmake(
-            func_groups, source_mapping, dst_dir, generate_definition
-        )
+        save_aic_aiv_config_cmake(func_groups, source_mapping, dst_dir, generate_definition)
         extract_host_stub.IS_V220_MODE = False
         generate_definition = False
         func_groups_m200 = [
@@ -977,31 +677,11 @@ struct AddCustomTilingData {
                         return_type="void",
                         func_name="add_custom",
                         func_params=(
-                            FuncParam(
-                                parts=("uint8_t*", "x"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "y"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "z"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "workspace"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
-                            FuncParam(
-                                parts=("uint8_t*", "tiling"),
-                                cce_global=True,
-                                tiling_struct=False,
-                            ),
+                            FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                            FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
                         ),
                         func_template_decl="",
                         func_template_specialization_args=(),
@@ -1012,12 +692,10 @@ struct AddCustomTilingData {
                 dump_info={"dump_type": "", "dump_size": 1048576},
                 mode=CodeMode.AIV,
                 base_key=0,
-            ),
+            )
         ]
         save_device_kernel_function(func_groups_m200, source_mapping, dst_dir, True)
-        save_aic_aiv_config_cmake(
-            func_groups_m200, source_mapping, dst_dir, generate_definition
-        )
+        save_aic_aiv_config_cmake(func_groups_m200, source_mapping, dst_dir, generate_definition)
         cpp_path = os.path.join(dst_dir, "auto_gen_add_custom.cpp")
         aic_cmake_path = os.path.join(dst_dir, "aic_config.cmake")
         aiv_cmake_path = os.path.join(dst_dir, "aiv_config.cmake")
@@ -1046,16 +724,8 @@ struct AddCustomTilingData {
             return_type="uint32_t",
             func_name="aclrtlaunch_hello_world",
             func_params=(
-                FuncParam(
-                    parts=("uint32_t", "numBlocks"),
-                    cce_global=False,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("aclrtStream", "stream"),
-                    cce_global=False,
-                    tiling_struct=False,
-                ),
+                FuncParam(parts=("uint32_t", "numBlocks"), cce_global=False, tiling_struct=False),
+                FuncParam(parts=("aclrtStream", "stream"), cce_global=False, tiling_struct=False),
             ),
             func_template_decl="int a",
             func_template_specialization_args=["35", "45"],
@@ -1087,28 +757,12 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct*", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct*", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="",
             func_template_specialization_args=(),
@@ -1119,28 +773,12 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="",
             func_template_specialization_args=(),
@@ -1151,28 +789,12 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct&", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct&", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="int a",
             func_template_specialization_args=(),
@@ -1183,37 +805,19 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="int a",
             func_template_specialization_args=(),
             func_params_specialization_args=(),
         )
 
-        nomal_func_params_res = tiling_remove_ref_or_ptr_func_params(
-            nomal_func_sign, nomal_func_sign.func_params
-        )
+        nomal_func_params_res = tiling_remove_ref_or_ptr_func_params(nomal_func_sign, nomal_func_sign.func_params)
         nomal_without_ptr_func_params_res = tiling_remove_ref_or_ptr_func_params(
             nomal_without_ptr_func_sign, nomal_func_sign.func_params
         )
@@ -1233,28 +837,12 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="",
             func_template_specialization_args=(),
@@ -1265,40 +853,20 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="int a",
             func_template_specialization_args=(),
             func_params_specialization_args=(),
         )
 
-        nomal_func_params_res = tiling_add_ref_or_ptr_func_params(
-            nomal_func_sign, nomal_func_sign.func_params
-        )
-        template_func_params_res = tiling_add_ref_or_ptr_func_params(
-            template_func_sign, template_func_sign.func_params
-        )
+        nomal_func_params_res = tiling_add_ref_or_ptr_func_params(nomal_func_sign, nomal_func_sign.func_params)
+        template_func_params_res = tiling_add_ref_or_ptr_func_params(template_func_sign, template_func_sign.func_params)
         self.assertIn("CustomStruct*", nomal_func_params_res[3].parts[0])
         self.assertIn("CustomStruct&", template_func_params_res[3].parts[0])
 
@@ -1322,54 +890,27 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
     def test_get_mode_by_ofile(self, mock_channel):
         mock_channel.side_effect = [[1, CODE_DEFAULT, ""], [0, CODE_DEFAULT, ""]]
         self.assertRaises(Exception, get_mode_by_ofile, "aic", "aiv", True)
-        mock_channel.side_effect = {
-            "aic": [0, CODE_DEFAULT, ""],
-            "aiv": [1, CODE_DEFAULT, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [0, CODE_DEFAULT, ""], "aiv": [1, CODE_DEFAULT, ""]}.get
         self.assertRaises(Exception, get_mode_by_ofile, "aic", "aiv", False)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_DEFAULT, ""],
-            "aiv": [1, CODE_DEFAULT, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_DEFAULT, ""], "aiv": [1, CODE_DEFAULT, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", True), CodeMode.AIV)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_DEFAULT, ""],
-            "aiv": [1, CODE_DEFAULT, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_DEFAULT, ""], "aiv": [1, CODE_DEFAULT, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", False), CodeMode.AIV)
         mock_channel.side_effect = [[1, CODE_DEFAULT, ""], [1, CODE_AIV, ""]]
         self.assertEqual(get_mode_by_ofile("aic", "aiv", True), CodeMode.AIV)
         mock_channel.side_effect = [[1, CODE_DEFAULT, ""], [1, CODE_AIV, ""]]
         self.assertEqual(get_mode_by_ofile("aic", "aiv", False), CodeMode.AIV)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIC, ""],
-            "aiv": [1, CODE_DEFAULT, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIC, ""], "aiv": [1, CODE_DEFAULT, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", True), CodeMode.AIC)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIC, ""],
-            "aiv": [1, CODE_DEFAULT, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIC, ""], "aiv": [1, CODE_DEFAULT, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", False), CodeMode.AIC)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIC, ""],
-            "aiv": [1, CODE_AIV, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIC, ""], "aiv": [1, CODE_AIV, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", True), CodeMode.MIX)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIC, ""],
-            "aiv": [1, CODE_AIV, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIC, ""], "aiv": [1, CODE_AIV, ""]}.get
         self.assertEqual(get_mode_by_ofile("aic", "aiv", False), CodeMode.MIX)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIC, ""],
-            "aiv": [1, CODE_AIC, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIC, ""], "aiv": [1, CODE_AIC, ""]}.get
         self.assertRaises(Exception, get_mode_by_ofile, "aic", "aiv", True)
-        mock_channel.side_effect = {
-            "aic": [1, CODE_AIV, ""],
-            "aiv": [1, CODE_AIV, ""],
-        }.get
+        mock_channel.side_effect = {"aic": [1, CODE_AIV, ""], "aiv": [1, CODE_AIV, ""]}.get
         self.assertRaises(Exception, get_mode_by_ofile, "aic", "aiv", False)
 
     def test_get_code_channel(self):
@@ -1413,10 +954,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
 
     def test_get_func_meta_type(self):
         self.assertEqual(get_func_meta_type(FuncMetaType.F_TYPE_KTYPE), "F_TYPE_KTYPE")
-        self.assertEqual(
-            get_func_meta_type(FuncMetaType.F_TYPE_CROSS_CORE_SYNC),
-            "F_TYPE_CROSS_CORE_SYNC",
-        )
+        self.assertEqual(get_func_meta_type(FuncMetaType.F_TYPE_CROSS_CORE_SYNC), "F_TYPE_CROSS_CORE_SYNC")
         self.assertEqual(get_func_meta_type(FuncMetaType.F_TYPE_MAX), "F_TYPE_MAX")
         self.assertRaises(Exception, get_func_meta_type, 4)
 
@@ -1427,11 +965,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
                 "command": "mock -o add_custom.cpp.o -DASCENDC_TIME_STAMP_ON",
                 "file": "add_custom.cpp",
             },
-            {
-                "directory": "preprocess",
-                "command": "mock -o add_custom_1.cpp.o",
-                "file": "add_custom_1.cpp",
-            },
+            {"directory": "preprocess", "command": "mock -o add_custom_1.cpp.o", "file": "add_custom_1.cpp"},
             {
                 "directory": "preprocess",
                 "command": "mock -DFEATURE=1 -o add_custom_2.cpp.o",
@@ -1445,9 +979,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             "preprocess/add_custom_2.cpp.o": "add_custom_2.cpp",
         }
         with (
-            mock.patch(
-                "builtins.open", new_callable=mock.mock_open, read_data=""
-            ) as mock_open,
+            mock.patch("builtins.open", new_callable=mock.mock_open, read_data="") as mock_open,
             mock.patch("json.load", return_value=data) as mock_load,
         ):
             result, _ = load_compile_commands("compile_commands.json")
@@ -1516,9 +1048,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
                 return builtin_open(*args, **kwargs)
 
             with mock.patch.object(
-                extract_host_stub,
-                "load_compile_commands",
-                return_value=[source_mapping, enable_timestamp_mapping],
+                extract_host_stub, "load_compile_commands", return_value=[source_mapping, enable_timestamp_mapping]
             ) as mock_compile:
                 with mock.patch("builtins.open", mock_open) as m:
                     if i == 3 or i == 4:
@@ -1532,26 +1062,20 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
             return builtin_open(*args, **kwargs)
 
         with mock.patch.object(
-            extract_host_stub,
-            "load_compile_commands",
-            return_value=[source_mapping, enable_timestamp_mapping],
+            extract_host_stub, "load_compile_commands", return_value=[source_mapping, enable_timestamp_mapping]
         ) as mock_compile:
             with mock.patch("builtins.open", mock_open) as m:
                 main_with_except(argv)
                 mock_compile.side_effect = FileNotFoundError()
                 self.assertEqual(False, main_with_except(argv))
-            with mock.patch(
-                "extract_host_stub.parse_func_signature_group_by_source"
-            ) as mock_extract:
+            with mock.patch("extract_host_stub.parse_func_signature_group_by_source") as mock_extract:
                 mock_extract.side_effect = RuntimeError()
                 self.assertEqual(False, main_with_except(argv))
 
         shutil.rmtree(dst_dir)
 
         with mock.patch.object(
-            extract_host_stub,
-            "load_compile_commands",
-            return_value=[source_mapping, enable_timestamp_mapping],
+            extract_host_stub, "load_compile_commands", return_value=[source_mapping, enable_timestamp_mapping]
         ):
             with mock.patch("builtins.open", mock_open) as m:
                 main_with_except(
@@ -1609,9 +1133,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
 
         mock_shutil.close()
         with mock.patch.object(
-            extract_host_stub,
-            "load_compile_commands",
-            return_value=[source_mapping, enable_timestamp_mapping],
+            extract_host_stub, "load_compile_commands", return_value=[source_mapping, enable_timestamp_mapping]
         ):
             with mock.patch("builtins.open", mock_open) as m:
                 main_with_except(
@@ -1682,18 +1204,14 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
 
         with (
             mock.patch.object(
-                extract_host_stub,
-                "load_compile_commands",
-                return_value=[source_mapping, enable_timestamp_mapping],
+                extract_host_stub, "load_compile_commands", return_value=[source_mapping, enable_timestamp_mapping]
             ),
             mock.patch("builtins.open", template_mock_open) as m,
             mock.patch("os.path.isfile", return_value=True) as mock_file,
             mock.patch("subprocess.run") as mock_run,
         ):
             mock_stdout = mock.MagicMock()
-            mock_stdout.configure_mock(
-                **{"stdout.decode.return_value": "void add_custom<5>", "returncode": 0}
-            )
+            mock_stdout.configure_mock(**{"stdout.decode.return_value": "void add_custom<5>", "returncode": 0})
             argv = [
                 "preprocess/add_custom.cpp.o",
                 "--aiv-o",
@@ -1717,10 +1235,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
     def test_get_func_template_specialization_mangle_name(self):
         import subprocess
 
-        with (
-            mock.patch("subprocess.run") as mock_run,
-            mock.patch("os.path.isfile", return_value=True),
-        ):
+        with mock.patch("subprocess.run") as mock_run, mock.patch("os.path.isfile", return_value=True):
             mock_stdout = mock.MagicMock()
             mock_stdout.configure_mock(
                 **{
@@ -1745,9 +1260,7 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
                 }
             )
             mock_run.return_value = mock_stdout
-            ret, tmp_spec_names, err_msg = get_func_template_specialization_mangle_name(
-                "dummy_file.o", "ReduceCustom"
-            )
+            ret, tmp_spec_names, err_msg = get_func_template_specialization_mangle_name("dummy_file.o", "ReduceCustom")
             self.assertEqual(ret, True)
             self.assertEqual(len(tmp_spec_names), 1)
             self.assertEqual(tmp_spec_names[0][0], "float, 20, 20, 1")
@@ -1757,93 +1270,45 @@ inline uint32_t hello_world(uint32_t numBlocks, void* hold, void* stream)
         func_param_error_list = ["__attribute__((cce_global))", "const", "int"]
         self.assertEqual((2, "int"), get_func_param_type_by_parts(func_param_list))
         self.assertEqual((3, "A"), get_func_param_name_by_parts(func_param_list))
-        self.assertRaises(
-            Exception, get_func_param_name_by_parts, func_param_error_list
-        )
+        self.assertRaises(Exception, get_func_param_name_by_parts, func_param_error_list)
 
-        func_param_input = FuncParam(
-            parts=("uint32_t", "numBlocks"), cce_global=False, tiling_struct=True
-        )
-        self.assertEqual(
-            convert_func_param_cce_param_type(func_param_input), func_param_input
-        )
+        func_param_input = FuncParam(parts=("uint32_t", "numBlocks"), cce_global=False, tiling_struct=True)
+        self.assertEqual(convert_func_param_cce_param_type(func_param_input), func_param_input)
 
         self.assertEqual(convert_to_void("int"), "void")
 
-        func_param_output = FuncParam(
-            parts=("uint32_t*", "numBlocks"), cce_global=False, tiling_struct=True
-        )
+        func_param_output = FuncParam(parts=("uint32_t*", "numBlocks"), cce_global=False, tiling_struct=True)
         self.assertEqual(tiling_add_pointer(func_param_input), func_param_output)
         self.assertEqual(tiling_remove_pointer(func_param_input), func_param_input)
-        self.assertEqual(
-            remove_aclrt_prefix_snake("aclrtlaunch_add_custom"), "add_custom"
-        )
+        self.assertEqual(remove_aclrt_prefix_snake("aclrtlaunch_add_custom"), "add_custom")
         self.assertEqual(remove_aclrt_prefix_snake("add_custom"), "add_custom")
-        self.assertEqual(
-            get_triple_chevrons_impl_cpp_filepath("path"),
-            "path/triple_chevrons_config.cmake",
-        )
+        self.assertEqual(get_triple_chevrons_impl_cpp_filepath("path"), "path/triple_chevrons_config.cmake")
 
         template_func_sign = FuncSign(
             return_type="void",
             func_name="add_custom",
             func_params=(
-                FuncParam(
-                    parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False
-                ),
-                FuncParam(
-                    parts=("CustomStruct", "myStruct"),
-                    cce_global=False,
-                    tiling_struct=True,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "workspace"),
-                    cce_global=True,
-                    tiling_struct=False,
-                ),
-                FuncParam(
-                    parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False
-                ),
+                FuncParam(parts=("uint8_t*", "x"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "y"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "z"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("CustomStruct", "myStruct"), cce_global=False, tiling_struct=True),
+                FuncParam(parts=("uint8_t*", "workspace"), cce_global=True, tiling_struct=False),
+                FuncParam(parts=("uint8_t*", "tiling"), cce_global=True, tiling_struct=False),
             ),
             func_template_decl="int a",
             func_template_specialization_args=(),
             func_params_specialization_args=(),
         )
-        self.assertFalse(
-            get_func_template_specialization_mangle_name("not_file", "not_kernel")[0]
-        )
-        with (
-            mock.patch("subprocess.run") as mock_run,
-            mock.patch("os.path.isfile", return_value=True),
-        ):
+        self.assertFalse(get_func_template_specialization_mangle_name("not_file", "not_kernel")[0])
+        with mock.patch("subprocess.run") as mock_run, mock.patch("os.path.isfile", return_value=True):
             mock_stdout = mock.MagicMock()
-            mock_stdout.configure_mock(
-                **{"stdout.decode.return_value": " ", "returncode": 1}
-            )
-            self.assertRaises(
-                Exception,
-                add_template_specialization_args,
-                template_func_sign,
-                "not_file",
-                "not_file",
-            )
+            mock_stdout.configure_mock(**{"stdout.decode.return_value": " ", "returncode": 1})
+            self.assertRaises(Exception, add_template_specialization_args, template_func_sign, "not_file", "not_file")
             with mock.patch.object(
-                extract_host_stub,
-                "get_func_template_specialization_mangle_name",
-                return_value=(True, "int b", ""),
+                extract_host_stub, "get_func_template_specialization_mangle_name", return_value=(True, "int b", "")
             ):
                 self.assertRaises(
-                    Exception,
-                    add_template_specialization_args,
-                    template_func_sign,
-                    "not_file",
-                    "not_file",
+                    Exception, add_template_specialization_args, template_func_sign, "not_file", "not_file"
                 )
 
 

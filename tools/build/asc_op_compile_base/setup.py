@@ -30,23 +30,14 @@ else:
 current_dir = os.getcwd()
 print(current_dir)
 
-shared_library_path = os.path.join(
-    current_dir, "asc_op_compile_base", "c_api", "libasc_platform.so"
-)
+shared_library_path = os.path.join(current_dir, "asc_op_compile_base", "c_api", "libasc_platform.so")
 setup(
     name="asc_op_compile_base",
     version="0.1.0",
     description="asc_op_compile_base: base of op complication tool",
     zip_safe=False,
-    install_requires=[
-        "numpy",
-        "decorator",
-        "attrs",
-        "psutil",
-    ],
+    install_requires=["numpy", "decorator", "attrs", "psutil"],
     packages=find_packages(),
-    package_data={
-        "asc_op_compile_base.c_api": [shared_library_path],
-    },
+    package_data={"asc_op_compile_base.c_api": [shared_library_path]},
     include_package_data=True,
 )

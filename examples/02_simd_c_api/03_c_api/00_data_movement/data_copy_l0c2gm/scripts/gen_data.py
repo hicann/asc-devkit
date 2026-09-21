@@ -63,29 +63,11 @@ def snap_near_half_integer(value, epsilon=1e-5):
 def apply_deqf16(value, quant_pre, relu_pre):
     alpha, offset, _, shift, mode_control = decode_quant_pre(quant_pre)
     if mode_control:
-        value = saturate(
-            value >> shift,
-            np.finfo(np.float16).min,
-            np.finfo(np.float16).max,
-            np.float16,
-        )
+        value = saturate(value >> shift, np.finfo(np.float16).min, np.finfo(np.float16).max, np.float16)
     value = np.float32(value)
     value *= alpha if value >= 0 else decode_relu_pre(relu_pre)
-    value = (
-        saturate(
-            value,
-            np.finfo(np.float16).min,
-            np.finfo(np.float16).max,
-            np.float16,
-        )
-        + offset
-    )
-    return saturate(
-        value,
-        np.finfo(np.float16).min,
-        np.finfo(np.float16).max,
-        np.float16,
-    )
+    value = saturate(value, np.finfo(np.float16).min, np.finfo(np.float16).max, np.float16) + offset
+    return saturate(value, np.finfo(np.float16).min, np.finfo(np.float16).max, np.float16)
 
 
 def apply_qf322b8(value, quant_pre, relu_pre):
@@ -96,11 +78,7 @@ def apply_qf322b8(value, quant_pre, relu_pre):
     value *= alpha if value >= 0 else decode_relu_pre(relu_pre)
     value = snap_near_half_integer(value)
     value = saturate(value, -256, 255, np.int16) + offset
-    return (
-        saturate(value, -128, 127, np.int8)
-        if sign
-        else saturate(value, 0, 255, np.uint8)
-    )
+    return saturate(value, -128, 127, np.int8) if sign else saturate(value, 0, 255, np.uint8)
 
 
 def apply_req8(value, quant_pre, relu_pre):
@@ -111,11 +89,7 @@ def apply_req8(value, quant_pre, relu_pre):
     value *= alpha if value >= 0 else decode_relu_pre(relu_pre)
     value = snap_near_half_integer(value)
     value = saturate(value, -256, 255, np.int16) + offset
-    return (
-        saturate(value, -128, 127, np.int8)
-        if sign
-        else saturate(value, 0, 255, np.uint8)
-    )
+    return saturate(value, -128, 127, np.int8) if sign else saturate(value, 0, 255, np.uint8)
 
 
 def make_quant_params():
@@ -131,17 +105,11 @@ def apply_prequant(matrix, scenario_num, quant_params):
     for row in range(M):
         for column in range(N):
             if scenario_num in (1, 2):
-                result[row, column] = apply_deqf16(
-                    matrix[row, column], quant_params[column], relu_pre
-                )
+                result[row, column] = apply_deqf16(matrix[row, column], quant_params[column], relu_pre)
             elif scenario_num in (3, 4):
-                result[row, column] = apply_qf322b8(
-                    matrix[row, column], quant_params[column], relu_pre
-                )
+                result[row, column] = apply_qf322b8(matrix[row, column], quant_params[column], relu_pre)
             else:
-                result[row, column] = apply_req8(
-                    matrix[row, column], quant_params[column], relu_pre
-                )
+                result[row, column] = apply_req8(matrix[row, column], quant_params[column], relu_pre)
     return result
 
 
@@ -171,14 +139,10 @@ def gen_golden_data(scenario_num):
 
     if scenario_num in NZ_OUTPUT_SCENARIOS:
         block_columns = 16 if output_dtype == np.float16 else 32
-        golden = golden.reshape(
-            M // 16, 16, N // block_columns, block_columns
-        ).transpose(2, 0, 1, 3)
+        golden = golden.reshape(M // 16, 16, N // block_columns, block_columns).transpose(2, 0, 1, 3)
 
     # The kernel consumes A as two consecutive [M, K / K_ROUND] chunks.
-    x1.reshape(M, K_ROUND, K // K_ROUND).transpose(1, 0, 2).astype(input_dtype).tofile(
-        "./input/x1_gm.bin"
-    )
+    x1.reshape(M, K_ROUND, K // K_ROUND).transpose(1, 0, 2).astype(input_dtype).tofile("./input/x1_gm.bin")
     x2.astype(input_dtype).tofile("./input/x2_gm.bin")
     golden.astype(output_dtype).tofile("./output/golden.bin")
 

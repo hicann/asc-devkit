@@ -26,9 +26,7 @@ def gen_golden_data_simple():
     input_x[mid:, mid:] = input_x[:mid, :mid]
     input_x[:mid, mid:] = input_x[:mid, :mid]
     input_y = np.arange(32 * 32).reshape([32, 32]).astype(dtype)
-    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(np.float32)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     input_x.tofile("./input/input_x.bin")

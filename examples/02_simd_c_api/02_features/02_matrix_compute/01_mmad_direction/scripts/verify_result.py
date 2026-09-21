@@ -22,10 +22,7 @@ def verify_result(scenario_num, output_path, golden_path):
     output = np.fromfile(output_path, dtype=output_type)
     golden = np.fromfile(golden_path, dtype=output_type)
     if output.shape != golden.shape:
-        print(
-            "[ERROR] output shape %s does not match golden shape %s"
-            % (output.shape, golden.shape)
-        )
+        print("[ERROR] output shape %s does not match golden shape %s" % (output.shape, golden.shape))
         return False
     if output_type == np.uint8:
         passed = np.array_equal(output, golden)
@@ -36,10 +33,7 @@ def verify_result(scenario_num, output_path, golden_path):
     if not passed:
         mismatch = np.flatnonzero(~matched)
         for index in mismatch[:20]:
-            print(
-                "data index: %06d, expected: %s, actual: %s"
-                % (index, golden[index], output[index])
-            )
+            print("data index: %06d, expected: %s, actual: %s" % (index, golden[index], output[index]))
     return passed
 
 

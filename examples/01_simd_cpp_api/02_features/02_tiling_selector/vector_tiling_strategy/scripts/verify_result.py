@@ -26,13 +26,9 @@ def verify_result(output, golden):
     output_data = np.fromfile(output, dtype=np.float16).reshape(-1)
     golden_data = np.fromfile(golden, dtype=np.float16).reshape(-1)
     if output_data.size != golden_data.size:
-        raise ValueError(
-            f"size mismatch: output={output_data.size}, golden={golden_data.size}"
-        )
+        raise ValueError(f"size mismatch: output={output_data.size}, golden={golden_data.size}")
 
-    compare = np.isclose(
-        output_data, golden_data, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    compare = np.isclose(output_data, golden_data, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
     diff_indexes = np.where(compare == False)[0]
     for index, real_index in enumerate(diff_indexes[:100]):
         expect = golden_data[real_index]

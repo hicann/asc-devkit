@@ -18,11 +18,7 @@ import numpy as np
 
 def get_range_by_dtype(input_type):
     try:
-        if (
-            input_type == np.float16
-            or input_type == np.float32
-            or input_type == np.float64
-        ):
+        if input_type == np.float16 or input_type == np.float32 or input_type == np.float64:
             return np.finfo(input_type).min, np.finfo(input_type).max
         else:
             return np.iinfo(input_type).min, np.iinfo(input_type).max
@@ -43,8 +39,7 @@ def gen_golden_data_simple():
     golden = np.zeros(output_shape).astype(output_type)
     for i in range(len(input_x)):
         golden[
-            i * (one_data_block_size // input_type.itemsize) : (i + 1)
-            * (one_data_block_size // input_type.itemsize)
+            i * (one_data_block_size // input_type.itemsize) : (i + 1) * (one_data_block_size // input_type.itemsize)
         ] = input_x[i]
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

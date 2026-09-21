@@ -26,9 +26,7 @@ def verify_result(output, golden):
     golden = np.fromfile(golden, dtype=np.float32).reshape(-1)
     print("output:", output[0:10], output[-10:])
     print("golden:", golden[0:10], golden[-10:])
-    different_element_results = np.isclose(
-        output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    different_element_results = np.isclose(output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(len(different_element_indexes)):
         real_index = different_element_indexes[index]
@@ -36,12 +34,7 @@ def verify_result(output, golden):
         output_data = output[real_index]
         print(
             "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f"
-            % (
-                real_index,
-                golden_data,
-                output_data,
-                abs(output_data - golden_data) / golden_data,
-            )
+            % (real_index, golden_data, output_data, abs(output_data - golden_data) / golden_data)
         )
         if index == 100:
             break

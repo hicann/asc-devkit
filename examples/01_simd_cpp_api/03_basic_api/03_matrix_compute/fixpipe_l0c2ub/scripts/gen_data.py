@@ -28,9 +28,7 @@ def gen_golden_data(scenarioNum=1):
     output_type = np.dtype("float32")
     x1_gm = np.random.uniform(-1, 3, [M, K]).astype(input_type)
     x2_gm = np.random.uniform(-1, 3, [K, N]).astype(input_type)
-    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-        np.float32
-    )
+    golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32)
     # print(golden)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -38,9 +36,7 @@ def gen_golden_data(scenarioNum=1):
     if scenarioNum == 1:
         block_cols = 16
         golden = (
-            golden.reshape((int(M / 16), 16, int(N / block_cols), block_cols))
-            .transpose(2, 0, 1, 3)
-            .astype(output_type)
+            golden.reshape((int(M / 16), 16, int(N / block_cols), block_cols)).transpose(2, 0, 1, 3).astype(output_type)
         )
 
     if kRound > 1:

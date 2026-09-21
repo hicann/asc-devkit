@@ -45,10 +45,7 @@ class MarkdownLinkTests(unittest.TestCase):
             repo = pathlib.Path(temp_dir)
             source = repo / "docs" / "en" / "page.md"
             source.parent.mkdir(parents=True)
-            source.write_text(
-                "[internal](./other.md)\n[root](../../CONTRIBUTING_en.md)\n",
-                encoding="utf-8",
-            )
+            source.write_text("[internal](./other.md)\n[root](../../CONTRIBUTING_en.md)\n", encoding="utf-8")
 
             html = parse_file(str(source))
 

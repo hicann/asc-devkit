@@ -63,14 +63,9 @@ PROPERTIES COMPILE_OPTIONS {disable_kernel_check_option})\n"
     return config_options
 
 
-def generate_save_template_config_commands(
-    filepaths: List[str], dst_dir: str
-) -> Iterator[Tuple[str, str]]:
+def generate_save_template_config_commands(filepaths: List[str], dst_dir: str) -> Iterator[Tuple[str, str]]:
     """Generate save template_config commands."""
-    yield (
-        get_template_config_filepath(dst_dir),
-        generate_template_config_code(filepaths),
-    )
+    yield (get_template_config_filepath(dst_dir), generate_template_config_code(filepaths))
 
 
 def main(argv: List[str]):

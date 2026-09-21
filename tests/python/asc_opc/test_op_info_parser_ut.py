@@ -39,9 +39,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
 
     def test_01_get_op_info_and_generate_kernel_name_ut(self):
         """test get_op_info and generate_kernel_name"""
-        logger.debug(
-            "Start to execute ============ test_01_get_op_info_and_generate_kernel_name_ut ============"
-        )
+        logger.debug("Start to execute ============ test_01_get_op_info_and_generate_kernel_name_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -72,12 +70,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
                     "dtype": "float16",
                     "format": "NC1HWC0",
                     # "ori_format": "NCHW", specify process: no ori_format, will be set same as format
-                    "shape": [
-                        -1,
-                        -1,
-                        -1,
-                        -1,
-                    ],  # specify process:: no range, resolve json input wil has no range
+                    "shape": [-1, -1, -1, -1],  # specify process:: no range, resolve json input wil has no range
                     # specify process: no ori_shape, will be set same as shape
                 },
                 {
@@ -101,11 +94,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
                 {"name": "strides", "dtype": "bool", "value": "true"},
                 {"name": "pads", "dtype": "list_int", "value": None},
                 {"name": "groups", "dtype": "float", "value": 1.0},
-                {
-                    "name": "data_format",
-                    "dtype": "string",
-                    "value": ["NCHW", "NCHW", "NCHW"],
-                },
+                {"name": "data_format", "dtype": "string", "value": ["NCHW", "NCHW", "NCHW"]},
                 {"name": "offset_x", "dtype": "int", "value": [1, 2, 3, 4]},
                 None,
             ],
@@ -122,49 +111,28 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
         check = op_info_dict.get("inputs")[0].get("shape") == [-1, -1, -1, -1]
         self.assertEqual(check, True)
         # check point：first inputs range -1 be set None
-        check = op_info_dict.get("inputs")[0].get("range") == [
-            [1, None],
-            [1, None],
-            [1, None],
-            [1, None],
-        ]
+        check = op_info_dict.get("inputs")[0].get("range") == [[1, None], [1, None], [1, None], [1, None]]
         self.assertEqual(check, True)
         # check point：second inputs ori_format be set same as format
-        check = op_info_dict.get("inputs")[1].get("ori_format") == op_info_dict.get(
-            "inputs"
-        )[1].get("format")
+        check = op_info_dict.get("inputs")[1].get("ori_format") == op_info_dict.get("inputs")[1].get("format")
         self.assertEqual(check, True)
         # check point：second inputs ori_shape be set same as shape
-        check = op_info_dict.get("inputs")[1].get("ori_shape") == op_info_dict.get(
-            "inputs"
-        )[1].get("shape")
+        check = op_info_dict.get("inputs")[1].get("ori_shape") == op_info_dict.get("inputs")[1].get("shape")
         self.assertEqual(check, True)
         # check point：second inputs has no range
-        check = op_info_dict.get("inputs")[1].get("range") == [
-            [1, None],
-            [1, None],
-            [1, None],
-            [1, None],
-        ]
+        check = op_info_dict.get("inputs")[1].get("range") == [[1, None], [1, None], [1, None], [1, None]]
         self.assertEqual(check, True)
         # check point：third inputs is none
         check = op_info_dict.get("inputs")[2] == None
         self.assertEqual(check, True)
 
         kernel_name = op_info_parser.generate_kernel_name()
-        self.assertEqual(
-            kernel_name,
-            "add_05db7513122f8dc56c39ca9befcf46c006b0cf41f24250cb5859608e527954b2",
-        )
-        logger.debug(
-            "End to execute ============ test_01_get_op_info_and_generate_kernel_name_ut ============"
-        )
+        self.assertEqual(kernel_name, "add_05db7513122f8dc56c39ca9befcf46c006b0cf41f24250cb5859608e527954b2")
+        logger.debug("End to execute ============ test_01_get_op_info_and_generate_kernel_name_ut ============")
 
     def test_02_get_op_info_and_generate_kernel_name_ut(self):
         """test_02_get_op_info_and_generate_kernel_name_ut"""
-        logger.debug(
-            "Start to execute ============ test_02_get_op_info_and_generate_kernel_name_ut ============"
-        )
+        logger.debug("Start to execute ============ test_02_get_op_info_and_generate_kernel_name_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -187,24 +155,14 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
                         ]
                     ],
                     "ori_shape": [-1, -1, -1, -1],
-                    "const_value": [
-                        0.008575439453125,
-                        0.0122833251953125,
-                        0.0099334716796875,
-                        0.0164642333984375,
-                    ],
+                    "const_value": [0.008575439453125, 0.0122833251953125, 0.0099334716796875, 0.0164642333984375],
                 },
                 {
                     "index": 0,
                     "dtype": "float16",
                     "format": "NC1HWC0",
                     # "ori_format": "NCHW", specify process: no ori_format, will be set same as format
-                    "shape": [
-                        -1,
-                        -1,
-                        -1,
-                        -1,
-                    ],  # specify process:: no range, resolve json input wil has no range
+                    "shape": [-1, -1, -1, -1],  # specify process:: no range, resolve json input wil has no range
                     # specify process: no ori_shape, will be set same as shape
                 },
                 {
@@ -228,11 +186,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
                 {"name": "strides", "dtype": "bool", "value": "true"},
                 {"name": "pads", "dtype": "list_int", "value": None},
                 {"name": "groups", "dtype": "float", "value": 1.0},
-                {
-                    "name": "data_format",
-                    "dtype": "string",
-                    "value": ["NCHW", "NCHW", "NCHW"],
-                },
+                {"name": "data_format", "dtype": "string", "value": ["NCHW", "NCHW", "NCHW"]},
                 {"name": "offset_x", "dtype": "int", "value": [1, 2, 3, 4]},
                 None,
             ],
@@ -262,39 +216,23 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
         self.assertEqual(check, True)
 
         kernel_name = op_info_parser.generate_kernel_name()
-        self.assertEqual(
-            kernel_name,
-            "add_cad913795db5b7909271604914284ea6ab28f95aa5a7a9db2451127c1cc3d855",
-        )
-        logger.debug(
-            "End to execute ============ test_02_get_op_info_and_generate_kernel_name_ut ============"
-        )
+        self.assertEqual(kernel_name, "add_cad913795db5b7909271604914284ea6ab28f95aa5a7a9db2451127c1cc3d855")
+        logger.debug("End to execute ============ test_02_get_op_info_and_generate_kernel_name_ut ============")
 
     def test_03_generate_kernel_name_binfilename_ut(self):
         """test_03_generate_kernel_name_binfilename_ut"""
-        logger.debug(
-            "Start to execute ============ test_03_generate_kernel_name_binfilename_ut ============"
-        )
+        logger.debug("Start to execute ============ test_03_generate_kernel_name_binfilename_ut ============")
         op_info_dict = dict()
-        op_info_dict["bin_filename"] = (
-            "add_033fc89a3368bcab301917125079cc0fa68362669c81eb3d14bdea5f1ae2e044"
-        )
+        op_info_dict["bin_filename"] = "add_033fc89a3368bcab301917125079cc0fa68362669c81eb3d14bdea5f1ae2e044"
 
         op_info_parser = OpInfoParser(None, op_info_dict, None)
         kernel_name = op_info_parser.generate_kernel_name()
-        self.assertEqual(
-            kernel_name,
-            "add_033fc89a3368bcab301917125079cc0fa68362669c81eb3d14bdea5f1ae2e044",
-        )
-        logger.debug(
-            "End to execute ============ test_03_generate_kernel_name_binfilename_ut ============"
-        )
+        self.assertEqual(kernel_name, "add_033fc89a3368bcab301917125079cc0fa68362669c81eb3d14bdea5f1ae2e044")
+        logger.debug("End to execute ============ test_03_generate_kernel_name_binfilename_ut ============")
 
     def test_04_check_get_op_info_ut(self):
         """test get_op_info"""
-        logger.debug(
-            "Start to execute ============ test_04_check_get_op_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_04_check_get_op_info_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -306,11 +244,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
                 {"name": "strides", "dtype": "bool", "value": "true"},
                 {"name": "pads", "dtype": "listInt", "value": None},
                 {"name": "groups", "dtype": "float", "value": 1.0},
-                {
-                    "name": "data_format",
-                    "dtype": "string",
-                    "value": ["NCHW", "NCHW", "NCHW"],
-                },
+                {"name": "data_format", "dtype": "string", "value": ["NCHW", "NCHW", "NCHW"]},
                 {"name": "offset_x", "dtype": "int", "value": [1, 2, 3, 4]},
                 None,
             ],
@@ -320,15 +254,11 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
             op_info_parser.get_op_info("add")
         except Exception:
             pass
-        logger.debug(
-            "End to execute ============ test_04_check_get_op_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_04_check_get_op_info_ut ============")
 
     def test_05_check_get_op_info_ut(self):
         """test get_op_info"""
-        logger.debug(
-            "Start to execute ============ test_05_check_get_op_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_05_check_get_op_info_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -347,15 +277,11 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
             op_info_parser.get_op_info("add")
         except Exception:
             pass
-        logger.debug(
-            "End to execute ============ test_05_check_get_op_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_05_check_get_op_info_ut ============")
 
     def test_06_check_get_op_info_ut(self):
         """test get_op_info"""
-        logger.debug(
-            "Start to execute ============ test_06_check_get_op_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_06_check_get_op_info_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -374,15 +300,11 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
             op_info_parser.get_op_info("add")
         except Exception:
             pass
-        logger.debug(
-            "End to execute ============ test_06_check_get_op_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_06_check_get_op_info_ut ============")
 
     def test_07_check_get_op_info_ut(self):
         """test get_op_info"""
-        logger.debug(
-            "Start to execute ============ test_07_check_get_op_info_ut ============"
-        )
+        logger.debug("Start to execute ============ test_07_check_get_op_info_ut ============")
         opc_compile_args_dict = dict()
         opc_compile_args_dict["core_type"] = "Acend910"
         opc_compile_args_dict["aicore_num"] = 1
@@ -392,12 +314,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
             "comment": "ND_float16 with attr = true",
             "attrs": [
                 {"name": "var_attrs", "dtype": "list_string", "value": ["p", "a", "c"]},
-                {
-                    "name": "a",
-                    "value_range": [[1, 2]],
-                    "range_mode": ["left_excluded"],
-                    "dtype": "int",
-                },
+                {"name": "a", "value_range": [[1, 2]], "range_mode": ["left_excluded"], "dtype": "int"},
                 {"name": "p", "value_list": [1, 2, 3], "dtype": "int"},
             ],
         }
@@ -406,9 +323,7 @@ class TestOpcOpInfoPaserUt(unittest.TestCase):
             op_info_parser.get_op_info("add")
         except Exception:
             pass
-        logger.debug(
-            "End to execute ============ test_07_check_get_op_info_ut ============"
-        )
+        logger.debug("End to execute ============ test_07_check_get_op_info_ut ============")
 
 
 if __name__ == "__main__":

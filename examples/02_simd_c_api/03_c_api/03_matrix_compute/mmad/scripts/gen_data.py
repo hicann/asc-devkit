@@ -25,19 +25,11 @@ def gen_golden_data(scenario_num=1):
         x1_gm = np.random.randint(1, 10, [m, k]).astype(np.int8)
         x2_gm = np.random.randint(1, 10, [k, n]).astype(np.int8)
         bias_gm = np.random.randint(1, 10, [n]).astype(np.int32)
-        golden = (
-            np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32)
-            + bias_gm
-        )
+        golden = np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32) + bias_gm
     elif scenario_num == 2:
         x1_gm = np.random.uniform(1, 10, [m, k]).astype(bfloat16)
         x2_gm = np.random.uniform(1, 10, [k, n]).astype(bfloat16)
-        golden = (
-            np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(
-                np.float32
-            )
-            * 2
-        )
+        golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) * 2
         x2_gm = x2_gm.transpose()
 
     os.makedirs("input", exist_ok=True)

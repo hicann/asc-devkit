@@ -34,17 +34,7 @@ def philox4_round(counter, key, philox_m, len_w, mask_w):
     counter[VAL_4] = lo_1
 
 
-def philox(
-    counter,
-    key,
-    philox_round,
-    philox_m,
-    philox_bumpkey,
-    philox_w,
-    len_w,
-    mask_w,
-    rounds,
-):
+def philox(counter, key, philox_round, philox_m, philox_bumpkey, philox_w, len_w, mask_w, rounds):
     for _ in range(rounds - 1):
         philox_round(counter, key, philox_m, len_w, mask_w)
         philox_bumpkey(key, philox_w, mask_w)
@@ -71,17 +61,7 @@ def philox4_bumpkey(key, philox_w, mask_w):
 
 
 def philox4_32(counter, key, rounds):
-    return philox(
-        counter,
-        key,
-        philox4_round,
-        PHILOX_M4_32,
-        philox4_bumpkey,
-        PHILOX_W_32,
-        32,
-        MASK_32,
-        rounds,
-    )
+    return philox(counter, key, philox4_round, PHILOX_M4_32, philox4_bumpkey, PHILOX_W_32, 32, MASK_32, rounds)
 
 
 def philox_random_with_stride(rounds, counter, key, stride, row, column):
@@ -120,9 +100,7 @@ def gen_golden_data_simple():
     row = 32
     column = 32
 
-    golden = philox_random_with_stride(10, counter, key, stride, row, column).astype(
-        np.uint32
-    )
+    golden = philox_random_with_stride(10, counter, key, stride, row, column).astype(np.uint32)
     if dtype == np.float32:
         golden = uint2float(golden)
     else:

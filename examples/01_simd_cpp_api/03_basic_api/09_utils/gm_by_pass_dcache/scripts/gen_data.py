@@ -18,11 +18,7 @@ import numpy as np
 
 def get_range_by_dtype(input_type):
     try:
-        if (
-            input_type == np.float16
-            or input_type == np.float32
-            or input_type == np.float64
-        ):
+        if input_type == np.float16 or input_type == np.float32 or input_type == np.float64:
             return np.finfo(input_type).min, np.finfo(input_type).max
         else:
             return np.iinfo(input_type).min, np.iinfo(input_type).max

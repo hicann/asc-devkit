@@ -22,9 +22,7 @@ def gen_golden_data_simple():
     adds_addend = 1.0
 
     input_x = np.random.uniform(0.0, 100.0, [input_total_length]).astype(np.float32)
-    index = np.random.randint(0, input_total_length, [index_total_length]).astype(
-        np.uint32
-    )
+    index = np.random.randint(0, input_total_length, [index_total_length]).astype(np.uint32)
 
     golden = input_x[index] + adds_addend
 

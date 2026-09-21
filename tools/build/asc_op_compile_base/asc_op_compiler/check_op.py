@@ -19,9 +19,7 @@ import json
 from asc_op_compile_base.common.error_mgr.error_manager_util import raise_runtime_error
 
 
-def check_op_cap(
-    check_type: str, optype: str, inputs: list, outputs: list, attrs: list = None
-):
+def check_op_cap(check_type: str, optype: str, inputs: list, outputs: list, attrs: list = None):
     """Check whether an operator has a certain capability based on the operator type / inputs / outputs information.
 
     Args:
@@ -60,15 +58,7 @@ def check_op_cap(
 
     libregister = ctypes.CDLL("libregister.so")
     check_func = libregister.AscendCPyInterfaceCheckOp
-    res = check_func(
-        check_type_c,
-        optype_c,
-        inputs_c,
-        outputs_c,
-        attrs_c,
-        result_info_buf,
-        result_info_buf_size,
-    )
+    res = check_func(check_type_c, optype_c, inputs_c, outputs_c, attrs_c, result_info_buf, result_info_buf_size)
 
     if not res:
         dict_args = {}
@@ -88,13 +78,7 @@ def check_op_cap(
     return result_info_buf.value
 
 
-def generalize_op_params(
-    optype: str,
-    inputs: list,
-    outputs: list,
-    attrs: list = None,
-    generalize_config: str = "",
-):
+def generalize_op_params(optype: str, inputs: list, outputs: list, attrs: list = None, generalize_config: str = ""):
     """
     This is a common interface. You can use this interface to query the customized functions registered by an operator.
     Refer to "tbe_register.register_param_generalization"
@@ -126,13 +110,7 @@ def generalize_op_params(
     result_info_buf = ctypes.create_string_buffer(max_run_info_size)
     result_info_buf_size = ctypes.c_size_t(max_run_info_size)
     res = generalize_func(
-        optype_c,
-        inputs_c,
-        outputs_c,
-        attrs_c,
-        generalize_config_c,
-        result_info_buf,
-        result_info_buf_size,
+        optype_c, inputs_c, outputs_c, attrs_c, generalize_config_c, result_info_buf, result_info_buf_size
     )
 
     if not res:

@@ -31,12 +31,7 @@ def build_golden(input_x):
 
 def main():
     rng = np.random.default_rng(RANDOM_SEED)
-    input_x = rng.integers(
-        RANDOM_LOW,
-        RANDOM_HIGH + 1,
-        size=(MATRIX_H, MATRIX_W),
-        dtype=np.int16,
-    ).astype(np.float16)
+    input_x = rng.integers(RANDOM_LOW, RANDOM_HIGH + 1, size=(MATRIX_H, MATRIX_W), dtype=np.int16).astype(np.float16)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -44,9 +39,7 @@ def main():
     input_x.tofile("./input/input.bin")
     golden = build_golden(input_x)
     golden.tofile("./output/golden.bin")
-    print(
-        f"generate random input: seed={RANDOM_SEED}, range=[{RANDOM_LOW}, {RANDOM_HIGH}]"
-    )
+    print(f"generate random input: seed={RANDOM_SEED}, range=[{RANDOM_LOW}, {RANDOM_HIGH}]")
     print(f"input sample: {input_x.reshape(-1)[:16]}")
 
 

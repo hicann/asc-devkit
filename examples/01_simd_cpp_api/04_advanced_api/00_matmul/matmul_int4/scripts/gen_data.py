@@ -24,10 +24,7 @@ def gen_golden_data():
     x1_gm = np.random.uniform(-5, 5, [m, k]).astype(np.int8)
     x2_gm = np.random.uniform(-5, 5, [k, n]).astype(np.int8)
     bias_gm = np.random.uniform(-5, 5, [n]).reshape([n]).astype(np.int32)
-    golden = (
-        np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32)
-        + bias_gm
-    )
+    golden = np.matmul(x1_gm.astype(np.int32), x2_gm.astype(np.int32)).astype(np.int32) + bias_gm
 
     x1_gm_int4 = np.zeros(shape=[m, k // 2]).astype(np.int8)
     for i in range(m):

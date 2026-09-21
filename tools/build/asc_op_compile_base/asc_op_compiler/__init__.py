@@ -31,12 +31,7 @@ from .ascendc_compile_v220 import (
     call_bisheng_v220,
     get_ktype_section_variable,
 )
-from .ascendc_constants import (
-    KernelMetaType,
-    STR_TO_KERNEL_TYPE_V220,
-    TilingKeyConfig,
-    CustomizedConfig,
-)
+from .ascendc_constants import KernelMetaType, STR_TO_KERNEL_TYPE_V220, TilingKeyConfig, CustomizedConfig
 from .ascendc_compile_base import compile_multi_tilingkey, link_relocatable, fatbin_objs
 from .ascendc_compile_v200 import gen_compile_cmd_v200
 from .ascendc_compile_gen_code import get_code_for_l2_cache, gen_global_isolation_macro

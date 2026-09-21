@@ -41,10 +41,7 @@ def conv2d_nhwc(x, weight, stride, dilation, padding, pad_value=0):
     hout = (h + pad_top + pad_bottom - dilation_h * (kh - 1) - 1) // stride_h + 1
     wout = (w + pad_left + pad_right - dilation_w * (kw - 1) - 1) // stride_w + 1
     x_pad = np.pad(
-        x,
-        ((0, 0), (pad_top, pad_bottom), (pad_left, pad_right), (0, 0)),
-        mode="constant",
-        constant_values=pad_value,
+        x, ((0, 0), (pad_top, pad_bottom), (pad_left, pad_right), (0, 0)), mode="constant", constant_values=pad_value
     )
     y = np.zeros((n, hout, wout, cout), dtype=np.float32)
 
@@ -58,9 +55,7 @@ def conv2d_nhwc(x, weight, stride, dilation, padding, pad_value=0):
                             for wk in range(kw):
                                 hi = ho * stride_h + hk * dilation_h
                                 wi = wo * stride_w + wk * dilation_w
-                                acc += float(x_pad[n_idx, hi, wi, ci]) * float(
-                                    weight[co, ci, hk, wk]
-                                )
+                                acc += float(x_pad[n_idx, hi, wi, ci]) * float(weight[co, ci, hk, wk])
                     y[n_idx, ho, wo, co] = acc
     return y
 
@@ -101,9 +96,7 @@ def gen_golden_data(scenario):
     fmap = np.random.uniform(-1, 1, (BATCH, H, W, CIN)).astype(np.float16)
     weight = np.random.uniform(-1, 1, (COUT, CIN, KH, KW)).astype(np.float16)
 
-    golden = conv2d_nhwc(fmap, weight, STRIDE, DILATION, PADDING, PAD_VALUE).astype(
-        np.float16
-    )
+    golden = conv2d_nhwc(fmap, weight, STRIDE, DILATION, PADDING, PAD_VALUE).astype(np.float16)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
@@ -131,10 +124,7 @@ def gen_golden_data(scenario):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--scenario",
-        type=int,
-        default=0,
-        help="0=NC1HWC0, 1=NCHW, 2=NHWC (must match SCENARIO_NUM used to build)",
+        "--scenario", type=int, default=0, help="0=NC1HWC0, 1=NCHW, 2=NHWC (must match SCENARIO_NUM used to build)"
     )
     args = parser.parse_args()
     gen_golden_data(args.scenario)

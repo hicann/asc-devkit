@@ -25,14 +25,8 @@ def gen_golden_data():
     b2_gm = np.random.uniform(-10, 10, [k, n]).reshape([k, n]).astype(np.float16)
     bias_gm = np.random.uniform(-10, 10, [n]).reshape([n]).astype(np.float32)
 
-    golden_1 = (
-        np.matmul(a1_gm.astype(np.float32), b1_gm.astype(np.float32), dtype=np.float32)
-        + bias_gm
-    )
-    golden_2 = (
-        np.matmul(a2_gm.astype(np.float32), b2_gm.astype(np.float32), dtype=np.float32)
-        + bias_gm
-    )
+    golden_1 = np.matmul(a1_gm.astype(np.float32), b1_gm.astype(np.float32), dtype=np.float32) + bias_gm
+    golden_2 = np.matmul(a2_gm.astype(np.float32), b2_gm.astype(np.float32), dtype=np.float32) + bias_gm
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

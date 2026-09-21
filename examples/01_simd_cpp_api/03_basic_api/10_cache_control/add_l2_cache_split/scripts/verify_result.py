@@ -39,18 +39,13 @@ def verify_result(output_path, golden_path):
     output_size = output_file_path.stat().st_size
     golden_size = golden_file_path.stat().st_size
     if output_size != golden_size:
-        print(
-            f"[ERROR] file size mismatch: output={output_size} bytes, "
-            f"golden={golden_size} bytes"
-        )
+        print(f"[ERROR] file size mismatch: output={output_size} bytes, golden={golden_size} bytes")
         return False
     if output_size % BYTES_PER_HALF != 0:
         print(f"[ERROR] invalid output file size: {output_size} bytes")
         return False
 
-    with output_file_path.open("rb") as output_file, golden_file_path.open(
-        "rb"
-    ) as golden_file:
+    with output_file_path.open("rb") as output_file, golden_file_path.open("rb") as golden_file:
         base_index = 0
         while True:
             output_data = output_file.read(CHUNK_BYTES)

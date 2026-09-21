@@ -261,13 +261,9 @@ def check_op_params(*type_args, **type_kwargs):
         _check_input_output_key(op_param, param_name, op_name)
         check_shape(op_param[OpParamInfoKey.SHAPE.value], param_name=param_name)
         check_shape(op_param[OpParamInfoKey.ORI_SHAPE.value], param_name=param_name)
-        if in_dynamic() and DYNAMIC_SHAPE_FLAG in op_param.get(
-            OpParamInfoKey.ORI_SHAPE.value
-        ):
+        if in_dynamic() and DYNAMIC_SHAPE_FLAG in op_param.get(OpParamInfoKey.ORI_SHAPE.value):
             _check_range(
-                op_param[OpParamInfoKey.SHAPE.value],
-                op_param[OpParamInfoKey.RANGE.value],
-                param_name=param_name,
+                op_param[OpParamInfoKey.SHAPE.value], op_param[OpParamInfoKey.RANGE.value], param_name=param_name
             )
 
         if op_param[OpParamInfoKey.FORMAT.value] not in ALL_FORMAT_LIST:
@@ -358,11 +354,7 @@ def check_op_params(*type_args, **type_kwargs):
 
     def _check_input(op_param, param_name, param_type, op_name=OP_NAME):
         if param_type == REQUIRED_INPUT:
-            error_info = {
-                "errCode": OP_ERROR_CODE_001,
-                "op_name": op_name,
-                "param_name": param_name,
-            }
+            error_info = {"errCode": OP_ERROR_CODE_001, "op_name": op_name, "param_name": param_name}
             if op_param is None:
                 raise RuntimeError(
                     error_info,
@@ -386,23 +378,12 @@ def check_op_params(*type_args, **type_kwargs):
                     error_info,
                     "In op[%s], the parameter[%s]'s type should be [%s],  "
                     "but actually is [%s]."
-                    % (
-                        op_name,
-                        param_name,
-                        error_info["param_type"],
-                        error_info["actual_type"],
-                    ),
+                    % (op_name, param_name, error_info["param_type"], error_info["actual_type"]),
                 )
             if not op_param:
-                error_info = {
-                    "errCode": OP_ERROR_CODE_001,
-                    "op_name": op_name,
-                    "param_name": param_name,
-                }
+                error_info = {"errCode": OP_ERROR_CODE_001, "op_name": op_name, "param_name": param_name}
                 raise RuntimeError(
-                    error_info,
-                    "In op[%s], the mandatory parameter[%s] is missed."
-                    % (op_name, param_name),
+                    error_info, "In op[%s], the mandatory parameter[%s] is missed." % (op_name, param_name)
                 )
             for one_input in op_param:
                 _check_input_output_dict(one_input, param_name, op_name)
@@ -410,15 +391,9 @@ def check_op_params(*type_args, **type_kwargs):
     def _check_output(op_param, param_name, param_type, op_name=OP_NAME):
         if param_type == REQUIRED_OUTPUT:
             if op_param is None:
-                error_info = {
-                    "errCode": OP_ERROR_CODE_001,
-                    "op_name": op_name,
-                    "param_name": param_name,
-                }
+                error_info = {"errCode": OP_ERROR_CODE_001, "op_name": op_name, "param_name": param_name}
                 raise RuntimeError(
-                    error_info,
-                    "In op[%s], the mandatory parameter[%s] is missed."
-                    % (op_name, param_name),
+                    error_info, "In op[%s], the mandatory parameter[%s] is missed." % (op_name, param_name)
                 )
 
             _check_input_output_dict(op_param, param_name, op_name)
@@ -438,23 +413,12 @@ def check_op_params(*type_args, **type_kwargs):
                     error_info,
                     "In op[%s], the parameter[%s]'s type should be [%s],  "
                     "but actually is [%s]."
-                    % (
-                        op_name,
-                        param_name,
-                        error_info["param_type"],
-                        error_info["actual_type"],
-                    ),
+                    % (op_name, param_name, error_info["param_type"], error_info["actual_type"]),
                 )
             if not op_param:
-                error_info = {
-                    "errCode": OP_ERROR_CODE_001,
-                    "op_name": op_name,
-                    "param_name": param_name,
-                }
+                error_info = {"errCode": OP_ERROR_CODE_001, "op_name": op_name, "param_name": param_name}
                 raise RuntimeError(
-                    error_info,
-                    "In op[%s], the mandatory  parameter[%s] is missed."
-                    % (op_name, param_name),
+                    error_info, "In op[%s], the mandatory  parameter[%s] is missed." % (op_name, param_name)
                 )
             for one_input in op_param:
                 _check_input_output_dict(one_input, param_name, op_name)
@@ -540,16 +504,8 @@ def check_op_params(*type_args, **type_kwargs):
 
     def _check_attr(op_param, param_name, param_type, op_name=OP_NAME):
         if op_param is None and param_type in required_attr_params:
-            error_info = {
-                "errCode": OP_ERROR_CODE_001,
-                "op_name": op_name,
-                "param_name": param_name,
-            }
-            raise RuntimeError(
-                error_info,
-                "In op[%s], the mandatory parameter[%s] is missed."
-                % (op_name, param_name),
-            )
+            error_info = {"errCode": OP_ERROR_CODE_001, "op_name": op_name, "param_name": param_name}
+            raise RuntimeError(error_info, "In op[%s], the mandatory parameter[%s] is missed." % (op_name, param_name))
         if not op_param:
             return
 
@@ -641,8 +597,7 @@ def check_op_params(*type_args, **type_kwargs):
             raise RuntimeError(
                 error_info,
                 "In op[%s],kernel_name can only contain letters, numbers and "
-                "underscores, and begin with underscores or letters"
-                % (error_info["op_name"]),
+                "underscores, and begin with underscores or letters" % (error_info["op_name"]),
             )
 
     def _check_one_op_param(op_param, param_name, param_type, op_name=OP_NAME):
@@ -667,20 +622,13 @@ def check_op_params(*type_args, **type_kwargs):
             OP_NAME = func.__name__
             for i, one_args in enumerate(args):
                 op_name = func.__name__
-                _check_one_op_param(
-                    one_args,
-                    formal_parameter_list[i][0],
-                    formal_parameter_list[i][1],
-                    op_name,
-                )
+                _check_one_op_param(one_args, formal_parameter_list[i][0], formal_parameter_list[i][1], op_name)
 
             for arg_key in kwargs:
                 op_name = func.__name__
                 for name_type in formal_parameter_list:
                     if arg_key == name_type[0]:
-                        _check_one_op_param(
-                            kwargs[arg_key], arg_key, name_type[1], op_name
-                        )
+                        _check_one_op_param(kwargs[arg_key], arg_key, name_type[1], op_name)
                         break
 
             return func(*args, **kwargs)
@@ -691,12 +639,7 @@ def check_op_params(*type_args, **type_kwargs):
 
 
 def _check_range(
-    shape,
-    shape_range,
-    min_dim=0,
-    max_dim=RANK_LIMIT,
-    max_shape_num=MAX_UNKNOWN_SHAPE_NUM_INT64,
-    param_name=PARAM_NAME,
+    shape, shape_range, min_dim=0, max_dim=RANK_LIMIT, max_shape_num=MAX_UNKNOWN_SHAPE_NUM_INT64, param_name=PARAM_NAME
 ):
     """
     check rule for tensor shape
@@ -712,12 +655,7 @@ def _check_range(
         raise RuntimeError(
             error_info,
             "In op, the parameter[%s]'s type should be [%s],"
-            "but actually is [%s]."
-            % (
-                error_info["param_name"],
-                error_info["param_type"],
-                error_info["actual_type"],
-            ),
+            "but actually is [%s]." % (error_info["param_name"], error_info["param_type"], error_info["actual_type"]),
         )
     if len(shape) != len(shape_range):
         error_info = {
@@ -735,22 +673,13 @@ def _check_range(
 
     for range_i in shape_range:
         if len(range_i) != 2:
-            error_info = {
-                "errCode": OP_ERROR_CODE_023,
-                "op_name": OP_NAME,
-                "param_name": param_name,
-            }
+            error_info = {"errCode": OP_ERROR_CODE_023, "op_name": OP_NAME, "param_name": param_name}
             raise RuntimeError(
                 error_info,
-                "In op[%s],the length of each element in the range must be two"
-                % (error_info.get("op_name")),
+                "In op[%s],the length of each element in the range must be two" % (error_info.get("op_name")),
             )
 
-        if (
-            (range_i[1] is None)
-            and isinstance(range_i[0], int)
-            and 0 <= range_i[0] <= max_shape_num
-        ):
+        if (range_i[1] is None) and isinstance(range_i[0], int) and 0 <= range_i[0] <= max_shape_num:
             continue
         if not isinstance(range_i[0], int):
             error_info = {
@@ -764,11 +693,7 @@ def _check_range(
                 error_info,
                 "In op, the parameter[%s]'s type should be [%s], "
                 "but actually is [%s]."
-                % (
-                    error_info["param_name"],
-                    error_info["param_type"],
-                    error_info["actual_type"],
-                ),
+                % (error_info["param_name"], error_info["param_type"], error_info["actual_type"]),
             )
         if not isinstance(range_i[1], int):
             error_info = {
@@ -782,11 +707,7 @@ def _check_range(
                 error_info,
                 "In op, the parameter[%s]'s type should be [%s],"
                 "but actually is [%s]."
-                % (
-                    error_info["param_name"],
-                    error_info["param_type"],
-                    error_info["actual_type"],
-                ),
+                % (error_info["param_name"], error_info["param_type"], error_info["actual_type"]),
             )
         valid_type = isinstance(range_i[0], int) and isinstance(range_i[1], int)
         valid_range = 0 <= range_i[0] <= range_i[1] <= max_shape_num
@@ -807,18 +728,11 @@ def _check_range(
                 "In op, the dim of first range input[%s] is less than "
                 "that of the second range input[%s], and the dim of range "
                 "should be in the range of [%s, %s]."
-                % (
-                    error_info["first_real_value"],
-                    error_info["second_real_value"],
-                    0,
-                    max_shape_num,
-                ),
+                % (error_info["first_real_value"], error_info["second_real_value"], 0, max_shape_num),
             )
 
 
-def _check_dynamic_shape(
-    shape, max_dim=DIM_LIMIT_INT64, max_rank=RANK_LIMIT, param_name=PARAM_NAME
-):
+def _check_dynamic_shape(shape, max_dim=DIM_LIMIT_INT64, max_rank=RANK_LIMIT, param_name=PARAM_NAME):
     _check_shape_range(max_rank, MIN_UNKNOWN_SHAPE_RANK, param_name, shape)
     for _, dim in enumerate(shape):
         valid_dim = -2 <= dim <= max_dim
@@ -865,12 +779,7 @@ def check_shape(
         raise RuntimeError(
             error_info,
             "In op, the parameter[%s]'s type should be [%s], "
-            "but actually is [%s]."
-            % (
-                error_info["param_name"],
-                error_info["param_type"],
-                error_info["actual_type"],
-            ),
+            "but actually is [%s]." % (error_info["param_name"], error_info["param_type"], error_info["actual_type"]),
         )
 
     for dim in shape:
@@ -886,11 +795,7 @@ def check_shape(
                 error_info,
                 "In op, the parameter[%s]'s type should be [%s],  "
                 "but actually is [%s]."
-                % (
-                    error_info["param_name"],
-                    error_info["param_type"],
-                    error_info["actual_type"],
-                ),
+                % (error_info["param_name"], error_info["param_type"], error_info["actual_type"]),
             )
 
     if in_dynamic():
@@ -945,6 +850,5 @@ def _check_shape_range(max_rank, min_rank, param_name, shape):
         raise RuntimeError(
             error_info,
             "In op, the num of dimensions of input/output[%s] should be in "
-            "the range of [%s, %s], but actually is [%s]."
-            % (error_info["param_name"], min_rank, max_rank, len(shape)),
+            "the range of [%s, %s], but actually is [%s]." % (error_info["param_name"], min_rank, max_rank, len(shape)),
         )

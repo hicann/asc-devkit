@@ -32,9 +32,7 @@ def get_ascendc_section(soc_version: str, target_name: str) -> str:
     return rf".ascend.kernel.{soc_version}.{target_name}"
 
 
-def update_source_section(
-    origin_content: str, soc_version: str, target_name: str
-) -> str:
+def update_source_section(origin_content: str, soc_version: str, target_name: str) -> str:
     update_content = origin_content
 
     ascendc_kernel = get_ascendc_kernel(soc_version, target_name)
@@ -46,9 +44,7 @@ def update_source_section(
     update_content = re.sub(replaced_ascend_section, ascendc_section, update_content)
 
     replaced_ascend_kernel_soc_version = "__replaced_ascend_compile_soc_version"
-    update_content = re.sub(
-        replaced_ascend_kernel_soc_version, soc_version, update_content
-    )
+    update_content = re.sub(replaced_ascend_kernel_soc_version, soc_version, update_content)
 
     return update_content
 

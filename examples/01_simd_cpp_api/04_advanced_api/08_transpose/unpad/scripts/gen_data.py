@@ -22,9 +22,7 @@ def gen_golden_data_simple():
     output_shape = [8, 7]
     output_dtype = np.float32
 
-    input = np.arange(0, input_shape[0] * input_shape[1], 1, input_dtype).reshape(
-        input_shape[0], input_shape[1]
-    )
+    input = np.arange(0, input_shape[0] * input_shape[1], 1, input_dtype).reshape(input_shape[0], input_shape[1])
 
     golden = np.zeros((output_shape[0], output_shape[1]), dtype=input_dtype)
 

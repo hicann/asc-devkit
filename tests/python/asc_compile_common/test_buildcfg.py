@@ -34,17 +34,10 @@ class TestBuildcfg(unittest.TestCase):
 
     def test_default_build_cfg(self):
         self.assertEqual(buildcfg.get_default_build_config("dynamic_shape"), False)
-        self.assertEqual(
-            buildcfg.get_default_build_config("bool_storage_as_1bit"), True
-        )
-        self.assertEqual(
-            buildcfg.get_default_build_config("enable_mask_counter_mode"),
-            "default_normal",
-        )
+        self.assertEqual(buildcfg.get_default_build_config("bool_storage_as_1bit"), True)
+        self.assertEqual(buildcfg.get_default_build_config("enable_mask_counter_mode"), "default_normal")
         self.assertEqual(buildcfg.get_default_build_config()["dump_ir"], False)
-        self.assertEqual(
-            buildcfg.get_default_build_config("all")["tik_debug_context_id"], -1
-        )
+        self.assertEqual(buildcfg.get_default_build_config("all")["tik_debug_context_id"], -1)
         self.assertEqual(buildcfg.get_default_build_config("tir.test"), None)
 
     def test_current_build_cfg(self):
@@ -53,17 +46,11 @@ class TestBuildcfg(unittest.TestCase):
         buildcfg.set_current_build_config("early_start_mode", "enable")
         buildcfg.set_current_build_config("tir.test", "test")
         self.assertEqual(buildcfg.get_current_build_config("dynamic_shape"), True)
-        self.assertEqual(
-            buildcfg.get_current_build_config("bool_storage_as_1bit"), False
-        )
-        self.assertEqual(
-            buildcfg.get_current_build_config("early_start_mode"), "enable"
-        )
+        self.assertEqual(buildcfg.get_current_build_config("bool_storage_as_1bit"), False)
+        self.assertEqual(buildcfg.get_current_build_config("early_start_mode"), "enable")
         self.assertEqual(buildcfg.get_current_build_config("tir.test"), None)
         buildcfg.set_current_build_config("tir.is_dynamic_shape", False)
-        self.assertEqual(
-            buildcfg.get_current_build_config("tir.is_dynamic_shape"), False
-        )
+        self.assertEqual(buildcfg.get_current_build_config("tir.is_dynamic_shape"), False)
         self.assertEqual(buildcfg.get_current_build_config("dynamic_shape"), False)
         self.assertEqual(buildcfg.get_current_build_config()["is_dynamic_shape"], False)
 

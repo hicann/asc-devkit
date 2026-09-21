@@ -81,18 +81,14 @@ def test_kernel_json_option_writes_opc_kernel_config(tmp_path):
 
 def test_kernel_sources_no_longer_handles_binary_json():
     source = (FWK_MODULES_DIR / "func.cmake").read_text(encoding="utf-8")
-    kernel_sources = source.split("function(npu_op_kernel_sources target_name)", 1)[
-        1
-    ].split("endfunction()", 1)[0]
+    kernel_sources = source.split("function(npu_op_kernel_sources target_name)", 1)[1].split("endfunction()", 1)[0]
 
     assert "BINARY_JSON" not in kernel_sources
     assert "--simplified_key_mode=None" not in kernel_sources
 
 
 def test_without_kernel_json_option_keeps_existing_path(tmp_path):
-    result, _, build_dir = _configure(
-        tmp_path, "OP_TYPE AddCustomTemplate KERNEL_FILE kernel.cpp"
-    )
+    result, _, build_dir = _configure(tmp_path, "OP_TYPE AddCustomTemplate KERNEL_FILE kernel.cpp")
 
     assert result.returncode == 0, result.stdout
     assert (build_dir / "autogen/custom_opc_options.ini").read_text() == ""

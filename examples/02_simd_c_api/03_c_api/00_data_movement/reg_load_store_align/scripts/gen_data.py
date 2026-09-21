@@ -31,9 +31,7 @@ def generate_golden(scenario_num, src0, src1):
     if scenario_num == 4:
         return (src0 + src1).reshape(INPUT_LENGTH // 32, 32)[:, :16].reshape(-1)
     if scenario_num == 5:
-        return np.repeat(
-            src0[::VECTOR_LENGTH] + src1[::VECTOR_LENGTH], VECTOR_LENGTH
-        ).astype(np.float16)
+        return np.repeat(src0[::VECTOR_LENGTH] + src1[::VECTOR_LENGTH], VECTOR_LENGTH).astype(np.float16)
     return np.repeat(src0 + src1, 2).astype(np.float16)
 
 

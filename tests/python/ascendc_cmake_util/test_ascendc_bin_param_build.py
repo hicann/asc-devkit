@@ -63,15 +63,9 @@ def test_op_specific_config_overrides_all_config(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     op_desc = _FakeOpDesc()
-    monkeypatch.setattr(
-        ascendc_bin_param_build.opdesc_parser,
-        "get_op_desc",
-        lambda *_args, **_kwargs: [op_desc],
-    )
+    monkeypatch.setattr(ascendc_bin_param_build.opdesc_parser, "get_op_desc", lambda *_args, **_kwargs: [op_desc])
 
-    ascendc_bin_param_build.gen_bin_param_file(
-        str(cfg_file), str(tmp_path), "ascend910b", str(opc_file)
-    )
+    ascendc_bin_param_build.gen_bin_param_file(str(cfg_file), str(tmp_path), "ascend910b", str(opc_file))
 
     assert op_desc.final_json_file == "/op.json"
     assert op_desc.simplified_key_mode == 1
@@ -84,40 +78,22 @@ def test_build_command_passes_default_numeric_mode(tmp_path):
     builder.soc = "ascend910b"
     builder.out_path = str(tmp_path)
 
-    builder._write_build_cmd(
-        str(tmp_path / "param.json"),
-        "AddCustomTemplate_FP16",
-        0,
-        str(tmp_path),
-    )
+    builder._write_build_cmd(str(tmp_path / "param.json"), "AddCustomTemplate_FP16", 0, str(tmp_path))
 
-    command = (tmp_path / "AddCustomTemplate-add_custom_template-0.sh").read_text(
-        encoding="utf-8"
-    )
+    command = (tmp_path / "AddCustomTemplate-add_custom_template-0.sh").read_text(encoding="utf-8")
     assert "--simplified_key_mode=0" in command
     assert "--simplified_key_mode=None" not in command
 
 
-def test_kernel_json_without_simplified_key_keeps_legacy_behavior(
-    tmp_path, monkeypatch
-):
+def test_kernel_json_without_simplified_key_keeps_legacy_behavior(tmp_path, monkeypatch):
     json_file = tmp_path / "legacy.json"
     json_file.write_text(
-        json.dumps(
-            {
-                "op_type": "AddCustomTemplate",
-                "op_list": [{"bin_filename": "AddCustomTemplate_FP16"}],
-            }
-        ),
+        json.dumps({"op_type": "AddCustomTemplate", "op_list": [{"bin_filename": "AddCustomTemplate_FP16"}]}),
         encoding="utf-8",
     )
     builder = ascendc_bin_param_build.BinParamBuilder("AddCustomTemplate")
     build_commands = []
-    monkeypatch.setattr(
-        builder,
-        "_write_build_cmd",
-        lambda *args: build_commands.append(args),
-    )
+    monkeypatch.setattr(builder, "_write_build_cmd", lambda *args: build_commands.append(args))
 
     builder.gen_input_json_based_on_specified_json(str(json_file), str(tmp_path))
 

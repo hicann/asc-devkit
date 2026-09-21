@@ -18,9 +18,7 @@ import numpy as np
 
 def numpy_fmod(src0_gm, src1_gm):
     new_dtype = np.float32
-    golden = np.fmod(src0_gm.astype(new_dtype), src1_gm.astype(new_dtype)).astype(
-        src0_gm.dtype
-    )
+    golden = np.fmod(src0_gm.astype(new_dtype), src1_gm.astype(new_dtype)).astype(src0_gm.dtype)
     return golden
 
 

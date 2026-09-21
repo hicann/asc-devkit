@@ -170,9 +170,7 @@ def get_int64_mode(inputs_or_outputs) -> bool:
             return True
 
         if data_size is None:
-            logger.warn(
-                "Data type[%s] is not support.", in_or_out.get(CompileParam.DTYPE, "")
-            )
+            logger.warn("Data type[%s] is not support.", in_or_out.get(CompileParam.DTYPE, ""))
             return True
 
         if shape_sum[0] * data_size > INT32_MAX:
@@ -213,11 +211,7 @@ def modify_except_msg(evalue):
     """
     modify except msg 'No space left on device' to 'No space left on disk'
     """
-    if (
-        evalue
-        and hasattr(evalue, "strerror")
-        and evalue.strerror == "No space left on device"
-    ):
+    if evalue and hasattr(evalue, "strerror") and evalue.strerror == "No space left on device":
         evalue.strerror = "No space left on disk"
 
 
@@ -343,11 +337,7 @@ def check_and_normalize_impl_mode(impl_mode):
 
 def normalize_optional_impl_mode(impl_mode_cfg):
     impl_mode_list = impl_mode_cfg.split(",", -1)
-    impl_mode_strip_list = [
-        impl_mode.strip()
-        for impl_mode in impl_mode_list
-        if OpImplType.OPTIONAL not in impl_mode
-    ]
+    impl_mode_strip_list = [impl_mode.strip() for impl_mode in impl_mode_list if OpImplType.OPTIONAL not in impl_mode]
     impl_mode_str = ",".join(impl_mode_strip_list)
     logger.debug("impl_mode_str[%s].", impl_mode_str)
     return impl_mode_str
@@ -372,9 +362,7 @@ def update_json_file(key, value, json_path):
         # read json file
         with open(json_path, "r") as file_in:
             # Only the owner and group have rights
-            os.chmod(
-                json_path, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR
-            )
+            os.chmod(json_path, stat.S_IWGRP + stat.S_IWUSR + stat.S_IRGRP + stat.S_IRUSR)
             json_info = json.load(file_in)
 
         # update value
@@ -394,9 +382,7 @@ def generate_attrs_value_list(attrs_dict, attrs_value_list):
         if CompileParam.VALUE_RANGE in value:
             attr_dict = {}
             attr_dict[CompileParam.VALUE_RANGE] = value.get(CompileParam.VALUE_RANGE)
-            attr_dict[CompileParam.RANGE_MODE] = value.get(
-                CompileParam.RANGE_MODE, None
-            )
+            attr_dict[CompileParam.RANGE_MODE] = value.get(CompileParam.RANGE_MODE, None)
             attrs_value_list.append(attr_dict)
         elif CompileParam.VALUE_LIST in value:
             attr_dict = {}
@@ -406,9 +392,7 @@ def generate_attrs_value_list(attrs_dict, attrs_value_list):
             attrs_value_list.append(value.get(CompileParam.VALUE))
 
 
-def record_attrs_value_list(
-    value_range, value_list, range_mode, value, attrs_value_list
-):
+def record_attrs_value_list(value_range, value_list, range_mode, value, attrs_value_list):
     new_attr_info = dict()
     if value_range:
         new_attr_info[CompileParam.VALUE_RANGE] = value_range
@@ -436,9 +420,7 @@ def get_new_attrs_for_op_compile(op_node, op_func, op_compile_mode):
         if isinstance(attr, dict):
             attrs_dict.update({attr.get(CompileParam.NAME): attr})
         else:
-            raise RuntimeError(
-                "type of attr should be dict, but it is [{}].".format(str(type(attr)))
-            )
+            raise RuntimeError("type of attr should be dict, but it is [{}].".format(str(type(attr))))
 
     attrs_value_list = []
     if (
@@ -467,11 +449,7 @@ def record_real_attrs(params, attrs_dict, attrs_value_list):
     var_attrs = attrs_dict.get(GraphDefParam.VAR_ATTRS, {}).get(CompileParam.VALUE, [])
     for name, value in params.items():
         if str(name) == OpcOptions.KERNEL_NAME:
-            logger.debug(
-                "{} not belong to attrs, should not be added to new_attrs.".format(
-                    str(name)
-                )
-            )
+            logger.debug("{} not belong to attrs, should not be added to new_attrs.".format(str(name)))
             break
 
         attr_info = attrs_dict.get(name, None)
@@ -482,10 +460,7 @@ def record_real_attrs(params, attrs_dict, attrs_value_list):
                 continue
 
             # in var_attrs but not value_range/value_list
-            if (
-                attr_info.get(CompileParam.VALUE_RANGE) is None
-                and attr_info.get(CompileParam.VALUE_LIST) is None
-            ):
+            if attr_info.get(CompileParam.VALUE_RANGE) is None and attr_info.get(CompileParam.VALUE_LIST) is None:
                 attrs_value_list.append(None)
                 attr_info[CompileParam.VALUE] = None
                 op_attrs.append(attr_info)
@@ -513,12 +488,7 @@ def update_compile_info(json_file_path, compile_info):
     """
     update compile info into json file if necessary
     """
-    opc_log_full(
-        LogLevel.DEBUG,
-        "json_file_path = %s, compile_info = %s.",
-        json_file_path,
-        compile_info,
-    )
+    opc_log_full(LogLevel.DEBUG, "json_file_path = %s, compile_info = %s.", json_file_path, compile_info)
     if not json_file_path:
         return
 
@@ -533,16 +503,11 @@ def update_compile_info(json_file_path, compile_info):
 
         # update compile info if necessary
         if "compileInfo" not in json_content:
-            logger.warn(
-                "[update_compile_info]: update compile info into json file path: %s.",
-                json_file_path,
-            )
+            logger.warn("[update_compile_info]: update compile info into json file path: %s.", json_file_path)
             json_content["compileInfo"] = compile_info
 
             with open(json_file_path, "w") as fw:
-                json.dump(
-                    json_content, fw, sort_keys=True, indent=4, separators=(",", ":")
-                )
+                json.dump(json_content, fw, sort_keys=True, indent=4, separators=(",", ":"))
     except Exception as e:
         logger.error("update_compile_info failed with error message: %s.", str(e))
 
@@ -615,10 +580,7 @@ def attrs_from_string_to_str(attrs):
 def check_and_generate_single_attr_for_simpilified_key(dtype, value, attr_str):
     if (dtype != "bool") and (dtype != "string"):
         if value is not None:
-            logger.warn(
-                "dtype[%s] has non-null value, and simplified key won't be generated",
-                dtype,
-            )
+            logger.warn("dtype[%s] has non-null value, and simplified key won't be generated", dtype)
             return True, attr_str
         else:
             attr_str += ","
@@ -665,9 +627,7 @@ def check_attr_for_simpilified_key(attrs):
         valid_keys = ["name", "dtype", "value"]
         for key in attr.keys():
             if key not in valid_keys:
-                logger.warn(
-                    "invalid key: %s, and simplified key won't be generated", key
-                )
+                logger.warn("invalid key: %s, and simplified key won't be generated", key)
                 has_invalid_option = True
                 break
 
@@ -677,9 +637,7 @@ def check_attr_for_simpilified_key(attrs):
         if value is not None:
             has_non_null_value = True
 
-        has_invalid_option, attr_str = (
-            check_and_generate_single_attr_for_simpilified_key(dtype, value, attr_str)
-        )
+        has_invalid_option, attr_str = check_and_generate_single_attr_for_simpilified_key(dtype, value, attr_str)
         if has_invalid_option:
             break
 
@@ -693,9 +651,7 @@ def check_attr_for_simpilified_key(attrs):
     return has_invalid_option, has_non_null_value, attr_str
 
 
-def check_single_input_or_output_for_simplified_key(
-    input_or_output, has_invalid_option
-):
+def check_single_input_or_output_for_simplified_key(input_or_output, has_invalid_option):
     if check_single_input_or_output_dtype_for_simplified_key(
         input_or_output
     ) or check_single_input_or_output_format_for_simplified_key(input_or_output):
@@ -712,20 +668,14 @@ def check_single_input_or_output_dtype_for_simplified_key(input_or_output):
 
     dtype_match_mode = input_or_output.get(CompileParam.DTYPE_MATCH_MODE)
     if dtype_match_mode not in valid_dtype_match_mode:
-        logger.warn(
-            "invalid dtype_match_mode: %s, will not generate siplified key.",
-            dtype_match_mode,
-        )
+        logger.warn("invalid dtype_match_mode: %s, will not generate siplified key.", dtype_match_mode)
         return True
 
     dtype_for_bin_query = input_or_output.get(CompileParam.DTYPE_FOR_BIN_QUERY)
     if dtype_for_bin_query is not None:
         for dtype in dtype_for_bin_query:
             if dtype not in OpDataType.DtypeValueDict.keys():
-                logger.warn(
-                    "invalid dtype: %s in dtypeForBinQuery, will not generate simplified key.",
-                    dtype,
-                )
+                logger.warn("invalid dtype: %s in dtypeForBinQuery, will not generate simplified key.", dtype)
                 return True
     return False
 
@@ -738,27 +688,19 @@ def check_single_input_or_output_format_for_simplified_key(input_or_output):
 
     format_match_mode = input_or_output.get(CompileParam.FORMAT_MATCH_MODE)
     if format_match_mode not in valid_format_match_mode:
-        logger.warn(
-            "invalid format_match_mode: %s, will not generate siplified key.",
-            format_match_mode,
-        )
+        logger.warn("invalid format_match_mode: %s, will not generate siplified key.", format_match_mode)
         return True
 
     format_mode = input_or_output.get(CompileParam.FORMAT_MODE)
     if format_mode not in valid_format_mode:
-        logger.warn(
-            "invalid formatMode: %s, will not generate siplified key.", format_mode
-        )
+        logger.warn("invalid formatMode: %s, will not generate siplified key.", format_mode)
         return True
 
     format_for_bin_query = input_or_output.get(CompileParam.FORMAT_FOR_BIN_QUERY)
     if format_for_bin_query is not None:
         for format in format_for_bin_query:
             if format not in OpFormatType.FormatValueDict.keys():
-                logger.warn(
-                    "invalid format: %s in formatForBinQuery, will not generate simplified key.",
-                    format,
-                )
+                logger.warn("invalid format: %s in formatForBinQuery, will not generate simplified key.", format)
                 return True
 
     return False
@@ -787,9 +729,7 @@ def check_input_or_output_for_simplified_key(inputs_or_outputs, is_input):
         if isinstance(input_or_output, list):
             if len(input_or_output) == 0:
                 has_invalid_option = True
-                logger.warn(
-                    "dynamic param count is 0, will not generate simplified key."
-                )
+                logger.warn("dynamic param count is 0, will not generate simplified key.")
                 break
             has_dynamic_param = True
             input_or_output = input_or_output[0]
@@ -810,16 +750,12 @@ def check_input_or_output_for_simplified_key(inputs_or_outputs, is_input):
             flag = (len(shape) != 1) or (shape[0] != -2)
             if flag:
                 has_invalid_option = True
-                logger.warn(
-                    "invalid shape: %s, will not generate simplified key.", str(shape)
-                )
+                logger.warn("invalid shape: %s, will not generate simplified key.", str(shape))
         else:
             has_invalid_option = True
             break
 
-        has_invalid_option = check_single_input_or_output_for_simplified_key(
-            input_or_output, has_invalid_option
-        )
+        has_invalid_option = check_single_input_or_output_for_simplified_key(input_or_output, has_invalid_option)
         if has_invalid_option:
             break
         param_type = input_or_output.get(CompileParam.PARAM_TYPE)
@@ -844,19 +780,14 @@ def check_input_or_output_for_simplified_key(inputs_or_outputs, is_input):
 
 
 def check_input_and_output_for_simplified_key(op):
-    has_invalid_option, has_dynamic_param_input, has_optional_input = (
-        check_input_or_output_for_simplified_key(op.get(CompileParam.INPUTS), True)
+    has_invalid_option, has_dynamic_param_input, has_optional_input = check_input_or_output_for_simplified_key(
+        op.get(CompileParam.INPUTS), True
     )
 
-    has_invalid_option, has_dynamic_param_output, has_optional_output = (
-        check_input_or_output_for_simplified_key(op.get(CompileParam.OUTPUTS), False)
+    has_invalid_option, has_dynamic_param_output, has_optional_output = check_input_or_output_for_simplified_key(
+        op.get(CompileParam.OUTPUTS), False
     )
 
     has_dynamic_param = has_dynamic_param_input or has_dynamic_param_output
-    res_tuple = (
-        has_invalid_option,
-        has_dynamic_param,
-        has_optional_input,
-        has_optional_output,
-    )
+    res_tuple = (has_invalid_option, has_dynamic_param, has_optional_input, has_optional_output)
     return res_tuple

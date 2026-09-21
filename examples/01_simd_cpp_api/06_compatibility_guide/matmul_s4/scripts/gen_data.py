@@ -20,12 +20,8 @@ def split_and_reorder(data):
     data_uint8 = data.astype(np.uint8)
     low_bits_unsigned = data_uint8 & 0x0F
     high_bits_unsigned = (data_uint8 >> 4) & 0x0F
-    low_bits_signed = np.where(
-        low_bits_unsigned > 7, low_bits_unsigned - 16, low_bits_unsigned
-    )
-    high_bits_signed = np.where(
-        high_bits_unsigned > 7, high_bits_unsigned - 16, high_bits_unsigned
-    )
+    low_bits_signed = np.where(low_bits_unsigned > 7, low_bits_unsigned - 16, low_bits_unsigned)
+    high_bits_signed = np.where(high_bits_unsigned > 7, high_bits_unsigned - 16, high_bits_unsigned)
     result = np.empty(len(data) * 2, dtype=np.int8)
     result[0::2] = low_bits_signed
     result[1::2] = high_bits_signed
@@ -113,9 +109,7 @@ def gen_golden_data_simple():
         0,
     ]
 
-    golden = np.matmul(
-        x1_gm_unzipped.astype(np.int32), x2_gm_unzipped.astype(np.int32)
-    ).astype(l0c_type)
+    golden = np.matmul(x1_gm_unzipped.astype(np.int32), x2_gm_unzipped.astype(np.int32)).astype(l0c_type)
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

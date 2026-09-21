@@ -26,21 +26,13 @@ def verify_result(scenario_num, output_path, golden_path):
     output = np.fromfile(output_path, dtype=output_dtype).reshape(-1)
     golden = np.fromfile(golden_path, dtype=output_dtype).reshape(-1)
     if output.size != golden.size:
-        print(
-            "element count mismatch: expected %d, actual %d"
-            % (golden.size, output.size)
-        )
+        print("element count mismatch: expected %d, actual %d" % (golden.size, output.size))
         return False
 
-    match = np.isclose(
-        output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True
-    )
+    match = np.isclose(output, golden, rtol=RELATIVE_TOL, atol=ABSOLUTE_TOL, equal_nan=True)
     mismatch_indices = np.where(~match)[0]
     for index in mismatch_indices[:101]:
-        print(
-            "data index: %06d, expected: %-.9f, actual: %-.9f"
-            % (index, golden[index], output[index])
-        )
+        print("data index: %06d, expected: %-.9f, actual: %-.9f" % (index, golden[index], output[index]))
     error_ratio = float(mismatch_indices.size) / golden.size
     return error_ratio <= ERROR_TOL
 

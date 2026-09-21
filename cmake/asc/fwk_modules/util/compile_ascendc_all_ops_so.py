@@ -59,25 +59,15 @@ clean:
 
 def args_parse():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-s", "--src-file", nargs="*", required=True, help="input src files"
-    )
+    parser.add_argument("-s", "--src-file", nargs="*", required=True, help="input src files")
     parser.add_argument("-d", "--output-dir", required=True, help="output dir")
     parser.add_argument("-o", "--output", required=True, help="output")
     parser.add_argument("-p", "--cann-path", required=True, help="cann path")
-    parser.add_argument(
-        "-j", "--parallel-jobs", required=False, help="compile parallel jobs"
-    )
-    parser.add_argument(
-        "-c", "--compile-options", nargs="*", required=False, help="compile options"
-    )
-    parser.add_argument(
-        "-l", "--link-options", nargs="*", required=False, help="compile options"
-    )
+    parser.add_argument("-j", "--parallel-jobs", required=False, help="compile parallel jobs")
+    parser.add_argument("-c", "--compile-options", nargs="*", required=False, help="compile options")
+    parser.add_argument("-l", "--link-options", nargs="*", required=False, help="compile options")
 
-    parser.add_argument(
-        "-c++", "--cxx-compiler", required=False, help="compile options"
-    )
+    parser.add_argument("-c++", "--cxx-compiler", required=False, help="compile options")
     return parser.parse_args()
 
 

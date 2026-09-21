@@ -53,12 +53,8 @@ class TestCcec(unittest.TestCase):
     def test_get_and_set(self, get_soc_spec_mock):
         self.assertEqual(current_build_config()[dynamic_shape], False)
         switching_compilation_mode()
-        self.assertEqual(
-            _set_vector_fp_ceiling([]), ["-mllvm", "-cce-aicore-fp-ceiling=2"]
-        )
-        self.assertEqual(
-            _set_cce_overflow([]), ["-mllvm", "-cce-aicore-record-overflow=false"]
-        )
+        self.assertEqual(_set_vector_fp_ceiling([]), ["-mllvm", "-cce-aicore-fp-ceiling=2"])
+        self.assertEqual(_set_cce_overflow([]), ["-mllvm", "-cce-aicore-record-overflow=false"])
         get_soc_spec_mock.return_value = ASCEND_031
         self.assertEqual(check_is_regbase_v2(), True)
         get_soc_spec_mock.return_value = ASCEND_910B

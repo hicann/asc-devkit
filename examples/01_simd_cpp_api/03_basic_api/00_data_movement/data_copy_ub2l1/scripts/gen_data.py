@@ -22,9 +22,7 @@ def nd_to_nz(data_nd, c0size=16):
     与仓库中其他matmul样例使用相同的标准NZ转换。
     """
     rows, cols = data_nd.shape
-    data_nz = data_nd.reshape(
-        (int(rows / 16), 16, int(cols / c0size), c0size)
-    ).transpose(2, 0, 1, 3)
+    data_nz = data_nd.reshape((int(rows / 16), 16, int(cols / c0size), c0size)).transpose(2, 0, 1, 3)
     return data_nz
 
 
@@ -45,9 +43,7 @@ def gen_golden_data_simple(scenarioNum=1):
     x2_nz = nd_to_nz(x2_nd)
 
     # 计算golden数据（使用ND格式计算）
-    golden = (np.matmul(x1_nd.astype(np.float32), x2_nd.astype(np.float32))).astype(
-        np.float32
-    )
+    golden = (np.matmul(x1_nd.astype(np.float32), x2_nd.astype(np.float32))).astype(np.float32)
 
     if scenarioNum == 1:
         # 保存NZ格式的输入数据

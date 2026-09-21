@@ -46,9 +46,7 @@ def gen_golden_data(scenarioNum=1):
     golden = np.zeros([1, dst_length]).astype(input_type)
 
     for i in range(block_num):
-        block_data = input_x[
-            0, i * one_data_block_items : (i + 1) * one_data_block_items
-        ]
+        block_data = input_x[0, i * one_data_block_items : (i + 1) * one_data_block_items]
         if scenarioNum == 1:
             golden[0, i] = np.max(block_data)
         elif scenarioNum == 2:

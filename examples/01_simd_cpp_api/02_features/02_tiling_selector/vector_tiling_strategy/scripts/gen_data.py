@@ -17,12 +17,7 @@ import argparse
 import numpy as np
 
 
-SCENARIO_LENGTHS = {
-    0: 256000,
-    1: 260096,
-    2: 256064,
-    3: 258112,
-}
+SCENARIO_LENGTHS = {0: 256000, 1: 260096, 2: 256064, 3: 258112}
 
 
 def gen_golden_data_simple(scenario):

@@ -54,9 +54,7 @@ def main():
             with open(changed_files_arg, "r") as f:
                 changed_files = [line.strip() for line in f.readlines() if line.strip()]
         elif "," in changed_files_arg:
-            changed_files = [
-                f.strip() for f in changed_files_arg.split(",") if f.strip()
-            ]
+            changed_files = [f.strip() for f in changed_files_arg.split(",") if f.strip()]
         else:
             changed_files = [changed_files_arg.strip()]
     except BaseException:

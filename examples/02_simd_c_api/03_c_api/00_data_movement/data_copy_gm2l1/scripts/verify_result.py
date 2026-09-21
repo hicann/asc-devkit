@@ -26,9 +26,7 @@ def verify_result(output_path, golden_path):
     output_size = os.path.getsize(output_path)
     golden_size = os.path.getsize(golden_path)
     if output_size != golden_size:
-        print(
-            "output and golden file sizes differ: %d != %d" % (output_size, golden_size)
-        )
+        print("output and golden file sizes differ: %d != %d" % (output_size, golden_size))
         return False
     if golden_size == 0:
         print("output and golden files are empty")
@@ -39,17 +37,12 @@ def verify_result(output_path, golden_path):
         golden = np.fromfile(golden_path, dtype=np.int8).reshape(-1)
         different_element_indexes = np.where(output != golden)[0]
         for real_index in different_element_indexes[:101]:
-            print(
-                "data index: %06d, expected: %d, actual: %d"
-                % (real_index, golden[real_index], output[real_index])
-            )
+            print("data index: %06d, expected: %d, actual: %d" % (real_index, golden[real_index], output[real_index]))
         return different_element_indexes.size == 0
 
     output = np.fromfile(output_path, dtype=np.float32).reshape(-1)
     golden = np.fromfile(golden_path, dtype=np.float32).reshape(-1)
-    different_element_results = np.isclose(
-        output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True
-    )
+    different_element_results = np.isclose(output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(len(different_element_indexes)):
         real_index = different_element_indexes[index]

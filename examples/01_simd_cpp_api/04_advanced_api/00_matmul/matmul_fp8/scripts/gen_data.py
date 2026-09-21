@@ -49,10 +49,7 @@ def tf_matmul(x1_gm_fp32, x2_gm_fp32, bias_gm_fp32=None):
         res_tf = tf.add(res_tf, bias)
 
     with tf.compat.v1.Session() as sess:
-        feed_dict = {
-            x1: x1_gm_fp32,
-            x2: x2_gm_fp32,
-        }
+        feed_dict = {x1: x1_gm_fp32, x2: x2_gm_fp32}
         if is_bias:
             feed_dict[bias] = bias_gm_fp32
         res_tf = sess.run(res_tf, feed_dict=feed_dict)
@@ -189,12 +186,6 @@ def gen_golden_data_fp8(work_dir, data_type_str, dst_type=np.float32):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-scenarioNum",
-        type=int,
-        default=1,
-        choices=[0, 1, 2, 3, 4],
-        help="Scenario number: 0 ~ 4",
-    )
+    parser.add_argument("-scenarioNum", type=int, default=1, choices=[0, 1, 2, 3, 4], help="Scenario number: 0 ~ 4")
     args = parser.parse_args()
     gen_golden_data(".", args.scenarioNum)

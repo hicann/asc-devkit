@@ -21,9 +21,7 @@ ELEMENT_COUNT = 64
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate deterministic reduce input and golden data."
-    )
+    parser = argparse.ArgumentParser(description="Generate deterministic reduce input and golden data.")
     parser.add_argument("-scenario_num", type=int, choices=[1, 2], default=1)
     args = parser.parse_args()
 
@@ -32,9 +30,7 @@ def main():
     input_dir.mkdir(exist_ok=True)
     output_dir.mkdir(exist_ok=True)
 
-    input_data = (np.arange(ELEMENT_COUNT, dtype=np.float32) % 16 + 1).astype(
-        np.float32
-    )
+    input_data = (np.arange(ELEMENT_COUNT, dtype=np.float32) % 16 + 1).astype(np.float32)
     if args.scenario_num == 1:
         golden = np.array([np.sum(input_data, dtype=np.float32)], dtype=np.float32)
     else:

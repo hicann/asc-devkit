@@ -19,19 +19,9 @@ import numpy as np
 def gen_golden_data_simple():
     input_shape_x = [128, 128]
     input_shape_y = [128, 256]
-    input_x = (
-        np.arange(1, input_shape_x[0] * input_shape_x[1] + 1)
-        .astype(np.half)
-        .reshape(input_shape_x)
-    )
-    input_y = (
-        np.arange(1, input_shape_y[0] * input_shape_y[1] + 1)
-        .astype(np.half)
-        .reshape(input_shape_y)
-    )
-    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(
-        np.float32
-    )
+    input_x = np.arange(1, input_shape_x[0] * input_shape_x[1] + 1).astype(np.half).reshape(input_shape_x)
+    input_y = np.arange(1, input_shape_y[0] * input_shape_y[1] + 1).astype(np.half).reshape(input_shape_y)
+    golden = np.matmul(input_x.astype(np.float32), input_y.astype(np.float32)).astype(np.float32)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     input_x.tofile("./input/input_x.bin")
