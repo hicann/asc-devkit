@@ -24,6 +24,7 @@
 #include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
 #include "tensor_api/utils/utils.h"
+#include "tensor_api/utils/print.h"
 #include "tensor_api/arch/arch.h"
 #include "tensor_api/atom/atom.h"
 #include "tensor_api/algorithm/copy.h"

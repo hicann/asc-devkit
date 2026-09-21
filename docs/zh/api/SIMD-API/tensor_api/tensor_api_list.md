@@ -153,6 +153,7 @@
 | [维度保留标记](utils/dimension_keep_mark.md) | 提供用于标记维度保留行为的类型和常量。 |
 | [get_layout_pattern](utils/get_layout_pattern.md) | 从Layout类型中提取Layout Pattern类型信息。 |
 | [类型判断与提取工具](utils/type_traits.md) | 提供Layout、Tensor、Coord、Shape、量化参数等类型判断工具。 |
+| [print打印接口](utils/print.md) | 提供Tensor API调试场景下的格式化、Layout表格和Tensor元素打印能力。 |
 
 ## 废弃接口
 

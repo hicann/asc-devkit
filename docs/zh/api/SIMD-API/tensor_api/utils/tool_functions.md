@@ -4,5 +4,6 @@
 
 - **[get_layout_pattern](get_layout_pattern.md)**
 - **[类型判断与提取工具](type_traits.md)**
+- **[print打印接口](print.md)**
 - **[编译期整型别名](compile_time_integer_aliases.md)**
 - **[维度保留标记](dimension_keep_mark.md)**
