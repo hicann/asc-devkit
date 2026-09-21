@@ -783,6 +783,8 @@
 | [__umulhi](../math_functions/integer_math_functions/__umulhi.md) | 获取输入uint32类型数据x和y乘积的高32位。 |
 | [__mul64hi](../math_functions/integer_math_functions/__mul64hi.md) | 获取输入int64类型数据x和y乘积的高64位。 |
 | [__umul64hi](../math_functions/integer_math_functions/__umul64hi.md) | 获取输入uint64类型数据x和y乘积的高64位。 |
+| [asc_uintdiv](../math_functions/integer_math_functions/asc_uintdiv.md) | 使用magic和shift参数执行快速无符号除法。 |
+| [asc_get_uintdiv_magic_and_shift](../math_functions/integer_math_functions/asc_get_uintdiv_magic_and_shift.md) | 根据无符号除数计算快速除法所需的magic和shift参数。 |
 | [__mul_i32toi64](../math_functions/integer_math_functions/__mul_i32toi64.md) | 计算输入32位整数x和y的乘积，返回64位结果。 |
 | [__brev](../math_functions/integer_math_functions/__brev.md) | 将输入数据的位序反转，返回反转后的值。 |
 | [__clz](../math_functions/integer_math_functions/__clz.md) | 从输入数据的二进制最高有效位开始，返回连续的前导零的位数。 |

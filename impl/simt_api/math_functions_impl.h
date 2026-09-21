@@ -5932,6 +5932,65 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, f
 
 #endif // ASCENDC_USE_LEGACY_PRECISION
 
+#ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
+#ifndef ASCENDC_CPU_DEBUG
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_uintdiv(uint32_t dividend, uint32_t magic, uint32_t shift)
+{
+    uint32_t q = __umulhi(dividend, magic);
+    uint32_t sum = dividend + q;
+    return sum >> shift;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_uintdiv(uint64_t dividend, uint64_t magic, uint64_t shift)
+{
+    uint64_t q = __umul64hi(dividend, magic);
+    uint64_t sum = dividend + q;
+    return sum >> shift;
+}
+
+__aicore__ inline uint64_t asc_get_uintdiv_magic_impl(uint64_t dividend, uint64_t divisor)
+{
+    uint64_t quotient = 0;
+    uint64_t remainder = dividend;
+    for (int i = 0; i < 64; ++i) { // 64: process every bit of the uint64_t dividend.
+        quotient <<= 1;
+        const uint64_t borrow = remainder >> 63; // 63: highest bit index of uint64_t.
+        remainder <<= 1;
+        if (borrow != 0) {
+            remainder -= divisor;
+            quotient |= 1; // 1: set the current quotient bit.
+        } else if (remainder >= divisor) {
+            remainder -= divisor;
+            quotient |= 1; // 1: set the current quotient bit.
+        }
+    }
+    return quotient + 1; // 1: round the reciprocal up for exact division.
+}
+
+__aicore__ inline void asc_get_uintdiv_magic_and_shift(uint32_t* magic, uint32_t* shift, uint32_t divisor)
+{
+    const int64_t pos = 64 - clz(static_cast<uint64_t>(divisor)); // 64: width of the clz input.
+    const int64_t cnt1 = bcnt1(static_cast<uint64_t>(divisor));
+    *shift = cnt1 == 1 ? pos - 1 : pos;
+    *magic = (1ULL << 32) * ((1ULL << *shift) - divisor) / divisor + 1; // 32: uint32_t bit width.
+}
+
+__aicore__ inline void asc_get_uintdiv_magic_and_shift(uint64_t* magic, uint64_t* shift, uint64_t divisor)
+{
+    const int64_t pos = 64 - clz(divisor); // 64: uint64_t bit width.
+    const int64_t cnt1 = bcnt1(divisor);
+    *shift = cnt1 == 1 ? pos - 1 : pos;
+    uint64_t dividend = 0;
+    if (*shift < 64) { // 64: one-past-the-highest valid uint64_t shift.
+        dividend = (1ULL << *shift) - divisor;
+    } else {
+        dividend = UINT64_MAX - divisor + 1; // 1: two's-complement form of 2^64 - divisor.
+    }
+    *magic = asc_get_uintdiv_magic_impl(dividend, divisor);
+}
+#endif
+#endif
+
 #endif
 #endif // IMPL_SIMT_API_MATH_FUNCTIONS_IMPL_H
 
