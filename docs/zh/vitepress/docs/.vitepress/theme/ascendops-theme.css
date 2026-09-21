@@ -461,6 +461,15 @@ html.dark .Layout .VPNavBar {
   font-weight: 600;
 }
 
+/* Code fences must display source operators literally, without font ligatures. */
+.vp-doc pre,
+.vp-doc pre code,
+.markdown-body pre,
+.markdown-body pre code {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+}
+
 .vp-doc div[class*="language-"],
 .markdown-body .highlight {
   border: 0;

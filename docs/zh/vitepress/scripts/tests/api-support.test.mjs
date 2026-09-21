@@ -23,15 +23,24 @@ import {
 
 test('maps all supported product labels to existing filter values', () => {
   const labels = {
+    'Ascend 950PR&950DT系列产品': '950',
     'Ascend 950PR/Ascend 950DT': '950',
+    'Atlas A3系列产品': 'A3',
     'Atlas A3 训练系列产品/Atlas A3 推理系列产品': 'A3',
+    'Atlas A3训练系列产品/Atlas A3推理系列产品': 'A3',
+    'Atlas A2系列产品': '910b',
     'Atlas A2 训练系列产品/Atlas A2 推理系列产品': '910b',
+    'Atlas A2训练系列产品/Atlas A2推理系列产品': '910b',
     'Atlas 200I/500 A2 推理产品': '310b',
+    'Atlas 200I/500 A2推理产品': '310b',
     'Atlas 推理系列产品AI Core': '310p',
     'Atlas 推理系列产品 AI Core': '310p',
     'Atlas 推理系列产品Vector Core': '310p',
     'Atlas 推理系列产品 Vector Core': '310p',
+    'Atlas推理系列产品AI Core': '310p',
+    'Atlas推理系列产品Vector Core': '310p',
     'Atlas 训练系列产品': '910',
+    'Atlas训练系列产品': '910',
     'Kirin X90': 'x90',
     'Kirin 9030': '9030',
   }
@@ -39,6 +48,23 @@ test('maps all supported product labels to existing filter values', () => {
   for (const [label, expected] of Object.entries(labels)) {
     assert.equal(getProductFilterValue(label), expected)
   }
+})
+
+test('extracts unsupported products from the current consolidated labels', () => {
+  const markdown = `## 产品支持情况
+- Ascend 950PR&950DT系列产品：支持
+- Atlas A3系列产品：不支持
+- Atlas A2系列产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
+- Atlas推理系列产品AI Core：不支持
+- Atlas推理系列产品Vector Core：不支持
+- Atlas训练系列产品：不支持
+`
+
+  assert.deepEqual(
+    extractUnsupportedProducts(markdown),
+    ['A3', '910b', '310b', '310p', '910']
+  )
 })
 
 test('treats a product family as supported when any member is supported', () => {

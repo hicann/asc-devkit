@@ -13,21 +13,21 @@ const NEXT_H2_RE = /^##[ \t]+/
 const SUPPORT_ROW_RE = /^[-*+][ \t]+(.+?)[ \t]*[：:][ \t]*(不支持|支持)[ \t]*$/
 
 const PRODUCT_MATCHERS = [
-  ['950', /^Ascend 950PR\/Ascend 950DT$/],
-  ['A3', /^Atlas A3 训练系列产品\/Atlas A3 推理系列产品$/],
-  ['910b', /^Atlas A2 训练系列产品\/Atlas A2 推理系列产品$/],
-  ['310b', /^Atlas 200I\/500 A2 推理产品$/],
-  ['310p', /^Atlas 推理系列产品 ?(?:AI Core|Vector Core)$/],
-  ['910', /^Atlas 训练系列产品$/],
-  ['x90', /^Kirin X90$/],
-  ['9030', /^Kirin 9030$/],
+  ['950', /^Ascend950PR(?:&950DT|\/Ascend950DT)(?:系列产品)?$/],
+  ['A3', /^(?:AtlasA3系列产品|AtlasA3训练系列产品\/AtlasA3推理系列产品)$/],
+  ['910b', /^(?:AtlasA2系列产品|AtlasA2训练系列产品\/AtlasA2推理系列产品)$/],
+  ['310b', /^Atlas200I\/500A2推理产品$/],
+  ['310p', /^Atlas推理系列产品(?:AICore|VectorCore)$/],
+  ['910', /^Atlas训练系列产品$/],
+  ['x90', /^KirinX90$/],
+  ['9030', /^Kirin9030$/],
 ]
 
 function normalizeProductName(value) {
   return value
     .replace(/<!--[^]*?-->/g, '')
     .replace(/<[^>]+>/g, '')
-    .replace(/[ \t]+/g, ' ')
+    .replace(/\s+/g, '')
     .trim()
 }
 
