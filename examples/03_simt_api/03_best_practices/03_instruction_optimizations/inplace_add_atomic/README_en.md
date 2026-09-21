@@ -107,9 +107,11 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void vector_muladd_atomic(
 
 The performance data shows one phenomenon: switching to atomic add reduces the Task Duration by 8.0%. The difference comes solely from the data path of the old value of the accumulation target `a[index]`.
 
-The following figure compares the data flow of the two accumulation methods in this sample: the left side is Scenario 0 (plain in-place add), the right side is Scenario 1 (atomic add), and GM on both sides holds the three arrays `a`, `b`, and `c`.
+The following figures show the data flow of the two accumulation methods in this sample respectively; GM in both figures holds the three arrays `a`, `b`, and `c`.
 
-![Data flow comparison of the two accumulation methods](figures/inplace_add_atomic_dataflow.png)
+![Data flow of plain in-place add (Scenario 0)](figures/inplace_add_atomic_dataflow_plain.png)
+
+![Data flow of atomic add (Scenario 1)](figures/inplace_add_atomic_dataflow_atomic.png)
 
 - **In-place add (Scenario 0)**: `a[index]`, `b[index]`, and `c[index]` are all read into registers through L2 Cache, and after the multiply-add completes, the new value of `a[index]` is written back from the registers to L2 Cache.
 - **Atomic add (Scenario 1)**: only `b[index]` and `c[index]` are read into registers to compute the product, which is issued as the operand of the atomic add; reading the old value, the addition, and the write-back are completed as one indivisible unit at the L2 Cache side, so `a[index]` never enters the registers and the round trip above does not happen.
@@ -187,6 +189,7 @@ The conclusion of both controlled groups is consistent: the scenarios using atom
 
 1. **Prefer atomic add for element-wise in-place accumulation**: When the old value of the target address is used only for accumulation and does not participate in other computations, switching to atomic add completes the read, addition, and write-back of the old value in L2, eliminating the data round trip of the old value in and out of the registers.
 2. **Note the applicability boundary**: This optimization applies only to element-wise in-place updates; before use, confirm that the target addresses of each thread's atomic operations do not overlap. Its boundary differs from reduction-style accumulation (multiple threads accumulating into the same address, e.g. the histogram counting in the [atomic_histogram](../atomic_histogram/README_en.md) sample): in reduction accumulation, atomic operations on the same address can only execute serially, so under address contention, using atomic add directly degrades performance instead; use the block-local accumulation and merge strategy shown in that sample.
+3. **The data type must support the instruction optimization**: The data type of the atomic add target must be one that supports the instruction optimization; for types such as int64_t, the benefit of this execution path needs to be verified through measurement; whether a better atomic instruction is generated when the return value is unused depends on the data type; see the [constraints of asc_atomic_add](../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md#约束说明).
 
 ## Build and Run
 
@@ -228,7 +231,7 @@ Run the following steps in the root directory of this sample to build and execut
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..; make -j;   # NPU simulation mode
   ```
 
-  > **Note:** Clear the cmake cache before switching build modes. Execute `rm CMakeCache.txt` in the build directory, then run cmake again.
+  > Note: Clear the cmake cache before switching build modes. Execute `rm CMakeCache.txt` in the build directory, then run cmake again.
 
   Build Options Description:
 
@@ -260,7 +263,7 @@ make -j
 msopprof ./inplace_add_atomic
 ```
 
-> **Regarding Validation failed during performance collection:** In this sample, the accumulation target `a` is initialized on the host side at allocation, and the kernel only accumulates on it. The `msopprof` warmup+replay re-executes the kernel on the same GM memory, causing `a` to be accumulated multiple times; therefore, strict validation mode reports `Validation failed`. This is an inherent conflict between the replay mechanism and the validation logic. When collecting performance, it is recommended to rebuild with `-DSKIP_VALIDATION=ON` before running `msopprof` to skip validation.
+> Regarding Validation failed during performance collection: In this sample, the accumulation target `a` is initialized on the host side at allocation, and the kernel only accumulates on it. The `msopprof` warmup+replay re-executes the kernel on the same GM memory, causing `a` to be accumulated multiple times; therefore, strict validation mode reports `Validation failed`. This is an inherent conflict between the replay mechanism and the validation logic. When collecting performance, it is recommended to rebuild with `-DSKIP_VALIDATION=ON` before running `msopprof` to skip validation.
 
 After the command completes, a folder named "OPPROF_{timestamp}_XXX" is generated in the default directory. The performance data folder structure is as follows:
 

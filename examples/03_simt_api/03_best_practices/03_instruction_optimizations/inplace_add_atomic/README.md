@@ -106,9 +106,15 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void vector_muladd_atomic(
 
 性能数据呈现出一个现象：改用原子加后，Task Duration下降8.0%。差异只来自累加目标`a[index]`旧值的数据路径。
 
-本样例两种累加方式的数据流转对比如下图所示，左侧为场景0（普通原地加），右侧为场景1（原子加），两侧的GM均存放`a`、`b`、`c`三个数组。
+本样例两种累加方式的数据流转分别如下图所示，两图的GM均存放`a`、`b`、`c`三个数组。
 
-![两种累加方式的数据流转对比](figures/inplace_add_atomic_dataflow.png)
+普通原地加的数据流转如下图：
+
+![普通原地加（场景0）的数据流转](figures/inplace_add_atomic_dataflow_plain.png)
+
+原子加的数据流转如下图：
+
+![原子加（场景1）的数据流转](figures/inplace_add_atomic_dataflow_atomic.png)
 
 - **原地加法（场景0）**：`a[index]`、`b[index]`、`c[index]`三者都经L2 Cache读入寄存器，乘加完成后，`a[index]`的新值再从寄存器写回L2 Cache。
 - **原子加法（场景1）**：只有`b[index]`与`c[index]`读入寄存器并算出乘积，乘积作为原子加的操作数下发；读旧值、加法、写回三步作为一个不可分割的整体在L2 Cache侧完成，`a[index]`不进入寄存器，上述往返不再发生。
@@ -186,6 +192,7 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void vector_add_atomic(
 
 1. **逐元素原地累加优先考虑用原子加完成**：当目标地址的旧值仅用于累加、不参与其他计算时，改用原子加可使旧值的读出、加法与写回均在L2完成，省去旧值进出寄存器的数据往返。
 2. **注意适用边界**：本优化仅适用于逐元素原地更新，使用前需确认各线程原子操作的目标地址互不重叠。其与归约累加（多个线程向同一地址累加，如[atomic_histogram](../atomic_histogram/README.md)样例中的直方图统计）的适用边界不同：归约累加中同一地址上的原子操作只能串行执行，存在地址竞争时直接使用原子加反而会劣化性能，应采用该样例中分块累加再合并的策略。
+3. **数据类型需支持指令优化**：原子加支持的数据类型必须是支持指令优化的数据类型；对int64_t等类型，该执行路径的收益需实测确认，不使用返回值时能否生成更优原子指令与数据类型相关，参见[asc_atomic_add约束说明](../../../../../docs/zh/api/SIMT-API/atomic_operations/asc_atomic_add.md#约束说明)。
 
 ## 编译运行
 
@@ -227,7 +234,7 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void vector_add_atomic(
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..; make -j;   # NPU仿真模式
   ```
 
-  > **注意：**切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
+  > 注意：切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
 
   编译选项说明：
 
@@ -259,7 +266,7 @@ make -j
 msopprof ./inplace_add_atomic
 ```
 
-> **关于性能采集时的Validation failed：**本样例的累加目标`a`在host侧分配时写入初值，kernel仅在其上累加。`msopprof`的warmup+replay会在同一块GM内存上重复执行kernel，`a`被累加多次，因此严格校验模式下会报`Validation failed`。该现象是replay机制与校验逻辑的固有冲突。采集性能时建议先以`-DSKIP_VALIDATION=ON`重新编译再执行`msopprof`，跳过校验。
+> 关于性能采集时的Validation failed：本样例的累加目标`a`在host侧分配时写入初值，kernel仅在其上累加。`msopprof`的warmup+replay会在同一块GM内存上重复执行kernel，`a`被累加多次，因此严格校验模式下会报`Validation failed`。该现象是replay机制与校验逻辑的固有冲突。采集性能时建议先以`-DSKIP_VALIDATION=ON`重新编译再执行`msopprof`，跳过校验。
 
 命令完成后，会在默认目录下生成以"OPPROF_{timestamp}_XXX"命名的文件夹，性能数据文件夹结构示例如下：
 

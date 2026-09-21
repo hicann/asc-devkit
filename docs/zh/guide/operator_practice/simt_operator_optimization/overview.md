@@ -97,3 +97,4 @@ SIMT编程模式以线程（Thread）为基本编程单位，由开发者编写�
 | 优化建议 | 优先级 | 样例 |
 | --- | :---: | --- |
 | [原子操作指令优化](./instruction_optimization/atomic_instruction_optimization.md) | 高 | [histogram](../../../../../examples/03_simt_api/03_best_practices/03_instruction_optimizations/atomic_histogram)<br>[atomic_add_perf](../../../../../examples/03_simt_api/02_features/01_api_features/02_atomic_operation/atomic_add_perf) |
+| [原地加法指令优化](./instruction_optimization/inplace_add_instruction_optimization.md) | 中 | [inplace_add_atomic](../../../../../examples/03_simt_api/03_best_practices/03_instruction_optimizations/inplace_add_atomic) |
