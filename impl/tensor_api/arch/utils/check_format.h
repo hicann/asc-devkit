@@ -265,7 +265,7 @@ using layout_pattern_check_set = tuple_map<
     Std::tuple<scaleb_dn_layout_ptn, check_scaleb_dn_layout_pattern>>;
 
 template <typename Tensor>
-__aicore__ inline void check_one_layout_pattern()
+__aicore__ inline constexpr void check_one_layout_pattern()
 {
     using layout = typename Tensor::layout_type;
     using layout_pattern = get_layout_pattern<layout>;
@@ -276,7 +276,7 @@ __aicore__ inline void check_one_layout_pattern()
 }
 
 template <typename... Args>
-__aicore__ inline void check_layout_pattern()
+__aicore__ inline void constexpr check_layout_pattern()
 {
     (check_one_layout_pattern<Args>(), ...);
 }

@@ -36,10 +36,10 @@
 
 ```cpp
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info);
+__aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info);
 
 template <typename Coord, typename Info>
-__aicore__ inline constexpr decltype(auto) Slice(const Coord& coord, const Info& info) const;
+__aicore__ inline decltype(auto) Slice(const Coord& coord, const Info& info) const;
 ```
 
 ## 参数说明

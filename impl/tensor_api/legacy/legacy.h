@@ -271,21 +271,21 @@ __aicore__ inline auto MakeMemPtr(Addr address)
 
 template <typename PtrPattern, typename Iterator, asc::te::enable_make_hardware_ptr<PtrPattern, Iterator> = 0>
 ASC_DEPRECATED(9.2.0, "2027/09/07", make_mem_ptr)
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+__aicore__ inline auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr<PtrPattern>(iterator);
 }
 
 template <typename Iterator, asc::te::enable_make_ptr_by_iter<Iterator> = 0>
 ASC_DEPRECATED(9.2.0, "2027/09/07", make_mem_ptr)
-__aicore__ inline constexpr auto MakeMemPtr(Iterator iterator)
+__aicore__ inline auto MakeMemPtr(Iterator iterator)
 {
     return make_mem_ptr(iterator);
 }
 
 template <typename Iterator, typename... Args>
 ASC_DEPRECATED(9.2.0, "2027/09/07", make_tensor)
-__aicore__ inline constexpr auto MakeTensor(const Iterator& iterator, const Args&... args)
+__aicore__ inline auto MakeTensor(const Iterator& iterator, const Args&... args)
 {
     return make_tensor(iterator, args...);
 }
@@ -295,7 +295,7 @@ template <
     typename = Std::enable_if_t<
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) && (sizeof...(SqueezeDims) > 0)>>
 ASC_DEPRECATED(9.2.0, "2027/09/07", squeeze)
-__aicore__ inline constexpr auto Squeeze(const Input& value)
+__aicore__ inline auto Squeeze(const Input& value)
 {
     return squeeze<SqueezeDims...>(value);
 }
@@ -306,7 +306,7 @@ template <
         (asc::te::is_layout_v<Input> || asc::te::is_attr_tensor_v<Input>) &&
         Std::is_tuple_v<Std::remove_cvref_t<Pattern>>>>
 ASC_DEPRECATED(9.2.0, "2027/09/07", squeeze)
-__aicore__ inline constexpr auto Squeeze(const Input& value, const Pattern& pattern)
+__aicore__ inline auto Squeeze(const Input& value, const Pattern& pattern)
 {
     return squeeze(value, pattern);
 }

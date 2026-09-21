@@ -43,14 +43,14 @@ squeeze用于删除layout的shape中大小为1的指定维度，并同步删除s
 
     ```cpp
     template <size_t... SqueezeDims, typename Input>
-    __aicore__ inline constexpr auto squeeze(const Input& x)
+    __aicore__ inline auto squeeze(const Input& x)
     ```
 
 - 通过Pattern删除大小为1的维度。
 
     ```cpp
     template <typename Pattern, typename Input>
-    __aicore__ inline constexpr auto squeeze(const Input& x, const Pattern& pattern)
+    __aicore__ inline auto squeeze(const Input& x, const Pattern& pattern)
     ```
 
 ## 参数说明

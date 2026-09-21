@@ -24,10 +24,10 @@ namespace asc {
 namespace te {
 
 template <typename EngineT, typename LayoutT>
-__aicore__ inline local_tensor<EngineT, LayoutT>::local_tensor() = default;
+__aicore__ inline constexpr local_tensor<EngineT, LayoutT>::local_tensor() = default;
 
 template <typename EngineT, typename LayoutT>
-__aicore__ inline local_tensor<EngineT, LayoutT>::local_tensor(const EngineT& engine, const LayoutT& layout)
+__aicore__ inline constexpr local_tensor<EngineT, LayoutT>::local_tensor(const EngineT& engine, const LayoutT& layout)
     : tensor_api_base(engine, layout)
 {}
 

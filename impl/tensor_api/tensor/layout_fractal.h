@@ -28,7 +28,7 @@ namespace asc {
 namespace te {
 
 template <typename OriginShape, typename InnerShape, size_t... Is>
-__aicore__ inline decltype(auto) make_fractal_shape(
+__aicore__ inline constexpr decltype(auto) make_fractal_shape(
     OriginShape origin_shape, InnerShape inner_shape, Std::index_sequence<Is...>)
 {
     auto outer_shape = Std::make_tuple(Std::ceil_division(Std::get<Is>(origin_shape), Std::get<Is>(inner_shape))...);
@@ -36,7 +36,7 @@ __aicore__ inline decltype(auto) make_fractal_shape(
 }
 
 template <typename OriginShape, typename InnerShape>
-__aicore__ inline decltype(auto) make_fractal_shape(OriginShape origin_shape, InnerShape inner_shape)
+__aicore__ inline constexpr decltype(auto) make_fractal_shape(OriginShape origin_shape, InnerShape inner_shape)
 {
     static_assert(
         Std::tuple_size_v<OriginShape> == Std::tuple_size_v<InnerShape>, "OriginShape and InnerShape must match");

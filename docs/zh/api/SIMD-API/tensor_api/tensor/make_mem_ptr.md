@@ -49,14 +49,14 @@ make_mem_ptr提供三种调用形式：
 
   ```cpp
   template <typename PtrPattern, typename Iterator>
-  __aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
+  __aicore__ inline auto make_mem_ptr(Iterator iterator)
   ```
 
 - 从已有迭代器中自动推导物理位置：
 
   ```cpp
   template <typename Iterator>
-  __aicore__ inline constexpr auto make_mem_ptr(Iterator iterator)
+  __aicore__ inline auto make_mem_ptr(Iterator iterator)
   ```
 
 ## 参数说明
