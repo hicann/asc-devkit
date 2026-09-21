@@ -87,7 +87,7 @@ __aicore__ inline void MrgSort(const LocalTensor<T>& dst, const MrgSortSrcList<T
        <!-- end id9 -->
     <!-- end id10 -->
     <!-- npu="950" id11 -->
-    - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算](../../reg_vector_compute/reg_vector_compute.md)API实现兼容，当参数repeatTimes取值为0时，不保证该接口被视为NOP（空操作）。
+    - 针对Ascend 950PR&950DT系列产品，当参数repeatTimes取值为0时，不保证该接口被视为NOP（空操作）。
     <!-- end id11 -->
 <!-- end id12 -->
 
