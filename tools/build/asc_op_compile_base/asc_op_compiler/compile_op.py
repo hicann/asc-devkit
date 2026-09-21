@@ -715,7 +715,7 @@ def gen_kernel_fun(
 
     kernel_func_dec = f'extern "C" {gen_func_attributes} void {auto_gen_kernel_func}('
     compile_info.global_kernel_attribute = gen_func_attributes
-    kernel_func_dec_pub = f"__aicore__ inline __attribute__((always_inline)) void ascendc_{auto_gen_kernel_func}("
+    kernel_func_dec_pub = f"static __aicore__ inline __attribute__((always_inline)) void ascendc_{auto_gen_kernel_func}("
 
     source_declare_pub, workspace_idx, called_func_params, called_func_params_type = _gen_kernel_func_declare_head(
         is_mix, is_single_and_using_hard_sync, opinfo, tiling_info
