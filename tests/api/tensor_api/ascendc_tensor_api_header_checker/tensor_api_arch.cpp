@@ -11,7 +11,7 @@
 #ifndef VERIFY_SINGLE_HEADER
 #include "include/tensor_api/tensor.h"
 #else
-#include "include/tensor_api/tensor/tensor.h"
+#include "include/tensor_api/tensor/tensor_interface.h"
 #include "include/tensor_api/arch/cube/mmad_op.h"
 #include "include/tensor_api/arch/cube/cube_copy_op.h"
 #include "include/tensor_api/arch/vector/vector_copy_op.h"

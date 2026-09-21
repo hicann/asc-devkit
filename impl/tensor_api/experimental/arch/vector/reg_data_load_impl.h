@@ -17,7 +17,7 @@
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_DATA_LOAD_IMPL_H
 
 #include "impl/tensor_api/experimental/arch/utils/reg_utils.h"
-#include "tensor_api/tensor/tensor.h"
+#include "tensor_api/tensor/tensor_interface.h"
 
 namespace asc {
 namespace te {

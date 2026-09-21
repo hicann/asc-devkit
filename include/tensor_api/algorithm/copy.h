@@ -23,7 +23,7 @@
 #include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
 #include "tensor_api/atom/cube/copy_atom.h"
-#include "impl/tensor_api/algorithm/copy_impl.h"
+#include "impl/tensor_api/algorithm/copy_algorithm_impl.h"
 
 namespace asc {
 namespace te {

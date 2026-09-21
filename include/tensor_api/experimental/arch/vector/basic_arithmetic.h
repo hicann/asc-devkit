@@ -16,7 +16,7 @@
 #ifndef INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_BASIC_ARITHMETIC_H
 #define INCLUDE_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_BASIC_ARITHMETIC_H
 
-#include "tensor_api/tensor/tensor.h"
+#include "tensor_api/tensor/tensor_interface.h"
 #include "tensor_api/experimental/arch/vector/reg_tensor.h"
 
 namespace asc {
