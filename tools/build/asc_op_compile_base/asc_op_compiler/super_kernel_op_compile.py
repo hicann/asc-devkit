@@ -26,10 +26,8 @@ from asc_op_compile_base.common.error_mgr import (
 from .global_storage import global_var_storage
 from .get_op_tiling import OpInfo
 from .ascendc_compile_dfx import DFXSectionGenerator
-from .ascendc_compile_dispatch import (
-    _compile_ascendc_cce_v220_with_kernel_type_for_static,
-)
 from .compile_op import (
+    _compile_ascendc_cce_v220_with_kernel_type_for_static,
     _json_post_process,
 )
 from .ascendc_constants import CompileOptionTuple, KernelMetaType

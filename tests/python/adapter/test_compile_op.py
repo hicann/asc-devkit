@@ -39,16 +39,14 @@ def SetCurrentSocInfo(soc: str):
 
 
 from adapter.compile_op import *
-from adapter.ascendc_compile_dispatch import (
+from adapter.compile_op import (
+    _gen_kernel_func_declare_head,
     _compile_ascendc_cce,
     _generate_section_content,
     _get_sub_kernel_name,
     _compile_ascendc_cce_v200_with_kernel_type,
-    _compile_ascendc_cce_v200_with_kernel_type_for_dynamic,
-)
-from adapter.compile_op import (
-    _gen_kernel_func_declare_head,
     _dynamic_kernel_list_to_json,
+    _compile_ascendc_cce_v200_with_kernel_type_for_dynamic,
     _gen_dynamic_json_for_v200,
     _gen_static_json_for_mix_v200,
     _gen_static_json_for_no_mix_v200,
@@ -84,9 +82,6 @@ import importlib
 
 compile_op_module = importlib.import_module("adapter.compile_op")
 super_kernel_compile_module = importlib.import_module("adapter.super_kernel_op_compile")
-dispatch_module = importlib.import_module("adapter.ascendc_compile_dispatch")
-gen_code_module = importlib.import_module("adapter.ascendc_compile_gen_code")
-gen_json_module = importlib.import_module("adapter.ascendc_compile_gen_json")
 from unittest.mock import Mock, patch
 from tempfile import TemporaryDirectory
 
@@ -1614,15 +1609,13 @@ class TestCompileOp(unittest.TestCase):
         compile_info.kernel_name = op_info.kernel_name
         tiling_info.static_shape_flag = True
         with mock.patch.object(
-            dispatch_module, "call_bisheng_v220", return_value=["1"]
+            compile_op_module, "call_bisheng_v220", return_value=["1"]
         ):
             with mock.patch.object(
-                dispatch_module, "_gen_non_mix_sub_json", return_value=None
+                compile_op_module, "_gen_non_mix_sub_json", return_value=None
             ):
                 with mock.patch.object(
-                    dispatch_module,
-                    "_dynamic_kernel_list_to_json",
-                    return_value=None,
+                    compile_op_module, "_dynamic_kernel_list_to_json", return_value=None
                 ):
                     _compile_ascendc_cce_m510(
                         compile_info, compile_option_tuple, tiling_info
@@ -1654,15 +1647,13 @@ class TestCompileOp(unittest.TestCase):
         compile_info.kernel_name = op_info.kernel_name
         tiling_info.static_shape_flag = False
         with mock.patch.object(
-            dispatch_module, "call_bisheng_v220", return_value=["1"]
+            compile_op_module, "call_bisheng_v220", return_value=["1"]
         ):
             with mock.patch.object(
-                dispatch_module, "_gen_non_mix_sub_json", return_value=None
+                compile_op_module, "_gen_non_mix_sub_json", return_value=None
             ):
                 with mock.patch.object(
-                    dispatch_module,
-                    "_dynamic_kernel_list_to_json",
-                    return_value=None,
+                    compile_op_module, "_dynamic_kernel_list_to_json", return_value=None
                 ):
                     _compile_ascendc_cce_m510(
                         compile_info, compile_option_tuple, tiling_info
@@ -1671,7 +1662,7 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_regbase_m510(self, mock_shutil):
-        from adapter.ascendc_compile_dispatch import _gen_compile_cmd_regbase
+        from adapter.compile_op import _gen_compile_cmd_regbase
 
         mock_shutil.return_value = "/tmp/ascendc_compiler"
         op_info = OpInfo(
@@ -1922,7 +1913,7 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_regbase(self, mock_shutil):
-        from adapter.ascendc_compile_dispatch import _gen_compile_cmd_regbase
+        from adapter.compile_op import _gen_compile_cmd_regbase
 
         mock_shutil.return_value = "/tmp/ascendc_compiler"
         op_info = OpInfo(
@@ -3427,7 +3418,7 @@ Contents of section
         )
         arch = "dav-m300"
 
-        from adapter.ascendc_compile_dispatch import _call_bisheng_regbase
+        from adapter.compile_op import _call_bisheng_regbase
 
         os.mknod(compile_info.gen_kernel_func_file)
         with (
@@ -3913,7 +3904,7 @@ Contents of section
         self.assertEqual(src_file, "/tmp/add_custom.cpp")
 
     def test_get_sub_compile_info(self):
-        from adapter.ascendc_compile_dispatch import _get_sub_compile_info
+        from adapter.compile_op import _get_sub_compile_info
 
         compile_info = CompileInfo()
         compile_info.kernel_name = "test"
@@ -4610,14 +4601,10 @@ Contents of section
                         compile_info, compile_option_tuple, tiling_info
                     )
                     with mock.patch.object(
-                        dispatch_module,
-                        "call_bisheng_v220",
-                        return_value=["1"],
+                        compile_op_module, "call_bisheng_v220", return_value=["1"]
                     ):
                         with mock.patch.object(
-                            dispatch_module,
-                            "fatbin_objs",
-                            return_value=["1"],
+                            compile_op_module, "fatbin_objs", return_value=["1"]
                         ):
                             tiling_info.static_shape_flag = False
                             compile_info.code_channel = CORE_TYPE_MIX
@@ -4723,7 +4710,7 @@ Contents of section
 
         compile_option_tuple = CompileOptionTuple([], [])
         CommonUtility.get_ascendc_compiler_path()
-        from adapter.ascendc_compile_dispatch import (
+        from adapter.compile_op import (
             _compile_ascendc_cce_v200_with_kernel_type_for_static,
             _compile_ascendc_cce_v200_with_kernel_type,
         )
@@ -5950,7 +5937,7 @@ Contents of section
             kernel_meta_dir, op_info.kernel_name + file_name_tag
         )
 
-        from adapter.ascendc_compile_gen_code import _gen_set_workspace_codes
+        from adapter.compile_op import _gen_set_workspace_codes
 
         is_mix = True
         is_single_and_using_hard_sync = True
@@ -5980,7 +5967,7 @@ Contents of section
         self.assertNotEqual(result, "")
 
     def test_gen_usr_workspace_codes(self):
-        from adapter.ascendc_compile_gen_code import _gen_usr_workspace_codes
+        from adapter.compile_op import _gen_usr_workspace_codes
 
         with (
             mock.patch.object(CommonUtility, "is_c310", return_value=True),
@@ -8269,10 +8256,10 @@ Contents of section
             DFXSectionGenerator().get_param("tiling").args_dfx_info, golden_dfx_info
         )
 
-        module_name = "adapter.ascendc_compile_dfx"
-        dfx_module = importlib.import_module(module_name)
+        module_name = "adapter.compile_op"
+        compile_op_module = importlib.import_module(module_name)
         with mock.patch.object(
-            dfx_module, "get_current_build_config", return_value=["oom"]
+            compile_op_module, "get_current_build_config", return_value=["oom"]
         ):
             DFXSectionGenerator()._generate_binary_for_tiling(
                 "1", tiling_info, compile_info
