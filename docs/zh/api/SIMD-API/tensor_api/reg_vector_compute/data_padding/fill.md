@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径：`"include/tensor_api/experimental/arch/vector/compare_and_select.h"`。
+头文件路径：`"tensor_api/experimental/arch/vector/data_padding.h"`。
 
 支持scalar和tensor两种模式：
 

@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`"tensor_api/arch/vector/experimental/reg_tensor.h"`，命名空间为`asc::te::experimental`。
+头文件路径为：`"tensor_api/experimental/arch/vector/reg_tensor.h"`，命名空间为`asc::te::experimental`。
 
 保存两个相同元素类型的`reg_tensor`，用于`deinterleave`等双结果接口。
 

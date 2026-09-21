@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径：`"tensor_api/arch/vector/experimental/type_conversion.h"`。
+头文件路径：`"tensor_api/experimental/arch/vector/type_conversion.h"`。
 
 命名空间：`asc::te::experimental`。
 

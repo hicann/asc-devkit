@@ -106,6 +106,7 @@
 | [make_mask](reg_vector_compute/mask_reg_compute/make_mask.md) | 根据Mask模式和数据元素宽度创建Mask寄存器。 |
 | [none_mask](reg_vector_compute/mask_reg_compute/none_mask.md) | 创建与指定元素类型位宽匹配的全无效Mask寄存器。 |
 | [update_mask](reg_vector_compute/mask_reg_compute/update_mask.md) | 根据剩余待处理元素数生成有效位Mask，并更新剩余元素数量。 |
+| [interleave（掩码寄存器交织）](reg_vector_compute/mask_reg_compute/interleave.md) | 将两个Mask寄存器按指定元素宽度交织，返回低半部分和高半部分结果。 |
 | [deinterleave（掩码寄存器解交织）](reg_vector_compute/mask_reg_compute/deinterleave.md) | 将两个Mask寄存器按指定元素宽度解交织，返回偶数组和奇数组结果。 |
 | [load](reg_vector_compute/reg_data_load/load.md) | 将UB中的数据搬入`reg_tensor`，支持多种数据排列方式。 |
 | [load_broadcast](reg_vector_compute/reg_data_load/load_broadcast.md) | 从UB搬入数据，并按指定模式广播到`reg_tensor`。 |
@@ -137,10 +138,17 @@
 | [&lt;&lt;](reg_vector_compute/logical_compute/shift_left.md) | 对源操作数逐元素执行左移计算。 |
 | [&gt;&gt;](reg_vector_compute/logical_compute/shift_right.md) | 对源操作数逐元素执行右移计算。 |
 | [选择与比较](reg_vector_compute/compare_and_select/compare_and_select.md) | 根据mask的比特位值，从源操作数src0、src1中选择元素，得到目的操作数。 |
+| [operator==](reg_vector_compute/compare_and_select/operator_compare.md#operator-eq) | 对两个源操作数逐元素执行相等比较。 |
+| [operator!=](reg_vector_compute/compare_and_select/operator_compare.md#operator-ne) | 对两个源操作数逐元素执行不等比较。 |
+| [operator<](reg_vector_compute/compare_and_select/operator_compare.md#operator-lt) | 对两个源操作数逐元素执行小于比较。 |
+| [operator<=](reg_vector_compute/compare_and_select/operator_compare.md#operator-le) | 对两个源操作数逐元素执行小于等于比较。 |
+| [operator>](reg_vector_compute/compare_and_select/operator_compare.md#operator-gt) | 对两个源操作数逐元素执行大于比较。 |
+| [operator>=](reg_vector_compute/compare_and_select/operator_compare.md#operator-ge) | 对两个源操作数逐元素执行大于等于比较。 |
 | [select](reg_vector_compute/compare_and_select/select.md) | 根据条件Mask从两个源寄存器中逐元素选择数据。 |
 | [数据填充](reg_vector_compute/data_padding/data_padding.md) | 根据mask将源操作数src的最低位元素或者一个scalar操作数填充到目的操作数。 |
 | [fill](reg_vector_compute/data_padding/fill.md) | 将标量或源寄存器最低位元素广播并填充到目的寄存器。 |
-| [数据重排](reg_vector_compute/data_reorder/data_reorder.md) | 给定源操作数src0和src1，将src0和src1中的元素解交织存入结果操作数。 |
+| [数据重排](reg_vector_compute/data_reorder/data_reorder.md) | 给定源操作数src0和src1，将src0和src1中的元素交织或解交织存入结果操作数。 |
+| [interleave（数据寄存器交织）](reg_vector_compute/data_reorder/interleave.md) | 将两个源寄存器中的元素交织到两个结果寄存器。 |
 | [deinterleave（数据寄存器解交织）](reg_vector_compute/data_reorder/deinterleave.md) | 将两个源寄存器中的元素解交织到两个结果寄存器。 |
 
 ## 工具接口

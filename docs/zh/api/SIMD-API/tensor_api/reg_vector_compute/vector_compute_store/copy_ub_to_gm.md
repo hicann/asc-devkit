@@ -29,7 +29,7 @@
 
 ## 功能说明
 
-头文件路径为：`tensor_api/tensor.h`，命名空间为`asc::te`。
+头文件路径为：`tensor_api/algorithm/copy.h`，命名空间为`asc::te`。
 
 该接口用于将Unified Buffer（UB）中的数据搬运到Global Memory。接口根据源、目的Tensor的存储位置自动选择`copy_ub_to_gm`通路，并根据源、目的Layout推导搬运块数、单块长度、源步长和目的步长，支持单块长度非32字节对齐的数据搬运。
 

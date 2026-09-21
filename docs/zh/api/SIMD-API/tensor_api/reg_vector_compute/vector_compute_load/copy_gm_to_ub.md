@@ -29,7 +29,7 @@
 
 ## 功能说明
 
-头文件路径为：`tensor_api/tensor.h`，命名空间为`asc::te`。
+头文件路径为：`tensor_api/algorithm/copy.h`，命名空间为`asc::te`。
 
 Tensor API通过`copy`接口统一执行不同通路的数据搬运。该接口用于将Global Memory中的数据搬运到Unified Buffer（UB）。接口根据源Tensor和目的Tensor的存储位置自动选择`copy_gm_to_ub`通路，并根据Layout推导搬运块数、单块长度、源步长和目的步长，实现连续或非连续的高维切分数据搬运。
 

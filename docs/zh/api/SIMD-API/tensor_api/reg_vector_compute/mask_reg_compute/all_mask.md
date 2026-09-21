@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`"tensor_api/arch/vector/experimental/mask_reg_compute.h"`，命名空间为`asc::te::experimental`。
+头文件路径为：`"tensor_api/experimental/arch/vector/mask_reg_compute.h"`，命名空间为`asc::te::experimental`。
 
 创建`reg_tensor<bool>`，其成员变量reg是与`DataType`元素类型宽度匹配的全有效的掩码寄存器，等价于`make_mask<mask_pattern::all, DataType>()`。
 

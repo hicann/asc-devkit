@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径：`"include/tensor_api/experimental/arch/vector/compare_and_select.h"`。
+头文件路径：`"tensor_api/experimental/arch/vector/compare_and_select.h"`。
 
 给定两个源操作数src0和src1，根据condition的比特位值选取元素，得到目的操作数。当condition的比特位是1时，从src0中选取对应位置的数，比特位是0时从src1选取对应位置的数。
 
@@ -34,7 +34,8 @@
 
 ```cpp
 template <typename T>
-__simd_callee__ inline reg_tensor<T> select(reg_tensor<bool> condition, reg_tensor<T> src0, reg_tensor<T> src1)
+__simd_callee__ inline reg_tensor<T> select(
+    const reg_tensor<bool>& condition, const reg_tensor<T>& src0, const reg_tensor<T>& src1)
 ```
 
 ## 参数说明

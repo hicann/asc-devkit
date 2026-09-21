@@ -29,7 +29,7 @@
 
 ## 功能说明
 
-头文件路径为：`tensor_api/tensor.h`，命名空间为`asc::te`。
+头文件路径为：`tensor_api/algorithm/copy.h`，命名空间为`asc::te`。
 
 该接口用于将Unified Buffer（UB）中的数据搬运到L1 Buffer。接口根据源、目的Tensor的存储位置自动选择`copy_ub_to_l1`通路，并根据Layout推导数据块个数、单块长度以及源、目的块间间隔，同时支持连续和非连续的高维切分数据搬运。
 
