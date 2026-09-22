@@ -22,9 +22,12 @@ install(
   PATTERN "utils/stub" EXCLUDE
 )
 
-install(FILES common_types.h sys_constants.h sys_macros.h
+install(FILES common_types.h sys_constants.h sys_macros_impl.h
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/utils ${INSTALL_OPTIONAL} COMPONENT asc-devkit
 )
+
+# Preserve the legacy internal header path in installed packages.
+install(CODE "file(CREATE_LINK sys_macros_impl.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/utils/sys_macros.h SYMBOLIC)" COMPONENT asc-devkit)
 
 if(NOT BUILD_OPEN_PROJECT)
     install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/host_api/include/tiling)" COMPONENT asc-devkit)
