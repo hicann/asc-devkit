@@ -8,6 +8,7 @@
 - **[寄存器数据搬出](reg_data_store/reg_data_store.md)**
 - **[类型转换](type_conversion/type_conversion.md)**
 - **[基础算术](basic_arithmetic/basic_arithmetic.md)**
+- **[归约计算](reduction_compute/reduction_compute.md)**
 - **[逻辑计算](logical_compute/logical_compute.md)**
 - **[选择与比较](compare_and_select/compare_and_select.md)**
 - **[数据填充](data_padding/data_padding.md)**

@@ -98,6 +98,9 @@ enum class mask_pattern : uint8_t {
     quarter,
     none,
 };
+
+enum class reduce_scope : uint8_t { element, datablock, pair };
+
 } // namespace experimental
 } // namespace te
 } // namespace asc
