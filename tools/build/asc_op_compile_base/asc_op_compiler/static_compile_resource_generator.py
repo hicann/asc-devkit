@@ -22,10 +22,13 @@ import shutil
 import tempfile
 from typing import Optional, Tuple
 
-if __package__:
-    from .static_compile_resource_id import ResourceIdError, generate_and_write_resource_id
-else:
-    from static_compile_resource_id import ResourceIdError, generate_and_write_resource_id
+from asc_op_compile_base.common import context as context_module
+from asc_op_compile_base.common import error_mgr
+from asc_op_compile_base.asc_op_compiler import ascendc_common_utility as utility_module
+from asc_op_compile_base.asc_op_compiler import global_storage as storage_module
+
+from . import static_compile_resource_id
+from .static_compile_resource_id import ResourceIdError
 
 _TILING_DATA_TEMPLATE = "@@STATIC_VALUE_tiling_data@@"
 _LINK_OPTION = ("-m", "aicorelinux", "-Ttext=0", "-q", "-x")
@@ -45,16 +48,6 @@ class ManifestCommandError(ManifestGenerationError):
 
 class ManifestPublishError(ManifestGenerationError):
     pass
-
-
-def _kernel_spec_runtime():
-    # Keep the Manifest writer importable without loading the compiler runtime.
-    from asc_op_compile_base.common import context as context_module
-    from asc_op_compile_base.common import error_mgr
-    from asc_op_compile_base.asc_op_compiler import ascendc_common_utility
-    from asc_op_compile_base.asc_op_compiler import global_storage
-
-    return context_module, error_mgr, ascendc_common_utility, global_storage
 
 
 @dataclass(frozen=True)
@@ -851,7 +844,6 @@ class KernelSpecCompilation:
     )
 
     def __init__(self, compile_info, compile_option_tuple, tiling_info):
-        context_module, _, _, storage_module = _kernel_spec_runtime()
         context = context_module.get_context()
         global_var_storage = storage_module.global_var_storage
         self.compile_info = compile_info
@@ -880,7 +872,6 @@ class KernelSpecCompilation:
     def __exit__(self, exc_type, exc_value, traceback):
         if not self.record_sk_commands:
             return False
-        _, _, _, storage_module = _kernel_spec_runtime()
         global_var_storage = storage_module.global_var_storage
         try:
             self.cleanup()
@@ -899,17 +890,18 @@ class KernelSpecCompilation:
             self.basic_compile_info = compile_info_origin
         if self.enabled:
             # Execute the Normal compile and retain its commands for the Manifest.
-            _, _, utility_module, _ = _kernel_spec_runtime()
             self.basic_compile_info.compile_command_session = utility_module.CompileCommandSession(
                 utility_module.CompileCommandMode.EXECUTE_AND_RECORD
             )
 
-    def attach_resource_id(self):
+    def generate_resource_id(self, compile_info):
+        """Embed the Resource ID of the kernel object into itself."""
         if not self.enabled:
             return
-        _, error_mgr, utility_module, _ = _kernel_spec_runtime()
         try:
-            self.resource_id = generate_and_write_resource_id(self.compile_info.dst_file)
+            self.resource_id = static_compile_resource_id.embed_resource_id(
+                compile_info.dst_file, compile_info.is_debug, compile_info.compile_log_path
+            )
         except ResourceIdError as error:
             utility_module.CommonUtility.ascendc_raise_python_err(
                 error_mgr.TBE_DEFAULT_PYTHON_ERROR_CODE, f"generate Resource ID failed, reason is: {error}"
@@ -919,7 +911,6 @@ class KernelSpecCompilation:
         if not self.record_sk_commands:
             return False
         # Restore SK state only for the record-only replay.
-        _, _, _, storage_module = _kernel_spec_runtime()
         self.basic_compile_info.global_kernel_symbols = [
             command.compiled_symbol for command in self.basic_compile_info.compile_command_session.records
         ]
@@ -936,7 +927,6 @@ class KernelSpecCompilation:
         if not self.enabled:
             return
         # Publish after the Resource ID and all requested commands are available.
-        _, error_mgr, utility_module, storage_module = _kernel_spec_runtime()
         try:
             ManifestPackageWriter(
                 ManifestInputSnapshot(
@@ -960,7 +950,6 @@ class KernelSpecCompilation:
         if self._cleaned:
             return
         self._cleaned = True
-        _, _, utility_module, storage_module = _kernel_spec_runtime()
         if (
             self.record_sk_commands
             and self.sk_compile_info.gen_kernel_func_file
@@ -971,7 +960,6 @@ class KernelSpecCompilation:
     def _validate_configuration(self):
         if not self.enabled:
             return
-        _, error_mgr, utility_module, _ = _kernel_spec_runtime()
         common_utility = utility_module.CommonUtility
         if not (common_utility.is_v220() or common_utility.is_c310()):
             error_mgr.raise_tbe_python_err(
@@ -986,7 +974,6 @@ class KernelSpecCompilation:
     def _initialize_sk_recording(self, compile_option_tuple):
         if not self.record_sk_commands:
             return
-        _, _, utility_module, storage_module = _kernel_spec_runtime()
         self.sk_compile_info = copy.deepcopy(self.compile_info)
         self.sk_compile_option_tuple = copy.deepcopy(compile_option_tuple)
         self.sk_compile_info.compile_command_session = utility_module.CompileCommandSession(

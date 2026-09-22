@@ -25,6 +25,7 @@ from asc_op_compile_base.asc_op_compiler import cce_runtime
 from asc_op_compile_base.common.buildcfg import get_current_build_config
 from asc_op_compile_base.common.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
 from asc_op_compile_base.common.ccec import CCECInfo
+from asc_op_compile_base.common.platform import COMPILER_ARCH, get_soc_spec
 from .ascendc_common_utility import (
     CommonUtility,
     write_mk,
@@ -105,6 +106,17 @@ SingleTilingKeyCompileParams = namedtuple(
     "SingleTilingKeyCompileParams",
     ["tiling_key", "compile_info", "sub_arch", "tiling_info", "code_channel", "compile_option_tuple"],
 )
+
+
+def link_resource_id_obj(bin_file_path, resource_object, is_debug, compile_log_path=None):
+    """Merge the Resource ID metadata object into the kernel object."""
+    link_cmd = [CCECInfo.get_exe("ld.lld"), "-m", "aicorelinux", "-r", "-Ttext=0", "-q"]
+    if not is_debug:
+        link_cmd.append("-x")
+    link_cmd += ["%s" % bin_file_path, "%s" % resource_object, "-static", "-o", "%s" % bin_file_path]
+    CommonUtility.run_cmd_inner(link_cmd, CompileStage.SPECIALIZATION, compile_log_path)
+    if not global_var_storage.get_variable("ascendc_compile_debug_config"):
+        CommonUtility.remove_temp_file(resource_object)
 
 
 def fatbin_objs(obj_files: list, dst_file: str, is_debug: bool, compile_log_path=None):

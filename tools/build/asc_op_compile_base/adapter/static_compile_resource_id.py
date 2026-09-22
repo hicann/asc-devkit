@@ -9,127 +9,114 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
-"""Calculate a stable Resource ID and atomically attach it to an ELF object."""
+"""Build a Resource ID metadata object from the linked object inputs."""
 
 from contextlib import suppress
 import hashlib
 import os
-import re
+import platform
 import shutil
-import subprocess
 import tempfile
 
+from .ascendc_common_utility import CommonUtility, CompileStage
+from .ascendc_compile_base import COMPILER_ARCH, get_soc_spec, link_resource_id_obj
+from .global_storage import global_var_storage
 
-_RESOURCE_ID_SECTION = ".ascend.resource_id"
-_RESOURCE_ID_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+
+_RESOURCE_ID_TYPE = 6
+_RESOURCE_ID_VALUE_SIZE = 64
+_HASH_CHUNK_SIZE = 1024 * 1024
 
 
 class ResourceIdError(RuntimeError):
     pass
 
 
-def _validate_elf(dynamic_object_path):
-    if not os.path.isfile(dynamic_object_path) or os.path.islink(dynamic_object_path):
-        raise ResourceIdError(f"ELF object is not a regular file: {dynamic_object_path}")
-    try:
-        with open(dynamic_object_path, "rb") as file_obj:
-            magic = file_obj.read(4)
-    except OSError as error:
-        raise ResourceIdError(f"failed to read ELF object: {dynamic_object_path}") from error
-    if magic != b"\x7fELF":
-        raise ResourceIdError(f"input is not an ELF object: {dynamic_object_path}")
-
-
-def _find_tool(*names):
-    cann_root = os.environ.get("ASCEND_HOME_PATH")
-    for name in names:
-        if cann_root:
-            candidate = os.path.join(cann_root, "bin", name)
-            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
-                return candidate
-        candidate = shutil.which(name)
-        if candidate:
-            return candidate
-    raise ResourceIdError(f"required ELF tool is unavailable: {', '.join(names)}")
-
-
-def _run_tool(command):
-    try:
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False, text=True)
-    except OSError as error:
-        raise ResourceIdError(f"failed to execute ELF tool: {command[0]}") from error
-    if result.returncode != 0:
-        output = result.stdout.strip()
-        raise ResourceIdError(f"ELF tool failed ({command[0]}): {output}")
-    return result.stdout
-
-
-def calculate_resource_id(dynamic_object_path: str) -> str:
-    # Calculate the digest before the Resource ID section changes the ELF.
-    _validate_elf(dynamic_object_path)
+def calculate_resource_id(object_path):
+    """SHA256 of the kernel object as it stands before the Resource ID is embedded."""
+    if os.path.islink(object_path):
+        raise ResourceIdError(f"link input must not be a symlink: {object_path}")
     digest = hashlib.sha256()
     try:
-        with open(dynamic_object_path, "rb") as file_obj:
-            for chunk in iter(lambda: file_obj.read(1024 * 1024), b""):
+        with open(object_path, "rb") as file_obj:
+            chunk = file_obj.read(_HASH_CHUNK_SIZE)
+            while chunk:
                 digest.update(chunk)
+                chunk = file_obj.read(_HASH_CHUNK_SIZE)
     except OSError as error:
-        raise ResourceIdError(f"failed to hash ELF object: {dynamic_object_path}") from error
+        raise ResourceIdError(f"failed to read link input: {object_path}") from error
     return digest.hexdigest()
 
 
-def write_resource_id_section(dynamic_object_path: str, resource_id: str) -> None:
-    if not isinstance(resource_id, str) or not _RESOURCE_ID_PATTERN.fullmatch(resource_id):
-        raise ResourceIdError("resource_id must be 64 lowercase hex characters")
-    objcopy = _find_tool("llvm-objcopy")
-    directory = os.path.dirname(os.path.realpath(dynamic_object_path))
-    object_fd = None
-    payload_fd = None
-    temporary_object = None
-    payload_path = None
+def _asc_include_options():
+    """Include roots for the ASC headers, resolved the way SuperKernel resolves them."""
+    ascend_home_path = os.environ.get("ASCEND_HOME_PATH")
+    if not ascend_home_path:
+        asc_opc_path = shutil.which("asc_opc")
+        if asc_opc_path is None:
+            ascend_home_path = "/usr/local/Ascend/cann"
+        else:
+            asc_opc_dir = os.path.realpath(os.path.dirname(asc_opc_path))
+            ascend_home_path = os.path.realpath(os.path.join(asc_opc_dir, "..", ".."))
+    arch_dir = "x86_64-linux" if "x86" in platform.machine() else "aarch64-linux"
+    asc_path = os.path.realpath(os.path.join(ascend_home_path, arch_dir, "asc"))
+    return ["-I" + asc_path, "-I" + os.path.join(asc_path, "include")]
+
+
+def _render_resource_id_source(resource_id):
+    """Render the C++ source that appends the Resource ID entry to .ascend.meta."""
+    # One character at a time: a string literal of exactly 64 chars would carry an
+    # implicit NUL and overflow the value.
+    value = ", ".join(f"'{char}'" for char in resource_id)
+    source = '#include "basic_api/kernel_tensor.h"\n'
+    source += '__attribute__((used, section(".ascend.meta")))\n'
+    source += "static const BinaryMetaSpecializationResourceId "
+    source += "g_ascend_resource_id_section = "
+    source += "{{B_TYPE_SPECIALIZATION_RESOURCE_ID, %d}, {" % _RESOURCE_ID_VALUE_SIZE
+    source += value + "}};\n"
+    return source
+
+
+def generate_resource_id_object(object_path, output_path, compile_command, cce_arch, compile_log_path=None):
+    """Compile the Resource ID into a .ascend.meta metadata object."""
+    resource_id = calculate_resource_id(object_path)
+    directory = os.path.dirname(os.path.realpath(output_path))
+    source_fd = None
+    source_path = None
     try:
-        # Keep temporary files beside the ELF so the final replacement is atomic.
-        object_fd, temporary_object = tempfile.mkstemp(prefix=".resource_id.object.", suffix=".o", dir=directory)
-        os.close(object_fd)
-        object_fd = None
-        payload_fd, payload_path = tempfile.mkstemp(prefix=".resource_id.payload.", dir=directory)
-        payload_file = os.fdopen(payload_fd, "wb")
-        payload_fd = None
-        with payload_file:
-            payload_file.write(resource_id.encode("ascii"))
-            payload_file.flush()
-            os.fsync(payload_file.fileno())
-        # Mutate a private copy and publish it only after objcopy succeeds.
-        shutil.copy2(dynamic_object_path, temporary_object)
-        _run_tool(
-            [
-                objcopy,
-                "--add-section",
-                f"{_RESOURCE_ID_SECTION}={payload_path}",
-                "--set-section-flags",
-                f"{_RESOURCE_ID_SECTION}=readonly",
-                temporary_object,
-            ]
+        source_fd, source_path = tempfile.mkstemp(prefix=".resource_id.source.", suffix=".cpp", dir=directory)
+        source_file = os.fdopen(source_fd, "w")
+        source_fd = None
+        with source_file:
+            source_file.write(_render_resource_id_source(resource_id))
+        with suppress(FileNotFoundError):
+            os.unlink(output_path)
+        CommonUtility.run_cmd_inner(
+            list(compile_command)
+            + ["-c", "-O3", "-xcce", source_path]
+            + _asc_include_options()
+            + ["--cce-aicore-arch=" + cce_arch, "--cce-aicore-only", "-std=c++17", "-o", output_path],
+            CompileStage.SPECIALIZATION,
+            compile_log_path,
         )
-        with open(temporary_object, "rb") as temporary_file:
-            os.fsync(temporary_file.fileno())
-        os.replace(temporary_object, dynamic_object_path)
+        return resource_id
     finally:
-        # Cover failures before descriptors are transferred to file objects.
-        for file_descriptor in (object_fd, payload_fd):
-            if file_descriptor is None:
-                continue
+        if source_fd is not None:
             with suppress(OSError):
-                os.close(file_descriptor)
-        for path in (temporary_object, payload_path):
-            if path is None:
-                continue
-            try:
-                os.unlink(path)
-            except FileNotFoundError:
-                pass
+                os.close(source_fd)
+        if source_path is not None:
+            with suppress(FileNotFoundError):
+                os.unlink(source_path)
 
 
-def generate_and_write_resource_id(dynamic_object_path: str) -> str:
-    resource_id = calculate_resource_id(dynamic_object_path)
-    write_resource_id_section(dynamic_object_path, resource_id)
+def embed_resource_id(dst_file, is_debug, compile_log_path=None):
+    """Compile the Resource ID of dst_file and merge it back into dst_file."""
+    resource_object = "%s.resource_id.o" % dst_file
+    compile_command = [global_var_storage.get_variable("ascendc_compiler_path")]
+    if global_var_storage.get_variable("ascendc_enable_ccache"):
+        compile_command.insert(0, os.environ.get("ASCENDC_CCACHE_EXECUTABLE"))
+    resource_id = generate_resource_id_object(
+        dst_file, resource_object, compile_command, get_soc_spec(COMPILER_ARCH), compile_log_path
+    )
+    link_resource_id_obj(dst_file, resource_object, is_debug, compile_log_path)
     return resource_id

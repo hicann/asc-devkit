@@ -421,6 +421,10 @@ class CommonUtility:
             CommonUtility.dump_compile_log(cmds, stage, compile_log_path)
             output, ret_code = CommonUtility.run_cmd_ascendc(cmds, "link")
             CommonUtility.dump_build_log(output.decode(), cmds, stage, ret_code)
+        elif stage == CompileStage.SPECIALIZATION:
+            CommonUtility.dump_compile_log(cmds, stage, compile_log_path)
+            output, ret_code = CommonUtility.run_cmd_ascendc(cmds, "compile")
+            CommonUtility.dump_build_log(output.decode(), cmds, stage, ret_code)
 
     @staticmethod
     def get_distinct_filename_tag() -> str:

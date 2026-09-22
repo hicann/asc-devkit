@@ -93,12 +93,18 @@ enum BinaryMetaType { // function level TLV type
     B_TYPE_DEBUG_INFO = 1,
     B_TYPE_DYNAMIC_PARAM = 2,
     B_TYPE_OPTIONAL_PARAM = 3,
-    B_TYPE_SK_INFO = 5
+    B_TYPE_SK_INFO = 5,
+    B_TYPE_SPECIALIZATION_RESOURCE_ID = 6
 };
 
 struct BaseTlv { // definition of TLV head
     unsigned short type;
     unsigned short len;
+};
+
+struct BinaryMetaSpecializationResourceId {
+    BaseTlv head;
+    char value[64];
 };
 
 struct BinaryMetaVersion {
