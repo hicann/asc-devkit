@@ -75,7 +75,7 @@
             return;
         }
         if ASCEND_IS_AIC {
-            AscendC::CrossCoreWaitFlag(0x4);   // 等待AIV核完成ND2NZ格式转换
+            AscendC::CrossCoreWaitFlag<0x2>(0x4);   // 等待AIV核完成ND2NZ格式转换
         }
         ... ...
         // 设置左矩阵A、右矩阵B、Bias。

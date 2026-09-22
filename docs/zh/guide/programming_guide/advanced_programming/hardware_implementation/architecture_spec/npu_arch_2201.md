@@ -192,7 +192,7 @@ Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配�
 
     ![](../../../../figures/aicore.png)
 
-    例如，在AIC中将L0C的计算结果搬运到GM后，AIV需要将GM的数据搬运到UB。此时，可以使用CrossCoreSetFlag和CrossCoreWaitFlag命令，确保数据从L0C成功搬运到GM后，再从GM搬运到UB，流程如下图所示。
+    下面以模式2为例说明AIC与同一AI Core内AIV之间的同步过程：AIC将L0C的计算结果搬运到GM后，调用`CrossCoreSetFlag<0x2, PIPE_FIX>(ID1)`；两个AIV通过`CrossCoreWaitFlag<0x2>(ID1)`确保数据从L0C成功搬运到GM后，再将GM的数据搬运到UB。其中，`0x2`表示模式2，`PIPE_FIX`表示流水类型，`ID1`为同步标记ID。CrossCoreWaitFlag只显式传入modeId，未传入pipe模板参数。CrossCoreSetFlag之前PIPE_FIX流水的指令完成后，CrossCoreWaitFlag后续全部流水的指令才能执行，具体原因请参考[“默认值”](#cross_core_wait_flag_default_values)。
 
     ![](../../../../figures/inter_sync_1.png)
 
@@ -200,13 +200,13 @@ Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配�
 
     需要注意以下几点：
 
-    -   **成对使用**
+    -   **成对使用与一致性要求**
 
-        CrossCoreSetFlag和CrossCoreWaitFlag必须成对使用，否则可能导致算子超时问题。
+        CrossCoreSetFlag和CrossCoreWaitFlag必须成对使用，否则可能导致算子超时问题。两个接口的参数一致性要求如下：
 
-    -   **一致性要求**
-
-        CrossCoreSetFlag的模板参数和flagId必须与CrossCoreWaitFlag完全一致，否则视为不同的flagId。例如，CrossCoreSetFlag<0x0, PIPE\_MTE3\>\(0x8\)和CrossCoreSetFlag<0x2, PIPE\_FIX\>\(0x8\)设置的不是同一个flagId。
+        - modeId：本架构版本的硬件指令不使用CrossCoreWaitFlag的modeId，但建议显式配置与CrossCoreSetFlag相同的modeId，以便确认两个接口的同步模式匹配。
+        - pipe：CrossCoreWaitFlag的pipe不生效，无需与CrossCoreSetFlag的pipe保持一致。
+        - flagId：CrossCoreSetFlag与CrossCoreWaitFlag必须使用相同的flagId。
 
     -   **避免连续设置**
 
@@ -220,6 +220,9 @@ Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配�
 
         同一flagId的计数器最多可以设置15次。
 
-    -   **默认流水类型**
+    <a id="cross_core_wait_flag_default_values"></a>
 
-        CrossCoreWaitFlag不需要显式设置指令所在的流水类型，默认使用PIPE\_S。
+    -   **默认值**
+
+        - modeId：默认值为0。建议显式配置与CrossCoreSetFlag相同的modeId。
+        - pipe：默认值为PIPE\_S。CrossCoreWaitFlag接口提供pipe模板参数，但本架构版本的硬件指令不区分等待的流水，因此pipe取值不影响实际执行效果，CrossCoreWaitFlag会阻塞全部流水的后续指令。

@@ -310,7 +310,7 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
     ![](../../../../figures/inter_core_sync.png)
 
-    例如，在AIC中将L0C的计算结果搬运到GM后，AIV需要将GM的数据搬运到UB。此时，可以使用CrossCoreSetFlag和CrossCoreWaitFlag命令，确保数据从L0C成功搬运到GM后，再从GM搬运到UB，流程如下图所示。
+    下面以模式2为例说明AIC与同一AI Core内AIV之间的同步过程：AIC将L0C的计算结果搬运到GM后，调用`CrossCoreSetFlag<0x2, PIPE_FIX>(ID1)`；两个AIV通过`CrossCoreWaitFlag<0x2, PIPE_MTE2>(ID1)`等待同步标记，再将GM的数据搬运到UB。其中，`0x2`表示模式2，`PIPE_FIX`和`PIPE_MTE2`表示流水类型，`ID1`为同步标记ID。CrossCoreSetFlag之前PIPE_FIX流水的指令完成后，CrossCoreWaitFlag后续MTE2流水的指令才能执行，其他流水不受阻塞。
 
     ![](../../../../figures/inter_sync_1.png)
 
@@ -318,13 +318,13 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
     需要注意以下几点：
 
-    -   **成对使用**
+    -   **成对使用与一致性要求**
 
-        CrossCoreSetFlag和CrossCoreWaitFlag必须成对使用，否则可能导致算子超时问题。
+        CrossCoreSetFlag和CrossCoreWaitFlag必须成对使用，否则可能导致算子超时问题。两个接口的参数一致性要求如下：
 
-    -   **一致性要求**
-
-        CrossCoreSetFlag的模板参数和flagId必须与CrossCoreWaitFlag完全一致，否则视为不同的flagId。例如，CrossCoreSetFlag<0x0, PIPE\_MTE3\>\(0x8\)和CrossCoreSetFlag<0x2, PIPE\_FIX\>\(0x8\)设置的不是同一个flagId。
+        - modeId：建议CrossCoreWaitFlag显式配置与CrossCoreSetFlag相同的modeId，以便确认两个接口的同步模式匹配。
+        - pipe：CrossCoreSetFlag的pipe表示调用该接口前需要完成的流水，CrossCoreWaitFlag的pipe表示需要阻塞的流水，无需保持一致。
+        - flagId：模式0、模式1和模式2下，CrossCoreSetFlag与CrossCoreWaitFlag必须使用相同的flagId；模式4下，两个接口的flagId必须符合对应关系。
 
     -   **避免连续设置**
 
@@ -338,6 +338,7 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
         同一flagId的计数器最多可以设置15次。
 
-    -   **默认流水类型**
+    -   **默认值**
 
-        CrossCoreWaitFlag不需要显式设置指令所在的流水类型，默认使用PIPE\_S。
+        - modeId：默认值为0。建议显式配置与CrossCoreSetFlag相同的modeId。
+        - pipe：默认值为PIPE\_S，此时阻塞PIPE\_S流水的后续指令。需要阻塞其它流水时，必须显式配置对应的pipe。

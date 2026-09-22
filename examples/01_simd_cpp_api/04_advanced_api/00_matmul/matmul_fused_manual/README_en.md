@@ -64,7 +64,7 @@ A fused programming implementation with separate AIC and AIV cores, mainly intro
       - Wait for inter-core synchronization.
         ```cpp
         if ASCEND_IS_AIV {
-          AscendC::CrossCoreWaitFlag(3);
+          AscendC::CrossCoreWaitFlag<0x2>(3);
         }
         ```
       - Complete the LeakyRelu computation.

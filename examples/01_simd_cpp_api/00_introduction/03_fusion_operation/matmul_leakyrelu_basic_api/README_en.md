@@ -269,7 +269,7 @@ This example implements Matmul and LeakyRelu fusion computation based on the sta
                   AscendC::LocalTensor<half> vecLocal = ubAllocator.Alloc<half>(baseM / 2 * baseN);
 
                   // ==================== Inter-core Synchronization: Wait for Cube Core Fixpipe Completion ====================
-                  AscendC::CrossCoreWaitFlag(0);
+                  AscendC::CrossCoreWaitFlag<0x2>(0);
 
                   // ==================== GM → UB: DataCopyPad Read Matmul Results ====================
                   // Calculate the starting offset of current Vector core in GM

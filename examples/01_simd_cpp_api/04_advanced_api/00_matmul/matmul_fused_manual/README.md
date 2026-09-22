@@ -64,7 +64,7 @@
       - 等待核间同步。
         ```cpp
         if ASCEND_IS_AIV {
-          AscendC::CrossCoreWaitFlag(3);
+          AscendC::CrossCoreWaitFlag<0x2>(3);
         }
         ```
       - 完成LeakyRelu计算。

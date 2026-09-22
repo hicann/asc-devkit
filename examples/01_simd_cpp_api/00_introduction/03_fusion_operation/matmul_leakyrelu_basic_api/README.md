@@ -269,7 +269,7 @@
                   AscendC::LocalTensor<half> vecLocal = ubAllocator.Alloc<half>(baseM / 2 * baseN);
 
                   // ==================== 核间同步：等待Cube核Fixpipe完成 ====================
-                  AscendC::CrossCoreWaitFlag(0);
+                  AscendC::CrossCoreWaitFlag<0x2>(0);
 
                   // ==================== GM → UB: DataCopyPad读取Matmul结果 ====================
                   // 计算当前Vector核在GM中的起始偏移

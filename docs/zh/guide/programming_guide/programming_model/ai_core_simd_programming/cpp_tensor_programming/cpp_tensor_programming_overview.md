@@ -281,11 +281,11 @@ AI Core上的执行单元分别属于不同的执行流水，同步即是保证�
 
 | 核间同步类型 | 场景说明 | 实现代码示例 |
 |---|---|---|
-| **所有AIC核同步** | 同步所有AIC核，通常用于对Cube算子计算结果进行多核累加操作。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x0, PIPE_FIX>(flagID);`<br>`    AscendC::CrossCoreWaitFlag(flagID);`<br>`}` |
-| **所有AIV核同步** | 同步所有AIV核，通常用于对Vector算子计算结果进行多核累加操作。 | `if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(flagID);`<br>`    AscendC::CrossCoreWaitFlag(flagID);`<br>`}` |
-| **单个AI Core内两个AIV子核之间同步** | 同步单个AI Core内两个AIV子核，通常用于Vector算子内需要分组进行同步的场景。 | `if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(flagID);`<br>`    AscendC::CrossCoreWaitFlag(flagID);`<br>`}` |
-| **单个AI Core内AIC与AIV同步** | 同步单个AI Core内AIC与AIV核，通常用于CV融合算子中Cube与Vector间的交互操作。AIC触发两个AIV同时等待。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0);`<br>`}`<br>`if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreWaitFlag(0);`<br>`}` |
-| **单个AI Core内AIC与AIV同步（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)新引入）** | 同步单个AI Core内AIC与AIV核，通常用于CV融合算子中Cube与Vector间的交互操作。AIV0与AIV1可单独触发AIC等待。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x4, PIPE_FIX>(0);`<br>`    AscendC::CrossCoreSetFlag<0x4, PIPE_FIX>(16);`<br>`}`<br>`if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreWaitFlag(0);`<br>`}` |
+| **所有AIC核同步** | 同步所有AIC核，通常用于对Cube算子计算结果进行多核累加操作。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x0, PIPE_FIX>(flagID);`<br>`    AscendC::CrossCoreWaitFlag<0x0>(flagID);`<br>`}` |
+| **所有AIV核同步** | 同步所有AIV核，通常用于对Vector算子计算结果进行多核累加操作。 | `if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(flagID);`<br>`    AscendC::CrossCoreWaitFlag<0x0>(flagID);`<br>`}` |
+| **单个AI Core内两个AIV子核之间同步** | 同步单个AI Core内两个AIV子核，通常用于Vector算子内需要分组进行同步的场景。 | `if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(flagID);`<br>`    AscendC::CrossCoreWaitFlag<0x1>(flagID);`<br>`}` |
+| **单个AI Core内AIC与AIV同步** | 同步单个AI Core内AIC与AIV核，通常用于CV融合算子中Cube与Vector间的交互操作。AIC触发两个AIV同时等待。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0);`<br>`}`<br>`if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreWaitFlag<0x2>(0);`<br>`}` |
+| **单个AI Core内AIC与AIV同步（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)新引入）** | 同步单个AI Core内AIC与AIV核，通常用于CV融合算子中Cube与Vector间的交互操作。AIV0与AIV1可单独触发AIC等待。 | `if ASCEND_IS_AIC {`<br>`    AscendC::CrossCoreSetFlag<0x4, PIPE_FIX>(0);`<br>`    AscendC::CrossCoreSetFlag<0x4, PIPE_FIX>(16);`<br>`}`<br>`if ASCEND_IS_AIV {`<br>`    AscendC::CrossCoreWaitFlag<0x4>(0);`<br>`}` |
 
 > 📌 基于分离模式（AIC和AIV分离）开发融合算子时，算子逻辑中通常同时包含AIV和AIC的处理逻辑，此时需要使用Ascend C提供的宏ASCEND_IS_AIV/ASCEND_IS_AIC来对AIV和AIC的代码进行隔离。
 >

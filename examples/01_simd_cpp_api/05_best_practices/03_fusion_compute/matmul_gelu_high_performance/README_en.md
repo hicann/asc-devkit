@@ -189,7 +189,7 @@ After the AIC side completes Fixpipe output of one (baseM × baseN) sub-block, i
 AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);  // Notify AIV data ready
 
 // AIV side GeluAndCopyOutAivSeparate() / GeluAndCopyOutAiv():
-AscendC::CrossCoreWaitFlag(0x8);  // Wait for AIC side Fixpipe completion
+AscendC::CrossCoreWaitFlag<0x2>(0x8);  // Wait for AIC side Fixpipe completion
 ```
 
 #### 3. Multi-Core Splitting in `__mix__(1,2)` Mode
