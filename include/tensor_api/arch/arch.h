@@ -21,8 +21,8 @@
 #define INCLUDE_TENSOR_API_ARCH_ARCH_H
 
 #include "tensor_api/arch/cube/mmad_op.h"
-#include "tensor_api/arch/cube/copy_op.h"
-#include "tensor_api/arch/vector/copy_op.h"
+#include "tensor_api/arch/cube/cube_copy_op.h"
+#include "tensor_api/arch/vector/vector_copy_op.h"
 
 #endif // INCLUDE_TENSOR_API_ARCH_ARCH_H
 

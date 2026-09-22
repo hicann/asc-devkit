@@ -23,7 +23,7 @@
 #include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
 #include "tensor_api/atom/cube/mmad_atom.h"
-#include "impl/tensor_api/algorithm/mmad_impl.h"
+#include "impl/tensor_api/algorithm/mmad_algorithm_impl.h"
 
 namespace asc {
 namespace te {

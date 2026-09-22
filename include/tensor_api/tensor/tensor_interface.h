@@ -10,15 +10,15 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TENSOR_INTERFACE_H
 #endif
 
 /*!
- * \file tensor.h
+ * \file tensor_interface.h
  * \brief
  */
-#ifndef INCLUDE_TENSOR_API_TENSOR_TENSOR_H
-#define INCLUDE_TENSOR_API_TENSOR_TENSOR_H
+#ifndef INCLUDE_TENSOR_API_TENSOR_TENSOR_INTERFACE_H
+#define INCLUDE_TENSOR_API_TENSOR_TENSOR_INTERFACE_H
 
 namespace asc {
 namespace te {
@@ -30,7 +30,7 @@ enum class cache_mode : uint8_t { normal = 0, disable = 4, last = 5, persistent 
 
 #include "tensor_api/tensor/layout_interface.h"
 #include "tensor_api/tensor/pointer.h"
-#include "impl/tensor_api/tensor/tuple_impl.h"
+#include "impl/tensor_api/tensor/tensor_tuple_impl.h"
 
 #if !defined(ASC_DEPRECATED)
 #define ASC_DEPRECATED(version, removal_date, replacement)                                                  \
@@ -166,9 +166,9 @@ __aicore__ inline auto squeeze(const Input& x, const Pattern& pattern);
 } // namespace te
 } // namespace asc
 
-#endif // INCLUDE_TENSOR_API_TENSOR_TENSOR_H
+#endif // INCLUDE_TENSOR_API_TENSOR_TENSOR_INTERFACE_H
 
-#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H)
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TENSOR_INTERFACE_H)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC_TENSOR_API_H
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_TENSOR_INTERFACE_H
 #endif

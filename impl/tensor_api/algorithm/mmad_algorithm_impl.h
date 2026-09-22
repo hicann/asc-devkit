@@ -10,17 +10,17 @@
 
 #if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
 #warning \
-    "impl/tensor_api/algorithm/mmad_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
+    "impl/tensor_api/algorithm/mmad_algorithm_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file maybe removed in the future. Please use "#include "tensor_api/tensor.h"" and use public functions or variables defined in interface headers files."
 #define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
 #define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC
 #endif
 
 /*!
- * \file mmad_impl.h
+ * \file mmad_algorithm_impl.h
  * \brief
  */
-#ifndef IMPL_TENSOR_API_ALGORITHM_MMAD_IMPL_H
-#define IMPL_TENSOR_API_ALGORITHM_MMAD_IMPL_H
+#ifndef IMPL_TENSOR_API_ALGORITHM_MMAD_ALGORITHM_IMPL_H
+#define IMPL_TENSOR_API_ALGORITHM_MMAD_ALGORITHM_IMPL_H
 
 #include "impl/tensor_api/atom/mmad_atom_impl.h"
 
@@ -57,7 +57,7 @@ __aicore__ inline constexpr auto make_mmad(const MmadOperation& operation, const
 } // namespace te
 } // namespace asc
 
-#endif // IMPL_TENSOR_API_ALGORITHM_MMAD_IMPL_H
+#endif // IMPL_TENSOR_API_ALGORITHM_MMAD_ALGORITHM_IMPL_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
 #undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS

@@ -21,7 +21,7 @@
 #define INCLUDE_TENSOR_API_TENSOR_LAYOUT_INTERFACE_H
 
 #include "tensor_api/tensor/layout_type.h"
-#include "impl/tensor_api/tensor/tuple_impl.h"
+#include "impl/tensor_api/tensor/tensor_tuple_impl.h"
 #include "impl/tensor_api/tensor/layout_definition.h"
 
 namespace asc {

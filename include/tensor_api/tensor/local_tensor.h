@@ -16,7 +16,7 @@
 #ifndef INCLUDE_TENSOR_API_TENSOR_LOCAL_TENSOR_H
 #define INCLUDE_TENSOR_API_TENSOR_LOCAL_TENSOR_H
 
-#include "tensor_api/tensor/tensor.h"
+#include "tensor_api/tensor/tensor_interface.h"
 #include "tensor_api/utils/utils.h"
 
 namespace asc {
