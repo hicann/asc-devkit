@@ -21,6 +21,7 @@ def gen_golden_data_simple():
     value = 2.0
     dst = np.zeros(4 * 128, dtype=np.float32)
     golden = (input_x * value + dst).astype(np.float32)
+    golden = np.tile(golden, 8)
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
     input_x.tofile("./input/input_x.bin")

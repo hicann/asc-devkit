@@ -106,6 +106,7 @@ def gen_golden_data_simple():
     else:
         golden = golden.astype(dtype)
     golden = np.concatenate((golden, np.zeros(256).astype(dtype)))
+    golden = np.tile(golden, 8)
 
     os.makedirs("output", exist_ok=True)
     golden.tofile("./output/golden.bin")
