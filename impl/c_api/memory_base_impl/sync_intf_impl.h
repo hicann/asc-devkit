@@ -236,7 +236,7 @@ __aicore__ inline void asc_sync_vec(int id)
 }
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sync)
-__aicore__ inline void asc_sync_vec() { asc_sync_post_process(); }
+__aicore__ inline void asc_sync_vec() { pipe_barrier(pipe_t::PIPE_ALL); }
 
 __aicore__ inline void asc_sync_notify(pipe_t pipe, pipe_t tpipe, event_t id)
 {
@@ -268,7 +268,7 @@ __aicore__ inline void asc_sync_pipe(pipe_t pipe)
         } else if (pipe == pipe_t::PIPE_MTE3) {
             pipe_barrier(pipe_t::PIPE_MTE3);
         } else if (pipe == pipe_t::PIPE_ALL) {
-            asc_sync_post_process();
+            pipe_barrier(pipe_t::PIPE_ALL);
         } else if (pipe == pipe_t::PIPE_FIX) {
             pipe_barrier(pipe_t::PIPE_FIX);
         }
@@ -278,7 +278,7 @@ __aicore__ inline void asc_sync_pipe(pipe_t pipe)
         } else if (pipe == pipe_t::PIPE_MTE3) {
             pipe_barrier(pipe_t::PIPE_MTE3);
         } else if (pipe == pipe_t::PIPE_ALL) {
-            asc_sync_post_process();
+            pipe_barrier(pipe_t::PIPE_ALL);
         } else if (pipe == pipe_t::PIPE_V) {
             pipe_barrier(pipe_t::PIPE_V);
         }
@@ -303,7 +303,7 @@ __aicore__ inline void asc_sync_mte2(int id)
     pipe_barrier(pipe_t::PIPE_MTE2);
 }
 
-__aicore__ inline void asc_sync() { asc_sync_post_process(); }
+__aicore__ inline void asc_sync() { pipe_barrier(pipe_t::PIPE_ALL); }
 
 __aicore__ inline void asc_sync_block_arrive(pipe_t pipe, int64_t flag_id)
 {

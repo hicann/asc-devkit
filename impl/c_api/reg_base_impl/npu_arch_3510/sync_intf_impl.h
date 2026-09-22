@@ -21,7 +21,7 @@
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_sync)
-__aicore__ inline void asc_sync_vec() { asc_sync_post_process(); }
+__aicore__ inline void asc_sync_vec() { pipe_barrier(pipe_t::PIPE_ALL); }
 
 #endif
 
