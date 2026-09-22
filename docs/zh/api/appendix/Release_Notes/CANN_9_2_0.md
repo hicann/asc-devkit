@@ -58,6 +58,8 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 - `asc_duplicate`、`asc_duplicate_scalar`新增`fp8_e8m0_t`引用输出重载，并补充包括`fp8_e8m0_t`在内的函数返回值形式；[asc_madd](../../SIMD-API/c_api/reg_compute/reg_fused/asc_madd.md)新增`bfloat16_t`重载。
 - [asc_store](../../SIMD-API/c_api/reg_compute/store/asc_store.md)补充`half`数据类型且带`count`参数的公共重载，支持指定从Reg搬出到UB的有效元素数量。
 - 类型转换接口补充显式源/目的位置参数和函数返回值形式，统一由[asc_position_mode](../../SIMD-API/c_api/defs/enum/asc_position_mode.md)或[asc_position_quarter_mode](../../SIMD-API/c_api/defs/enum/asc_position_quarter_mode.md)表达位置；奇偶位置也可直接使用[ASC_POSITION_EVEN](../../SIMD-API/c_api/defs/enum/asc_position_mode.md)和[ASC_POSITION_ODD](../../SIMD-API/c_api/defs/enum/asc_position_mode.md)常量，不再依赖`_v2`、`_v3`、`_v4`后缀推断位置。
+- 为[asc_pack_to_high](../../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_high.md)和[asc_pack_to_low](../../SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_low.md)接口补充函数返回值形式的重载。
+- [asc_update_addr_reg](../../SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md)补充功能及约束说明，并提供可以直接运行的调用示例。
 
 ### 矩阵计算与数据搬运
 
@@ -77,6 +79,8 @@ CANN 9.2.0在CANN 9.1.0的基础上继续增强C API。本版本新增矩阵与�
 - [asc_get_arch_ver](../../SIMD-API/c_api/utils/sys_var/asc_get_arch_ver.md)改为返回Ascend C对外使用的架构版本号，2201架构返回`2201`，3510架构返回`3510`，不再直接暴露芯片寄存器中的内部版本字段。
 - [asc_sync_pipe](../../SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md)补齐2201架构Vector Core的`PIPE_V`单流水同步，并修正3510架构[asc_sync_vec](../../SIMD-API/c_api/sync/intra_core_sync/asc_sync_vec.md)带`id`重载中的冗余Vector流水屏障。
 - [asc_lock](../../SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)和[asc_unlock](../../SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)新增使用[asc_mutex_execute_mode](../../SIMD-API/c_api/defs/enum/asc_mutex_execute_mode.md)的重载，以强类型参数选择阻塞或非阻塞模式；原`ascMutexExecuteMode`类型名作为兼容别名保留。
+- 完善系统变量接口（[asc_get_status](../../SIMD-API/c_api/utils/sys_var/asc_get_status.md)、[asc_get_sub_block_id](../../SIMD-API/c_api/utils/sys_var/asc_get_sub_block_id.md)、[asc_get_sub_block_num](../../SIMD-API/c_api/utils/sys_var/asc_get_sub_block_num.md)、[asc_get_sys_virtual_base](../../SIMD-API/c_api/utils/sys_var/asc_get_sys_virtual_base.md)和[asc_get_vf_len](../../SIMD-API/c_api/utils/sys_var/asc_get_vf_len.md)）和特殊寄存器控制接口（[asc_get_ctrl](../../SIMD-API/c_api/spr/asc_get_ctrl.md)、[asc_set_ctrl](../../SIMD-API/c_api/spr/asc_set_ctrl.md)）的文档内容，补充功能及约束说明，并提供可以直接运行的调用示例。
+- 新增接口文档[asc_get_system_clock](../../SIMD-API/c_api/utils/sys_var/asc_get_system_clock.md)，功能为读取当前系统时钟计数器，直接返回微秒级时间值。
 
 ### 公共头文件
 
