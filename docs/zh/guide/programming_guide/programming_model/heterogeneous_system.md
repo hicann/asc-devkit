@@ -14,4 +14,4 @@
 
 
 >[!NOTE]说明
-> 关于Task/Stream等Runtime运行时管理的详细介绍，请参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+> 关于Task/Stream等Runtime运行时管理的详细介绍，请参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/README.md)。

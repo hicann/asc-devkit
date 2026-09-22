@@ -50,7 +50,7 @@ hello_world<<<numBlocks, nullptr, stream>>>(&args, sizeof(KernelArgs));
 
 -   numBlocks：AI CPU Device侧暂不支持分核逻辑，因此Host侧调用多核无实际意义。建议设置为1。
 -   l2ctrl：保留参数，当前固定为nullptr，开发者无需关注。
--   stream：类型为aclrtStream，stream用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在Device上执行。stream创建等管理接口请参考[《Runtime运行时API》](https://hiascend.com/document/redirect/CannCommunityRuntimeApi)。
+-   stream：类型为aclrtStream，stream用于维护一些异步操作的执行顺序，确保按照应用程序中的代码调用顺序在Device上执行。stream创建等管理接口请参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/README.md)。
 
 >[!NOTE]说明 
 >在编写调用代码时需要遵循如下规范：
