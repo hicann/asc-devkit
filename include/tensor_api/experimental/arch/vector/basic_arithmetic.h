@@ -105,8 +105,25 @@ __simd_callee__ inline reg_tensor<T> sub_c(
     const reg_tensor<bool>& carry_src);
 
 template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& carry_src);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& borrow_src);
+
+template <typename T>
 __simd_callee__ inline reg_tensor<T> mull(
     reg_tensor<T>& high, const reg_tensor<T>& src0, const reg_tensor<T>& src1);
+
+template <typename T>
+__simd_callee__ inline reg_pair<T> mull(const reg_tensor<T>& src0, const reg_tensor<T>& src1);
 
 template <typename T, typename U>
 __simd_callee__ inline decltype(auto) operator/(const T& a, const U& b);

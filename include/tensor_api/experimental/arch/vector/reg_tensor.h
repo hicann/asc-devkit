@@ -81,16 +81,17 @@ template <typename T>
 inline constexpr bool is_reg_tensor_v = is_reg_tensor<AscendC::Std::remove_cvref_t<T>>::value;
 
 /**
- * @brief Holds a pair of register tensors with the same element type.
- * @tparam DataType Element type represented by both register tensors.
+ * @brief Holds a pair of register tensors, optionally with different element types.
+ * @tparam DataType Element type represented by the first register tensor.
+ * @tparam CarryType Element type represented by the second register tensor. Defaults to DataType.
  */
-template <typename DataType>
+template <typename DataType, typename CarryType = DataType>
 struct reg_pair {
     /** @brief First register tensor. */
     reg_tensor<DataType> first;
 
     /** @brief Second register tensor. */
-    reg_tensor<DataType> second;
+    reg_tensor<CarryType> second;
 };
 
 } // namespace experimental

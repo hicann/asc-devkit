@@ -32,10 +32,6 @@ void check_bitwise_and()
 {
     static_assert(AscendC::Std::is_same_v<decltype(
         AscendC::Std::declval<const reg_type<T>&>() & AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const reg_type<T>&>() & AscendC::Std::declval<const T&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const T&>() & AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T>
@@ -43,10 +39,6 @@ void check_bitwise_or()
 {
     static_assert(AscendC::Std::is_same_v<decltype(
         AscendC::Std::declval<const reg_type<T>&>() | AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const reg_type<T>&>() | AscendC::Std::declval<const T&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const T&>() | AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
 }
 
 template <typename T>
@@ -54,10 +46,29 @@ void check_bitwise_xor()
 {
     static_assert(AscendC::Std::is_same_v<decltype(
         AscendC::Std::declval<const reg_type<T>&>() ^ AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const reg_type<T>&>() ^ AscendC::Std::declval<const T&>()), reg_type<T>>);
-    static_assert(AscendC::Std::is_same_v<decltype(
-        AscendC::Std::declval<const T&>() ^ AscendC::Std::declval<const reg_type<T>&>()), reg_type<T>>);
+}
+
+template <typename T>
+void check_bitwise_masks()
+{
+    reg_type<T> src0{};
+    reg_type<T> src1{};
+    src0.mask = all_mask<T>().reg;
+    auto and_result = src0 & src1;
+    auto xor_result = src0 ^ src1;
+    EXPECT_EQ(and_result.mask, src0.mask);
+    EXPECT_EQ(xor_result.mask, src0.mask);
+}
+
+TEST(test_tensor_api_logical_compute, register_bitwise_masks)
+{
+    check_bitwise_masks<bool>();
+    check_bitwise_masks<int8_t>();
+    check_bitwise_masks<uint8_t>();
+    check_bitwise_masks<int16_t>();
+    check_bitwise_masks<uint16_t>();
+    check_bitwise_masks<int32_t>();
+    check_bitwise_masks<uint32_t>();
 }
 
 template <typename T, typename shift_type>

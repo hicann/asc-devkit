@@ -132,6 +132,42 @@ void check_mull()
         AscendC::Std::declval<const reg_type<T>&>(), AscendC::Std::declval<const reg_type<T>&>())), reg_type<T>>);
 }
 
+template <typename T>
+void check_pair_results()
+{
+    reg_type<T> src0{};
+    reg_type<T> src1{};
+    reg_type<bool> carry_src{};
+    src0.mask = all_mask<T>().reg;
+
+    auto add_result = asc::te::experimental::addc(src0, src1);
+    auto add_carry_result = asc::te::experimental::addc(src0, src1, carry_src);
+    auto sub_result = asc::te::experimental::subc(src0, src1);
+    auto sub_borrow_result = asc::te::experimental::subc(src0, src1, carry_src);
+    auto mull_result = asc::te::experimental::mull(src0, src1);
+    static_assert(AscendC::Std::is_same_v<decltype(add_result), reg_pair<T, bool>>);
+    static_assert(AscendC::Std::is_same_v<decltype(add_carry_result), reg_pair<T, bool>>);
+    static_assert(AscendC::Std::is_same_v<decltype(sub_result), reg_pair<T, bool>>);
+    static_assert(AscendC::Std::is_same_v<decltype(sub_borrow_result), reg_pair<T, bool>>);
+    static_assert(AscendC::Std::is_same_v<decltype(mull_result), reg_pair<T>>);
+    EXPECT_EQ(add_result.first.mask, src0.mask);
+    EXPECT_EQ(add_result.second.mask, src0.mask);
+    EXPECT_EQ(add_carry_result.first.mask, src0.mask);
+    EXPECT_EQ(add_carry_result.second.mask, src0.mask);
+    EXPECT_EQ(sub_result.first.mask, src0.mask);
+    EXPECT_EQ(sub_result.second.mask, src0.mask);
+    EXPECT_EQ(sub_borrow_result.first.mask, src0.mask);
+    EXPECT_EQ(sub_borrow_result.second.mask, src0.mask);
+    EXPECT_EQ(mull_result.first.mask, src0.mask);
+    EXPECT_EQ(mull_result.second.mask, src0.mask);
+}
+
+TEST(test_tensor_api_basic_arithmetic, pair_result_apis)
+{
+    check_pair_results<int32_t>();
+    check_pair_results<uint32_t>();
+}
+
 TEST(test_tensor_api_basic_arithmetic, compile_public_apis_and_supported_types)
 {
     check_unary_arithmetic<int8_t>();

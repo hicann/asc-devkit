@@ -293,6 +293,52 @@ __simd_callee__ inline reg_tensor<T> sub_c(
 }
 
 template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_carry_v<T>, "addc supports int32_t and uint32_t");
+    reg_pair<T, bool> result;
+    asc_add(result.second.reg, result.first.reg, src0.reg, src1.reg, src0.mask);
+    result.first.mask = src0.mask;
+    result.second.mask = src0.mask;
+    return result;
+}
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> addc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& carry_src)
+{
+    static_assert(detail::supports_carry_v<T>, "addc supports int32_t and uint32_t");
+    reg_pair<T, bool> result;
+    asc_addc(result.second.reg, result.first.reg, src0.reg, src1.reg, carry_src.reg, src0.mask);
+    result.first.mask = src0.mask;
+    result.second.mask = src0.mask;
+    return result;
+}
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_carry_v<T>, "subc supports int32_t and uint32_t");
+    reg_pair<T, bool> result;
+    asc_sub(result.second.reg, result.first.reg, src0.reg, src1.reg, src0.mask);
+    result.first.mask = src0.mask;
+    result.second.mask = src0.mask;
+    return result;
+}
+
+template <typename T>
+__simd_callee__ inline reg_pair<T, bool> subc(
+    const reg_tensor<T>& src0, const reg_tensor<T>& src1, const reg_tensor<bool>& borrow_src)
+{
+    static_assert(detail::supports_carry_v<T>, "subc supports int32_t and uint32_t");
+    reg_pair<T, bool> result;
+    asc_subc(result.second.reg, result.first.reg, src0.reg, src1.reg, borrow_src.reg, src0.mask);
+    result.first.mask = src0.mask;
+    result.second.mask = src0.mask;
+    return result;
+}
+
+template <typename T>
 __simd_callee__ inline reg_tensor<T> mull(
     reg_tensor<T>& high, const reg_tensor<T>& src0, const reg_tensor<T>& src1)
 {
@@ -302,6 +348,17 @@ __simd_callee__ inline reg_tensor<T> mull(
     low.mask = src0.mask;
     high.mask = src0.mask;
     return low;
+}
+
+template <typename T>
+__simd_callee__ inline reg_pair<T> mull(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_mull_v<T>, "mull supports int32_t and uint32_t");
+    reg_pair<T> result;
+    asc_mull(result.first.reg, result.second.reg, src0.reg, src1.reg, src0.mask);
+    result.first.mask = src0.mask;
+    result.second.mask = src0.mask;
+    return result;
 }
 
 template <typename T, typename U>

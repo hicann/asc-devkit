@@ -23,11 +23,31 @@ namespace te {
 namespace experimental {
 
 template <typename T>
+__simd_callee__ inline reg_tensor<T> operator&(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_and_v<T>, "operator& does not support this element type");
+    reg_tensor<T> dst;
+    asc_and(dst.reg, src0.reg, src1.reg, src0.mask);
+    dst.mask = src0.mask;
+    return dst;
+}
+
+template <typename T>
 __simd_callee__ inline reg_tensor<T> operator|(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
 {
     static_assert(detail::supports_or_v<T>, "operator| does not support this element type");
     reg_tensor<T> dst;
     asc_or(dst.reg, src0.reg, src1.reg, src0.mask);
+    dst.mask = src0.mask;
+    return dst;
+}
+
+template <typename T>
+__simd_callee__ inline reg_tensor<T> operator^(const reg_tensor<T>& src0, const reg_tensor<T>& src1)
+{
+    static_assert(detail::supports_xor_v<T>, "operator^ does not support this element type");
+    reg_tensor<T> dst;
+    asc_xor(dst.reg, src0.reg, src1.reg, src0.mask);
     dst.mask = src0.mask;
     return dst;
 }
