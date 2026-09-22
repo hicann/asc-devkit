@@ -302,6 +302,7 @@ __simd_callee__ inline void ComplexMulKernel(U& dstReg, U& srcReg0, U& srcReg1, 
     RegTensor<typename ActualT::EleType>& dstReal = (RegTensor<typename ActualT::EleType>&)dstReg.reg[0];
     RegTensor<typename ActualT::EleType>& dstImag = (RegTensor<typename ActualT::EleType>&)dstReg.reg[1];
     if constexpr (SupportType<ActualT, complex32>()) {
+        // (a + bi) * (c + di) = (ac - bd) + (bc + ad)i.
         RegTensor<typename ActualT::EleType> e;
         RegTensor<typename ActualT::EleType> f;
         RegTensor<typename ActualT::EleType> g;
@@ -313,6 +314,9 @@ __simd_callee__ inline void ComplexMulKernel(U& dstReg, U& srcReg0, U& srcReg1, 
         Sub(dstReal, e, f, mask);
         Add(dstImag, g, h, mask);
     } else {
+        // FMA path for (a + bi) * (c + di):
+        // first Mul initializes real = (-b)d and imag = bc,
+        // then MulAddDst accumulates ac and ad.
         RegTensor<typename ActualT::EleType> src0ImagMinus;
         Muls(src0ImagMinus, src0Imag, -1, mask);
         Mul(dstReal, src0ImagMinus, src1Imag, mask);
@@ -1269,7 +1273,7 @@ __simd_callee__ inline void DivIEEE754HalfImpl(
     constexpr uint16_t F16_INF = 0x7C00;
 
     HalfUnion subnormalThreshold;
-    subnormalThreshold.i = 0x03FF;
+    subnormalThreshold.i = 0x0400; // minimum positive normal
 
     HalfUnion nan;
     nan.i = 0x7E00;
