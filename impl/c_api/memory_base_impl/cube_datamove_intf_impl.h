@@ -805,6 +805,12 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_gm2l1_nd2nz; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ uint8_t*.
+ * @param src Source type: __gm__ uint8_t*.
+ * @note 10-parameter form.
+ */
 __aicore__ inline void asc_copy_gm2l1_nd2nz(
     __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
@@ -813,7 +819,7 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b8(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
-            dst_nz_matrix_stride);
+            dst_nz_matrix_stride); // Memory overload: dst uses __cbuf__ uint8_t*.
     }
 }
 
@@ -829,6 +835,12 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_gm2l1_nd2nz; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ half*.
+ * @param src Source type: __gm__ half*.
+ * @note 10-parameter form.
+ */
 __aicore__ inline void asc_copy_gm2l1_nd2nz(
     __cbuf__ half* dst, __gm__ half* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
@@ -837,10 +849,16 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b16(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
-            dst_nz_matrix_stride);
+            dst_nz_matrix_stride); // Memory overload: dst uses __cbuf__ half*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_gm2l1_nd2nz; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ int16_t*.
+ * @param src Source type: __gm__ int16_t*.
+ * @note 10-parameter form.
+ */
 __aicore__ inline void asc_copy_gm2l1_nd2nz(
     __cbuf__ int16_t* dst, __gm__ int16_t* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
@@ -849,7 +867,7 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b16(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
-            dst_nz_matrix_stride);
+            dst_nz_matrix_stride); // Memory overload: dst uses __cbuf__ int16_t*.
     }
 }
 
@@ -865,6 +883,12 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_gm2l1_nd2nz; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ int32_t*.
+ * @param src Source type: __gm__ int32_t*.
+ * @note 10-parameter form.
+ */
 __aicore__ inline void asc_copy_gm2l1_nd2nz(
     __cbuf__ int32_t* dst, __gm__ int32_t* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
@@ -873,10 +897,16 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b32s(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
-            dst_nz_matrix_stride);
+            dst_nz_matrix_stride); // Memory overload: dst uses __cbuf__ int32_t*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_gm2l1_nd2nz; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ uint32_t*.
+ * @param src Source type: __gm__ uint32_t*.
+ * @note 10-parameter form.
+ */
 __aicore__ inline void asc_copy_gm2l1_nd2nz(
     __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint16_t nd_num, uint16_t n_value, uint16_t d_value,
     uint16_t src_nd_matrix_stride, uint16_t src_d_value, uint16_t dst_nz_c0_stride, uint16_t dst_nz_n_stride,
@@ -885,7 +915,7 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(
     if ASC_IS_AIC {
         copy_gm_to_cbuf_multi_nd2nz_b32s(
             dst, src, 0, nd_num, n_value, d_value, src_nd_matrix_stride, src_d_value, dst_nz_c0_stride, dst_nz_n_stride,
-            dst_nz_matrix_stride);
+            dst_nz_matrix_stride); // Memory overload: dst uses __cbuf__ uint32_t*.
     }
 }
 
@@ -912,6 +942,12 @@ __aicore__ inline void asc_copy_l0c2l1(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2l1; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ int8_t*.
+ * @param src Source type: __cc__ float*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
     uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split, bool enable_nz2nd)
@@ -919,10 +955,16 @@ __aicore__ inline void asc_copy_l0c2l1(
     if ASC_IS_AIC {
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
-            relu_pre, enable_channel_split, enable_nz2nd);
+            relu_pre, enable_channel_split, enable_nz2nd); // Memory overload: dst uses __cbuf__ int8_t*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2l1; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ half*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
     uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split, bool enable_nz2nd)
@@ -930,10 +972,16 @@ __aicore__ inline void asc_copy_l0c2l1(
     if ASC_IS_AIC {
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
-            relu_pre, enable_channel_split, enable_nz2nd);
+            relu_pre, enable_channel_split, enable_nz2nd); // Memory overload: dst/src are cbuf half*/cc int32_t*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2l1; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ int16_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ int16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split,
@@ -942,10 +990,16 @@ __aicore__ inline void asc_copy_l0c2l1(
     if ASC_IS_AIC {
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
-            relu_pre, enable_channel_split, enable_nz2nd);
+            relu_pre, enable_channel_split, enable_nz2nd); // Memory overload: dst uses __cbuf__ int16_t*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2l1; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ int8_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split,
@@ -954,10 +1008,16 @@ __aicore__ inline void asc_copy_l0c2l1(
     if ASC_IS_AIC {
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
-            relu_pre, enable_channel_split, enable_nz2nd);
+            relu_pre, enable_channel_split, enable_nz2nd); // Memory overload: dst/src are cbuf int8_t*/cc int32_t*.
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2l1; parameters below identify this variant.
+ * @param dst Destination type: __cbuf__ uint8_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool enable_channel_split,
@@ -966,7 +1026,7 @@ __aicore__ inline void asc_copy_l0c2l1(
     if ASC_IS_AIC {
         copy_matrix_cc_to_cbuf(
             dst, src, 0, n_size, m_size, dst_stride, src_stride, unit_flag_mode, static_cast<QuantMode_t>(quant_pre),
-            relu_pre, enable_channel_split, enable_nz2nd);
+            relu_pre, enable_channel_split, enable_nz2nd); // Memory overload: dst uses __cbuf__ uint8_t*.
     }
 }
 
@@ -1088,6 +1148,12 @@ __aicore__ inline void asc_copy_l12l0a(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ uint8_t*.
+ * @param src Source type: __cbuf__ uint8_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ uint8_t* dst, __cbuf__ uint8_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1095,12 +1161,19 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ uint8_t*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ half*.
+ * @param src Source type: __cbuf__ half*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ half* dst, __cbuf__ half* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1108,12 +1181,19 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ half*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ bfloat16_t*.
+ * @param src Source type: __cbuf__ bfloat16_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ bfloat16_t* dst, __cbuf__ bfloat16_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1121,12 +1201,19 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ bfloat16_t*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ int32_t*.
+ * @param src Source type: __cbuf__ int32_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ int32_t* dst, __cbuf__ int32_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1134,12 +1221,19 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ int32_t*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ uint32_t*.
+ * @param src Source type: __cbuf__ uint32_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ uint32_t* dst, __cbuf__ uint32_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1147,12 +1241,19 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ uint32_t*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0a; parameters below identify this variant.
+ * @param dst Destination type: __ca__ float*.
+ * @param src Source type: __cbuf__ float*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0a(
     __ca__ float* dst, __cbuf__ float* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1160,6 +1261,7 @@ __aicore__ inline void asc_copy_l12l0a(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __ca__ float*.
         img2colv2_cbuf_to_ca(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
@@ -1249,6 +1351,12 @@ __aicore__ inline void asc_copy_l12l0b(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0b; parameters below identify this variant.
+ * @param dst Destination type: __cb__ bfloat16_t*.
+ * @param src Source type: __cbuf__ bfloat16_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0b(
     __cb__ bfloat16_t* dst, __cbuf__ bfloat16_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1256,12 +1364,19 @@ __aicore__ inline void asc_copy_l12l0b(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __cb__ bfloat16_t*.
         img2colv2_cbuf_to_cb(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0b; parameters below identify this variant.
+ * @param dst Destination type: __cb__ int32_t*.
+ * @param src Source type: __cbuf__ int32_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0b(
     __cb__ int32_t* dst, __cbuf__ int32_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1269,12 +1384,19 @@ __aicore__ inline void asc_copy_l12l0b(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __cb__ int32_t*.
         img2colv2_cbuf_to_cb(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0b; parameters below identify this variant.
+ * @param dst Destination type: __cb__ uint32_t*.
+ * @param src Source type: __cbuf__ uint32_t*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0b(
     __cb__ uint32_t* dst, __cbuf__ uint32_t* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1282,12 +1404,19 @@ __aicore__ inline void asc_copy_l12l0b(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __cb__ uint32_t*.
         img2colv2_cbuf_to_cb(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l12l0b; parameters below identify this variant.
+ * @param dst Destination type: __cb__ float*.
+ * @param src Source type: __cbuf__ float*.
+ * @note 17-parameter form.
+ */
 __aicore__ inline void asc_copy_l12l0b(
     __cb__ float* dst, __cbuf__ float* src, uint16_t k_extension, uint16_t m_extension, uint16_t k_start_pt,
     uint16_t m_start_pt, uint8_t stride_w, uint8_t stride_h, uint8_t filter_w, uint8_t filter_h,
@@ -1295,6 +1424,7 @@ __aicore__ inline void asc_copy_l12l0b(
     bool f_matrix_ctrl, uint16_t channel_size)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __cb__ float*.
         img2colv2_cbuf_to_cb(
             dst, src, k_extension, m_extension, k_start_pt, m_start_pt, stride_w, stride_h, filter_w, filter_h,
             dilation_filter_w, dilation_filter_h, filter_size_w, filter_size_h, transpose, f_matrix_ctrl, channel_size);
@@ -1313,96 +1443,152 @@ __aicore__ inline void asc_copy_l0c2gm(
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ bfloat16_t*.
+ * @param src Source type: __cc__ float*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __gm__ bfloat16_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ int8_t*.
+ * @param src Source type: __cc__ float*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst/src are gm int8_t*/cc float*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ uint8_t*.
+ * @param src Source type: __cc__ float*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __gm__ uint8_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ float*.
+ * @param src Source type: __cc__ float*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __gm__ float*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ half*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst/src are gm half*/cc int32_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ int16_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ int16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __gm__ int16_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ int8_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst/src are gm int8_t*/cc int32_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);
     }
 }
 
+/**
+ * @brief Memory-based overload of asc_copy_l0c2gm; parameters below identify this variant.
+ * @param dst Destination type: __gm__ int32_t*.
+ * @param src Source type: __cc__ int32_t*.
+ * @note 11-parameter form.
+ */
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride_dst_d,
     uint16_t src_stride, uint8_t unit_flag_mode, uint64_t quant_pre, uint8_t relu_pre, bool channel_split,
     bool nz2nd_en)
 {
     if ASC_IS_AIC {
+        // Memory overload: dst uses __gm__ int32_t*.
         copy_matrix_cc_to_gm(
             dst, src, 0, n_size, m_size, dst_stride_dst_d, src_stride, unit_flag_mode,
             static_cast<QuantMode_t>(quant_pre), relu_pre, channel_split, nz2nd_en);

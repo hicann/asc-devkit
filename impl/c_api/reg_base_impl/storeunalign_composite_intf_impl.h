@@ -31,8 +31,14 @@ __simd_callee__ inline void asc_store(__ubuf__ int8_t* dst, vector_int8_t src)
     }
 }
 
+/**
+ * @brief Register-based sync overload of asc_store; parameters below identify this variant.
+ * @param dst Destination type: __ubuf__ uint8_t*.
+ * @param src Source type: vector_uint8_t.
+ * @note 2-parameter form.
+ */
 __simd_callee__ inline void asc_store(__ubuf__ uint8_t* dst, vector_uint8_t src)
-{ /* asc_store overload */
+{
     if ASC_IS_AIV {
         vector_store_unalign ureg;
         constexpr uint32_t count = asc_get_vf_len() / sizeof(uint8_t);
