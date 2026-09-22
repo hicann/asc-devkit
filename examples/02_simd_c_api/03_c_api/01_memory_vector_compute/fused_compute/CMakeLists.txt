@@ -15,6 +15,11 @@ if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-2201")
     message(FATAL_ERROR "This Memory vector compute C API example only supports CMAKE_ASC_ARCHITECTURES=dav-2201.")
 endif()
 find_package(ASC REQUIRED)
+
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(memory_vector_fused_compute LANGUAGES ASC CXX)
 add_executable(demo fused_compute.asc)
 target_link_libraries(demo PRIVATE tiling_api register platform m)

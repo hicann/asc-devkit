@@ -16,6 +16,10 @@ set(SCENARIO_NUM "1" CACHE STRING "Scenario number (1-3)")
 
 find_package(ASC REQUIRED)
 
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(c_api_data_copy_ub2l1 LANGUAGES ASC CXX)
 
 if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")

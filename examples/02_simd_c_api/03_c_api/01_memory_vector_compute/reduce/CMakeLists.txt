@@ -19,6 +19,11 @@ if(NOT SCENARIO_NUM MATCHES "^[1-2]$")
     message(FATAL_ERROR "SCENARIO_NUM must be 1 or 2, but got ${SCENARIO_NUM}.")
 endif()
 find_package(ASC REQUIRED)
+
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(memory_vector_reduce LANGUAGES ASC CXX)
 add_executable(demo reduce.asc)
 target_link_libraries(demo PRIVATE tiling_api register platform m)

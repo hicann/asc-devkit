@@ -12,6 +12,10 @@ cmake_minimum_required(VERSION 3.16)
 
 find_package(ASC REQUIRED)
 
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 set(PROJECT_NAME "kernel_samples" CACHE STRING "Project name")
 project(PROJECT_NAME LANGUAGES ASC CXX)
 

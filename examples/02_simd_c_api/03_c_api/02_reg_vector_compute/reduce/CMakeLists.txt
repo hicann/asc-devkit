@@ -16,6 +16,10 @@ set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510"
 
 find_package(ASC REQUIRED)
 
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo

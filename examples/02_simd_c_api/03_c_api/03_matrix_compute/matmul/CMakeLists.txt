@@ -18,6 +18,10 @@ endif()
 
 find_package(ASC REQUIRED)
 
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(kernel_samples LANGUAGES ASC CXX)
 
 add_executable(demo

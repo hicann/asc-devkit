@@ -20,6 +20,11 @@ if(NOT SCENARIO_NUM MATCHES "^[12]$")
 endif()
 
 find_package(ASC REQUIRED)
+
+if(CMAKE_ASC_RUN_MODE STREQUAL "cpu")
+    include_directories($ENV{ASCEND_HOME_PATH}/tools/cpudebug/include)
+endif()
+
 project(memory_vector_cast LANGUAGES ASC CXX)
 add_executable(demo cast.asc)
 target_link_libraries(demo PRIVATE tiling_api register platform m)
