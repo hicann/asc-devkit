@@ -15,3 +15,4 @@ This directory contains samples that directly include `tensor_api/tensor.h` and 
 | [conv2d_forward_tensor_api](./conv2d_forward_tensor_api) | Implements Conv2D Forward using the Tensor API and supports NC1HWC0, NCHW, and NHWC GM input/output formats | Ascend 950PR/Ascend 950DT |
 | [mmad_tensor_api](./mmad_tensor_api) | Implements dynamic-shape matrix multiplication and in-path quantization using the Tensor API | Ascend 950PR/Ascend 950DT |
 | [matmul_mxfp4_tensor_api_high_performance](./matmul_mxfp4_tensor_api_high_performance) | High-performance MxFP4 Matmul Tensor API sample based on the static Tensor programming model | Ascend 950PR/Ascend 950DT |
+| [custom_op_tensor_api](./custom_op_tensor_api) | Implements batched-input flattening and shared-weight QKV projection with a custom Tensor API Copy Operation | Ascend 950PR/Ascend 950DT |
