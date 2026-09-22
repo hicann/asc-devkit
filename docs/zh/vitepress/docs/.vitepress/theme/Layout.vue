@@ -19,6 +19,7 @@ import ApiDownload from './ApiDownload.vue'
 import EditOnGitcode from './EditOnGitcode.vue'
 import PageBreadcrumb from './PageBreadcrumb.vue'
 import DocumentBuildInfo from './DocumentBuildInfo.vue'
+import { renderMermaidDiagrams } from './mermaid.mjs'
 
 let sidebarScrollRequest = 0
 
@@ -54,10 +55,13 @@ function scrollActiveSidebarItem() {
   })
 }
 
-onMounted(() => {
+function updatePageEnhancements() {
   scrollActiveSidebarItem()
-})
-onContentUpdated(scrollActiveSidebarItem)
+  void renderMermaidDiagrams()
+}
+
+onMounted(updatePageEnhancements)
+onContentUpdated(updatePageEnhancements)
 onBeforeUnmount(() => { sidebarScrollRequest += 1 })
 </script>
 

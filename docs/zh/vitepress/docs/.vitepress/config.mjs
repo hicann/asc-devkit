@@ -24,6 +24,7 @@ import {
   normalizeApiRoute,
 } from '../../scripts/api-support.mjs'
 import { loadGitTimestamps } from '../../scripts/git-timestamps.mjs'
+import { installMermaidFence } from '../../scripts/mermaid-fence.mjs'
 import { shellQuote } from '../../scripts/shell-utils.mjs'
 import { patchVitePressSidebarItem } from '../../scripts/vitepress-sidebar-patch.mjs'
 import {
@@ -620,6 +621,7 @@ export default defineConfig({
   markdown: {
     math: true,
     config(md) {
+      installMermaidFence(md)
       installRepositoryLinkRewrite(
         md,
         env => getOriginalSourceFile(env?.relativePath),
@@ -823,6 +825,13 @@ function balanceDivTags(html) {
           const src = resolve(docsRoot, sub)
           if (existsSync(src)) cpSync(src, dst, { recursive: true })
         }
+      },
+    }, {
+      name: 'copy-mermaid-browser-bundle',
+      closeBundle() {
+        const src = resolve(docsRoot, '..', 'node_modules', 'mermaid', 'dist', 'mermaid.min.js')
+        const dst = resolve(distDir, 'assets', 'mermaid.min.js')
+        copyFileSync(src, dst)
       },
     }, {
       name: 'vitepress-override-search-vue',

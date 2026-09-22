@@ -1,0 +1,34 @@
+.vp-doc .mermaid-diagram {
+  margin: 20px 0;
+  overflow-x: auto;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+}
+
+.vp-doc .mermaid-diagram > pre.mermaid {
+  min-height: 120px;
+  margin: 0;
+  padding: 20px;
+  overflow: visible;
+  color: var(--vp-c-text-1);
+  background: transparent;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+.vp-doc .mermaid-diagram > pre.mermaid.is-rendering {
+  color: transparent;
+}
+
+.vp-doc .mermaid-diagram > pre.mermaid.mermaid-error {
+  color: var(--vp-c-danger-1);
+  text-align: left;
+}
+
+.vp-doc .mermaid-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}

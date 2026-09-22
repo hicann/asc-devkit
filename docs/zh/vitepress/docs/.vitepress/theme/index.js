@@ -15,6 +15,7 @@ import SidebarResizer from './SidebarResizer.vue'
 import { installBaiduAnalytics } from '../baidu-analytics.mjs'
 import './code-theme.css'
 import './search-overrides.css'
+import './mermaid.css'
 
 import './filter.css'
 import './ascendops-theme.css'
