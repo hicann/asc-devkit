@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-`int4x2_t`将两个连续的4bit有符号整数打包为一个8bit存储单元。本接口根据`mask`将`src`中参与计算的4bit有符号整数转换为`int16_t`类型，结果写入`dst`。
+`int4x2_t`将两个连续的4bit有符号整数打包为一个8bit存储单元。本接口根据`mask`将`src`中参与计算的4bit有符号整数转换为`int16_t`类型，可通过引用参数或函数返回值输出结果。
 
 由于每个4bit有符号整数的位宽小于1Byte，实际处理时，同一`int4x2_t`存储单元内的两个4bit有符号整数共同对应`mask`中的一个掩码位。该掩码位为1时，两个4bit有符号整数同时参与转换，转换结果作为两个连续的`int16_t`类型元素写入`dst`；为0时，对应的两个`int16_t`类型元素均置0。
 
@@ -38,8 +38,15 @@
 
 ```cpp
 // 占位符形式
+// 通过引用参数输出结果
 __simd_callee__ inline void asc_int4x22int16(
     vector_int16_t& dst,
+    vector_int4x2_t src,
+    vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode, <quarter_pos>> src_quarter_pos)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_int16_t asc_int4x22int16(
     vector_int4x2_t src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> src_quarter_pos)
@@ -62,7 +69,8 @@ __simd_callee__ inline void asc_int4x22int16(
 
 ## 返回值说明
 
-无。
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 

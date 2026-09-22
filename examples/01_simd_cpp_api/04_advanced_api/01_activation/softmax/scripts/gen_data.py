@@ -15,6 +15,9 @@ import os
 import numpy as np
 
 
+FLOAT32_MIN = np.finfo(np.float32).min
+
+
 def softmax_py_float(x):
     """Compute the softmax function for each channel of the input x."""
     orig_shape = x.shape
@@ -32,15 +35,11 @@ def softmax_py_float(x):
     return out, x_max, x_sum
 
 
-def adjust_softmax_res(res, max_val, res_shape):
+def adjust_softmax_res(res, max_val):
     """Adjust softmax results based on max values."""
-    target = 0xFF7FFFFF
-    to = 0.0
-    for i in range(res_shape[0]):
-        if max_val[i][0] == target:
-            for j in range(res_shape[1]):
-                res[i][j] = to
-    return
+    matched_rows = max_val[:, 0] == FLOAT32_MIN
+    res[matched_rows, :] = np.float32(0.0)
+    return res
 
 
 def gen_golden_data():
@@ -51,11 +50,11 @@ def gen_golden_data():
     x_shape = (32, 32)
     workspace_shape = (1024,)
     x = np.random.uniform(-1, 1, x_shape).astype(np.float32)
+    x[0, :] = FLOAT32_MIN
     workspace = np.zeros(workspace_shape, dtype=np.uint32)
 
     softmax_out, max_val, sum_val = softmax_py_float(x)
-
-    adjust_softmax_res(softmax_out, max_val, softmax_out.shape)
+    softmax_out = adjust_softmax_res(softmax_out, max_val)
 
     x.tofile("./input/input_x.bin")
     workspace.tofile("./input/workspace.bin")

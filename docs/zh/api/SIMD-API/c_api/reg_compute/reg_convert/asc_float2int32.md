@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
 
-将`float`类型数据转换为`int32_t`类型，并支持多种舍入模式与饱和/非饱和模式。
+将`float`类型数据转换为`int32_t`类型，并支持多种舍入模式与饱和/非饱和模式，可通过引用参数或函数返回值输出结果。
 
 关于舍入模式和饱和/非饱和模式的详细说明，请参见[舍入模式与饱和模式](rounding_mode.md)。
 
@@ -48,10 +48,14 @@ def asc_float2int32_rn(dst, src, mask):
 ### 模板原型
 
 ```c
-// 占位符形式
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_float2int32_<round_mode><sat_mode>(vector_int32_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask)
+
+// 通过函数返回值返回结果（占位符形式）
+__simd_callee__ inline vector_int32_t asc_float2int32_<round_mode><sat_mode>(vector_float src,
+                                                                            vector_bool mask)
 ```
 
 ### 占位符说明
@@ -62,10 +66,14 @@ __simd_callee__ inline void asc_float2int32_<round_mode><sat_mode>(vector_int32_
 ### 函数原型典型示例
 
 ```c
-// 示例：向最近且偶数舍入（rn）非饱和模式。
+// 示例：向最近且偶数舍入（rn）非饱和模式，通过引用参数输出结果
 __simd_callee__ inline void asc_float2int32_rn(vector_int32_t& dst,
                                                vector_float src,
                                                vector_bool mask)
+
+// 示例：向最近且偶数舍入（rn）非饱和模式，通过函数返回值返回结果
+__simd_callee__ inline vector_int32_t asc_float2int32_rn(vector_float src,
+                                                        vector_bool mask)
 ```
 
 ## 参数说明
@@ -82,7 +90,8 @@ __simd_callee__ inline void asc_float2int32_rn(vector_int32_t& dst,
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 

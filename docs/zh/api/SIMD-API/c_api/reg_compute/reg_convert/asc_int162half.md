@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/reg_compute/reg_convert.h"`。
 
-`src`中int16_t类型的元素转换为half类型（16位浮点数），并将结果写入dst。源操作数和目的操作数位宽相同，转换后元素数量不变。支持5种舍入模式，关于舍入模式的详细说明请参见[舍入模式与饱和模式](rounding_mode.md)。
+`src`中`int16_t`类型的元素转换为`half`类型（16位浮点数），可通过引用参数或函数返回值输出结果。源操作数和目的操作数位宽相同，转换后元素数量不变。支持5种舍入模式，关于舍入模式的详细说明请参见[舍入模式与饱和模式](rounding_mode.md)。
 
 ```python
 def asc_int162half_rn(dst, src, mask):
@@ -44,10 +44,14 @@ def asc_int162half_rn(dst, src, mask):
 ## 函数原型
 
 ```c
-// 占位符形式
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_int162half_<round_mode>(vector_half& dst,
                                                          vector_int16_t src,
                                                          vector_bool mask)
+
+// 通过函数返回值返回结果（占位符形式）
+__simd_callee__ inline vector_half asc_int162half_<round_mode>(vector_int16_t src,
+                                                               vector_bool mask)
 ```
 
 **占位符说明如下：**
@@ -67,7 +71,8 @@ __simd_callee__ inline void asc_int162half_<round_mode>(vector_half& dst,
 
 ## 返回值说明
 
-无
+- 通过引用参数输出结果的函数原型无返回值。
+- 通过函数返回值输出结果的函数原型返回计算结果，返回值类型与对应引用输出函数原型中`dst`参数的类型一致（去除引用）。
 
 ## 约束说明
 
