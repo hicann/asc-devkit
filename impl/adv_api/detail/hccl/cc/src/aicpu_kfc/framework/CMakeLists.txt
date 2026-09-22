@@ -75,6 +75,7 @@ if(NOT BUILD_OPEN_PROJECT OR (BUILD_OPEN_PROJECT AND KERNEL_MODE))
         ${HCCL_BASE_DIR}/pub_inc
         ${HCCL_BASE_DIR}/pub_inc/aicpu
         ${HCCL_BASE_DIR}/pub_inc/new
+        ${HCCL_CC_DIR}/src/common
         ${HCCL_BASE_DIR}/common/debug/config
         ${HCCL_BASE_DIR}/common/debug/profiling/inc
         ${HCCL_BASE_DIR}/common/stream
@@ -126,7 +127,6 @@ if(NOT BUILD_OPEN_PROJECT OR (BUILD_OPEN_PROJECT AND KERNEL_MODE))
         ${HCCL_BASE_DIR}/legacy/framework/dfx/aicpu/common
         ${HCCL_BASE_DIR}/legacy/framework/dfx/aicpu/profiling
         ${HCCL_BASE_DIR}/legacy/framework/dfx/common
-        ${HCCL_BASE_DIR}/legacy/framework/dfx/profiling
         ${HCCL_BASE_DIR}/legacy/service/collective
         ${HCCL_BASE_DIR}/legacy/unified_platform/external_system
         ${HCCL_BASE_DIR}/legacy/unified_platform/pub_inc

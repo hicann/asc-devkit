@@ -127,6 +127,7 @@ if(TARGET mc2_server)
     target_include_directories(mc2_server_decoupler BEFORE PRIVATE
         ${HCCL_BASE_DIR}/pub_inc
         ${HCCL_HCOMM_HEADER_DIR}/../
+        ${OPEN_HCCL_SRC_ROOT}/common
         ${OPEN_HCCL_SRC_ROOT}/ops/op_common/inc
         ${OPEN_HCCL_SRC_ROOT}/common/hcomm_dlsym
         ${OPEN_HCCL_SRC_ROOT}/common/hcomm_dlsym/ccu
