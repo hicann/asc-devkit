@@ -133,6 +133,8 @@ __simd_callee__ inline reg_pair<bool> interleave(reg_tensor<bool> src0, reg_tens
     } else if constexpr (sizeof(DataType) == sizeof(uint8_t)) {
         asc_intlv_b8(result.first.reg, result.second.reg, src0.reg, src1.reg);
     }
+    result.first.with_mask(all_mask<DataType>());
+    result.second.mask = result.first.mask;
     return result;
 }
 
@@ -152,6 +154,8 @@ __simd_callee__ inline reg_pair<bool> deinterleave(reg_tensor<bool> src0, reg_te
     } else if constexpr (sizeof(DataType) == sizeof(uint8_t)) {
         asc_deintlv_b8(result.first.reg, result.second.reg, src0.reg, src1.reg);
     }
+    result.first.with_mask(all_mask<DataType>());
+    result.second.mask = result.first.mask;
     return result;
 }
 
