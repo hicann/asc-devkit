@@ -636,6 +636,7 @@ struct OpParam { // 不申请ctx，每个算子单独下发
     void* inputSymWindow = nullptr;
     void* outputSymWindow = nullptr;
     bool supportSymmetricMemory{false};
+    bool symMemChecked{false};
     u64 inputOffset = 0;
     u64 outputOffset = 0;
     HcclMem hcclBuff; // 当前仅快速下发时使用此处的地址
