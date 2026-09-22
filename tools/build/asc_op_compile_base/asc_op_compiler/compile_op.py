@@ -99,7 +99,6 @@ from .ascendc_compile_gen_json import (
     _gen_static_json_for_mix_v200,
     _gen_dynamic_json_for_v200,
     _generate_final_json,
-    _get_simt_type_in_staic,
 )
 from .ascendc_compile_base import (
     compile_multi_tilingkey,
@@ -115,304 +114,21 @@ from .super_kernel_sub_op_compile import (
     gen_sub_kernel_name,
     split_sub_kernel_objs,
     gen_sub_super_kernel_compile_options,
-    add_sub_super_kernel_info,
 )
 from .static_compile_resource_generator import KernelSpecCompilation
-from .super_kernel_constants import SuperKernelStreamFusionMode
 from .super_kernel_option_parse import parse_super_kernel_options
 from .kernel_info_infer import KernelInfoInfer
 from .ascendc_compile_utils import check_custom_dcci_end_false, check_if_gen_placehoder
-from .ascendc_kernel_feature_manager import global_ascendc_kernel_feature_manager
+from .ascendc_compile_gen_json import (  # noqa: F401  后四项为兼容既有 UT 的导入路径而再导出
+    TILING_KEY_SEARCH_KEYWORD,
+    _json_post_process,
+    GEN_PLACE_HOLDER_STR,
+    _json_except_info,
+    _get_tiling_struct_size,
+    delete_tiling_section,
+)
 
 DEFAULT_TILING_KEY = "0"
-COMPILE_INFO_KEY = "compileInfo"
-GEN_PLACE_HOLDER_STR = "gen_placeholder"
-TILING_KEY_SEARCH_KEYWORD = "Contents of section"  # used in new tiling to search tiling section lines
-
-
-def _infer_name(key, sub_operater_infos, chip_version):
-    if key == "stream":
-        if (
-            sub_operater_infos["sub_operator_kernel_type"] == "KERNEL_TYPE_AIV_ONLY"
-            or sub_operater_infos["sub_operator_kernel_type"] == "KERNEL_TYPE_MIX_AIV_1_0"
-        ):
-            name = f"dav-{chip_version}-vec"
-        elif (
-            sub_operater_infos["sub_operator_kernel_type"] == "KERNEL_TYPE_MIX_AIC_1_1"
-            or sub_operater_infos["sub_operator_kernel_type"] == "KERNEL_TYPE_MIX_AIC_1_2"
-        ):
-            name = f"dav-{chip_version}-mix"
-        else:
-            name = f"dav-{chip_version}-cube"
-    else:
-        name = "aicore"
-    return name
-
-
-def _update_super_dfx_info(name, chip_version, sub_dfx_info, super_dfx_info):
-    if name == f"dav-{chip_version}-mix":
-        name_list = [f"dav-{chip_version}-vec", f"dav-{chip_version}-cube"]
-        for sub_name in name_list:
-            if sub_name in super_dfx_info and isinstance(super_dfx_info[sub_name], list):
-                super_dfx_info[sub_name].append(sub_dfx_info)
-            else:
-                super_dfx_info[sub_name] = [sub_dfx_info]
-    else:
-        if name in super_dfx_info and isinstance(super_dfx_info[name], list):
-            super_dfx_info[name].append(sub_dfx_info)
-        else:
-            super_dfx_info[name] = [sub_dfx_info]
-
-
-def _json_except_info(compile_info: CompileInfo):
-    super_dfx_info = {}
-    super_dfx_list = {}
-    key = "aicore"
-    chip_version = CommonUtility.get_chip_version()
-    if "stream-fusion" in compile_info.super_kernel_info["sp_options"]:
-        stream_fusion = compile_info.super_kernel_info["sp_options"]["stream-fusion"]
-        if stream_fusion.value == SuperKernelStreamFusionMode.StreamFusionEnable.value:
-            key = "stream"
-    i = 0
-    for sub_op in compile_info.super_kernel_info["op_list"]:
-        sub_json_path = sub_op.get("json_path")
-        sub_dfx_info = {}
-        arg_list = {}
-        with open(sub_json_path, "r") as fd:
-            sub_operater_infos = json.load(fd)
-            sub_dfx_info["func_name"] = sub_operater_infos["kernelName"]
-            sub_dfx_info["split_mode"] = sub_operater_infos.get("split_mode")
-            sub_dfx_info["blockNum"] = sub_operater_infos["blockDim"]
-            sub_dfx_info["sub_operator_op_type"] = sub_operater_infos.get("sub_operator_op_type", "")
-            sub_dfx_info["sub_operator_kernel_type"] = sub_operater_infos["sub_operator_kernel_type"]
-            sub_dfx_info["sub_operator_early_start_set_flag"] = sub_operater_infos["sub_operator_early_start_set_flag"]
-            sub_dfx_info["sub_operator_early_start_wait_flag"] = sub_operater_infos[
-                "sub_operator_early_start_wait_flag"
-            ]
-            sub_dfx_info["sub_operator_call_dcci_before_kernel_start"] = sub_operater_infos.get(
-                "sub_operator_call_dcci_before_kernel_start", False
-            )
-            sub_dfx_info["sub_operator_call_dcci_after_kernel_end"] = sub_operater_infos.get(
-                "sub_operator_call_dcci_after_kernel_end", False
-            )
-            sub_dfx_info["sub_operator_call_dcci_disable_on_kernel"] = sub_operater_infos.get(
-                "sub_operator_call_dcci_disable_on_kernel", False
-            )
-            sub_dfx_info["streamid"] = sub_op.get("stream_id")
-            sub_dfx_info["send_event_list"] = compile_info.super_kernel_info["send_event_list"][i]
-            notify_before_call_event_list = compile_info.super_kernel_info.get("notify_before_call_event_list", [])
-            if notify_before_call_event_list and notify_before_call_event_list[i]:
-                sub_dfx_info["notify_before_call_event_list"] = notify_before_call_event_list[i]
-            sub_dfx_info["recv_event_list"] = compile_info.super_kernel_info["recv_event_list"][i]
-            arg_list["param_offset"] = compile_info.super_kernel_info["param_offset"][i]
-            if compile_info.super_kernel_info["send_event_list"][i]:
-                arg_list["notify_param_offset"] = compile_info.super_kernel_info["notify_param_offset"][i]
-            else:
-                arg_list["notify_param_offset"] = None
-            if notify_before_call_event_list and notify_before_call_event_list[i]:
-                arg_list["notify_before_call_param_offset"] = compile_info.super_kernel_info[
-                    "notify_before_call_param_offset"
-                ][i]
-            if compile_info.super_kernel_info["recv_event_list"][i]:
-                arg_list["wait_param_offset"] = compile_info.super_kernel_info["wait_param_offset"][i]
-            else:
-                arg_list["wait_param_offset"] = None
-            sub_dfx_info["arg_list"] = arg_list
-            if "debugOptions" in sub_operater_infos:
-                sub_dfx_info["debug_option"] = sub_operater_infos["debugOptions"]
-                sub_dfx_info["debug_size"] = sub_operater_infos["debugBufSize"]
-            name = _infer_name(key, sub_operater_infos, chip_version)
-        _update_super_dfx_info(name, chip_version, sub_dfx_info, super_dfx_info)
-        i += 1
-    super_dfx_list["kernelList"] = super_dfx_info
-    return super_dfx_list
-
-
-def _init_param_value(op_info: OpInfo, tiling_info: TilingInfo, js):
-    if op_info.init_value_list is not None:
-        # generate clear output for atomic instrs
-        param_of_init_values = [None for _ in op_info.inputs]
-        if tiling_info.clear_atomic:
-            for output, init_value in zip(op_info.outputs, op_info.init_value_list):
-                if init_value is not None:
-                    if init_value.isdigit():
-                        # generate init value for InitValue(uint64_t)
-                        param_init_value = {"dtype": output["dtype"], "init_value": int(init_value)}
-                    else:
-                        try:
-                            init_value_json = json.loads(init_value)
-                            # generate init value for InitValue(std::vector<ScalarVar>)
-                            if init_value_json["is_list"]:
-                                param_init_value = {
-                                    "dtype": init_value_json[output["dtype"]]["type"],
-                                    "init_value": init_value_json[output["dtype"]]["value"],
-                                }
-                            else:
-                                #  generate init value for InitValue(ScalarVar)
-                                param_init_value = {
-                                    "dtype": init_value_json["type"],
-                                    "init_value": init_value_json["value"],
-                                }
-                        except Exception as err:
-                            raise_tbe_python_err(
-                                TBE_DEFAULT_PYTHON_ERROR_CODE, ("read initValue error, reason is:", err)
-                            )
-                    param_of_init_values.append(param_init_value)
-                else:
-                    param_of_init_values.append(None)
-        else:
-            param_of_init_values += [None for _ in op_info.outputs]
-        # generate null for workspace
-        param_of_init_values.append(None)
-        js["parameters"] = param_of_init_values
-
-
-def _json_post_process(
-    compile_info: CompileInfo,
-    op_info: OpInfo,
-    tiling_info: TilingInfo,
-    input_gen_placehoder: bool,
-    output_gen_placehoder: bool,
-    compile_log_path,
-):
-    kernel_meta_path = CommonUtility.get_kernel_meta_dir()
-    json_path = os.path.join(kernel_meta_path, compile_info.kernel_name + ".json")
-    obj_path = os.path.join(kernel_meta_path, compile_info.kernel_name + ".o")
-
-    try:
-        with open(json_path, "r") as fd:
-            js = json.load(fd)
-    except Exception as err:
-        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("read json file failed, reason is:", err))
-    if input_gen_placehoder:
-        js["optionalInputMode"] = GEN_PLACE_HOLDER_STR
-    if output_gen_placehoder:
-        js["optionalOutputMode"] = GEN_PLACE_HOLDER_STR
-    if compile_info.enable_deterministic:
-        if get_current_build_config("enable_deterministic_mode") == 1:
-            js["deterministic"] = "true"
-        else:
-            js["deterministic"] = "false"
-
-    superkernel_black_op_list = ["MoeInitRoutingV3", "MoeInitRoutingV2", "MoeInitRoutingQuant"]
-    if op_info.op_type not in superkernel_black_op_list or not CommonUtility.is_v220():
-        js["supportSuperKernel"] = 1
-    else:
-        CommonUtility.print_compile_log(
-            compile_info.kernel_name,
-            f"The operator {op_info.op_type} has not been adapted to superkernel. Therefore, \
-the superkernel cannot be integrated with the operator.",
-            AscendCLogLevel.LOG_WARNING,
-        )
-
-    if CommonUtility.is_c310():
-        if tiling_info.local_memory_size > 0 or _get_simt_type_in_staic(tiling_info, compile_info, obj_path):
-            js["supportSuperKernel"] = 0
-            CommonUtility.print_compile_log(
-                compile_info.kernel_name,
-                f"The current soc version does not support merging simt type operator:{op_info.op_type} \
-    into superkernel",
-                AscendCLogLevel.LOG_INFO,
-            )
-
-    def _safe_int_conversion(value, default=-1):
-        if value is None:
-            return default
-        clean_value = str(value).strip()
-        try:
-            return int(clean_value)
-        except (ValueError, TypeError):
-            return default
-
-    aicore_num = get_context().get_addition("_op_aicore_num")
-    vectorcore_num = get_context().get_addition("_op_vectorcore_num")
-    has_platform_info = False
-    if aicore_num is not None and vectorcore_num is not None:
-        js["platformInfo"] = {"cubeCoreCnt": int(aicore_num), "vectorCoreCnt": int(vectorcore_num)}
-        has_platform_info = True
-    deterministic_level = _safe_int_conversion(get_current_build_config("deterministic_level"))
-    if deterministic_level != -1:
-        if not has_platform_info:
-            js["platformInfo"] = {}
-        js["platformInfo"]["deterministicLevel"] = int(deterministic_level)
-    pcie_through = get_context().get_addition("pcie_through_flag")
-    if pcie_through is not None:
-        if not has_platform_info:
-            js["platformInfo"] = {}
-        js["platformInfo"]["pcie_through_flag"] = pcie_through
-
-    # set tilingdata of mc2 operator when online static compile
-    if tiling_info.static_shape_flag is True and op_info.mc2_ctx is not None and len(op_info.mc2_ctx) != 0:
-        js["runInfo"] = tiling_info.raw_run_info
-
-    # gen sub operator infos for super kernel feature
-    js = add_sub_super_kernel_info(js, tiling_info.static_shape_flag, compile_info)
-
-    if compile_info.super_kernel_info.get("timestamp_option") is not None and compile_info.super_kernel_info.get(
-        "timestamp_option"
-    ):
-        del js["workspace"]
-        js["debugOptions"] = compile_info.super_kernel_info["debug_option"]
-        js["debugBufSize"] = compile_info.super_kernel_info["debug_size"]
-
-    if (
-        compile_info.super_kernel_info.get("workspace_size") is not None
-        and compile_info.super_kernel_info.get("workspace_size") > 0
-    ):
-        js["workspace"] = {"num": 1, "size": [compile_info.super_kernel_info.get("workspace_size")], "type": [0]}
-
-    # get max tiling size when use tiling new
-    if len(compile_info.tiling_key_struct_map) > 0:
-        max_tiling_size = _get_tiling_struct_size(compile_info)
-    # get max tiling size without register tiling
-    elif global_var_storage.get_variable("ascendc_tiling_no_register"):
-        max_tiling_size = compile_info.max_tiling_size
-        delete_tiling_section(compile_info)
-    # get max tiling size when use tiling old
-    else:
-        max_tiling_size = tiling_info.tiling_data_size
-    compile_info.max_tiling_size = int(max_tiling_size)
-
-    # updata op_param size by flag of oom
-    if "oom" in get_current_build_config("tir.op_debug_config"):
-        # tiling need align to 8 bytes, dfx need 8 bytes for dfx point,
-        # oom need allocate 8 * (input + output + shape_tensor+ workspace)
-        op_param_size = ((max_tiling_size + 7) // 8) * 8 + 8 + 8 * DFXSectionGenerator().param_placeholder_num
-    else:
-        op_param_size = max_tiling_size + 8
-
-    js["opParaSize"] = int(op_param_size)
-
-    if COMPILE_INFO_KEY not in js:
-        js[COMPILE_INFO_KEY] = {}
-    if tiling_info.static_shape_flag:
-        del js[COMPILE_INFO_KEY]
-        # generate schedule_mode for static shape
-        if tiling_info.static_shape_flag and tiling_info.schedule_mode != 0:
-            js["schedule_mode"] = tiling_info.schedule_mode
-    if tiling_info.local_memory_size != -1:
-        js["localMemorySize"] = tiling_info.local_memory_size
-    if "param_type_dynamic" in op_info._fields and op_info.param_type_dynamic:
-        js["dynamicParamMode"] = "folded_with_desc"
-
-    _init_param_value(op_info, tiling_info, js)
-
-    if compile_info.super_kernel_info.get("kernel_name") is not None:
-        js["SuperkernelInfo"] = _json_except_info(compile_info)
-    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
-        js["feature_list"] = global_ascendc_kernel_feature_manager.get_available_feature_versions()
-
-    try:
-        with open(obj_path, "rb") as obj_file:
-            js["sha256"] = hashlib.sha256(obj_file.read()).hexdigest()
-    except Exception as err:
-        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("read obj_file failed, reason is:", err))
-    try:
-        with open(json_path, "w") as fd_write:
-            os.chmod(json_path, stat.S_IRUSR + stat.S_IWUSR)
-            json.dump(js, fd_write, indent=2)
-    except Exception as err:
-        raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("write json file failed, reason is:", err))
 
 
 def _omit_super_kernel_workspace(tiling_info: TilingInfo):
@@ -715,7 +431,9 @@ def gen_kernel_fun(
 
     kernel_func_dec = f'extern "C" {gen_func_attributes} void {auto_gen_kernel_func}('
     compile_info.global_kernel_attribute = gen_func_attributes
-    kernel_func_dec_pub = f"static __aicore__ inline __attribute__((always_inline)) void ascendc_{auto_gen_kernel_func}("
+    kernel_func_dec_pub = (
+        f"static __aicore__ inline __attribute__((always_inline)) void ascendc_{auto_gen_kernel_func}("
+    )
 
     source_declare_pub, workspace_idx, called_func_params, called_func_params_type = _gen_kernel_func_declare_head(
         is_mix, is_single_and_using_hard_sync, opinfo, tiling_info
@@ -985,64 +703,6 @@ def _add_op_compile_options_by_customized_json(op_compile_option: str, compile_o
                     compile_option_tuple.compile_options.append(opt)
 
 
-def _get_tiling_struct_size(compile_info):
-    tiling_struct_set = set()
-    tiling_struct_size_map = {}
-    max_tiling_size = 0
-    for _, tiling_struct in compile_info.tiling_key_struct_map.items():
-        tiling_struct_set.add(tiling_struct)
-
-    for tiling_struct in tiling_struct_set:
-        objdump_cmd = [
-            "llvm-objdump",
-            "-s",
-            "-j",
-            ".ascendc_tiling.{}".format(tiling_struct),
-            "{}".format(compile_info.dst_file),
-        ]
-        proc = subprocess.Popen(objdump_cmd, stdout=subprocess.PIPE, stderr=None)
-        (out, _) = proc.communicate()
-        """
-        e.g.
-        Contents of section .ascend.meta.TilingData:         # main_tiling_info[0]
-        0000 50000000 00000000                    P.......   # main_tiling_info[1] that needs to be parsed
-        """
-        tiling_str_info = out.decode("utf-8")
-        if TILING_KEY_SEARCH_KEYWORD in tiling_str_info:  # key words from llvm-objdump .ascendc_tiling.
-            main_line_start_index = tiling_str_info.index(TILING_KEY_SEARCH_KEYWORD)
-            main_tiling_info = tiling_str_info[main_line_start_index:].split("\n")
-            hex_num = main_tiling_info[1].split(" ")[2:4]
-            hex_num_str = CommonUtility.parser_uint64_hex_num(hex_num)
-            bytes_data = bytes.fromhex(hex_num_str)
-            dec_data = struct.unpack(">Q", bytes_data)[0]
-            tiling_struct_size_map[tiling_struct] = dec_data
-            max_tiling_size = max(max_tiling_size, dec_data)
-
-    # Preserve exact per-key sizes for Manifest constants before removing sections.
-    compile_info.compiled_tiling_key_data_size_map = {
-        str(tiling_key): int(tiling_struct_size_map[tiling_struct])
-        for tiling_key, tiling_struct in compile_info.tiling_key_struct_map.items()
-        if tiling_struct in tiling_struct_size_map
-    }
-    # The sk sub operator failed to rm tiling section because llvm-objcopy could not correctly process the ar obj.
-    if (
-        global_var_storage.get_variable("ascendc_enable_super_kernel") is True
-        and compile_info.is_super_kernel_compile is False
-    ):
-        CommonUtility.print_compile_log(
-            compile_info.kernel_name,
-            "[Superkernel]In sk sub kernel compile, do not need rm tiling seciton!",
-            AscendCLogLevel.LOG_INFO,
-        )
-        return max_tiling_size
-    # remove ascendc_tiling section
-    objdump_cmd = ["llvm-objcopy", "--remove-section=.ascendc_tiling.*", "{}".format(compile_info.dst_file)]
-    proc = subprocess.Popen(objdump_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    CommonUtility.print_compile_log(compile_info.kernel_name, "need rm tiling seciton!", AscendCLogLevel.LOG_INFO)
-    (out, _) = proc.communicate()
-    return max_tiling_size
-
-
 def _get_tiling_struct_without_register_size(compile_info: CompileInfo):
     section_name_set = set()
     tiling_key_struct_size_map = {}  # tiling_key -> (tiling_struct, struct_size)
@@ -1091,26 +751,6 @@ def _get_tiling_struct_without_register_size(compile_info: CompileInfo):
         if isinstance(value, tuple) and len(value) == 2 and value[1] > 0
     }
     return tiling_key_struct_size_map
-
-
-def delete_tiling_section(compile_info: CompileInfo):
-    # The sk sub operator failed to rm tiling section because llvm-objcopy could not correctly process the ar obj.
-    if (
-        global_var_storage.get_variable("ascendc_enable_super_kernel") is True
-        and compile_info.is_super_kernel_compile is False
-    ):
-        CommonUtility.print_compile_log(
-            compile_info.kernel_name,
-            "[Superkernel]In sk sub kernel compile, do not need rm tiling seciton!",
-            AscendCLogLevel.LOG_INFO,
-        )
-        return
-    # remove ascendc_tiling section
-    objdump_cmd = ["llvm-objcopy", "--remove-section=.ascendc_tiling.*", "{}".format(compile_info.dst_file)]
-    proc = subprocess.Popen(objdump_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    CommonUtility.print_compile_log(compile_info.kernel_name, "need rm tiling seciton!", AscendCLogLevel.LOG_INFO)
-    (out, _) = proc.communicate()
-    return
 
 
 def _update_compile_option(kernel_name: str, compile_options: list, extend_options: dict):
@@ -1366,14 +1006,7 @@ def _get_sk_cap_bitmap(compile_info: CompileInfo, basic_kernel_symbols: list) ->
     return cap_bitmap | _get_dcci_disable_cap_bitmap(compile_info, basic_kernel_symbols)
 
 
-def compile_sk_bind(compile_info: CompileInfo, compile_info_origin: CompileInfo, compile_option_tuple, kernel_meta_dir):
-    sk_bind_src_file = os.path.join(kernel_meta_dir, "sk_bind.cpp")
-    sk_bind_dst_file = os.path.join(kernel_meta_dir, "sk_bind.o")
-    source = '#include "kernel_operator.h"\n'
-
-    # bitmap definition: bit0:wait_flag(1), bit1:set_flag(2), bit2:dcci_disable(4)
-    cap_bitmap = _get_sk_cap_bitmap(compile_info, compile_info_origin.global_kernel_symbols)
-
+def _gen_sk_bind_source(source, compile_info, compile_info_origin, cap_bitmap):
     for idx, global_syb in enumerate(compile_info_origin.global_kernel_symbols):
         sk_syb = compile_info.global_kernel_symbols[idx]
         source += f'extern "C" {compile_info_origin.global_kernel_attribute} void {global_syb}();\n'
@@ -1382,6 +1015,18 @@ def compile_sk_bind(compile_info: CompileInfo, compile_info_origin: CompileInfo,
         source += f'extern "C" {compile_info.global_kernel_attribute} void {sk_syb}_split2();\n'
         source += f'extern "C" {compile_info.global_kernel_attribute} void {sk_syb}_split3();\n'
         source += f"SK_BIND({global_syb}, {cap_bitmap}, {sk_syb}, {sk_syb}_split1, {sk_syb}_split2, {sk_syb}_split3);\n"
+    return source
+
+
+def compile_sk_bind(compile_info: CompileInfo, compile_info_origin: CompileInfo, compile_option_tuple, kernel_meta_dir):
+    sk_bind_src_file = os.path.join(kernel_meta_dir, "sk_bind.cpp")
+    sk_bind_dst_file = os.path.join(kernel_meta_dir, "sk_bind.o")
+    source = '#include "kernel_operator.h"\n'
+
+    # bitmap definition: bit0:wait_flag(1), bit1:set_flag(2), bit2:dcci_disable(4)
+    cap_bitmap = _get_sk_cap_bitmap(compile_info, compile_info_origin.global_kernel_symbols)
+
+    source = _gen_sk_bind_source(source, compile_info, compile_info_origin, cap_bitmap)
 
     # write code into file
     try:
@@ -1928,19 +1573,7 @@ def _generate_section_content(
     return section_content
 
 
-def _get_compile_cmd_and_section_content(
-    compile_info: CompileInfo, arch: str, compile_option_tuple, tiling_info: TilingInfo, tiling_key: str
-):
-    compile_cmd = gen_compile_cmd_v220(
-        compile_info.gen_kernel_func_file,
-        compile_info.dst_file,
-        compile_option_tuple,
-        arch,
-        tiling_info.tiling_data_file_path,
-    )
-
-    current_kernel_name = ""
-    kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
+def _resolve_kernel_name_into_cmd(compile_cmd, compile_info, arch, tiling_info, tiling_key, kernel_type):
     if tiling_info.static_shape_flag:
         if kernel_type.value >= 2:
             current_kernel_name = compile_info.kernel_name
@@ -1966,6 +1599,25 @@ def _get_compile_cmd_and_section_content(
             set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group(
                 tiling_key, "AiCore", kernel_type.name, current_kernel_name, compile_info
             )
+    return compile_cmd, current_kernel_name
+
+
+def _get_compile_cmd_and_section_content(
+    compile_info: CompileInfo, arch: str, compile_option_tuple, tiling_info: TilingInfo, tiling_key: str
+):
+    compile_cmd = gen_compile_cmd_v220(
+        compile_info.gen_kernel_func_file,
+        compile_info.dst_file,
+        compile_option_tuple,
+        arch,
+        tiling_info.tiling_data_file_path,
+    )
+
+    current_kernel_name = ""
+    kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
+    compile_cmd, current_kernel_name = _resolve_kernel_name_into_cmd(
+        compile_cmd, compile_info, arch, tiling_info, tiling_key, kernel_type
+    )
     compile_cmd.extend(get_compile_target_options(compile_info, tiling_key, CommonUtility.is_c310()))
     compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_key}UL"]
     if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
