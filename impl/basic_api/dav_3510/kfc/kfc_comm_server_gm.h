@@ -92,6 +92,7 @@ public:
             .addr = reinterpret_cast<uint64_t>(ubAvalidTail),
             .flagId = 1,
             .pipe = pipe_t::PIPE_MTE3,
+            .isMore = true,
         };
         __mstx_dfx_report_stub(1, sizeof(MstxCrossRecord), &record);
 #endif
