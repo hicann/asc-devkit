@@ -22,7 +22,7 @@ class InsCollAlgBase;
 struct AlgResourceCtxSerializable;
 
 // 判断该 op 是否需要走 CANN 桥接路径(选路/取执行器/资源准备)。
-// 条件: engine 为 AICPU/AICPU_TS 且 opType 为 ALLTOALL/ALLTOALLV/ALLREDUCE。
+// 条件: engine 为 AICPU/AICPU_TS 且 opType 为 ALLTOALLV/ALLREDUCE；ALLTOALL 使用本地 devkit 路径。
 bool UseCannBridge(const OpParam& param);
 
 HcclResult SelectViaCann(OpParam& ascParam, TopoInfoWithNetLayerDetails* ascTopo, std::string& algName);
