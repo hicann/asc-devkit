@@ -3,25 +3,25 @@
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 
 ## 功能说明
@@ -83,8 +83,6 @@ __simd_callee__ inline reg_tensor<DataType> reduce_max(const reg_tensor<DataType
 ## 约束说明
 
 - `src.mask`需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与归约的元素位置错误。
-- `scope`仅支持`reduce_scope::element`和`reduce_scope::datablock`。配置为其他取值时会产生编译期错误。
-- `DataType`必须为[数据类型](#数据类型)章节中列出的类型。
 - 未被`src.mask`选中的元素被视为对应数据类型的最小值，浮点数类型的最小值为`-inf`。
 - `scope`为`reduce_scope::element`时，若`src.mask`全为0，则将对应数据类型的最小值写入返回值`reg`的第0个元素，并将其余元素置0。
 - `scope`为`reduce_scope::datablock`时，若某个`DataBlock`内的元素均不参与计算，则将对应数据类型的最小值写入返回值`reg`的对应位置。
