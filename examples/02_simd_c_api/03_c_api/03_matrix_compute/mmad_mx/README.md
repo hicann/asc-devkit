@@ -182,7 +182,7 @@ FP4和FP8数据在K轴上的存储宽度不同，GM到L1搬运后的补齐范围
 
 场景3中，GM到L1完成`K = 70`的数据搬运及其32字节粒度补齐后，L1中已初始化的K轴范围到96元素边界，而`asc_mmad_mx`会按照128个元素进行计算。样例分别对A和B调用`asc_fill_l1`，从K轴偏移96处开始，为每个对齐行写入一个32字节的全0数据块，从而清除`[96, 128)`区域。
 
-`asc_fill_l1`的目的地址按`uint16_t`寻址，起始偏移通过`AlignHeight * (CeilAlign(PACKED_K, 32) / 2)`计算。对于FP8场景，A和B的`AlignHeight`分别为`M_ALIGN = 48`和`N_ALIGN = 64`，所以起始偏移分别为2304和3072个`uint16_t`元素。两次清零的`repeat`分别设置为48和64，`blk_num = 1`、`dst_gap = 0`，连续覆盖每个对齐行对应的一个32字节数据块。清零完成后调用`asc_sync_pipe(PIPE_MTE1)`，确保写L1操作结束后再执行L1到L0A/L0B的搬运。
+`asc_fill_l1`的目的地址按`uint16_t`寻址，起始偏移通过`AlignHeight * (CeilAlign(PACKED_K, 32) / 2)`计算。对于FP8场景，A和B的`AlignHeight`分别为`M_ALIGN = 48`和`N_ALIGN = 64`，所以起始偏移分别为2304和3072个`uint16_t`元素。两次清零的`repeat`分别设置为48和64，`blk_num = 1`、`dst_gap = 0`，连续覆盖每个对齐行对应的一个32字节数据块。
 
 需要特别注意：如果修改样例中的K值，必须同步重新计算`PACKED_K`、`ScaleK`和`ALIGN_K`，并根据GM到L1搬运实际覆盖的K轴范围处理剩余补齐区域。
 
