@@ -112,7 +112,7 @@ __simd_callee__ inline void Cast(S& dstReg, V& srcReg, MaskReg& mask);
     - 不饱和模式：当输出类型为fp8_e4m3fn_t时，由于fp8_e4m3fn_t没有inf表示格式，所以输出为nan。
     - 饱和模式：当输出类型为fp8_e5m2_t/fp8_e4m3fn_t时，输入nan，默认输出为0。如果CTRL\[50\] = 1'b1，则输出为nan。
     - fp4x2_e2m1_t/fp4x2_e1m2_t数据类型没有inf和nan的定义。对于bfloat16到float4的数据类型转换，输入bfloat16类型的值为inf或超出fp4x2_e2m1_t/fp4x2_e1m2_t数据最值范围时，会返回对应符号的fp4x2_e2m1_t/fp4x2_e1m2_t最值；输入nan时，fp4x2_e2m1_t/fp4x2_e1m2_t输出0。
-    - 对于fp8_e8m0_t类型：输入bfloat16_t +/-inf或绝对值超出fp8_e8m0_t类型最大值，则返回fp8_e8m0_t最大值0b11111110；输入bfloat16_t nan输出fp8_e8m0_t nan = 0b11111111。
+    - 对于fp8_e8m0_t类型：输入bfloat16_t绝对值超出fp8_e8m0_t类型最大值，返回fp8_e8m0_t最大值0b11111110；输入bfloat16_t +/-inf或nan，输出fp8_e8m0_t nan = 0b11111111。
 
 - 整数转整数
 
