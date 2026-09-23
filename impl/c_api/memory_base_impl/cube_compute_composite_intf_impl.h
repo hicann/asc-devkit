@@ -57,14 +57,6 @@ __aicore__ inline void asc_mmad_sync(
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ half*.
- * @param b_matrix Right-matrix type: __cb__ half*.
- * @param k_direction_align K-direction alignment control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -77,13 +69,6 @@ __aicore__ inline void asc_mmad_sync(
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ half*.
- * @param b_matrix Right-matrix type: __cb__ half*.
- * @note 13-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -91,21 +76,12 @@ __aicore__ inline void asc_mmad_sync(
     bool is_weight_offset, bool c_matrix_source, bool c_matrix_init_val)
 {
     if ASC_IS_AIC {
-        // Memory sync overload: c_matrix uses __cc__ float*.
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, feat_offset, smask_offset, unit_flag,
             k_direction_align, is_weight_offset, c_matrix_source, c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ float*.
- * @param b_matrix Right-matrix type: __cb__ float*.
- * @param k_direction_align K-direction alignment control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -113,18 +89,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, k_direction_align,
-            c_matrix_source, c_matrix_init_val); // Memory sync overload: a_matrix uses __ca__ float*.
+            c_matrix_source, c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ float*.
- * @param b_matrix Right-matrix type: __cb__ float*.
- * @note 13-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -132,21 +101,12 @@ __aicore__ inline void asc_mmad_sync(
     bool is_weight_offset, bool c_matrix_source, bool c_matrix_init_val)
 {
     if ASC_IS_AIC {
-        // Memory sync overload: a_matrix uses __ca__ float*.
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, feat_offset, smask_offset, unit_flag,
             k_direction_align, is_weight_offset, c_matrix_source, c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ int32_t*.
- * @param a_matrix Left-matrix type: __ca__ int8_t*.
- * @param b_matrix Right-matrix type: __cb__ int8_t*.
- * @param k_direction_align K-direction alignment control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -154,18 +114,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, k_direction_align,
-            c_matrix_source, c_matrix_init_val); // Memory sync overload: c_matrix uses __cc__ int32_t*.
+            c_matrix_source, c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief Memory-based sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ int32_t*.
- * @param a_matrix Left-matrix type: __ca__ int8_t*.
- * @param b_matrix Right-matrix type: __cb__ int8_t*.
- * @note 13-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -173,7 +126,6 @@ __aicore__ inline void asc_mmad_sync(
     bool is_weight_offset, bool c_matrix_source, bool c_matrix_init_val)
 {
     if ASC_IS_AIC {
-        // Memory sync overload: c_matrix uses __cc__ int32_t*.
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, feat_offset, smask_offset, unit_flag,
             k_direction_align, is_weight_offset, c_matrix_source, c_matrix_init_val);
         asc_sync_post_process();

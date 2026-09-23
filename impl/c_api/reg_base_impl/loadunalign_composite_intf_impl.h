@@ -29,12 +29,6 @@ __simd_callee__ inline void asc_load(vector_int8_t& dst, __ubuf__ int8_t* src)
     }
 }
 
-/**
- * @brief Register-based sync overload of asc_load; parameters below identify this variant.
- * @param dst Destination type: vector_uint8_t&.
- * @param src Source type: __ubuf__ uint8_t*.
- * @note 2-parameter form.
- */
 __simd_callee__ inline void asc_load(vector_uint8_t& dst, __ubuf__ uint8_t* src)
 {
     if ASC_IS_AIV {

@@ -34,11 +34,6 @@ __aicore__ inline void asc_mmad_mx_sync(
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp4x2_e1m2_t*.
- * @param b_matrix Right-matrix type: __cb__ fp4x2_e2m1_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp4x2_e1m2_t* a_matrix, __cb__ fp4x2_e2m1_t* b_matrix, uint16_t left_height,
@@ -48,16 +43,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp4x2_e1m2_t*/cb fp4x2_e2m1_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp4x2_e2m1_t*.
- * @param b_matrix Right-matrix type: __cb__ fp4x2_e1m2_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp4x2_e2m1_t* a_matrix, __cb__ fp4x2_e1m2_t* b_matrix, uint16_t left_height,
@@ -67,16 +57,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp4x2_e2m1_t*/cb fp4x2_e1m2_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp4x2_e2m1_t*.
- * @param b_matrix Right-matrix type: __cb__ fp4x2_e2m1_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp4x2_e2m1_t* a_matrix, __cb__ fp4x2_e2m1_t* b_matrix, uint16_t left_height,
@@ -86,16 +71,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp4x2_e2m1_t*/cb fp4x2_e2m1_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp8_e4m3fn_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e4m3fn_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint16_t left_height,
@@ -105,16 +85,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e4m3fn_t*/cb fp8_e4m3fn_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp8_e4m3fn_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e5m2_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint16_t left_height,
@@ -124,16 +99,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e4m3fn_t*/cb fp8_e5m2_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp8_e5m2_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e4m3fn_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint16_t left_height,
@@ -143,16 +113,11 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e5m2_t*/cb fp8_e4m3fn_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_mx_sync; parameters below identify this variant.
- * @param a_matrix Left-matrix type: __ca__ fp8_e5m2_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e5m2_t*.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad_mx and asc_sync)
 __aicore__ inline void asc_mmad_mx_sync(
     __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint16_t left_height,
@@ -162,7 +127,7 @@ __aicore__ inline void asc_mmad_mx_sync(
     if ASC_IS_AIC {
         mad_mx(
             c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e5m2_t*/cb fp8_e5m2_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
@@ -180,13 +145,6 @@ __aicore__ inline void asc_mmad_sync(
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ fp8_e4m3fn_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e4m3fn_t*.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint16_t left_height,
@@ -195,18 +153,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e4m3fn_t*/cb fp8_e4m3fn_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ fp8_e4m3fn_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e5m2_t*.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ fp8_e4m3fn_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint16_t left_height,
@@ -215,18 +166,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e4m3fn_t*/cb fp8_e5m2_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ fp8_e5m2_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e4m3fn_t*.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint16_t left_height,
@@ -235,18 +179,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e5m2_t*/cb fp8_e4m3fn_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ fp8_e5m2_t*.
- * @param b_matrix Right-matrix type: __cb__ fp8_e5m2_t*.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint16_t left_height,
@@ -255,19 +192,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix/b_matrix are ca fp8_e5m2_t*/cb fp8_e5m2_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ half*.
- * @param b_matrix Right-matrix type: __cb__ half*.
- * @param disable_gemv GEMV-disable control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ half* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -275,19 +204,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: c_matrix uses __cc__ float*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ float*.
- * @param b_matrix Right-matrix type: __cb__ float*.
- * @param disable_gemv GEMV-disable control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ float* a_matrix, __cb__ float* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -295,19 +216,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: a_matrix uses __ca__ float*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ int32_t*.
- * @param a_matrix Left-matrix type: __ca__ int8_t*.
- * @param b_matrix Right-matrix type: __cb__ int8_t*.
- * @param disable_gemv GEMV-disable control specific to this overload.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ int32_t* c_matrix, __ca__ int8_t* a_matrix, __cb__ int8_t* b_matrix, uint16_t left_height, uint16_t n_dim,
@@ -315,18 +228,11 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val); // 3510 sync overload: c_matrix uses __cc__ int32_t*.
+            c_matrix_init_val);
         asc_sync_post_process();
     }
 }
 
-/**
- * @brief 3510 sync overload of asc_mmad_sync; parameters below identify this variant.
- * @param c_matrix Accumulator type: __cc__ float*.
- * @param a_matrix Left-matrix type: __ca__ hifloat8_t*.
- * @param b_matrix Right-matrix type: __cb__ hifloat8_t*.
- * @note 10-parameter form.
- */
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_mmad and asc_sync)
 __aicore__ inline void asc_mmad_sync(
     __cc__ float* c_matrix, __ca__ hifloat8_t* a_matrix, __cb__ hifloat8_t* b_matrix, uint16_t left_height,
@@ -335,8 +241,8 @@ __aicore__ inline void asc_mmad_sync(
 {
     if ASC_IS_AIC {
         mad(c_matrix, a_matrix, b_matrix, left_height, n_dim, right_width, unit_flag, disable_gemv, c_matrix_source,
-            c_matrix_init_val);  // 3510 sync overload: a_matrix uses __ca__ hifloat8_t*.
-        asc_sync_post_process(); // 3510 sync completion: a_matrix uses __ca__ hifloat8_t*.
+            c_matrix_init_val);
+        asc_sync_post_process();
     }
 }
 
