@@ -209,7 +209,7 @@ Set `SCENARIO_NUM` to `0` or `1`, then rerun CMake, build, execution, and verifi
 | Build option | Values | Description |
 | --- | --- | --- |
 | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture |
-| `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode |
+| `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode |
 | `SCENARIO_NUM` | `0`, `1` (default) | `0` selects the single-buffer baseline; `1` selects L1 double buffering. |
 
 A successful verification prints:
