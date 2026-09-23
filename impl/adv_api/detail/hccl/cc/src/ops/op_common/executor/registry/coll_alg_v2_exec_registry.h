@@ -14,6 +14,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <vector>
 #include "executor_v2_base.h"
 
 namespace mc2_ops_hccl {
@@ -33,6 +34,7 @@ public:
     static CollAlgExecRegistryV2& Instance();
     HcclResult Register(const HcclCMDType type, const std::string& tag, const CollExecCreatorV2& collExecCreator);
     bool IsRegistered(const HcclCMDType type, const std::string& tag) const;
+    std::vector<std::string> GetRegisteredTags(const HcclCMDType type) const;
     std::unique_ptr<InsCollAlgBase> GetAlgExec(const HcclCMDType type, const std::string& tag);
 
 private:

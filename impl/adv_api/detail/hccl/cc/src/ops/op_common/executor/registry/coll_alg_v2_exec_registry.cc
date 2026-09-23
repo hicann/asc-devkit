@@ -35,6 +35,19 @@ bool CollAlgExecRegistryV2::IsRegistered(const HcclCMDType type, const std::stri
     return typeIter != execCreators_.end() && typeIter->second.count(tag) != 0U;
 }
 
+std::vector<std::string> CollAlgExecRegistryV2::GetRegisteredTags(const HcclCMDType type) const
+{
+    const std::lock_guard<std::mutex> lock(mu_);
+    std::vector<std::string> tags;
+    const auto it = execCreators_.find(type);
+    if (it != execCreators_.end()) {
+        for (const auto& entry : it->second) {
+            tags.push_back(entry.first);
+        }
+    }
+    return tags;
+}
+
 std::unique_ptr<InsCollAlgBase> CollAlgExecRegistryV2::GetAlgExec(const HcclCMDType type, const std::string& tag)
 {
     if (execCreators_.count(type) == 0 || execCreators_[type].count(tag) == 0) {

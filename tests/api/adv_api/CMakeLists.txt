@@ -596,6 +596,7 @@ foreach(product_type ${TILING_PRODUCT_TYPE_LIST})
         ${ASCENDC_TEST_HEADER_FILES}
         ${ASCENDC_DEP_HEADER_DIR}
         ${ASCENDC_TEST_${product_type}_HEADER_FILES}
+        ${ASCENDC_ADV_API_IMPL}/detail/hccl/cc/src/ops/op_common/external_alg
         ${ASCENDC_ADV_API_INCLUDE}/
         ${ASCENDC_ADV_API_INCLUDE}/activation/
         ${ASCENDC_ADV_API_INCLUDE}/filter/

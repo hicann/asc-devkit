@@ -22,6 +22,7 @@ set(INCLUDE_LIST
     ${HCCL_DEV_BASE}/src/ops/op_common/executor/registry
 
     ${HCCL_DEV_BASE}/src/ops/op_common/selector
+    ${HCCL_DEV_BASE}/src/ops/op_common/external_alg
 
     ${HCCL_DEV_BASE}/src/ops/op_common/template
     ${HCCL_DEV_BASE}/src/ops/op_common/template/registry
@@ -202,6 +203,7 @@ target_sources(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE
     ${HCCL_DEV_BASE}/src/ops/reduce_scatter/selector/reduce_scatter_auto_selector.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/selector/alltoall_auto_selector.cc
     ${HCCL_DEV_BASE}/src/ops/all_to_all_v/selector/alltoallv_auto_selector.cc
+    ${HCCL_DEV_BASE}/src/ops/op_common/external_alg/alg_meta_registry.cc
 )
 
 target_include_directories(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE

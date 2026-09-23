@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------------------------------------
-# Copyright (c) 2025 Huawei Technologies Co., Ltd.
-# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# Copyright (c) 2026 Huawei Technologies Co., Ltd.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
 # CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
 # THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
@@ -8,10 +8,12 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # -----------------------------------------------------------------------------------------------------------
 
-set(UT_COMMON_INCLUDE_LIST
-    ${CANN_3RD_LIB_PATH}/gtest/include/
+set(src_list
+    ${CMAKE_CURRENT_SOURCE_DIR}/alg_meta_registry.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/external_alg_resolver.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/external_alg_rules.cc
 )
 
-add_subdirectory(common/prepare_ut_env)
-add_subdirectory(../st/algorithm ${CMAKE_CURRENT_BINARY_DIR}/algorithm)
-add_subdirectory(../st/algorithm/testcase/external_alg ${CMAKE_CURRENT_BINARY_DIR}/external_alg)
+target_sources(mc2_client PRIVATE
+    ${src_list}
+)

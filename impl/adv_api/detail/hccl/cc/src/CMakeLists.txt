@@ -31,6 +31,7 @@ set(INCLUDE_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/channel
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/registry
+    ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/external_alg
 
     ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/selector
 
@@ -136,6 +137,7 @@ if(PRODUCT_SIDE STREQUAL "device")
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/channel/channel_request.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/registry/coll_alg_exec_registry.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/registry/coll_alg_v2_exec_registry.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/external_alg/alg_meta_registry.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/executor_base.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/ops/op_common/executor/executor_v2_base.cc
 

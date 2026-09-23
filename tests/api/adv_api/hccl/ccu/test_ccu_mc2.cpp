@@ -18,6 +18,8 @@
 #include "include/adv_api/hccl/hccl_mc2.h"
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "hccl_alloc_ctx_res.h"
+#include "external_alg_resolver.h"
+#include "external_alg_rules.h"
 #include "kfc_server_protocol.h"
 #include "sim_communicator.h"
 #include "sim_world.h"
@@ -32,14 +34,36 @@ extern bool g_stubCcuAlgExecNull;
 extern std::string g_stubCcuAlgExecNullName;
 extern std::string g_stubSelectorAlgName;
 extern bool g_stubCcuAlgResUnavailable;
+extern std::string g_stubCcuAlgResUnavailableName;
 extern bool g_stubAclrtMemcpyFail;
 extern uint32_t g_stubAclrtMemcpyCallCount;
 extern uint32_t g_stubAclrtMemcpyFailOnCall;
 extern HcclResult g_stubHcomCheckDataTypeResult;
 extern HcclResult g_stubHcomCheckReductionOpResult;
+extern HcclResult g_stubCalcTopoInfoResult;
 extern bool g_stubHcommCcuKernelLaunchFail;
 extern uint32_t g_stubHcommCcuKernelLaunchCallCount;
+extern std::string g_stubCcuAlgNotRegisteredName;
 } // namespace mc2_ops_hccl
+
+// 夹具：本目标不编 executor 文件（-DAICPU_COMPILE 裁掉产品 CCU sidecar 注册行），
+// 按产品现场同款注册供 EXTERNAL 用例使用。
+// (AR, sole[mesh]) 键三候选：两个白名单真名 + 一个白名单外假名（验证过滤 wiring）。
+namespace mc2_ops_hccl {
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLGATHER, CcuSchedAllGatherSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherMesh1D, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, CcuSchedAllReduceSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, CcuSchedAllGatherSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLREDUCE, UtDriftProbeCcuFake, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+} // namespace mc2_ops_hccl
+
+// hccl_mc2.cc 的 CheckCcuAlgorithmsRegistered（非 static 自由函数，须在全局作用域声明）
+bool CheckCcuAlgorithmsRegistered(const void* ccTilingList[], uint32_t tilingNum);
 
 namespace {
 
@@ -66,12 +90,15 @@ static void StubCleanup()
     mc2_ops_hccl::g_stubCcuAlgExecNullName.clear();
     mc2_ops_hccl::g_stubSelectorAlgName.clear();
     mc2_ops_hccl::g_stubCcuAlgResUnavailable = false;
+    mc2_ops_hccl::g_stubCcuAlgResUnavailableName.clear();
     mc2_ops_hccl::g_cannBridgeTestState = {};
     mc2_ops_hccl::g_stubAclrtMemcpyFail = false;
     mc2_ops_hccl::g_stubAclrtMemcpyCallCount = 0U;
     mc2_ops_hccl::g_stubAclrtMemcpyFailOnCall = 0U;
     mc2_ops_hccl::g_stubHcomCheckDataTypeResult = HCCL_SUCCESS;
     mc2_ops_hccl::g_stubHcomCheckReductionOpResult = HCCL_SUCCESS;
+    mc2_ops_hccl::g_stubCalcTopoInfoResult = HCCL_SUCCESS;
+    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail = false;
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount = 0U;
     unsetenv("HCCL_OP_EXPANSION_MODE");
@@ -265,6 +292,31 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_AllGather)
     EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_SUCCESS);
     EXPECT_EQ(resCtx.opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER));
     EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh));
+}
+
+// EXTERNAL 通道端到端：合法外部名经 tiling algConfig 进入，resolver 定名
+// CcuSchedAllGatherSoleMesh，algorithmType 回填正确
+TEST_F(CcuMc2TestSuite, CcuSelectAlg_ExternalNameAccepted)
+{
+    SetCommEngineEnv(COMM_ENGINE_CCU);
+
+    OpResCtx resCtx{};
+    ASSERT_EQ(AllocCcuOpResCtx(comm_, "external_alg_ctx", g_stubRankSize, g_stubRankId, resCtx), HCCL_SUCCESS);
+
+    Mc2CcTilingInner ccTiling{};
+    ccTiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    ccTiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    ccTiling.srcDataType = HCCL_DATA_TYPE_FP16;
+    ccTiling.dstDataType = HCCL_DATA_TYPE_FP16;
+    ccTiling.reduceType = HCCL_REDUCE_SUM;
+    strcpy(ccTiling.algConfig, "sole[mesh]");
+    const void* ccTilingList[] = {&ccTiling};
+    std::string topoTag[] = {"external_alg_tag"};
+
+    EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_SUCCESS);
+    EXPECT_EQ(resCtx.opType[0], static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER));
+    EXPECT_EQ(resCtx.algorithmType[0], static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleMesh));
+    EXPECT_TRUE(resCtx.isKfc[0]);
 }
 
 TEST_F(CcuMc2TestSuite, CcuSelectAlg_ParallelMeshNhrMultiLink)
@@ -723,6 +775,125 @@ TEST_F(CcuMc2TestSuite, AutomaticAndLegacyConfigSkipForcedBridgePrecheck)
     }
 }
 
+// EXTERNAL 坏配置：与裸名未注册同路——WARNING + false，调用方走默认 selector
+TEST_F(CcuMc2TestSuite, TryForcedAlgExternalParseFailFallsBackToSelector)
+{
+    // 语法错：不报错中止，回退 selector
+    Mc2CcTilingInner tiling{};
+    tiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    strcpy(tiling.algConfig, "sole[ring]");
+    OpParam opParam{};
+    std::string algName;
+    auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
+    bool accepted = true;
+    EXPECT_EQ(TryForcedAlgAndPrepareEngine(comm_, &tiling, opParam, algName, topoInfo, accepted), HCCL_SUCCESS);
+    EXPECT_FALSE(accepted);
+    EXPECT_TRUE(algName.empty());
+}
+
+TEST_F(CcuMc2TestSuite, TryForcedAlgExternalResolveFailFallsBackToSelector)
+{
+    // 语义错（无 3 层注册候选）：WARNING + false 回退 selector，且 opParam 复位到入口现场
+    Mc2CcTilingInner tiling{};
+    tiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    strcpy(tiling.algConfig, "pipeline[mesh,nhr,nhr]");
+    OpParam opParam{};
+    opParam.opType = HcclCMDType::HCCL_CMD_ALLGATHER;
+    opParam.engine = CommEngine::COMM_ENGINE_AICPU_TS;
+    std::string algName;
+    auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
+    bool accepted = true;
+    EXPECT_EQ(TryForcedAlgAndPrepareEngine(comm_, &tiling, opParam, algName, topoInfo, accepted), HCCL_SUCCESS);
+    EXPECT_FALSE(accepted);
+    EXPECT_TRUE(algName.empty());
+    // hcclComm 入口为 nullptr 而 PrepareTopoInfoForOp 会改写为 comm，
+    // 此断言钉住失败路径 opParam 复位真正生效
+    EXPECT_EQ(opParam.hcclComm, nullptr);
+    EXPECT_EQ(opParam.engine, CommEngine::COMM_ENGINE_AICPU_TS);
+}
+
+TEST_F(CcuMc2TestSuite, TryForcedAlgExternalTopoFailFallsBackToSelector)
+{
+    // topo 准备失败（HcclCalcTopoInfo 打桩失败）：WARNING + false 回退 selector，且 opParam 复位到入口现场
+    Mc2CcTilingInner tiling{};
+    tiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    strcpy(tiling.algConfig, "sole[mesh]");
+    OpParam opParam{};
+    opParam.opType = HcclCMDType::HCCL_CMD_ALLGATHER;
+    opParam.engine = CommEngine::COMM_ENGINE_CCU; // 入口值与 topo 准备的改写值不同，钉住复位
+    std::string algName;
+    auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
+    bool accepted = true;
+
+    mc2_ops_hccl::g_stubCalcTopoInfoResult = HcclResult::HCCL_E_INTERNAL;
+    EXPECT_EQ(TryForcedAlgAndPrepareEngine(comm_, &tiling, opParam, algName, topoInfo, accepted), HCCL_SUCCESS);
+    mc2_ops_hccl::g_stubCalcTopoInfoResult = HcclResult::HCCL_SUCCESS;
+
+    EXPECT_FALSE(accepted);
+    EXPECT_TRUE(algName.empty());
+    // topo 准备会改写 hcclComm(→comm) 与 engine(→AICPU_TS)，复位后须回到入口值
+    EXPECT_EQ(opParam.hcclComm, nullptr);
+    EXPECT_EQ(opParam.engine, CommEngine::COMM_ENGINE_CCU);
+}
+
+// (AR, sole[mesh]) 一好一坏（按名桩把 CcuSchedAllGatherSoleMesh 打成双名单不过）→ 整体拒绝：
+// 校验必须覆盖全部候选而非找到一个过就放行
+TEST_F(CcuMc2TestSuite, GateBRejectsDriftedExternalCandidate)
+{
+    Mc2CcTilingInner tiling{};
+    tiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE);
+    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
+    strcpy(tiling.algConfig, "sole[mesh]");
+    const void* ccTilingList[] = {&tiling};
+
+    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName = "CcuSchedAllGatherSoleMesh";
+    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
+    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
+
+    // 桩清除后全部候选过双名单 → 放行（证明前一次拒绝源于坏候选而非全局开关）
+    EXPECT_TRUE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
+}
+
+// 白名单过滤 wiring：(AR, sole[mesh]) 键注册了两个白名单真名 + 一个白名单外假名，
+// 候选表须含真名、不含假名
+TEST_F(CcuMc2TestSuite, ExtAlgWhitelistFiltersCandidates)
+{
+    const auto& cands = GetExternalCandidates(HcclCMDType::HCCL_CMD_ALLREDUCE, "sole[mesh]");
+    ASSERT_EQ(cands.size(), 2U);
+    EXPECT_STREQ(cands[0].registeredName.c_str(), "CcuSchedAllGatherSoleMesh");
+    EXPECT_STREQ(cands[1].registeredName.c_str(), "CcuSchedAllReduceSoleMesh");
+    for (const auto& cand : cands) {
+        EXPECT_STRNE(cand.registeredName.c_str(), "UtDriftProbeCcuFake");
+    }
+}
+
+// EXTERNAL 资源失败回退（与裸名同路）：定名成功 → 资源失败（按名桩限定）→
+// 回退默认 selector 重选 → 二次资源申请成功 → GetOpParam 整体 SUCCESS
+TEST_F(CcuMc2TestSuite, GetOpParam_ExternalNameResourceFallbackToSelector)
+{
+    Mc2CcTilingInner tiling{};
+    tiling.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER);
+    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::AICPU_TS);
+    tiling.srcDataType = HCCL_DATA_TYPE_FP16;
+    tiling.dstDataType = HCCL_DATA_TYPE_FP16;
+    tiling.reduceType = HCCL_REDUCE_SUM;
+    strcpy(tiling.algConfig, "sole[mesh]");
+
+    // 仅定名算法（夹具 AICPU 行 InsAllGatherMesh1D）资源不足；回退算法资源正常
+    mc2_ops_hccl::g_stubCcuAlgResUnavailableName = "InsAllGatherMesh1D";
+    mc2_ops_hccl::g_stubSelectorAlgName = "AicpuAllGatherSoleNHR";
+
+    OpParam opParam{};
+    HcclResult ret = GetOpParam(comm_, stream_, "external_res_fallback_tag", &tiling, opParam);
+
+    // 回退后 selector 选定算法，作业继续（与裸名资源回退行为一致）
+    EXPECT_EQ(ret, HCCL_SUCCESS);
+    EXPECT_STREQ(opParam.algName, "AicpuAllGatherSoleNHR");
+}
+
 TEST_F(CcuMc2TestSuite, LocalForcedAlgorithmKeepsLegacyHierarchy)
 {
     using namespace mc2_ops_hccl;
@@ -855,8 +1026,10 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_AllGatherMesh1D_KfcServerArgs)
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "allgather_tag", &ccTiling, opParam), HCCL_SUCCESS);
 
     std::string algName;
+    ExternalAlgSpec extSpec;
+    std::string extParseErrMsg;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(ClassifyForcedAlgConfig(ccTiling.algConfig, algName, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuSchedAllGatherSoleMesh");
@@ -930,8 +1103,10 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam1), HCCL_SUCCESS);
 
     std::string algName;
+    ExternalAlgSpec extSpec;
+    std::string extParseErrMsg;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(ClassifyForcedAlgConfig(ccTiling.algConfig, algName, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam1, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam1, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuSchedAllGatherSoleMesh");
@@ -962,7 +1137,7 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
 
     OpParam opParam2{};
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam2), HCCL_SUCCESS); // 相同tag
-    ASSERT_TRUE(GetForcedAlgName(&ccTiling, algName));
+    ASSERT_EQ(ClassifyForcedAlgConfig(ccTiling.algConfig, algName, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam2, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam2, algName), HCCL_SUCCESS);
     result = sprintf_s(opParam2.algName, sizeof(opParam2.algName), "%s", algName.c_str());
