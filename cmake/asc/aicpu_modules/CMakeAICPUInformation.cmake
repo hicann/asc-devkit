@@ -51,6 +51,9 @@ set(kernel_compile_options_list -O2 -c -std=c++17 -fvisibility=default -fvisibil
     -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/7.3.0
     -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/7.3.0/aarch64-target-linux-gnu
     -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/7.3.0/backward
+    -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/14.3.0
+    -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/14.3.0/aarch64-target-linux-gnu
+    -isystem $ENV{ASCEND_HOME_PATH}/toolkit/toolchain/hcc/aarch64-target-linux-gnu/include/c++/14.3.0/backward
     )
 list(JOIN kernel_compile_options_list " " KERNEL_OPTIONS_LIST)
 
