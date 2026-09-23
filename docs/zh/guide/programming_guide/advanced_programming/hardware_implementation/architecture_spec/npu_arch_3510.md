@@ -245,7 +245,7 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
 
     ![](../../../../figures/fixpipe_f32_1.png)
 
-## 指令序列深度<a name="section1073952984688"></a>
+## 指令队列深度<a name="section1073952984688"></a>
 
 以下是计算单元和搬运单元的指令队列深度：
 

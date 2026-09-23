@@ -104,6 +104,7 @@
             -   [硬件约束](./programming_guide/advanced_programming/hardware_implementation/hardware_constraints/npu_arch_2002.md)
                 -   [NPU架构版本2002](./programming_guide/advanced_programming/hardware_implementation/hardware_constraints/npu_arch_2002.md)
                 -   [NPU架构版本2201](./programming_guide/advanced_programming/hardware_implementation/hardware_constraints/npu_arch_2201.md)
+                -   [NPU架构版本3510](./programming_guide/advanced_programming/hardware_implementation/hardware_constraints/npu_arch_3510.md)
         
         -   [内存模型](./programming_guide/advanced_programming/memory_model/memory_model.md)
             -   [缓存一致性](./programming_guide/advanced_programming/memory_model/cache_coherence.md)
