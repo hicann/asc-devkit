@@ -17,14 +17,15 @@
 #include "ins_temp_all_to_all_v_mesh_1D.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 #include "ccu_temp_kfc_all_to_all_mesh1d_multi_jetty.h"
+#include "ccu_temp_all_to_all_mesh1d_multi_jetty.h"
 #endif
 
 namespace mc2_ops_hccl {
 namespace {
 constexpr u32 CONCURRENT_TEMPLATE_NUM = 2U;
 constexpr u32 CLOS_PORT_NUM = 4U;
-constexpr u32 MESH_BW_CCU = 11U;
-constexpr u32 CLOS_BW_CCU = 10U;
+constexpr u32 MESH_BW_CCU = 13U;
+constexpr u32 CLOS_BW_CCU = 20U;
 constexpr u32 MESH_BW_AICPU_TS = 10U;
 constexpr u32 CLOS_BW_AICPU_TS = 12U;
 
@@ -486,7 +487,7 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllSoleMeshConcurrent, InsV2AllToAllConcurrentExecutor, TopoMatchUBX,
-    CcuTempKfcAllToAllMesh1DMultiJetty, CcuTempKfcAllToAllMesh1DMultiJetty);
+    CcuTempKfcAllToAllMesh1DMultiJetty, CcuTempAllToAllMesh1DMultiJetty);
 #endif
 
 } // namespace mc2_ops_hccl
