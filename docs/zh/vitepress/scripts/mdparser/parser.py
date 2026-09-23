@@ -199,7 +199,7 @@ def _escape_lone_tildes(md_text: str) -> str:
 
 _MATH_BLOCK_RE = re.compile(r"(?<!\\)\$\$[\s\S]*?(?<!\\)\$\$")
 
-_MATH_INLINE_RE = re.compile(r"(?<!\\)(?<!\$)\$(?!\$)[^\n$]+?(?<!\\)\$(?!\$)")
+_MATH_INLINE_RE = re.compile(r"(?<!\\)(?<!\$)\$(?![\${])[^\n$]+?(?<!\\)\$(?!\$)")
 
 _MATH_PLACEHOLDER_FMT = "@@MATH{n}@@"
 
