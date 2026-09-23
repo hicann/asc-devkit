@@ -230,7 +230,7 @@ For operators developed based on operator projects, you can use the [DumpTensor]
 Call the DumpTensor interface in the operator kernel-side implementation code where Tensor data needs to be printed. Example:
 
 ```cpp
-AscendC::DumpTensor(cLocal, baseM * baseN);
+AscendC::DumpTensor(cLocal, 1, baseM * baseN);
 ```
 
 > [!CAUTION]
