@@ -10,6 +10,7 @@
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
 | [simd_simt_adaptive_max_pool3d_grad](./simd_simt_adaptive_max_pool3d_grad) |  本样例以adaptive_max_pool3d_grad为例，介绍存在离散写的场景下，混合编程相对于纯SIMD的优势。 | Ascend 950PR/Ascend 950DT |
 | [simd_simt_matrix_transpose](./simd_simt_matrix_transpose) |  本样例以矩阵转置为例，介绍Ascend C SIMD与SIMT混合编程场景下的访存调优方法，展示MTE搬运与UB中转优化GM访问模式、固定Thread Block数降低调度开销、UB padding降低bank冲突以及双缓冲流水并行的完整调优路径。 | Ascend 950PR/Ascend 950DT |
+| [simd_simt_softmax](./simd_simt_softmax) |  本样例以softmax为例，介绍Ascend C SIMD与SIMT混合编程场景下行内归约的调优方法，展示数据访问从SIMT直接读GM、经MTE搬入UB中转双缓冲、到中间值驻留寄存器的完整调优路径。 | Ascend 950PR/Ascend 950DT |
 | [simd_simt_high_performance](./simd_simt_high_performance) |  本样例以FloorMod计算为例，介绍SIMD与SIMT混合编程场景下的性能调优方法，展示SIMT直接访问GM、SIMD Reg矢量计算、SIMT访问UB以及调整线程映射使Warp内连续访问UB优化的性能差异。 | Ascend 950PR/Ascend 950DT |
 | [simd_simt_hash_table_mte_queue](./simd_simt_hash_table_mte_queue) |  本样例以HashTable插入或更新键值对场景为例，介绍SIMD与SIMT混合编程场景下使用MTE任务队列搬运value向量的性能优化方法。 | Ascend 950PR/Ascend 950DT |
 | [simd_simt_grid_dim_config](./simd_simt_grid_dim_config) |  本样例以Gather计算为例，介绍Ascend C SIMD与SIMT混合编程场景下的gridDim配置和vf函数调用优化思路。 | Ascend 950PR/Ascend 950DT |

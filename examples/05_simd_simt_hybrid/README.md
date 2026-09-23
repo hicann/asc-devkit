@@ -74,6 +74,7 @@ SIMD与SIMT混合编程场景的常用性能优化路径如下：
 | 样例名 | 样例描述 |
 | ------------------------------------------------------------ | ---------------------------------------------------- |
 | simd_simt_matrix_transpose | 以矩阵转置为例介绍UB中转和全局访存合并优化方法。样例链接：[simd_simt_matrix_transpose](./02_best_practices/simd_simt_matrix_transpose)。 |
+| simd_simt_softmax | 以softmax为例，介绍行内归约场景下数据访问从SIMT直接读GM、经MTE搬入UB中转双缓冲、到中间值驻留寄存器的调优方法。样例链接：[simd_simt_softmax](./02_best_practices/simd_simt_softmax)。 |
 | simd_simt_high_performance | 以FloorMod计算为例，对比SIMT直接访问GM、SIMD Reg矢量计算、SIMT访问UB以及连续线程映射等实现方式。样例链接：[simd_simt_high_performance](./02_best_practices/simd_simt_high_performance)。 |
 | simd_simt_grid_dim_config | 以Gather计算为例介绍线程块数量配置和VF函数调用优化思路。样例链接：[simd_simt_grid_dim_config](./02_best_practices/simd_simt_grid_dim_config)。 |
 | simd_simt_integer_fast_div | 以固定除数整数除法为例，展示使用乘法和移位替代普通除法的优化方式。样例链接：[simd_simt_integer_fast_div](./02_best_practices/simd_simt_integer_fast_div)。 |
