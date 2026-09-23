@@ -151,8 +151,8 @@ __global__ __cube__ void asc_copy_l12l0b_3d_bside_kernel(
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(
-        output, output_l0, M, COUT, M, COUT, 0, 0, 0, static_cast<uint64_t>(QuantMode_t::F322F16), 0, false,
-        true, 0, 0, false, 0, false, false, false, false);
+        output, output_l0, M, COUT, M, COUT, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        asc_unit_flag_mode::DISABLE, QuantMode_t::F322F16, asc_relu_pre_mode::NONE, false, true, false, false);
     asc_sync_pipe(PIPE_ALL);
 }
 

@@ -151,7 +151,7 @@ This example selects scenarios through the compilation parameter `SCENARIO_NUM`.
   1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`: Transfer A, B, Bias from GM to L1 Buffer (ND -> Nz);
   2. `asc_copy_l12l0a`: Transfer A from L1 Buffer to L0A Buffer; `asc_copy_l12l0b_trans`: Transfer B from L1 Buffer to L0B Buffer with transposition; `asc_copy_l12bt`: Transfer Bias from L1 Buffer to BT;
   3. `asc_mmad`: Matrix multiply-add, C matrix initial value from BT;
-   4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`: : Transfer result from L0C Buffer to GM (Nz -> ND);
+   4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`: Transfer result from L0C Buffer to GM (Nz -> ND);
 - Description: For int8_t type input with B matrix not transposed, the N axis aligns to 2 * 16, filling a 32 * 16 fractal with all invalid data. As shown in Figure 1 below, if `right_width = N` is set, it would read fractals numbered 3 and 7 while failing to read fractals numbered 9 and 10 that contain valid data. Therefore, set: `right_width = CeilAlign(N, BLOCK_CUBE * fractalNum)`, which reads all fractals. Although the matrix computation result includes results from invalid data participation, the `asc_copy_l0c2gm` instruction ensures that results from invalid data are not transferred out by setting `n_size = N` during data transfer.
 <p align="center">
   <img src="figures/mmad_s8_L0B_转置.png" width="700">

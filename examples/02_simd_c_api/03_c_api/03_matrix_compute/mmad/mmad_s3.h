@@ -98,8 +98,8 @@ __aicore__ inline void s3_compute_mmad(__cc__ float* c_matrix, __ca__ float* a_m
 __aicore__ inline void s3_copy_result_to_gm(__gm__ float* dst, __cc__ float* src)
 {
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
-    asc_set_l0c2gm_nz2nd(1, 0, 0);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(
-        dst, src, N, M, N, ceil_align(M, BLOCK_CUBE), 0, 0, 0, 0, 0, false, true, 0, 0, false, 0, false, false, false,
-        false);
+        dst, src, N, M, N, ceil_align(M, BLOCK_CUBE), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        asc_unit_flag_mode::DISABLE, QuantMode_t::NoQuant, asc_relu_pre_mode::NONE, false, true, false, false);
 }

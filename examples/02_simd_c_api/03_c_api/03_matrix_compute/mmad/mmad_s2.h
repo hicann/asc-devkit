@@ -36,7 +36,7 @@ __aicore__ inline void s2_copy_matrix_a_to_l1(__cbuf__ bfloat16_t* dst, __gm__ b
     asc_set_gm2l1_nz_para(config);
 
     uint64_t loop1_src_stride = K * sizeof(bfloat16_t);
-    uint8_t l2_cache_ctl = 0;
+    asc_load_l2_cache_mode l2_cache_ctl = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM;
     uint16_t n_value = M;
     uint32_t d_value = K;
     uint64_t loop4_src_stride = 0;
@@ -55,7 +55,7 @@ __aicore__ inline void s2_copy_matrix_b_to_l1(__cbuf__ bfloat16_t* dst, __gm__ b
     asc_set_gm2l1_nz_para(config);
 
     uint64_t loop1_src_stride = K * sizeof(bfloat16_t);
-    uint8_t l2_cache_ctl = 0;
+    asc_load_l2_cache_mode l2_cache_ctl = asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM;
     uint16_t n_value = N;
     uint32_t d_value = K;
     uint64_t loop4_src_stride = 0;
@@ -147,24 +147,16 @@ __aicore__ inline void s2_copy_result_to_gm(__gm__ float* dst, __cc__ float* src
     uint16_t m_size = M;
     uint32_t loop_dst_stride = N;
     uint16_t loop_src_stride = ceil_align(M, BLOCK_CUBE);
-    uint8_t l2_cache_ctl = 0;
-    uint8_t clip_relu_pre = 0;
-    uint8_t unit_flag_ctl = 0;
-    uint64_t quant_pre = 0;
-    uint8_t relu_pre = 0;
+    asc_store_l2_cache_mode l2_cache_ctl = asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM;
+    asc_unit_flag_mode unit_flag_ctl = asc_unit_flag_mode::DISABLE;
+    asc_quant_mode quant_pre = QuantMode_t::NoQuant;
+    asc_relu_pre_mode relu_pre = asc_relu_pre_mode::NONE;
     bool split_en = false;
     bool nz2nd_en = true;
-    uint64_t quant_post = 0;
-    uint8_t relu_post = 0;
-    bool clip_relu_post = false;
-    uint8_t eltwise_op = 0;
-    bool eltwise_antq_en = false;
-    bool c0_pad_en = false;
-    bool broadcast_en = false;
     bool nz2dn_en = false;
+    bool clip_relu_pre = false;
 
     asc_copy_l0c2gm(
-        dst, src, n_size, m_size, loop_dst_stride, loop_src_stride, l2_cache_ctl, clip_relu_pre, unit_flag_ctl,
-        quant_pre, relu_pre, split_en, nz2nd_en, quant_post, relu_post, clip_relu_post, eltwise_op, eltwise_antq_en,
-        c0_pad_en, broadcast_en, nz2dn_en);
+        dst, src, n_size, m_size, loop_dst_stride, loop_src_stride, l2_cache_ctl, unit_flag_ctl, quant_pre, relu_pre,
+        split_en, nz2nd_en, nz2dn_en, clip_relu_pre);
 }

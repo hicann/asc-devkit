@@ -286,7 +286,7 @@ __global__ __cube__ void Conv2dForwardCapi(
     __gm__ half* fmap, __gm__ half* weight, __gm__ half* output)
 {
     asc_init();
-    const uint32_t batch_idx = static_cast<uint32_t>(asc_get_block_idx());
+    const uint32_t batch_idx = static_cast<uint32_t>(block_idx);
     if (batch_idx >= BATCH) {
         return;
     }
@@ -299,7 +299,8 @@ __global__ __cube__ void Conv2dForwardCapi(
 
     asc_set_gm2l1_nz_para(1, 1, H * W, 0);
     asc_copy_gm2l1_nd2nz(
-        fmap_l1, fmap + batch_idx * FMAP_BATCH_SIZE, CIN * sizeof(half), 0, H * W, CIN, 0, false);
+        fmap_l1, fmap + batch_idx * FMAP_BATCH_SIZE, CIN * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        H * W, CIN, 0, false);
 
     asc_set_gm2l1_nz_para(1, 1, K_ALIGN, 0);
     asc_copy_gm2l1_nd2nz(weight_l1, weight, COUT * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, K, COUT, 0, false);
@@ -342,8 +343,9 @@ __global__ __cube__ void Conv2dForwardCapi(
 
     asc_set_l0c_copy_nz_para(1, 0, 0);
     asc_copy_l0c2gm(
-        output + batch_idx * OUTPUT_BATCH_SIZE, output_l0, N, M, N, M_ALIGN, 0, 0, 0,
-        static_cast<uint64_t>(QuantMode_t::F322F16), 0, false, true, 0, 0, false, 0, false, false, false, false);
+        output + batch_idx * OUTPUT_BATCH_SIZE, output_l0, N, M, N, M_ALIGN,
+        asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, asc_unit_flag_mode::DISABLE, QuantMode_t::F322F16,
+        asc_relu_pre_mode::NONE, false, true, false, false);
     asc_sync_pipe(PIPE_FIX);
 }
 

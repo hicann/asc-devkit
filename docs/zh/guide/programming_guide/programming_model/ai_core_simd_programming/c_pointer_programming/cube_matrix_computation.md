@@ -162,7 +162,7 @@ constexpr uint64_t src_d_value = 32;
 // Offset between starting addresses of adjacent ND matrices in source matrix
 constexpr uint64_t src_nd_matrix_stride = 0;
 // L2 Cache uses NORMAL mode
-constexpr uint8_t l2_cache_ctrl = 1;
+constexpr asc_load_l2_cache_mode l2_cache_ctrl = asc_load_l2_cache_mode::NORMAL_LAST_VICTIM;
 // Number of rows in ND matrix of source matrix
 constexpr uint16_t n_value = 16;
 // Number of columns in ND matrix of source matrix
