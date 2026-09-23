@@ -11,14 +11,15 @@
 
 set -e
 
+# @target_arrays_begin
 adv_test_targets=(
     ascendc_ut_adv_api_kernel_ascend310p
     ascendc_ut_adv_api_kernel_ascend610
     ascendc_ut_adv_api_kernel_ascend310B1
     ascendc_ut_adv_api_kernel_ascend910B1_AIC
     ascendc_ut_adv_api_kernel_ascend910B1_AIV
-    # ascendc_ut_adv_api_kernel_KirinX90_AIV
-    # ascendc_ut_adv_api_kernel_Kirin9030_AIV
+    ascendc_ut_adv_api_kernel_KirinX90_AIV
+    ascendc_ut_adv_api_kernel_Kirin9030_AIV
     ascendc_ut_adv_api_tiling_ascend310p
     ascendc_ut_adv_api_tiling_ascend310B1
     ascendc_ut_adv_api_tiling_ascend910B1_AIC
@@ -146,3 +147,17 @@ arm_test_targets=(
     adv_api_run_all_host_header_checks_npu
     adv_api_run_all_host_header_checks_npu_single
 )
+# @target_arrays_end
+
+all_test_targets=()
+while IFS= read -r arr_name; do
+    ref="${arr_name}[@]"
+    all_test_targets+=("${!ref}")
+done < <(awk '/^# @target_arrays_begin$/{f=1;next} /^# @target_arrays_end$/{f=0} f' "${BASH_SOURCE[0]}" | sed -n 's/^\([a-zA-Z_][a-zA-Z0-9_]*\)=(.*/\1/p')
+
+all_test_targets_exclude_kirin=()
+for target in "${all_test_targets[@]}"; do
+    if [[ ! "$target" =~ [Kk]irin ]]; then
+        all_test_targets_exclude_kirin+=("$target")
+    fi
+done

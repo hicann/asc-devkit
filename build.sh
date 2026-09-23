@@ -698,6 +698,8 @@ function build_test_part() {
     TEST_TARGET_LIST=("${basic_test_four_targets[@]}")
   elif [ "$TEST_PART" == "basic_test_five" ]; then
     TEST_TARGET_LIST=("${basic_test_five_targets[@]}")
+  elif [ "$TEST_PART" == "test_exclude_kirin" ]; then
+    TEST_TARGET_LIST=("${all_test_targets_exclude_kirin[@]}")
   fi
 
   for tag in "${TEST_TARGET_LIST[@]}"; do
