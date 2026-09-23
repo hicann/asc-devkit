@@ -17,7 +17,7 @@
 
 #include <type_traits>
 
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 namespace __asc_aicore {
 template <typename T>
 constexpr __aicore__ inline uint64_t get_scalar_bitcode_value(T scalarValue)

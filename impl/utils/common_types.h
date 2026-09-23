@@ -17,7 +17,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include "sys_macros.h"
+#include "sys_macros_impl.h"
 
 namespace AscendC {
 enum class Hardware : uint8_t { GM, UB, L1, L0A, L0B, L0C, BIAS, FIXBUF, MAX };

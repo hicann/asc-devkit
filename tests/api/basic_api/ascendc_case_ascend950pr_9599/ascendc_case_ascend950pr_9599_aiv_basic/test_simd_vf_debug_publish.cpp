@@ -13,7 +13,7 @@
 #include <cstring>
 #include <vector>
 #include "stub_fun.h"
-#include "impl/utils/sys_macros.h"
+#include "impl/utils/sys_macros_impl.h"
 #include "impl/utils/common_types.h"
 
 // Keep CPU stub types/core selection, but include the real device debug implementation.
