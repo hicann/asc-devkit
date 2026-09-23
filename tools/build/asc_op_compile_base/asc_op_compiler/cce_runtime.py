@@ -577,6 +577,8 @@ def _save_operator_json_info(
         ):
             title_dict["opParaSize"] = int(op_para_size + dfx_size)
 
+    if "oom" in ccec.current_build_config().get(op_debug_config):
+        title_dict["oom"] = {"version": 1, "tensor_version": 1}
     final_dict = title_dict.copy()
     write_code(final_dict, file_name)
 
