@@ -351,9 +351,10 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForConcurrentAllToAll(
     __gm__ CommonPrepareParamCcu* commParam)
 {
-    constexpr uint64_t meshBandwidth = 11U;
-    constexpr uint64_t totalBandwidth = 21U;
+    constexpr uint64_t meshBandwidth = 13U; // mesh:clos = 13:20，与 executor 侧 MESH_BW_CCU/CLOS_BW_CCU 同步
+    constexpr uint64_t totalBandwidth = 33U;
     constexpr uint64_t splitAlignment = 128U;
+    constexpr uint64_t closJettyNum = 1U; // 与 CcuTempAllToAllMesh1DMultiJetty 的 A2A_JETTY_NUM 保持一致
     const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
     const uint64_t totalSize = commParam->count * dataTypeSize;
     const uint64_t repeatOffset = totalSize * ccuParam_.repeatIndex;
@@ -379,6 +380,9 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     xnData_[KFC_CONCURRENT_A2A_CLOS_SRC_OFFSET] = 0U;
     xnData_[KFC_CONCURRENT_A2A_CLOS_DST_OFFSET] = strideSize * ccuParam_.rankId;
     CalcGoSize(closSize, CCU_LOOP_COUNT_M2M_AG, CCU_MEMSLICE_SIZE * 8U, &xnData_[KFC_CONCURRENT_A2A_CLOS_GO_SIZE_0]);
+    xnData_[KFC_CONCURRENT_A2A_CLOS_SLICE_SIZE_PER_JETTY] = closSize / closJettyNum / splitAlignment * splitAlignment;
+    xnData_[KFC_CONCURRENT_A2A_CLOS_LAST_SLICE_SIZE_PER_JETTY] =
+        closSize - (closJettyNum - 1U) * xnData_[KFC_CONCURRENT_A2A_CLOS_SLICE_SIZE_PER_JETTY];
 }
 
 template <const auto& config>

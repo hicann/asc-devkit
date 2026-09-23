@@ -145,7 +145,12 @@ CcuResult DoAllToAll(AllToAllMesh1DMultiJettyContext& ctx)
     localDst.addr = ctx.output;
     localDst.addr += ctx.dstOffset;
     localDst.token = ctx.token;
-    CCU_IF(ctx.sliceSize != 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, ctx.goSize)); }
+    CCU_IF(ctx.sliceSize != 0)
+    {
+        CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, ctx.goSize));
+        CCU_CHK_RET(ccu::EventRecord(ctx.eventList[ctx.rankId], 1U));
+        CCU_CHK_RET(ccu::EventWait(ctx.eventList[ctx.rankId], 1U));
+    }
     CCU_CHK_RET(ccu::EventRecord(ctx.eventList[ctx.rankId], 1U));
 
     for (uint32_t r = 0; r < ctx.rankSize; ++r) {
