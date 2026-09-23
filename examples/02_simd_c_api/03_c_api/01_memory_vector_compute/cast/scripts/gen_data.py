@@ -28,6 +28,7 @@ def make_golden(input_data, scenario_num):
     rounded = np.ceil(input_data.astype(np.float32))
     if scenario_num == 1:
         converted = np.clip(rounded, -8, 7).astype(np.int8).astype(np.uint8)
+        converted &= 0x0F
         return (converted[0::2] | (converted[1::2] << 4)).astype(np.uint8)
     return rounded.astype(np.int32)
 
