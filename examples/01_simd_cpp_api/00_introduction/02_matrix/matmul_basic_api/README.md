@@ -230,7 +230,7 @@ AscendC::printf("matmul blockIdx=%d\n", AscendC::GetBlockIdx());
 在算子kernel侧实现代码中需要打印Tensor数据的地方调用DumpTensor接口打印相关内容。样例如下：
 
 ```cpp
-AscendC::DumpTensor(cLocal, baseM * baseN);
+AscendC::DumpTensor(cLocal, 1, baseM * baseN);
 ```
 
 > [!CAUTION]注意 
