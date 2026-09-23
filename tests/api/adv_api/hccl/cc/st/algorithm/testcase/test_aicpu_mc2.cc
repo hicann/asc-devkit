@@ -395,7 +395,7 @@ TEST_F(AicpuMc2Test, LaunchUsesSimpleCtxProtocol)
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
 
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    ASSERT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_SUCCESS);
 
     const auto& state = GetMc2AicpuLaunchStubState();
     ASSERT_EQ(state.launchCalls, 1U);
@@ -422,7 +422,7 @@ TEST_F(AicpuMc2Test, LaunchRejectsAicpuTsEngine)
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU_TS);
 
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_E_NOT_SUPPORT);
 
     EXPECT_EQ(GetMc2AicpuLaunchStubState().launchCalls, 0U);
 }
@@ -435,7 +435,7 @@ TEST_F(AicpuMc2Test, LaunchTimeoutAddsOpExecuteTimeout)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    ASSERT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_SUCCESS);
 
     ASSERT_EQ(state.launchCalls, 1U);
     EXPECT_EQ(state.opExecuteTimeoutCalls, 1U);
@@ -450,7 +450,7 @@ TEST_F(AicpuMc2Test, LaunchTimeoutHonoursExternalExecTimeout)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    ASSERT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_SUCCESS);
 
     const auto& state = GetMc2AicpuLaunchStubState();
     ASSERT_EQ(state.launchCalls, 1U);
@@ -465,7 +465,7 @@ TEST_F(AicpuMc2Test, LaunchTimeoutClampsToMaxUint16)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    ASSERT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_SUCCESS);
 
     const auto& state = GetMc2AicpuLaunchStubState();
     ASSERT_EQ(state.launchCalls, 1U);
@@ -480,12 +480,12 @@ TEST_F(AicpuMc2Test, LaunchSkippedWhenTimeoutQueryFails)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_E_RUNTIME);
 
     EXPECT_EQ(state.launchCalls, 0U);
 }
 
-TEST_F(AicpuMc2Test, LaunchSurvivesRuntimeFailure)
+TEST_F(AicpuMc2Test, LaunchPropagatesRuntimeFailure)
 {
     auto& state = GetMc2AicpuLaunchStubState();
     state.launchRet = RT_LAUNCH_FAILURE;
@@ -493,7 +493,7 @@ TEST_F(AicpuMc2Test, LaunchSurvivesRuntimeFailure)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_E_RUNTIME);
 
     EXPECT_EQ(state.launchCalls, 1U);
 }
@@ -506,20 +506,20 @@ TEST_F(AicpuMc2Test, LaunchRejectsUnsupportedDevice)
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx)), HCCL_E_NOT_SUPPORT);
 
     EXPECT_EQ(GetMc2AicpuLaunchStubState().launchCalls, 0U);
 }
 
 TEST_F(AicpuMc2Test, LaunchRejectsInvalidContext)
 {
-    Mc2CcKernelLaunch(stream_, nullptr, sizeof(OpResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, nullptr, sizeof(OpResCtx)), HCCL_E_PTR);
     EXPECT_EQ(GetMc2AicpuLaunchStubState().launchCalls, 0U);
 
     OpParam opParam{};
     OpResCtx opResCtx{};
     BuildAicpuLaunchCtx(opParam, opResCtx, COMM_ENGINE_AICPU);
-    Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx) - 1U);
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, &opResCtx, sizeof(opResCtx) - 1U), HCCL_E_PARA);
     EXPECT_EQ(GetMc2AicpuLaunchStubState().launchCalls, 0U);
 }
 

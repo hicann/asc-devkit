@@ -1196,31 +1196,23 @@ uint32_t __attribute__((visibility("default"))) Mc2AcquireCcResCtx(
     return HCCL_E_NOT_SUPPORT;
 }
 
-void __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, void* ccResCtx, uint32_t ccResCtxSize)
+uint32_t __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, void* ccResCtx, uint32_t ccResCtxSize)
 {
-    if (ccResCtx == nullptr) {
-        HCCL_ERROR("[Mc2CcKernelLaunch] ccResCtx is nullptr.");
-        return;
-    }
-
+    CHK_PTR_NULL(ccResCtx);
     if (ccResCtxSize < sizeof(OpResCtx)) {
         HCCL_ERROR(
             "[Mc2CcKernelLaunch] invalid ccResCtxSize[%u], expected at least[%zu].", ccResCtxSize, sizeof(OpResCtx));
-        return;
+        return HCCL_E_PARA;
     }
 
     OpResCtx opResHost{};
     CcuResult loadRet = CopyOpResCtxToHost(ccResCtx, opResHost);
     if (loadRet != CCU_SUCCESS) {
         HCCL_ERROR("[Mc2CcKernelLaunch] failed to load OpResCtx, ret[%d].", loadRet);
-        return;
+        return HCCL_E_INTERNAL;
     }
 
-    HcclResult deviceRet = CheckMc2CcDeviceType(__func__);
-    if (deviceRet != HCCL_SUCCESS) {
-        HCCL_ERROR("[Mc2CcKernelLaunch] Mc2 launch is not supported, ret[%d].", deviceRet);
-        return;
-    }
+    CHK_RET(CheckMc2CcDeviceType(__func__));
 
     const CommEngine commEngine = static_cast<CommEngine>(opResHost.commEngine);
     switch (commEngine) {
@@ -1229,7 +1221,7 @@ void __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, void
             loadRet = CopyOpParamToHost(opResHost, opParamHost);
             if (loadRet != CCU_SUCCESS) {
                 HCCL_ERROR("[Mc2CcKernelLaunch] failed to load OpParam, ret[%d].", loadRet);
-                return;
+                return HCCL_E_INTERNAL;
             }
             const HcclComm comm = static_cast<HcclComm>(opParamHost.hcclComm);
             // The CCU launch stream is carried by the thread handles in the resource context.
@@ -1237,23 +1229,18 @@ void __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, void
             CcuResult launchRet = LaunchCcuKernel(comm, opParamHost);
             if (launchRet != CCU_SUCCESS) {
                 HCCL_ERROR("[Mc2CcKernelLaunch] CcuKernelLaunch failed, ret[%d].", launchRet);
+                return HCCL_E_INTERNAL;
             }
-            return;
+            return HCCL_SUCCESS;
         }
         case COMM_ENGINE_AICPU: {
-            if (stream == nullptr) {
-                HCCL_ERROR("[Mc2CcKernelLaunch] stream is nullptr.");
-                return;
-            }
-            HcclResult launchRet = LaunchAicpuKernel(stream, ccResCtx);
-            if (launchRet != HCCL_SUCCESS) {
-                HCCL_ERROR("[Mc2CcKernelLaunch] AicpuKernelLaunch failed, ret[%d].", launchRet);
-            }
-            return;
+            CHK_PTR_NULL(stream);
+            CHK_RET(LaunchAicpuKernel(stream, ccResCtx));
+            return HCCL_SUCCESS;
         }
         default:
             HCCL_ERROR("[Mc2CcKernelLaunch] unsupported commEngine[%d].", static_cast<int>(commEngine));
-            return;
+            return HCCL_E_NOT_SUPPORT;
     }
 }
 } // extern "C"

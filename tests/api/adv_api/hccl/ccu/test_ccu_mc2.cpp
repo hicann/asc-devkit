@@ -1589,16 +1589,14 @@ TEST_F(CcuMc2TestSuite, Mc2AcquireCcResCtx_PropagatesOpResCtxCopyFailure)
 
 TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_NullContext)
 {
-    Mc2CcKernelLaunch(nullptr, nullptr, 0U);
-    SUCCEED();
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, nullptr, 0U), HCCL_E_PTR);
 }
 
 TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_RejectsInvalidContextSize)
 {
     OpParam opParam{};
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, comm_, COMM_ENGINE_CCU);
-    Mc2CcKernelLaunch(nullptr, &opResCtx, 0U);
-    SUCCEED();
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, 0U), HCCL_E_PARA);
 }
 
 TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_HandlesOpResCopyFailure)
@@ -1607,8 +1605,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_HandlesOpResCopyFailure)
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, comm_, COMM_ENGINE_CCU);
     mc2_ops_hccl::g_stubAclrtMemcpyFail = true;
 
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
-    SUCCEED();
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_INTERNAL);
 }
 
 TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_HandlesOpParamCopyFailure)
@@ -1617,7 +1614,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_HandlesOpParamCopyFailure)
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, comm_, COMM_ENGINE_CCU);
     mc2_ops_hccl::g_stubAclrtMemcpyFailOnCall = 2U;
 
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_INTERNAL);
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 2U);
 }
 
@@ -1626,7 +1623,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_RejectsNullCommInCcuContext)
     OpParam opParam{};
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, nullptr, COMM_ENGINE_CCU);
 
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_INTERNAL);
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 2U);
 }
 
@@ -1638,7 +1635,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_RejectsInvalidOpResCtx)
     opResCtx.workSpace = 0U;
     opResCtx.workSpaceSize = 0U;
 
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_INTERNAL);
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 1U);
 }
 
@@ -1647,8 +1644,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_RejectsUnsupportedEngine)
     OpParam opParam{};
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, comm_, static_cast<CommEngine>(0xFFU));
 
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
-    SUCCEED();
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_NOT_SUPPORT);
 }
 
 TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_CcuPath)
@@ -1666,7 +1662,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_CcuPath)
     ASSERT_NE(ccResCtx, nullptr);
 
     // CCU obtains the launch stream from the thread handles in ccResCtx.
-    Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize);
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize), HCCL_SUCCESS);
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 5U);
     EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 1U);
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
@@ -1687,9 +1683,8 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_PropagatesCcuLaunchFailure)
     ASSERT_NE(ccResCtx, nullptr);
 
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail = true;
-    Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize);
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize), HCCL_E_INTERNAL);
     EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 1U);
-    SUCCEED();
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }
 
@@ -1699,7 +1694,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_RejectsUnsupportedDevice)
     OpResCtx opResCtx = BuildLaunchOpResCtx(opParam, comm_, COMM_ENGINE_CCU);
 
     mc2_ops_hccl::g_stubDeviceType = DevType::DEV_TYPE_910B;
-    Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx));
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, &opResCtx, sizeof(opResCtx)), HCCL_E_NOT_SUPPORT);
 
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 1U);
     EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 0U);

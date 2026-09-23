@@ -187,7 +187,7 @@ extern Mc2Result __attribute__((visibility("default"))) Mc2AcquireCcResCtx(
  *       The CCU path currently supports Ascend 950 only and obtains its launch stream
  *       from the thread resource embedded in ccResCtx.
  */
-extern void __attribute__((visibility("default"))) Mc2CcKernelLaunch(
+extern Mc2Result __attribute__((visibility("default"))) Mc2CcKernelLaunch(
     void* stream, void* ccResCtx, uint32_t ccResCtxSize);
 
 #ifdef __cplusplus
