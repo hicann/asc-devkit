@@ -65,7 +65,9 @@ constexpr DataTypeName DTYPE_NAMES[] = {
     {ge::DT_FLOAT6_E3M2, "float6_e3m2", "DT_FLOAT6_E3M2"},
     {ge::DT_FLOAT6_E2M3, "float6_e2m3", "DT_FLOAT6_E2M3"},
     {ge::DT_FLOAT4_E2M1, "float4_e2m1", "DT_FLOAT4_E2M1"},
-    {ge::DT_FLOAT4_E1M2, "float4_e1m2", "DT_FLOAT4_E1M2"}};
+    {ge::DT_FLOAT4_E1M2, "float4_e1m2", "DT_FLOAT4_E1M2"},
+    {ge::DT_HIFLOAT4, "hifloat4", "DT_HIFLOAT4"},
+    {ge::DT_HIFLOAT4_SCALE, "hifloat4_scale", "DT_HIFLOAT4_SCALE"}};
 
 inline const char* FindDataTypeName(const ge::DataType& type, const DataTypeNameMode mode)
 {
