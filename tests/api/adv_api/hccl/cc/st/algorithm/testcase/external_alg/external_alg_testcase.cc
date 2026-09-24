@@ -203,7 +203,7 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
     // 各 cmd 精确分布锚（AG 12 / RS 16 / AR 8 / A2A 7 / A2AV 3 = 46），失败时定位更直接
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER).size(), 12U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_REDUCE_SCATTER).size(), 16U);
-    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 8U);
+    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 9U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALL).size(), 7U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALLV).size(), 3U);
     // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：46 行精确锚
@@ -215,7 +215,7 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
             }
         }
     }
-    EXPECT_EQ(total, 46U);
+    EXPECT_EQ(total, 47U);
 }
 
 // 不变量：注册行 externalName 字面量必须自身就是规范形（"与 parser 产出同构"的机器契约）。
@@ -640,8 +640,8 @@ TEST(ExtAlgResolver, CandidateTableIsDeterministic)
         }
         comboCount += engines.size();
     }
-    EXPECT_EQ(keyCount, 30U);
-    EXPECT_EQ(comboCount, 36U);
+    EXPECT_EQ(keyCount, 31U);
+    EXPECT_EQ(comboCount, 37U);
 }
 
 TEST(ExtAlgResolver, SpecificityOrdering)
@@ -744,9 +744,12 @@ TEST(ExtAlgWhitelist, IsAlgAllowedMatchesNameList)
              "CcuSchedReduceScatterSoleNHRMultiLink",
              "CcuSchedReduceScatterConcurMeshNHRMultiLink",
              "AicpuReduceScatterPipeLinePcie",
+             "AicpuAllReduceSoleNHR",
              "AicpuAllReduceSoleMeshOneShot",
              "AicpuAllReduceSoleMeshTwoShot",
              "AicpuAllReduceSoleMeshChunkTwoShot",
+             "AicpuAllReduceParallelMeshNHR",
+             "AicpuAllReducePipeLinePcie",
              "CcuSchedAllReduceSoleMesh",
              "AicpuAllToAllSoleMesh",
              "AicpuAllToAllSoleMeshSingleChannel",
@@ -771,15 +774,13 @@ TEST(ExtAlgWhitelist, IsAlgAllowedMatchesNameList)
              "InsReduceScatterSequenceMesh1DNhr",
              "InsReduceScatterSequenceMeshMeshDPU",
              "InsReduceScatterParallelMesh1DNHR",
-             "AicpuAllReduceSoleNHR",
              "AicpuAllReduceSoleNHRAicpuReduce",
-             "AicpuAllReduceParallelMeshNHR",
              "AicpuAllreduceParallelMeshNHRPcie",
          }) {
         EXPECT_FALSE(IsAlgAllowed(name)) << name;
     }
     EXPECT_FALSE(IsAlgAllowed("NotAnAlgorithm"));
-    EXPECT_EQ(ALG_WHITELIST.size(), 33U);
+    EXPECT_EQ(ALG_WHITELIST.size(), 36U);
 }
 
 // 改名漏改防线：白名单出现死名即红
@@ -807,15 +808,13 @@ TEST(ExtAlgWhitelist, DifferentialProductionView)
             kept.push_back(row);
         }
     }
-    EXPECT_EQ(kept.size(), 33U);
+    EXPECT_EQ(kept.size(), 36U);
     const auto prodTable = BuildCandidateTable(kept);
 
     const std::pair<HcclCMDType, const char*> deadKeys[] = {
         {HcclCMDType::HCCL_CMD_ALLGATHER, "sequence[mesh,nhr]"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sequence[mesh,nhr]"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sequence[mesh,mesh]"},
-        {HcclCMDType::HCCL_CMD_ALLREDUCE, "sole[nhr]"},
-        {HcclCMDType::HCCL_CMD_ALLREDUCE, "parallel[mesh,nhr]"},
     };
     for (const auto& dead : deadKeys) {
         EXPECT_EQ(prodTable.count(std::make_pair(dead.first, std::string(dead.second))), 0U) << dead.second;

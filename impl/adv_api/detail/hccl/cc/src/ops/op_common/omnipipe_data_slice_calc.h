@@ -115,6 +115,15 @@ u64 CalReducescatterDataSize2D(
 std::vector<u64> CalcOmniPipeScratchInfo(OmniPipeScratchParam& omniPipeScratchParam);
 OmniPipeSliceInfo CalcRSOmniPipeSliceInfo(OmniPipeSliceParam& omniPipeSliceParam);
 OmniPipeSliceInfo CalcAGOmniPipeSliceInfo(OmniPipeSliceParam& omniPipeSliceParam);
+std::vector<std::vector<u64>> OmniPipeSplitRankDataLoop(
+    std::vector<u64> omniPipeSplitSliceInfoList, u64 maxDataCountPerLoop, u64 loopCount, u64 dataTypeSize);
+std::vector<u64> OmniPipeSplitData(u64 rankSize, u64 count, u64 dataTypeSize);
+HcclResult CalLocalCopySlice(
+    const TemplateDataParams& tempAlgParams, const std::vector<u64>& allRankSplitData,
+    const std::vector<u64>& curLoopAllRankSplitData, std::vector<DataSlice>& srcDataSlice,
+    std::vector<DataSlice>& dstDataSlice, u64 dataTypeSize);
+bool isSameLoop(const std::vector<u64>& splitData1, const std::vector<u64>& splitData2);
+std::vector<u64> CalcCountToDataSize(const std::vector<u64>& vecCount, u64 dataType);
 int SetMaxStepNumOmni(OmniNeedSetStepNum needSetStepNum);
 } // namespace mc2_ops_hccl
 #endif
