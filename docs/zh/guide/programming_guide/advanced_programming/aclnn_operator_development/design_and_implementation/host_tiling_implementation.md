@@ -26,7 +26,7 @@ Host侧Tiling的输入和输出如下图所示：
 
 Host侧Tiling的输出主要包括`TilingData`、`numBlocks`、workspace大小和`TilingKey`；不同运行场景还可能涉及调度模式（schedule mode）等核函数（Kernel）launch配置。写代码前先理解这些输出，后面的流程会更容易对应。
 
-### TilingData
+### TilingData（必选）
 
 `TilingData`用于承载Host侧传给核函数（Kernel）侧的切分结果，只需定义核函数（Kernel）实际使用的字段。常见字段包括总元素数、单次处理的数据量、循环次数、尾块长度和分支参数，具体字段由核函数（Kernel）实现决定。
 
@@ -39,15 +39,62 @@ AscendC推荐使用**标准C++语法**定义Tiling结构体。这种方式便于
 
 本文档以标准C++语法为主线介绍Tiling实现的基本流程。
 
-### numBlocks<a id="numblocks"></a>
+### numBlocks（必选）<a id="numblocks"></a>
 
 `numBlocks`指定核函数（Kernel）启动的SIMD Block数量，应根据数据规模、切分策略和硬件资源确定。可设置范围还受AI处理器型号、核函数（Kernel）执行类型和运行时资源约束，更多信息请参考[核函数（Kernel）配置](../../../language_extension/simd_builtin_keywords.md#section97005415463)。
 
-### workspace大小
+### workspace大小（必选）
 
-workspace是设备侧Global Memory上的临时内存，用于为核函数（Kernel）计算提供辅助存储，例如保存中间结果、作为Ascend C API的临时缓存，或为核函数（Kernel）提供临时空间。Host侧Tiling函数只负责计算并设置所需的workspace大小，不直接使用这块内存。单算子API执行场景下，开发者通过第一段接口获取workspace大小，并申请对应大小的Global Memory；入图场景下，框架会根据Host侧Tiling设置的大小自动申请。申请完成后，核函数（Kernel）可以通过入口参数`workspace`访问这块内存。
+workspace是设备侧Global Memory上的临时内存，供核函数（Kernel）执行时作为辅助存储：Host侧Tiling函数负责计算并设置所需大小，框架或调用方据此申请，核函数（Kernel）通过入口参数workspace访问。workspace内存分为系统workspace和用户workspace两部分：
 
-Host侧需要设置的workspace内存分为系统workspace和用户workspace两部分，具体设置方法请参考[如何使用workspace](../../../appendix/common_operations/how_to_use_workspace.md)。
+- 系统workspace：Ascend C API需要预留的workspace内存
+
+    API在计算过程需要一些workspace内存作为缓存，因此算子需要为API预留workspace内存，预留内存大小通过[GetLibApiWorkSpaceSize](../../../../../api/Utils-API/platform_info/PlatformAscendC/GetLibApiWorkSpaceSize.md)接口获取。
+- 用户workspace：算子实现使用到的workspace内存（按需）
+
+    算子内部需要通过额外的Device内存进行数据交换或者缓存的时候才需要分配，根据实际情况自行分配。使用场景如下：
+
+    - 需要使用Unified Buffer（UB）和L1 Buffer上的空间且空间不够用时，可以将数据暂存至workspace上。
+    - 调用[SyncAll](../../../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll.md)等API接口时，需要workspace作为入参。
+    - 其他需要使用Global Memory上内存空间的场景。
+
+整体的workspace内存就是系统workspace和用户workspace之和，在Tiling函数中通过`GetWorkspaceSizes`接口设置。具体使用方式如下：
+
+1. 在Tiling函数中先通过GetWorkspaceSizes接口获取workspace大小的存放位置，再设置workspace的大小，框架侧会为其申请对应大小的设备侧Global Memory，在对应的算子核函数（Kernel）侧实现时可以使用这块workspace内存。在使用[Matmul核函数（Kernel）侧接口](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)等需要系统workspace的高阶API时，设置的workspace空间大小为系统workspace和用户workspace之和。
+
+    ```cpp
+    // 用户自定义的tiling函数
+    static ge::graphStatus TilingFunc(gert::TilingContext* context)
+    {
+        AddApiTiling tiling;
+        ...
+        size_t usrSize = 256; // 设置用户需要使用的workspace大小为256字节。
+        // 调用GetLibApiWorkSpaceSize获取系统workspace的大小。
+        auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());
+        uint32_t sysWorkspaceSize = ascendcPlatform.GetLibApiWorkSpaceSize();
+        if (sysWorkspaceSize == std::numeric_limits<uint32_t>::max()) {
+            return ge::GRAPH_FAILED;
+        }
+        size_t *currentWorkspace = context->GetWorkspaceSizes(1); // 通过框架获取workspace的指针，GetWorkspaceSizes入参为所需workspace的块数
+        currentWorkspace[0] = usrSize + sysWorkspaceSize;
+        ...
+    }
+    ```
+
+2. 在Device侧核函数（Kernel）入口处的workspace为用户的workspace指针：
+
+    ```cpp
+    // 用户写的核函数（Kernel），核函数（Kernel）必须包括GM_ADDR workspace入参，位置需要放在tiling之前
+    extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
+    {
+        ...
+
+    }
+    ```
+
+> [!NOTE] 不同执行场景下的workspace申请
+>
+> 单算子API执行场景下，开发者通过第一段接口获取workspace大小，并申请对应大小的Global Memory；入图场景下，框架会根据Host侧Tiling设置的大小自动申请。
 
 ### TilingKey（可选）
 
