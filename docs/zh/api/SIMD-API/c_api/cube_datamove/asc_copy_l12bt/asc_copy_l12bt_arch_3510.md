@@ -152,7 +152,7 @@ __global__ __cube__ void CopyL12btKernel(__gm__ half* input)
 {
     asc_init();
     __cbuf__ half l1[N];
-    asc_copy_gm2l1(l1, input, 1, BYTES / 32, 0, 0, 0);
+    asc_copy_gm2l1(l1, input, 1, BYTES / 32, asc_channel_pad_mode::NONE, 0, 0);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_copy_l12bt(0, l1, BYTES);

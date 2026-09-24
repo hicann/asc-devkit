@@ -183,7 +183,7 @@
   1. `asc_copy_gm2l1_nd2nz` + `asc_set_gm2l1_nz_para`：将转置后的 A、B 及 Bias 从 GM 搬运至 L1 Buffer；
   2. `asc_copy_l12l0a_transpose`：将 A 从 L1 Buffer转置搬运至 L0A Buffer；`asc_copy_l12l0b`：将 B 从 L1 Buffer搬运至 L0B Buffer；`asc_copy_l12bt`：将 Bias 从 L1 Buffer搬运至 BT 的 0 地址；
   3. `asc_mmad`：显式传入 BT 的 0 地址作为 Bias 地址，并设置 `disable_gemv = false`，完成矩阵乘加；
-  4. `asc_copy_l0c2gm` + `asc_set_l0c2gm_nz2nd`：将结果从 L0C Buffer搬运至 GM（Nz -> ND）；
+  4. `asc_copy_l0c2gm` + `asc_set_l0c_copy_nz_para`：将结果从 L0C Buffer搬运至 GM（Nz -> ND）；
 - 说明：A 矩阵通过 `asc_copy_l12l0a_transpose` 从 L1 Buffer转置搬运至 L0A Buffer。L0A Buffer中 M、K 方向的存储长度分别按照 `ceil_align(M, BLOCK_CUBE)` 和 `ceil_align(K, S3_C0_SIZE * S3_FRACTAL_NUM)` 计算；当前规格下，M 方向由 30 对齐至 32，K 方向由 70 对齐至 80。场景 3 使用 `dav-3510` 对应的显式 Bias 地址重载；由于 M 不为 1，`disable_gemv` 参数在本场景中不生效。
 <p align="center">
   <img src="figures/mmad_f32_L0A_转置.png" width="1100">

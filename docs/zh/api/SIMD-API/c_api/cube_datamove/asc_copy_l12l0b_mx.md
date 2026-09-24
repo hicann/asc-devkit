@@ -140,12 +140,14 @@ __global__ __cube__ void AscCopyL12l0bMxKernel(__gm__ uint8_t* a, __gm__ uint8_t
     asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(a), K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 2, 0);
     asc_copy_gm2l1_dn2nz(reinterpret_cast<__cbuf__ half*>(scale_a_l1),
-        reinterpret_cast<__gm__ half*>(scale_a), SCALE_K, 0, SCALE_K / 2, M, 0, false);
+        reinterpret_cast<__gm__ half*>(scale_a), SCALE_K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, SCALE_K / 2, M, 0,
+        false);
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ fp8_e4m3fn_t*>(b), K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, N, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 2, 0);
     asc_copy_gm2l1_dn2nz(reinterpret_cast<__cbuf__ half*>(scale_b_l1),
-        reinterpret_cast<__gm__ half*>(scale_b), SCALE_K, 0, SCALE_K / 2, N, 0, false);
+        reinterpret_cast<__gm__ half*>(scale_b), SCALE_K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, SCALE_K / 2, N, 0,
+        false);
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
 

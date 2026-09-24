@@ -136,8 +136,8 @@ __global__ __mix__(1, 2) void MatmulScaleKernel(
 
     if ASC_IS_AIC {
         // AIC直接将两个输入矩阵从GM搬入L1 Buffer。
-        asc_copy_gm2l1(matrix_a_l1, input, 1, INPUT_BYTES / DATA_BLOCK_BYTES, 0, 0, 0);
-        asc_copy_gm2l1(matrix_b_l1, input, 1, INPUT_BYTES / DATA_BLOCK_BYTES, 0, 0, 0);
+        asc_copy_gm2l1(matrix_a_l1, input, 1, INPUT_BYTES / DATA_BLOCK_BYTES, asc_channel_pad_mode::NONE, 0, 0);
+        asc_copy_gm2l1(matrix_b_l1, input, 1, INPUT_BYTES / DATA_BLOCK_BYTES, asc_channel_pad_mode::NONE, 0, 0);
         asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
         asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
         asc_copy_l12l0a(matrix_a_l0, matrix_a_l1, 0, 0, 1, 1, 1, 1);

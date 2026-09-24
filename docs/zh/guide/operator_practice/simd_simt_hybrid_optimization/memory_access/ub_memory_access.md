@@ -131,8 +131,8 @@ __aicore__ inline void process_tiles(__gm__ int32_t* x, __gm__ int32_t* y, __gm_
         __ubuf__ int32_t* z_local = ((tile_idx & 1) == 0 ? z_ping : z_pong);
 
         asc_sync_wait(PIPE_V, PIPE_MTE2, event_id);
-        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
-        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, CACHE_MODE_DISABLE, 0, 0);
+        asc_copy_gm2ub_align(x_local, x_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_DROP, 0, 0);
+        asc_copy_gm2ub_align(y_local, y_gm + tile_offset, 1, tile_bytes, 0, 0, false, asc_load_l2_cache_mode::NOTALLOC_DROP, 0, 0);
         asc_sync_notify(PIPE_MTE2, PIPE_V, event_id);
 
         asc_sync_wait(PIPE_MTE2, PIPE_V, event_id);
@@ -143,7 +143,7 @@ __aicore__ inline void process_tiles(__gm__ int32_t* x, __gm__ int32_t* y, __gm_
 
         asc_sync_notify(PIPE_V, PIPE_MTE3, event_id);
         asc_sync_wait(PIPE_V, PIPE_MTE3, event_id);
-        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, 0, 0, 0);
+        asc_copy_ub2gm_align(z_gm + tile_offset, z_local, 1, tile_bytes, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
         asc_sync_notify(PIPE_MTE3, PIPE_V, event_id);
     }
 
