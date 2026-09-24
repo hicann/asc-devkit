@@ -13,7 +13,7 @@ set -e
 
 SUPPORTED_SHORT_OPTS=("h" "j" "t" "p" "f")
 SUPPORTED_LONG_OPTS=(
-    "help" "cov" "cache" "pkg" "pkg-type" "asan" "make_clean" "cann_3rd_lib_path" "test" "cann_path" "adv_test" "adv_test_two" "arm_test" "basic_test_one" "basic_test_two" "basic_test_three" "basic_test_four" "basic_test_five" "build-type" "extra-cmake-args" "changed_file" "enable-sign" "sign-script"
+    "help" "cov" "cache" "pkg" "pkg-type" "asan" "make_clean" "cann_3rd_lib_path" "test" "cann_path" "adv_test" "adv_test_two" "arm_test" "basic_test_one" "basic_test_two" "basic_test_three" "basic_test_four" "basic_test_five" "9201_c_api_test" "build-type" "extra-cmake-args" "changed_file" "enable-sign" "sign-script"
 )
 
 CURRENT_DIR=$(dirname $(readlink -f ${BASH_SOURCE[0]}))
@@ -84,6 +84,7 @@ usage() {
         echo "    --basic_test_three    Build and run the basic_three part of unit tests"
         echo "    --basic_test_four     Build and run the basic_four part of unit tests"
         echo "    --basic_test_five     Build and run the basic_five part of unit tests"
+        echo "    --9201_c_api_test     Build and run the 9201 C API unit tests"
         echo "    --cann_3rd_lib_path  Set the path for third-party library dependencies, eg: ./build"
         echo "    --cov                Enable code coverage for unit tests"
         echo "    --asan               Enable ASAN (address Sanitizer)"
@@ -124,6 +125,7 @@ usage() {
   echo "    --basic_test_three    Build and run the basic_three part of unit tests"
   echo "    --basic_test_four     Build and run the basic_four part of unit tests"
   echo "    --basic_test_five     Build and run the basic_five part of unit tests"
+  echo "    --9201_c_api_test     Build and run the 9201 C API unit tests"
   echo "    --pkg                Compile package"
   echo "    --pkg-type=<TYPE>    Specify package type (TYPE options: run/rpm/deb/all or comma-separated values, eg: deb,rpm), Default: run"
   echo "                         all builds run, rpm and deb packages"
@@ -242,6 +244,7 @@ check_help_combinations() {
       --basic_test_three) test_part="basic_test_three" ;;
       --basic_test_four) test_part="basic_test_four" ;;
       --basic_test_five) test_part="basic_test_five" ;;
+      --9201_c_api_test) test_part="9201_c_api_test" ;;
       --cov) has_cov=true ;;
       --pkg) has_pkg=true ;;
       -h|--help) ;;
@@ -308,6 +311,7 @@ check_param_with_help() {
           --basic_test_three) SHOW_HELP="test" ;;
           --basic_test_four) SHOW_HELP="test" ;;
           --basic_test_five) SHOW_HELP="test" ;;
+          --9201_c_api_test) SHOW_HELP="test" ;;
           --make_clean) SHOW_HELP="clean" ;;
         esac
       done
@@ -466,6 +470,11 @@ set_options() {
       ;;
     --basic_test_five)
       TEST_PART="basic_test_five"
+      check_param_test_part
+      shift
+      ;;
+    --9201_c_api_test)
+      TEST_PART="9201_c_api_test"
       check_param_test_part
       shift
       ;;
@@ -698,6 +707,8 @@ function build_test_part() {
     TEST_TARGET_LIST=("${basic_test_four_targets[@]}")
   elif [ "$TEST_PART" == "basic_test_five" ]; then
     TEST_TARGET_LIST=("${basic_test_five_targets[@]}")
+  elif [ "$TEST_PART" == "9201_c_api_test" ]; then
+    TEST_TARGET_LIST=("${c_api_test_9201_targets[@]}")
   elif [ "$TEST_PART" == "test_exclude_kirin" ]; then
     TEST_TARGET_LIST=("${all_test_targets_exclude_kirin[@]}")
   fi
