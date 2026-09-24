@@ -193,8 +193,12 @@ __aicore__ inline void emit_value(print_session& session, const T& value)
 template <typename Value, typename T>
 __aicore__ inline void emit_element_as(print_session& session, const T& value)
 {
-    if constexpr (Std::is_same_v<Value, float> || Std::is_same_v<Value, half> || Std::is_same_v<Value, bfloat16_t>) {
+    if constexpr (
+        Std::is_same_v<Value, float> || Std::is_same_v<Value, half> || Std::is_same_v<Value, fp8_e5m2_t> ||
+        Std::is_same_v<Value, fp8_e4m3fn_t> || Std::is_same_v<Value, fp8_e8m0_t> || Std::is_same_v<Value, hifloat8_t>) {
         print_fragment(session, (__gm__ const char*)"%f  ", static_cast<float>(value));
+    } else if constexpr (Std::is_same_v<Value, bfloat16_t>) {
+        print_fragment(session, (__gm__ const char*)"%f  ", __asc_aicore::to_float(value));
     } else if constexpr (
         Std::is_same_v<Value, int8_t> || Std::is_same_v<Value, int16_t> || Std::is_same_v<Value, int32_t>) {
         print_fragment(session, (__gm__ const char*)"%d  ", static_cast<int32_t>(value));
