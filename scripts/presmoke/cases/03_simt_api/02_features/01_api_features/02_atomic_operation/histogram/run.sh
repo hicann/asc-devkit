@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-CASE_REL=03_simt_api/02_features/01_api_features/02_atomic_operation/histogram
+CASE_REL=03_simt_api/03_best_practices/03_instruction_optimizations/atomic_histogram
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"
