@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`tensor_api/tensor.h`。
+头文件路径为：`tensor_api/utils/print.h`。
 
 Tensor API提供三个调试打印接口：
 
@@ -113,6 +113,9 @@ __aicore__ inline void print_tensor(const Tensor& tensor, bool print_type = true
   | `location::fixbuf` | 不支持 |
   | `location::ssbuf` | 不支持 |
 - 打印功能会增加算子运行时间和调试输出量。打印Tensor前应控制Tensor的逻辑元素数量。多个核或多个线程同时打印时，日志可能交错或受输出缓存大小限制。
+- 使用`print_tensor`接口时，在每个核上打印的数据总量不能大于30KB，请开发者自行控制打印的内容数据量，超出则不会打印。
+- `print_tensor`接口支持打印的元素数据类型：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
+- 由于在SIMD VF中不能直接访问GM地址，因此不能在SIMD VF中使用。
 
 ## 输出格式
 
@@ -160,6 +163,7 @@ ptr[<element_bits>b](<address>) o layout(shape=<shape>, stride=<stride>)
 
 ```cpp
 #include "tensor_api/tensor.h"
+#include "tensor_api/utils/print.h"
 
 using namespace asc::te;
 
@@ -183,6 +187,7 @@ NPU模式下的输出示例：
 
 ```cpp
 #include "tensor_api/tensor.h"
+#include "tensor_api/utils/print.h"
 
 using namespace asc::te;
 
@@ -203,6 +208,7 @@ __aicore__ inline void print_layout_description_example()
 
 ```cpp
 #include "tensor_api/tensor.h"
+#include "tensor_api/utils/print.h"
 
 using namespace asc::te;
 
@@ -229,6 +235,7 @@ __aicore__ inline void print_layout_table_example()
 
 ```cpp
 #include "tensor_api/tensor.h"
+#include "tensor_api/utils/print.h"
 
 using namespace asc::te;
 
@@ -255,6 +262,7 @@ __aicore__ inline void print_gm_tensor_example(__gm__ int32_t* data)
 
 ```cpp
 #include "tensor_api/tensor.h"
+#include "tensor_api/utils/print.h"
 
 using namespace asc::te;
 
