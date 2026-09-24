@@ -11,9 +11,7 @@ C[b] = A[b] * B[b] + Bias[b], b = 0, 1, ..., B - 1
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| <cann-filter npu-type="950">Ascend 950PR/Ascend 950DT</cann-filter> | >= CANN 9.1.0 |
-
-> **说明：** 该样例依赖尚未正式发布的CANN特性，请使用最新的CANN master包。
+| <cann-filter npu-type="950">Ascend 950PR/Ascend 950DT</cann-filter> | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 

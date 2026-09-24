@@ -8,9 +8,7 @@ This example implements multi-core matrix multiplication computation based on th
 
 | Product | CANN Software Version |
 |---------|----------------------|
-| Ascend 950PR/Ascend 950DT | > CANN 9.1.0 |
-
-> **Note:** This example depends on CANN features that are not yet officially released. Please use the latest CANN master package.
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

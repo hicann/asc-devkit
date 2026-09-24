@@ -9,9 +9,7 @@ This example implements dynamic shape matrix multiplication with Bias based on t
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | > CANN 9.1.0 |
-
-> **Note:** This example depends on CANN features that have not been officially released. Use the latest CANN master package.
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## Directory Structure
 

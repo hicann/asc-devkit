@@ -8,9 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | > CANN 9.1.0 |
-
-> **说明：** 该样例依赖尚未正式发布的CANN特性，请使用最新的CANN master包。
+| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
