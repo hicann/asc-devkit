@@ -23,6 +23,7 @@
 #include "mc2_type.h"
 #include "ccu_assist_pub.h"
 #include "hccl_tiling_msg.h"
+#include "external_alg_parser.h"
 
 #include <vector>
 #include <memory>

@@ -23,6 +23,8 @@
 #ifndef AICPU_COMPILE
 #include "ccu_temp_all_to_all_mesh_1D.h"
 #endif
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 
 namespace mc2_ops_hccl {
 namespace {
@@ -320,28 +322,44 @@ HcclResult InsV2AlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchestrate
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSoleMesh, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshSingleChannel, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshSingleChannel, AlgEngine::AICPU, "sole[mesh.single_channel]",
+    COND_NONE, FLAG_NONE, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMesh, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_FLAT_1D, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshUBX, InsV2AlltoAllVSoleExecutor, TopoMatchUBX1d,
     InsTempUBXAllToAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshUBX, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_UBX, 0);
 
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     CcuTempAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllMesh1DMultiJetty, InsV2AlltoAllVSoleExecutor, TopoMatchUBX1d,
     CcuTempAllToAllMesh1DMultiJetty);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllMesh1DMultiJetty, AlgEngine::CCU, "sole[mesh.multi_channel]",
+    COND_NONE, FLAG_NONE, 0);
 #endif
 #ifndef AICPU_COMPILE
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllSoleMesh, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     CcuTempAlltoAllMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 #endif
 
 } // namespace mc2_ops_hccl

@@ -58,6 +58,7 @@ set(HCCL_CHECKER_COMMON_INCLUDE_LIST
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/channel
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/registry
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg
     ${HCCL_CC_SRC_DIR}/ops/op_common/selector
     ${HCCL_CC_SRC_DIR}/ops/op_common/template
     ${HCCL_CC_SRC_DIR}/ops/op_common/template/registry

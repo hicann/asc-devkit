@@ -17,6 +17,8 @@
 #include "ccu_temp_kfc_reduce_scatter_nhr_1D_multi_jetty_mem2mem.h"
 #include "topo_match_concurrent_v2.h"
 #endif
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 namespace mc2_ops_hccl {
 namespace {
 constexpr u32 MESH_BW_AICPU = 21;
@@ -412,6 +414,9 @@ InsReduceScatterConcurrentExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterConcurMeshNHR, InsReduceScatterConcurrentExecutor,
     TopoMatchUBX, InsTempReduceScatterMesh1D, InsTempReduceScatterNHR);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterConcurMeshNHR, AlgEngine::AICPU, "concur[mesh,nhr]",
+    COND_NONE, FLAG_NONE, 0);
 
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 // KFC 并发 RS：mission0 = Mesh Mem2Mem 流，mission1 = NHR MultiJetty 流（kernelInfo 顺序须与 role 匹配）。
@@ -421,5 +426,8 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuSchedReduceScatterConcurMeshNHRMultiLink,
     InsReduceScatterConcurrentExecutor, TopoMatchConcurrentV2, CcuTempKfcReduceScatterMesh1DMem2Mem,
     CcuTempKfcReduceScatterNHR1DMultiJettyMem2Mem);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuSchedReduceScatterConcurMeshNHRMultiLink, AlgEngine::CCU,
+    "concur[mesh,nhr.multi_channel]", COND_NONE, FLAG_NONE, 0);
 #endif
 } // namespace mc2_ops_hccl

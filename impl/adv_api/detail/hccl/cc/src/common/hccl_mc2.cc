@@ -14,6 +14,7 @@
 #include "hccl_inner.h"
 #include "param_check.h"
 #include "hccl_alloc_ctx_res.h"
+#include "external_alg_resolver.h"
 #include "op_common.h"
 #include "ccu_assist_pub.h"
 #include "hccl_ccu_res.h"
@@ -226,6 +227,67 @@ bool HcclIsCcuAlgorithmRegistered(uint32_t opType, const char* algName)
     return CollAlgExecRegistryV2::Instance().IsRegistered(static_cast<HcclCMDType>(opType), algName);
 }
 
+namespace {
+bool IsCcuForcedAlgUsable(const Mc2CcTilingInner* ccTiling)
+{
+    if (ccTiling == nullptr) {
+        HCCL_WARNING("[AllocComResourceByTilingCcu] algName[] is not supported in mc2_client.");
+        return false;
+    }
+    std::string algName;
+    ExternalAlgSpec extSpec;
+    std::string extParseErrMsg;
+    const ForcedAlgKind kind = ClassifyForcedAlgConfig(ccTiling->algConfig, algName, extSpec, extParseErrMsg);
+    if (kind == ForcedAlgKind::NONE || kind == ForcedAlgKind::LEGACY) {
+        HCCL_WARNING("[MC2_EXT_ALG] algConfig[%s] is not supported in mc2_client.", ccTiling->algConfig);
+        return false;
+    }
+    if (kind == ForcedAlgKind::BARE_NAME) {
+        if (!HcclIsCcuAlgorithmRegistered(ccTiling->opType, algName.c_str())) {
+            HCCL_WARNING(
+                "[MC2_EXT_ALG] algorithm[%s] is not registered in mc2_client for opType[%u].", algName.c_str(),
+                ccTiling->opType);
+            return false;
+        }
+        HCCL_INFO("[MC2_EXT_ALG] ccu gate passed, algConfig[%s], algorithm registered.", ccTiling->algConfig);
+        return true;
+    }
+    if (!extParseErrMsg.empty()) {
+        HCCL_WARNING(
+            "[MC2_EXT_ALG] ccu gate rejected, algConfig[%s], opType[%u], reason[%s].", ccTiling->algConfig,
+            ccTiling->opType, extParseErrMsg.c_str());
+        return false;
+    }
+    const std::vector<AlgCandidate>& cands =
+        GetExternalCandidates(static_cast<HcclCMDType>(ccTiling->opType), extSpec.canonical());
+    size_t ccuCount = 0U;
+    for (const AlgCandidate& cand : cands) {
+        if (cand.engine != AlgEngine::CCU) {
+            continue;
+        }
+        ccuCount++;
+        if (!HcclIsCcuAlgorithmRegistered(ccTiling->opType, cand.registeredName.c_str())) {
+            HCCL_WARNING(
+                "[MC2_EXT_ALG] ccu gate rejected, algConfig[%s], opType[%u], ccuCandidate[%s] not registered "
+                "(all CCU candidates must pass algorithmMap/V2 registry, funnel may select any of them).",
+                ccTiling->algConfig, ccTiling->opType, cand.registeredName.c_str());
+            return false;
+        }
+    }
+    if (ccuCount == 0U) {
+        HCCL_WARNING(
+            "[MC2_EXT_ALG] ccu gate rejected, algConfig[%s], opType[%u], ccuCandidates[0] "
+            "(external name has no CCU candidate).",
+            ccTiling->algConfig, ccTiling->opType);
+        return false;
+    }
+    HCCL_INFO(
+        "[MC2_EXT_ALG] ccu gate passed, algConfig[%s], ccuCandidates[%zu] all registered.", ccTiling->algConfig,
+        ccuCount);
+    return true;
+}
+} // namespace
+
 bool CheckCcuAlgorithmsRegistered(const void* ccTilingList[], uint32_t tilingNum)
 {
     HCCL_INFO("[CheckCcuAlgorithmsRegistered]Start CheckCcuAlgorithmsRegistered!");
@@ -235,15 +297,7 @@ bool CheckCcuAlgorithmsRegistered(const void* ccTilingList[], uint32_t tilingNum
     }
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const auto* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
-        std::string algName;
-        if (!GetForcedAlgName(ccTiling, algName)) {
-            HCCL_WARNING("[AllocComResourceByTilingCcu] algName[%s] is not supported in mc2_client.", algName.c_str());
-            return false;
-        }
-        if (!HcclIsCcuAlgorithmRegistered(ccTiling->opType, algName.c_str())) {
-            HCCL_WARNING(
-                "[AllocComResourceByTilingCcu] algorithm[%s] is not registered in mc2_client for opType[%u].",
-                algName.c_str(), ccTiling->opType);
+        if (!IsCcuForcedAlgUsable(ccTiling)) {
             return false;
         }
     }

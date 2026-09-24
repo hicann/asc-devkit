@@ -12,6 +12,8 @@
 #include "ins_temp_all_gather_mesh_1D.h"
 #include "ins_temp_all_gather_nhr_dpu.h"
 #include "coll_alg_v2_exec_registry.h"
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 
 namespace mc2_ops_hccl {
 template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTemplate1>
@@ -224,4 +226,7 @@ HcclResult InsV2AllGatherSequenceExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgT
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherMeshNhrDPU, InsV2AllGatherSequenceExecutor, TopoMatchMultilevel,
     InsTempAllGatherMesh1D, InsTempAllGatherNHRDPU);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherMeshNhrDPU, AlgEngine::DPU, "sequence[mesh,nhr]", COND_NONE, FLAG_NONE,
+    0);
 } // namespace mc2_ops_hccl

@@ -44,12 +44,18 @@ static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedReduceScatterConcurMeshNHRMultiLink",
     "CcuSchedAllToAllSoleMeshConcurrent"};
 
+// 外部名（含 '['）在此宽松放行：精确判断在 mc2 侧 CheckCcuAlgorithmsRegistered
+// （排在 version 校验之前），语法错/无候选由其报错，信息更详细。
+// commEngine 非 CCU 系直接 false——version=101 仅 CCU 链消费。
 bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
 {
     if (commEngine != 5U && commEngine != 6U) {
         return false;
     }
-    return REGISTERED_CCU_ALGORITHMS.count(algConfig) != 0U;
+    if (REGISTERED_CCU_ALGORITHMS.count(algConfig) != 0U) {
+        return true;
+    }
+    return algConfig.find('[') != std::string::npos;
 }
 
 void PrintMc2InitTiling(const Mc2InitTilingInner& tiling)

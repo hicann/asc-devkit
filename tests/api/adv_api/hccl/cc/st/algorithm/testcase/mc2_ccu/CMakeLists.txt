@@ -70,6 +70,9 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/executor_v2_base.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/registry/coll_alg_v2_exec_registry.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/registry/coll_alg_exec_registry.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/alg_meta_registry.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/external_alg_rules.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/external_alg_resolver.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/template/ccu_alg_template_base.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/template/alg_v2_template_base.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/template/alg_template_base.cc
@@ -134,6 +137,7 @@ target_include_directories(
     ${UTILS_DIR}/ccu_scenario
     ${HCCL_CC_SRC_DIR}
     ${HCCL_CC_SRC_DIR}/common
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg
     ${HCCL_CC_SRC_DIR}/ops/all_gather/selector
     ${HCCL_CC_SRC_DIR}/ops/all_gather/executor
     ${HCCL_CC_SRC_DIR}/ops/all_gather/template/ccu

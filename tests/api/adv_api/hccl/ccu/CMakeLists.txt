@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Huawei Technologies Co., Ltd.
 # This program is free software, you can redistribute it and/or modify it under the terms and conditions of
 # CANN Open Software License Agreement Version 2.0 (the "License").
-# Please refer to the License for details. You may not use this file except be in compliance with the License.
+# Please refer to the License for details. You may not use this file except in compliance with the License.
 # THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
@@ -52,6 +52,7 @@ set(CCU_INCLUDE_LIST
     ${HCCL_CC_SRC_DIR}/ops
     ${HCCL_CC_SRC_DIR}/ops/op_common
     ${HCCL_CC_SRC_DIR}/ops/op_common/inc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/channel
     ${HCCL_CC_SRC_DIR}/ops/op_common/executor/registry
@@ -120,9 +121,17 @@ add_executable(${CCU_UT_TARGET}
     # Cann host bridge stub
     ${CMAKE_CURRENT_SOURCE_DIR}/stub/cann_host_bridge_stub.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/stub/exception_defination_stub.cc
+    # alg_env_config 替身（auto_selector_base.cc 的 Select 引用，空表实现）
+    ${CMAKE_CURRENT_SOURCE_DIR}/stub/alg_env_config_stub.cc
     # Source under test (minimal impl dependencies)
     ${HCCL_CC_SRC_DIR}/common/hccl_mc2.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_alloc_ctx_res.cc
+    # external_alg 链（hccl_alloc_ctx_res 改造后引用 parser/resolver 符号；
+    # rules.cc 的 kRuleSelectorBase 需要 AutoSelectorBase 的 vtable（key function Select 在此 .cc））
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/alg_meta_registry.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/external_alg_rules.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/external_alg/external_alg_resolver.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/selector/auto_selector_base.cc
 )
 
 target_include_directories(${CCU_UT_TARGET} PRIVATE

@@ -14,6 +14,8 @@
 #include "ins_temp_reduce_scatter_omnipipe_nhr.h"
 #include "topo_match_pcie_mix.h"
 #include "omnipipe_template_utils.h"
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 // CCU legacy templates are not support in this executor.
 namespace mc2_ops_hccl {
 constexpr uint32_t HIERARCHY_SIZE_3 = 3;
@@ -588,5 +590,8 @@ InsV2ReduceScatterOmniPipeExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate
 REGISTER_EXEC_V2_MULTI(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterPipeLinePcie, InsV2ReduceScatterOmniPipeExecutor,
     TopoMatchPcieMix, InsTempReduceScatterOmniPipeMesh1D, InsTempReduceScatterOmniPipeNHR);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterPipeLinePcie, AlgEngine::AICPU, "pipeline[mesh,nhr]",
+    COND_NONE, FLAG_NONE, 0);
 
 } // namespace mc2_ops_hccl

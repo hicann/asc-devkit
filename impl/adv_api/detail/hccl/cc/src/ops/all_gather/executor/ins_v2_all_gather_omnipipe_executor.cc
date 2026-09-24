@@ -19,6 +19,8 @@
 #include "ins_temp_all_gather_omnipipe_mesh_1D.h"
 #include "ins_temp_all_gather_omnipipe_nhr.h"
 #include "omnipipe_template_utils.h"
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 
 namespace mc2_ops_hccl {
 constexpr u32 ALG_HIERARCHY_NUM3 = 3;
@@ -651,5 +653,8 @@ InsV2AllGatherOmniPipeExecutor<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1, I
 REGISTER_EXEC_V2_MULTI(
     HcclCMDType::HCCL_CMD_ALLGATHER, AicpuAllGatherPipeLinePcie, InsV2AllGatherOmniPipeExecutor, TopoMatchPcieMix,
     InsTempAllGatherOmniPipeMesh1D, InsTempAllGatherOmniPipeNHR);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLGATHER, AicpuAllGatherPipeLinePcie, AlgEngine::AICPU, "pipeline[mesh,nhr]", COND_NONE,
+    FLAG_NONE, 0);
 
 } // namespace mc2_ops_hccl
