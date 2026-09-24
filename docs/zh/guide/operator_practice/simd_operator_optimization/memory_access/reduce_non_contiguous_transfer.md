@@ -14,28 +14,46 @@
 
 【描述】DataCopyPad接口在Normal/Compact模式基础上，可以使用Loop模式搬运二维数据，假设我们希望以下图的方式搬运8个48B大小的数据块：
 
+以下示例中，`DataCopyExtParams`的`blockLen`和`srcStride`、`LoopModeParams`的stride以及地址布局均以字节描述；`DataCopyExtParams`的`dstStride`以32B的dataBlock为单位，本例使用Compact模式时该参数无效并置为0；`DataCopyPadExtParams`的`leftPadding/rightPadding`和`LocalTensor`、`GlobalTensor`的`operator[]`偏移均以元素为单位。以下代码假定`T`为普通的按字节存储类型（如`float`、`half`或`int8_t`），并通过`sizeof(T)`将字节偏移转换为元素偏移；4bit打包类型需要单独处理。
+
 ![](../../../figures/copy_opt.png)
 
 【反例】调用多次搬运接口进行搬运（以DataCopyPad为例）
 
 ```
 __aicore__ inline void CopyIn3(){
+    constexpr uint16_t blockCount = 2;
+    constexpr uint32_t blockLenBytes = 48;
+    constexpr uint32_t copyBytes = blockCount * blockLenBytes;
+    constexpr uint32_t dstGap1Bytes = 32;
+    constexpr uint32_t dstGap2Bytes = 64;
+    constexpr uint32_t dstGap3Bytes = 32;
+    constexpr uint32_t srcOffset1 = copyBytes / sizeof(T);
+    constexpr uint32_t srcOffset2 = 2 * copyBytes / sizeof(T);
+    constexpr uint32_t srcOffset3 = 3 * copyBytes / sizeof(T);
+    constexpr uint32_t dstOffset1 = (copyBytes + dstGap1Bytes) / sizeof(T);
+    constexpr uint32_t dstOffset2 = (2 * copyBytes + dstGap1Bytes + dstGap2Bytes) / sizeof(T);
+    constexpr uint32_t dstOffset3 = (3 * copyBytes + dstGap1Bytes + dstGap2Bytes + dstGap3Bytes) / sizeof(T);
     AscendC::LocalTensor<T> xLocal = inQueueX.AllocTensor<T>();
     AscendC::Duplicate<T>(xLocal, 0, count);
-    AscendC::DataCopyParams dataCopyParams;
-    dataCopyParams.blockCount = 2;
-    dataCopyParams.blockLen = 48;
+    AscendC::DataCopyExtParams dataCopyParams;
+    dataCopyParams.blockCount = blockCount;
+    dataCopyParams.blockLen = blockLenBytes;
     dataCopyParams.srcStride = 0;
     dataCopyParams.dstStride = 0;
-    AscendC::DataCopyPadParams dataCopyPadParams;
+    dataCopyParams.rsv = 0;
+    AscendC::DataCopyPadExtParams<T> dataCopyPadParams;
     dataCopyPadParams.isPad = 0;
     dataCopyPadParams.leftPadding = 0;
     dataCopyPadParams.rightPadding = 0;
     dataCopyPadParams.paddingValue = 0;
     AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(xLocal, xGm, dataCopyParams, dataCopyPadParams);
-    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(xLocal[32], xGm[24], dataCopyParams, dataCopyPadParams);
-    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(xLocal[72], xGm[48], dataCopyParams, dataCopyPadParams);
-    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(xLocal[104], xGm[72], dataCopyParams, dataCopyPadParams);
+    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(
+        xLocal[dstOffset1], xGm[srcOffset1], dataCopyParams, dataCopyPadParams);
+    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(
+        xLocal[dstOffset2], xGm[srcOffset2], dataCopyParams, dataCopyPadParams);
+    AscendC::DataCopyPad<T, AscendC::PaddingMode::Compact>(
+        xLocal[dstOffset3], xGm[srcOffset3], dataCopyParams, dataCopyPadParams);
     inQueueX.EnQue<T>(xLocal);
 }
 ```
@@ -56,12 +74,13 @@ __aicore__ inline void CopyIn3(){
     loopModeParams.loop2DstStride = 288;
     AscendC::LocalTensor<T> xLocal = inQueueX.AllocTensor<T>();
     AscendC::Duplicate<T>(xLocal, 0, count);
-    AscendC::DataCopyParams dataCopyParams;
+    AscendC::DataCopyExtParams dataCopyParams;
     dataCopyParams.blockCount = 2;
     dataCopyParams.blockLen = 48;
     dataCopyParams.srcStride = 0;
     dataCopyParams.dstStride = 0;
-    AscendC::DataCopyPadParams dataCopyPadParams;
+    dataCopyParams.rsv = 0;
+    AscendC::DataCopyPadExtParams<T> dataCopyPadParams;
     dataCopyPadParams.isPad = 0;
     dataCopyPadParams.leftPadding = 0;
     dataCopyPadParams.rightPadding = 0;
@@ -92,26 +111,34 @@ __aicore__ inline void CopyIn3(){
 
 ```
 __aicore__ inline void CopyIn5(){
+    constexpr uint32_t blockLenBytes = 8;
+    constexpr uint8_t leftPadding = 5;
+    constexpr uint8_t rightPadding = 1;
+    constexpr uint32_t srcOffset = blockLenBytes / sizeof(T);
+    constexpr uint32_t dstOffset =
+        ((blockLenBytes + (leftPadding + rightPadding) * sizeof(T) + 31) / 32 * 32) / sizeof(T);
     AscendC::LocalTensor<T> xLocal = inQueueX.AllocTensor<T>();
     AscendC::Duplicate<T>(xLocal, 0, count);
-    AscendC::DataCopyParams dataCopyParams;
+    AscendC::DataCopyExtParams dataCopyParams;
     dataCopyParams.blockCount = 1;
-    dataCopyParams.blockLen = 8;
+    dataCopyParams.blockLen = blockLenBytes;
     dataCopyParams.srcStride = 0;
     dataCopyParams.dstStride = 0;
-    AscendC::DataCopyPadParams dataCopyPadParams;
+    dataCopyParams.rsv = 0;
+    AscendC::DataCopyPadExtParams<T> dataCopyPadParams;
     dataCopyPadParams.isPad = 1;
-    dataCopyPadParams.leftPadding = 5;
-    dataCopyPadParams.rightPadding = 1;
+    dataCopyPadParams.leftPadding = leftPadding;
+    dataCopyPadParams.rightPadding = rightPadding;
     dataCopyPadParams.paddingValue = 0;
     // 第一次搬运
     AscendC::DataCopyPad<T, AscendC::PaddingMode::Normal>(xLocal, xGm, dataCopyParams, dataCopyPadParams);
     dataCopyPadParams.isPad = 1;
-    dataCopyPadParams.leftPadding = 1;
-    dataCopyPadParams.rightPadding = 5;
+    dataCopyPadParams.leftPadding = rightPadding;
+    dataCopyPadParams.rightPadding = leftPadding;
     dataCopyPadParams.paddingValue = 0;
     // 第二次搬运
-    AscendC::DataCopyPad<T, AscendC::PaddingMode::Normal>(xLocal[8], xGm[2], dataCopyParams, dataCopyPadParams);
+    AscendC::DataCopyPad<T, AscendC::PaddingMode::Normal>(
+        xLocal[dstOffset], xGm[srcOffset], dataCopyParams, dataCopyPadParams);
     inQueueX.EnQue<T>(xLocal);
 }
 ```
