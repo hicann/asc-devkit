@@ -18,6 +18,7 @@
 #include "dev_type.h"
 #include "rt_external.h"
 #include "rt_external_kernel.h"
+#include "../../../../common/mc2_comm_info_format.h"
 
 namespace Hccl {
 #ifdef CCL_FWK_LLT
@@ -131,16 +132,6 @@ struct MsprofHcclInfo {
           rdmaType(0xFFFFFFFF)
     {}
 #endif
-};
-struct ProfilingDeviceCommResInfo {
-    uint64_t groupName;        // 通信域
-    uint32_t rankSize;         // 通信域内rank总数
-    uint32_t rankId;           // 当前device rankId，通信域内编号
-    uint32_t usrRankId;        // 当前device rankId，全局编号
-    uint32_t aicpuKfcStreamId; // MC2中launch aicpu kfc算子的stream
-    uint32_t commStreamSize;   // 当前device侧使用的通信stream数量
-    uint32_t commStreamIds[8]; // 具体streamId
-    uint32_t reserve;
 };
 struct rtMemUbTokenInfo {
     uint64_t va;

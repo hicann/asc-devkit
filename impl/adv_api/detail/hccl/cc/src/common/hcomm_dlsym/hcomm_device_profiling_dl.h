@@ -46,6 +46,7 @@ DECL_WEAK_FUNC(HcclResult, HcommProfilingEnd, ThreadHandle* threads, uint32_t th
 DECL_WEAK_FUNC(HcclResult, HcommProfilingReportDeviceOp, const char* groupname);
 DECL_WEAK_FUNC(HcclResult, HcommProfilingReportKernelStartTask, uint64_t thread, const char* groupname);
 DECL_WEAK_FUNC(HcclResult, HcommProfilingReportKernelEndTask, uint64_t thread, const char* groupname);
+DECL_WEAK_FUNC(HcclResult, HcclDfxRegOpInfoByCommId, char* commId, void* hcclDfxOpInfo);
 
 // 动态库管理接口
 void HcommDeviceProfilingDlInit(void* libHcommHandle);

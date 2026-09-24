@@ -11,6 +11,16 @@
 #include "hccl_common.h"
 #include "hcomm_diag.h"
 #include "hcomm_host_profiling_dl.h"
+// Keep the legacy profiling macro out of alg_param.h's MAX_LENGTH declaration.
+#pragma push_macro("MAX_LENGTH")
+#undef MAX_LENGTH
+#include "mc2_comm_info_reporter.h"
+#pragma pop_macro("MAX_LENGTH")
+
+namespace mc2_ops_hccl {
+// Algorithm simulations do not register callbacks with the real host profiler.
+void SaveMc2CommInfoForProfiling(HcclComm, const OpParam&, const AlgResourceCtxSerializable&) noexcept {}
+} // namespace mc2_ops_hccl
 
 #ifdef __cplusplus
 extern "C" {

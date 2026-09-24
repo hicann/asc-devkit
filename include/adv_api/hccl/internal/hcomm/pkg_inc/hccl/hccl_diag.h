@@ -68,8 +68,17 @@ struct HcclDfxOpInfo {
     uint64_t cpuTsThread = 0;             // host侧算子主流的threadhandle
     uint32_t cpuWaitAicpuNotifyIdx = ~0U; // host wait device notifyIdx
     uint32_t cpuWaitAicpuNotifyId = ~0U;  // host wait device notifyId
-    int8_t reserve[128];                  // 预留扩展字段
+    // 算子内存信息
+    uint64_t inputMemAddr = 0;
+    uint64_t inputMemSize = 0;
+    uint64_t outputMemAddr = 0;
+    uint64_t outputMemSize = 0;
+    int8_t reserve[96]; // 预留扩展字段
 };
+
+static_assert(sizeof(HcclDfxOpInfo) == 504U, "HcclDfxOpInfo size must match HCOMM ABI");
+static_assert(offsetof(HcclDfxOpInfo, inputMemAddr) == 376U, "HcclDfxOpInfo inputMemAddr offset mismatch");
+static_assert(offsetof(HcclDfxOpInfo, reserve) == 408U, "HcclDfxOpInfo reserve offset mismatch");
 
 #ifdef __cplusplus
 }

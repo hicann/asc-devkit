@@ -20,6 +20,7 @@ DEFINE_WEAK_FUNC(HcclResult, HcommProfilingEnd, ThreadHandle* threads, uint32_t 
 DEFINE_WEAK_FUNC(HcclResult, HcommProfilingReportDeviceOp, const char* groupname);
 DEFINE_WEAK_FUNC(HcclResult, HcommProfilingReportKernelStartTask, uint64_t thread, const char* groupname);
 DEFINE_WEAK_FUNC(HcclResult, HcommProfilingReportKernelEndTask, uint64_t thread, const char* groupname);
+DEFINE_WEAK_FUNC(HcclResult, HcclDfxRegOpInfoByCommId, char* commId, void* hcclDfxOpInfo);
 
 // 初始化
 void HcommDeviceProfilingDlInit(void* libHcommHandle)
@@ -32,4 +33,5 @@ void HcommDeviceProfilingDlInit(void* libHcommHandle)
     INIT_SUPPORT_FLAG(libHcommHandle, HcommProfilingReportDeviceOp);
     INIT_SUPPORT_FLAG(libHcommHandle, HcommProfilingReportKernelStartTask);
     INIT_SUPPORT_FLAG(libHcommHandle, HcommProfilingReportKernelEndTask);
+    INIT_SUPPORT_FLAG(libHcommHandle, HcclDfxRegOpInfoByCommId);
 }

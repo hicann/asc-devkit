@@ -21,6 +21,7 @@ if(PRODUCT_SIDE STREQUAL "host")
         ${CMAKE_CURRENT_SOURCE_DIR}/sal.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/hccl_mc2.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/hccl_alloc_ctx_res.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/mc2_comm_info_reporter.cc
         ${CMAKE_CURRENT_SOURCE_DIR}/compat.cc
     )
 

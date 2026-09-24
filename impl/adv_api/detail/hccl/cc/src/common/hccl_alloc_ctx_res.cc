@@ -10,6 +10,7 @@
 #include "hccl_alloc_ctx_res.h"
 #include "external_alg_resolver.h"
 #include "kfc_server_protocol.h"
+#include "mc2_comm_info_reporter.h"
 
 #include <limits>
 
@@ -935,6 +936,9 @@ HcclResult GetOpParamResCtx(
     }
     CHK_RET(HcclGetAlgRes(comm, opParam, executor, topoInfo, resCtxHost, resCtxOut, isResourceReused));
     CHK_PTR_NULL(*resCtxOut);
+    if (opParam.engine == COMM_ENGINE_AICPU_TS && !isResourceReused) {
+        SaveMc2CommInfoForProfiling(comm, opParam, *resCtxHost);
+    }
     opParam.cacheValid = isResourceReused;
     opParam.resCtx = *resCtxOut;
     return HCCL_SUCCESS;
