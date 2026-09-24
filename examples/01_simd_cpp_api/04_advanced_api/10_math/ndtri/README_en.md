@@ -12,7 +12,7 @@ For `p = 0`, the output is negative infinity. For `p = 1`, the output is positiv
 | --- | --- |
 | Ascend 950PR/Ascend 950DT | Community version, >= CANN 9.1.0 |
 
-This sample uses the experimental Ndtri interface, which is not included in the CANN 9.1 or CANN 9.2.0 releases. To run this sample, use a package built from the master branch.
+This sample uses the experimental Ndtri interface, which is not released on branches such as CANN 9.1.0 or CANN 9.2.0. To run this sample, verify it against the dedicated subpackage built from the master branch of this repository.
 
 ## Directory Structure
 
