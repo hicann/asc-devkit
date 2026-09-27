@@ -159,6 +159,7 @@ struct ConvFMatrixDual1BitModeConfig0 {
 template <typename T>
 struct ConvPaddingBitModeConfig0 {
     uint64_t paddingValue : 16;
+    uint64_t reserved0 : 16;
     uint64_t paddingMode : 2;
     uint64_t paddingAddr : 16;
 
@@ -203,6 +204,7 @@ struct ConvPaddingBitModeConfig0 {
 struct FixPipeConfigBitModeConfig0 {
     uint64_t preReluAddr : 8;
     uint64_t preQuantAddr : 8;
+    uint64_t reserved0 : 8;
     uint64_t postQuantAddr : 8;
     uint64_t antiquantAddr : 8;
     uint64_t shiftValue : 7;
