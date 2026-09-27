@@ -68,12 +68,12 @@ HcclResult SimContextMgr::GetCommEngineCtx(const std::string& tag, CommEngine en
     // Ctx未创建返回
     if (contextMap_.find(tag) == contextMap_.end()) {
         HCCL_INFO("[%s] not exist a context with tag[%s]", __func__, tag.c_str());
-        return HCCL_E_PARA;
+        return HCCL_E_NOT_FOUND;
     } else {
         auto engineCtxMap = contextMap_[tag];
         if (engineCtxMap.find(engine) == engineCtxMap.end()) {
             HCCL_INFO("[%s] not exist a context with tag[%s], engine[%d]", __func__, tag.c_str(), engine);
-            return HCCL_E_PARA;
+            return HCCL_E_NOT_FOUND;
         }
     }
 
