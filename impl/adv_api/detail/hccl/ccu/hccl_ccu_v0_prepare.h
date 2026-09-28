@@ -658,8 +658,12 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     // CCU_MS_LOCAL_COPY_LOOP_COUNT/LOCAL_COPY_MS_PER_LOOP 定义在 host 侧 ccu_kernel_alg_base.h
     // （AIV 编译上下文不可见），按 A2A/AG prepare 先例展开为值等价表达（8 / CCU_MEMSLICE_SIZE*8）。
     constexpr uint64_t localCopyLoopCount = 8U;
-    CalcGoSize(sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0]);
-    CalcGoSize(sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0]);
+    CalcGoSize(
+        sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0],
+        ccuProtocolVersion_);
+    CalcGoSize(
+        sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0],
+        ccuProtocolVersion_);
     KERNEL_LOG(
         KERNEL_INFO, "RS sole-NHR-2die prepare: slice=0x%llx, stride=0x%llx, die0=0x%llx, die1=0x%llx, eq=%llu\n",
         sliceSize, sliceStride, die0Size, die1Size, isInputOutputEqual);
