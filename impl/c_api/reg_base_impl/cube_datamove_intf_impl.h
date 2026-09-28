@@ -20,8 +20,14 @@
 
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
+constexpr uint8_t ASC_GM2L1_SID_DEFAULT = 0;
+
+constexpr uint8_t ASC_GM2L1_DECOMP_MODE_DEFAULT = 0;
+
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/reg_base_impl/npu_arch_3510/cube_datamove_intf_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+#include "impl/c_api/reg_base_impl/npu_arch_9201/cube_datamove_intf_impl.h"
 #endif
 
 constexpr uint8_t ASC_L13D_RPT_REPEAT_TIMES_SHIFT = 16;
@@ -51,10 +57,6 @@ constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_RIGHT_SHIFT = 40;
 constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_TOP_SHIFT = 48;
 
 constexpr uint8_t ASC_L13D_FMATRIX_B_PAD_BOTTOM_SHIFT = 56;
-
-constexpr uint8_t ASC_GM2L1_SID_DEFAULT = 0;
-
-constexpr uint8_t ASC_GM2L1_DECOMP_MODE_DEFAULT = 0;
 
 constexpr uint8_t ASC_3D_PADDING_SHIFT_BIT = 8;
 

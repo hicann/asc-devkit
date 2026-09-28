@@ -9,7 +9,7 @@
  */
 
 #include "tests/api/c_api/npu_arch_9201/utils/test_copy_l0c2l1_instr_utils.h"
-#include "impl/c_api/reg_base_impl/npu_arch_9201/cube_datamove_intf_impl.h"
+#include "c_api/asc_simd.h"
 
 //================asc_copy_l0c2l1 basic (enum + enable_nz2dn)================
 TEST_CUBE_DATAMOVE_L0C2L1_BASIC(L0C2L1, asc_copy_l0c2l1, copy_matrix_cc_to_cbuf, half, float, 1);

@@ -9,7 +9,7 @@
  */
 
 #include "tests/api/c_api/npu_arch_9201/utils/test_prefetch_l2cache_instr_utils.h"
-#include "impl/c_api/reg_base_impl/npu_arch_9201/cube_datamove_intf_impl.h"
+#include "c_api/asc_simd.h"
 
 //================asc_prefetch_gm2l2cache AIC================
 
