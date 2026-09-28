@@ -315,7 +315,7 @@ add_executable(demo
      ```shell
      bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture> -DASCENDC_USE_LEGACY_PRECISION
      ```
-     仅在Ascend 950PR&950DT系列产品支持该选项。
+     该选项仅在Ascend 950PR&950DT系列产品上支持，且用于保证CANN 9.2.0之前版本开发的算子在SIMT API实现变更后仍保持兼容；在CANN 9.2.0版本之后开发的算子不推荐使用该选项。
  <!-- end id20 -->
 
 
