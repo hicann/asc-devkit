@@ -34,10 +34,7 @@
 
 - 连续数据搬运
 
-    若搬运数据长度非32字节对齐，搬运数据会补齐至32字节对齐，支持以下两种填充方式：
-
-    - 手动填充：搬运前调用[asc_set_copy_pad_val](../asc_set_copy_pad_val.md)配置填充值。
-    - 自动填充：由硬件自动填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
+    若搬运数据长度非32字节对齐，搬运数据会补齐至32字节对齐。该原型由硬件自动填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。如果需要使用常量填充，应使用高维切分原型，将`burst_count`设置为1、`enable_constant_pad`设置为`true`，并在搬运前调用[asc_set_copy_pad_val](../asc_set_copy_pad_val.md)配置填充值。
 
 - 高维切分数据搬运
 
@@ -178,7 +175,7 @@ PIPE_MTE2
 
 ### 连续数据搬运约束
 
-- 若`size`非32字节对齐，搬运数据会补齐至32字节对齐，目的UB需要预留补齐后的空间。手动填充时，调用`asc_set_copy_pad_val`配置填充值；自动填充时，由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
+- 若`size`非32字节对齐，搬运数据会补齐至32字节对齐，目的UB需要预留补齐后的空间。该连续原型固定由硬件填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
 - `size`需满足dtype字节对齐：dtype为b16时需为2的倍数，dtype为b32时需为4的倍数。
 
 ### 高维切分数据搬运约束
@@ -192,7 +189,7 @@ PIPE_MTE2
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main

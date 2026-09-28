@@ -30,7 +30,7 @@
 
 将数据从Unified Buffer（UB）搬运到UB。
 
-本接口支持连续数据搬运和高维切分数据搬运。连续数据搬运按`size`指定的字节数在UB内连续搬运，如图1所示；高维切分数据搬运按`n_burst`指定搬运的数据块个数，每个数据块按`len_burst`指定的DataBlock个数搬运，并通过`src_gap`和`dst_gap`指定源操作数和目的操作数相邻数据块之间的间隔，如图2所示。
+本接口支持连续数据搬运和高维切分数据搬运。连续数据搬运按`size`指定的字节数在UB内连续搬运，如图1所示；高维切分数据搬运按`burst_count`指定搬运的数据块个数，每个数据块按`burst_len`指定的DataBlock个数搬运，并通过`src_gap`和`dst_gap`指定源操作数和目的操作数相邻数据块之间的间隔，如图2所示。
 
 **图1**  连续搬运示意图
 ![](../figures/asc_copy_ub2ub_continuous.png "连续搬运示意图")
@@ -76,8 +76,8 @@ __aicore__ inline void asc_copy_ub2ub(__ubuf__ void* dst, __ubuf__ void* src, ui
 |---|---|---|
 | dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
 | src | 输入 | 源UB的起始地址。需要32字节对齐。 |
-| n_burst | 输入 | 待搬运的连续数据块个数。取值范围：[1, 65535]。 |
-| len_burst | 输入 | 每个连续数据块的长度，单位为DataBlock（32字节）。取值范围：[1, 65535]。 |
+| burst_count | 输入 | 待搬运的连续数据块个数。取值范围：[1, 65535]。 |
+| burst_len | 输入 | 每个连续数据块的长度，单位为DataBlock（32字节）。取值范围：[1, 65535]。 |
 | src_gap | 输入 | 源操作数相邻连续数据块的间隔（前面一个数据块的尾与后面一个数据块的头的间隔），单位为DataBlock（32字节）。取值范围：[0, $2^{16}−1$]。 |
 | dst_gap | 输入 | 目的操作数相邻连续数据块的间隔（前面一个数据块的尾与后面一个数据块的头的间隔），单位为DataBlock（32字节）。取值范围：[0, $2^{16}−1$]。 |
 
@@ -96,7 +96,12 @@ PIPE_V
 - 本接口在非AIV上调用直接返回。
 - 各存储单元的空间大小和对齐要求请参考[存储单元说明](../general_description_and_constraints.md#存储单元说明)。
 - 源操作数与目的操作数的有效搬运DataBlock要求不重叠。高维切分搬运模式下，若`src_gap`和`dst_gap`使源、目的的实际搬运DataBlock互不重叠，则允许`src`和`dst`覆盖的整体地址跨度存在交叠。
-- 如果需要执行多条本接口指令，且目的地址存在重叠，需要插入同步指令（`asc_sync_notify`和`asc_sync_wait`），保证多个指令串行化，防止出现异常数据。
+<!-- npu="950" id9 -->
+- Ascend 950PR&950DT系列产品的`PIPE_V`内部同步由硬件自动保证，多条本接口指令之间无需额外插入同步。
+<!-- end id9 -->
+<!-- npu="A3,910b" id10 -->
+- Atlas A2系列产品和Atlas A3系列产品执行多条本接口指令且目的地址存在重叠时，使用`asc_sync_pipe(PIPE_V)`保证多个指令串行化。
+<!-- end id10 -->
 
 ### 连续搬运模式约束
 
@@ -107,7 +112,7 @@ PIPE_V
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main

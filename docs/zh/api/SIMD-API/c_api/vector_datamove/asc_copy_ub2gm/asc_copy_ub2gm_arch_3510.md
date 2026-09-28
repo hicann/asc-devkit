@@ -32,6 +32,8 @@
 
 本接口支持连续数据搬运和高维切分数据搬运。连续数据搬运按`size`指定的字节数从源UB连续搬运到目的GM，如图1所示；高维切分数据搬运按`burst_count`指定搬运的数据块个数，每个数据块按`burst_len`指定的字节数搬运，并通过`src_stride`和`dst_stride`指定源操作数和目的操作数相邻数据块首地址间隔，如图2所示。
 
+有效长度非32字节对齐时，硬件会补齐读取UB至32字节边界，但仅把有效数据写入GM。连续搬运仅在整体末尾补齐读取；高维切分搬运中，`src_stride`等于`burst_len`时仅在所有数据块的整体末尾补齐读取，否则每个数据块分别补齐读取。源UB必须为实际读取范围预留合法空间。
+
 **图1**  连续搬运示意图
 ![](../../figures/asc_copy_ub2gm_continuous.png "连续搬运示意图")
 
@@ -105,11 +107,13 @@ PIPE_MTE3
 ### 连续数据搬运约束
 
 - `size`需满足dtype字节对齐：dtype为b16时需为2的倍数，dtype为b32时需为4的倍数。
+- `size`非32字节对齐时，源UB需要预留补齐至32字节边界后的可读范围。
 
 ### 高维切分数据搬运约束
 
-- `len_burst`需满足dtype字节对齐：dtype为b16时需为2的倍数，dtype为b32时需为4的倍数。
+- `burst_len`需满足dtype字节对齐：dtype为b16时需为2的倍数，dtype为b32时需为4的倍数。
 - 当`src_stride`不等于`burst_len`时，`src_stride`要求32字节对齐。
+- 源UB容量需要按Compact整体补齐或Normal逐块补齐后的实际读取范围计算。
 
 ## 关键特性说明
 
@@ -130,7 +134,7 @@ PIPE_MTE3
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
