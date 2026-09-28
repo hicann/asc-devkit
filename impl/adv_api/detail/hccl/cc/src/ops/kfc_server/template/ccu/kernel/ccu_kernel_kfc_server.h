@@ -33,6 +33,9 @@ struct CcuKernelArgKfcServer : CcuKernelArgBase {
     bool loadFromMem = false;
     KfcServerRole role = KfcServerRole::DEFAULT;
     uint32_t jettyNum = 4;
+    // SoleNHR 2Die：die 维编号/总数（双 die 时每 mission 一个 die 实例，dispatch 转发给 kernel）
+    uint32_t axisId = 0;
+    uint32_t axisSize = 1;
     OpParam opParam;
     std::vector<std::vector<uint32_t>> subCommRanks;
     std::vector<KfcNhrStepInfo> nhrStepInfoVector;

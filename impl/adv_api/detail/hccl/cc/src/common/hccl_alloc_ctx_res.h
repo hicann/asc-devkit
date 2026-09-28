@@ -110,6 +110,8 @@ enum class AlgorithmType {
     // 153/155 已被 master 尾部隐式编号占用（AllGatherSoleMesh/AllToAllSoleMeshConcurrent），ConcurRS 顺延 156。
     CcuSchedReduceScatterConcurMeshNHRMultiLink = 156,
     CcuSchedAllToAllMesh1DMultiJetty = 157,
+    // 与设备侧 hccl_ccu_v0_def.h 的 AlgorithmType 同值（158，两级拓扑 L1 NHR 中继 RS）
+    CcuSchedReduceScatterSoleNHR = 158,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -127,7 +129,8 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},
     {"CcuSchedAllGatherSoleMesh", AlgorithmType::CcuSchedAllGatherSoleMesh},
     {"CcuSchedReduceScatterConcurMeshNHRMultiLink", AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink},
-    {"CcuSchedReduceScatterSoleNHRMultiLink", AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink}};
+    {"CcuSchedReduceScatterSoleNHRMultiLink", AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink},
+    {"CcuSchedReduceScatterSoleNHR", AlgorithmType::CcuSchedReduceScatterSoleNHR}};
 
 typedef HcclResult (*OpParamPrepareFunc)(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);

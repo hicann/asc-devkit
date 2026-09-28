@@ -15,6 +15,7 @@
 #include "../../../../all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
+#include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_2die_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.h"
@@ -258,6 +259,25 @@ static void DispatchKfcSubKernel(ccu::Array<ccu::Variable>& param, KfcServerCont
                 static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->jettyNum,
                 ctx.arg->opParam.DataDes.dataType, ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType,
                 ctx.arg->nhrStepInfoVector, ctx.arg->nhrRank2ChannelIdx);
+        } else if (ctx.arg->role == KfcServerRole::REDUCE_SCATTER_SOLE_NHR_2DIE) {
+            // SoleNHR 2Die 单帧布局见 KfcReduceScatterSoleNhr2DieParamIndex（[0]=opId，[1..20] 共 20 参数，
+            // token 走 ctx.token）；双 die 两 mission 共享区间，axisId/axisSize 来自 kernelArg 区分实例。
+            CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
+                param[KFC_RS_SOLE_NHR_2DIE_INPUT], param[KFC_RS_SOLE_NHR_2DIE_OUTPUT], ctx.token,
+                param[KFC_RS_SOLE_NHR_2DIE_DIE0_SIZE], param[KFC_RS_SOLE_NHR_2DIE_DIE1_SIZE],
+                param[KFC_RS_SOLE_NHR_2DIE_DIE0_LAST_SLICE_SIZE], param[KFC_RS_SOLE_NHR_2DIE_DIE1_LAST_SLICE_SIZE],
+                param[KFC_RS_SOLE_NHR_2DIE_INPUT_SLICE_STRIDE],
+                param[KFC_RS_SOLE_NHR_2DIE_CURRENT_RANK_SLICE_OUTPUT_OFFSET],
+                param[KFC_RS_SOLE_NHR_2DIE_INPUT_REPEAT_STRIDE], param[KFC_RS_SOLE_NHR_2DIE_OUTPUT_REPEAT_STRIDE],
+                param[KFC_RS_SOLE_NHR_2DIE_REPEAT_NUM_VAR], param[KFC_RS_SOLE_NHR_2DIE_IS_INPUT_OUTPUT_EQUAL],
+                param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0], param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_1],
+                param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_2], param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_3],
+                param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0], param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_1],
+                param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_2], param[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_3],
+                ctx.arg->channels, ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId,
+                ctx.arg->axisId, ctx.arg->axisSize, ctx.arg->opParam.DataDes.dataType,
+                ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType, ctx.arg->nhrStepInfoVector,
+                ctx.arg->nhrRank2ChannelIdx);
         } else if (ctx.arg->role == KfcServerRole::REDUCE_SCATTER_NHR) {
             // 并发 RS 的 NHR mission 读 [16..24] 区间（见 KfcConcurrentReduceScatterParamIndex）。
             CcuKfcReduceScatterNHR1DMultiJettyMem2MemKernel(

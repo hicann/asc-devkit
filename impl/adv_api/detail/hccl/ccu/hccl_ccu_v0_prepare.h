@@ -24,6 +24,8 @@ using namespace HcclKfcProtocol;
 static_assert(KFC_CONCURRENT_AG_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllGather parameters exceed XN capacity");
 static_assert(
     KFC_RS_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR MultiLink ReduceScatter parameters exceed XN capacity");
+static_assert(
+    KFC_RS_SOLE_NHR_2DIE_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR 2Die ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllToAll parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_RS_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_PARALLEL_AG_STORAGE_NUM <= CCU_USED_XN_NUM, "Parallel AllGather parameters exceed XN capacity");
@@ -602,6 +604,65 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         "RS concur chunk debug: slice=0x%llx, mesh=0x%llx, nhr=0x%llx, chunk=0x%llx, meshLoop=0x%llx, "
         "meshTail=0x%llx\n",
         sliceSize, meshSize, nhrSize, chunkSize, xnData_[KFC_CONCURRENT_RS_MESH_CHUNK_LOOP_NUM], meshTailSize);
+}
+
+// SoleNHR 2Die（CcuSchedReduceScatterSoleNHR）的 AIV prepare：
+// 将 hccl InsV2ReduceScatterSoleExecutor::OrchestrateLoop（repeatNum=1 单趟、双 stride=0、
+// outputStride=0）+ CcuTempReduceScatterNHR1DMem2Mem::KernelRun 的 host 侧参数计算
+// （SplitDataFor2Dies + CalGoSize×4）搬到设备侧。
+// 布局见 KfcReduceScatterSoleNhr2DieParamIndex，与 KFC dispatch、kernel 形参逐槽一致；
+// 双 die 时两个 mission 共享同一区间（kernelArg.axisId 区分实例）。
+// goSize 口径与 hccl 模板一致：(loopCount=CCU_MS_LOCAL_COPY_LOOP_COUNT=8,
+// memSlice=CCU_MEMSLICE_SIZE*LOCAL_COPY_MS_PER_LOOP=32K)。
+template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForReduceScatterSoleNhr2DieM2M(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    // TODO(双die链路): dieSplitRatio 现不切分（见下方 die1 恒 0 注释）；通道带宽比已序列化进
+    // AlgResourceContext（AlgResourceRequest.dieSplitRatio），AIV 侧读取链路待接
+    // （CcuPrepareParam 暂无该字段），真机双 die 分带宽场景需补链路后恢复 hccl SplitDataFor2Dies 切分公式。
+    const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t sliceSize = commParam->count * dataTypeSize; // 每 rank 输出份
+    const uint64_t repeatOffset = sliceSize * ccuParam_.repeatIndex;
+    const uint64_t sliceStride = commParam->strideCount == 0U ? sliceSize : commParam->strideCount * dataTypeSize;
+    const uint64_t inputBase = reinterpret_cast<uint64_t>(commParam->sendBuf) + repeatOffset;
+    const uint64_t outputBase = reinterpret_cast<uint64_t>(commParam->recvBuf) + repeatOffset;
+    const uint64_t currentRankSliceInputOffset = sliceStride * ccuParam_.rankId;
+    // hccl executor：outputSliceStride = 0 → currentRankSliceOutputOffset 恒 0
+    const uint64_t currentRankSliceOutputOffset = 0U;
+    const uint64_t isInputOutputEqual =
+        (inputBase + currentRankSliceInputOffset == outputBase + currentRankSliceOutputOffset) ? 1U : 0U;
+
+    // TODO(双die链路): dieNum/dieSplitRatio 为 host 资源期通道探测值（AlgResourceRequest.dieSplitRatio
+    // 已序列化），AIV 侧读取链路待接（CcuPrepareParam 暂无该字段）。链路接通前 die1 恒 0
+    // （die0=全量）：单 die 语义正确；双 die 时 die1 mission 空转（kernel 的 sliceSize==0 分支
+    // EventRecord 占位），正确性保持、无双 die 加速。
+    const uint64_t die0Size = sliceSize;
+    const uint64_t die1Size = 0;
+    const uint64_t die0LastSliceSize = die0Size;
+    const uint64_t die1LastSliceSize = die1Size;
+
+    xnData_[KFC_RS_SOLE_NHR_2DIE_OP_ID] = GetOpId(commParam);
+    xnData_[KFC_RS_SOLE_NHR_2DIE_INPUT] = inputBase;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_OUTPUT] = outputBase;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_DIE0_SIZE] = die0Size;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_DIE1_SIZE] = die1Size;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_DIE0_LAST_SLICE_SIZE] = die0LastSliceSize;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_DIE1_LAST_SLICE_SIZE] = die1LastSliceSize;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_INPUT_SLICE_STRIDE] = sliceStride;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_CURRENT_RANK_SLICE_OUTPUT_OFFSET] = currentRankSliceOutputOffset;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_INPUT_REPEAT_STRIDE] = 0U; // sole executor repeatNum=1 双 stride=0
+    xnData_[KFC_RS_SOLE_NHR_2DIE_OUTPUT_REPEAT_STRIDE] = 0U;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_REPEAT_NUM_VAR] = UINT64_MAX - 1U;
+    xnData_[KFC_RS_SOLE_NHR_2DIE_IS_INPUT_OUTPUT_EQUAL] = isInputOutputEqual;
+    // CCU_MS_LOCAL_COPY_LOOP_COUNT/LOCAL_COPY_MS_PER_LOOP 定义在 host 侧 ccu_kernel_alg_base.h
+    // （AIV 编译上下文不可见），按 A2A/AG prepare 先例展开为值等价表达（8 / CCU_MEMSLICE_SIZE*8）。
+    constexpr uint64_t localCopyLoopCount = 8U;
+    CalcGoSize(sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0]);
+    CalcGoSize(sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0]);
+    KERNEL_LOG(
+        KERNEL_INFO, "RS sole-NHR-2die prepare: slice=0x%llx, stride=0x%llx, die0=0x%llx, die1=0x%llx, eq=%llu\n",
+        sliceSize, sliceStride, die0Size, die1Size, isInputOutputEqual);
 }
 } // namespace AscendC
 

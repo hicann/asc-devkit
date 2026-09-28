@@ -38,6 +38,7 @@ constexpr char KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME[] = "CcuSchedReduceScatter
 constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_ALG_NAME[] = "CcuSchedReduceScatterSoleMeshPeerOnly";
 constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_KERNEL_NAME[] = "CcuKernelKfcReduceScatterMesh1DMem2MemPeerOnly";
 constexpr char KFC_RS_SOLE_NHR_ALG_NAME[] = "CcuSchedReduceScatterSoleNHRMultiLink";
+constexpr char KFC_RS_SOLE_NHR_2DIE_ALG_NAME[] = "CcuSchedReduceScatterSoleNHR";
 
 struct KfcNhrStepInfo {
     uint32_t step = 0;
@@ -73,6 +74,7 @@ enum class KfcServerRole : uint32_t {
     REDUCE_SCATTER_SOLE_NHR = 6,
     ALL_TO_ALL_MESH = 7,
     ALL_TO_ALL_CLOS = 8,
+    REDUCE_SCATTER_SOLE_NHR_2DIE = 9,
 };
 
 inline KfcServerRole GetKfcServerRole(const char* algName, uint32_t missionIndex)
@@ -99,6 +101,12 @@ inline KfcServerRole GetKfcServerRole(const char* algName, uint32_t missionIndex
     }
     if (std::strcmp(algName, KFC_RS_SOLE_NHR_ALG_NAME) == 0) {
         return KfcServerRole::REDUCE_SCATTER_SOLE_NHR;
+    }
+    // SoleNHR 2Die：双 die 时两个 mission 跑同一 kernel（kernelArg.axisId 区分 die 实例），role 不随
+    // missionIndex 分叉；mission 数由 dieNum 动态决定（不进 GetKfcServerMissionNum 静态双 mission 名单，
+    // 由 CcuTempKfcServer::CalcRes 按源 kernel 数修正）
+    if (std::strcmp(algName, KFC_RS_SOLE_NHR_2DIE_ALG_NAME) == 0) {
+        return KfcServerRole::REDUCE_SCATTER_SOLE_NHR_2DIE;
     }
     return KfcServerRole::DEFAULT;
 }

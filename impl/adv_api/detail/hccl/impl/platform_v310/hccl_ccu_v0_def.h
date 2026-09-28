@@ -41,7 +41,9 @@ enum class AlgorithmType : uint8_t {
     CcuSchedAllToAllSoleMeshConcurrent,
     // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（156，master 尾部隐式编号已占用 153/155）。
     CcuSchedReduceScatterConcurMeshNHRMultiLink = 156,
-    CcuSchedAllToAllMesh1DMultiJetty = 157
+    CcuSchedAllToAllMesh1DMultiJetty = 157,
+    // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（158，两级拓扑 L1 NHR 中继 RS）
+    CcuSchedReduceScatterSoleNHR = 158
 };
 
 template <const auto& config>
@@ -143,6 +145,7 @@ private:
     __aicore__ inline void CcuPrepareForConcurrentReduceScatterM2M(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForReduceScatterPeerOnlyM2M(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForReduceScatterSoleNhrM2M(__gm__ CommonPrepareParamCcu* commParam);
+    __aicore__ inline void CcuPrepareForReduceScatterSoleNhr2DieM2M(__gm__ CommonPrepareParamCcu* commParam);
 
 private:
     __gm__ HcclCombineOpParam* hcclContext_;

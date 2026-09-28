@@ -46,7 +46,8 @@ static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedAllToAllMesh1DMultiJetty",
     "CcuSchedReduceScatterSoleNHRMultiLink",
     "CcuSchedAllToAllSoleMeshConcurrent",
-    "CcuSchedReduceScatterConcurMeshNHRMultiLink"};
+    "CcuSchedReduceScatterConcurMeshNHRMultiLink",
+    "CcuSchedReduceScatterSoleNHR"};
 
 // 外部名（含 '['）在此宽松放行：精确判断在 mc2 侧 CheckCcuAlgorithmsRegistered
 // （排在 version 校验之前），语法错/无候选由其报错，信息更详细。

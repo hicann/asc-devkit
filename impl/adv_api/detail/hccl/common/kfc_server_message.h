@@ -155,6 +155,36 @@ enum KfcReduceScatterSoleNhrParamIndex : uint32_t {
     KFC_RS_SOLE_NHR_PARAM_NUM = 10,
 };
 
+// Sole NHR 2Die（CcuSchedReduceScatterSoleNHR，两级拓扑 L1 NHR 中继）单帧 xnData 布局：
+// [0]=opId 哨兵，参数从 1 顺排（token 走 dispatch 的 ctx.token，不占槽；其余 20 参数与 hccl 模板
+// taskArgs 布局一致）。双 die 时两个 mission 共享同一区间（参数相同，kernelArg.axisId 区分实例）。
+// AIV prepare（CcuPrepareForReduceScatterSoleNhr2DieM2M）写入、KFC dispatch 逐槽转发、
+// kernel 形参三处索引必须一致。
+enum KfcReduceScatterSoleNhr2DieParamIndex : uint32_t {
+    KFC_RS_SOLE_NHR_2DIE_OP_ID = 0,
+    KFC_RS_SOLE_NHR_2DIE_INPUT = 1,
+    KFC_RS_SOLE_NHR_2DIE_OUTPUT = 2,
+    KFC_RS_SOLE_NHR_2DIE_DIE0_SIZE = 3,
+    KFC_RS_SOLE_NHR_2DIE_DIE1_SIZE = 4,
+    KFC_RS_SOLE_NHR_2DIE_DIE0_LAST_SLICE_SIZE = 5,
+    KFC_RS_SOLE_NHR_2DIE_DIE1_LAST_SLICE_SIZE = 6,
+    KFC_RS_SOLE_NHR_2DIE_INPUT_SLICE_STRIDE = 7,
+    KFC_RS_SOLE_NHR_2DIE_CURRENT_RANK_SLICE_OUTPUT_OFFSET = 8,
+    KFC_RS_SOLE_NHR_2DIE_INPUT_REPEAT_STRIDE = 9,
+    KFC_RS_SOLE_NHR_2DIE_OUTPUT_REPEAT_STRIDE = 10,
+    KFC_RS_SOLE_NHR_2DIE_REPEAT_NUM_VAR = 11,
+    KFC_RS_SOLE_NHR_2DIE_IS_INPUT_OUTPUT_EQUAL = 12,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0 = 13,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_1 = 14,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_2 = 15,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_3 = 16,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0 = 17,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_1 = 18,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_2 = 19,
+    KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_3 = 20,
+    KFC_RS_SOLE_NHR_2DIE_PARAM_NUM = 21,
+};
+
 // ReduceScatter 并发(Mesh+NHR)单帧 xnData 布局：mission0 读 Mesh 区间，mission1 读 NHR 区间。
 enum KfcConcurrentReduceScatterParamIndex : uint32_t {
     KFC_CONCURRENT_RS_OP_ID = 0,

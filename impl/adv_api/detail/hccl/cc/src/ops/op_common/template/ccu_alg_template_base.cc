@@ -104,6 +104,44 @@ HcclResult CcuAlgTemplateBase::GetChannelDieId(
     return HcclResult::HCCL_SUCCESS;
 }
 
+HcclResult CcuAlgTemplateBase::GetChannelBwCoeff(
+    HcclComm comm, uint32_t rankId, const HcclChannelDesc& channelDesc, uint32_t& bwCoeff) const
+{
+    EndpointAttrBwCoeff tmpBwCoeff{};
+    uint32_t infoLen = sizeof(EndpointAttrBwCoeff);
+    CHK_RET(HcclRankGraphGetEndpointInfo(
+        comm, rankId, &(channelDesc.localEndpoint), ENDPOINT_ATTR_BW_COEFF, infoLen, &tmpBwCoeff));
+    bwCoeff = tmpBwCoeff;
+    HCCL_INFO("[CcuAlgTemplateBase::GetChannelBwCoeff] rank[%d]: get channel bwCoeff [%d]", rankId, bwCoeff);
+    return HcclResult::HCCL_SUCCESS;
+}
+
+HcclResult CcuAlgTemplateBase::ReverseChannelPerDieIfNeed(
+    const HcclComm comm, const u32 myRankId, std::vector<std::vector<HcclChannelDesc>>& channelsPerDie) const
+{
+    if (channelsPerDie.size() <= 1) {
+        HCCL_ERROR(
+            "[ReverseChannelPerDieIfNeed] channelsPerDie.size() = [%u], there's no channel on both dies",
+            channelsPerDie.size());
+        return HCCL_E_PTR;
+    }
+    if (channelsPerDie[0].size() < 1 || channelsPerDie[1].size() < 1) {
+        HCCL_ERROR("[ReverseChannelPerDieIfNeed] there's no channel in channelsPerDie");
+        return HCCL_E_PTR;
+    }
+    uint32_t portNum0 = 0;
+    uint32_t portNum1 = 0;
+    GetChannelBwCoeff(comm, myRankId, channelsPerDie[0][0], portNum0);
+    GetChannelBwCoeff(comm, myRankId, channelsPerDie[1][0], portNum1);
+
+    if (portNum0 < portNum1) {
+        // 2个die出框端口数不同，将端口数多的channel放在前面
+        std::swap(channelsPerDie[0], channelsPerDie[1]);
+    }
+    HCCL_INFO("portNum0 = %lld,portNum1 = %lld", portNum0, portNum1);
+    return HCCL_SUCCESS;
+}
+
 /* nhr算法，需要遍历得到的channelDesc，判断使用几个die，如果是1个die，则还需要得到dieId。
    以便于算法挑选相应dieId的channelDesc */
 HcclResult CcuAlgTemplateBase::GetDieInfoFromChannelDescs(

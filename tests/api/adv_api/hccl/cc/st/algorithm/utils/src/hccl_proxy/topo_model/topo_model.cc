@@ -80,6 +80,12 @@ TopoModel::TopoModel(const TopoMeta& topoMeta)
         isUbxTopo_ = true;
         InitUbxTopo();
     }
+
+    // 双 die L1 双链路 opt-in：默认关闭（每 pair 单 L1 链路 → dieNum=1）。
+    char* twoDieEnv = getenv("ENABLE_2DIE_L1_LINK_FOR_LLT");
+    if (twoDieEnv != nullptr && std::string(twoDieEnv) == "1") {
+        is2DieL1Link_ = true;
+    }
 }
 
 // UBX 模式：L0 只保留一个覆盖全 server rank 的 CLOS 实例（GetTopoType 返回 COMM_TOPO_CLOS），
@@ -675,6 +681,15 @@ void TopoModel::Create910DLinks(uint32_t srcRank, uint32_t dstRank)
         link.linkAttr.linkProtocol =
             isDpuEnable ? CommProtocol::COMM_PROTOCOL_ROCE : CommProtocol::COMM_PROTOCOL_UBC_CTP;
         allLinkMap_[rankPair][NetLayerL1].push_back(link);
+        // 双 die L1 双链路 opt-in：同 pair 追加第二条链路，src/dst endpoint 的 devPhyId 翻转
+        // die 位（+4 mod 8，与 HcclRankGraphGetEndpointInfo 的 devPhyId>=4→die1 判定配合），
+        // 使 GetDieInfoFromChannelDescs 探测到 2 链路 2 die → dieNum=2（SoleNHR2die 双 mission）。
+        if (is2DieL1Link_) {
+            CommLink dieLink = link;
+            dieLink.srcEndpointDesc.loc.device.devPhyId = (link.srcEndpointDesc.loc.device.devPhyId + 4U) % 8U;
+            dieLink.dstEndpointDesc.loc.device.devPhyId = (link.dstEndpointDesc.loc.device.devPhyId + 4U) % 8U;
+            allLinkMap_[rankPair][NetLayerL1].push_back(dieLink);
+        }
     }
 
     // level0 同server才有level0链路

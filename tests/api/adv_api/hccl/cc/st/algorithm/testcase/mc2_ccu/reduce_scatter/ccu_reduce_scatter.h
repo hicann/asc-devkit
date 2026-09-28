@@ -13,6 +13,7 @@
 
 #include "ccu_reduce_scatter_mesh1d_adapter.h"
 #include "ccu_reduce_scatter_nhr_multilink_adapter.h"
+#include "ccu_reduce_scatter_nhr_2die_adapter.h"
 #include "ccu_fixture.h"
 
 #include <functional>

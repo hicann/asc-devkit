@@ -327,6 +327,9 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
             GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink)) {
             ccuUsedXnNum_ = KFC_RS_SOLE_NHR_PARAM_NUM;
             CcuPrepareForReduceScatterSoleNhrM2M(&handleParamGM_[handleId]);
+        } else if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR)) {
+            ccuUsedXnNum_ = KFC_RS_SOLE_NHR_2DIE_PARAM_NUM;
+            CcuPrepareForReduceScatterSoleNhr2DieM2M(&handleParamGM_[handleId]);
         } else {
             ccuUsedXnNum_ = 24;
             CcuPrepareForReduceScatterM2M(&handleParamGM_[handleId]);
