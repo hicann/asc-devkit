@@ -18,7 +18,7 @@ import numpy as np
 
 def taylor_exp(src, n):
     if n < 1:
-        raise
+        raise ValueError("taylor_exp: n must be >= 1")
     item = np.ones_like(src).astype(np.float32)
     result = np.ones_like(src).astype(np.float32)
     for i in range(n):
