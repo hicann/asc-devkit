@@ -127,6 +127,9 @@ __aicore__ inline void TopKCompute(
         GatherDstValAndDstIdx(dstValueLocal, dstIndexLocal, tmpLocal, tiling, dstOffsetFourBytes, j);
 
         if constexpr (isHasfinish) {
+            auto eventIDMte2ToS = GetTPipePtr()->FetchEventID(HardEvent::MTE2_S);
+            SetFlag<HardEvent::MTE2_S>(eventIDMte2ToS);
+            WaitFlag<HardEvent::MTE2_S>(eventIDMte2ToS);
             bool finishValue = finishLocal.GetValue(j);
             auto eventID = GetTPipePtr()->FetchEventID(HardEvent::S_V);
             SetFlag<HardEvent::S_V>(eventID);
