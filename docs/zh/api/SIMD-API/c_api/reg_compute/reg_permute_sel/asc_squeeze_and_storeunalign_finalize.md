@@ -36,8 +36,8 @@ Reg计算数据搬运接口，用于结束一组[asc_squeeze_and_storeunalign](a
 
 ```c
 // 占位符形式
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(
-    __ubuf__ <dtype>* dst, vector_store_unalign src)
+__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ <dtype>* dst,
+                                                                  vector_store_unalign src)
 ```
 
 ### dtype支持数据类型
@@ -47,8 +47,8 @@ __simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(
 ### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(
-    __ubuf__ float* dst, vector_store_unalign src)
+__simd_callee__ inline void asc_squeeze_and_storeunalign_finalize(__ubuf__ float* dst,
+                                                                  vector_store_unalign src)
 ```
 
 ## 参数说明

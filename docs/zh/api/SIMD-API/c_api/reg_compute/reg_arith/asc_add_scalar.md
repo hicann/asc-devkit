@@ -46,9 +46,9 @@ __simd_callee__ inline vector_<dtype> asc_add_scalar(vector_<dtype> src,
 
 // 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_add_scalar(vector_<dtype>& dst,
-                                            vector_<dtype> src,
-                                            <dtype> value,
-                                            vector_bool mask)
+                                           vector_<dtype> src,
+                                           <dtype> value,
+                                           vector_bool mask)
 ```
 
 ### dtype支持数据类型

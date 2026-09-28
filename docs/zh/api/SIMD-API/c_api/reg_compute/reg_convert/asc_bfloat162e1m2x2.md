@@ -36,8 +36,7 @@
 ## 函数原型
 
 ```c
-// 占位符形式
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_bfloat162e1m2x2_<round_mode>(vector_fp4x2_e1m2_t& dst,
                                      vector_bfloat16_t src,
                                      vector_bool mask,

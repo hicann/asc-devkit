@@ -58,7 +58,7 @@ __simd_callee__ inline vector_int32_t asc_float2int32_<round_mode><sat_mode>(vec
                                                                             vector_bool mask)
 ```
 
-### 占位符说明
+**占位符说明如下：**
 
 - `<round_mode>`表示支持的舍入模式，支持`rn`（`RINT`）、`rna`（`ROUND`）、`rd`（`FLOOR`）、`ru`（`CEIL`）和`rz`（`TRUNC`）。
 - `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。

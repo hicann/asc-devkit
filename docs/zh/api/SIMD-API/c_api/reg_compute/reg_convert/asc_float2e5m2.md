@@ -36,14 +36,13 @@
 ## 函数原型
 
 ```c
-// 占位符形式
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_float2e5m2_rn<sat_mode>(vector_fp8_e5m2_t& dst,
                                      vector_float src,
                                      vector_bool mask,
                                      std::integral_constant<asc_position_quarter_mode, <quarter_pos>> dst_quarter_pos)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_fp8_e5m2_t asc_float2e5m2_rn<sat_mode>(vector_float src,
                                      vector_bool mask,
                                      std::integral_constant<asc_position_quarter_mode, <quarter_pos>> dst_quarter_pos)

@@ -69,7 +69,7 @@ __simd_callee__ inline void asc_int322int64<position_mode>(vector_int64_t& dst,
                                                            vector_bool mask)
 ```
 
-### 占位符说明
+**占位符说明如下：**
 
 - `<position_mode>`表示`src`读取的位置，为空时，读取`src`的偶数索引位置元素；取值为`_v2`时，读取`src`的奇数索引位置元素。
 

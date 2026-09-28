@@ -111,7 +111,7 @@ PIPE_S
 - 以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
   ```bash
-  bisheng example.asc -o main --npu-arch=dav-3510; ./main
+  bisheng example.asc -o main --npu-arch=dav-3510 && ./main
   ```
 
   以下调用示例代码仅Ascend 950PR&950DT系列产品支持。示例在VF场景外调用本接口设置掩码寄存器（低64bit全1、高64bit全0，即b16模式下前64个元素参与计算），并在VF场景内通过[asc_get_mask_spr](../../reg_compute/reg_mask/asc_get_mask_spr.md)读取掩码值后完成Reg矢量计算，最终仅有前64个元素被写为广播值。

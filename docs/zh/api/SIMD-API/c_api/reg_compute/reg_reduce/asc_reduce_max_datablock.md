@@ -47,8 +47,8 @@ __simd_callee__ inline vector_<dtype> asc_reduce_max_datablock(vector_<dtype> sr
 
 // 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_reduce_max_datablock(vector_<dtype>& dst,
-                                                      vector_<dtype> src,
-                                                      vector_bool mask)
+                                                     vector_<dtype> src,
+                                                     vector_bool mask)
 ```
 
 ### dtype支持数据类型

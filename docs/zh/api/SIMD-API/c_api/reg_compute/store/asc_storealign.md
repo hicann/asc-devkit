@@ -301,7 +301,7 @@ __simd_callee__ inline void asc_storealign(__ubuf__ uint8_t* dst,
 以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng examples.asc -o main --npu-arch=dav-3510; ./main
+bisheng examples.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id8 -->
 

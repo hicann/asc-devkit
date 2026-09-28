@@ -39,28 +39,27 @@
 ## 函数原型
 
 ```cpp
-// 占位符形式
-// 非饱和模式，通过引用参数输出结果
+// 非饱和模式，通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_half2int4x2_<round_mode>(
     vector_int4x2_t& dst,
     vector_half src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> dst_quarter_pos)
 
-// 非饱和模式，通过函数返回值返回结果
+// 非饱和模式，通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_int4x2_t asc_half2int4x2_<round_mode>(
     vector_half src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> dst_quarter_pos)
 
-// 饱和模式，通过引用参数输出结果
+// 饱和模式，通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_half2int4x2_<round_mode>_sat(
     vector_int4x2_t& dst,
     vector_half src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> dst_quarter_pos)
 
-// 饱和模式，通过函数返回值返回结果
+// 饱和模式，通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_int4x2_t asc_half2int4x2_<round_mode>_sat(
     vector_half src,
     vector_bool mask,

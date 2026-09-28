@@ -49,7 +49,7 @@ def asc_int322int16(dst, src, mask, dst_pos):
 ## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_int322int16<sat_mode>(vector_int16_t& dst,
                                                       vector_int32_t src,
                                                       vector_bool mask,
@@ -70,7 +70,8 @@ __simd_callee__ inline vector_int16_t asc_int322int16<sat_mode>(vector_int32_t s
                                                       std::integral_constant<asc_position_mode, asc_position_mode::ODD> dst_pos)
 ```
 
-`<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
+**占位符说明如下：**
+- `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
 
 ### 函数原型典型示例
 
@@ -236,4 +237,3 @@ int main()
     return passed ? 0 : 1;
 }
 ```
-

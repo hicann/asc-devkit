@@ -147,6 +147,8 @@ __global__ __vector__ void transto5hd_kernel(__gm__ uint16_t* matrix_out,
         src_list[i] = reinterpret_cast<__ubuf__ half*>(src + i * 16);
         dst_list[i] = reinterpret_cast<__ubuf__ half*>(dst + i * 16);
     }
+    asc_sync_notify(PIPE_S, PIPE_V, EVENT_ID0);
+    asc_sync_wait(PIPE_S, PIPE_V, EVENT_ID0);
     asc_set_va_reg(VA0, dst_list);
     asc_set_va_reg(VA1, dst_list + 8);
     asc_set_va_reg(VA2, src_list);
@@ -164,6 +166,8 @@ __global__ __vector__ void transto5hd_kernel(__gm__ uint16_t* matrix_out,
             src_list[i] = reinterpret_cast<__ubuf__ half*>(src + OFFSET * j + i * 16 * 16);
             dst_list[i] = reinterpret_cast<__ubuf__ half*>(dst + OFFSET * j + i * 16);
         }
+        asc_sync_notify(PIPE_S, PIPE_V, EVENT_ID0);
+        asc_sync_wait(PIPE_S, PIPE_V, EVENT_ID0);
         asc_set_va_reg(VA0, dst_list);
         asc_set_va_reg(VA1, dst_list + 8);
         asc_set_va_reg(VA2, src_list);

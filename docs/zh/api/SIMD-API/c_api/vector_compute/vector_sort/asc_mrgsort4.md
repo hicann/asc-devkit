@@ -49,7 +49,7 @@ __aicore__ inline void asc_mrgsort4(__ubuf__ <dtype>* dst,
 
 ### dtype支持数据类型
 
-`dtype`支持的数据类型为`half`、`float`，源操作数与目的操作数的指针类型须一致。
+`dtype`取值为：`half`、`float`，源操作数与目的操作数的指针类型须一致。
 
 ### 函数原型典型示例
 

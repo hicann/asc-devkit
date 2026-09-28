@@ -58,8 +58,8 @@ __simd_callee__ inline vector_<dst_dtype> asc_reduce_sum_datablock(vector_<src_d
 
 // 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_reduce_sum_datablock(vector_<dst_dtype>& dst,
-                                                      vector_<src_dtype> src,
-                                                      vector_bool mask)
+                                                     vector_<src_dtype> src,
+                                                     vector_bool mask)
 ```
 
 ### src_dtype与dst_dtype支持数据类型
@@ -207,4 +207,3 @@ int main()
     return passed ? 0 : 1;
 }
 ```
-
