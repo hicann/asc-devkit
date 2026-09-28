@@ -25,7 +25,7 @@ def gen_golden_data():
     bias_gm = np.random.uniform(-10, 10, [n]).reshape([n]).astype(np.float32)
     golden = np.matmul(x1_gm.astype(np.float32), x2_gm.astype(np.float32)).astype(np.float32) + bias_gm
 
-    offset_gm = np.zeros(shape=(50), dtype=np.uint64)
+    offset_gm = np.zeros(shape=(168), dtype=np.uint64)
     offset_gm[0] = 256
 
     os.makedirs("input", exist_ok=True)
