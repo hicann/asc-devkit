@@ -705,6 +705,7 @@ HcclResult HcclAllocCcResByArgsImpl(HcclComm comm, uint8_t ccType, void* ccArgs)
     CHK_RET(InitEnvConfig());
 
     const auto* args = static_cast<const Mc2OpArgs*>(ccArgs);
+    CHK_RET(HcomCheckReductionOp(args->reduceType));
     const uint8_t commEngine = args->commEngine;
     HCCL_INFO(
         "[%s] start, comm[%p], ccType[%u], args[%p], commEngine[%u], srcDataType[%u], dstDataType[%u], "
