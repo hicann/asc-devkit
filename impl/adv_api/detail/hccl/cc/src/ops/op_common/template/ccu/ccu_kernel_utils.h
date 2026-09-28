@@ -14,8 +14,37 @@
 #include <queue>
 #include "alg_param.h"
 #include "ccu_kernel.h"
+#include "ccu_primitives_impl_dl.h"
 
 namespace mc2_ops_hccl {
+
+enum class CcuVersion : uint8_t { CCU_V1 = 0U, CCU_V2 = 1U, INVALID = 2U };
+
+inline CcuVersion GetCcuVersion()
+{
+    DevType deviceType = DevType::DEV_TYPE_COUNT;
+    if (hrtGetDeviceType(deviceType) != HCCL_SUCCESS) {
+        HCCL_ERROR("GetCcuVersion: failed to get device type");
+        return CcuVersion::INVALID;
+    }
+    CcuVersion ccuVersion = CcuVersion::INVALID;
+    if (deviceType == DevType::DEV_TYPE_950) {
+        ccuVersion = CcuVersion::CCU_V1;
+    } else if (deviceType == DevType::DEV_TYPE_960) {
+        if (!HcommIsSupportCcuV2()) {
+            HCCL_ERROR("GetCcuVersion: HCOMM does not support complete CCU V2 interfaces");
+            return CcuVersion::INVALID;
+        }
+        ccuVersion = CcuVersion::CCU_V2;
+    } else {
+        HCCL_ERROR("GetCcuVersion: unsupported deviceType[%u]", static_cast<uint32_t>(deviceType));
+        return CcuVersion::INVALID;
+    }
+    HCCL_INFO(
+        "GetCcuVersion: deviceType[%u], ccuVersion[%u]", static_cast<uint32_t>(deviceType),
+        static_cast<uint32_t>(ccuVersion));
+    return ccuVersion;
+}
 
 constexpr uint16_t LOC_CPY_LOOP_NUM = 8;
 constexpr uint64_t UB_MAX_TRANS_SIZE = 256 * 1024 * 1024;         // UB单次最大传输量256*1024*1024 Byte
@@ -28,7 +57,9 @@ uint64_t CalcLGMaxTransSize();
 
 uint64_t GetMaxLoopIterNum();
 uint64_t GetLoopParam(uint64_t loopCtxId, uint64_t gsaOffset, uint64_t loopIterNum);
-uint64_t GetParallelParam(uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum);
+uint64_t GetLoopGsaOffset(uint64_t gsaOffset);
+uint64_t GetParallelParam(
+    uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum, CcuVersion ccuVersion = CcuVersion::CCU_V1);
 uint64_t GetOffsetParam(uint64_t gsaOffset, uint64_t msOffset, uint64_t ckeOffset);
 uint64_t GetExpansionParam(uint64_t expansionNum);
 uint32_t GetReduceExpansionNum(HcclReduceOp reduceOp, HcclDataType dataType, HcclDataType outputDataType);

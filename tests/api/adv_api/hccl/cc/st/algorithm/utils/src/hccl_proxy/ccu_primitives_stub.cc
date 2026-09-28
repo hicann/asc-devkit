@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cstring>
 #include <limits>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 
@@ -162,6 +163,44 @@ ResourceHandle CompilerContext::CreateLoopGroup(
     return groupHandle;
 }
 
+ResourceHandle CompilerContext::CreateLoopGroupV2(
+    ResourceHandle parallelCfg, ResourceHandle offsetCfg, ResourceHandle varOffsetCfg, uint32_t maxLoopNum,
+    const std::vector<ResourceHandle>& loopHandles, const std::vector<ResourceHandle>& loopParamHandles,
+    const std::vector<ResourceHandle>& addrOffsetHandles)
+{
+    ResourceHandle groupHandle = nextHandle_++;
+
+    GroupCopyDescriptor descriptor;
+    descriptor.destination = groupHandle;
+    descriptor.loopGroups.push_back(GroupCopyLoopGroupDescriptor{});
+    auto& lg = descriptor.loopGroups.back();
+    lg.parallelParamVariable = parallelCfg;
+    lg.addressOffsetVariable = offsetCfg;
+    lg.varOffsetVariable = varOffsetCfg;
+    lg.maxLoopNum = maxLoopNum;
+    lg.loopHandles = loopHandles;
+    lg.loopParamHandles = loopParamHandles;
+    lg.addrOffsetHandles = addrOffsetHandles;
+
+    for (const auto& loopHandle : loopHandles) {
+        descriptor.loops.push_back(GroupCopyLoopDescriptor{});
+        descriptor.loops.back().index = static_cast<uint32_t>(descriptor.loops.size() - 1);
+        descriptor.functions.push_back(GroupCopyFunctionDescriptor{});
+        descriptor.functions.back().index = static_cast<uint32_t>(descriptor.functions.size() - 1);
+    }
+
+    program_.groupCopies.push_back(descriptor);
+    program_.loopBodies = loopBodies_;
+
+    Operation operation;
+    operation.code = OpCode::GROUP_COPY;
+    operation.dst = groupHandle;
+    operation.index = static_cast<uint32_t>(program_.groupCopies.size() - 1);
+    Append(operation);
+
+    return groupHandle;
+}
+
 void CompilerContext::AppendGroupCopy(
     ResourceHandle destination, ResourceHandle source, ResourceHandle length,
     const std::array<ResourceHandle, 4>& groupSize)
@@ -197,9 +236,9 @@ void CompilerContext::AppendGroupCopy(
         descriptor.loops.push_back(GroupCopyLoopDescriptor{index, index});
     }
     descriptor.loopGroups.push_back(
-        GroupCopyLoopGroupDescriptor{groupSize[0], groupSize[1], 0, groupSize[0], 0, loopCount, {0}});
+        GroupCopyLoopGroupDescriptor{groupSize[0], groupSize[1], 0, groupSize[0], 0, 0, loopCount, {0}});
     descriptor.loopGroups.push_back(
-        GroupCopyLoopGroupDescriptor{groupSize[2], 0, groupSize[2], groupSize[0], groupSize[3], loopCount, {0, 1}});
+        GroupCopyLoopGroupDescriptor{groupSize[2], 0, groupSize[2], groupSize[0], 0, groupSize[3], loopCount, {0, 1}});
     program_.groupCopies.push_back(descriptor);
 
     Operation operation;
@@ -344,12 +383,16 @@ void Variable::operator=(const Variable& other) const { AppendSimple(OpCode::ASS
 
 void Variable::operator=(const VariableExpr& expr) const
 {
-    Operation addOp;
-    addOp.code = OpCode::ADD_VAR;
-    addOp.dst = handle;
-    addOp.src0 = expr.LhsHandle();
-    addOp.src1 = expr.RhsHandle();
-    CompilerContext::Current().Append(addOp);
+    static const std::map<ArithmeticOp, OpCode> opCodeMap = {
+        {ArithmeticOp::ADD, OpCode::ADD_VAR},
+        {ArithmeticOp::SUB, OpCode::SUB_VAR},
+        {ArithmeticOp::MUL, OpCode::MUL_VAR}};
+    Operation arithOp;
+    arithOp.code = opCodeMap.at(expr.Op());
+    arithOp.dst = handle;
+    arithOp.src0 = expr.LhsHandle();
+    arithOp.src1 = expr.RhsHandle();
+    CompilerContext::Current().Append(arithOp);
 }
 
 void Variable::operator=(uint64_t immediate) const
@@ -372,6 +415,16 @@ void Variable::operator+=(const Variable& other) const
 }
 
 VariableExpr Variable::operator+(const Variable& other) const { return VariableExpr(handle, other.handle); }
+
+VariableExpr Variable::operator-(const Variable& other) const
+{
+    return VariableExpr(handle, other.handle, ArithmeticOp::SUB);
+}
+
+VariableExpr Variable::operator*(const Variable& other) const
+{
+    return VariableExpr(handle, other.handle, ArithmeticOp::MUL);
+}
 
 Condition Variable::operator==(uint64_t immediate) const { return Condition{handle, immediate, true}; }
 
@@ -775,6 +828,16 @@ Loop::Loop(Variable& loopParam, const Func& func)
     CompilerContext::Current().LoopBodyExit();
 }
 
+Loop::Loop(Variable& iterNum, Variable& addrOffset, const Func& func)
+{
+    handle = CompilerContext::Current().CreateLoop();
+    loopParamHandle = iterNum.handle;
+    addrOffsetHandle = addrOffset.handle;
+    CompilerContext::Current().LoopBodyEnter(handle);
+    func.RunBody();
+    CompilerContext::Current().LoopBodyExit();
+}
+
 LoopGroup::LoopGroup() : handle(0) {}
 
 LoopGroup::LoopGroup(Variable& parallelCfg, Variable& offsetCfg, uint32_t maxLoopNum, const std::vector<Loop>& loops)
@@ -787,6 +850,23 @@ LoopGroup::LoopGroup(Variable& parallelCfg, Variable& offsetCfg, uint32_t maxLoo
     }
     handle = CompilerContext::Current().CreateLoopGroup(
         parallelCfg.handle, offsetCfg.handle, maxLoopNum, loopHandles, loopParamHandles);
+}
+
+LoopGroup::LoopGroup(
+    Variable& parallelCfg, Variable& offsetCfg, Variable& varOffsetCfg, uint32_t maxLoopNum,
+    const std::vector<Loop>& loops)
+{
+    std::vector<ResourceHandle> loopHandles;
+    std::vector<ResourceHandle> loopParamHandles;
+    std::vector<ResourceHandle> addrOffsetHandles;
+    for (const auto& loop : loops) {
+        loopHandles.push_back(loop.handle);
+        loopParamHandles.push_back(loop.loopParamHandle);
+        addrOffsetHandles.push_back(loop.addrOffsetHandle);
+    }
+    handle = CompilerContext::Current().CreateLoopGroupV2(
+        parallelCfg.handle, offsetCfg.handle, varOffsetCfg.handle, maxLoopNum, loopHandles, loopParamHandles,
+        addrOffsetHandles);
 }
 
 } // namespace ccu

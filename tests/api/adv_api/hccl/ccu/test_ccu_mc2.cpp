@@ -44,6 +44,7 @@ extern HcclResult g_stubCalcTopoInfoResult;
 extern bool g_stubHcommCcuKernelLaunchFail;
 extern uint32_t g_stubHcommCcuKernelLaunchCallCount;
 extern std::string g_stubCcuAlgNotRegisteredName;
+extern bool g_stubHcommIsSupportCcuV2;
 } // namespace mc2_ops_hccl
 
 // 夹具：本目标不编 executor 文件（-DAICPU_COMPILE 裁掉产品 CCU sidecar 注册行），
@@ -101,6 +102,7 @@ static void StubCleanup()
     mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail = false;
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount = 0U;
+    mc2_ops_hccl::g_stubHcommIsSupportCcuV2 = true;
     unsetenv("HCCL_OP_EXPANSION_MODE");
 }
 

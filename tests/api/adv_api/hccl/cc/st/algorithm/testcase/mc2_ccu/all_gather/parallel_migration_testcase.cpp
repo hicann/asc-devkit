@@ -11,8 +11,12 @@
 #include "ccu_fixture.h"
 #include "ccu_kernel_kfc_server.h"
 #include "ccu_temp_kfc_all_gather_nhr_1D_multi_jetty_mem2mem.h"
+#include "sim_world.h"
+#include "acl/acl_rt.h"
 
 #include <algorithm>
+#include <functional>
+#include <numeric>
 
 namespace HcclSim {
 namespace CcuSt {
@@ -68,6 +72,27 @@ protected:
         const uint64_t part0 = count / 2 * elementSize;
         const uint64_t stride = 2 * bytes + 16; // 两个请求 + rank 间 guard
         const uint32_t mission = mesh ? 0U : 1U;
+
+        // patch 新增的 GetCcuVersion() 会经 hrtGetDeviceType 查 SimWorld 的 SimNpu，
+        // 必须先 Init SimWorld 并在每 rank Register 前 aclrtSetDevice，否则
+        // curr_dev_id=UINT32_MAX 会在 CommDomain 查询时抛 InvalidParamsException。
+        // DevType 固定 950：本用例预计算 GoSize 使用默认 CcuVersion::CCU_V1，
+        // 960 会使 GetCcuVersion() 返回 CCU_V2 走 V2 位布局，与 V1 编码不匹配。
+        struct ScopeGuard {
+            std::function<void()> onExit;
+            ~ScopeGuard()
+            {
+                if (onExit) {
+                    onExit();
+                }
+            }
+        } simGuard{[]() { HcclSim::SimWorld::Global()->Deinit(); }};
+        // 单 Pod / 单 Server / ranks 个 device，CommDomain::Init 按顺序分配 rankId 0..ranks-1
+        SuperPodMeta pod{ServerMeta(ranks)};
+        std::iota(pod[0].begin(), pod[0].end(), 0U);
+        TopoMeta topoMeta{pod};
+        HcclSim::SimWorld::Global()->Init(topoMeta, DevType::DEV_TYPE_950);
+
         std::vector<RankMemory> memories(ranks);
         std::vector<RankLaunch> launches(ranks);
         std::vector<std::vector<uint8_t>> expected(ranks);
@@ -167,6 +192,9 @@ protected:
             std::copy(channels.begin(), channels.end(), arg.channels);
             arg.channelCount = channels.size();
             auto& registry = RegisterManager::Global();
+            // Register 在调用线程同步执行 kernel lambda，GetCcuVersion() 经
+            // thread_local 的 curr_dev_id 查 SimNpu，须先绑定当前 rank 的设备
+            ASSERT_EQ(aclrtSetDevice(static_cast<int32_t>(rank)), ACL_SUCCESS);
             ASSERT_EQ(registry.RegisterStart(rank + 1), Result::SUCCESS);
             KernelHandle handle = 0;
             ASSERT_EQ(

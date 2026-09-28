@@ -11,9 +11,6 @@
 #ifndef CCU_UTILS_DL_HPP
 #define CCU_UTILS_DL_HPP
 
-#if CANN_VERSION_NUM >= 90100000
-#include "ccu_utils.hpp"
-#else
 #include <exception>
 #include <string>
 #include "ccu_types_dl.h"
@@ -45,7 +42,8 @@ private:
     CcuResult code_;
     std::string what_;
 };
-enum class CcuArithmeticOperatorType { ADDITION, INVALID };
+enum class CcuArithmeticOperatorType { ADDITION, SUBTRACTION, MULTIPLICATION, INVALID };
+enum class CcuLogicOperatorType { AND, OR, XOR, NOT, INVALID };
 
 template <typename lhsT, typename rhsT>
 class CcuOperator {
@@ -74,6 +72,35 @@ public:
     CcuArithmeticOperatorType type{CcuArithmeticOperatorType::INVALID};
 };
 
+template <typename lhsT, typename rhsT>
+class CcuLogicOperator : public CcuOperator<lhsT, rhsT> {
+public:
+    CcuLogicOperator(lhsT lhs, rhsT rhs, CcuLogicOperatorType type) : CcuOperator<lhsT, rhsT>(lhs, rhs), type(type)
+    {
+        Check();
+    }
+    void Check() const
+    {
+        throw ::AscendC::ccu::detail::CcuException(CcuResult::CCU_E_PARA, "CcuLogicOperator: invalid operand types");
+    }
+
+    CcuLogicOperatorType type{CcuLogicOperatorType::INVALID};
+};
+
+template <typename lhsT>
+class CcuLogicUnaryOperator {
+public:
+    CcuLogicUnaryOperator(lhsT lhs, CcuLogicOperatorType type) : lhs(lhs), type(type) { Check(); }
+    void Check() const
+    {
+        throw ::AscendC::ccu::detail::CcuException(
+            CcuResult::CCU_E_PARA, "CcuLogicUnaryOperator: invalid operand types");
+    }
+
+    lhsT lhs;
+    CcuLogicOperatorType type{CcuLogicOperatorType::INVALID};
+};
+
 } // namespace detail
 } // namespace ccu
 } // namespace AscendC
@@ -86,5 +113,4 @@ public:
         }                                                                \
     } while (0)
 
-#endif // CANN_VERSION_NUM >= 90100000
 #endif // CCU_UTILS_DL_HPP

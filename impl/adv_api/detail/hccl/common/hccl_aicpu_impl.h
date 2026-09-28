@@ -163,7 +163,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_AICPU, config>:
                 tiling = ccOpTilingDataTable_[static_cast<uint32_t>(param.commType.prepareType)];
             }
         }
-#if (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
+#if __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
         AssembleHcclMsgV2(param, curVersion_, curHandleId_, tiling, hcclSendMsg, &hcclMsgArea_->controlMsg);
 #else
         AssembleHcclMsg(param, curVersion_, curHandleId_, tiling, hcclSendMsg, &hcclMsgArea_->controlMsg);

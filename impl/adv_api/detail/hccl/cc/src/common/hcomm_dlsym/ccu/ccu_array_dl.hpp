@@ -11,9 +11,6 @@
 #ifndef CCU_ARRAY_DL_HPP
 #define CCU_ARRAY_DL_HPP
 
-#if CANN_VERSION_NUM >= 90100000
-#include "ccu_array.hpp"
-#else
 #include <cstdint>
 #include <new>
 #include <vector>
@@ -130,7 +127,5 @@ private:
 
 } // namespace ccu
 } // namespace AscendC
-
-#endif // CANN_VERSION_NUM >= 90100000
 
 #endif // CCU_ARRAY_DL_HPP

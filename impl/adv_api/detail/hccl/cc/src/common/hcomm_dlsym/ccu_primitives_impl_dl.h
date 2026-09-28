@@ -11,16 +11,14 @@
 #ifndef CCU_PRIMITIVES_IMPL_DL_H
 #define CCU_PRIMITIVES_IMPL_DL_H
 
-#ifdef __cplusplus
-#include <cstdbool>
-#else
+#ifndef __cplusplus
 #include <stdbool.h>
 #endif // __cplusplus
 
 #include "dlsym_common.h"
 #include "hccl_types.h"
-#include "ccu_types.h"
-#include "hcomm_primitives.h"
+#include "ccu_types_dl.h"
+#include "hcomm_res_defs.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -169,6 +167,62 @@ DECL_WEAK_FUNC(
     CcuVariableHandle offsetVar);
 DECL_WEAK_FUNC(CcuResult, CcuLoopGroupAddLoop, CcuLoopGroup group, CcuLoop loop, const CcuLoopConfig* config);
 DECL_WEAK_FUNC(CcuResult, CcuLoopGroupAddLoopFromVar, CcuLoopGroup group, CcuLoop loop, CcuVariableHandle loopParamVar);
+
+/*========== V2 扩展接口（弱符号，libhcomm.so 提供时自动覆盖）==========*/
+// Variable V2 算术运算
+DECL_WEAK_FUNC(
+    CcuResult, CcuVariableSubVarToVar, CcuVariableHandle resVar, CcuVariableHandle varA, CcuVariableHandle varB);
+DECL_WEAK_FUNC(
+    CcuResult, CcuVariableMulVarToVar, CcuVariableHandle resVar, CcuVariableHandle varA, CcuVariableHandle varB);
+DECL_WEAK_FUNC(CcuResult, CcuVariableAddImmToVar, CcuVariableHandle resVar, CcuVariableHandle varA, uint16_t immediate);
+DECL_WEAK_FUNC(CcuResult, CcuVariableSubImmToVar, CcuVariableHandle resVar, CcuVariableHandle varA, uint16_t immediate);
+DECL_WEAK_FUNC(CcuResult, CcuVariableMulImmToVar, CcuVariableHandle resVar, CcuVariableHandle varA, uint16_t immediate);
+// Variable V2 逻辑运算
+DECL_WEAK_FUNC(
+    CcuResult, CcuVariableAndVarToVar, CcuVariableHandle resVar, CcuVariableHandle varA, CcuVariableHandle varB);
+DECL_WEAK_FUNC(
+    CcuResult, CcuVariableOrVarToVar, CcuVariableHandle resVar, CcuVariableHandle varA, CcuVariableHandle varB);
+DECL_WEAK_FUNC(
+    CcuResult, CcuVariableXorVarToVar, CcuVariableHandle resVar, CcuVariableHandle varA, CcuVariableHandle varB);
+DECL_WEAK_FUNC(CcuResult, CcuVariableNotVar, CcuVariableHandle resVar, CcuVariableHandle varA);
+// Address V2 运算
+DECL_WEAK_FUNC(CcuResult, CcuAddressAddImmToAddr, CcuAddressHandle resAddr, CcuAddressHandle addrA, uint16_t imm);
+// 控制流 V2（Variable-vs-Variable 比较）
+DECL_WEAK_FUNC(
+    CcuResult, CcuIfBeginVar, CcuVariableHandle lhs, CcuVariableHandle rhs, CcuConditionType condType,
+    const char* label);
+DECL_WEAK_FUNC(
+    CcuResult, CcuWhileBeginVar, CcuVariableHandle lhs, CcuVariableHandle rhs, CcuConditionType condType,
+    const char* label);
+DECL_WEAK_FUNC(
+    CcuResult, CcuDoWhileEndVar, CcuVariableHandle lhs, CcuVariableHandle rhs, CcuConditionType condType,
+    const char* label);
+// LoopGroup V2
+DECL_WEAK_FUNC(
+    CcuResult, CcuLoopGroupCreateFromVarV2, CcuLoopGroup* group, uint32_t maxLoopNum, CcuVariableHandle parallelVarV2,
+    CcuVariableHandle offsetVarV2, CcuVariableHandle varOffsetVar);
+DECL_WEAK_FUNC(
+    CcuResult, CcuLoopGroupAddLoopFromVarV2, CcuLoopGroup group, CcuLoop loop, CcuVariableHandle iterNumVar,
+    CcuVariableHandle addrOffsetVar, CcuVariableHandle ctxIdVar);
+
+// V2 能力探测：上层通过 HcommIsSupportCcuV2() 判断 HCOMM 是否提供完整 V2 接口集
+DECL_SUPPORT_FLAG(CcuVariableSubVarToVar);
+DECL_SUPPORT_FLAG(CcuVariableMulVarToVar);
+DECL_SUPPORT_FLAG(CcuVariableAddImmToVar);
+DECL_SUPPORT_FLAG(CcuVariableSubImmToVar);
+DECL_SUPPORT_FLAG(CcuVariableMulImmToVar);
+DECL_SUPPORT_FLAG(CcuVariableAndVarToVar);
+DECL_SUPPORT_FLAG(CcuVariableOrVarToVar);
+DECL_SUPPORT_FLAG(CcuVariableXorVarToVar);
+DECL_SUPPORT_FLAG(CcuVariableNotVar);
+DECL_SUPPORT_FLAG(CcuAddressAddImmToAddr);
+DECL_SUPPORT_FLAG(CcuIfBeginVar);
+DECL_SUPPORT_FLAG(CcuWhileBeginVar);
+DECL_SUPPORT_FLAG(CcuDoWhileEndVar);
+DECL_SUPPORT_FLAG(CcuLoopGroupCreateFromVarV2);
+DECL_SUPPORT_FLAG(CcuLoopGroupAddLoopFromVarV2);
+
+bool HcommIsSupportCcuV2(void);
 
 void CcuPrimitivesImplDlInit(void* libHcommHandle);
 

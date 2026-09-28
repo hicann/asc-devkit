@@ -50,17 +50,37 @@ uint64_t GetLoopParam(uint64_t loopCtxId, uint64_t gsaOffset, uint64_t loopIterN
            ((loopIterNum & SetBits(loopNumBitNum)) << loopNumShiftBit);
 }
 
-uint64_t GetParallelParam(uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum)
+uint64_t GetLoopGsaOffset(uint64_t gsaOffset)
 {
-    constexpr uint16_t repeatBitNum = 7;
-    constexpr uint16_t repeatNumShiftBit = 55;
-    constexpr uint16_t repeatLoopBitNum = 7;
-    constexpr uint16_t repeatLoopShiftBit = 48;
-    constexpr uint16_t totalLoopBitNum = 7;
-    constexpr uint16_t totalLoopShiftBit = 41;
-    return ((repeatNum & SetBits(repeatBitNum)) << repeatNumShiftBit) |
-           ((repeatLoopIndex & SetBits(repeatLoopBitNum)) << repeatLoopShiftBit) |
-           ((totalLoopNum & SetBits(totalLoopBitNum)) << totalLoopShiftBit);
+    constexpr uint64_t gsaOffsetMask = 0xffffffffULL;
+    return gsaOffset & gsaOffsetMask;
+}
+
+uint64_t GetParallelParam(uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum, CcuVersion ccuVersion)
+{
+    if (ccuVersion == CcuVersion::CCU_V1) {
+        constexpr uint64_t parallelParamMask = 0x7fU;
+        constexpr uint16_t repeatNumShiftBit = 55;
+        constexpr uint16_t repeatLoopShiftBit = 48;
+        constexpr uint16_t totalLoopShiftBit = 41;
+        return ((repeatNum & parallelParamMask) << repeatNumShiftBit) |
+               ((repeatLoopIndex & parallelParamMask) << repeatLoopShiftBit) |
+               ((totalLoopNum & parallelParamMask) << totalLoopShiftBit);
+    }
+    if (ccuVersion == CcuVersion::CCU_V2) {
+        // CCU V121 Loop规格变化适配
+        constexpr uint64_t repeatNumMask = 0x1ffU;
+        constexpr uint16_t repeatNumShiftBit = 19;
+        constexpr uint64_t repeatLoopMask = 0x1ffU;
+        constexpr uint16_t repeatLoopShiftBit = 10;
+        constexpr uint64_t totalLoopMask = 0x3ffU;
+        constexpr uint16_t totalLoopShiftBit = 0;
+        return ((repeatNum & repeatNumMask) << repeatNumShiftBit) |
+               ((repeatLoopIndex & repeatLoopMask) << repeatLoopShiftBit) |
+               ((totalLoopNum & totalLoopMask) << totalLoopShiftBit);
+    }
+    HCCL_ERROR("GetParallelParam: invalid CCU version[%u]", static_cast<uint32_t>(ccuVersion));
+    return 0U;
 }
 
 uint64_t GetOffsetParam(uint64_t gsaOffset, uint64_t msOffset, uint64_t ckeOffset)

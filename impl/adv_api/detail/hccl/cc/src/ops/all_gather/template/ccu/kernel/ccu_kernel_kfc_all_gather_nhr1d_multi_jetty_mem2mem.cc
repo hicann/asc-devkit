@@ -210,7 +210,7 @@ CcuResult RunNhr(KfcAllGatherNhrContext& ctx)
         constexpr uint16_t rankMask = 1U;
         CCU_IF(ctx.isInputOutputEqual == 0)
         {
-            CCU_CHK_RET(GroupCopy(ctx, dst, src, ctx.goSize));
+            CCU_CHK_RET(GroupCopy(ctx, dst, src, ctx.goSize, GetCcuVersion()));
             CCU_CHK_RET(ccu::EventRecord(ctx.event, rankMask));
         }
         CCU_ELSE { CCU_CHK_RET(ccu::EventRecord(ctx.event, rankMask)); }

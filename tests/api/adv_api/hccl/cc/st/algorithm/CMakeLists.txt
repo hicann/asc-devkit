@@ -51,6 +51,7 @@ set(HCCL_CHECKER_COMMON_INCLUDE_LIST
     ${HCCL_CHECKER_CANN_ARCH_DIR}/pkg_inc/runtime/runtime
     ${HCCL_CC_SRC_DIR}/common
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym
+    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu
     ${HCCL_CC_SRC_DIR}/aicpu_kfc/pub_inc
     ${HCCL_CC_SRC_DIR}/ops
     ${HCCL_CC_SRC_DIR}/ops/op_common

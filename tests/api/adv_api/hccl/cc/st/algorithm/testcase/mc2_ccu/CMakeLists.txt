@@ -18,6 +18,7 @@ set(HCCL_MC2_CCU_ALL_TO_ALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_to_all)
 set(HCCL_MC2_CCU_REDUCE_SCATTER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/reduce_scatter)
 set(HCCL_MC2_CCU_ALL_REDUCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_reduce)
 set(HCCL_MC2_CCU_ALL_GATHER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/all_gather)
+set(HCCL_MC2_CCU_EVENT_GROUP_TESTCASE ${CMAKE_CURRENT_SOURCE_DIR}/ccu_event_group_testcase.cpp)
 
 set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_gather/selector/all_gather_auto_selector.cc
@@ -100,6 +101,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/ccu_log.cc
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu_res_dl.cc
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hccl_ccu_res_dl.cc
+    ${UTILS_DIR}/hccl_proxy/hcomm_dlsym_stub.cc
 )
 
 add_executable(
@@ -123,6 +125,7 @@ add_executable(
     ${HCCL_MC2_CCU_ALL_GATHER_DIR}/parallel_migration_testcase.cpp
     ${HCCL_MC2_CCU_ALL_GATHER_DIR}/ccu_all_gather_kfc_server_adapter.cc
     ${HCCL_MC2_CCU_ALL_GATHER_DIR}/ccu_all_gather.cc
+    ${HCCL_MC2_CCU_EVENT_GROUP_TESTCASE}
     ${UTILS_DIR}/ccu_scenario/ccu_fixture.cc
     ${HCCL_SELECTOR_PRODUCT_SOURCES}
 )

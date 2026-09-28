@@ -137,7 +137,10 @@ CcuResult CcuAlltoAllVMesh1DKernel(
                     CCU_IF(loopNum == static_cast<uint64_t>(UINT64_MAX - 1U))
                     {
                         if (rankIdx == rankId) {
-                            CCU_IF(tailSize != 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, src[rankIdx], tailGoSize)); }
+                            CCU_IF(tailSize != 0)
+                            {
+                                CCU_CHK_RET(GroupCopy(ctx, localDst, src[rankIdx], tailGoSize, GetCcuVersion()));
+                            }
                             CCU_CHK_RET(ccu::EventRecord(events[eventIdx], rankMask));
                         } else {
                             CCU_IF(tailSize != 0)

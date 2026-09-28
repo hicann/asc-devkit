@@ -83,7 +83,7 @@ HcclResult CcuTempKfcAllToAllMesh1DMultiJetty::KernelRun(
     config.msInterleave = CCU_MS_INTERLEAVE;
     config.loopCount = CCU_MS_LOCAL_COPY_LOOP_COUNT;
     config.memSlice = CCU_MS_SIZE * LOCAL_COPY_MS_PER_LOOP;
-    const auto goSize = CalGoSize(sliceSize, config);
+    const auto goSize = CalGoSize(sliceSize, config, GetCcuVersion());
 
     CcuKernelSubmitInfo submitInfo{};
     submitInfo.kernelHandle = templateResource.ccuKernels[0];

@@ -34,10 +34,17 @@ constexpr uint64_t COMM_TYPE_SHIFT = 0;
 
 constexpr int CCU_PARAM_INDEX = 2;
 
-constexpr uint64_t REPEAT_NUM_SHIFT = 55;
-constexpr uint64_t REPEAT_LOOP_INDEX_SHIFT = 48;
-constexpr uint64_t TOTAL_LOOP_NUM_SHIFT = 41;
-constexpr uint64_t MASK = 0x7f;
+constexpr uint64_t V1_REPEAT_NUM_SHIFT = 55U;
+constexpr uint64_t V1_REPEAT_LOOP_INDEX_SHIFT = 48U;
+constexpr uint64_t V1_TOTAL_LOOP_NUM_SHIFT = 41U;
+constexpr uint64_t V1_PARALLEL_PARAM_MASK = 0x7fU;
+
+constexpr uint64_t V2_REPEAT_NUM_SHIFT = 19U;
+constexpr uint64_t V2_REPEAT_LOOP_INDEX_SHIFT = 10U;
+constexpr uint64_t V2_TOTAL_LOOP_NUM_SHIFT = 0U;
+constexpr uint64_t V2_REPEAT_NUM_MASK = 0x1ffU;
+constexpr uint64_t V2_REPEAT_LOOP_INDEX_MASK = 0x1ffU;
+constexpr uint64_t V2_TOTAL_LOOP_NUM_MASK = 0x3ffU;
 
 __aicore__ inline uint64_t GetOpId(__gm__ CommonPrepareParamCcu* commParam)
 {
@@ -118,13 +125,27 @@ __aicore__ inline void AssembleHcclMsgExtForCCU(
     }
 }
 
-__aicore__ inline uint64_t GetParallelParameters(uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum)
+__aicore__ inline uint64_t GetParallelParameters(
+    uint64_t repeatNum, uint64_t repeatLoopIndex, uint64_t totalLoopNum, CcuProtocolVersion ccuVersion)
 {
-    return ((repeatNum & MASK) << REPEAT_NUM_SHIFT) | ((repeatLoopIndex & MASK) << REPEAT_LOOP_INDEX_SHIFT) |
-           ((totalLoopNum & MASK) << TOTAL_LOOP_NUM_SHIFT);
+    if (ccuVersion == CcuProtocolVersion::CCU_V1) {
+        return ((repeatNum & V1_PARALLEL_PARAM_MASK) << V1_REPEAT_NUM_SHIFT) |
+               ((repeatLoopIndex & V1_PARALLEL_PARAM_MASK) << V1_REPEAT_LOOP_INDEX_SHIFT) |
+               ((totalLoopNum & V1_PARALLEL_PARAM_MASK) << V1_TOTAL_LOOP_NUM_SHIFT);
+    }
+    if (ccuVersion == CcuProtocolVersion::CCU_V2) {
+        return ((repeatNum & V2_REPEAT_NUM_MASK) << V2_REPEAT_NUM_SHIFT) |
+               ((repeatLoopIndex & V2_REPEAT_LOOP_INDEX_MASK) << V2_REPEAT_LOOP_INDEX_SHIFT) |
+               ((totalLoopNum & V2_TOTAL_LOOP_NUM_MASK) << V2_TOTAL_LOOP_NUM_SHIFT);
+    }
+    KERNEL_LOG(
+        KERNEL_ERROR, "ApiClient GetParallelParameters invalid CCU protocol version:%d",
+        static_cast<uint32_t>(ccuVersion));
+    return 0U;
 }
 
-__aicore__ inline void CalcLoopGroupParam(uint64_t* xnData, uint64_t m, uint64_t n, uint64_t p)
+__aicore__ inline void CalcLoopGroupParam(
+    uint64_t* xnData, uint64_t m, uint64_t n, uint64_t p, CcuProtocolVersion ccuVersion)
 {
     if (n == 0 && p == 0) {
         // 数据量为loopSize的整数倍，跳过LoopGroup1
@@ -132,20 +153,21 @@ __aicore__ inline void CalcLoopGroupParam(uint64_t* xnData, uint64_t m, uint64_t
         xnData[7] = 0; // ccu xn7
     } else if (n != 0 && p == 0) {
         // 数据量为256K * m + CCU_MEMSLICE_SIZE * n
-        xnData[6] = GetParallelParameters(n - 1, 0, 1); // ccu xn6
-        xnData[7] = CCU_MEMSLICE_SIZE;                  // ccu xn7
+        xnData[6] = GetParallelParameters(n - 1, 0, 1, ccuVersion); // ccu xn6
+        xnData[7] = CCU_MEMSLICE_SIZE;                              // ccu xn7
     } else if (n == 0 && p != 0) {
         // 数据量为loopSize * m + p
-        xnData[6] = GetParallelParameters(0, 0, 1); // ccu xn6
-        xnData[7] = p;                              // ccu xn7
+        xnData[6] = GetParallelParameters(0, 0, 1, ccuVersion); // ccu xn6
+        xnData[7] = p;                                          // ccu xn7
     } else {
         // 数据量为loopSize * m + CCU_MEMSLICE_SIZE * n + p
-        xnData[6] = GetParallelParameters(n - 1, 1, CCU_PARAM_INDEX); // ccu xn6
-        xnData[7] = p;                                                // ccu xn7
+        xnData[6] = GetParallelParameters(n - 1, 1, CCU_PARAM_INDEX, ccuVersion); // ccu xn6
+        xnData[7] = p;                                                            // ccu xn7
     }
 }
 
-__aicore__ inline void CalcGoSize(uint64_t sliceSize, uint64_t loopCount, uint64_t ccuMemsliceSize, uint64_t* goSize)
+__aicore__ inline void CalcGoSize(
+    uint64_t sliceSize, uint64_t loopCount, uint64_t ccuMemsliceSize, uint64_t* goSize, CcuProtocolVersion ccuVersion)
 {
     uint64_t loopSize = loopCount * ccuMemsliceSize;
     uint64_t m = sliceSize / loopSize;
@@ -161,15 +183,15 @@ __aicore__ inline void CalcGoSize(uint64_t sliceSize, uint64_t loopCount, uint64
         goSize[3] = 0;
     } else if (n != 0 && p == 0) {
         // 数据量为256K * m + ccuMemsliceSize * n
-        goSize[2] = GetParallelParameters(n - 1, 0, 1);
+        goSize[2] = GetParallelParameters(n - 1, 0, 1, ccuVersion);
         goSize[3] = ccuMemsliceSize;
     } else if (n == 0 && p != 0) {
         // 数据量为loopSize * m + p
-        goSize[2] = GetParallelParameters(0, 0, 1);
+        goSize[2] = GetParallelParameters(0, 0, 1, ccuVersion);
         goSize[3] = p;
     } else {
         // 数据量为loopSize * m + ccuMemsliceSize * n + p
-        goSize[2] = GetParallelParameters(n - 1, 1, CCU_PARAM_INDEX);
+        goSize[2] = GetParallelParameters(n - 1, 1, CCU_PARAM_INDEX, ccuVersion);
         goSize[3] = p;
     }
 }

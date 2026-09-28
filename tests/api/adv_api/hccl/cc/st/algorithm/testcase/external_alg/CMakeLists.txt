@@ -118,6 +118,9 @@ set(EXT_ALG_FIXED_SOURCES
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hcomm_primitives_dl.cc
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu_res_dl.cc
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hccl_ccu_res_dl.cc
+    # ccu_primitives_impl_dl.h（ccu_kernel_utils.h 传递包含）依赖 hcomm_dlsym/ccu/ccu_types_dl.h，
+    # 且 GetCcuVersion() 引用 HcommIsSupportCcuV2()——该符号由 hcomm_dlsym_stub.cc 提供 stub 定义
+    ${EXT_ALG_UTILS_HCCL_PROXY_DIR}/hcomm_dlsym_stub.cc
     # op_common
     ${HCCL_CC_SRC_DIR}/ops/op_common/op_common.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/cann_host_bridge.cc
@@ -237,6 +240,7 @@ target_include_directories(${HCCL_EXTERNAL_ALG_TARGET} PRIVATE
     ${HCCL_CC_SRC_DIR}
     ${HCCL_CC_SRC_DIR}/common
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym
+    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu
     ${HCCL_CC_SRC_DIR}/ops
     ${HCCL_CC_SRC_DIR}/ops/op_common
     ${HCCL_CC_SRC_DIR}/ops/op_common/inc

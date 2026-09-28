@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------
 # Copyright (c) 2026 Huawei Technologies Co., Ltd.
 # This program is free software, you can redistribute it and/or modify it under the terms and conditions of
 # CANN Open Software License Agreement Version 2.0 (the "License").
@@ -6,7 +6,7 @@
 # THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
-# -----------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------
 
 set(CCU_UT_TARGET ascendc_ut_adv_api_hccl_ccu_mc2)
 
@@ -49,6 +49,7 @@ set(CCU_INCLUDE_LIST
     ${HCCL_CC_SRC_DIR}
     ${HCCL_CC_SRC_DIR}/common
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym
+    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu
     ${HCCL_CC_SRC_DIR}/ops
     ${HCCL_CC_SRC_DIR}/ops/op_common
     ${HCCL_CC_SRC_DIR}/ops/op_common/inc

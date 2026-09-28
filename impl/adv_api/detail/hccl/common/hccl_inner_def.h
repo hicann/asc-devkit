@@ -116,7 +116,7 @@ struct HcclCombineOpParam {
     uint32_t rankId;        // id of this rank
     uint32_t rankNum;       // num of ranks in this comm group
     uint64_t winSize;       // size of each windows memory
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202)
     uint64_t windowsIn[HCCL_MAX_RANK_NUM_V310];
     uint64_t windowsOut[HCCL_MAX_RANK_NUM_V310];
     GM_ADDR xnOffset;
@@ -177,6 +177,14 @@ constexpr uint64_t CCU_MEMSLICE_SIZE = 4096; // CCU MS size, MC2 is not aware of
 constexpr uint64_t CCU_MSG_CKE_INIT_VALUE = 0;
 constexpr uint64_t CCU_MSG_CKE_SET_VALUE = 1;
 constexpr uint64_t CCU_MAX_COMM_DATA = 268435456; // 256 * 1024 * 1024
+constexpr uint8_t HCCL_CCU_DEV_TYPE_A5 = 6U;
+constexpr uint8_t HCCL_CCU_DEV_TYPE_A6 = 8U;
+
+enum class CcuProtocolVersion : uint8_t {
+    CCU_V1 = 0U,
+    CCU_V2 = 1U,
+    INVALID = 2U,
+};
 
 struct CCUMsg {
     GM_ADDR xnData; // Msg is converted to CCU register value

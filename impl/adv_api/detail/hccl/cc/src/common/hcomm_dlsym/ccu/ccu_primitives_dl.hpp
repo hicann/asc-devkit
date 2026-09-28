@@ -11,13 +11,6 @@
 #ifndef CCU_PRIMITIVES_DL_HPP
 #define CCU_PRIMITIVES_DL_HPP
 
-#if CANN_VERSION_NUM >= 90100000
-#include "ccu_primitives.hpp"
-#else
-#include <cstdint>
-#include "ccu_types_dl.h"
-#include "hccl_types.h"
-#include "hcomm_primitives.h"
 #include "ccu_primitives_impl_dl.h"
 #include "ccu_control_flow_macro_dl.h"
 #include "ccu_variable_dl.hpp"
@@ -183,5 +176,4 @@ inline CcuResult WriteReduce(
 } // namespace ccu
 } // namespace AscendC
 
-#endif // CANN_VERSION_NUM >= 90100000
 #endif // CCU_PRIMITIVES_DL_HPP

@@ -148,7 +148,7 @@ static CcuResult DoAlltoAll(AlltoAllMesh1DContext& ctx)
                 channelId++;
             }
         }
-        GroupCopy(ctx, localDst, src[ctx.rankId], ctx.goSize);
+        GroupCopy(ctx, localDst, src[ctx.rankId], ctx.goSize, GetCcuVersion());
         ccu::EventWait(ctx.event, allBit);
     }
 

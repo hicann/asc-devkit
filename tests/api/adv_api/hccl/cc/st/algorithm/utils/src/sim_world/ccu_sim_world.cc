@@ -327,6 +327,12 @@ bool RuntimeWorld::ExecuteOne(std::vector<RankState>& states, size_t rankIndex, 
         case OpCode::ADD_VAR:
             state.variables[operation.dst] = state.variables[operation.src0] + state.variables[operation.src1];
             break;
+        case OpCode::SUB_VAR:
+            state.variables[operation.dst] = state.variables[operation.src0] - state.variables[operation.src1];
+            break;
+        case OpCode::MUL_VAR:
+            state.variables[operation.dst] = state.variables[operation.src0] * state.variables[operation.src1];
+            break;
         case OpCode::ADDRESS_ASSIGN_VAR:
             state.addresses[operation.dst] = state.variables[operation.src0];
             break;
@@ -398,9 +404,13 @@ bool RuntimeWorld::ExecuteOne(std::vector<RankState>& states, size_t rankIndex, 
                 if (parallelParam == 0) {
                     continue;
                 }
-                const uint64_t repeatNum = (parallelParam >> 55) & 0x7F;
-                const uint64_t repeatLoopIndex = (parallelParam >> 48) & 0x7F;
-                const uint64_t totalLoopNum = (parallelParam >> 41) & 0x7F;
+                // V2: varOffsetVariable 非空表示变量化并行参数（9/9/10bit@19/10/0，iterNum/addrOffset 来自变量）
+                const bool isVarBasedV2 = (loopGroup.varOffsetVariable != 0);
+                const uint64_t repeatNum =
+                    isVarBasedV2 ? ((parallelParam >> 19) & 0x1FF) : ((parallelParam >> 55) & 0x7F);
+                const uint64_t repeatLoopIndex =
+                    isVarBasedV2 ? ((parallelParam >> 10) & 0x1FF) : ((parallelParam >> 48) & 0x7F);
+                const uint64_t totalLoopNum = isVarBasedV2 ? (parallelParam & 0x3FF) : ((parallelParam >> 41) & 0x7F);
                 const uint64_t gsaOffsetGroup = (offsetParam >> 21) & 0xFFFFFFFF;
                 const uint64_t msOffset = (offsetParam >> 10) & 0x7FF;
 
@@ -415,17 +425,26 @@ bool RuntimeWorld::ExecuteOne(std::vector<RankState>& states, size_t rankIndex, 
 
                         ResourceHandle loopParamHandle =
                             (li < loopGroup.loopParamHandles.size()) ? loopGroup.loopParamHandles[li] : 0;
+                        ResourceHandle addrOffsetHandle = (isVarBasedV2 && li < loopGroup.addrOffsetHandles.size()) ?
+                                                              loopGroup.addrOffsetHandles[li] :
+                                                              0;
                         const uint64_t loopParam = (loopParamHandle != 0 && state.variables.count(loopParamHandle)) ?
                                                        state.variables[loopParamHandle] :
                                                        0;
-                        const uint64_t iterNum = loopParam & 0x1FFF;
-                        const uint64_t gsaOffsetLoop = (loopParam >> 13) & 0xFFFFFFFF;
+                        // V2: iterNum 直接来自变量，V1: iterNum 从 loopParam 低 13bit 解出
+                        const uint64_t iterNum = isVarBasedV2 ? loopParam : (loopParam & 0x1FFF);
+                        const uint64_t gsaOffsetLoop = isVarBasedV2 ? 0 : ((loopParam >> 13) & 0xFFFFFFFF);
                         if (iterNum == 0) {
                             continue;
                         }
 
                         for (uint64_t round = 0; round < iterNum; ++round) {
-                            const uint64_t addrOffset = gsaOffsetGroup * idx + gsaOffsetLoop * round;
+                            const uint64_t addrOffsetVarValue =
+                                (addrOffsetHandle != 0 && state.variables.count(addrOffsetHandle)) ?
+                                    state.variables[addrOffsetHandle] :
+                                    0;
+                            const uint64_t addrOffset =
+                                gsaOffsetGroup * idx + (isVarBasedV2 ? addrOffsetVarValue : gsaOffsetLoop) * round;
                             const uint64_t msIdx = msOffset * idx;
 
                             for (const auto& bodyOp : bodyIt->second) {

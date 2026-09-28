@@ -22,6 +22,7 @@
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "kfc_server_protocol.h"
 #include "ccu_launch_dl.h"
+#include "ccu_kernel_utils.h"
 #include <new>
 #include "hcomm_host_profiling_dl.h"
 #include "runtime/rt.h"
@@ -393,10 +394,11 @@ HcclResult BuildTagsAndValidate(
     const void* ccTilingList[], uint32_t tilingNum, const char* commName, u32 rankSize, u32 userRank,
     std::string topoTag[], std::string& ctxTag)
 {
+    const std::string versionTag = "_ccuV" + std::to_string(static_cast<uint32_t>(GetCcuVersion()) + 1U);
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
         topoTag[i] = std::to_string(ccTiling->opType) + "_" + std::to_string(ccTiling->srcDataType) + "_" +
-                     std::string(commName);
+                     std::string(commName) + versionTag;
         CHK_RET(HcclCheckTag(topoTag[i].c_str()));
         bool isReduce;
         CHK_RET(CheckIsReduce(ccTiling, &isReduce));
@@ -410,6 +412,7 @@ HcclResult BuildTagsAndValidate(
                       std::to_string(ccTiling->commEngine);
         }
     }
+    ctxTag += versionTag;
     CHK_RET(HcomCheckUserRank(rankSize, userRank));
     return HCCL_SUCCESS;
 }
@@ -594,6 +597,11 @@ HcclResult DispatchAllocByCommEngine(
             comm, stream, mc2Tiling, ccTilingList, tilingNum, commName, rankSize, userRank, opResCtx, ctxTag));
     } else if (commEngine == static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED)) {
         HCCL_INFO("[HcclAllocComResourceByTiling]commEngine == CCU_SCHED!");
+        if (GetCcuVersion() == CcuVersion::INVALID) {
+            HCCL_ERROR(
+                "[HcclAllocComResourceByTiling]Failed to resolve a supported CCU version; refusing V1 fallback.");
+            return HCCL_E_NOT_SUPPORT;
+        }
         if (!CheckCcuAlgorithmsRegistered(ccTilingList, tilingNum)) {
             HCCL_INFO("[HcclAllocComResourceByTiling]Current ccu algorithm is not supported in mc2_client.");
             return HCCL_E_ALG_NOT_SUPPORTED;
@@ -623,7 +631,7 @@ HcclResult HcclAllocComResourceByTilingImpl(
     HcclComm comm, void* stream, void* mc2Tiling, void** opResCtx, bool checkOnly = false)
 {
     HCCL_RUN_INFO(
-        "[MC2_CLIENT_A5] enter asc-devkit common HcclAllocComResourceByTiling, "
+        "[MC2_CLIENT_A5A6] enter asc-devkit common HcclAllocComResourceByTiling, "
         "comm[%p], stream[%p], tiling[%p].",
         comm, stream, mc2Tiling);
     // 记录开始时间，用于性能统计
@@ -632,8 +640,8 @@ HcclResult HcclAllocComResourceByTilingImpl(
     // 获取设备类型
     DevType deviceType = DevType::DEV_TYPE_COUNT;
     CHK_RET(hrtGetDeviceType(deviceType));
-    // 检查设备类型是否支持新流程，950或910_95支持新流程，其他设备走老流程
-    if (deviceType != DevType::DEV_TYPE_950) {
+    // 检查设备类型是否支持新流程，950或960支持新流程，其他设备走老流程
+    if (deviceType != DevType::DEV_TYPE_950 && deviceType != DevType::DEV_TYPE_960) {
         HCCL_ERROR("[%s] invalid deviceType[%u]", __func__, deviceType);
         return HCCL_E_NOT_SUPPORT;
     }
@@ -698,7 +706,8 @@ HcclResult HcclAllocCcResByArgsImpl(HcclComm comm, uint8_t ccType, void* ccArgs)
     HcclUs startut = TIME_NOW();
     DevType deviceType = DevType::DEV_TYPE_COUNT;
     CHK_RET(hrtGetDeviceType(deviceType));
-    if (deviceType != DevType::DEV_TYPE_950) {
+    // 检查设备类型是否支持新流程，950或960支持新流程，其他设备走老流程
+    if (deviceType != DevType::DEV_TYPE_950 && deviceType != DevType::DEV_TYPE_960) {
         HCCL_ERROR("[%s] invalid deviceType[%u]", __func__, deviceType);
         return HCCL_E_NOT_SUPPORT;
     }
