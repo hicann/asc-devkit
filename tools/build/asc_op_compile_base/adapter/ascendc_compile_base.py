@@ -209,8 +209,12 @@ def link_sk_norm_combine(sk_bin_file, norm_bin_file, sk_bind_dst_file, meta_file
         # Step 2: 将解压的 .o 文件、norm_bin_file、sk_bind_dst_file 和可选的 meta_file_path 合并
         merged_obj = os.path.join(temp_extract_dir, "merged_sk_norm_bind.o")
         link_cmd = [CCECInfo.get_exe("ld.lld"), "-r", "-o", merged_obj]
-        link_cmd.extend(extracted_objs)
-        link_cmd.extend([norm_bin_file, sk_bind_dst_file])
+        if CommonUtility.is_c310():
+            link_cmd.extend([norm_bin_file, sk_bind_dst_file])
+            link_cmd.extend(extracted_objs)
+        else:
+            link_cmd.extend(extracted_objs)
+            link_cmd.extend([norm_bin_file, sk_bind_dst_file])
         if meta_file_path:
             link_cmd.append(meta_file_path)
         CommonUtility.dump_compile_log(link_cmd, CompileStage.LINKRELOCATE, compile_log_path)
