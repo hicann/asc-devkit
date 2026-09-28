@@ -113,8 +113,13 @@ enum class DumpType : uint8_t {
     DUMP_SIMT,
     DUMP_BUFI,
     DUMP_BUFO,
-    DUMP_SKIP
+    DUMP_SKIP,
+    DUMP_SUPER_TENSOR,
+    DUMP_SUPER_TENSOR_BODY
 };
+
+static_assert(static_cast<uint32_t>(DumpType::DUMP_SUPER_TENSOR) == 11U, "unexpected super tensor dump type");
+static_assert(static_cast<uint32_t>(DumpType::DUMP_SUPER_TENSOR_BODY) == 12U, "unexpected super tensor body dump type");
 
 struct DebugBlockHeadInfo {
     uint32_t length = 0U;       // total size per block (include head and r/w info)
@@ -178,6 +183,33 @@ struct DumpShapeTlv {
     uint32_t dim = 0U;                                           // shapeInfo.dim
     uint32_t shape[8];                                           // dim <= 8
     uint32_t resv;
+};
+
+struct DumpSuperTensorTlv {
+    uint32_t type = static_cast<uint32_t>(DumpType::DUMP_SUPER_TENSOR);
+    uint32_t length = 0U;
+    uint32_t tensorAddr = 0U;
+    uint32_t dataType = 0U;
+    uint32_t desc = 0U;
+    uint32_t bufferId = 0U;
+    uint16_t position = 0U;
+    uint16_t blockIdx = 0U;
+    uint32_t dim = 0U;
+    uint32_t shape[8];
+    uint32_t resv = 0U;
+    uint64_t tensorLength = 0U;
+    uint64_t tensorOffset = 0U;
+    uint32_t dumpSize = 0U;
+};
+
+struct DumpSuperTensorBodyTlv {
+    uint32_t type = static_cast<uint32_t>(DumpType::DUMP_SUPER_TENSOR_BODY);
+    uint32_t length = 0U;
+    uint32_t resv1 = 0U;
+    uint32_t resv2 = 0U;
+    uint64_t tensorLength = 0U;
+    uint64_t tensorOffset = 0U;
+    uint32_t dumpSize = 0U;
 };
 
 struct TimeStampTlv {

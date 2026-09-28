@@ -520,7 +520,7 @@ __aicore__ inline void SetDumpDataL0C2GM(__gm__ uint8_t* dst, const LocalTensor<
         param); // recover data in UB
     PipeBarrier<PIPE_ALL>();
     uint32_t tailLen = copyLen * 2 - alignDumpDataLen;
-    ClearGmData(gmBackAddr + alignDumpDataLen, tailLen);
+    ClearGmData(dst + alignDumpDataLen, tailLen);
 }
 
 template <typename T>
@@ -555,6 +555,123 @@ __aicore__ inline void WriteRingBufTlvData(
     MemCopyGm2Gm(dst, reinterpret_cast<__gm__ const uint8_t*>(src.GetPhyAddr()), dumpSize * sizeof(T));
 }
 
+#ifndef ASCENDC_CPU_DEBUG
+template <typename T>
+__aicore__ inline void WriteSuperTensorData(
+    const GlobalTensor<T>& src, __gm__ uint8_t* dst, uint32_t alignDumpLen, uint32_t dumpSize)
+{
+    PipeBarrier<PIPE_ALL>();
+    MemCopyGm2Gm(dst, reinterpret_cast<__gm__ const uint8_t*>(src.GetPhyAddr()), dumpSize);
+}
+
+template <typename T>
+__aicore__ inline void WriteSuperTensorData(
+    const LocalTensor<T>& src, __gm__ uint8_t* dst, uint32_t alignDumpLen, uint32_t dumpSize)
+{
+    PipeBarrier<PIPE_ALL>();
+    Hardware position = CheckDumpTensorPosition(src);
+    if (position == Hardware::UB) {
+        DataCopyParams params = {1, static_cast<uint16_t>(alignDumpLen / ONE_BLK_SIZE), 0, 0};
+        DataCopyUB2GMImpl(dst, reinterpret_cast<__ubuf__ uint8_t*>(src.GetPhyAddr()), params);
+    } else if (position == Hardware::L1) {
+        SetDumpDataL12GM(dst, src, alignDumpLen);
+    } else if (position == Hardware::L0C) {
+        SetDumpDataL0C2GM(dst, src, alignDumpLen);
+    }
+    PipeBarrier<PIPE_ALL>();
+    dcci(reinterpret_cast<__gm__ uint64_t*>(dst), cache_line_t::ENTIRE_DATA_CACHE);
+}
+
+template <template <typename> class Tensor, typename T>
+__aicore__ inline void WriteSuperTensorHead(
+    const Tensor<T>& src, __gm__ __asc_aicore::DumpSuperTensorTlv* dumpTlv, Hardware position, uint32_t desc,
+    uint64_t tensorLength, uint32_t dumpSize, uint32_t alignDumpLen, const uint32_t* shape, uint32_t shapeDim)
+{
+    dumpTlv->type = static_cast<uint32_t>(__asc_aicore::DumpType::DUMP_SUPER_TENSOR);
+    dumpTlv->length = sizeof(__asc_aicore::DumpSuperTensorTlv) - sizeof(uint32_t[2]) + alignDumpLen;
+    dumpTlv->tensorAddr = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(src.GetPhyAddr()));
+    dumpTlv->dataType = static_cast<uint32_t>(GetTensorDataType<T>());
+    dumpTlv->desc = desc;
+    dumpTlv->bufferId = 0U;
+    dumpTlv->position = static_cast<uint16_t>(position);
+    dumpTlv->blockIdx = static_cast<uint16_t>(GetBlockIdxImpl());
+    dumpTlv->dim = shape != nullptr && shapeDim <= K_MAX_SHAPE_DIM ? shapeDim : 0U;
+    for (uint32_t i = 0; i < K_MAX_SHAPE_DIM; ++i) {
+        dumpTlv->shape[i] = dumpTlv->dim == 0U ? 0U : (i < dumpTlv->dim ? shape[i] : 1U);
+    }
+    dumpTlv->resv = 0U;
+    dumpTlv->tensorLength = tensorLength;
+    dumpTlv->tensorOffset = 0U;
+    dumpTlv->dumpSize = dumpSize;
+    dcci(reinterpret_cast<__gm__ uint64_t*>(dumpTlv), cache_line_t::ENTIRE_DATA_CACHE);
+}
+
+template <template <typename> class Tensor, typename T>
+__aicore__ inline void DumpSuperTensorRingBufImpl(
+    const Tensor<T>& src, uint32_t desc, uint64_t tensorLength, const uint32_t* shape, uint32_t shapeDim,
+    __gm__ BlockRingBufInfo* blockRingBufInfo)
+{
+    Hardware position = Hardware::GM;
+    if constexpr (IsSameType<Tensor<T>, LocalTensor<T>>::value) {
+        position = CheckDumpTensorPosition(src);
+    }
+    const bool needBackup = position == Hardware::L1 || position == Hardware::L0C;
+    const uint32_t alignment = position == Hardware::L0C ? 16U * 16U * sizeof(uint32_t) : ONE_BLK_SIZE;
+    // The legacy and common headers describe the same FIFO ABI. Keep the 2002 core lookup.
+    static_assert(sizeof(BlockRingBufInfo) == sizeof(__asc_aicore::DebugBlockHeadInfo));
+    static_assert(sizeof(RingBufReadInfo) == sizeof(__asc_aicore::DebugBlockReadInfo));
+    static_assert(sizeof(RingBufWriteInfo) == sizeof(__asc_aicore::DebugBlockWriteInfo));
+    auto* blockInfo = reinterpret_cast<__gm__ __asc_aicore::DebugBlockHeadInfo*>(blockRingBufInfo);
+    uint64_t tensorOffset = 0U;
+    while (tensorOffset < tensorLength) {
+        const bool isFirst = tensorOffset == 0U;
+        const uint32_t headerLen =
+            isFirst ? sizeof(__asc_aicore::DumpSuperTensorTlv) : sizeof(__asc_aicore::DumpSuperTensorBodyTlv);
+        if (blockInfo->ringBufLen <= headerLen) {
+            return;
+        }
+        uint32_t payloadCapacity = (blockInfo->ringBufLen - headerLen) / (needBackup ? 2U : 1U);
+        // L1/L0C reuse the UB scratch tensor; UB DMA blockLen is a uint16_t.
+        const uint32_t maxCopyLen = needBackup ? ONE_DUMP_BACKUP_SIZE : 0xFFFFU * ONE_BLK_SIZE;
+        if (position != Hardware::GM && payloadCapacity > maxCopyLen) {
+            payloadCapacity = maxCopyLen;
+        }
+        payloadCapacity = payloadCapacity / alignment * alignment;
+        if (payloadCapacity == 0U) {
+            return;
+        }
+        const uint64_t remaining = tensorLength - tensorOffset;
+        const uint32_t dumpSize = remaining > payloadCapacity ? payloadCapacity : static_cast<uint32_t>(remaining);
+        const uint32_t alignDumpLen = AlignUp(dumpSize, alignment);
+        const uint32_t tlvLen = headerLen + alignDumpLen;
+        const uint32_t reserveLen = tlvLen + (needBackup ? alignDumpLen : 0U);
+        if (!__asc_aicore::check_ringbuf_space(blockInfo, reserveLen)) {
+            return;
+        }
+        __gm__ uint8_t* tlvAddr = __asc_aicore::get_ringbuf_tlv_addr(blockInfo);
+        if (isFirst) {
+            auto* dumpTlv = reinterpret_cast<__gm__ __asc_aicore::DumpSuperTensorTlv*>(tlvAddr);
+            WriteSuperTensorHead(src, dumpTlv, position, desc, tensorLength, dumpSize, alignDumpLen, shape, shapeDim);
+        } else {
+            auto* dumpTlv = reinterpret_cast<__gm__ __asc_aicore::DumpSuperTensorBodyTlv*>(tlvAddr);
+            dumpTlv->type = static_cast<uint32_t>(__asc_aicore::DumpType::DUMP_SUPER_TENSOR_BODY);
+            dumpTlv->length = tlvLen - sizeof(uint32_t[2]);
+            dumpTlv->resv1 = 0U;
+            dumpTlv->resv2 = 0U;
+            dumpTlv->tensorLength = tensorLength;
+            dumpTlv->tensorOffset = tensorOffset;
+            dumpTlv->dumpSize = dumpSize;
+            dcci(reinterpret_cast<__gm__ uint64_t*>(dumpTlv), cache_line_t::ENTIRE_DATA_CACHE);
+        }
+        auto chunkSrc = src[static_cast<uint32_t>(tensorOffset / sizeof(T))];
+        WriteSuperTensorData(chunkSrc, tlvAddr + headerLen, alignDumpLen, dumpSize);
+        // Publish only the TLV, after the borrowed UB has been restored.
+        __asc_aicore::update_write_info(__asc_aicore::get_block_write_info(blockInfo), tlvLen);
+        tensorOffset += dumpSize;
+    }
+}
+#endif
+
 template <template <typename> class Tensor, typename T>
 __aicore__ inline void DumpTensorRingBufImpl(
     const Tensor<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape, const uint32_t shapeDim)
@@ -580,9 +697,19 @@ __aicore__ inline void DumpTensorRingBufImpl(
         return;
     }
     constexpr uint32_t blockSize = 16 * 16 * sizeof(uint32_t);
-    uint32_t alignDumpDataLen = AlignUp(dumpSize * sizeof(T), ONE_BLK_SIZE);
-    uint32_t tlvLen = sizeof(DumpTensorTlvInfoHead) + alignDumpDataLen;
-    uint32_t maxResvLen = sizeof(DumpTensorTlvInfoHead) + AlignUp(alignDumpDataLen, blockSize) * 2; // resv tmp space
+    const uint64_t tensorLength = static_cast<uint64_t>(dumpSize) * sizeof(T);
+    const uint64_t alignDumpLen64 = (tensorLength + ONE_BLK_SIZE - 1U) / ONE_BLK_SIZE * ONE_BLK_SIZE;
+    const uint64_t maxResvLen64 =
+        sizeof(DumpTensorTlvInfoHead) + (alignDumpLen64 + blockSize - 1U) / blockSize * blockSize * 2U;
+    if (maxResvLen64 > blockRingBufInfo->ringBufLen) {
+#ifndef ASCENDC_CPU_DEBUG
+        DumpSuperTensorRingBufImpl(src, desc, tensorLength, shape, shapeDim, blockRingBufInfo);
+#endif
+        return;
+    }
+    const uint32_t alignDumpDataLen = static_cast<uint32_t>(alignDumpLen64);
+    const uint32_t tlvLen = sizeof(DumpTensorTlvInfoHead) + alignDumpDataLen;
+    const uint32_t maxResvLen = static_cast<uint32_t>(maxResvLen64);
     if (!CheckAndWaitRingBufSpace(blockRingBufInfo, maxResvLen)) { // Reserved Backup Capacity
         return;
     }
