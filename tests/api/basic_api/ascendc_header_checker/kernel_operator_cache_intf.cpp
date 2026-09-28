@@ -37,11 +37,12 @@ extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid1()
 
 // // template <typename T, CacheLine entireType, DcciDst dcciDst>
 // // __aicore__ inline void DataCacheCleanAndInvalid(const LocalTensor<T>& dst);
-// extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid2() {
-//     AscendC::LocalTensor<uint64_t> dst;
-//     AscendC::DataCacheCleanAndInvalid<uint64_t, AscendC::CacheLine::SINGLE_CACHE_LINE,
-//     AscendC::DcciDst::CACHELINE_OUT>(dst);
-// }
+extern "C" __global__ __aicore__ void KernelTestDataCacheCleanAndInvalid2()
+{
+    AscendC::LocalTensor<uint64_t> dst;
+    AscendC::DataCacheCleanAndInvalid<uint64_t, AscendC::CacheLine::SINGLE_CACHE_LINE, AscendC::DcciDst::CACHELINE_OUT>(
+        dst);
+}
 #endif
 
 #if defined(__NPU_ARCH__) &&                                                                                 \

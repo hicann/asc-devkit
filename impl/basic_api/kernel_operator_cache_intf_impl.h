@@ -74,7 +74,7 @@ __aicore__ inline void DataCacheCleanAndInvalid(const GlobalTensor<T>& dst)
 template <typename T, CacheLine entireType, DcciDst dcciDst>
 __aicore__ inline void DataCacheCleanAndInvalid(const LocalTensor<T>& dst)
 {
-    DcciUBImpl<T, entireType, dcciDst>(const_cast<__ubuf__ T*>(dst.GetPhyAddr()));
+    DcciUBImpl<T, entireType, dcciDst>((__ubuf__ T*)dst.GetPhyAddr());
 }
 #endif
 
