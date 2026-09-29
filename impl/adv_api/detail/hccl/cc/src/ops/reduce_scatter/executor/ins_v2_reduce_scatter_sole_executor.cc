@@ -44,6 +44,7 @@ HcclResult InsV2ReduceScatterSoleExecutor<AlgTopoMatch, InsAlgTemplate>::CalcRes
     HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
     const AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resourceRequest)
 {
+    CHK_PTR_NULL(topoInfo);
     // 构建template
     std::shared_ptr<InsAlgTemplate> algTemplate =
         std::make_shared<InsAlgTemplate>(param, topoInfo->userRank, algHierarchyInfo.infos[0]);
@@ -115,6 +116,13 @@ HcclResult InsV2ReduceScatterSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchest
     // 构建template
     std::shared_ptr<InsAlgTemplate> algTemplate =
         std::make_shared<InsAlgTemplate>(param, resCtx.topoInfo.userRank, resCtx.algHierarchyInfo.infos[0]);
+#ifdef AICPU_COMPILE
+    // Host CalcRes and the KFC server use separate template instances.
+    // Restore the allocated lanes before the device template splits data and assigns threads.
+    if (param.engine == COMM_ENGINE_AICPU_TS || param.engine == COMM_ENGINE_AICPU) {
+        CHK_RET(algTemplate->SetchannelsPerRank(templateAlgRes.channels));
+    }
+#endif
     u32 templateScratchMultiplier =
         algTemplate->CalcScratchMultiple(tempAlgParams.buffInfo.inBuffType, tempAlgParams.buffInfo.outBuffType);
     // 计算最小传输大小
@@ -268,6 +276,12 @@ REGISTER_EXEC_V2(
     InsTempReduceScatterNHR);
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, InsReduceScatterNHR, AlgEngine::AICPU, "sole[nhr]", COND_NONE, FLAG_NONE, 0);
+REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterSoleNHRMultiLink, InsV2ReduceScatterSoleExecutor,
+    TopoMatch1D, InsTempReduceScatterNHR);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_REDUCE_SCATTER, AicpuReduceScatterSoleNHRMultiLink, AlgEngine::AICPU,
+    "sole[nhr.multi_channel]", COND_NONE, FLAG_NONE, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, InsReduceScatterAicpuReduceNHR, InsV2ReduceScatterSoleExecutor, TopoMatch1D,
     InsTempReduceScatterAicpuReduceNHR);

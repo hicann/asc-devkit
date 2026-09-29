@@ -17,7 +17,7 @@ namespace mc2_ops_hccl {
 
 // 算法选用白名单（过渡性机制）：仅约束外部名消歧，auto/裸名不受影响。
 // 本头文件须兼容设备侧 -std=c++14：不用 string_view / inline 变量（C++17）
-constexpr std::array<const char*, 37> ALG_WHITELIST = {
+constexpr std::array<const char*, 38> ALG_WHITELIST = {
     // AllGather
     "InsAllGatherMesh1D",
     "AicpuAllGatherSoleNHR",
@@ -32,6 +32,7 @@ constexpr std::array<const char*, 37> ALG_WHITELIST = {
     "InsReduceScatterMesh1D",
     "AicpuReduceScatterSoleMeshChunk",
     "InsReduceScatterNHR",
+    "AicpuReduceScatterSoleNHRMultiLink",
     "InsReduceScatterParallelMesh1DNHRPcie",
     "AicpuReduceScatterParallelMeshNHRUBX",
     "AicpuReduceScatterConcurMeshNHR",

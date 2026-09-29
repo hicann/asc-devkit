@@ -79,6 +79,14 @@ HcclResult InsTempReduceScatterNHR::KernelRun(
         HCCL_INFO("[InsTempReduceScatterNHR] sliceSize and tailSize are both 0, skip");
         return HCCL_SUCCESS;
     }
+    CHK_PRT_RET(
+        templateResource.channels.empty() || templateResource.threads.size() < GetThreadNum(),
+        HCCL_ERROR("[InsTempReduceScatterNHR] missing channels or threads"), HCCL_E_INTERNAL);
+    for (const auto& peer : templateResource.channels) {
+        CHK_PRT_RET(
+            peer.second.size() < channelsPerRank_,
+            HCCL_ERROR("[InsTempReduceScatterNHR] insufficient channels per peer"), HCCL_E_INTERNAL);
+    }
     tempAlgParams_ = tempAlgParams;
     channels_ = templateResource.channels;
     dataType_ = param.DataDes.dataType;

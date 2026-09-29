@@ -102,7 +102,19 @@ HcclResult CalcChannelRequestNhr(
     HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
     const std::vector<std::vector<u32>>& subcommInfo, std::vector<HcclChannelDesc>& channels)
 {
-    return CalcChannelRequestMesh1D(comm, param, topoInfo, subcommInfo, channels);
+    if (std::strcmp(param.algName, "AicpuReduceScatterSoleNHRMultiLink") != 0) {
+        return CalcChannelRequestMesh1D(comm, param, topoInfo, subcommInfo, channels);
+    }
+    // Model a CLOS peer with three links for the MC2 host resource-allocation test.
+    CHK_PTR_NULL(topoInfo);
+    CHK_PRT_RET(subcommInfo.empty(), HCCL_ERROR("[CalcChannelRequestNhr] empty subcommInfo"), HCCL_E_PARA);
+    channels.clear();
+    for (u32 rank : subcommInfo[COMM_LEVEL0]) {
+        if (rank != topoInfo->userRank) {
+            CHK_RET(AddChannelRequest(param, rank, channels, 3U));
+        }
+    }
+    return HCCL_SUCCESS;
 }
 
 HcclResult CalcChannelRequestNhrMultiJetty(

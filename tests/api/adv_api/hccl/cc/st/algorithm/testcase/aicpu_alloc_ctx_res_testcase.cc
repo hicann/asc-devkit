@@ -14,6 +14,7 @@
 #include "sim_world.h"
 #include "hccl_alloc_ctx_res.h"
 #include "op_common.h"
+#include "coll_alg_v2_exec_registry.h"
 
 namespace mc2_ops_hccl {
 extern bool g_rejectDirectAclrtMemcpy;
@@ -100,6 +101,17 @@ TEST_F(AicpuAllocCtxResTest, MalformedUnfoldContextDoesNotTriggerReallocation)
     auto resources = std::make_unique<AlgResourceCtxSerializable>();
     EXPECT_EQ(HcclGetThread(comm_, param, request, resources), HCCL_E_PARA);
     EXPECT_EQ(SaveUnfoldThreadInfo(comm_, param, 0U), HCCL_E_PARA);
+}
+
+TEST_F(AicpuAllocCtxResTest, ReduceScatterNamesAreRegisteredInMc2Client)
+{
+    // This target links the current mc2_client, rather than the algorithm-test registry.
+    auto& registry = CollAlgExecRegistryV2::Instance();
+    for (const char* algName : {"InsReduceScatterNHR", "AicpuReduceScatterSoleNHRMultiLink"}) {
+        EXPECT_TRUE(registry.IsRegistered(HCCL_CMD_REDUCE_SCATTER, algName));
+        EXPECT_NE(registry.GetAlgExec(HCCL_CMD_REDUCE_SCATTER, algName), nullptr);
+        EXPECT_FALSE(registry.IsRegistered(HCCL_CMD_ALLGATHER, algName));
+    }
 }
 
 TEST_F(AicpuAllocCtxResTest, CaptureSafeCopyCoversOpParamAndOpResCtx)

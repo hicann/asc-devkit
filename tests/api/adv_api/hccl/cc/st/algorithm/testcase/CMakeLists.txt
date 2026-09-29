@@ -158,7 +158,12 @@ add_subdirectory(mc2_ccu)
 
 # Isolate primitive interception from the existing simulator and production libraries.
 set(MESHCHUNK_TEST_TARGET ascendc_ut_adv_api_hccl_cc_meshchunk)
-add_executable(${MESHCHUNK_TEST_TARGET} main.cc reduce_scatter_meshchunk_testcase.cc)
+set(KFC_DECOUPLER_DIR ${HCCL_CC_SRC_DIR}/aicpu_kfc/framework/device/aicpu_kfc/decoupler)
+add_executable(${MESHCHUNK_TEST_TARGET} main.cc reduce_scatter_meshchunk_testcase.cc
+    ${KFC_DECOUPLER_DIR}/comm_kfc_open_kernel_adapter.cc
+    ${KFC_DECOUPLER_DIR}/comm_kfc_open_kernel_executor.cc
+    ${KFC_DECOUPLER_DIR}/cann_dispatch_bridge.cc)
+target_include_directories(${MESHCHUNK_TEST_TARGET} PRIVATE ${KFC_DECOUPLER_DIR})
 target_include_directories(${MESHCHUNK_TEST_TARGET} PRIVATE ${HCCL_CHECKER_COMMON_INCLUDE_LIST})
 target_compile_options(${MESHCHUNK_TEST_TARGET} PRIVATE -std=c++14 -Werror -O0 -g -D_GLIBCXX_USE_CXX11_ABI=0)
 target_compile_definitions(${MESHCHUNK_TEST_TARGET} PRIVATE UT_TEST AICPU_COMPILE)

@@ -21,6 +21,9 @@
 #include "ins_temp_reduce_scatter_nhr.h"
 #include "coll_alg_v2_exec_registry.h"
 #include "executor_v2_base.h"
+#include "reduce_scatter_auto_selector.h"
+#include "comm_kfc_open_kernel_adapter.h"
+#include "cann_host_bridge.h"
 
 using namespace mc2_ops_hccl;
 
@@ -414,9 +417,10 @@ struct Scenario {
                     signals[key] = false;
                 } else if (t.kind == Kind::THREAD_RECORD || t.kind == Kind::CHANNEL_RECORD) {
                     if (t.kind == Kind::CHANNEL_RECORD) {
-                        const auto from = (t.target - 1) / 64;
+                        const auto lane = (t.target - 1) / 4096;
+                        const auto from = ((t.target - 1) % 4096) / 64;
                         const auto to = (t.target - 1) % 64;
-                        key.first = 1 + to * 64 + from;
+                        key.first = 1 + lane * 4096 + to * 64 + from;
                     }
                     ASSERT_FALSE(signals[key]) << "Notify overwritten before wait";
                     signals[key] = true;
@@ -810,4 +814,233 @@ TEST_F(MeshChunkTest, NhrPcieReadReduceDoesNotUseWriteFusion)
     EXPECT_EQ(readReduceCalls, 1U);
     EXPECT_EQ(batchCalls, 0U);
     EXPECT_TRUE(descriptors.empty());
+}
+
+TEST_F(MeshChunkTest, NhrMigrationPreservesDefaultSelectionAndFallbacks)
+{
+    ReduceScatterAutoSelector selector;
+    const AutoSelectorBase& base = selector;
+    OpParam param{};
+    param.DataDes.dataType = HCCL_DATA_TYPE_FP32;
+    param.reduceType = HCCL_REDUCE_SUM;
+    TopoInfoWithNetLayerDetails topo{};
+    topo.level0Topo = Level0Shape::CLOS;
+    topo.userRankSize = 8;
+    topo.topoLevelNums = 1;
+    topo.netLayerDetails.localNetInsSizeOfLayer = {2, 4};
+    std::string name;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterNHR");
+    topo.topoLevelNums = 2;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterNHR");
+    topo.topLevelUboe = topo.level0Symmetric = topo.level1Symmetric = true;
+    topo.deviceNumPerModule = 8;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterNHR");
+    topo.topLevelUboe = false;
+    topo.Level1Nhr = true;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterNHR");
+    topo.Level1Nhr = false;
+    topo.netLayerDetails.localNetInsSizeOfLayer[0] = 1;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterNHR");
+    for (auto dtype : {HCCL_DATA_TYPE_INT64, HCCL_DATA_TYPE_UINT64, HCCL_DATA_TYPE_FP64}) {
+        param.DataDes.dataType = dtype;
+        ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+        EXPECT_EQ(name, "InsReduceScatterAicpuReduceNHR");
+    }
+    param.DataDes.dataType = HCCL_DATA_TYPE_FP32;
+    param.reduceType = HCCL_REDUCE_PROD;
+    ASSERT_EQ(base.SelectAicpuAlgo(&topo, param, {}, name), SelectorStatus::MATCH);
+    EXPECT_EQ(name, "InsReduceScatterAicpuReduceNHR");
+}
+
+namespace {
+struct NhrMultiLinkScenario : NhrScenario {
+    u32 links;
+    NhrMultiLinkScenario(u32 n, u64 c, u64 s, HcclDataType d, u32 l) : NhrScenario(n, c, s, d), links(l) {}
+    TemplateResource MultiLinkResources(u32 r)
+    {
+        auto res = NhrResources(r);
+        res.threads.resize(links);
+        for (u32 lane = 0; lane < links; ++lane) {
+            res.threads[lane] = 1 + r * 16 + lane;
+        }
+        for (auto& peer : res.channels) {
+            auto channel = peer.second[0];
+            peer.second.resize(links, channel);
+            for (u32 lane = 0; lane < links; ++lane) {
+                peer.second[lane].handle = 1 + lane * 4096 + r * 64 + peer.first;
+                peer.second[lane].portGroupSize = lane + 1; // Unequal bandwidth weights.
+            }
+        }
+        return res;
+    }
+    void ExpandMultiLink(
+        u64 loopCount, u32 repeat = 1, bool defaultStride = false,
+        const char* algName = "AicpuReduceScatterSoleNHRMultiLink")
+    {
+        for (u32 r = 0; r < ranks; ++r) {
+            auto param = Param();
+            std::strcpy(param.algName, algName);
+            // The host base parameter has no live device buffers/counts. The AIV/AIC message supplies them.
+            param.inputPtr = nullptr;
+            param.outputPtr = nullptr;
+            param.DataDes.count = 0;
+            param.DataDes.strideCount = 0;
+            std::vector<uint8_t> baseParam, runParam;
+            std::string commName;
+            ASSERT_EQ(
+                LoadOpenOpParamData(reinterpret_cast<uint64_t>(&param), sizeof(param), commName, baseParam),
+                HCCL_SUCCESS);
+            HcclApi::HcclMsg msg{};
+            HcclApi::HcclMsgExt ext{};
+            msg.commType.prepareType = AscendC::HcclCMDType::HCCL_CMD_REDUCE_SCATTER;
+            msg.opType = AscendC::HCCL_REDUCE_SUM;
+            msg.sendBuffer = reinterpret_cast<uint64_t>(In(r));
+            msg.recvBuffer = reinterpret_cast<uint64_t>(Out(r));
+            msg.dataCnt = count / repeat;
+            msg.strideCount = defaultStride ? 0 : stride;
+            msg.addMsg.v1Msg.hcclDataType = static_cast<AscendC::HcclDataType>(dtype);
+            msg.addMsg.v1Msg.repeatCnt = repeat;
+            msg.addMsg.v1Msg.ccOpTilingData = reinterpret_cast<uint64_t>(&param);
+            AlgResourceCtxSerializable ctx{};
+            ctx.topoInfo.userRank = r;
+            ctx.topoInfo.userRankSize = ranks;
+            ctx.topoInfo.level0Topo = Level0Shape::CLOS;
+            ctx.isHcommBatchTransferOnThreadSupported = true;
+            ctx.algHierarchyInfo.infos = {{rankList}};
+            auto res = MultiLinkResources(r);
+            ctx.threads = res.threads;
+            ctx.cclMem.addr = Tmp(r);
+            ctx.cclMem.size = loopCount * elementSize * ranks;
+            ctx.channels.resize(1);
+            for (const auto& peer : res.channels) {
+                ctx.channels[0].insert(ctx.channels[0].end(), peer.second.begin(), peer.second.end());
+            }
+            for (u32 rep = 0; rep < repeat; ++rep) {
+                ASSERT_EQ(
+                    FormatOpenOpParamDataFromMsg(baseParam, msg, ext, ranks, rep, nullptr, runParam), HCCL_SUCCESS);
+                const auto* run = reinterpret_cast<const OpParam*>(runParam.data());
+                EXPECT_STREQ(run->algName, algName);
+                EXPECT_EQ(run->engine, COMM_ENGINE_AICPU_TS);
+                EXPECT_EQ(run->DataDes.count, msg.dataCnt);
+                EXPECT_EQ(run->DataDes.strideCount, defaultStride ? count : stride);
+                EXPECT_EQ(run->inputPtr, In(r) + rep * msg.dataCnt * elementSize);
+                EXPECT_EQ(run->outputPtr, Out(r) + rep * msg.dataCnt * elementSize);
+                // This is the production entry called by CommKfcAicpuServer after consuming a request.
+                ASSERT_EQ(LaunchOpenOpParamData(runParam, ctx), HCCL_SUCCESS);
+            }
+        }
+    }
+};
+} // namespace
+
+TEST_F(MeshChunkTest, NhrMultiLinkKfcDispatchReducesWeightedLanesWithNonPowerOfTwoRanksAndChunkTails)
+{
+    for (auto dtype : {HCCL_DATA_TYPE_INT8, HCCL_DATA_TYPE_FP16, HCCL_DATA_TYPE_BFP16, HCCL_DATA_TYPE_FP32}) {
+        for (u32 ranks : {2U, 3U, 5U, 8U}) {
+            for (u32 links : {2U, 3U}) {
+                SCOPED_TRACE(::testing::Message() << "ranks=" << ranks << " links=" << links << " dtype=" << dtype);
+                tasks.clear();
+                descriptors.clear();
+                batchEnds.clear();
+                NhrMultiLinkScenario scenario(ranks, 301, 307, dtype, links);
+                const auto original = scenario.inputs;
+                // The real executor rounds loop bytes down to 128, with a short final loop.
+                scenario.ExpandMultiLink(128 / scenario.elementSize);
+                scenario.ExecuteAndCheck();
+                EXPECT_EQ(scenario.inputs, original);
+                EXPECT_GT(Count(Kind::THREAD_RECORD, 0), 0U);
+            }
+        }
+    }
+}
+
+TEST_F(MeshChunkTest, NhrMultiLinkHostOnlyCalculatesResources)
+{
+    NhrMultiLinkScenario scenario(3, 7, 10, HCCL_DATA_TYPE_FP32, 2);
+    auto param = scenario.Param();
+    std::strcpy(param.algName, "AicpuReduceScatterSoleNHRMultiLink");
+    param.inputPtr = param.outputPtr = nullptr;
+    param.DataDes.count = 0; // MC2 host tiling has no device count.
+    EXPECT_FALSE(UseCannBridge(param));
+    auto exec = CollAlgExecRegistryV2::Instance().GetAlgExec(param.opType, param.algName);
+    ASSERT_NE(exec, nullptr);
+    AlgHierarchyInfoForAllLevel hierarchy{};
+    hierarchy.infos = {{scenario.rankList}};
+    TopoInfoWithNetLayerDetails topo{};
+    topo.userRankSize = scenario.ranks;
+    topo.level0Topo = Level0Shape::CLOS;
+    AlgResourceRequest request{};
+    ASSERT_EQ(exec->CalcRes(nullptr, param, &topo, hierarchy, request), HCCL_SUCCESS);
+    ASSERT_EQ(request.channels.size(), 1U);
+    EXPECT_EQ(request.channels[0].size(), 6U); // Three simulated lanes for each of two peers.
+    EXPECT_EQ(request.slaveThreadNum, 2U);
+    EXPECT_EQ(request.notifyNumOnMainThread, 2U);
+    EXPECT_EQ(request.notifyNumPerThread, (std::vector<u32>{1, 1}));
+    EXPECT_TRUE(tasks.empty());
+    EXPECT_EQ(batchCalls, 0U);
+    EXPECT_EQ(copyCalls, 0U);
+}
+
+TEST_F(MeshChunkTest, NhrMultiLinkAllocatesOneThreadPerLaneAndSkipsZeroCount)
+{
+    NhrMultiLinkScenario scenario(3, 7, 10, HCCL_DATA_TYPE_FP32, 3);
+    auto param = scenario.Param();
+    InsTempReduceScatterNHR alg(param, 0, {scenario.rankList});
+    auto resources = scenario.MultiLinkResources(0);
+    ASSERT_EQ(alg.SetchannelsPerRank(resources.channels), HCCL_SUCCESS);
+    AlgResourceRequest request{};
+    ASSERT_EQ(alg.GetRes(request), HCCL_SUCCESS);
+    EXPECT_EQ(alg.GetThreadNum(), 3U);
+    EXPECT_EQ(request.slaveThreadNum, 2U);
+    EXPECT_EQ(request.notifyNumOnMainThread, 2U);
+    EXPECT_EQ(request.notifyNumPerThread, (std::vector<u32>{1, 1}));
+    EXPECT_EQ(alg.KernelRun(param, scenario.NhrData(0, 0, 0), {}), HCCL_SUCCESS);
+    EXPECT_TRUE(tasks.empty());
+    resources.threads.resize(1);
+    EXPECT_EQ(alg.KernelRun(param, scenario.NhrData(0, 0, 7), resources), HCCL_E_INTERNAL);
+    EXPECT_TRUE(tasks.empty());
+}
+
+TEST_F(MeshChunkTest, NhrMultiLinkHandlesEmptyWeightedLanesWithoutDeadlock)
+{
+    for (u64 count : {1U, 2U, 3U}) {
+        tasks.clear();
+        descriptors.clear();
+        batchEnds.clear();
+        NhrMultiLinkScenario scenario(3, count, count + 3, HCCL_DATA_TYPE_FP32, 3);
+        scenario.ExpandMultiLink(32);
+        scenario.ExecuteAndCheck();
+    }
+}
+
+TEST_F(MeshChunkTest, NhrMultiLinkKfcDispatchHonorsRepeatsAndExplicitOrDefaultRankStride)
+{
+    for (bool defaultStride : {false, true}) {
+        tasks.clear();
+        descriptors.clear();
+        batchEnds.clear();
+        NhrMultiLinkScenario scenario(5, 303, defaultStride ? 303 : 311, HCCL_DATA_TYPE_FP32, 3);
+        scenario.ExpandMultiLink(32, 3, defaultStride);
+        scenario.ExecuteAndCheck();
+    }
+}
+
+TEST_F(MeshChunkTest, NhrDefaultAndMigratedNamesResolveThroughKfcDispatch)
+{
+    for (const char* algName : {"InsReduceScatterNHR", "AicpuReduceScatterSoleNHRMultiLink"}) {
+        SCOPED_TRACE(algName);
+        EXPECT_TRUE(CollAlgExecRegistryV2::Instance().IsRegistered(HCCL_CMD_REDUCE_SCATTER, algName));
+        EXPECT_FALSE(CollAlgExecRegistryV2::Instance().IsRegistered(HCCL_CMD_ALLGATHER, algName));
+        tasks.clear();
+        descriptors.clear();
+        batchEnds.clear();
+        NhrMultiLinkScenario scenario(5, 303, 311, HCCL_DATA_TYPE_FP32, 3);
+        scenario.ExpandMultiLink(32, 3, false, algName);
+        scenario.ExecuteAndCheck();
+    }
 }
