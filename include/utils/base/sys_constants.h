@@ -85,6 +85,13 @@ constexpr uint64_t ASC_L0A_SIZE = 64 * 1024;
 constexpr uint64_t ASC_L0B_SIZE = 64 * 1024;
 constexpr uint64_t ASC_L0C_SIZE = 256 * 1024;
 constexpr uint64_t ASC_BT_SIZE = 4 * 1024;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
+constexpr uint64_t ASC_UB_SIZE = 248 * 1024 + __ASC_DISABLE_RESERVD_UBUF_SIZE + __ASC_DISABLE_VF_STACK_RESERVD_UBUF_SIZE;
+constexpr uint64_t ASC_L1_SIZE = 1024 * 1024;
+constexpr uint64_t ASC_L0A_SIZE = 64 * 1024;
+constexpr uint64_t ASC_L0B_SIZE = 64 * 1024;
+constexpr uint64_t ASC_L0C_SIZE = 256 * 1024;
+constexpr uint64_t ASC_BT_SIZE = 4 * 1024;
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
 constexpr uint64_t ASC_UB_SIZE = 128 * 1024;
 constexpr uint64_t ASC_L1_SIZE = 1536 * 1024;
