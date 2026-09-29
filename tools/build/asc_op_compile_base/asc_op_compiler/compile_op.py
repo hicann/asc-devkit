@@ -455,7 +455,7 @@ def gen_kernel_fun(
     else:
         source += _gen_set_mc2_ctx_param(opinfo)
         if _omit_super_kernel_workspace(tiling_info):
-            source += "    GM_ADDR usrWorkspace = nullptr;\n"
+            source += "    GM_ADDR usrWorkspace = reinterpret_cast<GM_ADDR>(0xFFFFFFFFFFFFFFFFULL);\n"
         else:
             source += "    AscendC::SetSysWorkspaceForce(workspace);\n"
             source += "    GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);\n"
