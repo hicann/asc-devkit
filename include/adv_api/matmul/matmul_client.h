@@ -2029,12 +2029,12 @@ private:
         TBuffAddr tbufOutTmp;
         tbufOutTmp.logicPos = (uint8_t)(TPosition::VECCALC);
         tbufOutTmp.bufferAddr = addr;
-#if ASCENDC_CPU_DEBUG
-        if (IsTypeOneOfV<T, fp4x2_e1m2_t, fp4x2_e2m1_t>) {
+        if constexpr (IsTypeOneOfV<T, fp4x2_e1m2_t, fp4x2_e2m1_t>) {
             tbufOutTmp.dataLen = size / AscendC::Impl::FP4_TWO;
         } else {
             tbufOutTmp.dataLen = size * sizeof(T);
         }
+#if ASCENDC_CPU_DEBUG
         tbufOutTmp.absAddr = reinterpret_cast<uint8_t*>(addr);
 #endif
         cLocal.SetAddr(tbufOutTmp);
