@@ -51,10 +51,6 @@ template <typename T>
 class GlobalTensor;
 } // namespace AscendC
 
-#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510)
-__BLOCK_LOCAL__ __inline__ uint32_t g_super_kernel_early_start_config;
-#endif
-
 // disabled on CPU mode for compatiablilty
 #if defined(ASCENDC_DEBUG) && !defined(ASCENDC_CPU_DEBUG)
 #ifdef SPLIT_CORE_CUBE

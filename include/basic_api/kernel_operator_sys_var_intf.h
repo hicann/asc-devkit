@@ -120,6 +120,30 @@ __aicore__ inline __ssbuf__ void* GetSsbufBaseAddr()
 }
 } // namespace AscendC
 
+#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+__BLOCK_LOCAL__ __inline__ uint32_t g_super_kernel_early_start_config;
+#endif
+
+namespace sk {
+// Transmit block-local variable information in an SK sub-kernel.
+struct SkSystemArgs {
+    uint16_t skBlockIdx;    // Sub-kernel block index.
+    uint16_t skNumBlocks;   // Sub-kernel block count.
+    uint16_t skTaskSyncCfg; // Early-start synchronization configuration.
+    uint8_t reserve[10];
+
+    inline __aicore__ uint16_t SkGetBlockIdx() { return skBlockIdx; }
+    inline __aicore__ uint16_t SkGetNumBlocks() { return skNumBlocks; }
+    inline __aicore__ uint16_t SkGetTaskSyncCfg() { return skTaskSyncCfg; }
+    inline __aicore__ void SkInit() const
+    {
+#if __NPU_ARCH__ == 2201 || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+        g_super_kernel_early_start_config = skTaskSyncCfg;
+#endif
+    }
+};
+} // namespace sk
+
 #include "../../impl/basic_api/kernel_operator_sys_var_intf_impl.h"
 #endif // ASCENDC_MODULE_OPERATOR_SYS_VAR_INTERFACE_H
 
