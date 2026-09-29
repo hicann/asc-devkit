@@ -37,22 +37,22 @@
 ## 函数原型
 
 ```cpp
-// 占位符形式
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_int4x22bfloat16(
     vector_bfloat16_t& dst,
     vector_int4x2_t src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> src_quarter_pos)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_bfloat16_t asc_int4x22bfloat16(
     vector_int4x2_t src,
     vector_bool mask,
     std::integral_constant<asc_position_quarter_mode, <quarter_pos>> src_quarter_pos)
 ```
 
-`<quarter_pos>`支持`ASC_DISPERSE_FIRST_QUARTER`、`ASC_DISPERSE_SECOND_QUARTER`、`ASC_DISPERSE_THIRD_QUARTER`和`ASC_DISPERSE_FOURTH_QUARTER`。
+**占位符说明如下：**
+- `<quarter_pos>`支持`ASC_DISPERSE_FIRST_QUARTER`、`ASC_DISPERSE_SECOND_QUARTER`、`ASC_DISPERSE_THIRD_QUARTER`和`ASC_DISPERSE_FOURTH_QUARTER`。
 
 ## 参数说明
 

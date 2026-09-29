@@ -39,9 +39,11 @@ Reg计算数据搬运接口。将源矢量数据寄存器`src1`中被掩码`sque
 ## 函数原型
 
 ```c
-__simd_callee__ inline void asc_squeeze_and_storeunalign(
-    __ubuf__ <dtype>* dst_addr, vector_<dtype>& dst, vector_store_unalign& src0,
-    vector_<dtype> src1, vector_bool squeeze_mask)
+__simd_callee__ inline void asc_squeeze_and_storeunalign(__ubuf__ <dtype>* dst_addr,
+                                                         vector_<dtype>& dst,
+                                                         vector_store_unalign& src0,
+                                                         vector_<dtype> src1,
+                                                         vector_bool squeeze_mask)
 ```
 
 ### dtype支持数据类型
@@ -51,9 +53,11 @@ __simd_callee__ inline void asc_squeeze_and_storeunalign(
 ### 函数原型典型示例
 
 ```c
-__simd_callee__ inline void asc_squeeze_and_storeunalign(
-    __ubuf__ float* dst_addr, vector_float& dst, vector_store_unalign& src0,
-    vector_float src1, vector_bool squeeze_mask)
+__simd_callee__ inline void asc_squeeze_and_storeunalign(__ubuf__ float* dst_addr,
+                                                         vector_float& dst,
+                                                         vector_store_unalign& src0,
+                                                         vector_float src1,
+                                                         vector_bool squeeze_mask)
 ```
 
 ## 参数说明

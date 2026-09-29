@@ -47,12 +47,12 @@ $$
 ```c
 // 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dtype> asc_pair_reduce_sum(vector_<dtype> src,
-                                                           vector_bool mask)
+                                                          vector_bool mask)
 
 // 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_pair_reduce_sum(vector_<dtype>& dst,
-                                                 vector_<dtype> src,
-                                                 vector_bool mask)
+                                                vector_<dtype> src,
+                                                vector_bool mask)
 ```
 
 ### dtype支持数据类型
@@ -64,8 +64,8 @@ __simd_callee__ inline void asc_pair_reduce_sum(vector_<dtype>& dst,
 ```c
 // 示例：对half矢量数据寄存器执行相邻元素相加
 __simd_callee__ inline void asc_pair_reduce_sum(vector_half& dst,
-                                                 vector_half src,
-                                                 vector_bool mask)
+                                                vector_half src,
+                                                vector_bool mask)
 ```
 
 ## 参数说明

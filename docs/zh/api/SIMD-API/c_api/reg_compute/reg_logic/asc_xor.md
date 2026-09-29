@@ -52,8 +52,8 @@ def asc_xor(dst, src0, src1, mask):
 ```c
 // 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_<dtype> asc_xor(vector_<dtype> src0,
-                                               vector_<dtype> src1,
-                                               vector_bool mask)
+                                              vector_<dtype> src1,
+                                              vector_bool mask)
 
 // 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_xor(vector_<dtype>& dst,
@@ -70,8 +70,8 @@ __simd_callee__ inline void asc_xor(vector_<dtype>& dst,
 ```c
 // 示例：对int8_t矢量数据寄存器执行按位异或，通过函数返回值返回结果。
 __simd_callee__ inline vector_int8_t asc_xor(vector_int8_t src0,
-                                              vector_int8_t src1,
-                                              vector_bool mask)
+                                             vector_int8_t src1,
+                                             vector_bool mask)
 
 // 示例：对int8_t矢量数据寄存器执行按位异或。
 __simd_callee__ inline void asc_xor(vector_int8_t& dst,

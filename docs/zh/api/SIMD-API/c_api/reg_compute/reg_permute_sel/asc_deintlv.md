@@ -126,7 +126,7 @@ __simd_callee__ inline void asc_deintlv_b32(vector_bool& dst0,
 以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
-bisheng example.asc -o main --npu-arch=dav-3510; ./main
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id10 -->
 

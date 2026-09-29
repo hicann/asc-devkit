@@ -34,7 +34,13 @@ __aicore__ inline uint64_t asc_get_overflow_status() { return get_overflow_statu
 
 __aicore__ inline int64_t asc_get_sub_block_id() { return get_subblockid(); }
 
-__aicore__ inline int64_t asc_get_sub_block_num() { return get_subblockdim(); }
+__aicore__ inline int64_t asc_get_sub_block_num()
+{
+    if ASC_IS_AIC {
+        return 1;
+    }
+    return get_subblockdim();
+}
 
 __aicore__ inline int64_t asc_get_system_cycle() { return get_sys_cnt(); }
 

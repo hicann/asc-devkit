@@ -50,7 +50,7 @@ def asc_float2int64_rn(dst, src, mask, src_pos):
 ## 函数原型
 
 ```c
-// 通过引用参数输出结果
+// 通过引用参数输出结果（占位符形式）
 __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_t& dst,
                                                                    vector_float src,
                                                                    vector_bool mask,
@@ -61,7 +61,7 @@ __simd_callee__ inline void asc_float2int64_<round_mode><sat_mode>(vector_int64_
                                                                    vector_bool mask,
                                                                    std::integral_constant<asc_position_mode, asc_position_mode::ODD> src_pos)
 
-// 通过函数返回值返回结果
+// 通过函数返回值返回结果（占位符形式）
 __simd_callee__ inline vector_int64_t asc_float2int64_<round_mode><sat_mode>(vector_float src,
                                                                    vector_bool mask,
                                                                    std::integral_constant<asc_position_mode, asc_position_mode::EVEN> src_pos)

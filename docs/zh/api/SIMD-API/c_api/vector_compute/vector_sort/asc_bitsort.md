@@ -34,11 +34,26 @@ Score和Index分别存储在src0和src1中，按Score进行排序（Score大的�
 
 ## 函数原型
 
-- 连续计算
-  ```cpp
-  __aicore__ inline void asc_bitsort(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ uint32_t* src1, int32_t repeat)
-  __aicore__ inline void asc_bitsort(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ uint32_t* src1, int32_t repeat)
-  ```
+```cpp
+// 占位符形式
+__aicore__ inline void asc_bitsort(__ubuf__ <dtype>* dst,
+                                   __ubuf__ <dtype>* src0,
+                                   __ubuf__ uint32_t* src1,
+                                   int32_t repeat)
+```
+
+### dtype支持数据类型
+
+`dtype`支持的数据类型为`half`、`float`。
+
+### 函数原型典型示例
+
+```cpp
+__aicore__ inline void asc_bitsort(__ubuf__ float* dst,
+                                   __ubuf__ float* src0,
+                                   __ubuf__ uint32_t* src1,
+                                   int32_t repeat)
+```
 
 ## 参数说明
 

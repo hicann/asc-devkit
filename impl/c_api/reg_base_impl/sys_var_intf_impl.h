@@ -26,7 +26,13 @@ constexpr int64_t SYSTEM_CLOCK_FREQ_MHZ = 1000;
 
 __aicore__ inline int64_t asc_get_program_counter() { return get_pc(); }
 
-__aicore__ inline int64_t asc_get_sub_block_num() { return get_subblockdim(); }
+__aicore__ inline int64_t asc_get_sub_block_num()
+{
+    if ASC_IS_AIC {
+        return 1;
+    }
+    return get_subblockdim();
+}
 
 __aicore__ inline int64_t asc_get_sub_block_id() { return get_subblockid(); }
 

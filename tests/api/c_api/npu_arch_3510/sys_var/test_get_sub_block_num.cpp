@@ -16,18 +16,29 @@
 class TestSysVarGetSubBlockNum : public testing::Test {
 protected:
     void SetUp() {}
-    void TearDown() {}
+    void TearDown() { g_coreType = C_API_AIV_TYPE; }
 };
 
 namespace {
 int64_t asc_get_sub_block_num_Stub() { return 2; }
 } // namespace
 
-TEST_F(TestSysVarGetSubBlockNum, get_sub_block_num_Succ)
+TEST_F(TestSysVarGetSubBlockNum, get_sub_block_num_AIV_Succ)
 {
+    g_coreType = C_API_AIV_TYPE;
     MOCKER_CPP(get_subblockdim, int64_t(void)).times(1).will(invoke(asc_get_sub_block_num_Stub));
 
     int64_t val = asc_get_sub_block_num();
     EXPECT_EQ(2, val);
+    GlobalMockObject::verify();
+}
+
+TEST_F(TestSysVarGetSubBlockNum, get_sub_block_num_AIC_Succ)
+{
+    g_coreType = C_API_AIC_TYPE;
+    MOCKER_CPP(get_subblockdim, int64_t(void)).times(0);
+
+    int64_t val = asc_get_sub_block_num();
+    EXPECT_EQ(1, val);
     GlobalMockObject::verify();
 }
