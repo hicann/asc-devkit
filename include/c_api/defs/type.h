@@ -17,7 +17,7 @@
 #define INCLUDE_C_API_DEFS_TYPE_H
 
 #include "c_api/defs/macro.h"
-#include "impl/utils/common_types.h"
+#include "utils/common_types.h"
 
 using vector_uint8_t = vector_u8;
 using vector_uint16_t = vector_u16;
