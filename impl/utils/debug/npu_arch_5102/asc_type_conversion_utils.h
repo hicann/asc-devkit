@@ -21,7 +21,7 @@ template <typename T>
 constexpr __aicore__ inline uint64_t get_scalar_bitcode_value(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         uint64_t output;
     } data;
@@ -34,7 +34,7 @@ template <typename T, typename U>
 constexpr __aicore__ inline U get_scalar_bitcode_value(T scalarValue)
 {
     union ScalarBitcode {
-        __aicore__ ScalarBitcode() {}
+        __callee__ ScalarBitcode() {}
         T input;
         U output;
     } data;
