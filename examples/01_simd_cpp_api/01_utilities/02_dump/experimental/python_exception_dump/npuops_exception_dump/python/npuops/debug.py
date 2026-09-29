@@ -217,9 +217,11 @@ def run_with_tensor_dump(func, *args, tag=None, dump_inputs=True, dump_outputs=T
     时机与语义：
     - 调用前：递归扫描 args/kwargs 中的全部 tensor（含 dict/tuple 嵌套），
       dump 为 input_ 前缀产物 —— 异常场景下输入现场在故障注入后、下发前已落盘；
-    - 正常返回后：dump 返回值中的全部 tensor 为 output_ 前缀产物；
-    - 调用抛异常：输入已落盘，输出不产出（kernel 未正常写回，输出数据不可得，
-      指针现场由异常回调的 _args.bin 提供），异常原样上抛。
+    - 正常返回后：dump 返回值中的全部 tensor 为 output_ 前缀产物
+      （kernel 异步检出场景的返回值数据不可信，以正常路径为基准）；
+    - 调用抛异常：输入已落盘，异常原样上抛；此时 kernel 未写回，输出数据不可得
+      （异步检出场景可能已落盘部分输出，其数据无效），输出指针现场由异常回调的
+      _args.bin 提供。
 
     单个 tensor dump 失败仅打印告警、不中断业务调用（保证故障复现流程不受影响）。
 

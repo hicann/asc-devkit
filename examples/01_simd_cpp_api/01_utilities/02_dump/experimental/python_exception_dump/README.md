@@ -40,9 +40,9 @@
 | 能力 | 开启方式 | 产物 |
 |---|---|---|
 | 异常自动dump（C++外挂库回调） | `enable_exception_dump(["kernel前缀"])` | `{kernel}_dev{id}_task{id}_{ts}_info.txt`（异常公共信息）+ 同前缀`_args.bin`（原始kernel args：各输入/输出tensor的device指针 + tiling，结合算子args布局可离线还原） |
-| 输入/输出tensor dump（纯Python，不依赖so、无需编译） | `run_with_tensor_dump(op, tag=...)`（调用边界自动）或`dump_tensors(..., stage=...)`（手动） | `input_{tag}_{name}_dev{idx}_{ts}.bin/.json`（数据 + 元信息；json中`data_ptr`与`_args.bin`对应指针一致，可交叉验证）；`output_*`同理，仅正常返回后产出 |
+| 输入/输出tensor dump（纯Python，不依赖so、无需编译） | `run_with_tensor_dump(op, tag=...)`（调用边界自动）或`dump_tensors(..., stage=...)`（手动） | `input_{tag}_{name}_dev{idx}_{ts}.bin/.json`（数据 + 元信息；json中`data_ptr`与`_args.bin`对应指针一致，可交叉验证）；`output_*`同理，在算子返回后产出；注意kernel异步异常场景（下发后才检出）返回值虽已落盘，但kernel未写回，数据不可信，输出基准以正常路径dump为准 |
 
-要点：kernel name前缀过滤（不匹配仅打一条skip日志）；重复开启幂等；回调注册接口按CANN版本运行期自适应（同一份so兼容新旧接口）；kernel异常时输出tensor未写回，`output_*`仅在算子正常返回后产出，输出指针现场由`_args.bin`提供。
+要点：kernel name前缀过滤（不匹配仅打一条skip日志）；重复开启幂等；回调注册接口按CANN版本运行期自适应（同一份so兼容新旧接口）；kernel异常时输出tensor未写回，异常路径产出的`output_*`数据不可信，输出基准以正常路径dump为准；输出指针现场由`_args.bin`提供。
 
 配置（环境变量）：
 
@@ -104,7 +104,7 @@
 |---|---|
 | 日志`kernel '...' not in enabled prefix list, skip dump` | 按日志实际kernel名修正前缀，或不传参（对全部kernel生效） |
 | dump目录没有`_args.bin` | `NPUOPS_DUMP_LEVEL`被设为0（仅公共信息），改回1 |
-| 异常调用后没有`output_*`产物 | 正常行为：异常时输出未写回；输出基准需在正常路径dump（见样例描述要点） |
+| 异常调用后`output_*`缺失或数据无效 | 正常行为：kernel异常时输出未写回（异步检出场景可能落盘部分输出，其数据无效）；输出基准需在正常路径dump（见样例描述要点） |
 | `_info.txt`中`args_dumped : no` / 日志`args unavailable` | CANN异常信息缺args，检查CANN版本 |
 | `FileNotFoundError: libnpuops_exception_dump.so not found` | 先编译：`cd npuops_exception_dump && bash build.sh`（so二进制不入库）；或设`NPUOPS_DUMP_LIB_DIR`指向so目录（仅异常dump需要so，tensor dump不受影响） |
 | 找不到`npuops`模块 | 将`npuops_exception_dump/python`加入`PYTHONPATH`（demo脚本已自动处理） |

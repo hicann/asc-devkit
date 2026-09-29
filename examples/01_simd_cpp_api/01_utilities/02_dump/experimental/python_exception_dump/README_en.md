@@ -40,9 +40,9 @@ This example provides two dump capabilities:
 | Capability | How to enable | Products |
 |---|---|---|
 | Exception auto-dump (C++ plugin-library callback) | `enable_exception_dump(["kernel_prefix"])` | `{kernel}_dev{id}_task{id}_{ts}_info.txt` (exception common info) + same-prefix `_args.bin` (raw kernel args: device pointers of each input/output tensor + tiling; reconstruct offline using the operator's args layout) |
-| Input/output tensor dump (pure Python, no .so, no build) | `run_with_tensor_dump(op, tag=...)` (automatic at call boundary) or `dump_tensors(..., stage=...)` (manual) | `input_{tag}_{name}_dev{idx}_{ts}.bin/.json` (data + meta; `data_ptr` in json matches the corresponding pointer in `_args.bin` for cross-checking); `output_*` likewise, produced only after a normal return |
+| Input/output tensor dump (pure Python, no .so, no build) | `run_with_tensor_dump(op, tag=...)` (automatic at call boundary) or `dump_tensors(..., stage=...)` (manual) | `input_{tag}_{name}_dev{idx}_{ts}.bin/.json` (data + meta; `data_ptr` in json matches the corresponding pointer in `_args.bin` for cross-checking); `output_*` likewise, produced after the operator returns; note that in async-exception scenarios (exception detected after launch) the returned tensors may be saved, but the kernel never wrote back — such data is unreliable; use the normal-path dump as the output baseline |
 
-Key points: kernel-name prefix filtering (a mismatch only logs one skip line); idempotent re-enabling; callback registration adapts to the CANN version at runtime (one .so works for both new and old interfaces); on a kernel exception the output tensor is never written back — `output_*` is produced only after the operator returns normally, while the output-pointer scene is provided by `_args.bin`.
+Key points: kernel-name prefix filtering (a mismatch only logs one skip line); idempotent re-enabling; callback registration adapts to the CANN version at runtime (one .so works for both new and old interfaces); on a kernel exception the output tensor is never written back — `output_*` produced on an exceptional path is unreliable; use the normal-path dump as the output baseline, while the output-pointer scene is provided by `_args.bin`.
 
 Configuration (environment variables):
 
@@ -104,7 +104,7 @@ Configuration (environment variables):
 |---|---|
 | Log `kernel '...' not in enabled prefix list, skip dump` | Correct the prefix per the actual kernel name in logs, or pass nothing (all kernels) |
 | No `_args.bin` in the dump directory | `NPUOPS_DUMP_LEVEL` was set to 0 (common info only); set it back to 1 |
-| No `output_*` after an exceptional call | Expected: outputs are not written back on exception; dump output baselines on the normal path (see the key points in Example Description) |
+| `output_*` missing or invalid after an exceptional call | Expected: outputs are not written back on exception (in async-detected cases some outputs may still be saved, but the data is unreliable); dump output baselines on the normal path (see the key points in Example Description) |
 | `args_dumped : no` in `_info.txt` / log `args unavailable` | CANN exception info lacks args; check the CANN version |
 | `FileNotFoundError: libnpuops_exception_dump.so not found` | Build first: `cd npuops_exception_dump && bash build.sh` (the .so binary is not committed); or set `NPUOPS_DUMP_LIB_DIR` to its directory (only exception dump needs the .so; tensor dump is unaffected) |
 | `npuops` module not found | Add `npuops_exception_dump/python` to `PYTHONPATH` (the demo script handles this automatically) |

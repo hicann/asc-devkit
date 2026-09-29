@@ -27,7 +27,7 @@ import os
 import sys
 import glob
 
-# dump 配置
+# dump 配置（环境变量说明见 README "配置（环境变量）"）
 DUMP_DIR = os.path.abspath("./exception_dump_ifa")
 os.environ["NPUOPS_DUMP_DIR"] = DUMP_DIR
 os.environ["NPUOPS_DUMP_LEVEL"] = "1"  # 1 = 公共信息 + args
