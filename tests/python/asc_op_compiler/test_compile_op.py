@@ -2046,6 +2046,47 @@ class TestCompileOp(unittest.TestCase):
         )
         self.assertEqual(idx, 5)
 
+    def test_super_kernel_zero_workspace_wrapper(self):
+        op_info = OpInfo(
+            kernel_name="TestKernel", op_type="TestOp", inputs=[], outputs=[], origin_inputs=[], mc2_ctx=[]
+        )
+        compile_info = CompileInfo()
+        compile_info.src_file = "test.cpp"
+        compile_info.super_kernel_info = {"sp_options": {}}
+        compile_info.tiling_key_list = []
+        tiling_info = TilingInfo()
+        tiling_info.static_shape_flag = True
+        global_var_storage.set_variable("ascendc_enable_super_kernel", True)
+        DFXSectionGenerator().dfx_info_reset(op_info)
+
+        with (
+            TemporaryDirectory() as temp_dir,
+            mock.patch.object(CommonUtility, "is_c310", return_value=True),
+            mock.patch.object(CommonUtility, "is_v100", return_value=False),
+            mock.patch.object(CommonUtility, "is_v200", return_value=False),
+            mock.patch.object(CommonUtility, "is_support_workspace_offset", return_value=True),
+            mock.patch.object(compile_op_module, "get_v220_kernel_type_mix_flag", return_value=(False, False)),
+            mock.patch.object(compile_op_module, "get_context", return_value=None),
+            mock.patch.object(compile_op_module, "get_current_build_config", return_value=False),
+        ):
+            compile_info.gen_kernel_func_file = os.path.join(temp_dir, "wrapper.cpp")
+            for workspace_size in (0, 1024):
+                with self.subTest(workspace_size=workspace_size):
+                    tiling_info.raw_run_info = {"workspaces": [workspace_size]}
+                    gen_kernel_fun(compile_info, "test", op_info, tiling_info, CompileOptionTuple([], []))
+                    with open(compile_info.gen_kernel_func_file, encoding="utf-8") as source_file:
+                        source = source_file.read()
+                    if workspace_size == 0:
+                        self.assertIn(
+                            "GM_ADDR usrWorkspace = reinterpret_cast<GM_ADDR>(0xFFFFFFFFFFFFFFFFULL);", source
+                        )
+                        self.assertNotIn("GM_ADDR workspace = param_base", source)
+                        self.assertNotIn("SetSysWorkspaceForce", source)
+                    else:
+                        self.assertIn("GM_ADDR workspace = param_base[args_offset++];", source)
+                        self.assertIn("AscendC::SetSysWorkspaceForce(workspace);", source)
+                        self.assertIn("GM_ADDR usrWorkspace = AscendC::GetUserWorkspace(workspace);", source)
+
     def test_compile_ascendc_cce(self):
         SetCurrentSocInfo("Ascend310P1")
         cce_file = os.path.join(TOP_PATH, "tests/python/asc_op_compiler/stub_kernels/test.cpp")
