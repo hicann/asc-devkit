@@ -30,7 +30,7 @@ constexpr std::array<const char*, 37> ALG_WHITELIST = {
     "AicpuAllGatherPipeLinePcie",
     // ReduceScatter
     "InsReduceScatterMesh1D",
-    "InsReduceScatterMesh1DMeshChunk",
+    "AicpuReduceScatterSoleMeshChunk",
     "InsReduceScatterNHR",
     "InsReduceScatterParallelMesh1DNHRPcie",
     "AicpuReduceScatterParallelMeshNHRUBX",

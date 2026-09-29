@@ -41,7 +41,12 @@ u64 InsTempReduceScatterMesh1DMeshChunk::CalcScratchMultiple(BufferType inBuffTy
 {
     (void)inBuffType;
     (void)outBuffType;
-    u64 scratchMultiple = templateRankSize_ - 1;
+    // 运行时实际峰值占用 = 1 份单趟段（原位累加）：PreCopy/txDst/rxDst 三类访问
+    // 的偏移均落在 [hcclBuffBaseOff, hcclBuffBaseOff + 单趟段) 内，无跨段写入。
+    // 原声明 (N-1) 为算法族从非 chunk Mesh（真需 N 份槽位）继承的超额预留，
+    // 将 8P@1G 从 3 趟放大到 3 趟（握手次数 147→49）。此处修正为实际占用 1 份。
+    // 注意：与 hccl 母本形成差异（母本仍声明 N-1）
+    u64 scratchMultiple = 1;
     return scratchMultiple;
 }
 
@@ -144,6 +149,16 @@ HcclResult InsTempReduceScatterMesh1DMeshChunk::PrepareSlicesAndValidate(
             !checkSpan(params.buffInfo.outputPtr, params.buffInfo.outBuffBaseOff, 0, 0, processSize_) ||
             !checkSpan(params.buffInfo.hcclBuff.addr, params.buffInfo.hcclBuffBaseOff, 0, 0, processSize_),
         HCCL_ERROR("MeshChunk buffer offset overflow"), HCCL_E_PARA);
+    // 容量校验：单趟段必须完整落在 hcclBuff 内（系数修正后段可触到 buf 顶端，
+    // 此处是 scratch 越界的唯一运行期防线——原 checkSpan 只查地址算术溢出，不查容量）。
+    CHK_PRT_RET(
+        params.buffInfo.hcclBuff.size < params.buffInfo.hcclBuffBaseOff + processSize_,
+        HCCL_ERROR(
+            "MeshChunk trip segment [%llu] exceeds scratch capacity [%llu] at offset [%llu]",
+            static_cast<unsigned long long>(processSize_),
+            static_cast<unsigned long long>(params.buffInfo.hcclBuff.size),
+            static_cast<unsigned long long>(params.buffInfo.hcclBuffBaseOff)),
+        HCCL_E_PARA);
     const u64 lastInputOffset = params.buffInfo.inBuffBaseOff + chunkNum * params.inputSliceStride;
     CHK_PRT_RET(
         !checkSpan(

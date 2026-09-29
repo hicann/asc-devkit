@@ -223,7 +223,7 @@ TEST_F(Mc2AicpuTaskCacheTest, ComputesAllGatherAndReduceScatterStridedSpans)
 TEST_F(Mc2AicpuTaskCacheTest, MeshChunkStrideChangesShapeButNewUserAddressesRemainRelocatable)
 {
     auto inputs = MakeTaskCacheInputs(HCCL_CMD_REDUCE_SCATTER);
-    std::strncpy(inputs.param.algName, "InsReduceScatterMesh1DMeshChunk", sizeof(inputs.param.algName) - 1U);
+    std::strncpy(inputs.param.algName, "AicpuReduceScatterSoleMeshChunk", sizeof(inputs.param.algName) - 1U);
     Mc2AicpuTaskCachePlan first, moved, strided;
     ASSERT_EQ(BuildMc2AicpuTaskCachePlan(inputs.param, inputs.resCtx, first), HCCL_SUCCESS);
     ASSERT_TRUE(first.enabled);
