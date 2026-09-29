@@ -282,6 +282,9 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
             static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherParallelMeshNHRMultiLink)) {
             ccuUsedXnNum_ = KFC_PARALLEL_AG_STORAGE_NUM;
             CcuPrepareForParallelAllGatherM2M(&handleParamGM_[handleId]);
+        } else if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleNHR)) {
+            ccuUsedXnNum_ = KFC_AG_SOLE_NHR_PARAM_NUM;
+            CcuPrepareForAllGatherSoleNhrM2M(&handleParamGM_[handleId]);
         } else if (GetKfcMissionNum(handleId) == KFC_MAX_MISSION_NUM) {
             ccuUsedXnNum_ = KFC_CONCURRENT_AG_PARAM_NUM;
             CcuPrepareForConcurrentAllGatherM2M(&handleParamGM_[handleId]);

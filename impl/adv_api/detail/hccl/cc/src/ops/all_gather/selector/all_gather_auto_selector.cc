@@ -16,6 +16,15 @@ constexpr u64 AG_2D_SMALL_DATA_SIZE = 1024 * 1024;
 constexpr u32 MAX_RANK_NUM_FOR_CONCURRENT_ALGO = 4;
 constexpr u32 PCIE_BASIC_RS_MAX_DATA_SIZE = 4 * 1024 * 1024;
 constexpr u64 OMNI_UBX_AG_DATA_SIZE = 16 * 1024 * 1024;
+// 与 hccl all_gather_auto_selector.cc 的常量取值一致（CcuSchedAllGatherSoleNHR 选择链路）。
+constexpr u32 TOPO_LEVEL_NUM_2 = 2;
+constexpr u32 TOPO_LEVEL_NUM_3 = 3;
+constexpr u32 MAX_RANK_NUM_FOR_SEQ_ALGO = 8;
+constexpr u64 AG_CCU_CLOS_SMALL_DATA_SIZE = 1 * 1024 * 1024;
+constexpr u64 AG_FLATTEN_MAX_DATA_SIZE = 128 * 1024;
+constexpr u64 AG_CCU_SEQUENCE_MAX_DATA_SIZE = 4 * 1024 * 1024;
+constexpr u32 AG_CCU_MAX_RANK_SIZE = 64;
+constexpr u32 AG_CCU_RANK_SIZE = 32;
 
 SelectorStatus AllGatherAutoSelector::SelectCcuMsAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam,
@@ -95,6 +104,18 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleLevel0Algo(
     if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS) {
         return SelectCcuScheduleUBXAlgo(topoInfo, selectAlgName, dataSize);
     }
+    // 与 hccl 一致：单层 CLOS 选择 SoleNHR（pcie mix 不支持 ccu schedule）。
+    if (topoInfo->level0Topo == Level0Shape::CLOS) {
+        if (topoInfo->level0PcieMix) {
+            HCCL_WARNING("[AllGatherAutoSelector] pcie mixed topo is not supported yet for ccu schedule mode.");
+            return SelectorStatus::NOT_MATCH;
+        }
+        selectAlgName = "CcuSchedAllGatherSoleNHR";
+        HCCL_INFO(
+            "[KFC][AllGather][Select] algorithm[%s], dataSize[%llu], level0Topo[%u]", selectAlgName.c_str(),
+            static_cast<unsigned long long>(dataSize), static_cast<uint32_t>(topoInfo->level0Topo));
+        return SelectorStatus::MATCH;
+    }
     // Temporary KFC convergence: route only regular Mesh1D to the KFC Mem2Mem implementation.
     if (topoInfo->level0Topo != Level0Shape::MESH_1D || topoInfo->level0MeshType != Level0MeshType::SINGLE_DIE) {
         HCCL_DEBUG(
@@ -120,16 +141,99 @@ SelectorStatus AllGatherAutoSelector::SelectCcuScheduleAlgo(
     (void)configAlgMap;
     u64 perDataSize = DATATYPE_SIZE_TABLE[opParam.DataDes.dataType];
     u64 dataSize = opParam.DataDes.count * perDataSize;
-    if (IsInputOutputOverlap(opParam)) {
-        HCCL_WARNING("[Algo][AllGatherAutoSelector] ccu schedule does not support inplace allgather.");
+    // 与 hccl 一致的前置约束。
+    if (topoInfo->level2UbRtp) {
+        HCCL_INFO(
+            "[AllGatherAutoSelector][%s] ccu schedule is not supported with level2UbRtp, reset to default.", __func__);
         return SelectorStatus::NOT_MATCH;
     }
-    if (topoInfo->topoLevelNums > 1) {
-        // Temporary KFC convergence: multilevel NHR/parallel CCU variants are not selected until they are
-        // re-registered.
-        HCCL_DEBUG("[AllGatherAutoSelector] multi-level topo is not supported for ccu schedule mode.");
+    if (topoInfo->topoLevelNums >= TOPO_LEVEL_NUM_3) {
+        HCCL_INFO(
+            "[AllGatherAutoSelector][%s] ccu schedule is not supported when topoLevelNums >= 3(levelNum[%u]), reset "
+            "to default.",
+            __func__, topoInfo->topoLevelNums);
         return SelectorStatus::NOT_MATCH;
+    }
+    u32 ccuMaxSize = AG_CCU_MAX_RANK_SIZE;
+    u32 ccuSize = AG_CCU_RANK_SIZE;
+    u32 frameNum = AutoSelectorBase::CalcFrameNum(topoInfo);
+    if (topoInfo->topoLevelNums > 1) {
+        if (topoInfo->level0Topo == Level0Shape::MESH_1D) {
+            // 与 hccl 一致：ccu_sched 不支持 inplace allgather。
+            CHK_PRT_RET(
+                IsInputOutputOverlap(opParam) == true,
+                HCCL_WARNING("[Algo][AllGatherAutoSelector] ccu_sched does not support inplace allgather."),
+                SelectorStatus::NOT_MATCH);
+            if (topoInfo->userRankSize > ccuMaxSize) {
+                HCCL_INFO("[AllGatherAutoSelector] ranksize > ccuMaxSize, fallback to aicpu mode.");
+                return SelectorStatus::NOT_MATCH;
+            }
+            // Level1Nhr 已在 CalcTopoShape 中设置（GCD==1 时为 true）
+            if (topoInfo->Level1Nhr) {
+                selectAlgName = "CcuSchedAllGatherSoleNHR";
+                HCCL_INFO("[AllGatherAutoSelector] Level1Nhr=true, select [%s]", selectAlgName.c_str());
+                return SelectorStatus::MATCH;
+            }
+            if (topoInfo->is2DieFullMesh) {
+                HCCL_DEBUG("[AllGatherAutoSelector] 2DieFullMesh is not supported yet for ccu schedule mode.");
+                return SelectorStatus::NOT_MATCH;
+            }
+            if (topoInfo->netLayerDetails.localNetInsSizeOfLayer[0] == 1) {
+                selectAlgName = "CcuSchedAllGatherSoleNHR";
+                return SelectorStatus::MATCH;
+            }
+            if (topoInfo->userRankSize <= MAX_RANK_NUM_FOR_SEQ_ALGO) {
+                if (dataSize <= AG_CCU_CLOS_SMALL_DATA_SIZE) {
+                    selectAlgName = "CcuSchedAllGatherSoleMesh";
+                } else if (frameNum <= MAX_FRAME_NUM_FOR_CCU_ALGO) {
+                    // hccl 选 CcuSchedAllGatherParallelMeshNHR，asc-devkit 未迁移，回退默认而非误选。
+                    HCCL_DEBUG("[AllGatherAutoSelector] ParallelMeshNHR is not present in asc-devkit yet, reset to "
+                               "default.");
+                    return SelectorStatus::NOT_MATCH;
+                } else {
+                    // 框数超过 kernel repeatNum 上限，hccl fallback 到 SoleNHR。
+                    HCCL_INFO(
+                        "[AllGatherAutoSelector] frameNum[%u] > %u, fallback to NHR1DMem2Mem.", frameNum,
+                        MAX_FRAME_NUM_FOR_CCU_ALGO);
+                    selectAlgName = "CcuSchedAllGatherSoleNHR";
+                }
+                return SelectorStatus::MATCH;
+            }
+            if (dataSize < AG_FLATTEN_MAX_DATA_SIZE && topoInfo->userRankSize <= ccuSize) {
+                selectAlgName = "CcuSchedAllGatherSoleMesh";
+                return SelectorStatus::MATCH;
+            }
+            if (dataSize < AG_CCU_SEQUENCE_MAX_DATA_SIZE && frameNum <= MAX_FRAME_NUM_FOR_CCU_ALGO) {
+                // hccl 选 CcuSchedAllGatherSequenceMeshMesh，asc-devkit 未迁移，回退默认而非误选。
+                HCCL_DEBUG(
+                    "[AllGatherAutoSelector] SequenceMeshMesh is not present in asc-devkit yet, reset to default.");
+                return SelectorStatus::NOT_MATCH;
+            }
+            if (frameNum <= MAX_FRAME_NUM_FOR_CCU_ALGO) {
+                // hccl 选 CcuSchedAllGatherParallelMeshNHR，asc-devkit 未迁移，回退默认而非误选。
+                HCCL_DEBUG(
+                    "[AllGatherAutoSelector] ParallelMeshNHR is not present in asc-devkit yet, reset to default.");
+                return SelectorStatus::NOT_MATCH;
+            }
+            // 框数超过 kernel repeatNum 上限，hccl fallback 到 SoleNHR。
+            HCCL_INFO(
+                "[AllGatherAutoSelector] frameNum[%u] > %u, fallback to NHR1DMem2Mem.", frameNum,
+                MAX_FRAME_NUM_FOR_CCU_ALGO);
+            selectAlgName = "CcuSchedAllGatherSoleNHR";
+            return SelectorStatus::MATCH;
+        } else if (topoInfo->level0Topo == Level0Shape::CLOS && (!IsInputOutputOverlap(opParam))) {
+            selectAlgName = "CcuSchedAllGatherSoleNHR";
+        } else {
+            HCCL_DEBUG(
+                "[AllGatherAutoSelector] level0Topo[%d] is not supported yet for ccu schedule mode.",
+                topoInfo->level0Topo);
+            return SelectorStatus::NOT_MATCH;
+        }
     } else {
+        CHK_PRT_RET(
+            IsInputOutputOverlap(opParam) == true,
+            HCCL_WARNING("[Algo][AllGatherAutoSelector] ccu_sched does not support inplace allgather."),
+            SelectorStatus::NOT_MATCH);
         return SelectCcuScheduleLevel0Algo(topoInfo, selectAlgName, dataSize);
     }
     HCCL_DEBUG("[AllGatherAutoSelector][%s] Algo match[%s]", __func__, selectAlgName.c_str());

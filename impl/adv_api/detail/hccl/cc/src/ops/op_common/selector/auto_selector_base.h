@@ -25,6 +25,7 @@ constexpr u32 CCU_MS_MODE = 2;
 constexpr double DEFAULT_RANK_SIZE = 8.0;
 constexpr u64 RS_2D_SMALL_DATA_SIZE = 1024 * 1024;
 constexpr u64 RS_M2M_1D_MAX_DATA_SIZE = 8 * 1024 * 1024;
+constexpr u32 MAX_FRAME_NUM_FOR_CCU_ALGO = 16; // 与 hccl auto_selector_base.h 取值一致
 
 enum class SelectorStatus { MATCH, NOT_MATCH };
 
@@ -100,6 +101,9 @@ public:
     HcclResult CheckClosNumMultipleOfMeshNum(const TopoInfoWithNetLayerDetails* topoInfo, bool& isMultiple) const;
     bool IsTwoLevelNetLayer(const TopoInfoWithNetLayerDetails* topoInfo) const;
     bool IsInputOutputOverlap(const OpParam& opParam) const;
+    // 与 hccl AutoSelectorBase::CalcFrameNum 逐行一致（static）：按 level0 实例数 GCD 推导框数，
+    // 用于 Parallel/Sequence 类 CCU 算法的 frameNum 上限判断与 SoleNHR fallback。
+    static u32 CalcFrameNum(const TopoInfoWithNetLayerDetails* topoInfo);
 
 private:
     bool ProcessAivConfig(

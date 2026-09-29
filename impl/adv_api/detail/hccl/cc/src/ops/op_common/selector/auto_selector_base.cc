@@ -376,6 +376,31 @@ bool AutoSelectorBase::IsTwoLevelNetLayer(const TopoInfoWithNetLayerDetails* top
     return true;
 }
 
+// 与 hccl AutoSelectorBase::CalcFrameNum 逐行一致：level0 实例数 GCD 推导框数。
+u32 AutoSelectorBase::CalcFrameNum(const TopoInfoWithNetLayerDetails* topoInfo)
+{
+    u32 frameNum = 0;
+    if (topoInfo->topoLevelNums <= 1 || topoInfo->netLayerDetails.instSizeListOfLayer[0].empty()) {
+        return frameNum;
+    }
+    u32 gcd = topoInfo->netLayerDetails.instSizeListOfLayer[0][0];
+    for (size_t i = 1; i < topoInfo->netLayerDetails.instSizeListOfLayer[0].size(); ++i) {
+        u32 a = gcd;
+        u32 b = topoInfo->netLayerDetails.instSizeListOfLayer[0][i];
+        while (b != 0) {
+            u32 r = a % b;
+            a = b;
+            b = r;
+        }
+        gcd = a;
+        if (gcd == 1) {
+            break;
+        }
+    }
+    frameNum = (gcd > 0) ? topoInfo->userRankSize / gcd : 0;
+    return frameNum;
+}
+
 bool AutoSelectorBase::IsInputOutputOverlap(const OpParam& opParam) const
 {
     CHK_PRT_RET(

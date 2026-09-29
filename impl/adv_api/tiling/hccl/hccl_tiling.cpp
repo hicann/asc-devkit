@@ -36,6 +36,7 @@ constexpr uint8_t DEV_TYPE_A6 = 8U;
 
 static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedAllGatherSoleMesh",
+    "CcuSchedAllGatherSoleNHR",
     "CcuSchedAllGatherConcurMeshNHRMultiLink",
     "CcuSchedAllGatherParallelMeshNHRMultiLink",
     "CcuSchedReduceScatterSoleMesh",

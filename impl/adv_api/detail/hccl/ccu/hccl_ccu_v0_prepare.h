@@ -26,6 +26,7 @@ static_assert(
     KFC_RS_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR MultiLink ReduceScatter parameters exceed XN capacity");
 static_assert(
     KFC_RS_SOLE_NHR_2DIE_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR 2Die ReduceScatter parameters exceed XN capacity");
+static_assert(KFC_AG_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "SoleNHR AllGather parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllToAll parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_RS_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_PARALLEL_AG_STORAGE_NUM <= CCU_USED_XN_NUM, "Parallel AllGather parameters exceed XN capacity");
@@ -298,6 +299,44 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
          xnData_[KFC_CONCURRENT_AG_MESH_OUTPUT] + xnData_[KFC_CONCURRENT_AG_MESH_OUTPUT_OFFSET]) ?
             1U :
             0U;
+}
+
+// SoleNHR（CcuSchedAllGatherSoleNHR）的 AIV prepare：
+// 将 hccl CcuTempAllGatherNHR1DMem2Mem::PrepareLaunchArgs 的 host 侧参数计算搬到设备侧。
+// KFC 单 mission 下固定单 die 语义：die0Size/die0LastSize 即全量分片（hccl dieNum=1 口径，
+// die1 参数省略，见 docs/migration/ccu-sched-allgather-sole-nhr-migration.md 4.2 节）。
+// 布局见 KfcAllGatherSoleNhrParamIndex，与 KFC dispatch、kernel 形参逐槽一致。
+// TopoMatch1D 生成全域单层（sub-rank == 全局 rank），ccuParam_.rankId 口径与 kernel rankId 一致。
+template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllGatherSoleNhrM2M(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t sliceSize = commParam->count * dataTypeSize; // 每 rank 输入份
+    const uint64_t repeatOffset = sliceSize * ccuParam_.repeatIndex;
+    // sole executor：inputSliceStride=0（与 InsV2AllGatherSoleExecutor::OrchestrateLoop 口径一致）
+    const uint64_t outputSliceStride = commParam->strideCount == 0U ? sliceSize : commParam->strideCount * dataTypeSize;
+    const uint64_t inputBase = reinterpret_cast<uint64_t>(commParam->sendBuf) + repeatOffset;
+    const uint64_t outputBase = reinterpret_cast<uint64_t>(commParam->recvBuf) + repeatOffset;
+
+    xnData_[KFC_AG_SOLE_NHR_OP_ID] = GetOpId(commParam);
+    xnData_[KFC_AG_SOLE_NHR_INPUT] = inputBase;
+    xnData_[KFC_AG_SOLE_NHR_OUTPUT] = outputBase;
+    xnData_[KFC_AG_SOLE_NHR_DIE0_SIZE] = sliceSize;
+    xnData_[KFC_AG_SOLE_NHR_DIE0_LAST_SIZE] = sliceSize;
+    xnData_[KFC_AG_SOLE_NHR_REPEAT_NUM_INV] = UINT64_MAX - 1U; // sole executor repeatNum=1
+    xnData_[KFC_AG_SOLE_NHR_INPUT_SLICE_STRIDE] = 0U;
+    xnData_[KFC_AG_SOLE_NHR_OUTPUT_SLICE_STRIDE] = outputSliceStride;
+    xnData_[KFC_AG_SOLE_NHR_INPUT_REPEAT_STRIDE] = 0U; // sole executor 双 repeat stride=0
+    xnData_[KFC_AG_SOLE_NHR_OUTPUT_REPEAT_STRIDE] = 0U;
+    xnData_[KFC_AG_SOLE_NHR_INPUT_OUTPUT_EQUAL] =
+        (inputBase == outputBase + outputSliceStride * ccuParam_.rankId) ? 1U : 0U;
+    CalcGoSize(
+        sliceSize, CCU_LOOP_COUNT_M2M_AG, CCU_MEMSLICE_SIZE * 8U, &xnData_[KFC_AG_SOLE_NHR_GO_SIZE_0],
+        ccuProtocolVersion_);
+    KERNEL_LOG(
+        KERNEL_INFO, "AG sole-NHR prepare: slice=0x%llx, outStride=0x%llx, equal=%llu\n", sliceSize, outputSliceStride,
+        xnData_[KFC_AG_SOLE_NHR_INPUT_OUTPUT_EQUAL]);
 }
 
 template <const auto& config>
