@@ -14,10 +14,10 @@
 #include "rt_external_stream.h"
 #include "aprof_pub.h"
 #include "log.h"
+#include "securec.h"
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <cstddef>
-#include <cstring>
 #include <dlfcn.h>
 #include <limits>
 
@@ -120,7 +120,13 @@ private:
         info.threadId = static_cast<uint32_t>(syscall(SYS_gettid));
         info.timeStamp = time_();
         info.dataLen = sizeof(wire);
-        std::memcpy(info.data, &wire, sizeof(wire));
+        const auto copyRet = memcpy_s(info.data, sizeof(info.data), &wire, sizeof(wire));
+        if (copyRet != EOK) {
+            HCCL_WARNING(
+                "[ASC_MC2_COMMINFO] memcpy_s failed comm[%s] batchOffset[%zu] ret[%d]", relation.commName.c_str(),
+                offset, copyRet);
+            return false;
+        }
         const auto ret = report_(1, &info, sizeof(info));
         if (ret != 0) {
             HCCL_WARNING(
