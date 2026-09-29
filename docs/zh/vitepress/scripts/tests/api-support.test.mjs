@@ -41,8 +41,8 @@ test('maps all supported product labels to existing filter values', () => {
     'Atlas推理系列产品Vector Core': '310p',
     'Atlas 训练系列产品': '910',
     'Atlas训练系列产品': '910',
-    'Kirin X90': 'x90',
-    'Kirin 9030': '9030',
+    'Kirin X90处理器系列产品': 'x90',
+    'Kirin 9030处理器系列产品': '9030',
   }
 
   for (const [label, expected] of Object.entries(labels)) {
@@ -88,7 +88,7 @@ test('marks a product family unsupported only when every member is unsupported',
 - Ascend 950PR/Ascend 950DT：支持
 - Atlas 推理系列产品 AI Core：不支持
 - Atlas 推理系列产品 Vector Core：不支持
-- Kirin X90：不支持
+- Kirin X90处理器系列产品：不支持
 `
 
   assert.deepEqual(extractUnsupportedProducts(markdown), ['310p', 'x90'])

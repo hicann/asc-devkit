@@ -24,10 +24,10 @@
 - Atlas训练系列产品：支持
 <!-- end id22 -->
 <!-- npu="x90" id23 -->
-- Kirin X90：不支持
+- Kirin X90处理器系列产品：不支持
 <!-- end id23 -->
 <!-- npu="9030" id24 -->
-- Kirin 9030：不支持
+- Kirin 9030处理器系列产品：不支持
 <!-- end id24 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_UBToUB_continuous_res.md#id1 -->
 

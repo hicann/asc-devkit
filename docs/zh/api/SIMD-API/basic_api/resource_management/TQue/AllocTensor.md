@@ -24,10 +24,10 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/resource_management/TQue/AllocTensor_res.md#id1 -->
 
@@ -118,10 +118,10 @@
     - Atlas训练系列产品不超过4个。
     <!-- end id16 -->
     <!-- npu="x90" id17 -->
-    - Kirin X90不超过8个。
+    - Kirin X90处理器系列产品不超过8个。
     <!-- end id17 -->
     <!-- npu="9030" id18 -->
-    - Kirin 9030不超过8个。
+    - Kirin 9030处理器系列产品不超过8个。
     <!-- end id18 -->    
 -   non-inplace接口分配的Tensor内容可能包含随机值。
 -   non-inplace接口，需要将TQueBind的depth模板参数设置为非零值；inplace接口，需要将TQueBind的depth模板参数设置为0。

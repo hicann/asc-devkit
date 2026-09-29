@@ -24,10 +24,10 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2D_res.md#id1 -->
 
@@ -93,11 +93,11 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 <!-- end id15 -->
 
 <!-- npu="x90" id16 -->
-针对Kirin X90，支持数据类型为：int8_t、half。
+针对Kirin X90处理器系列产品，支持数据类型为：int8_t、half。
 <!-- end id16 -->
 
 <!-- npu="9030" id17 -->
-针对Kirin 9030，支持数据类型为：half。
+针对Kirin 9030处理器系列产品，支持数据类型为：half。
 <!-- end id17 -->
 
 ## 返回值说明

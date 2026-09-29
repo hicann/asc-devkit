@@ -22,10 +22,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id14 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- npu="9030" id2 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/activation_functions/ReGlu_interface/ReGlu_res.md#id1 -->
 
@@ -110,11 +110,11 @@ ReGlu是一种GLU变体，使用Relu作为激活函数，计算公式如下：
     <!-- end id8 -->
 
     <!-- npu="x90" id3 -->
-    Kirin X90，支持的数据类型为：half、float。
+    Kirin X90处理器系列产品，支持的数据类型为：half、float。
     <!-- end id3 -->
 
     <!-- npu="9030" id4 -->
-    Kirin 9030，支持的数据类型为：half、float。
+    Kirin 9030处理器系列产品，支持的数据类型为：half、float。
     <!-- end id4 -->
 
 ## 调用示例

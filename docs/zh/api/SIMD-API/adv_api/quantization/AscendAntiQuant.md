@@ -22,10 +22,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- npu="9030" id2 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/quantization/AscendAntiQuant_res.md#id1 -->
 
@@ -367,11 +367,11 @@ struct AscendAntiQuantParam {
     <!-- end id20 -->
 
     <!-- npu="x90" id3 -->
-    - Kirin X90，支持的数据类型为：half。
+    - Kirin X90处理器系列产品，支持的数据类型为：half。
     <!-- end id3 -->
 
     <!-- npu="9030" id4 -->
-    - Kirin 9030，支持的数据类型为：half。
+    - Kirin 9030处理器系列产品，支持的数据类型为：half。
     <!-- end id4 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景src支持的数据类型<a id="li13336025165520"></a>
@@ -393,11 +393,11 @@ struct AscendAntiQuantParam {
     <!-- end id24 -->
 
     <!-- npu="x90" id5 -->
-    - Kirin X90，支持的数据类型为：int8\_t。
+    - Kirin X90处理器系列产品，支持的数据类型为：int8\_t。
     <!-- end id5 -->
 
     <!-- npu="9030" id6 -->
-    - Kirin 9030，支持的数据类型为：int8\_t。
+    - Kirin 9030处理器系列产品，支持的数据类型为：int8\_t。
     <!-- end id6 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景offset支持的数据类型<a id="li5382122225718"></a>
@@ -419,11 +419,11 @@ struct AscendAntiQuantParam {
     <!-- end id28 -->
 
     <!-- npu="x90" id7 -->
-    - Kirin X90，支持的数据类型为：half。
+    - Kirin X90处理器系列产品，支持的数据类型为：half。
     <!-- end id7 -->
 
     <!-- npu="9030" id8 -->
-    - Kirin 9030，支持的数据类型为：half。
+    - Kirin 9030处理器系列产品，支持的数据类型为：half。
     <!-- end id8 -->
 
 -   非PER\_TOKEN/PER\_GROUP b8/float4场景scale支持的数据类型<a id="li103341450906"></a>
@@ -445,11 +445,11 @@ struct AscendAntiQuantParam {
     <!-- end id32 -->
 
     <!-- npu="x90" id9 -->
-    - Kirin X90，支持的数据类型为：half。
+    - Kirin X90处理器系列产品，支持的数据类型为：half。
     <!-- end id9 -->
 
     <!-- npu="9030" id10 -->
-    - Kirin 9030，支持的数据类型为：half。
+    - Kirin 9030处理器系列产品，支持的数据类型为：half。
     <!-- end id10 -->
 
 ## 调用示例

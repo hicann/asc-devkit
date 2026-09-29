@@ -22,10 +22,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id10 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- npu="9030" id2 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_template_params_res.md#id1 -->
 
@@ -53,7 +53,7 @@
     Atlas A2系列产品
     <!-- end id14 -->
     <!-- npu="x90" id3 -->
-    Kirin X90
+    Kirin X90处理器系列产品
     <!-- end id3 -->
 
 -   MatmulPolicy信息（可选），用于配置Matmul可拓展模块策略。不配置使用默认模板策略。当前支持如下产品型号：
@@ -74,7 +74,7 @@
     Atlas推理系列产品AI Core
     <!-- end id19 -->
     <!-- npu="x90" id4 -->
-    Kirin X90
+    Kirin X90处理器系列产品
     <!-- end id4 -->
 <!-- end id20 -->
 

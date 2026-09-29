@@ -22,7 +22,7 @@
 - Atlas训练系列产品：不支持
 <!-- end id8 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/IterateAll_res.md#id1 -->
 
@@ -90,7 +90,7 @@ template <bool sync = true> __aicore__ inline void IterateAll(const LocalTensor<
     <!-- end id13 -->
 
     <!-- npu="x90" id2 -->
-    Kirin X90，支持的数据类型为：half、int8_t、int32_t。
+    Kirin X90处理器系列产品，支持的数据类型为：half、int8_t、int32_t。
     <!-- end id2 -->
 
 <!-- end id18 -->

@@ -24,10 +24,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：不支持
+- Kirin 9030处理器系列产品：不支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose_res.md#id1 -->
 
@@ -139,7 +139,7 @@ Atlas 200I/500 A2推理产品，支持数据类型为：int4b_t、int8_t、uint8
 <!-- end id17 -->
 
 <!-- npu="x90" id18 -->
-Kirin X90，支持数据类型：int8_t、half。
+Kirin X90处理器系列产品，支持数据类型：int8_t、half。
 <!-- end id18 -->
 
 ## 返回值说明<a id="zh-cn_topic_0000002543851571_section640mcpsimp"></a>

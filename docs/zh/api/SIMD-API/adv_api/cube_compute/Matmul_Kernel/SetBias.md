@@ -22,7 +22,7 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetBias_res.md#id1 -->
 
@@ -84,7 +84,7 @@ __aicore__ inline void SetBias(const LocalTensor<BiasT>& inputBias)
     <!-- end id12 -->
 
     <!-- npu="x90" id15 -->
-    Kirin X90，支持的数据类型为：half、int32_t，其中仅在A、B的数据类型为int8_t时，Bias的数据类型可以设置为int32_t。
+    Kirin X90处理器系列产品，支持的数据类型为：half、int32_t，其中仅在A、B的数据类型为int8_t时，Bias的数据类型可以设置为int32_t。
     <!-- end id15 -->
 
 <!-- end id14 -->

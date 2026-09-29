@@ -22,7 +22,7 @@
 - Atlas训练系列产品：不支持
 <!-- end id8 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetSelfDefineData_res.md#id1 -->
 
@@ -49,7 +49,7 @@ Atlas A2系列产品不支持SetSelfDefineData\(T dataPtr\)接口原型。
 <!-- end id10 -->
 
 <!-- npu="x90" id2 -->
-Kirin X90产品不支持SetSelfDefineData\(T dataPtr\)接口原型。
+Kirin X90处理器系列产品不支持SetSelfDefineData\(T dataPtr\)接口原型。
 <!-- end id2 -->
 
 ## 参数说明

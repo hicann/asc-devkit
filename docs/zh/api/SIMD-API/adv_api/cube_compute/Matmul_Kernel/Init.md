@@ -24,10 +24,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id10 -->
 <!-- npu="x90" id1 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id1 -->
 <!-- npu="9030" id2 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id2 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Init_res.md#id2 -->
 
@@ -53,10 +53,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id3 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id3 -->
 <!-- npu="9030" id4 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id4 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Init_res.md#id1 -->
 

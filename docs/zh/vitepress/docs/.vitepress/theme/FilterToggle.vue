@@ -28,8 +28,8 @@ const filterOptions = [
   { value: '910', label: 'Atlas 训练系列' },
   { value: '310p', label: 'Atlas 推理系列' },
   { value: '310b', label: 'Atlas 200I/500 A2' },
-  { value: 'x90', label: 'Kirin X90' },
-  { value: '9030', label: 'Kirin 9030' },
+  { value: 'x90', label: 'Kirin X90处理器系列产品' },
+  { value: '9030', label: 'Kirin 9030处理器系列产品' },
 ]
 
 function loadSavedFilter() {

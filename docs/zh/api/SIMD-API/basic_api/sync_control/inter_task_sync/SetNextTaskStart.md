@@ -27,10 +27,10 @@
 - Atlas训练系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id27 -->
 <!-- npu="x90" id28 -->
-- Kirin X90：支持，仅保证编译兼容，实际功能不生效。
+- Kirin X90处理器系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id28 -->
 <!-- npu="9030" id29 -->
-- Kirin 9030：支持，仅保证编译兼容，实际功能不生效。
+- Kirin 9030处理器系列产品：支持，仅保证编译兼容，实际功能不生效。
 <!-- end id29 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_task_sync/SetNextTaskStart_res.md#id1 -->
 
@@ -71,11 +71,11 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
     <!-- end id4 -->
 
     <!-- npu="x90" id5 -->
-    Kirin X90 
+    Kirin X90处理器系列产品 
     <!-- end id5 -->
 
     <!-- npu="9030" id6 -->
-    Kirin 9030 
+    Kirin 9030处理器系列产品 
     <!-- end id6 -->
 
     ```cpp

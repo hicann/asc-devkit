@@ -24,10 +24,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2ndFlag_res.md#id1 -->
 
@@ -87,10 +87,10 @@ Atlas 200I/500 A2推理产品
 <!-- npu="x90,9030" id16 -->
 针对如下产品型号，参数说明见下表：
 <!-- npu="x90" id17 -->
-Kirin X90 处理器系列产品
+Kirin X90处理器系列产品 
 <!-- end id17 -->
 <!-- npu="9030" id18 -->
-Kirin 9030 处理器系列产品
+Kirin 9030处理器系列产品 
 <!-- end id18 -->
 **表3** 参数说明
 

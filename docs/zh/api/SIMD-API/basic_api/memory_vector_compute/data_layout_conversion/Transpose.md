@@ -24,10 +24,10 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/Transpose_res.md#id1 -->
 
@@ -163,7 +163,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="x90" id15 -->
 
-**表**  Kirin X90 sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Kirin X90处理器系列产品 sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -175,7 +175,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="9030" id16 -->
 
-**表**  Kirin 9030 sharedTmpBuffer所需的内存<a id="table4"></a>
+**表**  Kirin 9030处理器系列产品 sharedTmpBuffer所需的内存<a id="table4"></a>
 
 | transposeType | sharedTmpBuffer所需的大小 |
 | :-- | :-- |
@@ -214,11 +214,11 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   <!-- end id22 -->
 
   <!-- npu="x90" id23 -->
-  Kirin X90，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Kirin X90处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id23 -->
 
   <!-- npu="9030" id24 -->
-  Kirin 9030，操作数支持的数据类型为：int16_t、uint16_t、half。
+  Kirin 9030处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id24 -->
 
 - 增强转置：
@@ -263,11 +263,11 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- end id33 -->
 
     <!-- npu="x90" id34 -->
-    Kirin X90，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    Kirin X90处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id34 -->
 
     <!-- npu="9030" id35 -->
-    Kirin 9030，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    Kirin 9030处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id35 -->
 
 ## 返回值说明

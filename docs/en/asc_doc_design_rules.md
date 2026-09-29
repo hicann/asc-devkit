@@ -282,10 +282,10 @@ For details, see [C Programming Overview](../../../guide/programming_guide/progr
 - Atlas training series products: Supported
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90: Supported
+- Kirin X90 Processor Series Products: Supported
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030: Supported
+- Kirin 9030 Processor Series Products: Supported
 <!-- end id9 -->
 
 ### Prototype with config
@@ -312,10 +312,10 @@ For details, see [C Programming Overview](../../../guide/programming_guide/progr
 - Atlas training series products: Not supported
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
-- Kirin X90: Not supported
+- Kirin X90 Processor Series Products: Not supported
 <!-- end id17 -->
 <!-- npu="9030" id18 -->
-- Kirin 9030: Not supported
+- Kirin 9030 Processor Series Products: Not supported
 <!-- end id18 -->
 
 >[!NOTE]Description
@@ -714,11 +714,11 @@ The source and destination operands must use the same data type. The Global Memo
 <!-- end id26 -->
 
 <!-- npu="x90" id27 -->
-- Kirin X90 supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, and double.
+- Kirin X90 Processor Series Products supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, and double.
 <!-- end id27 -->
 
 <!-- npu="9030" id28 -->
-- Kirin 9030 supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, and double.
+- Kirin 9030 Processor Series Products supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, and double.
 <!-- end id28 -->
 
 ## Return Value

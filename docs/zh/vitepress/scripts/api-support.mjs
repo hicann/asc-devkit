@@ -19,8 +19,8 @@ const PRODUCT_MATCHERS = [
   ['310b', /^Atlas200I\/500A2推理产品$/],
   ['310p', /^Atlas推理系列产品(?:AICore|VectorCore)$/],
   ['910', /^Atlas训练系列产品$/],
-  ['x90', /^KirinX90$/],
-  ['9030', /^Kirin9030$/],
+  ['x90', /^KirinX90(?:处理器系列产品)?$/],
+  ['9030', /^Kirin9030(?:处理器系列产品)?$/],
 ]
 
 function normalizeProductName(value) {

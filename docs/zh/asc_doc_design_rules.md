@@ -282,10 +282,10 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 - Atlas 训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90：支持
+- Kirin X90处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030：支持
+- Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
 
 ### 传入config的原型
@@ -312,10 +312,10 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 - Atlas 训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
-- Kirin X90：不支持
+- Kirin X90处理器系列产品：不支持
 <!-- end id17 -->
 <!-- npu="9030" id18 -->
-- Kirin 9030：不支持
+- Kirin 9030处理器系列产品：不支持
 <!-- end id18 -->
 
 >[!NOTE]说明
@@ -714,11 +714,11 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 <!-- end id26 -->
 
 <!-- npu="x90" id27 -->
-- Kirin X90，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Kirin X90处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id27 -->
 
 <!-- npu="9030" id28 -->
-- Kirin 9030，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Kirin 9030处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id28 -->
 
 ## 返回值说明
