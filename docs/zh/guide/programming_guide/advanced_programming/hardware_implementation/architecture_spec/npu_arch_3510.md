@@ -297,6 +297,8 @@ Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数
     -   不允许连续设置同一个EventID，因为这可能导致事件状态混乱或未被正确处理。
     -   不建议手动插入TEventID，不能手动插入6和7的TEventID，因为它们可能被系统预留或用于特殊用途。
 
+    除SetFlag/WaitFlag外，本架构还支持使用Mutex建立核内多流水同步关系。关于如何通过Mutex满足双缓冲场景下的正向数据依赖和反向数据依赖，并安全复用Buffer，请参考[基于Mutex实现多流水同步](../../advanced_kernel_programming/intra_core_sync/mutex_multi_pipeline_sync.md)。
+
 -   核间同步
 
     当不同核之间操作同一块全局内存时，可能存在读后写、写后读以及写后写等数据依赖问题，需要进行核间同步控制。

@@ -300,7 +300,11 @@ asc_add(z, x, y, 4096); // 4096: number of consecutive elements involved in addi
 
 ## Memory矢量计算同步控制
 
-AI Core内部的MTE2搬运单元、矢量计算单元等均为异步并行运行，多个单元读写同一块存储资源时会产生数据依赖。因此Memory矢量计算必须借助流水同步接口，保障流程正常执行。Memory矢量计算流程比矩阵计算更简洁，分为数据搬入、计算、数据搬出三个阶段，分别对应流水线PIPE_MTE2、PIPE_V、PIPE_MTE3，需通过核内同步接口约束执行顺序，保证流程串行执行。在[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品中，可使用`asc_lock`与`asc_unlock`接口实现三阶段的同步控制。以下为矢量加法的完整示例：
+AI Core内部的MTE2搬运单元、矢量计算单元等均为异步并行运行，多个单元读写同一块存储资源时会产生数据依赖。因此Memory矢量计算必须借助流水同步接口，保障流程正常执行。Memory矢量计算流程比矩阵计算更简洁，分为数据搬入、计算、数据搬出三个阶段，分别对应流水线PIPE_MTE2、PIPE_V、PIPE_MTE3，需通过核内同步接口约束执行顺序，保证流程串行执行。在[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品中，可使用`asc_lock`与`asc_unlock`接口实现三阶段的同步控制。
+
+关于`asc_lock`/`asc_unlock`的同步原理，以及双缓冲场景中的数据依赖和Buffer复用，请参考[基于Mutex实现多流水同步](../../../advanced_programming/advanced_kernel_programming/intra_core_sync/mutex_multi_pipeline_sync.md)。
+
+以下为矢量加法的完整示例：
 
 ```c
 __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ float* z)

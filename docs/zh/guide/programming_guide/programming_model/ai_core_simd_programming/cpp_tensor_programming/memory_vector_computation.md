@@ -267,7 +267,7 @@ AscendC::Add(dstLocal, src0Local, src1Local, 4096);
 
 AI Core内部执行单元（如MTE2搬运单元、Vector计算单元等）采用异步并行方式运行，当不同单元读写同一存储资源时，易产生数据依赖问题。因此，Memory矢量计算需通过流水同步接口协调执行顺序，确保计算流程正确。Memory矢量计算流程较Cube矩阵计算更为简洁，主要包含三步：数据搬入（Global Memory → UB）、计算（UB）、数据搬出（UB → Global Memory）。三个步骤分别对应PIPE_MTE2、PIPE_V、PIPE_MTE3流水线，需通过核内同步接口协调执行顺序，确保各步骤按序完成。
 
-当开发者进行一个矢量加法计算时（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品），可通过`Mutex::Lock`&`Mutex::Unlock`的方式完成对这三个步骤的同步。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)产品可使用`SetFlag`&`WaitFlag`实现相同同步效果，详见[同步机制](../cpp_tensor_programming/cpp_tensor_programming_overview.md#同步机制)。
+当开发者进行一个矢量加法计算时（[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)产品），可通过`Mutex::Lock`&`Mutex::Unlock`的方式完成对这三个步骤的同步。关于以上三个步骤流水间的数据依赖、双缓冲资源复用和`MutexID`规划，请参考[基于Mutex实现多流水同步](../../../advanced_programming/advanced_kernel_programming/intra_core_sync/mutex_multi_pipeline_sync.md)。[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)产品可使用`SetFlag`&`WaitFlag`实现相同同步效果，详见[同步机制](../cpp_tensor_programming/cpp_tensor_programming_overview.md#同步机制)。
 
 ```cpp
 __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ float* z)
