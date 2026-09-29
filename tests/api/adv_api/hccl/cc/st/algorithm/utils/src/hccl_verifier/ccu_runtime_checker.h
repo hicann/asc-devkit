@@ -24,6 +24,7 @@ namespace CcuSt {
 struct ScenarioData {
     std::vector<RankMemory> memories;
     std::vector<RankLaunch> launches;
+    std::vector<RankLaunch> launches2; // 双 mission 算法的第二组（每 rank 一个，空=单 mission）
 
     std::vector<std::vector<uint64_t>> srcOffsets;
     std::vector<std::vector<uint64_t>> dstOffsets;

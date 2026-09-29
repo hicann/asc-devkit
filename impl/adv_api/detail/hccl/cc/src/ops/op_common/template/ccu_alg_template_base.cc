@@ -184,8 +184,7 @@ HcclResult CcuAlgTemplateBase::GetDieInfoFromChannelDescs(
             return HcclResult::HCCL_E_INTERNAL;
         }
     }
-    // 为适配不对称场景，当前nhr仅使能1个die
-    dieNum = LINK_NUM_1;
+    dieNum = LINK_NUM_2;
     HCCL_INFO("[CcuAlgTemplateBase::GetDieNumFromChannelDescs] 2 channels on 2 dies, dieNum = 2.");
     return HcclResult::HCCL_SUCCESS;
 }
@@ -197,8 +196,8 @@ HcclResult CcuAlgTemplateBase::SelectChannelToVec(
     std::map<u32, u32>& rank2ChannelIdx, std::vector<HcclChannelDesc>& channels) const
 {
     auto it = rank2ChannelIdx.find(rmtRankId);
-    if (it != rank2ChannelIdx.end()) {
-        // 已经有对应channel，直接返回成功
+    if (it != rank2ChannelIdx.end() && channels.size() > it->second) {
+        // 已映射且索引在当前 die 组内有效才跳过（双 die 下同一对端在两组各占同位次）
         return HcclResult::HCCL_SUCCESS;
     }
 

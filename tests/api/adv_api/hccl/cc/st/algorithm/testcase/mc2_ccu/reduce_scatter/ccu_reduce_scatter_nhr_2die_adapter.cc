@@ -15,6 +15,7 @@
 #include "ccu_temp_kfc_reduce_scatter_nhr_1D_2die_mem2mem.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cstring>
 #include <limits>
 
@@ -25,6 +26,9 @@ namespace {
 // 产品kernelArg（CcuKernelArgKfcReduceScatterNHR1D2Die）→ ST运行配置。
 // 通道不在kernelArg中（归属CcuKernelInfo.channels，按 die 分组），按rank2ChannelIdx反演子rank重建；
 // 双 die 时每 die 一份 kernelInfo（各自 capture），axisId/axisSize 随 kernelArg 传递。
+// 注册期（Convert）记录 kernelArg 的 die 切分比例，Builder（用例期）读取——单一事实源是模板 CalcRes
+std::atomic<uint64_t> g_nhr2DieSplitPermille{1000U};
+
 void* ConvertReduceScatterNhr2DieArg(const void* productArg, uint32_t)
 {
     if (productArg == nullptr) {
@@ -43,6 +47,7 @@ void* ConvertReduceScatterNhr2DieArg(const void* productArg, uint32_t)
     config->reduceType = source->opParam.reduceType;
     config->stepInfoVector = source->stepInfoVector;
     config->rank2ChannelIdx = source->rank2ChannelIdx;
+    g_nhr2DieSplitPermille.store(source->dieSplitRatioPermille, std::memory_order_relaxed);
 
     std::map<uint32_t, uint32_t> channelIdx2SubRank;
     for (const auto& entry : source->rank2ChannelIdx) {
@@ -88,18 +93,20 @@ Result CaptureCcuKfcReduceScatterNhr2DieKernel(void* kernelArg)
     const CcuResult result = mc2_ops_hccl::CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
         arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7],
         arguments[8], arguments[9], arguments[10], arguments[11], arguments[12], arguments[13], arguments[14],
-        arguments[15], arguments[16], arguments[17], arguments[18], arguments[19], arguments[20],
+        arguments[15], arguments[16], arguments[17], arguments[18], arguments[19], arguments[20], arguments[21],
+        arguments[22], arguments[23], arguments[24], arguments[25], arguments[26], arguments[27], arguments[28],
         config.channels.data(), static_cast<uint32_t>(config.channels.size()), config.rankSize, config.rankId,
         config.axisId, config.axisSize, config.dataType, config.outputType, config.reduceType, config.stepInfoVector,
         config.rank2ChannelIdx);
     return result == CCU_SUCCESS ? Result::SUCCESS : Result::CONTRACT_ERROR;
 }
 
-// 21个taskArgs按kernel形参顺序排列，模拟AIV侧CcuPrepareForReduceScatterSoleNhr2DieM2M写入HBM、
+// 29个taskArgs按kernel形参顺序排列，模拟AIV侧CcuPrepareForReduceScatterSoleNhr2DieM2M写入HBM、
 // KFC dispatch（ccu_kernel_kfc_server.cc 的 RS 分支）逐槽转发的参数：
 // [0]=input [1]=output [2]=token [3]=die0Size [4]=die1Size [5]=die0Last [6]=die1Last
 // [7]=inputSliceStride [8]=currentRankSliceOutputOffset(=0) [9]=inputRepeatStride [10]=outputRepeatStride
-// [11]=repeatNumVar [12]=isInputOutputEqual [13..16]=goSizeNormal [17..20]=goSizeLast
+// [11]=repeatNumVar [12]=isInputOutputEqual [13..16]=die0 goSizeNormal [17..20]=die0 goSizeLast
+// [21..24]=die1 goSizeNormal [25..28]=die1 goSizeLast
 std::vector<uint64_t> PrepareReduceScatterNhr2DieTaskArgs(const ReduceScatterNhr2DieLaunchConfig& config)
 {
     return {
@@ -123,7 +130,15 @@ std::vector<uint64_t> PrepareReduceScatterNhr2DieTaskArgs(const ReduceScatterNhr
         config.goSizeLast[0],
         config.goSizeLast[1],
         config.goSizeLast[2],
-        config.goSizeLast[3]};
+        config.goSizeLast[3],
+        config.die1GoSizeNormal[0],
+        config.die1GoSizeNormal[1],
+        config.die1GoSizeNormal[2],
+        config.die1GoSizeNormal[3],
+        config.die1GoSizeLast[0],
+        config.die1GoSizeLast[1],
+        config.die1GoSizeLast[2],
+        config.die1GoSizeLast[3]};
 }
 
 namespace {
@@ -186,20 +201,27 @@ uint64_t EncodeNhr2DieElement(HcclDataType dataType, uint32_t value)
 
 ScenarioData BuildReduceScatterNhr2DieScenario(const CcuStScenario& scenario, const std::vector<KernelHandle>& handles)
 {
+    (void)handles; // 双 mission handle 经 CcuStFixture::LastHandleGroups() 获取
     const uint32_t rankSize = CcuStFixture::CountRanks(scenario.topoMeta);
     const uint64_t typeSize = DATATYPE_SIZE_TABLE[scenario.dataType];
     const uint64_t sliceSize = scenario.count * typeSize;
     const uint64_t totalSize = sliceSize * rankSize;
     constexpr uint64_t guard = 32;
-    // 与 AIV prepare 对齐：dieNum/dieSplitRatio 到 AIV 的链路接通前 die1 恒 0（die0=全量）。
-    // 单 die 语义正确；双 die 时 die1 mission 空转（sliceSize==0 分支 EventRecord 占位）。
-    const uint64_t die0Size = sliceSize;
-    const uint64_t die1Size = 0;
+    // 与 AIV prepare 同式：permille ∈ (0,1000) 且非小数据（>rankSize*4 元素）才切分
+    const uint64_t permille = g_nhr2DieSplitPermille.load(std::memory_order_relaxed);
+    uint64_t die0Size = sliceSize;
+    uint64_t die1Size = 0;
+    if (permille > 0U && permille < 1000U && scenario.count > rankSize * 4U) {
+        die0Size = scenario.count * permille / 1000U * typeSize;
+        die1Size = sliceSize - die0Size;
+    }
     // hccl executor 赋 sliceSize == tailSize，normal/last 两组保真相等
     const uint64_t die0LastSliceSize = die0Size;
     const uint64_t die1LastSliceSize = die1Size;
-    const std::array<uint64_t, 4> goSizeNormal = CalculateNhr2DieGoSize(sliceSize);
+    const std::array<uint64_t, 4> goSizeNormal = CalculateNhr2DieGoSize(die0Size);
     const std::array<uint64_t, 4> goSizeLast = goSizeNormal;
+    const std::array<uint64_t, 4> die1GoSizeNormal = CalculateNhr2DieGoSize(die1Size);
+    const std::array<uint64_t, 4> die1GoSizeLast = die1GoSizeNormal;
 
     ScenarioData data;
     data.memories.resize(rankSize);
@@ -243,7 +265,16 @@ ScenarioData BuildReduceScatterNhr2DieScenario(const CcuStScenario& scenario, co
         config.isInputOutputEqual = 0;
         config.goSizeNormal = goSizeNormal;
         config.goSizeLast = goSizeLast;
-        data.launches[rank] = RankLaunch{handles[rank], PrepareReduceScatterNhr2DieTaskArgs(config), &memory};
+        config.die1GoSizeNormal = die1GoSizeNormal;
+        config.die1GoSizeLast = die1GoSizeLast;
+        // 双 die：每 rank 两个注册 handle（mission0/mission1），两组 program 顺序 Launch；
+        // 两 mission 共享同一 xnData 区间 → 同一份 taskArgs，axisId 差异由各自 handle 的 kernelArg emission 决定
+        const auto& rankHandles = CcuStFixture::LastHandleGroups()[rank];
+        data.launches[rank] = RankLaunch{rankHandles.front(), PrepareReduceScatterNhr2DieTaskArgs(config), &memory};
+        if (rankHandles.size() > 1U) {
+            data.launches2.resize(rankSize);
+            data.launches2[rank] = RankLaunch{rankHandles[1], PrepareReduceScatterNhr2DieTaskArgs(config), &memory};
+        }
     }
     return data;
 }

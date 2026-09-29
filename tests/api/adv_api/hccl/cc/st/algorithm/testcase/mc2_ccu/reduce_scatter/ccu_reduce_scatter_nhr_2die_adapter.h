@@ -24,7 +24,7 @@ namespace CcuSt {
 
 // 与 CcuKfcReduceScatterNHR1D2DieMem2MemKernel 的 21 个 ccu::Variable 形参一一对应
 // （token 亦占一槽，KFC 直调模式下由 taskArgs 提供）。
-constexpr uint32_t REDUCE_SCATTER_NHR_2DIE_TASK_ARG_COUNT = 21;
+constexpr uint32_t REDUCE_SCATTER_NHR_2DIE_TASK_ARG_COUNT = 29;
 
 // goSize 口径与 hccl 模板/AIV prepare 一致：(loopCount=8, memSlice=4096*8=32768)
 constexpr uint64_t NHR_2DIE_MEM_SLICE = 32768ULL;
@@ -56,8 +56,10 @@ struct ReduceScatterNhr2DieLaunchConfig {
     uint64_t inputRepeatStride{0};            // sole executor 恒 0
     uint64_t outputRepeatStride{0};           // sole executor 恒 0
     uint64_t isInputOutputEqual{0};
-    std::array<uint64_t, 4> goSizeNormal{};
-    std::array<uint64_t, 4> goSizeLast{};
+    std::array<uint64_t, 4> goSizeNormal{}; // die0 组
+    std::array<uint64_t, 4> goSizeLast{};   // die0 组
+    std::array<uint64_t, 4> die1GoSizeNormal{};
+    std::array<uint64_t, 4> die1GoSizeLast{};
 };
 
 Result CaptureCcuKfcReduceScatterNhr2DieKernel(void* kernelArg);

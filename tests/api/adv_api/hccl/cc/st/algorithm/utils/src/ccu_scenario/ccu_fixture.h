@@ -46,12 +46,18 @@ protected:
 public:
     static Mc2CcTilingInner BuildTiling(HcclCMDType opType, HcclDataType dataType, const std::string& algConfig);
     static uint32_t CountRanks(const TopoMeta& topoMeta);
+    // 每 rank 的全部注册 handle（双 mission 算法为 2 个：mission0/mission1）；VerifyScenario 期间填充，
+    // 双 mission builder 经此取第二 mission 的 handle（形参 handles 仅含尾 handle）
+    static const std::vector<std::vector<KernelHandle>>& LastHandleGroups();
 
 protected:
     static void CleanupHostEnv(HcclComm& comm);
     KernelHandle RegisterKernelForRank(
         uint32_t rank, uint32_t rankSize, const CcuStScenario& scenario, const TopoMeta& topoMeta,
         const Mc2CcTilingInner& tiling);
+
+private:
+    static std::vector<std::vector<KernelHandle>> lastHandleGroups_;
 };
 
 } // namespace CcuSt

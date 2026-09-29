@@ -50,6 +50,8 @@ struct KfcReduceScatterNhr2DieContext : CcuKernelCtxBase {
     ccu::Variable isInputOutputEqual;
     GroupOpSizeVars goSizeNormal;
     GroupOpSizeVars goSizeLast;
+    GroupOpSizeVars die1GoSizeNormal;
+    GroupOpSizeVars die1GoSizeLast;
     ccu::Variable isRepeatIter;
     ccu::Variable sliceSize;
 
@@ -252,7 +254,8 @@ CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
         }
         ccu::Variable& localSliceSize = (ctx.axisId == 0) ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0Size) :
                                                             (islastSlice ? ctx.die1LastSliceSize : ctx.die1Size);
-        GroupOpSizeVars& goSize = islastSlice ? ctx.goSizeLast : ctx.goSizeNormal;
+        GroupOpSizeVars& goSize = (ctx.axisId == 0) ? (islastSlice ? ctx.goSizeLast : ctx.goSizeNormal) :
+                                                      (islastSlice ? ctx.die1GoSizeLast : ctx.die1GoSizeNormal);
         CCU_IF(localSliceSize != 0)
         {
             CCU_IF(ctx.isInputOutputEqual == 0)
@@ -280,10 +283,14 @@ CcuResult CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
     ccu::Variable outputRepeatStride, ccu::Variable repeatNumVar, ccu::Variable isInputOutputEqual,
     ccu::Variable goSizeNormalAddrOffset, ccu::Variable goSizeNormalLoopParam, ccu::Variable goSizeNormalParallelParam,
     ccu::Variable goSizeNormalResidual, ccu::Variable goSizeLastAddrOffset, ccu::Variable goSizeLastLoopParam,
-    ccu::Variable goSizeLastParallelParam, ccu::Variable goSizeLastResidual, const ChannelHandle channels[],
-    uint32_t channelCount, uint32_t rankSize, uint32_t rankId, uint32_t axisId, uint32_t axisSize,
-    const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType,
-    const std::vector<KfcNhrStepInfo>& stepInfoVector, const std::map<uint32_t, uint32_t>& rank2ChannelIdx)
+    ccu::Variable goSizeLastParallelParam, ccu::Variable goSizeLastResidual, ccu::Variable die1GoSizeNormalAddrOffset,
+    ccu::Variable die1GoSizeNormalLoopParam, ccu::Variable die1GoSizeNormalParallelParam,
+    ccu::Variable die1GoSizeNormalResidual, ccu::Variable die1GoSizeLastAddrOffset,
+    ccu::Variable die1GoSizeLastLoopParam, ccu::Variable die1GoSizeLastParallelParam,
+    ccu::Variable die1GoSizeLastResidual, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
+    uint32_t rankId, uint32_t axisId, uint32_t axisSize, const HcclDataType& dataType, const HcclDataType& outputType,
+    const HcclReduceOp& reduceType, const std::vector<KfcNhrStepInfo>& stepInfoVector,
+    const std::map<uint32_t, uint32_t>& rank2ChannelIdx)
 {
     KfcReduceScatterNhr2DieContext ctx;
     ctx.channels = channels;
@@ -325,6 +332,14 @@ CcuResult CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
     ctx.goSizeLast.loopParam = goSizeLastLoopParam;
     ctx.goSizeLast.parallelParam = goSizeLastParallelParam;
     ctx.goSizeLast.residual = goSizeLastResidual;
+    ctx.die1GoSizeNormal.addrOffset = die1GoSizeNormalAddrOffset;
+    ctx.die1GoSizeNormal.loopParam = die1GoSizeNormalLoopParam;
+    ctx.die1GoSizeNormal.parallelParam = die1GoSizeNormalParallelParam;
+    ctx.die1GoSizeNormal.residual = die1GoSizeNormalResidual;
+    ctx.die1GoSizeLast.addrOffset = die1GoSizeLastAddrOffset;
+    ctx.die1GoSizeLast.loopParam = die1GoSizeLastLoopParam;
+    ctx.die1GoSizeLast.parallelParam = die1GoSizeLastParallelParam;
+    ctx.die1GoSizeLast.residual = die1GoSizeLastResidual;
 
     HCCL_INFO(
         "[CcuKfcReduceScatterNHR1D2Die] run, rankId[%u], rankSize[%u], axisId[%u], axisSize[%u], dataType[%d]",

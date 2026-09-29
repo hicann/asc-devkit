@@ -316,7 +316,11 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         FlushDataCache(reinterpret_cast<__gm__ uint8_t*>(&handleParamGM_[handleId]) + MAX_DCCI_CNT);
         CcuPrepareForAllToAllVWrite(&handleParamGM_[handleId]);
     } else if (handleParamGM_[handleId].commType.prepareType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER) {
-        if (GetKfcMissionNum(handleId) == KFC_MAX_MISSION_NUM) {
+        if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR)) {
+            // 2die 判定先于 missionNum（其 mission 数为动态 dieNum，勿路由到并发 prepare）
+            ccuUsedXnNum_ = KFC_RS_SOLE_NHR_2DIE_PARAM_NUM;
+            CcuPrepareForReduceScatterSoleNhr2DieM2M(&handleParamGM_[handleId]);
+        } else if (GetKfcMissionNum(handleId) == KFC_MAX_MISSION_NUM) {
             ccuUsedXnNum_ = KFC_CONCURRENT_RS_PARAM_NUM;
             CcuPrepareForConcurrentReduceScatterM2M(&handleParamGM_[handleId]);
         } else if (
@@ -327,9 +331,6 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
             GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink)) {
             ccuUsedXnNum_ = KFC_RS_SOLE_NHR_PARAM_NUM;
             CcuPrepareForReduceScatterSoleNhrM2M(&handleParamGM_[handleId]);
-        } else if (GetAlgorithmType(handleId) == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR)) {
-            ccuUsedXnNum_ = KFC_RS_SOLE_NHR_2DIE_PARAM_NUM;
-            CcuPrepareForReduceScatterSoleNhr2DieM2M(&handleParamGM_[handleId]);
         } else {
             ccuUsedXnNum_ = 24;
             CcuPrepareForReduceScatterM2M(&handleParamGM_[handleId]);
@@ -389,6 +390,8 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::I
     ccuParam_.rankNum = newCcuFlag_ ? hcclNewContext_->rankSize : hcclContext_->rankNum;
     ccuParam_.rankId = newCcuFlag_ ? hcclNewContext_->rankId : hcclContext_->rankId;
     ccuParam_.scratchAddr = newCcuFlag_ ? hcclNewContext_->res[0] : hcclContext_->windowsOut[0];
+    // res[1]=die 切分千分比（1000/0=不切分），host 侧 GetCcuOpParamResCtx 写入
+    ccuParam_.dieSplitRatioPermille = newCcuFlag_ ? hcclNewContext_->res[1] : 1000U;
 }
 
 template <const auto& config>
@@ -579,6 +582,12 @@ __aicore__ inline uint8_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent) ||
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink)) {
         missionNum = KFC_MAX_MISSION_NUM;
+    } else if (algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR) && newCcuFlag_) {
+        // 2die 的 mission 数 = dieNum（资源期动态探测），host 经 OpResCtx.res[2] 下发；0/越界回退 1（兼容旧 host lib）
+        const uint64_t missionCnt = hcclNewContext_->res[2];
+        if (missionCnt >= 1U && missionCnt <= KFC_MAX_MISSION_NUM) {
+            missionNum = static_cast<uint8_t>(missionCnt);
+        }
     }
     return missionNum;
 }

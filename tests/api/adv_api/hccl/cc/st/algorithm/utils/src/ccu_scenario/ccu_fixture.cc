@@ -67,6 +67,10 @@ void CcuStFixture::CleanupHostEnv(HcclComm& comm)
     }
 }
 
+std::vector<std::vector<KernelHandle>> CcuStFixture::lastHandleGroups_;
+
+const std::vector<std::vector<KernelHandle>>& CcuStFixture::LastHandleGroups() { return lastHandleGroups_; }
+
 KernelHandle CcuStFixture::RegisterKernelForRank(
     uint32_t rank, uint32_t rankSize, const CcuStScenario& scenario, const TopoMeta& topoMeta,
     const Mc2CcTilingInner& tiling)
@@ -152,6 +156,7 @@ KernelHandle CcuStFixture::RegisterKernelForRank(
 
     const auto& lastGroup = RegisterManager::Global().GetLastCompiledGroup();
     KernelHandle handle = lastGroup.empty() ? 0 : lastGroup.back();
+    lastHandleGroups_[rank] = lastGroup;
 
     CleanupHostEnv(comm);
     return handle;
@@ -197,6 +202,7 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
     const Mc2CcTilingInner tiling = BuildTiling(scenario.opType, scenario.dataType, scenario.algConfig);
 
     std::vector<KernelHandle> handles(rankSize, 0);
+    lastHandleGroups_.assign(rankSize, {});
     std::vector<std::thread> threads;
     for (uint32_t rank = 0; rank < rankSize; ++rank) {
         threads.emplace_back([this, rank, rankSize, &scenario, &topoMeta, &tiling, &handles]() {
@@ -213,10 +219,12 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
     ScenarioData data = BuildScenarioData(scenario, handles);
 
     for (uint32_t rank = 0; rank < rankSize; ++rank) {
-        const Program* program = RegisterManager::Global().GetProgram(handles[rank]);
-        ASSERT_NE(program, nullptr);
-        CheckResult staticCheck = CcuProgramChecker().Check(*program);
-        ASSERT_TRUE(staticCheck.Ok()) << staticCheck.message;
+        for (KernelHandle groupHandle : lastHandleGroups_[rank]) {
+            const Program* program = RegisterManager::Global().GetProgram(groupHandle);
+            ASSERT_NE(program, nullptr);
+            CheckResult staticCheck = CcuProgramChecker().Check(*program);
+            ASSERT_TRUE(staticCheck.Ok()) << staticCheck.message;
+        }
     }
 
     RuntimeExpectation expectation;
@@ -230,6 +238,12 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
         ASSERT_EQ(world.Launch(data.launches), Result::SUCCESS) << world.LastError();
         CheckResult dagResult = CcuDagChecker().Check(world.ExecutionLogData());
         ASSERT_TRUE(dagResult.Ok()) << dagResult.message;
+        if (!data.launches2.empty()) {
+            // 双 mission：两组 program 顺序执行（语义等价并行——两 mission 无核内交叉依赖）
+            ASSERT_EQ(world.Launch(data.launches2), Result::SUCCESS) << world.LastError();
+            CheckResult dagResult2 = CcuDagChecker().Check(world.ExecutionLogData());
+            ASSERT_TRUE(dagResult2.Ok()) << dagResult2.message;
+        }
         CheckResult runtime = CheckRuntimeOutput(data.memories, expectation, world);
         ASSERT_TRUE(runtime.Ok()) << runtime.message;
     }

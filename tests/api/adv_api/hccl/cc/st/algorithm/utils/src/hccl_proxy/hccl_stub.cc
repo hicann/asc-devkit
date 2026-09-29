@@ -37,7 +37,7 @@ using namespace HcclSim;
 
 namespace mc2_ops_hccl {
 uint32_t g_hcclEngineCtxCopyCallCount = 0;
-uint32_t g_stubEndpointBwCoeff = 0;
+uint32_t g_stubEndpointBwCoeff = 1; // 均匀带宽：双 die 场景 dieSplitRatio=0.5（0 会导致 p0+p1=0 不切分）
 } // namespace mc2_ops_hccl
 
 namespace {

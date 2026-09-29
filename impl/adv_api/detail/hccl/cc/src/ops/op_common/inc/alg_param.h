@@ -418,6 +418,13 @@ static_assert(
     std::is_trivially_copyable<ParallelChannelPortInfo>::value,
     "ParallelChannelPortInfo must be trivially copyable for serialization");
 
+// dieSplitRatio ∈ (0,1) 表示有效双 die 切分；1.0/0.0（单 die 或未设置）统一折算为 1000（不切分）。
+// OpResCtx/kernelArg 以千分比整数传递到 AIV/ST，消费侧按 sliceCount*permille/1000 切分。
+inline uint64_t DieSplitRatioToPermille(double ratio)
+{
+    return (ratio > 0.0 && ratio < 1.0) ? static_cast<uint64_t>(ratio * 1000.0 + 0.5) : 1000U;
+}
+
 // A5用了cntNotify
 struct AlgResourceRequest {
     double dieSplitRatio = 0.0;

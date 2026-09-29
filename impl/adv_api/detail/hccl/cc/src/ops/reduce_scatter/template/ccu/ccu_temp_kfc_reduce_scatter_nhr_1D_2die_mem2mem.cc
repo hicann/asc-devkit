@@ -127,6 +127,7 @@ HcclResult CcuTempKfcReduceScatterNHR1D2DieMem2Mem::CalcRes(
         kernelArg->rankId = mySubCommRank_;
         kernelArg->axisId = kernelIdx;
         kernelArg->axisSize = dieNum;
+        kernelArg->dieSplitRatioPermille = DieSplitRatioToPermille(ratio);
         kernelArg->stepInfoVector = stepInfoVector;
         kernelArg->rank2ChannelIdx = rank2ChannelIdx;
         kernelArg->opParam = param;

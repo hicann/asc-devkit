@@ -22,10 +22,11 @@ namespace mc2_ops_hccl {
 // axisId/axisSize 为 die 维编号与总数（双 die 时每 die 一份 kernelInfo）；step/rank2ChannelIdx
 // 与 MultiLink 同源（递归倍增中继），通道按两级拓扑经 CalcChannelRequestNhr 计算。
 struct CcuKernelArgKfcReduceScatterNHR1D2Die : CcuKernelArgBase {
-    uint64_t rankSize = 0; // dimSize：子通信域 rank 数
-    uint32_t rankId = 0;   // 子通信域虚拟 rankid
-    uint32_t axisId = 0;   // die 维编号：0=die0, 1=die1
-    uint32_t axisSize = 0; // die 维总数（=dieNum）
+    uint64_t rankSize = 0;                  // dimSize：子通信域 rank 数
+    uint32_t rankId = 0;                    // 子通信域虚拟 rankid
+    uint32_t axisId = 0;                    // die 维编号：0=die0, 1=die1
+    uint32_t axisSize = 0;                  // die 维总数（=dieNum）
+    uint64_t dieSplitRatioPermille = 1000U; // 1000=不切分；(0,1000)=die0 千分比（ST adapter 消费）
     OpParam opParam;
     std::vector<KfcNhrStepInfo> stepInfoVector;
     std::map<uint32_t, uint32_t> rank2ChannelIdx;

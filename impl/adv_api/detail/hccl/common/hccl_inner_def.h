@@ -207,6 +207,7 @@ struct CcuPrepareParam {
     uint8_t alltoallvCnt = 0;
     __gm__ CCUMsgExt* ccuMsgExt;
     uint64_t scratchAddr;
+    uint64_t dieSplitRatioPermille = 1000U; // 1000=不切分；(0,1000)=die0 千分比（KFC 经 OpResCtx 传入）
 };
 
 struct AlltoAllVParamCcu {

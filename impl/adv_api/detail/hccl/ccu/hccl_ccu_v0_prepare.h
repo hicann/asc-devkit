@@ -618,9 +618,6 @@ template <const auto& config>
 __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForReduceScatterSoleNhr2DieM2M(
     __gm__ CommonPrepareParamCcu* commParam)
 {
-    // TODO(双die链路): dieSplitRatio 现不切分（见下方 die1 恒 0 注释）；通道带宽比已序列化进
-    // AlgResourceContext（AlgResourceRequest.dieSplitRatio），AIV 侧读取链路待接
-    // （CcuPrepareParam 暂无该字段），真机双 die 分带宽场景需补链路后恢复 hccl SplitDataFor2Dies 切分公式。
     const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
     const uint64_t sliceSize = commParam->count * dataTypeSize; // 每 rank 输出份
     const uint64_t repeatOffset = sliceSize * ccuParam_.repeatIndex;
@@ -633,12 +630,15 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     const uint64_t isInputOutputEqual =
         (inputBase + currentRankSliceInputOffset == outputBase + currentRankSliceOutputOffset) ? 1U : 0U;
 
-    // TODO(双die链路): dieNum/dieSplitRatio 为 host 资源期通道探测值（AlgResourceRequest.dieSplitRatio
-    // 已序列化），AIV 侧读取链路待接（CcuPrepareParam 暂无该字段）。链路接通前 die1 恒 0
-    // （die0=全量）：单 die 语义正确；双 die 时 die1 mission 空转（kernel 的 sliceSize==0 分支
-    // EventRecord 占位），正确性保持、无双 die 加速。
-    const uint64_t die0Size = sliceSize;
-    const uint64_t die1Size = 0;
+    // hccl SplitDataFor2Dies 口径：permille ∈ (0,1000) 且非小数据（>rankNum*4 元素）才切分
+    const uint64_t sliceCount = sliceSize / dataTypeSize;
+    uint64_t die0Size = sliceSize;
+    uint64_t die1Size = 0;
+    if (ccuParam_.dieSplitRatioPermille > 0U && ccuParam_.dieSplitRatioPermille < 1000U &&
+        sliceCount > ccuParam_.rankNum * 4U) {
+        die0Size = sliceCount * ccuParam_.dieSplitRatioPermille / 1000U * dataTypeSize;
+        die1Size = sliceSize - die0Size;
+    }
     const uint64_t die0LastSliceSize = die0Size;
     const uint64_t die1LastSliceSize = die1Size;
 
@@ -659,10 +659,16 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     // （AIV 编译上下文不可见），按 A2A/AG prepare 先例展开为值等价表达（8 / CCU_MEMSLICE_SIZE*8）。
     constexpr uint64_t localCopyLoopCount = 8U;
     CalcGoSize(
-        sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0],
+        die0Size, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_NORMAL_0],
         ccuProtocolVersion_);
     CalcGoSize(
-        sliceSize, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0],
+        die0Size, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_GO_SIZE_LAST_0],
+        ccuProtocolVersion_);
+    CalcGoSize(
+        die1Size, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_DIE1_GO_SIZE_NORMAL_0],
+        ccuProtocolVersion_);
+    CalcGoSize(
+        die1Size, localCopyLoopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_RS_SOLE_NHR_2DIE_DIE1_GO_SIZE_LAST_0],
         ccuProtocolVersion_);
     KERNEL_LOG(
         KERNEL_INFO, "RS sole-NHR-2die prepare: slice=0x%llx, stride=0x%llx, die0=0x%llx, die1=0x%llx, eq=%llu\n",

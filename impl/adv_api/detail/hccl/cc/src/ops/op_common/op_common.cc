@@ -169,7 +169,17 @@ static HcclResult UpdateCcuCtxTokenOnReuse(
 
     AlgResourceCtxSerializable tempCtx;
     tempCtx.DeSerialize(seq);
-    if (!resCtxHost->kfcServerArgs.empty()) {
+    resCtxHost->dieSplitRatio = tempCtx.dieSplitRatio;
+    if (!resCtxHost->kfcServerArgs.empty() && tempCtx.kfcServerArgs.size() >= KFC_SERVER_ARG_NUM) {
+        // 保留缓存 args 的 mission 结构（2die 的动态 dieNum/missionNum 注册期已修正；AcquireAlgResources
+        // 按静态名单重生成会丢 mission1），仅原地刷新每 mission 的 xn/cke
+        const uint64_t xnAddr = resCtxHost->kfcServerArgs[0];
+        const uint64_t ckeAddr = resCtxHost->kfcServerArgs[1];
+        for (size_t offset = 0; offset + 1U < tempCtx.kfcServerArgs.size(); offset += KFC_SERVER_ARG_NUM) {
+            tempCtx.kfcServerArgs[offset] = xnAddr;
+            tempCtx.kfcServerArgs[offset + 1U] = ckeAddr;
+        }
+    } else if (!resCtxHost->kfcServerArgs.empty()) {
         tempCtx.kfcServerArgs = resCtxHost->kfcServerArgs;
         tempCtx.kfcServerArgSize = resCtxHost->kfcServerArgSize;
     }
@@ -185,6 +195,9 @@ static HcclResult UpdateCcuCtxTokenOnReuse(
          offset += KFC_SERVER_ARG_NUM) {
         tempCtx.kfcServerArgs[offset + KFC_SERVER_TOKEN_ARG_INDEX] = token;
     }
+    // 同步回 host 侧：res[2] 的 mission 计数与重序列化同源（reuse 下保持注册期修正的动态 mission 数）
+    resCtxHost->kfcServerArgs = tempCtx.kfcServerArgs;
+    resCtxHost->kfcServerArgSize = tempCtx.kfcServerArgSize;
 
     std::vector<char> updatedSeq = tempCtx.Serialize();
     CHK_PRT_RET(
@@ -1520,6 +1533,7 @@ HcclResult HcclAllocAlgResourceCcu(
     resCtxHost->slaveThreadNum = resRequest.slaveThreadNum;
     resCtxHost->notifyNumPerThread = resRequest.notifyNumPerThread;
     resCtxHost->parallelPortInfo = resRequest.parallelPortInfo;
+    resCtxHost->dieSplitRatio = resRequest.dieSplitRatio;
     if (!param.checkRes) {
         CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
         CHK_RET(HcclGetChannelForCcu(comm, param, resRequest));
