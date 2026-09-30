@@ -129,7 +129,23 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
   - Fixpipe Buffer保存的是硬件参数位域，打印结果不一定与L1 Buffer中的原始数据按位相同。前级Quant参数每8字节保留bit[7:0]、bit[31:13]和bit[46:37]，期望值为`input & 0x00007fe0ffffe0ffULL`；前级ReLU参数每4字节保留bit[31:13]，期望值为`word & 0xffffe000U`。
 <!-- end id113 --> 
 - 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
-- SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围最小为1KB，最大为64MB。使用时应注意，如果超出这个限制，则数据不会被打印。
+- SIMD场景下，每核打印FIFO缓冲区大小默认为30KB，可通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的`simd_printf_fifo_size_per_core`字段配置，配置范围最小为1KB，最大为64MB。
+<!-- npu="950,A3,910b,310p" id114 -->
+- 针对如下型号:
+  <!-- npu="950" id115 -->
+  - Ascend 950PR&950DT系列产品
+  <!-- end id115 -->
+  <!-- npu="A3" id116 -->
+  - Atlas A3系列产品
+  <!-- end id116 --> 
+  <!-- npu="910b" id117 -->
+  - Atlas A2系列产品
+  <!-- end id117 --> 
+  <!-- npu="310p" id118 -->
+  - Atlas推理系列产品
+  <!-- end id118 -->
+  NPU上板调试时支持打印超大Tensor，即单次调用可打印数据量超过每核打印缓冲区大小的Tensor。使用方式与普通Tensor相同，通过`dumpSize`指定需要打印的元素个数，无需手动拆分Tensor或多次调用接口。
+<!-- end id114 -->
 
 ## 调用示例<a name="section82241477610"></a>
 

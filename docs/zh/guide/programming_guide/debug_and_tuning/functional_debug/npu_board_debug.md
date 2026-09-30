@@ -29,7 +29,9 @@ DumpTensor是SIMD编程场景独有的打印功能，用于NPU域上板打印指
 DumpTensor(srcLocal,5, dataLen);
 ```
 
-Dump时，每个block核的dump信息前会增加对应信息头DumpHead（32字节大小），用于记录核号和资源使用信息；每次Dump的Tensor数据前也会添加信息头DumpTensorHead（32字节大小），用于记录Tensor的相关信息。打印结果的样例如下：
+DumpTensor支持打印超大Tensor，使用方式与普通Tensor相同，无需手动拆分Tensor。适用产品和使用说明请参考[DumpTensor](../../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md)。
+
+打印结果的样例如下：
 
 ```
 DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
