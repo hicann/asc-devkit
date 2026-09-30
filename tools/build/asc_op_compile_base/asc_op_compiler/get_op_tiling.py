@@ -954,7 +954,10 @@ def gen_dynamic_shape(tiling_def, struct_tiling_def_base):
 class TilingInfo:
     def __init__(self):
         self.block_num: int = -1
-        self.task_ration: int = 2  # AscendC only support 1:2
+        if CommonUtility.is_920r1() or CommonUtility.is_920r2():
+            self.task_ration: int = 1  # AscendC only support 1:1 for 920r1/920r2
+        else:
+            self.task_ration: int = 2  # AscendC only support 1:2 otherwise
         self.file_content: str = ""
         self.tiling_data: bytes = bytes()
         self.tiling_data_file_path: str = ""
