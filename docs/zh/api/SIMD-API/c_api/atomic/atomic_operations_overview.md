@@ -1,11 +1,12 @@
 # 原子操作概述
 
-数据搬运随路原子操作接口用于对后续目的地址为GM的数据搬运指令开启原子操作，涉及的接口请参见[表1](#table1)。如下图1的左侧子图所示，未开启原子操作时，写入GM的数据搬运完成后，GM中原始数据将被新搬运数据完全覆盖。如图1右侧子图所示，当数据搬运随路原子操作接口被调用后，系统将为后续写入GM的数据搬运开启原子操作。此时，数据搬运完成后，GM中的最终数据由原始GM数据与新搬运数据共同决定。
+数据搬运随路原子操作接口用于对后续目的地址为GM的数据搬运指令开启原子操作，涉及的接口请参见[表1](#datamove_atomic_operation_interface)。如下图1的左侧子图所示，未开启原子操作时，写入GM的数据搬运完成后，GM中原始数据将被新搬运数据完全覆盖。如图1右侧子图所示，当数据搬运随路原子操作接口被调用后，系统将为后续写入GM的数据搬运开启原子操作。此时，数据搬运完成后，GM中的最终数据由原始GM数据与新搬运数据共同决定。
 
 **图1**  数据搬运随路原子累加效果
+
 ![](../../../figures/atomic_operation_pipelined_data_movement_effect.png "数据搬运随路原子累加效果")
 
-**表1**  数据搬运随路原子操作接口<a name="table1"></a>
+**表1**  数据搬运随路原子操作接口<a id="datamove_atomic_operation_interface"></a>
 
 | 对应接口 | 接口功能描述 |
 | --- | --- |
@@ -14,7 +15,7 @@
 | [asc_set_atomic_min](datamove_atomic/asc_set_atomic_min.md) | 设置后续搬运到GM的数据是否执行原子比较：将待拷贝的内容和GM已有内容进行比较，然后将最小值写入GM。 |
 | [asc_disable_dma_atomic](datamove_atomic/asc_disable_dma_atomic.md) | 关闭数据搬运随路原子操作功能。 |
 
-Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。
+Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#scalar_atomic_operation_interface)。
 
 标量原子操作与数据搬运随路原子操作相比，两者的差异如下：
 
@@ -23,10 +24,11 @@ Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操
 
 如下图2左侧子图所示，不使用`asc_atomic_add`接口时，多个AI Core同时对同一GM地址执行累加操作会相互覆盖，操作不具备原子性，最终结果不可预期。如右侧子图所示，使用`asc_atomic_add`接口后，各AI Core的累加操作串行化执行，确保每次累加操作的原子性，最终结果符合预期。
 
-**图2**  标量原子累加效果
+**图2**  标量原子累加效果<a id="scalar_atomic_operation_diagram"></a>
+
 ![](../../../figures/scalar_atomic_operation_diagram.png "标量原子累加效果")
 
-**表2**  Scalar原子操作接口<a name="table2"></a>
+**表2**  Scalar原子操作接口<a id="scalar_atomic_operation_interface"></a>
 
 | 对应接口 | 接口功能描述 |
 | --- | --- |

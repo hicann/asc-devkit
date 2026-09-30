@@ -1305,6 +1305,7 @@
                 -   [asc_set_atomic_min](SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_min.md)
                 -   [asc_disable_dma_atomic](SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md)
             -   [标量原子操作](SIMD-API/c_api/atomic/scalar_atomic/scalar_atomic.md)
+                -   [标量原子操作概述](SIMD-API/c_api/atomic/scalar_atomic/scalar_atomic_overview.md)
                 -   [asc_atomic_add](SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)
                 -   [asc_atomic_and](SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_and.md)
                 -   [asc_atomic_cas](SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_cas.md)
