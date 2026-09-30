@@ -78,8 +78,8 @@
 
 - 输入：A [128, 128] half类型，ND格式；B [128, 256] half类型，ND格式；量化参数 [256] uint64_t类型
 - 输出：C [128, 256] int8_t类型，ND格式
-- 实现：使用`asc_set_gm2l1_nz_para`配置ND2NZ参数，再使用`asc_copy_gm2l1_nd2nz`将输入数据从GM搬运到L1，执行矩阵乘计算；使用`asc_copy_gm2l1`和`asc_copy_l12fb`将量化参数从GM经L1搬运到Fixpipe Buffer；调用`asc_set_l0c2gm_config`配置参数地址，并通过`asc_copy_l0c2gm`的`VQF322B8_PRE`模式进行Vector量化输出
-- 说明：矩阵乘计算结果为float类型，随后通过Vector量化转换为int8_t类型；C矩阵的每一列使用一个量化参数。`asc_set_l0c2gm_config`通过`quant_pre`配置Fixpipe矢量量化参数地址，该参数以128B为地址单位，因此量化参数文件需按128B向上对齐，不足部分补0。本样例的`[256] uint64_t`参数共2048B，已满足该要求。量化参数从L1搬运至Fixpipe Buffer时，需要搬运2048B数据，数据搬运单位为64B，对应`asc_copy_l12fb`的`len_burst`配置为32。
+- 实现：使用`asc_set_gm2l1_nz_para`配置ND2NZ参数，再使用`asc_copy_gm2l1_nd2nz`将输入数据从GM搬运到L1，执行矩阵乘计算；使用`asc_copy_gm2l1`和`asc_copy_l12fb`将量化参数从GM经L1搬运到Fixpipe Buffer；调用`asc_set_l0c_copy_config`配置参数地址，并通过`asc_copy_l0c2gm`的`VQF322B8_PRE`模式进行Vector量化输出
+- 说明：矩阵乘计算结果为float类型，随后通过Vector量化转换为int8_t类型；C矩阵的每一列使用一个量化参数。`asc_set_l0c_copy_config`通过`quant_pre_addr`配置Fixpipe矢量量化参数地址，该参数以128B为地址单位，因此量化参数文件需按128B向上对齐，不足部分补0。本样例的`[256] uint64_t`参数共2048B，已满足该要求。量化参数从L1搬运至Fixpipe Buffer时，需要搬运2048B数据，数据搬运单位为64B，对应`asc_copy_l12fb`的`len_burst`配置为32。
 
 ## 编译运行
 

@@ -13,11 +13,13 @@
 | [asc_set_atomic_max](datamove_atomic/asc_set_atomic_max.md) | 设置后续搬运到GM的数据是否执行原子比较：将待拷贝的内容和GM已有内容进行比较，然后将最大值写入GM。 |
 | [asc_set_atomic_min](datamove_atomic/asc_set_atomic_min.md) | 设置后续搬运到GM的数据是否执行原子比较：将待拷贝的内容和GM已有内容进行比较，然后将最小值写入GM。 |
 | [asc_disable_dma_atomic](datamove_atomic/asc_disable_dma_atomic.md) | 关闭数据搬运随路原子操作功能。 |
-| [asc_set_store_atomic_config_v1](scalar_atomic/asc_set_store_atomic_config_v1.md) | 设置数据搬运的原子操作配置。 |
-| [asc_get_store_atomic_config](scalar_atomic/asc_get_store_atomic_config.md) | 获取数据搬运的原子操作配置。 |
 
-<!-- npu="950" id1 -->
-针对Ascend 950PR&950DT系列产品，新增Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。对比数据搬运随路原子操作接口，Scalar原子操作接口不会影响后续向GM搬运数据的指令。
+Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。
+
+标量原子操作与数据搬运随路原子操作相比，两者的差异如下：
+
+- 数据搬运随路原子操作的对象是搬运的Tensor，需要先调用数据搬运随路原子操作接口开启原子操作，开启后对后续通过MTE单元搬运到GM的整个Tensor生效，会影响后续搬运指令的行为。
+- 标量原子操作的对象是传入的GM地址上的单个元素，无需开启配置，仅对本次调用传入的GM地址上的单个元素生效，不会影响后续搬运指令。
 
 如下图2左侧子图所示，不使用`asc_atomic_add`接口时，多个AI Core同时对同一GM地址执行累加操作会相互覆盖，操作不具备原子性，最终结果不可预期。如右侧子图所示，使用`asc_atomic_add`接口后，各AI Core的累加操作串行化执行，确保每次累加操作的原子性，最终结果符合预期。
 
@@ -39,5 +41,5 @@
 | [asc_atomic_or](scalar_atomic/asc_atomic_or.md) | 对GM中的数据与指定数据执行原子或操作，即将val按位或到address指向的数据元素上。读取address指向的GM地址上的旧值（`old_value`），将旧值与输入标量值val进行按位或运算，将结果（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
 | [asc_atomic_sub](scalar_atomic/asc_atomic_sub.md) | 对GM中的数据与指定数据执行原子减操作，即将val从address指向的数据元素上减去。读取address指向的GM地址上的旧值（`old_value`），将旧值减去输入标量值val，将结果（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
 | [asc_atomic_xor](scalar_atomic/asc_atomic_xor.md) | 对GM中的数据与指定数据执行原子异或操作，即将val按位异或到address指向的数据元素上。读取address指向的GM地址上的旧值（`old_value`），将旧值与输入标量值val进行按位异或运算，将结果（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
-
-<!-- end id1 -->
+| [asc_set_store_atomic_config_v1](scalar_atomic/asc_set_store_atomic_config_v1.md) | 设置标量原子操作配置：操作类型（仅支持求和操作）和数据类型。 |
+| [asc_get_store_atomic_config](scalar_atomic/asc_get_store_atomic_config.md) | 获取asc_set_store_atomic_config_v1设置的标量原子操作配置。 |

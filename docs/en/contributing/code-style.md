@@ -17,19 +17,13 @@ Add, Sub, Mul, DataCopy, SetVectorMask, PipeBarrier
 **C API (`c_api/`):** snake_case, `asc_` prefix
 
 ```text
-asc_add, asc_axpy, asc_axpy_sync
+asc_add, asc_axpy
 ```
 
 **High-level API (`adv_api/`):** PascalCase
 
 ```text
 Axpy, Exp, LayerNorm, GroupedMatmul
-```
-
-Synchronous versions are named by API style (depending on API type and actual need): C API uses the `_sync` suffix (e.g., `asc_add_sync`). Not all APIs have synchronous variants.
-
-```text
-asc_add_sync, WarpReduceAddSync
 ```
 
 ### Macro Naming

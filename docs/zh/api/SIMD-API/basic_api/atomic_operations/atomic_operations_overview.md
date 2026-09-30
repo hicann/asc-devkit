@@ -14,11 +14,8 @@
 | [DisableDmaAtomic](DisableDmaAtomic.md) | 关闭数据搬运随路原子操作功能。 |
 | [SetAtomicMax(ISASI)](SetAtomicMax_ISASI.md) | 设置后续搬运到GM的数据是否执行原子比较：将待拷贝的内容和GM已有内容进行比较，然后将最大值写入GM。 |
 | [SetAtomicMin(ISASI)](SetAtomicMin_ISASI.md) | 设置后续搬运到GM的数据是否执行原子比较：将待拷贝的内容和GM已有内容进行比较，然后将最小值写入GM。 |
-| [SetStoreAtomicConfig(ISASI)](SetStoreAtomicConfig_ISASI.md) | 设置数据搬运的原子操作配置。 |
-| [GetStoreAtomicConfig(ISASI)](GetStoreAtomicConfig_ISASI.md) | 获取数据搬运的原子操作配置。 |
 
-<!-- npu="950" id1 -->
-针对Ascend 950PR&950DT系列产品新增Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。对比数据搬运随路原子操作接口，Scalar原子操作接口不会影响后续向GM搬运数据的指令。
+Scalar原子操作接口，能够在指定GM地址上进行单点原子计算操作，涉及的接口请参见[表2](#table2)。对比数据搬运随路原子操作接口，Scalar原子操作接口不会影响后续向GM搬运数据的指令。
 
 如下图2左侧子图所示，不使用AtomicAdd接口时，多个AI Core同时对同一GM地址执行累加操作会相互覆盖，操作不具备原子性，最终结果不可预期。如右侧子图所示，使用AtomicAdd接口后，各AI Core的累加操作串行化执行，确保每次累加操作的原子性，最终结果符合预期。
 
@@ -34,4 +31,5 @@
 | [AtomicMax](AtomicMax.md) | 该接口用于在指定GM地址上进行原子取最大值操作，将`address`指向的GM地址上的旧值（`old_value`）与输入的标量值（`value`）进行比较，将较大值（`new_value`）写回GM地址，返回该地址修改前的值（`old_value`）。 |
 | [AtomicCas](AtomicCas.md) | 在指定GM地址上进行原子比较操作，读取`address`指向的GM地址上的旧值（`old_value`）与输入标量值`value1`进行比较：如果相等，则将输入标量值`value2`写入GM地址；如果不相等，则GM地址上的值保持不变。返回该地址修改前的值（`old_value`）。 |
 | [AtomicExch](AtomicExch.md) | 用于在GM内存中执行原子交换操作，读取`address`指向的GM地址上的旧值（`old_value`），并将输入的标量值（`value`）替换旧值存储回同一地址，返回该地址修改前的值（`old_value`）。 |
-<!-- end id1 -->
+| [SetStoreAtomicConfig(ISASI)](SetStoreAtomicConfig_ISASI.md) | 设置标量原子操作配置：操作类型（仅支持求和操作）和数据类型。 |
+| [GetStoreAtomicConfig(ISASI)](GetStoreAtomicConfig_ISASI.md) | 获取SetStoreAtomicConfig设置的标量原子操作配置。 |

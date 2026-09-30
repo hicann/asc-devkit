@@ -65,7 +65,7 @@ asc_add(dst, src0, src1, count);
 
 #### Data Flow Modes
 
-C API supports three data flow modes:
+C API supports the following two data flow modes:
 
 Mode 1: First-n elements computation
 
@@ -88,16 +88,6 @@ asc_add(dst, src0, src1, repeat,
 - Non-contiguous memory access.
 - Supports multi-dimensional data.
 - Flexible control.
-
-Mode 3: Synchronous computation
-
-```cpp
-asc_add_sync(dst, src0, src1, count);
-```
-
-- Automatically synchronizes pipeline.
-- Ensures data consistency.
-- Used for critical paths.
 
 ### Parameter Conventions
 
@@ -246,12 +236,12 @@ asc-devkit/
 Implement vector multiply-add C API: `dst = src * scalar + dst`
 
 - Supported data types: half, float.
-- Supports three invocation modes.
+- Supports continuous and configuration modes.
 - Directly maps to hardware instructions.
 
 ### Interface Design
 
-Add in `include/c_api/vector_compute/vector_compute.h`:
+Declare in `include/c_api/vector_compute/compute/vector_fused.h`:
 
 ```cpp
 // ==========asc_axpy(half/float)==========
@@ -266,11 +256,6 @@ __aicore__ inline void asc_axpy(__ubuf__ half* dst, __ubuf__ half* src, half val
 
 __aicore__ inline void asc_axpy(__ubuf__ float* dst, __ubuf__ float* src, float value, uint8_t repeat,
     uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride);
-
-// Synchronous mode
-__aicore__ inline void asc_axpy_sync(__ubuf__ half* dst, __ubuf__ half* src, half scalar, uint32_t count);
-
-__aicore__ inline void asc_axpy_sync(__ubuf__ float* dst, __ubuf__ float* src, float scalar, uint32_t count);
 ```
 
 ### Implementation Code
