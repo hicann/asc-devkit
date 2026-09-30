@@ -126,6 +126,25 @@ inline constexpr bool supports_shift_pair_v =
     (::AscendC::Std::is_one_of_v<T, int16_t, uint16_t> && ::AscendC::Std::is_same_v<ShiftType, int16_t>) ||
     (::AscendC::Std::is_one_of_v<T, int32_t, uint32_t> && ::AscendC::Std::is_same_v<ShiftType, int32_t>);
 
+template <typename T>
+inline constexpr bool supports_axpy_v = ::AscendC::Std::is_one_of_v<T, half, float>;
+
+template <typename T>
+inline constexpr bool supports_abs_diff_v = ::AscendC::Std::is_one_of_v<T, half, float>;
+
+template <typename T>
+inline constexpr bool supports_madd_v = ::AscendC::Std::is_one_of_v<T, half, bfloat16_t, float>;
+
+template <typename T>
+inline constexpr bool supports_mula_v =
+    ::AscendC::Std::is_one_of_v<T, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>;
+
+template <typename T>
+inline constexpr bool supports_fma_v = ::AscendC::Std::is_one_of_v<T, half, bfloat16_t, float>;
+
+template <typename T, typename U>
+inline constexpr bool supports_muls_cast_v = ::AscendC::Std::is_same_v<T, half> && ::AscendC::Std::is_same_v<U, float>;
+
 } // namespace detail
 } // namespace experimental
 } // namespace te

@@ -30,6 +30,8 @@
 #include "tensor_api/experimental/arch/vector/type_conversion.h"
 #include "tensor_api/experimental/arch/vector/basic_arithmetic.h"
 #include "tensor_api/experimental/arch/vector/logical_compute.h"
+#include "tensor_api/experimental/arch/vector/composite_compute.h"
+#include "tensor_api/experimental/arch/vector/histogram_compute.h"
 #include "tensor_api/experimental/arch/vector/reduction_compute.h"
 #include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 #include "tensor_api/experimental/arch/vector/reg_data_load.h"

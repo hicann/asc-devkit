@@ -10,6 +10,8 @@
 - **[基础算术](basic_arithmetic/basic_arithmetic.md)**
 - **[归约计算](reduction_compute/reduction_compute.md)**
 - **[逻辑计算](logical_compute/logical_compute.md)**
+- **[复合计算](composite_compute/composite_compute.md)**
+- **[直方图计算](histogram_compute/histogram_compute.md)**
 - **[选择与比较](compare_and_select/compare_and_select.md)**
 - **[数据填充](data_padding/data_padding.md)**
 - **[数据重排](data_reorder/data_reorder.md)**
