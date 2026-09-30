@@ -131,6 +131,8 @@ DATA_TYPE_SIZE = {
     "float6_e2m3": 1006,
     "float4_e2m1": 1004,
     "float4_e1m2": 1004,
+    "hifloat4": 1004,
+    "hifloat4_scale": 4,
 }
 
 

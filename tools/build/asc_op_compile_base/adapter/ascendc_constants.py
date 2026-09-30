@@ -59,6 +59,8 @@ INPUT_OUTPUT_DTYPE_LEN = {
     "complex64": 8,
     "complex128": 16,
     "uint1": 0.125,
+    "hifloat4": 1,
+    "hifloat4_scale": 4,
 }
 
 InferChannelParamsFromIFile = namedtuple(

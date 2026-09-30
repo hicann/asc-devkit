@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 enum class ElfType { ELF_TYPE_ELF = 0, ELF_TYPE_AIVEC, ELF_TYPE_AICUBE, ELF_TYPE_MAX };
-enum class SocVersion { UNKNOWN, ASCEND310P, ASCEND910B, ASCEND950, ASCEND350 };
+enum class SocVersion { UNKNOWN, ASCEND310P, ASCEND910B, ASCEND950, ASCEND350, ASCEND960DT, ASCEND960PR };
 
 typedef enum KernelType : unsigned int {
     K_TYPE_AICORE = 1,
@@ -210,6 +210,12 @@ static SocVersion GetSocVersion()
     if (std::strncmp(socName, "Ascend350", sizeof("Ascend350") - 1) == 0) {
         return SocVersion::ASCEND350;
     }
+    if (std::strncmp(socName, "Ascend960DT", sizeof("Ascend960DT") - 1) == 0) {
+        return SocVersion::ASCEND960DT;
+    }
+    if (std::strncmp(socName, "Ascend960", sizeof("Ascend960") - 1) == 0) {
+        return SocVersion::ASCEND960PR;
+    }
     ASCENDLOGE("unsupport soc name: %s\n", socName);
     return SocVersion::UNKNOWN;
 }
@@ -231,10 +237,14 @@ int32_t AscendLaunchKernelWithHostArgs(
         }
     }
     if (currentSoc == SocVersion::ASCEND910B ||
-        ((currentSoc == SocVersion::ASCEND950 || currentSoc == SocVersion::ASCEND350) && ubufDynamicSize == 0)) {
+        ((currentSoc == SocVersion::ASCEND950 || currentSoc == SocVersion::ASCEND350 ||
+          currentSoc == SocVersion::ASCEND960DT || currentSoc == SocVersion::ASCEND960PR) &&
+         ubufDynamicSize == 0)) {
         return aclrtLaunchKernelWithHostArgs(funcHandle, numBlocks, stream, nullptr, hostArgs, argsSize, nullptr, 0);
     }
-    if ((currentSoc == SocVersion::ASCEND950 || currentSoc == SocVersion::ASCEND350) && ubufDynamicSize != 0) {
+    if ((currentSoc == SocVersion::ASCEND950 || currentSoc == SocVersion::ASCEND350 ||
+         currentSoc == SocVersion::ASCEND960DT || currentSoc == SocVersion::ASCEND960PR) &&
+        ubufDynamicSize != 0) {
         constexpr uint32_t attrLen = 1;
         aclrtLaunchKernelAttrValue attrValue{};
         attrValue.dynUBufSize = ubufDynamicSize;

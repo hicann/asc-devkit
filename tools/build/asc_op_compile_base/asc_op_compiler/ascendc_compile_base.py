@@ -91,7 +91,7 @@ def get_actual_kernel_type(tiling_key, compile_info, need_ffts, kernel_name):
         return CORE_TYPE_CUBE
     elif kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0]:
         return CORE_TYPE_VEC
-    elif kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2]:
+    elif kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2, KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1]:
         return CORE_TYPE_MIX
     if compile_info.no_set_kernel_type and need_ffts:
         return code_type

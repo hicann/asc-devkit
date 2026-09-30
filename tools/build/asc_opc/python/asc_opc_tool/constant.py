@@ -326,6 +326,8 @@ class OpDataType:
     DT_FLOAT6_E2M3 = "float6_e2m3"
     DT_FLOAT4_E2M1 = "float4_e2m1"
     DT_FLOAT4_E1M2 = "float4_e1m2"
+    DT_HIFLOAT4 = "hifloat4"
+    DT_HIFLOAT4_SCALE = "hifloat4_scale"
 
     DtypeValueDict = {
         DT_FLOAT: 0,
@@ -367,6 +369,8 @@ class OpDataType:
         DT_FLOAT6_E2M3: 39,
         DT_FLOAT4_E2M1: 40,
         DT_FLOAT4_E1M2: 41,
+        DT_HIFLOAT4: 42,
+        DT_HIFLOAT4_SCALE: 43,
     }
 
 

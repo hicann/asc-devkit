@@ -1334,7 +1334,8 @@ def get_tiling_data_func():
     class_body = "{\n"
     class_body += "    constexpr uint64_t all_bytes = sizeof(T);\n"
     class_body += "#if defined(ASCENDC_CPU_DEBUG) || (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201) || (defined \
-    (__DAV_CUBE__) && __NPU_ARCH__ == 3510) || defined(__GET_CODE_CHANNEL__)\n"
+        (__DAV_CUBE__) && __NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || \
+        (__NPU_ARCH__ == 9202) || defined(__GET_CODE_CHANNEL__)\n"
     class_body += "#if defined(__DAV_C100__) || defined(ASCENDC_CPU_DEBUG)\n"
     class_body += get_dynamic_assign_tiling_data_by_size(
         "all_bytes",
@@ -1346,7 +1347,8 @@ p_tilingdata",
     class_body += "    copy_data_align64((uint8_t*)tilingdata, (__gm__ uint8_t *)p_tilingdata, all_bytes);\n"
     class_body += "#endif\n"
     class_body += "#else\n"
-    class_body += "#if __NPU_ARCH__ == 3510 && defined(__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__) \n"
+    class_body += "#if (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202) && \
+        defined(__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__) \n"
     class_body += "#if defined(__ASC_DISABLE_RESERVED_UBUF__)\n"
     class_body += (
         '#error "GET_TILING_DATA macros using reserved UB are forbidden when compile option '
@@ -1357,9 +1359,13 @@ p_tilingdata",
     class_body += "#else \n"
     class_body += "    __ubuf__ uint8_t *tilingdata_in_ub = (__ubuf__ uint8_t *)get_imm(0);\n"
     class_body += "    constexpr uint32_t len_burst = (all_bytes + 31) / 32;\n"
-    class_body += "#if __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102\n"
+    class_body += "#if __NPU_ARCH__ == 3510 || defined(__DAV_310R6__) || __NPU_ARCH__ == 5102\n"
     class_body += "    copy_gm_to_ubuf_align_v2((__ubuf__ uint8_t *)tilingdata_in_ub, \
 (__gm__ uint8_t *)p_tilingdata, 0, 1, len_burst * 32, 0, 0, false, 0, 0, 0);\n"
+    class_body += get_tilingdata_preload()
+    class_body += "#elif defined(__DAV_VEC__) && (__NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202)\n"
+    class_body += "    copy_gm_to_ubuf_align_v2((__ubuf__ uint8_t *)tilingdata_in_ub, \
+(__gm__ uint8_t *)p_tilingdata, 0, 1, len_burst * 32, 0, 0, false, false, 0, 0, 0, false);\n"
     class_body += get_tilingdata_preload()
     class_body += "#elif __NPU_ARCH__ == 3103 || __NPU_ARCH__ == 3003\n"
     class_body += "    copy_gm_to_ubuf(((__ubuf__ void *)tilingdata_in_ub), (__gm__ void *)p_tilingdata, 0, 1, \
@@ -1405,7 +1411,7 @@ def get_tiling_copy_func_and_micro(class_name):
     class_body += get_tiling_data_func()
 
     short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-    if short_soc_version in ["Ascend950", "Ascend350", "MC62", "MC32DM11A"]:
+    if short_soc_version in ["Ascend950", "Ascend960DT", "Ascend960PR", "Ascend350", "MC62", "MC32DM11A"]:
         # use __AUX__ to create a new struct to reduce running time. __AUX__ name does not matter
         # original: initialize, then write value    use __AUX__: write value, then interpret_cast to needed struct
         class_body += _get_tiling_data_without_time_stamp(class_name)
@@ -2056,7 +2062,7 @@ def _add_time_stamp_codes(desc_id: str, space_len: int = 1):
 def get_tiling_info_by_tiling(op_info: OpInfo, infered_info_from_ifile, value_depends: dict, origin_func_name):
     CommonUtility.print_compile_log(op_info.kernel_name, "get tiling info...", AscendCLogLevel.LOG_INFO)
     # temp enable avoid
-    enable_vd = CommonUtility.is_c310()
+    enable_vd = CommonUtility.is_c310() or CommonUtility.is_920r1() or CommonUtility.is_920r2()
     if infered_info_from_ifile.default_tiling_struct != "" or global_var_storage.get_variable(
         "ascendc_tiling_no_register"
     ):

@@ -1021,7 +1021,12 @@ class SuperOperatorInfos:
             self.get_ws_size(self.block_num * 2)
 
     def add_define_options(self, exist_dynamic_sub_ops, options: list):
-        if self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1 and CommonUtility.is_c310():
+        if (
+            self.kernel_type == SuperKernelKernelType.KERNEL_TYPE_MIX_AIC_1_1
+            and CommonUtility.is_c310()
+            or CommonUtility.is_920r1()
+            or CommonUtility.is_920r2()
+        ):
             options.append("-D__ASCENDC_DAVID_SPLIT_CORE__")
         if exist_dynamic_sub_ops:
             options.append("-D__SUPER_KERNEL_DYNAMIC_BLOCK_NUM__")

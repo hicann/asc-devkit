@@ -255,7 +255,7 @@ def gen_switch_case_call_block_of_dynamic_op(super_operator, next_sub_operator, 
 def print_params_addr(super_kernel_params):
     result = ""
     index = 0
-    if not CommonUtility.is_c310():
+    if not (CommonUtility.is_c310() or CommonUtility.is_920r1() or CommonUtility.is_920r2()):
         result += 'AscendC::printf("ffts_addr: %p\\n", ffts_addr); //para index: 0\n'
         index += 1
     for param in super_kernel_params:
@@ -990,7 +990,7 @@ auto_gen_{super_operator.kernel_name}_kernel(void) {{\n'
             )
             super_kernel_file += "    InitProfiling(taskId, profilingPtr);\n"
 
-    if not CommonUtility.is_c310():
+    if not (CommonUtility.is_c310() or CommonUtility.is_920r1() or CommonUtility.is_920r2()):
         super_kernel_file += "    GM_ADDR ffts_addr = param_base[0];\n"
         super_kernel_file += "    if (ffts_addr != nullptr) {\n"
         super_kernel_file += "        set_ffts_base_addr((uint64_t)ffts_addr);\n"

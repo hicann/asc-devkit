@@ -42,6 +42,136 @@ from .ascendc_compile_dfx import DFXSectionGenerator
 from .super_kernel_sub_op_compile import gen_sub_kernel_name
 
 
+def _gen_compile_cmd_920r1(
+    src_file: str, dst_file: str, compile_option_tuple, sub_arch: str, tiling_file: str, with_tiling_file: bool = True
+):
+    """
+    Generate the compile command for the 920r1 compiler.
+    :param src_file: the source file
+    :param dst_file: the destination file
+    :param extra_options: the extra options
+    :param with_tiling_file: whether with the tiling file
+    :return: the compile command
+    """
+    if global_var_storage.get_variable("ascendc_enable_ccache") == True:
+        compile_cmd = [
+            os.environ.get("ASCENDC_CCACHE_EXECUTABLE"),
+            global_var_storage.get_variable("ascendc_compiler_path"),
+            "-c",
+            "-O3",
+        ]
+    else:
+        compile_cmd = [global_var_storage.get_variable("ascendc_compiler_path"), "-c", "-O3"]
+
+    for option in compile_option_tuple.compile_options:
+        compile_cmd += [option]
+
+    define = "-D__DAV_VEC__"
+    if sub_arch == "dav-920r1-cube":
+        define = "-D__DAV_CUBE__"
+
+    compile_cmd += [
+        src_file,
+        "--cce-aicore-arch=%s" % sub_arch,
+        define,
+        "-D__NPU_ARCH__=9201",
+        "--cce-aicore-only",
+        "-o",
+        dst_file,
+        "-mllvm",
+        "-cce-aicore-stack-size=0x8000",
+        "-mllvm",
+        "-cce-aicore-function-stack-size=0x8000",
+        "-mllvm",
+        "-cce-aicore-record-overflow=false",
+        "-mllvm",
+        "-cce-aicore-addr-transform",
+        "-mllvm",
+        "--cce-aicore-jump-expand=true",
+        "-mllvm",
+        "-cce-aicore-dcci-insert-for-scalar=false",
+    ]
+    if global_var_storage.get_variable("ascendc_enable_sanitizer"):
+        compile_cmd += ["--cce-enable-sanitizer", "-gline-tables-only"]
+        compile_cmd += ["-mllvm", "-cce-aicore-long-call", "-mllvm", "-cce-aicore-jump-expand=true"]
+
+    for opt in compile_option_tuple.mllvm_options:
+        compile_cmd += [opt]
+
+    if with_tiling_file and tiling_file != "":
+        compile_cmd += ["-include", tiling_file]
+    compile_cmd += ["-std=c++17"]
+    if "oom" in get_current_build_config("tir.op_debug_config"):
+        compile_cmd += ["-mllvm", "-cce-block-local-relocate=false"]
+        compile_cmd += [f"-D{ASCENDC_OOM}={1}"]
+    return compile_cmd
+
+
+def _gen_compile_cmd_920r2(
+    src_file: str, dst_file: str, compile_option_tuple, sub_arch: str, tiling_file: str, with_tiling_file: bool = True
+):
+    """
+    Generate the compile command for the 920r2 compiler.
+    :param src_file: the source file
+    :param dst_file: the destination file
+    :param extra_options: the extra options
+    :param with_tiling_file: whether with the tiling file
+    :return: the compile command
+    """
+    if global_var_storage.get_variable("ascendc_enable_ccache") == True:
+        compile_cmd = [
+            os.environ.get("ASCENDC_CCACHE_EXECUTABLE"),
+            global_var_storage.get_variable("ascendc_compiler_path"),
+            "-c",
+            "-O3",
+        ]
+    else:
+        compile_cmd = [global_var_storage.get_variable("ascendc_compiler_path"), "-c", "-O3"]
+
+    for option in compile_option_tuple.compile_options:
+        compile_cmd += [option]
+
+    define = "-D__DAV_VEC__"
+    if sub_arch == "dav-920r2-cube":
+        define = "-D__DAV_CUBE__"
+
+    compile_cmd += [
+        src_file,
+        "--cce-aicore-arch=%s" % sub_arch,
+        define,
+        "-D__NPU_ARCH__=9202",
+        "--cce-aicore-only",
+        "-o",
+        dst_file,
+        "-mllvm",
+        "-cce-aicore-stack-size=0x8000",
+        "-mllvm",
+        "-cce-aicore-function-stack-size=0x8000",
+        "-mllvm",
+        "-cce-aicore-record-overflow=false",
+        "-mllvm",
+        "-cce-aicore-addr-transform",
+        "-mllvm",
+        "--cce-aicore-jump-expand=true",
+        "-mllvm",
+        "-cce-aicore-dcci-insert-for-scalar=false",
+    ]
+    if global_var_storage.get_variable("ascendc_enable_sanitizer"):
+        compile_cmd += ["--cce-enable-sanitizer", "-gline-tables-only"]
+        compile_cmd += ["-mllvm", "-cce-aicore-long-call", "-mllvm", "-cce-aicore-jump-expand=true"]
+
+    for opt in compile_option_tuple.mllvm_options:
+        compile_cmd += [opt]
+
+    if with_tiling_file and tiling_file != "":
+        compile_cmd += ["-include", tiling_file]
+    compile_cmd += ["-std=c++17"]
+    if "oom" in get_current_build_config("tir.op_debug_config"):
+        compile_cmd += ["-mllvm", "-cce-block-local-relocate=false"]
+        compile_cmd += [f"-D{ASCENDC_OOM}={1}"]
+    return compile_cmd
+
+
 def _gen_compile_cmd_c310(
     src_file: str, dst_file: str, compile_option_tuple, sub_arch: str, tiling_file: str, with_tiling_file: bool = True
 ):
@@ -234,6 +364,10 @@ def gen_compile_cmd_v220(
     """
     if CommonUtility.is_c310():
         return _gen_compile_cmd_c310(src_file, dst_file, compile_option_tuple, sub_arch, tiling_file, with_tiling_file)
+    elif CommonUtility.is_920r1():
+        return _gen_compile_cmd_920r1(src_file, dst_file, compile_option_tuple, sub_arch, tiling_file, with_tiling_file)
+    elif CommonUtility.is_920r2():
+        return _gen_compile_cmd_920r2(src_file, dst_file, compile_option_tuple, sub_arch, tiling_file, with_tiling_file)
     elif CommonUtility.is_m510():
         return _gen_compile_cmd_m510(src_file, dst_file, compile_option_tuple, tiling_file, with_tiling_file)
     else:
@@ -336,7 +470,9 @@ def gen_compile_cmd_for_meta_info(src_file: str, dst_file: str, compile_option_t
 
 
 def get_v220_kernel_type_mix_flag(compile_info: CompileInfo, tiling_info: TilingInfo):
-    is_v220_flag = CommonUtility.is_v220() or CommonUtility.is_c310()
+    is_v220_flag = (
+        CommonUtility.is_v220() or CommonUtility.is_c310() or CommonUtility.is_920r1() or CommonUtility.is_920r2()
+    )
     kernel_type_res = 0
     is_single_and_using_hard_sync = (
         is_v220_flag and compile_info.hard_sync and compile_info.code_channel in [CORE_TYPE_VEC, CORE_TYPE_CUBE]
@@ -405,12 +541,16 @@ def set_dynamic_sub_func_names_of_super_kernel(tiling_key, compile_info, arch, k
         compile_info.hard_sync and compile_info.code_channel in [CORE_TYPE_VEC, CORE_TYPE_CUBE]
     ):
         kernel_type = (
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2.name
-            if compile_info.code_channel == CORE_TYPE_MIX
+            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1.name
+            if (compile_info.code_channel == CORE_TYPE_MIX and (CommonUtility.is_920r1() or CommonUtility.is_920r2()))
             else (
-                KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0.name
-                if compile_info.code_channel == CORE_TYPE_VEC
-                else KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0.name
+                KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2.name
+                if (compile_info.code_channel == CORE_TYPE_MIX)
+                else (
+                    KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0.name
+                    if compile_info.code_channel == CORE_TYPE_VEC
+                    else KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0.name
+                )
             )
         )
     else:
@@ -459,7 +599,9 @@ def compile_single_tiling_v220(param: SingleTilingKeyCompileParams):
     kernel_func_name = get_compile_target_name(param.compile_info, param.tiling_key, core_type)
     compile_cmd.extend(
         get_compile_target_options(
-            param.compile_info, param.tiling_key, CommonUtility.is_c310() or CommonUtility.is_m510()
+            param.compile_info,
+            param.tiling_key,
+            any((CommonUtility.is_c310(), CommonUtility.is_m510(), CommonUtility.is_920r1(), CommonUtility.is_920r2())),
         )
     )
     compile_cmd += [f"-Dauto_gen_{param.compile_info.origin_func_name}_kernel={kernel_func_name}"]
@@ -473,17 +615,17 @@ def gen_current_kernel_name(compile_info: CompileInfo, sub_arch: str, code_chann
     ):
         # if code_mix, do not add __kernel0 when compile
         current_kernel_name = compile_info.kernel_name
+        if code_channel == CORE_TYPE_MIX:
+            if CommonUtility.is_920r1() or CommonUtility.is_920r2():
+                kernel_meta_type = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1.name
+            else:
+                kernel_meta_type = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2.name
+        elif code_channel == CORE_TYPE_VEC:
+            kernel_meta_type = KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0.name
+        else:
+            kernel_meta_type = KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0.name
         current_kernel_name = gen_sub_kernel_name(
-            current_kernel_name,
-            sub_arch,
-            KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2.name
-            if code_channel == CORE_TYPE_MIX
-            else (
-                KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0.name
-                if code_channel == CORE_TYPE_VEC
-                else KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0.name
-            ),
-            compile_info.dst_file,
+            current_kernel_name, sub_arch, kernel_meta_type, compile_info.dst_file
         )
     else:
         current_kernel_name = compile_info.get_kernel_func_name()
@@ -516,7 +658,7 @@ def get_compile_cmd_for_kernel_name(
         ]
     if code_channel == CORE_TYPE_MIX:
         compile_cmd += [f"-D{MIX_CORE_MACRO}={1}"]
-    if CommonUtility.is_c310() or CommonUtility.is_m510():
+    if any((CommonUtility.is_c310(), CommonUtility.is_m510(), CommonUtility.is_920r1(), CommonUtility.is_920r2())):
         if code_channel == CORE_TYPE_MIX:
             compile_cmd += ["-D__ASCENDC_ENABLE_VEC_TAIL_TILING_COPY__"]
         raw_kernel_type = compile_info.raw_tiling_key_kernel_type.get(str(tiling_info.tiling_key))
@@ -628,11 +770,19 @@ def get_ktype_section_head(variable_name: str):
             section_var_head += "#if (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201)\n"
         elif CommonUtility.is_c310():
             section_var_head += "#if (defined(__DAV_CUBE__) && __NPU_ARCH__ == 3510)\n"
+        elif CommonUtility.is_920r1():
+            section_var_head += "#if (defined(__DAV_CUBE__) && __NPU_ARCH__ == 9201)\n"
+        elif CommonUtility.is_920r2():
+            section_var_head += "#if (defined(__DAV_CUBE__) && __NPU_ARCH__ == 9202)\n"
     elif "mix_aiv" in variable_name:
         if CommonUtility.is_v220():
             section_var_head += "#if (defined(__DAV_VEC__) && __NPU_ARCH__ == 2201)\n"
         elif CommonUtility.is_c310():
             section_var_head += "#if (defined(__DAV_VEC__) && __NPU_ARCH__ == 3510)\n"
+        elif CommonUtility.is_920r1():
+            section_var_head += "#if (defined(__DAV_VEC__) && __NPU_ARCH__ == 9201)\n"
+        elif CommonUtility.is_920r2():
+            section_var_head += "#if (defined(__DAV_VEC__) && __NPU_ARCH__ == 9202)\n"
     return section_var_head
 
 
@@ -887,7 +1037,7 @@ def get_code_channel_v220_by_first_tiling_key(params: InferChannelParams):
                 continue
             for inst in insts[1:5]:
                 hardware_sync_in_asm = hardware_sync_in_asm or _is_hard_sync_instr(inst)
-                if CommonUtility.is_c310():
+                if CommonUtility.is_c310() or CommonUtility.is_920r1() or CommonUtility.is_920r2():
                     mode |= v310_mode(inst, arch == f"dav-{chip_version}-cube")
                 else:
                     mode |= v220_mode(inst)

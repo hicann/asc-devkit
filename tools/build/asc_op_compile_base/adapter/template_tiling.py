@@ -33,7 +33,7 @@ UI_MIX = 2
 # native datatype and dataformat support
 ASCENDC_TPL_INPUT_BIAS = 1e8
 ASCENDC_TPL_OUTPUT_BIAS = 9e8
-ASCENDC_TPL_DATATYPE_MAX = 42
+ASCENDC_TPL_DATATYPE_MAX = 44
 ASCENDC_COMPILE_DATATYPE_MAP = {
     "DT_FLOAT": ["float32", 0],
     "DT_FLOAT16": ["float16", 1],
@@ -56,8 +56,11 @@ ASCENDC_COMPILE_DATATYPE_MAP = {
     "DT_HIFLOAT8": ["hifloat8", 34],
     "DT_FLOAT8_E5M2": ["float8_e5m2", 35],
     "DT_FLOAT8_E4M3FN": ["float8_e4m3fn", 36],
+    "DT_FLOAT8_E8M0": ["float8_e8m0", 37],
     "DT_FLOAT4_E2M1": ["float4_e2m1", 40],
     "DT_FLOAT4_E1M2": ["float4_e1m2", 41],
+    "DT_HIFLOAT4": ["hifloat4", 42],
+    "DT_HIFLOAT4_SCALE": ["hifloat4_scale", 43],
     "DT_MAX": ["unknown", ASCENDC_TPL_DATATYPE_MAX],
 }
 ASCENDC_COMPILE_DATATYPE_REVERT_MAP = {v[-1]: v[0] for v in ASCENDC_COMPILE_DATATYPE_MAP.values()}
@@ -80,8 +83,11 @@ ASCENDC_KERNEL_TEMPLATE_INPUT_DATATYPE_MAP = {
     "hifloat8_t": 34,
     "fp8_e5m2_t": 35,
     "fp8_e4m3fn_t": 36,
+    "fp8_e8m0_t": 37,
     "fp4x2_e2m1_t": 40,
     "fp4x2_e1m2_t": 41,
+    "hifloat4x2_t": 42,
+    "hif4_scale": 43,
 }
 ASCENDC_KERNEL_TEMPLATE_INPUT_KERNEL_TYPE_MAP = {
     "ASCENDC_TPL_AIV_ONLY": 0,
