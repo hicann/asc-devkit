@@ -143,6 +143,7 @@
 | srcNdStride | 可选输入 | 仅在L0C Buffer（CO1）->GM通路时生效，此通路无需额外设置。 |
 | dstNdStride | 可选输入 | 仅在L0C Buffer（CO1）->GM通路时生效，此通路无需额外设置。 |
 
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1_res.md#id2 -->
 ## 数据类型<a id="zh-cn_topic_0000002511188540_section4219135304818"></a>
 
 **源矩阵与目的矩阵支持的数据类型组合**

@@ -63,7 +63,8 @@ __simd_callee__ inline void ReduceDataBlock(U& dstReg, U srcReg, MaskReg mask)
 
 ## 数据类型
 
-**表3** ReduceType::SUM数据类型支持情况
+<!-- npu="950" id8 -->
+**表3** Ascend 950PR&950DT系列产品，版本ReduceType::SUM数据类型支持情况
 
 | dstReg | srcReg |
 | --- | --- |
@@ -74,7 +75,7 @@ __simd_callee__ inline void ReduceDataBlock(U& dstReg, U srcReg, MaskReg mask)
 | uint32_t | uint16_t |
 | float | float |
 
-**表4** ReduceType::MAX或ReduceType::MIN数据类型支持情况
+**表4** Ascend 950PR&950DT系列产品，ReduceType::MAX或ReduceType::MIN数据类型支持情况
 
 | dstReg | srcReg |
 | --- | --- |
@@ -84,6 +85,8 @@ __simd_callee__ inline void ReduceDataBlock(U& dstReg, U srcReg, MaskReg mask)
 | int32_t | int32_t |
 | uint32_t | uint32_t |
 | float | float |
+<!-- end id8 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/reduction_compute/ReduceDataBlock_res.md#id2 -->
 
 ## 返回值说明
 

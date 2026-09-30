@@ -109,6 +109,7 @@ DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动�
 <!-- npu="910b" id12 -->
 针对Atlas A2系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
 <!-- end id12 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable_res.md#id2 -->
 
 ## 返回值说明
 

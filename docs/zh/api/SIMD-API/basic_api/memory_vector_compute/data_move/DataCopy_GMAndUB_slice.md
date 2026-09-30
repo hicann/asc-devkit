@@ -172,6 +172,8 @@
 
 <!-- end id12 -->
 
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMAndUB_slice_res.md#id2 -->
+
 ## 返回值说明
 
 无

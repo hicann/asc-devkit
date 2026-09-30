@@ -78,6 +78,8 @@ __aicore__ inline void DataCopyL1ToUB(const LocalTensor<T>& dst, const LocalTens
 
 支持的数据类型为b8、b16、b32、b64。
 
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB_res.md#id1 -->
+
 ## 返回值说明
 
 无

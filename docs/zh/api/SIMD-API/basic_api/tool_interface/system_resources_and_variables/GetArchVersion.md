@@ -81,3 +81,4 @@ AscendC::printf("core version is %u", coreVersion);
 <!-- npu="910" id11 -->
 - Atlas训练系列产品：1001
 <!-- end id11 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetArchVersion_res.md#id2 -->
