@@ -319,6 +319,7 @@
             -   [基于全局掩码复用的计算性能优化](operator_practice/simd_operator_optimization/vector_compute/mask_reuse_optimization.md)
 
         -   [矩阵计算](operator_practice/simd_operator_optimization/matrix_compute/matrix_compute.md)
+            -   [使用hifloat8_t实现Matmul性能优化](operator_practice/simd_operator_optimization/matrix_compute/hifloat8_matmul_optimization.md)
             -   [通过BT Buffer实现高效的bias计算](operator_practice/simd_operator_optimization/matrix_compute/bt_buffer_bias_compute.md)
             -   [通过FP Buffer存放量化参数实现高效随路量化](operator_practice/simd_operator_optimization/matrix_compute/fp_buffer_quantization.md)
             -   [通过L0C Buffer数据暂存实现高效的矩阵乘结果累加](operator_practice/simd_operator_optimization/matrix_compute/l0c_buffer_matmul_accumulate.md)

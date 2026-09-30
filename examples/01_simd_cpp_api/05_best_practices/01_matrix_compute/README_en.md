@@ -8,6 +8,7 @@ Matrix computation optimization samples based on Matrix Compute API, introducing
 
 | Directory Name | Function Description | Supported Products |
 | --- | --- | --- |
+| [matmul_hif8_high_performance](./matmul_hif8_high_performance) |  Optimizes Matmul with hifloat8_t inputs and Fixpipe on-the-fly quantization, with comparison cases for half inputs, HIF8 inputs, and HIF8 inputs and output. | Ascend 950PR/Ascend 950DT |
 | [matmul_basic_api_high_performance](./matmul_basic_api_high_performance) |  Matmul basic API best practices sample, based on static Tensor programming demonstrating basic API high-performance implementation details. | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series Products/Atlas A3 Inference Series Products<br>Atlas A2 Training Series Products/Atlas A2 Inference Series Products |
 | [matmul_high_performance](./matmul_high_performance) |  Matmul high-level API progressive performance optimization sample, demonstrating multi-core splitting, MDL, L1/L2 Cache, constant tiling, UnitFlag, and other optimization methods. | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series Products/Atlas A3 Inference Series Products<br>Atlas A2 Training Series Products/Atlas A2 Inference Series Products |
 | [matmul_mxfp4_basic_api_high_performance](./matmul_mxfp4_basic_api_high_performance) |  MxFP4 Matmul basic API high-performance sample, based on static Tensor programming demonstrating verified basic API implementation paths. | Ascend 950PR/Ascend 950DT |
