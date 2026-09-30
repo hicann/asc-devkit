@@ -17,6 +17,9 @@ uint32_t g_msprofReportApiCallCount = 0;
 uint32_t g_msprofRegisterCallbackCallCount = 0;
 uint32_t g_msprofLastRegisterModuleId = 0;
 ProfCommandHandle g_msprofLastRegisterCallback = nullptr;
+uint32_t g_msprofUnRegisterCallbackCallCount = 0;
+uint32_t g_msprofLastUnRegisterModuleId = 0;
+ProfCommandHandle g_msprofLastUnRegisterCallback = nullptr;
 MsprofApi g_msprofLastApi = {};
 MsprofCompactInfo g_msprofLastCompactInfo = {};
 MsprofAdditionalInfo g_msprofLastAdditionalInfo = {};
@@ -61,4 +64,12 @@ int32_t MsprofRegisterCallback(uint32_t moduleId, ProfCommandHandle handle)
     g_msprofLastRegisterModuleId = moduleId;
     g_msprofLastRegisterCallback = handle;
     return 1;
+}
+
+int32_t MsprofUnRegisterCallback(uint32_t moduleId, ProfCommandHandle handle)
+{
+    ++g_msprofUnRegisterCallbackCallCount;
+    g_msprofLastUnRegisterModuleId = moduleId;
+    g_msprofLastUnRegisterCallback = handle;
+    return 0;
 }
