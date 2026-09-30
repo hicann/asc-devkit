@@ -163,9 +163,6 @@ inline void mad_mx(
 {}
 
 // The compiler supports this overload, but it is missing from the CPU debug stub header.
-int64_t ld_dev(__gm__ int64_t* src, int16_t offset);
-
-// The compiler supports this overload, but it is missing from the CPU debug stub header.
 inline void vmadd(vector_bf16& dst, vector_bf16 src0, vector_bf16 src1, vector_bool mask, Literal mode) {}
 
 #ifndef ULL
@@ -1525,10 +1522,5 @@ inline int32_t g_coreType = 1;
 #else
 inline int32_t g_coreType = 2;
 #endif
-
-typedef std::integral_constant<Pos, Pos::LOWEST> Lowest_Type;
-typedef std::integral_constant<Pos, Pos::HIGHEST> Highest_Type;
-constexpr Lowest_Type POS_LOWEST = Lowest_Type();
-constexpr Highest_Type POS_HIGHEST = Highest_Type();
 
 #endif

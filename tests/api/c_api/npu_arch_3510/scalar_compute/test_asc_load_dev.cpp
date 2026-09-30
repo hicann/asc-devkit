@@ -14,8 +14,6 @@
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "include/c_api/asc_simd.h"
 
-int64_t ld_dev(__gm__ int64_t*, int16_t) { return 0; }
-
 #define TEST_ASC_LOAD_DEV(data_type, cce_type, raw_value, expected_value)                                         \
     namespace {                                                                                                   \
     uint64_t ld_dev_##data_type##_stub(__gm__ cce_type* addr, int16_t offset)                                     \
@@ -43,10 +41,10 @@ TEST_ASC_LOAD_DEV(uint32_t, uint32_t, 3, 3)
 TEST_ASC_LOAD_DEV(uint64_t, uint64_t, 4, 4)
 
 namespace {
-int64_t ld_dev_int64_t_stub(__gm__ int64_t* addr, int16_t offset)
+uint64_t ld_dev_int64_t_stub(__gm__ int64_t* addr, int16_t offset)
 {
     EXPECT_EQ(offset, 0);
-    return -1;
+    return UINT64_MAX;
 }
 } // namespace
 
@@ -54,7 +52,7 @@ TEST(AscLoadDev, int64_t)
 {
     __gm__ int64_t* addr = nullptr;
     static_assert(std::is_same_v<decltype(asc_load_dev(addr)), int64_t>);
-    MOCKER_CPP(ld_dev, int64_t(__gm__ int64_t*, int16_t)).times(1).will(invoke(ld_dev_int64_t_stub));
+    MOCKER_CPP(ld_dev, uint64_t(__gm__ int64_t*, int16_t)).times(1).will(invoke(ld_dev_int64_t_stub));
     EXPECT_EQ(asc_load_dev(addr), -1);
     GlobalMockObject::verify();
 }
