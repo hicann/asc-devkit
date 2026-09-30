@@ -129,6 +129,7 @@ __simd_callee__ inline void asc_loadunalign_pre(vector_load_unalign& dst,
 - 本接口和紧随其后的首次搬入必须使用相同的`src`和`offset`。
 - 同一循环迭代内，后续搬入继续使用[asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)按`inc`更新后的`offset`时，可以复用更新后的`src0`；如果`src`或`offset`被另行修改，必须根据修改后的实际读取地址重新初始化`src0`。
 - 当dtype为`int64_t`时，由于地址寄存器更新接口不支持b64模式，需要使用[asc_update_addr_reg_b32](../reg_addr_reg/asc_update_addr_reg.md)生成地址寄存器。一个b64元素占用两个b32寻址单元，因此传入`asc_update_addr_reg_b32`的各维偏移量必须设置为期望的b64元素偏移量的2倍。
+
     ```c
     vector_int64_t src_reg;
     vector_bool mask_b32 = asc_create_mask_b32(PAT_ALL);

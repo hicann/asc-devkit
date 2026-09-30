@@ -41,6 +41,7 @@
 ## 函数原型
 
 - 同步计算
+
   ```cpp
   // RINT舍入模式
   __aicore__ inline void asc_bfloat162int32_rn_sync(__ubuf__ int32_t* dst, __ubuf__ bfloat16_t* src, uint32_t count)

@@ -60,18 +60,23 @@ msSanitizer工具是基于AI处理器的异常检测工具，包含了单算子�
 具体使用方法请参考[《msSanitizer用户指南》](https://gitcode.com/Ascend/mssanitizer/blob/master/docs/zh/user_guide/mssanitizer_user_guide.md)。
 
 **异常检测程序编译**
+
 ```shell
 // bisheng编译时增加相关的sanitizer编译选项。
 bisheng add_custom.asc -o add_custom --sanitizer -lineinfo
 ```
+
 **异常检测工具的使用**
+
 ```shell
 // 同时开启多种异常检测能力
 mssanitizer --tool=memcheck --tool=racecheck --tool=initcheck --tool=synccheck ./add_custom
 ```
+
 **内存异常报告解析**
 
 内存检测异常报告会输出多种不同类型的异常信息，以下将对非法读写给出了简单的异常信息示例：
+
 ```shell
 ====== ERROR: illegal read of size 224  // 异常的基本信息,包含非法读写的类型以及被非法访问的字节数,非法读写包括read(非法读取)和write(非法写入)
 ======    at 0x12c0c0015000 on GM in add_custom_kernel  // 异常发生的内存位置信息，包含发生的核函数（Kernel）名、地址空间与内存地址，此处的内存地址指一次内存访问中的首地址
@@ -166,14 +171,18 @@ Process 177943 stopped
 ### 解析异常算子dump文件
 
 通过环境变量开启算子异常时Dump出Core文件。
+
 ```shell
 # aic_err_detail_dump: 导出AI Core的内存存储、寄存器和调用栈信息。
 export ASCEND_DUMP_SCENE=aic_err_detail_dump
 # 指定异常算子Dump信息的存储路径，可配置为绝对路径或执行程序的相对路径。
 export ASCEND_DUMP_PATH=./
 ```
+
 使用msdebug解析core文件：
+
 ```shell
 msdebug --core output2/extra-info/data-dump/0/xxx.core add_custom
 ```
+
 更多详细信息可以参考[《msDebug用户指南》](https://gitcode.com/Ascend/msdebug/blob/master/docs/zh/user_guide/msdebug_user_guide.md)。

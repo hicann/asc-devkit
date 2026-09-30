@@ -82,7 +82,6 @@ PIPE_S
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
-
 <!-- end id8 -->
 
 - 场景A：标量load使用`NORMAL_FIRST_VICTIM`读取GM tiling表。<a id="asc_set_scalar_cache_mode_scenario_a"></a>

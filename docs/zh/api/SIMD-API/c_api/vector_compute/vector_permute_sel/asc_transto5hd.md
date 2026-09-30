@@ -106,7 +106,6 @@ PIPE_V
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
-
 <!-- end id8 -->
 
 一次运行会分别验证下面两个场景：

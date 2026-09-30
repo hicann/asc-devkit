@@ -38,11 +38,14 @@ MaskReg寄存器用于指示在计算过程中哪些元素参与计算，宽度�
 ## 函数原型<a name="section620mcpsimp"></a>
 
 - CreateMask接口
+
   ```cpp
   template <typename T, MaskPattern mode = MaskPattern::ALL, const RegTrait& regTrait = RegTraitNumOne>
   __simd_callee__ inline MaskReg CreateMask()
   ```
+
 - UpdateMask接口
+
   ```cpp
   template <typename T, const RegTrait& regTrait = RegTraitNumOne>
   __simd_callee__ inline MaskReg UpdateMask(uint32_t& scalarValue)
@@ -179,6 +182,7 @@ __simd_callee__ inline void Add(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
       }
     }
     ```
+
   >[!NOTE]说明
   >
   >当数据类型为int16_t（操作数为16位）时，每次循环内能够处理的元素个数Mask∈[1, 128]。当count>128时，仍按一次repeat（128元素）执行，不支持超过128元素的Mask控制。

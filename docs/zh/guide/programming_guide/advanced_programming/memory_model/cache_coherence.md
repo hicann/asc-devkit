@@ -252,6 +252,7 @@ T1        asc_atomic_add(A, 1)
 上面的关键不是`asc_atomic_add`本身不原子，而是原子操作看到的GM值没有包含此前停留在DCache中的普通Scalar写入。
 
 反过来，如果`asc_atomic_add(A, 1)`已经把GM更新为1，而本核DCache里还保留`A == 0`的旧副本，后续普通Scalar读也可能继续读到旧副本。
+
 ```text
 Case 2：Atomic在前，普通Scalar读在后
 初始状态：
@@ -323,7 +324,6 @@ T3        Scalar.DCCI A
 T4        Scalar.LOAD A -> 1
           // 重新从GM获取Atomic更新后的新值
 ```
-
 <!-- end id3 -->
 
 #### 软件维护Scalar访问GM的DCache一致性

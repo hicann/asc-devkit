@@ -666,9 +666,11 @@ Ascend C框架提供的编译选项介绍如下：
 -   `--op_relocatable_kernel_binary`，设置该选项为true时，会额外编译一份可被重新链接的二进制文件；不配置或设置为false时该选项均不生效。该选项用于自定义Tiling下沉算子开启SuperKernel的场景，配置该选项所生成的二进制文件，可以使算子在SuperKernel编译时直接复用二进制文件，降低编译耗时。
 -   `--kernel-template-input`，编译指定的模板参数组合相关的核函数（Kernel）代码，用于加速编译过程。更多信息参考[编译加速 — 选择性编译](./compilation_acceleration.md#选择性编译)。
 -   `-DFORCE_TILING_CONST_PROPAGATION`，该选项用于静态shape场景Tiling数据的常量化优化。对于复杂算子，该编译选项可以提升算子静态shape执行性能。该编译选项仅支持自定义算子工程，且仅在算子使用`BEGIN_TILING_DATA_DEF`注册Tiling结构体的情形下生效，对于算子使用标准C++语法定义Tiling结构体的情形下不生效。使用示例如下：
+
     ```
     -DFORCE_TILING_CONST_PROPAGATION
     ```
+
     该编译选项的原理是，在算子使用`BEGIN_TILING_DATA_DEF`注册Tiling结构体的场景下，自定义算子工程在定义该Tiling结构体时，会将其成员变量都定义为static constexpr类型常量，即将Tiling结构体变为静态常量类。由于在前端标记了常量，编译器会根据Tiling数据进行更彻底的常量折叠和优化。
     
     该选项对算子写法有约束，以下情形不支持该选项：

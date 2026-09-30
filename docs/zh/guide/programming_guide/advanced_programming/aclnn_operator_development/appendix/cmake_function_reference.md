@@ -214,6 +214,7 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>... | S
 ```cmake
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)   #为算子添加编译选项
 ```
+
 npu_op_kernel_options(ascendc_kernels AddCustom SOC_SERIES Ascendxxx Ascendyyy OPTIONS -DASCENDC_DEBUG)
 
 ### npu_op_kernel_sources
@@ -243,7 +244,9 @@ npu_op_kernel_sources(ascendc_kernels
     KERNEL_FILE add_custom.cpp
 )
 ```
+
 也可以使用`SOC_SERIES`按系列指定：
+
 ```cmake
 npu_op_kernel_sources(ascendc_kernels
     OP_TYPE AddCustom

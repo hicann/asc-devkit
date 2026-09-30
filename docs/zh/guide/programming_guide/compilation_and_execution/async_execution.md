@@ -1,13 +1,16 @@
 # 异步执行
 
 当开发者完成一个核函数（Kernel）的编写后，需要通过特定的下发/启动语法将其提交到指定的Stream（计算流）上执行。例如：
+
 ```c++
      kernel<<<numBlocks, ubufDynSize, stream>>>(参数列表);
      // 或使用对应的API：aclrtLaunchKernel*(...)
 ```
+
 这些核函数（Kernel）都是通过CANN Runtime完成核函数（Kernel）的加载与运行。CANN Runtime是CANN软件栈中负责驱动硬件执行与管理AI计算任务的核心组件，它通过提供Device、Memory、Context、Stream、核函数（Kernel）管理等API，使得上层应用和框架能够高效利用AI处理器的硬件计算资源。
 
 完成核函数（Kernel）加载和运行的主要流程分以下几步：
+
 ```txt
   1. 初始化：aclInit。
   2. 运行时资源申请：通过aclrtSetDevice和aclrtCreateStream分别申请Device、Stream运行管理资源。
@@ -18,6 +21,7 @@
   7. 资源释放：通过aclrtDestroyStream和aclrtResetDevice分别释放Stream、Device运行管理资源。
   8. 去初始化：aclFinalize。
 ```
+
 ![](../../figures/npu_verify.png)
 
 在这个过程中我们提到了Stream创建与销毁，内存申请与拷贝，异步调用与同步等待。在本节的其余部分，我们将解释这些CANN Runtime的元素和对应的API。

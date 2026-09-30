@@ -40,6 +40,7 @@
 ## 函数原型
 
 - 同步计算
+
     ```cpp
     // RINT舍入模式
     __aicore__ inline void asc_half2int16_rn_sync(__ubuf__ int16_t* dst, __ubuf__ half* src, uint32_t count)

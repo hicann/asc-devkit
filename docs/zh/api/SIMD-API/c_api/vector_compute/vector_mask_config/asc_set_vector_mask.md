@@ -184,7 +184,6 @@ PIPE_S
       return passed ? 0 : 1;
   }
   ```
-
 <!-- end id18 -->
 
 <!-- npu="A3,910b" id19 -->

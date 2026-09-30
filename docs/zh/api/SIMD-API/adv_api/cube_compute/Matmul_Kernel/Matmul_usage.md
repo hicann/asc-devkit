@@ -125,6 +125,7 @@ Matmul的计算公式为：C = A \* B + Bias，其示意图如下。
 
     <!-- npu="310p" id86 -->
     Atlas推理系列产品AI Core上需要额外调用[SetLocalWorkspace](SetLocalWorkspace.md)接口设置计算所需的UB空间。
+
     ```
     mm.SetLocalWorkspace(usedUbBufLen);
     ```

@@ -34,6 +34,7 @@
 ## 函数原型
 
 - 高维切分计算
+
     ```cpp
     // 结果输出到寄存器中
     __aicore__ inline void asc_le(__ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)

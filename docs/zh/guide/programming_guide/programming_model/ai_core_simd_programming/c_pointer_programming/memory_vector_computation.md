@@ -128,6 +128,7 @@ asc_copy_gm2ub(dst_ub, src_gm, burst_count, burst_len, src_stride, dst_stride);
 
 以上图为例，将两个数据块从GM搬运至UB，每个blockLen为54B，源操作数相邻数据块之间的间隔为1B，目的操作数相邻数据块之间的间隔为32B。
 在blockLen左侧和右侧分别填充2个和3个half类型元素，此时blockLen + leftPadding + rightPadding = 54B + 2 * 2B + 3 * 2B = 64B，满足32B对齐。
+
 ```c
 // Number of consecutive data blocks: transfer two consecutive data blocks
 uint16_t burst_count = 2;
@@ -144,6 +145,7 @@ uint8_t right_padding_num = 3;
 
 asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, src_stride, dst_stride);
 ```
+
 > 📌 stride（前一块数据头到后一块数据头的间隔）为该接口从[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入，[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)使用gap（前一个数据块结束地址与后一个数据块起始地址的差值）。
 
 以上为GM向UB的数据搬入逻辑，UB向GM的数据搬出可使用同系列接口实现。更多搬运接口说明可参考[矢量数据搬运](../../../../../api/SIMD-API/c_api/vector_datamove/vector_datamove.md)。
@@ -199,6 +201,7 @@ Memory矢量计算包含连续计算和高维切分计算两种模式，同时�
 <img src="../../../../figures/multi_iter_c.png" alt="多次迭代非连续场景示意图" width="800"/>
 
 通过C风格接口配置`repeat_stride`和`data_block_stride`实现上述多次迭代功能。
+
 ```c
 // In the above example with repeat interval of 9, the following configuration achieves the corresponding operation
 uint8_t repeat_time = 1;
@@ -295,6 +298,7 @@ asc_set_mask_normal();
 
 连续计算是软件层提供的简化接口，使用时无需配置掩码，可直接对源操作数中连续的N个数据执行运算，并将结果连续写入目的操作数，主要用于一维数据的批量计算。
 以加法运算为例，如需对长度为4096的矢量执行加法，调用方式如下：
+
 ```c
 asc_add(z, x, y, 4096); // 4096: number of consecutive elements involved in addition.
 ```

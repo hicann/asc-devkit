@@ -11,6 +11,7 @@
 - **Device端核函数（Kernel）实现**：
 
     后缀名为`*.asc`的代码文件包含Host端与Device端代码，其Device端部分示例如下：
+
     ```cpp
     __global__ void hello_world()
     {
@@ -23,6 +24,7 @@
 - **Host端代码实现**：
 
     Host端通过<<<>>>语法糖调用Device端代码。
+
     ```cpp
     int32_t main(int argc, char const *argv[])
     {
@@ -40,6 +42,7 @@
     ```
 
 - **算子编译与运行**：
+
     ```bash
     bisheng hello_world.asc --npu-arch=dav-3510 -o demo --enable-simt 
     ./demo

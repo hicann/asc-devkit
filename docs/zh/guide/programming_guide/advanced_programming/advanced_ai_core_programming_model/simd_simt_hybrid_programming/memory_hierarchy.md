@@ -41,6 +41,7 @@ UB内存空间总大小为256KB。除了用户申请的动静态内存，UB还�
     ```
     Data Cache空间大小 = min(UB总大小（256KB） - 静态内存 - 动态内存 - 预留空间（默认8KB）, 128KB)
     ```
+
     Data Cache空间上限为**128KB**，即使静态与动态内存申请较少，Data Cache实际分配大小也不会超出该上限。
 
 混合编程场景下，可在SIMT VF、SIMD VF和MainScalar执行空间中使用动静态内存。MainScalar是指Device侧在VF函数外部的执行空间。下图为不同执行空间申请内存时对应的UB内存排布示意图。

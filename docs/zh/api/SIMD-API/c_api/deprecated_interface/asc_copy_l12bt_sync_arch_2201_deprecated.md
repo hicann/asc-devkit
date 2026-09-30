@@ -35,6 +35,7 @@
 ## 函数原型
 
 - 同步搬运
+
     ```cpp
     __aicore__ inline void asc_copy_l12bt_sync(uint64_t dst, __cbuf__ void* src, uint32_t size)
     ```

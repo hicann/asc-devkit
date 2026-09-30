@@ -220,6 +220,7 @@ __simd_callee__ inline void asc_loadalign(vector_float& dst,
 
 - 该模式不支持目的操作数为掩码寄存器。
 - 当dtype为`int64_t`时，由于掩码创建接口不支持b64模式，需要先通过[asc_create_mask_b32](../reg_mask/asc_create_mask.md)生成b32掩码，再通过[asc_unpack_lower](../reg_permute_sel/asc_unpack.md)将其展开为适用于b64数据的掩码后传入本接口。展开后的掩码以连续8个bit为一组，仅每组最低位的bit有效，用于控制对应的一个b64元素。
+
     ```c
     vector_int64_t src_reg;
     vector_bool mask_b32 = asc_create_mask_b32(PAT_ALL);

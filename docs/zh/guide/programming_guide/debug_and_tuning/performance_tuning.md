@@ -221,6 +221,7 @@
        ├──trace.json           # Edge/Chrome Trace Viewer/Perfetto呈现文件
        └──visualize_data.bin   # MindStudio Insight呈现文件
     ```
+
 **表4 msopprof simulator文件介绍**
 
 | 名称 | 说明 |

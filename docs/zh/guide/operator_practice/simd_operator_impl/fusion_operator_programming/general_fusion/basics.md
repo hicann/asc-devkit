@@ -3,15 +3,15 @@
 >[!NOTE]说明 
 >本节内容为通算融合算子的理论背景和开发指导，学习本节内容之前，请确保已经掌握[矩阵编程](../../matrix_advanced_api/basics.md)和[《HCCL集合通信库》](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/README.md)中的相关知识。
 >通算融合算子一般支持如下产品型号：
->>    <!-- npu="950" id1 -->
->>    - Ascend 950PR&950DT系列产品
->>    <!-- end id1 -->
->>    <!-- npu="A3" id2 -->
->>    - Atlas A3系列产品
->>    <!-- end id2 -->
->>    <!-- npu="910b" id3 -->
->>    - Atlas A2系列产品
->>    <!-- end id3 -->
+>    <!-- npu="950" id1 -->
+>    - Ascend 950PR&950DT系列产品
+>    <!-- end id1 -->
+>    <!-- npu="A3" id2 -->
+>    - Atlas A3系列产品
+>    <!-- end id2 -->
+>    <!-- npu="910b" id3 -->
+>    - Atlas A2系列产品
+>    <!-- end id3 -->
 
 ## 通算融合算子<a name="zh-cn_topic_0000002366728672_section842184210813"></a>
 

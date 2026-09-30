@@ -23,6 +23,7 @@ $$
 **数据流路径**：
 
 Cube侧：
+
 ```
 GM(A:ND,half) -> L1(A:Nz,half) -> L0A(A:Nz,half) -
             │                  │                 │
@@ -40,6 +41,7 @@ GM(B:ND,half) -> L1(B:Nz,half) -> L0B(B:Zn,half) -
 ```
 
 核间同步与Vector侧：
+
 ```
 Cube核:  Fixpipe -> GM(C:ND,half)
                     │

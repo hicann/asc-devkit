@@ -46,6 +46,7 @@ def Duplicate(scalarValue, dst, count):
     for i in range(count):     
         dst[i] = scalarValue
 ```
+
 <!-- npu="950" id26 -->
 针对Ascend 950PR&950DT系列产品，为方便开发者使用，tensor前n个数据计算接口同时也支持直接传入LocalTensor，此时会将LocalTensor的第一个元素复制多次并填充到向量中。
 <!-- end id26 -->
@@ -193,6 +194,7 @@ def Duplicate(scalarValue, dst, count):
 <!-- npu="950" id25 -->
 
 - tensor前n个数据计算样例，源操作数为Tensor
+
     ```cpp
     AscendC::Duplicate<half>(dstLocal, srcLocal, srcDataSize);
     ```

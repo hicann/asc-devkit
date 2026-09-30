@@ -180,6 +180,7 @@ asc_copy_gm2l1_nd2nz(dst, src, src_d_value, l2_cache_ctrl, n_value, d_value, src
 <img src="../../../../figures/l1_l0a_copy.png" alt="L12L0A非转置搬运" width="700"/>
 
 通过如下方式调用可完成上述的`L1 Buffer`到`L0A Buffer`的搬入操作。
+
 ```c
 __cbuf__ half l1_buffer[6400];
 __ca__ half l0a_buffer[2304];
@@ -231,6 +232,7 @@ asc_copy_l12l0a_transpose(l0a_buffer, l1_buffer, m_start_position, k_start_posit
 <img src="../../../../figures/l0c_gm_950.png" alt="L0C2GM搬运" width="800"/>
 
 C语言编程提供了`asc_copy_l0c2gm`来使能发挥芯片的各种随路能力，通过直接传入配置参数可完成随路搬运的操作。
+
 ```c
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
@@ -241,6 +243,7 @@ __aicore__ inline void asc_copy_l0c2gm(
 ```
 
 另外，对于`unit_flag_mode`、`enable_nz2nd`参数的设置，需配置相应寄存器参数以启用不同功能。对应的接口和处理能力如下：
+
 ```c
 // 1.0 When performing inline quantization during data movement, call this interface to set vector quantization parameters in the quantization flow.
 __aicore__ inline void asc_set_l0c_copy_config(

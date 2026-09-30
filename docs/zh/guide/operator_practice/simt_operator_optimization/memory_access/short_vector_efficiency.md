@@ -38,6 +38,7 @@
   **图2** half2类型计算带宽示意图
 
   ![img](../../../figures/half2_bandwidth.png "短向量带宽示意图")
+
   ```cpp
   template<typename T, typename U>
   __global__ void add2(T* x, T* y, T* z, uint64_t size)

@@ -38,6 +38,7 @@ $$
 ## 函数原型
 
 - 同步计算
+
   ```cpp
   __aicore__ inline void asc_log_sync(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
   __aicore__ inline void asc_log_sync(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)

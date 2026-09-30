@@ -42,6 +42,7 @@
 ```cpp
 AscendC::DumpAccChkPoint(srcLocal, 5, 32, dataLen);
 ```
+
 > [!CAUTION]注意
 > 该接口主要用于调试分析，开启后会对算子性能产生一定影响，通常在调试阶段使用，生产环境建议关闭。<br>
 > 默认情况下，调用该接口就会打印相关内容，开发者可以参考[关闭ASCENDC_DUMP说明](../disable_ascendc_dump.md)，按需关闭该接口功能。
@@ -114,6 +115,7 @@ AscendC::DumpAccChkPoint(srcLocal, index, countOff, dumpSize);
 ```
 
 打印结果如下：
+
 ```plain
 DumpTensor: desc=56, addr=0x40, data_type=float16, position=UB, dump_size=15
 [4.710938, 4.707031, 4.773438, 2.271484, 4.347656, 2.359375, 1.284180, 1.073242, 1.242188, 2.298828, 0.521973, 1.099609, 1.880859, 1.226562, 3.916016]

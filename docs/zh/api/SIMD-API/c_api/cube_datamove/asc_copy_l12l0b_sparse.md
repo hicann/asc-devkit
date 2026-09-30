@@ -35,6 +35,7 @@
 ## 函数原型
 
 - 高维切分搬运
+
   ```cpp
   __aicore__ inline void asc_copy_l12l0b_sparse(__cb__ int8_t* dst, __cbuf__ int8_t* src, __cbuf__ int8_t* index, uint16_t start_index, uint8_t repeat)
   ```

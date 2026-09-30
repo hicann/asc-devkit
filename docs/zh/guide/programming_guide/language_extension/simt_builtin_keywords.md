@@ -344,6 +344,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
     ```cpp
     __global__ __launch_bounds__(512) inline void add(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z)
     ```
+
     \_\_launch\_bounds\_\_\(N\)的参数N需要满足：
     -   N \>= dimx \* dimy \* dimz；dimx, dimy, dimz为表示线程的dim3结构体。
     -   N的取值范围为1到2048。

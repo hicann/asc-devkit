@@ -29,10 +29,13 @@
 
 首先从Data Cache加载缓存数据，若未命中，则尝试从L2 Cache加载。L2 Cache与Global Memory之间的数据一致性由硬件保证，但Data Cache和Global Memory之间的数据一致性并不能保证。如果Data Cache和L2 Cache中均未找到所需数据，则从Global Memory中读取数据，然后将其缓存到L2 Cache和Data Cache中。  
 默认访存的底层实现与本接口一致，例如：
+
 ```cpp
 dst[idx] = src[idx];
 ``` 
+
 其底层实现等价于 
+
 ```cpp
 dst[idx] = asc_ldca(src + idx);
 ```

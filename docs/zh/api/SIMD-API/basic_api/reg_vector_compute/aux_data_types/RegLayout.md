@@ -1,6 +1,7 @@
 # RegLayout<a name="ZH-CN_TOPIC_0000001956862301"></a>
 
 源操作数和目的操作数位宽不同时，单条指令计算量以位宽更大的数据类型为准，RegLayout用于控制位宽小的元素在寄存器中的排布方式。更多特性说明请参考[Cast](../type_conversion/Cast.md)。
+
 ```cpp
 enum class RegLayout { 
     UNKNOWN = -1, 
@@ -46,6 +47,7 @@ enum class RegLayout {
   ![](../../../../figures/src_dst_bitwidth_4to1.png "源操作数与目的操作数位宽比为4:1")
 
 Cast在不同RegLayout取值下的数据排布伪代码如下，其中layout参数与枚举值的映射关系为：0对应RegLayout::ZERO，1对应RegLayout::ONE，2对应RegLayout::TWO，3对应RegLayout::THREE：
+
 ```python
 import numpy as np
 

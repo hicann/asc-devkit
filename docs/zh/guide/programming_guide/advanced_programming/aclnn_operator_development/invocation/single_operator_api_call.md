@@ -27,6 +27,7 @@
     │           │       └── libcust_opapi.so
     ...
     ```
+
 -   对于算子动态库或静态库编译场景，参考[算子动态库和静态库编译](../compilation_and_deployment/dynamic_static_lib_compilation.md)完成算子的编译安装。其中`CMAKE_INSTALL_PREFIX`为开发者在cmake文件中配置的安装路径。
     -   动态库路径：`${CMAKE_INSTALL_PREFIX}/lib/libcust_opapi.so`
     -   静态库路径：`${CMAKE_INSTALL_PREFIX}/lib/lib${vendor_name}.a`

@@ -286,6 +286,7 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >    - 使用高阶API Matmul时需要设置ASCENDC\_CUBE\_ONLY，表示仅在AIC侧调用Matmul API。
 >
 >    完整样例请参考[matmul_fused_manual样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/matmul_fused_manual)。
+>
 >    ```
 >    #define ASCENDC_CUBE_ONLY // 指定Matmul运行在AIC上
 >    if ASCEND_IS_AIC {
@@ -299,3 +300,4 @@ host侧实现GenerateTiling函数，在该函数中自动获取Tiling参数，�
 >        // AIV核进行LeakyRelu计算
 >    } 
 >    ```
+>

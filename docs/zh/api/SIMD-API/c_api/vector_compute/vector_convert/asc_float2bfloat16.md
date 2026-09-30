@@ -39,6 +39,7 @@
 ## 函数原型
 
 - 前n个数据连续计算
+
     ```cpp
     // RINT舍入模式
     __aicore__ inline void asc_float2bfloat16_rn(__ubuf__ bfloat16_t* dst, __ubuf__ float* src, uint32_t count)

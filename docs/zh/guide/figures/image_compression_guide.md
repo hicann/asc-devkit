@@ -18,6 +18,7 @@
 | 6 | addr_alloc_aft.png | **125.12 KB** | < 80 KB | 需压缩36% |
 
 **图片文件位置**：
+
 ```
 C:\work_for_code\doc_design\asc-devkit\docs\guide\figures\
 ```
@@ -133,6 +134,7 @@ optipng -o7 addr_alloc_aft.png
 ### 操作步骤截图说明
 
 **步骤1**：打开 TinyPNG 网站
+
 ```
 https://tinypng.com/
 ```
@@ -151,9 +153,11 @@ https://tinypng.com/
 
 **步骤5**：替换原文件
 - 将压缩后的图片复制到：
+
   ```
   C:\work_for_code\doc_design\asc-devkit\docs\guide\figures\
   ```
+
 - 替换原有的大图片文件
 
 ---

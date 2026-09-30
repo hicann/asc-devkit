@@ -58,6 +58,7 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     ![](../../../figures/mask_dirty.png "使用mask掩掉脏数据")
 
     示例片段如下：
+
     ```
     uint64_t Mask[2] = {((uint64_t)1 << 4) - 1, 0}; // 仅前4位元素参与运算
     AscendC::ReduceMin<half>(output, input, workLocal, Mask, 1, 8);
@@ -70,6 +71,7 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     ![](../../../figures/dup_clear.png "通过Duplicate逐行清零")
 
     示例片段如下：
+
     ```
     uint64_t mask[2] = {0b1111100000000000, 0}; // 控制16个元素中后5个元素有效
     for (int32_t i = 0; i < 16; i++) {
@@ -83,6 +85,7 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     ![](../../../figures/pad_clear.png "通过Pad一次性清零")
 
     示例片段如下：
+
     ```
     AscendC::PadParams padParams = {0, 10, 0}; 
     AscendC::Pad(outputLocal, inputLocal, padParams, tiling);
@@ -96,6 +99,7 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     ![](../../../figures/unpad_copy.png "使用UnPad接口去除冗余数据后搬出")
 
     示例片段如下：
+
     ```
     AscendC::UnPadParams unPadParams = {0, 10}; 
     AscendC::UnPad<half>(outputLocal, inputLocal, unPadParams, tiling);
@@ -109,6 +113,7 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     ![](../../../figures/gather_mask.png "使用GatherMask收集有效数据后搬出")
     
     示例片段如下：
+
     ```
     AscendC::LocalTensor<uint16_t> bufPattern = tmpPattern.Get<uint16_t>(); 
     AscendC::Duplicate<uint16_t>(bufPattern, 0, 16); 

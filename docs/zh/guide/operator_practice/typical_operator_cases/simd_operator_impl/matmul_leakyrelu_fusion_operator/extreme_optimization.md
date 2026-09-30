@@ -26,6 +26,7 @@
 > **兼容性说明**：A2/A3芯片不支持Fixpipe直写UB，请使用Scenario 1（CV融合-GM中转）方案。
 
 数据流路径：
+
 ```
 GM ──(MTE2)──> L1 ──(MTE1)──> L0A/L0B ──(Cube)──> L0C ──(Fixpipe)──> UB ──(Gelu)──> UB ──(MTE3)──> GM
 ```

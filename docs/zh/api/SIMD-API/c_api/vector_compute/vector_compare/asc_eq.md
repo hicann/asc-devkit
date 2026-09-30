@@ -33,6 +33,7 @@
 ## 函数原型
 
 - 高维切分计算
+
   ```cpp
   // 比较结果存入寄存器
   __aicore__ inline void asc_eq(__ubuf__ half* src0, __ubuf__ half* src1, uint8_t repeat, uint8_t dst_block_stride, uint8_t src0_block_stride, uint8_t src1_block_stride, uint8_t dst_repeat_stride, uint8_t src0_repeat_stride, uint8_t src1_repeat_stride)

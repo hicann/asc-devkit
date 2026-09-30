@@ -19,6 +19,7 @@ VQF322B8_PRE,          // Vector_Quant_Float32_2_B8：float量化成int8_t/uint8
 REQ8,                  // ReQuant_int8：int32_t重量化成int8_t/uint8_t，scalar量化
 VREQ8,                 // Vector_ReQuant_int8：int32_t重量化成int8_t/uint8_t，tensor量化
 ```
+
 <!-- npu="950" id1 -->
 除上述量化模式外，Ascend 950PR&950DT系列产品产品还额外支持以下量化模式：
 

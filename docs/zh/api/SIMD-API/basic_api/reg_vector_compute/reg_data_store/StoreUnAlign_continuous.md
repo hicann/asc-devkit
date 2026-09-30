@@ -197,6 +197,7 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
 ## 调用示例<a name="section642mcpsimp"></a>
 
 -  PostUpdate扩展搬运接口
+
     ```cpp
     template <typename T>
     __simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t postUpdateStride, uint16_t repeatTimes)
@@ -214,6 +215,7 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
     ```
 
 - 使用AddrReg寄存器存储偏移量接口
+
     ```cpp
     template <typename T>
     __simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
@@ -233,6 +235,7 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
     ```
 
 - 使用AR寄存器存储偏移量接口
+
     ```cpp
     template <typename T>
     __aicore__ inline void SqueezeVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)

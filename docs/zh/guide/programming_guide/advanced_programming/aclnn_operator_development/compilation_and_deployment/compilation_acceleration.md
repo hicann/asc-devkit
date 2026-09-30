@@ -11,6 +11,7 @@ ccache是编译缓存工具。第一次编译时，它把编译结果写入缓�
 ### 单机ccache
 
 ccache安装及查找路径命令如下：
+
 ```bash
 apt install ccache
 command -v ccache
@@ -18,6 +19,7 @@ ccache --version
 ```
 
 后续配置中的ccache路径以`command -v ccache`输出为准。ccache清空命令如下：
+
 ```bash
 ccache -z          #仅清空统计，不删除缓存内容
 ccache -C          #仅清空缓存内容，不清空统计
@@ -101,6 +103,7 @@ ccache --show-stats -v
 建议机器A和机器B使用相同的源码内容、相同的编译命令、相同版本的编译器，并保持一致的源码路径和构建目录路径，否则可能出现缓存未命中的情况。
 
 **1. 机器C：部署Redis服务**
+
 ```bash
 apt install redis-server
 # 启动Redis服务
@@ -112,6 +115,7 @@ redis-cli -h <C_IP> -p 6379 -a <PASSWORD> ping
 > 说明：上述配置仅用于受控测试环境。共享环境或生产环境建议开启访问控制、认证和网络隔离。
 
 **2. 机器A / 机器B：配置ccache**
+
 ```bash
 apt install redis-tools
 # 验证Redis连接
@@ -245,6 +249,7 @@ npu_op_kernel_options(ascendc_kernels AddCustomTemplate COMPUTE_UNIT Ascendxxyy 
 ```bash
 cmake -S . -B build_out --preset=default -DASCEND_SOC_SERIES=ascendxxx
 ```
+
 也可以使用参数`-DASCEND_COMPUTE_UNIT=ascendxxxyy`；两个参数不能同时传入。
 
 ### 跳过核函数（Kernel）二进制编译

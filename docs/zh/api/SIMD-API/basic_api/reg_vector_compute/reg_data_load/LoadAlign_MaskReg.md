@@ -117,6 +117,7 @@ LoadAlign能够实现数据从Unified Buffer（UB）搬运至[MaskReg](../regist
 ## 调用示例<a name="section642mcpsimp"></a>
 
 - 普通搬运接口
+
     ```cpp
     template <typename T>
     __simd_vf__ inline void ComputeMode01(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
@@ -130,6 +131,7 @@ LoadAlign能够实现数据从Unified Buffer（UB）搬运至[MaskReg](../regist
     ```
 
 - PostUpdate扩展搬运接口
+
     ```cpp
     template <typename T>
     __simd_vf__ inline void StoreAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
@@ -143,6 +145,7 @@ LoadAlign能够实现数据从Unified Buffer（UB）搬运至[MaskReg](../regist
     ```
 
 - 使用AddrReg存储偏移量接口
+
     ```cpp
     template <typename T>
     __simd_vf__ inline void ComputeMode03(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)

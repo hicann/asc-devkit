@@ -5,11 +5,13 @@
 ## AI Core SIMD编译
 
 使用bisheng编译Ascend C源文件的基本命令如下，其中--npu-arch=dav-\<npu architecture\>用于指定AI处理器架构版本：
+
 ```shell
   bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture>
 ```
 
 bisheng可以通过-I \<path\>指定头文件路径、-L \<path\> 指定链接库路径、-l \<library\>指定需要链接的动态库或静态库、-D\<macro\>=\<value\>指定宏定义，示例如下：
+
 ```shell
   bisheng add_kernel.asc -I <path_to_include> -L <path_to_library> -l <library> -o <output_file> -D<macro>=<value> --npu-arch=dav-<npu architecture>
 ```
@@ -18,6 +20,7 @@ AI Core SIMD的基本编译流程如下：Host代码使用Host编译器编译成
 ![aicore编译流程示意图](../../../figures/aicore_compilation.png)
 
 - 异构编译，完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/02_features/04_compile/00_basic_compile/README.md)。
+
   ```shell
   // ----- add_kernel.asc -----
   //  指定核函数（Kernel）在AI Core上执行
@@ -45,6 +48,7 @@ AI Core SIMD的基本编译流程如下：Host代码使用Host编译器编译成
   - 所有Ascend C源文件（.asc）都必须使用`-dc`选项编译。
 
   下方示例中，add_compute.asc定义了变量和函数，add_kernel.asc对其进行引用；两个文件将分别编译，最终链接为完整可执行文件。
+
   ```c++
   // ------- add_compute.asc -------
   __gm__ int dev_var = 5;
@@ -65,15 +69,18 @@ AI Core SIMD的基本编译流程如下：Host代码使用Host编译器编译成
   bisheng -c main.cpp -o main.o -I${INSTALL_DIR}/include
   bisheng add_compute.o add_kernel.o main.o -o program
   ```
+
   > [!NOTE]说明
   > `${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。以root用户安装为例，安装后文件默认存储路径为：/usr/local/Ascend/cann。
 
 - 动态库编译，完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/02_features/04_compile/02_dynamic_library_compile/README.md)。
+
    ```shell
   bisheng -shared add_kernel.asc -o libadd_kernel.so -fPIC --npu-arch=dav-xxxx
   ```
 
 - 静态库编译，完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/02_features/04_compile/03_static_library_compile/README.md)。
+
   ```shell
   bisheng -lib add_kernel.asc -o libadd_kernel.a --npu-arch=dav-xxxx
   ```
@@ -247,6 +254,7 @@ add_executable(demo
           mix.asc
     )
     ```
+
 **表1常用的CMAKE配置变量说明**
 
 | 变量名称 | 配置说明 |

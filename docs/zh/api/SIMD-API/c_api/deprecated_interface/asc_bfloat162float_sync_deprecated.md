@@ -35,6 +35,7 @@
 ## 函数原型
 
 - 同步计算
+
 ```cpp
 __aicore__ inline void asc_bfloat162float_sync(__ubuf__ float* dst, __ubuf__ bfloat16_t* src, uint32_t count)
 ```

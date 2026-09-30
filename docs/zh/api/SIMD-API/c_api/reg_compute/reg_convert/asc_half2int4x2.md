@@ -107,6 +107,7 @@ __simd_callee__ inline vector_int4x2_t asc_half2int4x2_<round_mode>_sat(
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id8 -->
+
 ```c
 #include <cstdint>
 #include <iostream>

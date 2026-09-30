@@ -37,6 +37,7 @@
   - **Device端核函数（Kernel）实现**：
   Device端部分示例如下：
     - **基于C语言API实现Memory矢量计算示例**
+
       ```cpp
       __vector__ __global__ void add_custom(__gm__ float* x, __gm__ float* y, __gm__ float* z)
       {
@@ -68,6 +69,7 @@
           asc_sync();
       }
       ```
+
       > [!NOTE]说明
       > - 本Memory矢量计算示例支持以下型号：
       >     <!-- npu="A3" id1 -->
@@ -113,6 +115,7 @@
           AscendC::PipeBarrier<PIPE_ALL>();
       }
       ```
+
       > [!NOTE]说明
       > - 该样例支持以下型号：
       >     <!-- npu="950" id3 -->
@@ -129,6 +132,7 @@
   - **Host端代码实现**：
 
     Host端通过`<<<>>>`语法糖调用Device端核函数（Kernel），示例代码片段如下：
+
     ```cpp
       int32_t main(int argc, char const *argv[])
       {
@@ -169,6 +173,7 @@
 - **算子编译与运行**：
 
   CMake配置文件示例：
+
   ```cmake
   cmake_minimum_required(VERSION 3.16)
 
@@ -190,12 +195,15 @@
       $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=dav-2201>
   )
   ```
+
   编译与执行示例：
+
   ```bash
   mkdir -p build && cd build;   # 创建并进入build目录
   cmake ..;make -j;             # 编译工程
   ./c_api_add_example           # 运行样例
   ```
+
   > [!NOTE]说明
   > - 编译选项`--npu-arch`用于指定NPU架构版本，`dav-`后面的数字为架构版本号，请替换为您实际使用的版本。各AI处理器型号与架构版本的对应关系请查阅[AI处理器型号和 \_\_NPU_ARCH\_\_ 的对应关系](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 

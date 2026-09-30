@@ -182,6 +182,7 @@ AscendC::Add(dstLocal, src0Local, src1Local, mask, repeatTime, { dstBlockStride,
 掩码由固定位宽的数值表示：有效位（通常为1）：对应元素正常参与计算。无效位（通常为0）：对应元素被屏蔽，不执行操作。
 
 掩码设置提供了两种模式：**Counter模式**和**Normal模式**。C++ Tensor矢量计算接口通过模板参数`isSetMask`控制掩码由开发者手动设置还是接口内部自动设置。以如下`Adds`接口为例，默认`isSetMask = true`表示由接口内部设置Counter或Normal模式；若开发者需自行控制两种模式的切换，则将`isSetMask`设为`false`。后续示例均以开发者自行控制切换为例。
+
 ```cpp
 template <typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG, typename U, typename S, typename V>
 __aicore__ inline void Adds(const U& dst, const S& src0, const V& src1, uint64_t mask[], const uint8_t repeatTime, const UnaryRepeatParams& repeatParams)

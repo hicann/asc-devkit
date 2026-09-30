@@ -94,11 +94,13 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
 -   SIMT中使用printf接口会增加算子运行时间，请控制打印数据量，避免算子超时。建议在代码中判断线程ID，仅在部分线程中打印调试信息，减少重复内容的打印，更有利于调试。
 -   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围为`[1KB,64MB]`。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
 -   如果需要使用"AscendC::printf"形式的打印，则必须额外包含"kernel\_operator.h"头文件，示例如下。
+
     ```cpp
     #include "kernel_operator.h"
 
     AscendC::printf("fmt string %d\n", 0x123);
     ```
+
 -   由于在simd vf中不能直接访问gm地址，因此使用simd vf中的printf时，需要先定义一个ubuf的字符串，该字符串即为原来的fmt变量。
 
     ```cpp

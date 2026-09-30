@@ -35,6 +35,7 @@
 ## 函数原型
 
 - 同步计算
+
   ```cpp
     __aicore__ inline void asc_transpose_sync(__ubuf__ int16_t* dst, __ubuf__ int16_t* src)
     __aicore__ inline void asc_transpose_sync(__ubuf__ uint16_t* dst, __ubuf__ uint16_t* src)

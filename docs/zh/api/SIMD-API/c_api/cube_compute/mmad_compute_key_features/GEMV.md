@@ -62,6 +62,7 @@ asc_mmad(c, a, b, 1, k, n, asc_unit_flag_mode::DISABLE,
 
 <!-- npu="950" id3 -->
 针对Ascend 950PR&950DT系列产品产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭，示例如下：
+
 ```cpp
 asc_mmad(c, a, b, 1, k, n, asc_unit_flag_mode::DISABLE,
          true /* disable_gemv */, false, true);
