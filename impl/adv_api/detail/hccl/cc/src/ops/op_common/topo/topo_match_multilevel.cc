@@ -190,13 +190,18 @@ HcclResult TopoMatchMultilevel::MatchTopo(
         HCCL_ERROR("[CollAlgFactory] [TopoMatchMultilevel] Rank [%d], deviceType not supported yet.", myRank),
         HcclResult::HCCL_E_PARA);
     // 1.获取并校验通信层数
-    uint32_t* netLayers;
+    uint32_t* netLayersTemp = nullptr;
     uint32_t layerNum = 0;
-    CHK_RET(HcclRankGraphGetLayers(comm, &netLayers, &layerNum));
+    CHK_RET(HcclRankGraphGetLayers(comm, &netLayersTemp, &layerNum));
+    CHK_PRT_RET(
+        netLayersTemp == nullptr || layerNum == 0,
+        HCCL_ERROR("[TopoMatchMultilevel][MatchTopo] Rank [%u], invalid net layers, layerNum[%u].", myRank, layerNum),
+        HcclResult::HCCL_E_INTERNAL);
+    std::vector<uint32_t> netLayerList(netLayersTemp, netLayersTemp + layerNum);
 
     HCCL_DEBUG(
         "[CollAlgFactory] [TopoMatchMultilevel] Rank [%d], netLayers[%u][%s]", myRank, layerNum,
-        PrintCArray<uint32_t>(netLayers, layerNum).c_str());
+        PrintCArray<uint32_t>(netLayerList.data(), layerNum).c_str());
 
     // 2. 获取每个pod上rank数量以及pod数量
     uint32_t* instSizeList;
@@ -233,13 +238,22 @@ HcclResult TopoMatchMultilevel::MatchTopo(
     }
 
     // 4. 计算layer1的topo
-    uint32_t netLayer = 1;
-    bool hostDPUOnly = false;
-    if ((CheckHostDPUOnly(comm, topoInfo, hostDPUOnly) == HcclResult::HCCL_SUCCESS) && hostDPUOnly) {
-        // host dpu场景使用最高层的链路
-        netLayer = topoInfo->netLayerDetails.netLayers[topoInfo->netLayerDetails.netLayerNum - 1];
+    if (topoInfo->topoLevelNums > 1) {
+        CHK_PRT_RET(
+            layerNum < COMM_LAYER_SIZE_2,
+            HCCL_ERROR(
+                "[TopoMatchMultilevel][MatchTopo] Rank [%u], net layer num[%u] is invalid for "
+                "topoLevelNums[%u].",
+                myRank, layerNum, topoInfo->topoLevelNums),
+            HcclResult::HCCL_E_INTERNAL);
+        uint32_t algLayer1NetLayer = netLayerList[1];
+        bool hostDPUOnly = false;
+        if ((CheckHostDPUOnly(comm, topoInfo, hostDPUOnly) == HcclResult::HCCL_SUCCESS) && hostDPUOnly) {
+            // host dpu场景使用最高层的链路
+            algLayer1NetLayer = netLayerList.back();
+        }
+        CHK_RET(TopoForLayer1(comm, algLayer1NetLayer, layer0Size, myRank, algHierarchyInfo));
     }
-    CHK_RET(TopoForLayer1(comm, netLayer, layer0Size, myRank, algHierarchyInfo));
 #endif
     return HcclResult::HCCL_SUCCESS;
 }

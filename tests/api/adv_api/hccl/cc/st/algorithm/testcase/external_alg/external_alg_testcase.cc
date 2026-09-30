@@ -154,7 +154,7 @@ TEST(ExtAlgV2Registry, EnumerateRegisteredTags)
     auto& registry = CollAlgExecRegistryV2::Instance();
     const std::vector<std::string> agTags = registry.GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER);
     // 本目标全量编译（-DMC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE 守卫裁剪），AG 应为 13 条：
-    // 9 条 AICPU 注册（含 omnipipe）+ 4 条 CCU 注册（CcuSchedAllGatherSoleMesh /
+    // 10 条 AICPU 注册（含 omnipipe）+ 4 条 CCU 注册（CcuSchedAllGatherSoleMesh /
     // CcuSchedAllGatherSoleNHR / CcuSchedAllGatherParallelMeshNHRMultiLink /
     // CcuSchedAllGatherConcurMeshNHRMultiLink）；
     // 此断言同时防止枚举接口漏实现
@@ -186,7 +186,7 @@ const HcclCMDType COLL_CMDS[] = {
 
 // 不变量：V2 注册表 ↔ AlgMetaRegistry 双向满射。本目标全量编译所有注册现场
 // （15 个 executor 文件，-DMC2_CLIENT_ENABLE_CCU=1 且无 AICPU_COMPILE 守卫裁剪），可见全部
-// 50 行 sidecar——按 cmd 分布：AG 13 / RS 18 / AR 9 / A2A 7 / A2AV 3。
+// 51 行 sidecar——按 cmd 分布：AG 14 / RS 18 / AR 9 / A2A 7 / A2AV 3。
 TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
 {
     for (HcclCMDType cmd : COLL_CMDS) {
@@ -201,13 +201,13 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
         std::sort(metaNames.begin(), metaNames.end());
         EXPECT_EQ(v2Tags, metaNames) << "cmd=" << static_cast<u32>(cmd);
     }
-    // 各 cmd 精确分布锚（AG 13 / RS 18 / AR 9 / A2A 7 / A2AV 3 = 50），失败时定位更直接
-    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER).size(), 13U);
+    // 各 cmd 精确分布锚（AG 14 / RS 18 / AR 9 / A2A 7 / A2AV 3 = 51），失败时定位更直接
+    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER).size(), 14U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_REDUCE_SCATTER).size(), 18U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 9U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALL).size(), 7U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALLV).size(), 3U);
-    // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：50 行精确锚
+    // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：51 行精确锚
     size_t total = 0;
     for (HcclCMDType cmd : COLL_CMDS) {
         for (const AlgMetaRow& row : AlgMetaRegistry::Instance().GetAll()) {
@@ -216,16 +216,16 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
             }
         }
     }
-    EXPECT_EQ(total, 50U);
+    EXPECT_EQ(total, 51U);
 }
 
 // 不变量：注册行 externalName 字面量必须自身就是规范形（"与 parser 产出同构"的机器契约）。
 // 手写字面量若带空格/词表外词/非规范拼写，将静默变死行——用户输入经 canonical() 规范化后永不相等，
-// 46 计数与 registeredName 满射断言均无法发现。往返自检：parse(字面量) 成功且 canonical() == 字面量。
+// 48 计数与 registeredName 满射断言均无法发现。往返自检：parse(字面量) 成功且 canonical() == 字面量。
 TEST(ExtAlgSurjectivity, ExternalNameLiteralsAreCanonical)
 {
     const std::vector<AlgMetaRow> rows = AlgMetaRegistry::Instance().GetAll();
-    ASSERT_FALSE(rows.empty()); // 全量编译目标：50 行产品 sidecar + 测试夹具
+    ASSERT_FALSE(rows.empty()); // 全量编译目标：51 行产品 sidecar + 测试夹具
     for (const AlgMetaRow& row : rows) {
         ExternalAlgSpec spec;
         std::string errMsg;
@@ -577,10 +577,12 @@ TEST(ExtAlgResolver, VariantPairDisambiguation)
     EXPECT_EQ(ResolveExternalAlg(arSum, &twoLevel, spec, algName, errMsg), ResolveStatus::RESOLVED);
     EXPECT_EQ(algName, "AicpuAllReduceSoleNHR");
 
-    // AICPU 引擎下 DPU-only 外部名 -> 候选为空 -> ERROR_INVALID
+    // AG sequence[mesh,nhr] 引擎消歧：AICPU 命中 AicpuAllGatherSequenceMeshConcurNHR（多层 Mesh1D），
+    // DPU 行仅 CPU 引擎命中（CPU -> InsAllGatherMeshNhrDPU 由 GoldenAllEngines 覆盖）
     ASSERT_TRUE(ParseExternalAlg("sequence[mesh,nhr]", spec, errMsg));
     OpParam aicpu = MakeResolveParam(HcclCMDType::HCCL_CMD_ALLGATHER, CommEngine::COMM_ENGINE_AICPU_TS);
-    EXPECT_EQ(ResolveExternalAlg(aicpu, &multi, spec, algName, errMsg), ResolveStatus::ERROR_INVALID);
+    EXPECT_EQ(ResolveExternalAlg(aicpu, &multi, spec, algName, errMsg), ResolveStatus::RESOLVED);
+    EXPECT_EQ(algName, "AicpuAllGatherSequenceMeshConcurNHR");
 }
 
 TEST(ExtAlgResolver, ErrorCasesCarryThreeElements)
@@ -624,8 +626,8 @@ TEST(ExtAlgResolver, CandidateTableIsDeterministic)
             }
         }
     }
-    // 覆盖数锚（限 5 个集合通信 CMD）：31 个 (op,外部名) 键（50 行归并）；
-    // 40 个 (引擎,op,外部名) 组合（键内引擎去重求和）。
+    // 覆盖数锚（限 5 个集合通信 CMD）：31 个 (op,外部名) 键（51 行归并）；
+    // 41 个 (引擎,op,外部名) 组合（键内引擎去重求和）。
     // 限定 COLL_CMDS 范围使锚不受测试内注册行（如 KFC cmd 的宏验证行）影响。
     const std::set<HcclCMDType> collCmds(std::begin(COLL_CMDS), std::end(COLL_CMDS));
     size_t keyCount = 0;
@@ -644,7 +646,7 @@ TEST(ExtAlgResolver, CandidateTableIsDeterministic)
         comboCount += engines.size();
     }
     EXPECT_EQ(keyCount, 31U);
-    EXPECT_EQ(comboCount, 40U);
+    EXPECT_EQ(comboCount, 41U);
 }
 
 TEST(ExtAlgResolver, SpecificityOrdering)
