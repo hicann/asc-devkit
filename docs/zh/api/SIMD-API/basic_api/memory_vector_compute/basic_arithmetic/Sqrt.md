@@ -181,6 +181,7 @@ T支持的数据类型为：half、float。
 - 如果src中的数值为非正数，可能会产生未知结果。
 
 <!-- npu="950" id35 -->
+
 ## 关键特性<a id="sqrt-key-features"></a>
 
 针对Ascend 950PR&950DT系列产品，有如下关键特性：

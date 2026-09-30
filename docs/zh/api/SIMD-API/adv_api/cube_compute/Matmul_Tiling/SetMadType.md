@@ -39,6 +39,7 @@ enum class MatrixMadType : int32_t {
 无
 
 <!-- npu="950" id3 -->
+
 ## 调用示例
 
 ```

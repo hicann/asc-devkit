@@ -123,6 +123,7 @@ kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
 ## VF函数的asc\_vf\_call调用
 
 ### SIMT VF的asc\_vf\_call调用
+
 SIMD与SIMT混合编程以SIMD核函数（Kernel）作为Device侧入口，在核函数（Kernel）或`__aicore__`函数中通过`asc_vf_call`启动SIMT VF子任务，通过参数配置，启动指定数目的线程，执行指定的SIMT VF函数。其函数原型如下：
 
 ```cpp

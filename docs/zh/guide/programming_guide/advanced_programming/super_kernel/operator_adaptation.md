@@ -52,6 +52,7 @@ Cache刷新机制示意图如下图所示：
 | [AscendC::GetBlockNum()](../../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetBlockNum.md) | 获取当前任务配置的核数 |
 
 <!-- npu="A3,910b" id1 -->
+
 ## TPipe析构约束
 
 针对Atlas A2系列产品、Atlas A3系列产品，在GE入图及npugraph_ex后端aclnn调用场景，子算子TPipe对象析构（[TPipe::Destroy](../../../../api/SIMD-API/basic_api/resource_management/TPipe/Destroy.md)）接口内部的`AscendC::PipeBarrier<PIPE_ALL>()`指令会被去除，如果算子内部使用了多个TPipe对象或手动调用Destroy函数时开发者需自行保障TPipe对象间流水的同步。

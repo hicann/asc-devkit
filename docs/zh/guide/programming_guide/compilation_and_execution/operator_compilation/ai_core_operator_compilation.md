@@ -1,7 +1,9 @@
 # AI Core编译基本用法<a name="section229217121411"></a>
+
 当开发者完成一个核函数（Kernel）的编写，并在Host侧通过<<<\>\>\>方式完成核函数（Kernel）的启动调用后，就需要进行算子源码编译与算子运行，接下来我们介绍通过bisheng编译器完成算子编译的基本用法。
 
 ## AI Core SIMD编译
+
 使用bisheng编译Ascend C源文件的基本命令如下，其中--npu-arch=dav-\<npu architecture\>用于指定AI处理器架构版本：
 ```shell
   bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture>
@@ -336,6 +338,7 @@ add_executable(demo
 | libascendcl.so | acl相关接口库。 |
 
 ### 高阶API常用链接库
+
 在使用高阶API时，必须链接以下库，因为这些库是高阶API功能所依赖的。在其他场景下，可以根据具体需求选择是否链接这些库。
 
 |链接库名称|作用描述|使用场景|动态库路径|

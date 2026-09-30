@@ -63,6 +63,7 @@ __simd_callee__ inline void asc_xor(vector_<dtype>& dst,
 ```
 
 #### dtype支持数据类型
+
 `dtype`支持的数据类型：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`int32_t`、`uint32_t`。
 
 #### 函数原型典型示例

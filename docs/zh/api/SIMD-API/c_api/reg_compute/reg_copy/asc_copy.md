@@ -56,6 +56,7 @@ __simd_callee__ inline void asc_copy(vector_<dtype>& dst,
 ```
 
 #### dtype支持数据类型
+
 `dtype`取值为：`int8_t`、`uint8_t`、`int16_t`、`uint16_t`、`half`、`bfloat16_t`、`int32_t`、`uint32_t`、`float`。
 
 #### 函数原型典型示例

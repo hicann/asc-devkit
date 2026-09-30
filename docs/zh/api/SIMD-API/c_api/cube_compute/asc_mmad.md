@@ -67,6 +67,7 @@ $$
 ## 函数原型
 
 <!-- npu="950" id12 -->
+
 ### 函数原型（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 **占位符形式：**
@@ -143,6 +144,7 @@ __aicore__ inline void asc_mmad(__cc__ float* c_matrix,
 <!-- end id12 -->
 
 <!-- npu="A3,910b" id13 -->
+
 ### 函数原型（[NPU架构版本2201](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
 **占位符形式：**

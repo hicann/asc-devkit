@@ -32,6 +32,7 @@ LoadDataWithSparse主要用于搬运以512Byte为单位存放的稠密权重矩�
 矩阵计算过程中，常用分形支持总结如下表：
     
 <!-- npu="910b,A3" id2 -->
+
 ### 针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品
 
 常用分形支持情况如下，供开发者参考：
@@ -119,6 +120,7 @@ LoadDataWithSparse主要用于搬运以512Byte为单位存放的稠密权重矩�
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
+
 ### 针对Ascend 950PR&950DT系列产品
 
 DataCopy（GM-\>L1 Buffer）支持使能随路进行DN到NZ转换，一定会改变分形排布。

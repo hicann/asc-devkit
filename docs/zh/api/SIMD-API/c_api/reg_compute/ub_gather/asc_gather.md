@@ -54,6 +54,7 @@ __simd_callee__ inline vector_<dst_dtype> asc_gather(__ubuf__ <src_dtype>* src,
 ```
 
 ### 数据类型组合列表
+
 **表1** UB源收集模式支持数据类型组合列表
 
 | dst_dtype | src_dtype | index_dtype |

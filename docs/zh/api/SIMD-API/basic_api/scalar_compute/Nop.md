@@ -26,6 +26,7 @@
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/scalar_compute/Nop_res.md#id1 -->
 
 ## 功能说明
+
 头文件路径为：`"basic_api/kernel_operator_utils_intf.h"`。
 
 用户输入延迟的个数，实现延迟若干个cycle。

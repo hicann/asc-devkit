@@ -58,6 +58,7 @@ __aicore__ inline void ShiftLeft(const LocalTensor<T>& dst, const LocalTensor<T>
 | count | 输入 | 参与计算的元素个数。 |
 
 ## 数据类型
+
 <!-- npu="950" id8 -->
 Ascend 950PR&950DT系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t。U支持的数据类型为：int8_t、int16_t、int32_t、int64_t。
 <!-- end id8 -->

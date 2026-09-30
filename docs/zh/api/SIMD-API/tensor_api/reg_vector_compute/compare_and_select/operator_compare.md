@@ -42,6 +42,7 @@
 ## 函数原型
 
 <a id="operator-eq"></a>
+
 ### operator==
 
 ```cpp
@@ -59,6 +60,7 @@ __simd_callee__ inline reg_tensor<bool> operator==(
 ```
 
 <a id="operator-ne"></a>
+
 ### operator!=
 
 ```cpp
@@ -76,6 +78,7 @@ __simd_callee__ inline reg_tensor<bool> operator!=(
 ```
 
 <a id="operator-lt"></a>
+
 ### operator<
 
 ```cpp
@@ -93,6 +96,7 @@ __simd_callee__ inline reg_tensor<bool> operator<(
 ```
 
 <a id="operator-le"></a>
+
 ### operator<=
 
 ```cpp
@@ -110,6 +114,7 @@ __simd_callee__ inline reg_tensor<bool> operator<=(
 ```
 
 <a id="operator-gt"></a>
+
 ### operator>
 
 ```cpp
@@ -127,6 +132,7 @@ __simd_callee__ inline reg_tensor<bool> operator>(
 ```
 
 <a id="operator-ge"></a>
+
 ### operator>=
 
 ```cpp

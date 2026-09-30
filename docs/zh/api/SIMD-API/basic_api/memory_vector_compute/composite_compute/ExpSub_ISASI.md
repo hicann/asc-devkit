@@ -64,6 +64,7 @@ __aicore__ inline void ExpSub(const LocalTensor<T>& dst, const LocalTensor<U>& s
 | count | 输入 | 参与计算的元素个数。 |
 
 ## 数据类型
+
 <!-- npu="950" id8 -->
 Ascend 950PR&950DT系列产品，T和U支持的数据类型为：half、float。
 <!-- end id8 -->

@@ -220,6 +220,7 @@ T6                                                Scalar.LOAD A -> 1
 还有一类问题来自Cache Line粒度。普通Scalar写后续以64B Cache Line为单位写回；多个核即使写的是同一条Cache Line中的不同字段，也可能在各自写回整条Cache Line时覆盖对方结果。此类场景可以通过让不同核操作的地址至少相隔Cache Line大小，或使用ReadGmBypassDCache和WriteGmBypassDCache降低风险。
 
 <!-- npu="950" id3 -->
+
 #### Atomic访问导致的DCache缓存一致性
 
 [NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作可以看成对某个GM地址执行的读-改-写事件，但是Scalar原子操作会绕过DCache，因此会导致缓存一致性。例如C API [asc_atomic_add](../../../../api/SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md)，该接口在指定GM地址上执行原子加操作。原子操作保证的是这一次读-改-写不会被其他原子更新打断，但它不会自动清理同一地址在DCache中的旧副本或Dirty副本。
@@ -448,6 +449,7 @@ ICache用于缓存Scalar单元最近使用或频繁使用的指令。Scalar读�
 从缓存一致性角度看，ICache缓存的是指令而不是普通数据，并且是只读Cache，因此一般不涉及普通数据路径上的Cache副本不一致问题。
 
 <!-- npu="950" id4 -->
+
 ### SIMT DCache与GM的缓存一致性
 
 #### SIMT DCache访问路径
@@ -608,6 +610,7 @@ C API中提供了[`asc_ub_dcci_single`](../../../../api/SIMD-API/c_api/cache_ctr
 下面按atomic事件发起路径分类说明：<!-- npu="950" id6 -->Scalar原子、<!-- end id6 -->MTE3随路原子、FixPipe随路原子<!-- npu="950" id7 -->和SIMT原子<!-- end id7 -->。本节只说明这些atomic事件放入一致性分析时需要关注的Cache行为，接口细节可参考对应API文档。
 
 <!-- npu="950" id8 -->
+
 ### Scalar原子操作与DCache一致性
 
 [NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持Scalar原子操作，Scalar原子操作和普通Scalar读写GM混用时，需要按DCache与GM的一致性来分析，详细处理方式参考[Atomic访问导致的DCache缓存一致性](#atomic访问导致的dcache缓存一致性)。
@@ -635,6 +638,7 @@ FixPipe常用于`L0C Buffer -> GM`或相关矩阵搬出路径。对一致性分�
 - 如果多个流水或多个核都对同一GM地址做随路原子，原子操作只保证每次GM读-改-写不被打断；不同流水、不同核之间的启动顺序仍应由同步或算法协议保证。
 
 <!-- npu="950" id9 -->
+
 ### SIMT原子操作与缓存一致性
 
 [NPU架构版本3510](../../language_extension/simd_builtin_keywords.md)支持SIMT原子操作，SIMT原子操作可能作用于UB，也可能作用于GM；接口例子可参考[asc_atomic_add](../../../../api/SIMT-API/atomic_operations/asc_atomic_add.md)。它保证的是同一地址上这一次读-改-写具有原子性，不保证多个线程之间的执行顺序。

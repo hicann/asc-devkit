@@ -48,6 +48,7 @@
 <!-- end id2 -->
 
 <!-- npu="950" id5 -->
+
 ## UB->L1 Buffer的接口分类与使用场景
 
 **表4** UB->L1 Buffer接口

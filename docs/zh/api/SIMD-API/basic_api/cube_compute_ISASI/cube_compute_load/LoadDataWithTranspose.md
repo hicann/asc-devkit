@@ -156,6 +156,7 @@ Kirin X90处理器系列产品，支持数据类型：int8_t、half。
 <!-- npu="950" id19 -->
 - 针对Ascend 950PR&950DT系列产品，推荐使用LoadData2dTransposeParamsV2作为参数，该参数具有更精细的搬运粒度。
 <!-- end id19 -->
+
 ## 关键特性说明<a id="zh-cn_topic_0000002543851571_section1891111310132"></a>
 
 ### 功能和参数讲解
@@ -514,6 +515,7 @@ for (int i = 0; i < CeilDivision(k, fractalShape[0]); ++i) {
 ```
 
 <!-- npu="950" id20 -->
+
 ### 使用LoadData2dTransposeParamsV2结构体作为参数的场景示例
 
 该示例使用了LoadData2dTransposeParamsV2结构体作为参数，输入a矩阵为int8_t类型，shape为[128,128]，输入数据格式为NZ，输入b矩阵为int8_t类型，shape为[128,256]，输入数据格式为NZ，输出c的类型为float。a矩阵从L1 Buffer（A1）搬运到L0A Buffer（A2）且不转置，b矩阵从L1 Buffer（B1）搬运到L0B Buffer（B2）并转置，示例仅展示接口调用过程，其余计算和搬运不作参考。完整示例请参考：[load_data_l12l0样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0)。

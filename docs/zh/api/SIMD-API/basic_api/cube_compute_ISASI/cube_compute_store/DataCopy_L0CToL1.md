@@ -203,6 +203,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 <!-- end id24 -->
 
 <!-- npu="950,A3,910b" id25 -->
+
 ## 调用示例<a id="zh-cn_topic_0000002511188540_section088124295117"></a>
 
 示例：通路L0C Buffer->L1 Buffer。输入A矩阵和B矩阵的数据类型为half，输出C矩阵为int8_t，不开启NZ2ND的格式转换，开启scalar量化。

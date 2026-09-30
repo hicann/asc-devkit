@@ -110,6 +110,7 @@ __simd_callee__ inline void asc_sub(vector_bool& carry,
                                     vector_int32_t src1,
                                     vector_bool mask)
 ```
+
 ## 参数说明
 
 ### 无借位输出减法

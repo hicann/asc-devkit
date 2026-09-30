@@ -52,6 +52,7 @@ __simd_callee__ inline vector_<dtype> asc_gather(vector_<dtype> src,
 ```
 
 ### 支持数据类型列表
+
 **表1** 寄存器源收集模式支持数据类型列表
 
 | dtype | index_dtype |

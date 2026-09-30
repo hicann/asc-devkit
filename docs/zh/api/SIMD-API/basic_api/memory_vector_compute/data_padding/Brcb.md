@@ -140,6 +140,7 @@ __aicore__ inline void Brcb(const LocalTensor<T>& dst, const LocalTensor<T>& src
   - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
   <!-- end id21 -->
 <!-- end id17 -->
+
 ## 关键特性说明
 
 源操作数不支持Stride参数配置，始终采用连续读。

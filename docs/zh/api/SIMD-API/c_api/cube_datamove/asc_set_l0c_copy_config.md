@@ -85,6 +85,7 @@ PIPE_S
 - 本接口的配置会持续生效，直至再次调用本接口覆盖。不同搬出任务使用的配置不同时，需在对应搬出接口执行前重新配置，每次调用均会同时覆盖三个参数。
 
 <!-- npu="950" id12 -->
+
 ## 调用示例
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。

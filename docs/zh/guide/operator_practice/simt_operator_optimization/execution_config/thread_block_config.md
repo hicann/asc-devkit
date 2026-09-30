@@ -19,6 +19,7 @@
 本优化方法对应的样例请参见[核函数（Kernel）的启动配置性能调优样例](../../../../../../examples/03_simt_api/03_best_practices/01_execution_conf_optimizations/grid_dim_config/README.md)。
 
 ## 大数据量场景
+
 下面以Gather算子为例，对比大数据量场景（`1024*2048`，即2097152个元素）下不同线程块数量配置的性能差异。
 
 【反例】一个线程处理一个元素，随数据量增加线程块个数，导致需要启动和调度的线程块大幅增加。

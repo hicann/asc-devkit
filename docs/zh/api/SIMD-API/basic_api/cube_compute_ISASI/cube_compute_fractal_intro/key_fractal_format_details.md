@@ -76,6 +76,7 @@
 <!-- end id20 -->
 
 <!-- npu="910b,A3,310b,310p,910,x90,9030" id10 -->
+
 ## Zz格式（FRACTAL_Zz）<a name="zh-cn_topic_0000002545089965_section1798516571585"></a>
 
 - **定义：** 大Z外部row major（行主序）+ 小z内部row major（行主序），见[图4](#zh-cn_topic_0000002545089965_fig18376432205510)。

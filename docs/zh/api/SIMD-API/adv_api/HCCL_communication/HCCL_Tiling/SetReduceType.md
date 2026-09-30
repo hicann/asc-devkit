@@ -26,6 +26,7 @@ uint32_t SetReduceType(uint32_t reduceType, uint8_t dstDataType = 0, uint8_t src
 -   非0表示设置失败。
 
 ## 约束说明
+
 <!-- npu="950" id3 -->
 对于Ascend 950PR&950DT系列产品，AI CPU作为服务端时，该接口暂不支持使用。
 <!-- end id3 -->

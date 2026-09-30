@@ -178,6 +178,7 @@ T支持的数据类型为：half、float。
 <!-- end id21 -->
 
 <!-- npu="950" id24 -->
+
 ## 关键特性<a id="exp-key-features"></a>
 
 针对Ascend 950PR&950DT系列产品，有如下关键特性：

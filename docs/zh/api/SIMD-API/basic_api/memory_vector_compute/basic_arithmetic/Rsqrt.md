@@ -181,6 +181,7 @@ T支持的数据类型为：half、float。
 - 使用Rsqrt时，half的算子结果对比误差不满足双千分之一的要求，float的算子结果对比误差不满足双万分之一的要求，如果需要高精度，建议使用[Div](Div.md)和[Sqrt](Sqrt.md)替代实现。
 
 <!-- npu="950" id35 -->
+
 ## 关键特性<a id="rsqrt-key-features"></a>
 
 针对Ascend 950PR&950DT系列产品，有如下关键特性：

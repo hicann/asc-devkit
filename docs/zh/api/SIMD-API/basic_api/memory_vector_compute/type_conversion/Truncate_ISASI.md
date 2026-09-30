@@ -57,6 +57,7 @@ __aicore__ inline void Truncate(const LocalTensor<T> &dst, const LocalTensor<T> 
 | count | 输入 | 参与计算的元素个数。 |
 
 ## 数据类型
+
 <!-- npu="950" id8 -->
 - 针对Ascend 950PR&950DT系列产品，T支持的数据类型为：half、float、bfloat16_t。
 <!-- end id8 -->

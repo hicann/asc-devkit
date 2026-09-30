@@ -381,6 +381,7 @@ $$
     | 0 | 8'hFE | 23'h7FFFFF | 最大正规格数 |
 
 <!-- npu="950" id1 -->
+
 ## 复数<a name="section8666633175111"></a>
 
 Ascend C提供了复数数据类型：complex32和complex64。

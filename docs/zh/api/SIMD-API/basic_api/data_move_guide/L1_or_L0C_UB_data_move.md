@@ -92,6 +92,7 @@ __aicore__ inline void DataCopyPad(const LocalTensor<T>& dst, const LocalTensor<
 ```
 
 <!-- npu="310p" id1 -->
+
 ## DataCopy（L0CToUB随路量化激活搬运）
 
 该接口主要实现将数据从L0C Buffer搬运至UB，并支持多种随路能力的组合，接口内包含了设置寄存器与数据搬运能力。
@@ -152,6 +153,7 @@ src和dst分别为源操作数和目的操作数；intriParams为搬运参数，
     ```
 
 <!-- npu="950" id2 -->
+
 ## DataCopyL1ToUB（L1ToUB连续数据搬运）
 
 DataCopyL1ToUB能够实现L1 Buffer到UB的连续数据搬运，数据搬运时格式和内容保持不变。
@@ -174,6 +176,7 @@ __aicore__ inline void DataCopyL1ToUB(const LocalTensor<T>& dst, const LocalTens
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
+
 ## DataCopyL1ToUB（L1ToUB高维切分数据搬运）
 
 DataCopyL1ToUB能够实现L1 Buffer到UB的连续数据搬运和非连续数据搬运，数据搬运时格式和内容保持不变。

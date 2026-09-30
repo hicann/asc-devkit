@@ -72,6 +72,7 @@ PIPE_S
 量化参数不能为inf/nan和非规格化数。
 
 ## 调用示例
+
 ```cpp
 const uint64_t MASK_8_0 = 0x1FF;
 const uint64_t MASK_BIT9 = 0x200;

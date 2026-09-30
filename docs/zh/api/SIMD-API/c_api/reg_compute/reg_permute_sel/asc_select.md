@@ -23,6 +23,7 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+
 ## 功能说明
 
 头文件路径为：`"c_api/reg_compute/compute/reg_permute_sel.h"`。

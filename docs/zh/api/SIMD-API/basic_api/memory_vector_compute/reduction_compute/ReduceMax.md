@@ -91,6 +91,7 @@
 **注：以上高维切分相关参数`mask`，`repeatTime`，`srcRepStride`请参考[高维切分](../SIMD_compute/high_dim_split.md)中的介绍。**
 
 ## 数据类型
+
 支持的数据类型如下：
 
 <!-- npu="950" id10 -->

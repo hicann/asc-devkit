@@ -215,6 +215,7 @@ npu_op_kernel_options(<target_name> <op_type> [COMPUTE_UNIT <soc_version>... | S
 npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)   #为算子添加编译选项
 ```
 npu_op_kernel_options(ascendc_kernels AddCustom SOC_SERIES Ascendxxx Ascendyyy OPTIONS -DASCENDC_DEBUG)
+
 ### npu_op_kernel_sources
 
 描述核函数（Kernel）目标的源码信息，包括设置算子的核函数（Kernel）实现文件和源码路径等。
@@ -251,6 +252,7 @@ npu_op_kernel_sources(ascendc_kernels
     KERNEL_FILE add_custom.cpp
 )
 ```
+
 ### npu_op_device_tiling_library
 
 创建Device侧Tiling库。使用该选项时，package的类型仅支持配置为RUN（run包模式）。

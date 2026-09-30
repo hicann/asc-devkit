@@ -149,6 +149,7 @@ Atlas 200I/500 A2推理产品，支持的数据类型为：int8_t、uint8_t、in
   - Atlas A2系列产品
   <!-- end id20 -->
 <!-- end id18 -->
+
 ## 调用示例<a name="section11276201527"></a>
 
 完整使用样例请参见[Gather类样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/gather)场景四。

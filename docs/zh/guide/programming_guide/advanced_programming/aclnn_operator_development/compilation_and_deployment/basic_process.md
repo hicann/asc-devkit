@@ -148,6 +148,7 @@ export ASCENDC_BUILD_LOG_DIR=/home/build_log/
 ```
 
 <a id="算子包部署"></a>
+
 ## 算子包部署<a id="operator-package-deployment"></a>
 
 编译生成的算子安装包需要部署到运行环境。
@@ -184,6 +185,7 @@ source /usr/local/Ascend/cann/set_env.sh
 > - 算子包要求架构与系统架构一致，且满足glibc版本依赖，否则可使用`--force`强制安装。
 
 <a id="部署后的目录结构"></a>
+
 ### 部署后的目录结构
 
 以默认安装场景为例：
@@ -223,6 +225,7 @@ source /usr/local/Ascend/cann/set_env.sh
 ```
 
 <a id="配置自定义算子优先级"></a>
+
 ### 配置自定义算子优先级
 
 多个算子包共存时，如果包含相同OpType的算子，优先级高的算子包中的版本生效。
@@ -313,6 +316,7 @@ source /usr/local/Ascend/cann/set_env.sh
 ---
 
 <a id="编译组织"></a>
+
 ## 编译组织（进阶）<a id="advanced-build-organization"></a>
 
 算子工程通过CMake组织编译。如需自行组织工程或用CANN提供的CMake modules定制编译流程，可参考以下内容。
@@ -613,6 +617,7 @@ npu_op_package_add(${package_name}
 完成编译组织之后，可按照[基本流程](#基本流程)的三个步骤完成算子编译与部署。
 
 <a id="自定义编译选项"></a>
+
 ## 自定义编译选项（进阶）<a id="custom-compile-options"></a>
 
 在CMakeLists.txt中，用`npu_op_kernel_options`为核函数（Kernel）侧代码添加编译选项：

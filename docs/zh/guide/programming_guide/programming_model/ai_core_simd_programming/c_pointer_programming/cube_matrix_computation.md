@@ -63,6 +63,7 @@ Cube单元采用分块计算逻辑，硬件最小计算粒度为分形块，可�
 ND格式是通用的N维张量格式，数据在内存中连续线性存放，通常存在于`Global Memory (GM)`中。在进行矩阵运算前，通常需要将其转换为Nz格式以适配Cube计算单元。
 
 #### Nz 格式
+
 Nz格式主要用于L1 Buffer和L0C Buffer中存放数据。针对[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)，L0A Buffer也采用Nz分形格式。该格式采用大N（外部列主序）+ 小z（内部行主序）的方式排布。
 
 <img src="../../../../figures/nz_format.png" alt="Nz数据排布格式" width="400"/>

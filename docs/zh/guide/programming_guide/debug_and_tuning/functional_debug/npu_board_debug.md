@@ -90,11 +90,14 @@ msDebug是一款面向昇腾设备的算子调试工具，用于调试NPU侧运�
 ### msdebug调试进程
 
 #### 调试程序编译
+
 ```shell
 // bisheng编译时增加debug命令行
 bisheng add_custom.asc -o add_custom  -O0 -g
 ```
+
 #### 调试程序运行
+
 ```shell
 // 使用msdebug进行调试
 $ msdebug ./add_custom
@@ -110,12 +113,14 @@ Breakpoint 1: where = device_debugdata`_ZN17MatmulLeakyKernelIDhDhffE7CopyOutEj_
 ```
 
 #### 断点设置
+
 ```shell
 (msdebug) b matmul_leakyrelu_kernel.cpp:114
 Breakpoint 1: where = device_debugdata`_ZN17MatmulLeakyKernelIDhDhffE7CopyOutEj_mix_aiv + 240 at matmul_leakyrelu_kernel.cpp:114:14, address = 0x000000000000ff88
 ```
 
 #### 内存与变量打印
+
 ```shell
 #  打印LocalTensor
 (msdebug) p reluOutLocal
@@ -134,6 +139,7 @@ Breakpoint 1: where = device_debugdata`_ZN17MatmulLeakyKernelIDhDhffE7CopyOutEj_
 ```
 
 #### 单步调试
+
 ```shell
 (msdebug) s
 Process 177943 stopped
@@ -148,6 +154,7 @@ Process 177943 stopped
    ```
 
 #### 调试信息展示
+
    ```shell
     (msdebug) ascend info cores
   CoreId  Type  Device Stream Task Block         PC               stop reason
@@ -157,6 +164,7 @@ Process 177943 stopped
    ```
 
 ### 解析异常算子dump文件
+
 通过环境变量开启算子异常时Dump出Core文件。
 ```shell
 # aic_err_detail_dump: 导出AI Core的内存存储、寄存器和调用栈信息。

@@ -67,6 +67,7 @@ PIPE_S
 无
 
 ## 调用示例
+
 ```cpp
 uint64_t config = 0;
 asc_set_l12l0_padding_val(config);

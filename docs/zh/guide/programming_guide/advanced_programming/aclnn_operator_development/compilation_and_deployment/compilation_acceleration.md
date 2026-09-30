@@ -147,6 +147,7 @@ ccache --show-stats -v
 
 
 <a id="选择性编译"></a>
+
 ## 选择性编译
 
 选择性编译的核心思路是：开发调试阶段只编译当前真正需要验证的部分，减少无关核函数（Kernel）变体、无关芯片和无关产物带来的编译开销。常用策略如下：
@@ -245,6 +246,7 @@ npu_op_kernel_options(ascendc_kernels AddCustomTemplate COMPUTE_UNIT Ascendxxyy 
 cmake -S . -B build_out --preset=default -DASCEND_SOC_SERIES=ascendxxx
 ```
 也可以使用参数`-DASCEND_COMPUTE_UNIT=ascendxxxyy`；两个参数不能同时传入。
+
 ### 跳过核函数（Kernel）二进制编译
 
 如果当前只需要生成源码包，或暂时不需要核函数（Kernel） `.o`二进制，可关闭二进制包生成。顶层`CMakeLists.txt`中应使用变量形式传递`ENABLE_BINARY_PACKAGE`：

@@ -118,6 +118,7 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 | dump_size | 输入 | 所需要打印的元素数量。 |
 
 ## 数据类型
+
 <!-- npu="950" id10 -->
 - 针对Ascend 950PR&950DT系列产品 ：bool、int8_t、uint8_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
 <!-- end id10 -->

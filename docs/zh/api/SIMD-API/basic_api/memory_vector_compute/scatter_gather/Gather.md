@@ -90,6 +90,7 @@ def Gather(dst, src, count, srcOffset, srcBaseAddr):
 | dstRepStride | 输入 | 相邻迭代间的地址步长，单位是DataBlock（32Bytes）。 |
 
 ## 数据类型
+
 <!-- npu="950" id8 -->
 Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。数据类型int8\_t、uint8\_t仅支持tensor前n个数据计算接口。
 <!-- end id8 -->

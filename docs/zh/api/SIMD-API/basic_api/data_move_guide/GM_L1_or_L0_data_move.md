@@ -110,6 +110,7 @@ src和dst分别为源操作数和目的操作数；intriParams为ND2NZ搬运配�
 <!-- end id1 -->
 
 <!-- npu="950" id2 -->
+
 ## DataCopy（GMToL1随路转换-DN2NZ搬运）<a name="ZH-CN_TOPIC_0000002573902899"></a>
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，并支持在数据搬运时进行[DN](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md)到[NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md)格式的转换。
@@ -132,6 +133,7 @@ src和dst分别为源操作数和目的操作数；intriParams为DN2NZ搬运配�
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
+
 ## DataCopyPad（GMToL1非对齐数据搬运）<a name="ZH-CN_TOPIC_0000002543262891"></a>
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，并支持在数据搬运时提供非对齐数据搬运功能，可以根据开发者的需要自行填充数据。
@@ -172,6 +174,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id4 -->
+
 ## GMToL1 NZ数据搬运(LoadData（2D矩阵搬运V2）)
 
 该接口主要实现将数据从Global Memory搬运至L1 Buffer，负责完成普通矩阵计算所需的2D格式数据的搬运，以大小为512Byte的数据分形为单位进行搬运。

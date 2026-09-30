@@ -80,6 +80,7 @@
 - 在**3510架构**下占用模式4的flagId为1、17（AIC：1、17；AIV：1）。参见[DataCopy（GMToL1连续数据搬运）](../../cube_compute_ISASI/cube_compute_load/DataCopy_GMToL1_continuous.md)。
 
 ## 各个核间同步控制实现原理<a id="sync_control_mode"></a>
+
 如图1所示，本章节将配合时序图介绍CrossCoreSetFlag和CrossCoreWaitFlag配合使用时支持的四种同步控制模式各自实现的原理。
 
 - 模式0：AI Core核间的同步控制。对于AIC全核场景，同步所有的AIC核，直到所有的AIC核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行；对于AIV全核场景，同步所有的AIV核，直到所有的AIV核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的全部流水或者由模板参数pipe指定的流水（与NPU架构有关）中的指令才会执行。

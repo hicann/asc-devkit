@@ -208,6 +208,7 @@ $dst_i = src0_i / src1_i$
 <!-- end id32 -->
 
 <!-- npu="950" id35 -->
+
 ## 关键特性<a id="div-key-features"></a>
 
 针对Ascend 950PR&950DT系列产品，有如下关键特性：

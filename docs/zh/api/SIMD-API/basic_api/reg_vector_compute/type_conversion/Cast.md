@@ -289,6 +289,7 @@ result[i][7 :0] = saturation(tmp[7 : 0]) according to control bit;
 ```
 
 ### half转hifloat8_t转换规则
+
 ```
 tmp2[15 : 0] = f16_src_data[i][15 : 0];
 Ev = tmp2[14 : 10] - 5'b01111, thr = {tmp2[0], 1’b1};

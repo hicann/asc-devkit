@@ -40,6 +40,7 @@
     此接口后续版本会废弃，请使用[asc_set_atomic_min_int32](../SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_min.md)接口。
 
 <!-- npu="950" id2 -->
+
 ### 系统变量
 
 - [asc_get_block_idx](../SIMD-API/c_api/deprecated_interface/asc_get_block_idx_deprecated.md)接口
@@ -59,6 +60,7 @@
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
+
 ### Reg矢量计算
 
 #### Reg数据搬入
@@ -212,6 +214,7 @@
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
+
 #### 逻辑计算
 
 - [asc_and](../SIMD-API/c_api/deprecated_interface/asc_and_deprecated.md)接口（浮点类型重载）
@@ -508,6 +511,7 @@
 
     使用`uint8_t unit_flag`入参的`asc_mmad_sparse()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口。`asc_mmad_sparse_sync()`接口已废弃，请使用[asc_mmad_sparse](../SIMD-API/c_api/cube_compute/asc_mmad_sparse.md)接口和[asc_sync](../SIMD-API/c_api/sync/intra_core_sync/asc_sync.md)接口。
 <!-- end id6 -->
+
 ### 矩阵计算搬运
 
 - [asc_copy_gm2l0a_sync（废弃）](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2l0a_sync_deprecated.md)接口
