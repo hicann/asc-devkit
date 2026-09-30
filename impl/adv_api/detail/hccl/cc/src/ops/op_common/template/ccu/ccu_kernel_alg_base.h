@@ -232,7 +232,16 @@ CcuResult GroupCopy(
 CcuResult CreateReduceLoop(
     CcuKernelCtxBase& ctx, GroupLocalReduceVar& var, uint32_t size, HcclDataType dataType, HcclDataType outputDataType,
     HcclReduceOp opType);
+CcuResult CreateReduceLoopV2(
+    CcuKernelCtxBase& ctx, GroupLocalReduceVar& var, uint32_t size, HcclDataType dataType, HcclDataType outputDataType,
+    HcclReduceOp opType);
 CcuResult GroupLocalReduce(
+    CcuKernelCtxBase& ctx, ccu::LocalAddr outDstOrg, std::vector<ccu::LocalAddr>& scratchOrg, GroupOpSizeVars goSize,
+    HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType, CcuVersion ccuVersion);
+CcuResult GroupLocalReduceV1(
+    CcuKernelCtxBase& ctx, ccu::LocalAddr outDstOrg, std::vector<ccu::LocalAddr>& scratchOrg, GroupOpSizeVars goSize,
+    HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType);
+CcuResult GroupLocalReduceV2(
     CcuKernelCtxBase& ctx, ccu::LocalAddr outDstOrg, std::vector<ccu::LocalAddr>& scratchOrg, GroupOpSizeVars goSize,
     HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType);
 

@@ -246,8 +246,8 @@ static CcuResult DoReduceScatter(KfcReduceScatterMesh1DMem2MemContext& ctx)
             // 本rank槽位直读 input(对齐 hccl ReduceLoopGroup 的 src 分支):规约循环 input->ccuBuf 单跳,
             // 省 Phase1 的 LocalCopy;n/p 段的 scratchOrg 地址推进对替换项同样适用
             scratch[ctx.rankId] = ctx.myInput;
-            CCU_CHK_RET(
-                GroupLocalReduce(ctx, myOutput, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp));
+            CCU_CHK_RET(GroupLocalReduce(
+                ctx, myOutput, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp, GetCcuVersion()));
         } else {
             CCU_CHK_RET(PairwiseLocalReduce(ctx, myOutput, ctx.scratchMem, ctx.sliceSize));
         }

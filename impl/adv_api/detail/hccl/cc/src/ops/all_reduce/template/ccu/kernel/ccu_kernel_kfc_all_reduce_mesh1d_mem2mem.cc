@@ -551,7 +551,8 @@ static CcuResult ReduceRmtToLocChunking(
         scratch[ctx.rankId].addr = ctx.reduceScatterSrc[ctx.rankId].addr;
         scratch[ctx.rankId].token = ctx.reduceScatterSrc[ctx.rankId].token;
         CCU_CHK_RET(GroupLocalReduce(
-            ctx, ctx.localDstMem, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp));
+            ctx, ctx.localDstMem, scratch, ctx.goSize, ctx.dataType, ctx.outputDataType, ctx.reduceOp,
+            GetCcuVersion()));
     } else {
         CCU_CHK_RET(PairwiseLocalReduce(
             ctx, ctx.localDstMem, ctx.reduceScatterDst, ctx.currentSliceSize, ctx.dataType, ctx.outputDataType,

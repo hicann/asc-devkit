@@ -20,9 +20,11 @@ extern "C" {
 #endif
 
 DECL_WEAK_FUNC(HcclResult, HcclCommQueryCcuIns, HcclComm comm, CcuInsHandle* insHandles, uint32_t* insNum);
+DECL_WEAK_FUNC(HcclResult, HcclCommQueryAssignedCcuIns, HcclComm comm, CcuInsHandle* insHandles, uint32_t* insNum);
 DECL_WEAK_FUNC(HcclResult, HcclCommAssignCcuIns, HcclComm comm, CcuInsHandle insHandle);
 
 DECL_SUPPORT_FLAG(HcclCommAssignCcuIns);
+DECL_SUPPORT_FLAG(HcclCommQueryAssignedCcuIns);
 
 void HcclCcuResDlInit(void* libHcommHandle);
 
