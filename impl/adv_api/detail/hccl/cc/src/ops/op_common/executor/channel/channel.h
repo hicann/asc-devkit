@@ -65,6 +65,7 @@ HcclResult CalcChannelRequestMeshClosMultiJetty(
     const std::vector<std::vector<u32>>& subcommInfo, std::vector<HcclChannelDesc>& channels, bool isIsolation = false,
     bool expectMesh = true);
 HcclResult GetProtocolByEngine(const OpParam& param, std::vector<CommProtocol>& protocols);
+HcclResult GetUbMultiChannelNum(HcclComm comm, u32& multiChannelNum);
 } // namespace mc2_ops_hccl
 
 #endif

@@ -81,6 +81,22 @@ TopoInfoWithNetLayerDetails MakeMultiJettyTopo(u32 userRank = 0U)
     return topo;
 }
 
+TopoInfoWithNetLayerDetails MakeMultiLevelClosTopo(u32 rankSize = 16U, u32 serverNum = 2U)
+{
+    TopoInfoWithNetLayerDetails topo{};
+    topo.userRank = 0U;
+    topo.userRankSize = rankSize;
+    topo.serverNum = serverNum;
+    topo.level0Topo = Level0Shape::CLOS;
+    topo.topoLevelNums = 2U;
+    topo.level0PcieMix = false;
+    const u32 rankSizePerServer = rankSize / serverNum;
+    topo.netLayerDetails.localNetInsSizeOfLayer = {rankSizePerServer, rankSize};
+    topo.topoInstDetailsOfLayer.resize(1U);
+    topo.topoInstDetailsOfLayer[0].rankNumForTopoType[COMM_TOPO_CLOS] = {rankSizePerServer};
+    return topo;
+}
+
 AlgHierarchyInfoForAllLevel MakeMultiJettyHierarchy(u32 userRank)
 {
     const u32 meshBase = userRank / MULTI_JETTY_MESH_SIZE * MULTI_JETTY_MESH_SIZE;
@@ -130,6 +146,7 @@ TEST_F(ST_ALL_GATHER_AICPU_TEST, local_registry_contains_all_gather_algorithms)
     CollAlgExecRegistryV2& registry = CollAlgExecRegistryV2::Instance();
     EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "InsAllGatherMesh1D"), nullptr);
     EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "AicpuAllGatherSoleNHR"), nullptr);
+    EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "AicpuAllGatherSoleNHRMultiLink"), nullptr);
     EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "AicpuAllGatherConcurMeshNHR"), nullptr);
     EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "AicpuAllGatherSequenceMeshConcurNHR"), nullptr);
     EXPECT_NE(registry.GetAlgExec(HCCL_CMD_ALLGATHER, "InsAllGatherParallelMesh1DNHRMultiJetty"), nullptr);
@@ -214,6 +231,24 @@ TEST_F(ST_ALL_GATHER_AICPU_TEST, multijetty_selector_uses_algorithm_for_uneven_m
 
     EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
     EXPECT_EQ(algName, "InsAllGatherParallelMesh1DNHRMultiJetty");
+}
+
+TEST_F(ST_ALL_GATHER_AICPU_TEST, aicpu_selector_uses_nhr_multilink_for_clos_topo)
+{
+    AllGatherAutoSelector selector;
+    OpParam param = MakeAicpuParam();
+    param.DataDes.count = 1U;
+    std::string algName;
+
+    TopoInfoWithNetLayerDetails topo = MakeMultiLevelClosTopo();
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllGatherSoleNHRMultiLink");
+
+    TopoInfoWithNetLayerDetails singleLevelTopo = MakeMultiLevelClosTopo(8U, 1U);
+    singleLevelTopo.topoLevelNums = 1U;
+    singleLevelTopo.netLayerDetails.localNetInsSizeOfLayer = {8U};
+    EXPECT_EQ(selector.Select(param, &singleLevelTopo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllGatherSoleNHRMultiLink");
 }
 
 TEST_F(ST_ALL_GATHER_AICPU_TEST, multijetty_executor_calculates_multichannel_resources)
