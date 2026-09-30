@@ -203,7 +203,7 @@ __aicore__ static inline bool OOMGetTensorViewStorageSize(
     const uint8_t versionAndReserved = OOMReadPackedValue<uint8_t>(view);
     const uint8_t version = versionAndReserved & Internal::g_oomNibbleMask;
     const uint64_t storageShapeSize = OOMReadPackedValue<uint64_t>(view + sizeof(uint8_t));
-    if (version != Internal::g_oomTensorViewVersion || storageShapeSize == 0 || elementSize == 0 ||
+    if (version != Internal::g_oomTensorViewVersion || elementSize == 0 ||
         storageShapeSize > (~static_cast<uint64_t>(0)) / elementSize) {
         return false;
     }
