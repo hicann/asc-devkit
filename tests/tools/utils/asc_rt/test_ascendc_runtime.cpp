@@ -50,6 +50,9 @@ extern "C" uint32_t g_msprofReportApiCallCount;
 extern "C" uint32_t g_msprofRegisterCallbackCallCount;
 extern "C" uint32_t g_msprofLastRegisterModuleId;
 extern "C" ProfCommandHandle g_msprofLastRegisterCallback;
+extern "C" uint32_t g_msprofUnRegisterCallbackCallCount;
+extern "C" uint32_t g_msprofLastUnRegisterModuleId;
+extern "C" ProfCommandHandle g_msprofLastUnRegisterCallback;
 extern "C" MsprofApi g_msprofLastApi;
 extern "C" MsprofCompactInfo g_msprofLastCompactInfo;
 extern "C" MsprofAdditionalInfo g_msprofLastAdditionalInfo;
@@ -162,6 +165,20 @@ TEST_F(TEST_ASCENDC_RUNTIME, AscendProfRegisterRecordsCallback)
     EXPECT_NE(g_msprofLastRegisterCallback, nullptr);
 }
 
+TEST_F(TEST_ASCENDC_RUNTIME, AscendProfUnRegisterUsesRegisteredCallback)
+{
+    ResetAscRtStubState();
+    AscendProfRegister();
+    const auto registeredCallback = g_msprofLastRegisterCallback;
+
+    AscendProfUnRegister();
+
+    EXPECT_EQ(g_msprofUnRegisterCallbackCallCount, 1);
+    EXPECT_EQ(g_msprofLastUnRegisterModuleId, 69U);
+    EXPECT_NE(registeredCallback, nullptr);
+    EXPECT_EQ(g_msprofLastUnRegisterCallback, registeredCallback);
+}
+
 typedef void* rtEvent_t;
 typedef void* rtStream_t;
 typedef void* rtContext_t;
@@ -243,6 +260,9 @@ static void ResetAscRtStubState()
     g_msprofRegisterCallbackCallCount = 0;
     g_msprofLastRegisterModuleId = 0;
     g_msprofLastRegisterCallback = nullptr;
+    g_msprofUnRegisterCallbackCallCount = 0;
+    g_msprofLastUnRegisterModuleId = 0;
+    g_msprofLastUnRegisterCallback = nullptr;
     memset(&g_msprofLastApi, 0, sizeof(g_msprofLastApi));
     memset(&g_msprofLastCompactInfo, 0, sizeof(g_msprofLastCompactInfo));
     memset(&g_msprofLastAdditionalInfo, 0, sizeof(g_msprofLastAdditionalInfo));

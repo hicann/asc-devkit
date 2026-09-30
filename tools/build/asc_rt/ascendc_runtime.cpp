@@ -367,6 +367,8 @@ bool GetAscendProfStatus() { return g_profEnable; }
 
 void AscendProfRegister() { MsprofRegisterCallback(ASCENDC_KERNEL_ID, AscendProfilingCallBack); }
 
+void AscendProfUnRegister() { MsprofUnRegisterCallback(ASCENDC_KERNEL_ID, AscendProfilingCallBack); }
+
 void StartAscendProf(const char* name, uint64_t* startTime)
 {
     (void)name;

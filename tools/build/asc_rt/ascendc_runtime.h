@@ -58,6 +58,7 @@ extern "C" bool GetAscendProfStatus();
 extern "C" uint32_t GetAscendCoreSyncAddr(void** addr);
 extern "C" int UnregisterAscendBinary(void* hdl);
 extern "C" void AscendProfRegister();
+extern "C" void AscendProfUnRegister();
 extern "C" bool AscendCheckSoCVersion(const char* socVersion, char* errMsg);
 extern "C" uint32_t GetCoreNumForMixVectorCore(uint32_t* aiCoreNum, uint32_t* vectorCoreNum);
 extern "C" int32_t AscendDevBinaryLazyRegister(const char* binBuf, size_t binSize, void** handle);
