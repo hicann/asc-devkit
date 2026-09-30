@@ -17,19 +17,13 @@ Add, Sub, Mul, DataCopy, SetVectorMask, PipeBarrier
 **C API（`c_api/`）：** snake_case，`asc_` 前缀
 
 ```text
-asc_add, asc_axpy, asc_axpy_sync
+asc_add, asc_axpy
 ```
 
 **高阶API（`adv_api/`）：** 大驼峰（PascalCase）
 
 ```text
 Axpy, Exp, LayerNorm, GroupedMatmul
-```
-
-同步版本按API风格命名（视API类型和实际需求而定）：C API使用 `_sync` 后缀（如 `asc_add_sync`）。并非所有API都有同步变体。
-
-```text
-asc_add_sync, WarpReduceAddSync
 ```
 
 ### 宏命名

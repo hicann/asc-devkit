@@ -523,7 +523,7 @@ Reg矢量计算接口直接操作矢量数据寄存器或掩码寄存器，通�
 vector_float src0_reg;
 vector_float src1_reg;
 vector_float dst_reg;
-vector_bool mask = asc_create_mask_b32(MASK_PATTERN_ALL);
+vector_bool mask = asc_create_mask_b32(PAT_ALL);
 
 // 矢量加法
 asc_add(dst_reg, src0_reg, src1_reg, mask);
@@ -544,10 +544,10 @@ asc_div(dst_reg, src0_reg, src1_reg, mask);
 float scalar_value = 2.0f;
 
 // 矢量加标量
-asc_adds(dst_reg, src_reg, scalar_value, mask);
+asc_add_scalar(dst_reg, src0_reg, scalar_value, mask);
 
 // 矢量乘标量
-asc_muls(dst_reg, src_reg, scalar_value, mask);
+asc_mul_scalar(dst_reg, src0_reg, scalar_value, mask);
 ```
 
 #### 掩码寄存器计算

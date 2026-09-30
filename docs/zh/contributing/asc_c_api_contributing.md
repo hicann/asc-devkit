@@ -65,7 +65,7 @@ asc_add(dst, src0, src1, count);
 
 #### 数据流模式
 
-C API支持三种数据流模式：
+C API支持以下两种数据流模式：
 
 模式1：前n个数据计算
 
@@ -88,16 +88,6 @@ asc_add(dst, src0, src1, repeat,
 - 非连续内存访问
 - 支持多维数据
 - 灵活控制
-
-模式3：同步计算
-
-```cpp
-asc_add_sync(dst, src0, src1, count);
-```
-
-- 自动同步流水线
-- 保证数据一致性
-- 用于关键路径
 
 ### 参数约定
 
@@ -246,12 +236,12 @@ asc-devkit/
 实现矢量乘加C API：`dst = src * scalar + dst`
 
 - 支持数据类型：half, float
-- 支持三种调用模式
+- 支持连续模式和配置模式
 - 直接映射硬件指令
 
 ### 接口设计
 
-在 `include/c_api/vector_compute/vector_compute.h` 中添加：
+在 `include/c_api/vector_compute/compute/vector_fused.h` 中声明：
 
 ```cpp
 // ==========asc_axpy(half/float)==========
@@ -266,11 +256,6 @@ __aicore__ inline void asc_axpy(__ubuf__ half* dst, __ubuf__ half* src, half val
 
 __aicore__ inline void asc_axpy(__ubuf__ float* dst, __ubuf__ float* src, float value, uint8_t repeat,
     uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride);
-
-// 同步模式
-__aicore__ inline void asc_axpy_sync(__ubuf__ half* dst, __ubuf__ half* src, half scalar, uint32_t count);
-
-__aicore__ inline void asc_axpy_sync(__ubuf__ float* dst, __ubuf__ float* src, float scalar, uint32_t count);
 ```
 
 ### 实现代码

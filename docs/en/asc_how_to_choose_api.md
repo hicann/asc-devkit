@@ -89,7 +89,6 @@ As a vectorized programming interface in the Ascend C language extension layer, 
 **Core Features**
 - **Native C Language Paradigm Compatibility**: Supports the standard C language operator development mode, natively supports array-style memory allocation and pointer-based computing primitives; all interfaces uniformly adopt the snake_case naming convention with the `asc_xxx` prefix, featuring clear semantics and high recognizability, which reduces developers' understanding and access costs.
 - **Systematic SIMD Vectorized Interfaces**: Provides a full-scenario matrix of continuous vector computing interfaces to meet the development needs of most conventional operators. Take the basic vector addition interface as an example: `asc_add(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, uint32_t count)`, with intuitive interface definition and concise calling logic.
-- **Hierarchical Synchronization Mechanism Design**: Balances development efficiency and performance controllability by providing layered synchronization capabilities. For rapid development and function verification scenarios, it has a built-in simplified synchronization management mechanism, and is equipped with integrated computing interfaces with the `_sync` suffix (e.g., `asc_add_sync(...)`). Developers can quickly complete function implementation without explicitly managing synchronization timing.
 - **Advanced Data Layout Control Capability**: For ultimate performance tuning scenarios, it provides advanced computing interfaces with control parameters such as `repeat`/`stride`, supports flexible configuration of data access stride, repeated calculation modes and memory layout strategies, enabling developers to deeply customize computing logic and fully tap the upper limit of hardware computing power.
 
 **Applicable Scenarios**
@@ -97,7 +96,6 @@ As a vectorized programming interface in the Ascend C language extension layer, 
 - Production-grade high-performance operator development scenarios that require in-depth mining of hardware computing power and ultimate performance tuning.
 
 **Reference Examples**
-- [SIMD Add Operator Example (Synchronized Integrated Computing Interface)](../../examples/02_simd_c_api/00_introduction/01_add/c_api_sync_add/c_api_add.asc)
 - For more examples, please refer to the [examples directory](../../examples)
 
 ---
