@@ -30,11 +30,6 @@
     int main(int argc, char const* argv[])
     {
         ...
-        constexpr uint32_t numBlocks = 8;
-        ...
-        
-        aclrtStream stream = nullptr;
-        aclrtCreateStream(&stream);
         // Launch kernel <<<numBlocks, dynUBufSize, stream>>>
         // numBlocks : Number of blocks. Default to 8 in this example.
         // dynUBufSize : Dynamic unified buffer size. Default to 0 in this example.
@@ -44,8 +39,27 @@
     }
     ```
 
-- **算子编译与运行**：
- 
+- **算子编译与运行**：  
+
+    本样例完整代码（hello_world.asc）如下：
+    ```cpp
+    #include "utils/debug/asc_printf.h"
+    #include "acl/acl.h"
+
+    __global__ __vector__ void hello_world() { printf("Hello World!!!\n"); }
+
+    int main(int argc, char const* argv[])
+    {
+        aclInit(nullptr);
+        aclrtSetDevice(0); // Acquire runtime management resources.
+        hello_world<<<8, 0, nullptr>>>();
+        aclrtSynchronizeDevice();
+        aclrtResetDevice(0); // Release runtime resources.
+        aclFinalize();
+        return 0;
+    }
+    ```
+    运行如下命令进行编译运行：
     ```bash
     bisheng hello_world.asc --npu-arch=dav-2201 -o demo
     ./demo
