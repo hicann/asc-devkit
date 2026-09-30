@@ -20,6 +20,7 @@
 #ifndef INCLUDE_C_API_ASC_SIMD_H
 #define INCLUDE_C_API_ASC_SIMD_H
 
+#include "version/asc_devkit_version.h"
 #include "impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h"
 
 #include "c_api/atomic/atomic.h"
@@ -33,7 +34,7 @@
 #include "c_api/vector_datamove/vector_datamove.h"
 #include "c_api/vector_compute/vector_compute.h"
 
-#if (ASC_DEVKIT_VERSION_NUM >= 902000000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
 #if !defined(__NPU_ARCH__) || (defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510))
 #include "c_api/reg_compute/reg_convert.h"
 #include "c_api/reg_compute/reg_load.h"
