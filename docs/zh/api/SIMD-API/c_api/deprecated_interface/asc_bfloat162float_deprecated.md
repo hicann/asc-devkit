@@ -61,9 +61,10 @@ def asc_bfloat162float_v2(dst, src, mask):
 
 ## 函数原型
 
-### 模板原型（占位符形式）
+### 模板原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_bfloat162float<position_mode>(vector_float& dst,
                                                               vector_bfloat16_t src,
                                                               vector_bool mask)

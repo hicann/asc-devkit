@@ -57,9 +57,8 @@ $$
 
 ## 函数原型
 
-**占位符形式：**
-
 ```c
+// 占位符形式
 __aicore__ inline void asc_mmad_mx(__cc__ float* c_matrix,
                                    __ca__ <a_dtype>* a_matrix,
                                    __cb__ <b_dtype>* b_matrix,

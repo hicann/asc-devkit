@@ -34,9 +34,10 @@
 
 ## 函数原型
 
-### 模板原型（占位符形式）
+### 模板原型
 
 ```cpp
+// 占位符形式
 __aicore__ inline void asc_copy_gm2l1(__cbuf__ <dtype>* dst,
                                       __gm__ <dtype>* src,
                                       uint32_t m_start_position,

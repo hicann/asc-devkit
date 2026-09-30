@@ -78,9 +78,10 @@
 
 ## 函数原型
 
-### 模板原型（占位符形式）
+### 模板原型
 
 ```cpp
+// 占位符形式
 __aicore__ inline void asc_copy_l0c2ub(__ubuf__ <dst_dtype>* dst,
                                        __cc__ <src_dtype>* src,
                                        uint16_t n_size,

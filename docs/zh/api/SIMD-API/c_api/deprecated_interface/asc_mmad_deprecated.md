@@ -85,9 +85,8 @@ K0的取值为`32B / sizeof(dtype)`，`dtype`为矩阵的数据类型。当数�
 
 ### 函数原型（[NPU架构版本3510](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）
 
-**占位符形式：**
-
 ```c
+// 占位符形式
 __aicore__ inline void asc_mmad(__cc__ <c_dtype>* c_matrix,
                                 __ca__ <a_dtype>* a_matrix,
                                 __cb__ <b_dtype>* b_matrix,

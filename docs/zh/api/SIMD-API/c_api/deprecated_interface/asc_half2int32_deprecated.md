@@ -63,9 +63,10 @@ def asc_half2int32_rd_v2(dst, src, mask):
 
 ## 函数原型
 
-### 模板原型（占位符形式）
+### 模板原型
 
 ```c
+// 占位符形式
 __simd_callee__ inline void asc_half2int32_<round_mode><position_mode>(vector_int32_t& dst,
                                                                        vector_half src,
                                                                        vector_bool mask)

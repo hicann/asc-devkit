@@ -55,10 +55,8 @@ $$
 
 ## 函数原型
 
-**占位符形式：**
-
 ```c
-// 不显式传入Bias起始地址，通过参数控制C矩阵初始化方式
+// 不显式传入Bias起始地址，通过参数控制C矩阵初始化方式（占位符形式）
 __aicore__ inline void asc_mmad_mx(__cc__ float* c_matrix,
                                     __ca__ <a_dtype>* a_matrix,
                                     __cb__ <b_dtype>* b_matrix,
@@ -70,7 +68,7 @@ __aicore__ inline void asc_mmad_mx(__cc__ float* c_matrix,
                                     bool c_matrix_source,
                                     bool c_matrix_init_val)
 
-// 显式传入Bias起始地址，C矩阵使用Bias矩阵初始化
+// 显式传入Bias起始地址，C矩阵使用Bias矩阵初始化（占位符形式）
 __aicore__ inline void asc_mmad_mx(__cc__ float* c_matrix,
                                     __ca__ <a_dtype>* a_matrix,
                                     __cb__ <b_dtype>* b_matrix,
