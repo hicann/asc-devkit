@@ -170,7 +170,7 @@ __simd_callee__ inline reg_tensor<bool> operator>=(
 
 ## 返回值说明
 
-返回类型为`reg_tensor<bool>`。返回值的reg保存逐元素比较结果：对应位置为1表示比较结果成立，为0表示比较结果不成立。当src0和src1都为reg_tensor类型时，返回值的mask和src0的mask值相同，当src0和src1分别为reg_tensor和标量形式时，，返回值的mask和reg_tensor操作数的mask相同。
+返回类型为`reg_tensor<bool>`。返回值的reg保存逐元素比较结果：对应位置为1表示比较结果成立，为0表示比较结果不成立。当src0和src1都为reg_tensor类型时，返回值的mask和src0的mask值相同，当src0和src1分别为reg_tensor和标量形式时，返回值的mask和reg_tensor操作数的mask相同。
 
 ## 约束说明
 

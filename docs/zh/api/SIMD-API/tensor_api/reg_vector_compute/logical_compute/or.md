@@ -69,6 +69,7 @@ __simd_callee__ inline reg_tensor<T> operator|(
 
 - `src0.mask`需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与计算的元素位置错误。
 - 参与计算的数据量由矢量长度VL决定。T不为bool时，元素个数为VL除以sizeof(T)；T为bool时，参与计算的bit数为VL。
+- `src0.mask`未选中的位置不参与计算，返回值对应位置置零。
 
 ## 调用示例
 

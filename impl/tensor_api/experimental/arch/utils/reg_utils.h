@@ -72,6 +72,9 @@ template <typename T>
 inline constexpr bool supports_abs_v = ::AscendC::Std::is_one_of_v<T, int8_t, int16_t, half, int32_t, float>;
 
 template <typename T>
+inline constexpr bool supports_neg_v = ::AscendC::Std::is_one_of_v<T, int8_t, int16_t, half, int32_t, float>;
+
+template <typename T>
 inline constexpr bool supports_relu_v = ::AscendC::Std::is_one_of_v<T, half, int32_t, float>;
 
 template <typename T>
