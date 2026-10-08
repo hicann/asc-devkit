@@ -56,15 +56,16 @@
   | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU 架构：本样例仅支持 dav-3510（Ascend 950PR/Ascend 950DT） |
 
 - 执行结果
+
   执行结果如下，说明执行成功。
 
   ```bash
-  [blockIdx (0/2)][threadIdx (2/32)]: Hello World!
-  [blockIdx (0/2)][threadIdx (1/32)]: Hello World!
   [blockIdx (0/2)][threadIdx (0/32)]: Hello World!
-  [blockIdx (1/2)][threadIdx (2/32)]: Hello World!
-  [blockIdx (1/2)][threadIdx (1/32)]: Hello World!
+  [blockIdx (0/2)][threadIdx (1/32)]: Hello World!
+  [blockIdx (0/2)][threadIdx (2/32)]: Hello World!
   [blockIdx (1/2)][threadIdx (0/32)]: Hello World!
+  [blockIdx (1/2)][threadIdx (1/32)]: Hello World!
+  [blockIdx (1/2)][threadIdx (2/32)]: Hello World!
   ```
 
   输出共6行，每行对应一个线程的打印结果。`[blockIdx (X/2)]` 表示当前为第X个线程块（共2个线程块），`[threadIdx (Y/32)]` 表示线程块内第Y个线程，说明核函数已成功在AIV Core上执行。
