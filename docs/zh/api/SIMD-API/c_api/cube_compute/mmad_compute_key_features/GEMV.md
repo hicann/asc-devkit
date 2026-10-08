@@ -5,7 +5,7 @@
 Gemv的核心功能体现为：当矩阵A的维度M取值为1时，接口会自动启用Gemv功能，该操作退化为1×K维度的行向量与K×N维度矩阵之间的乘法运算。
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR&950DT系列产品产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭。
+针对Ascend 950PR&950DT系列产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭。
 <!-- end id1 -->
 
 **特性约束：**
@@ -61,7 +61,7 @@ asc_mmad(c, a, b, 1, k, n, asc_unit_flag_mode::DISABLE,
 ```
 
 <!-- npu="950" id3 -->
-针对Ascend 950PR&950DT系列产品产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭，示例如下：
+针对Ascend 950PR&950DT系列产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭，示例如下：
 
 ```cpp
 asc_mmad(c, a, b, 1, k, n, asc_unit_flag_mode::DISABLE,

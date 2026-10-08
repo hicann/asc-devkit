@@ -77,7 +77,7 @@ PIPE_MTE1
 本示例使用`M=N=K=128`，将128×128个`uint8_t`元素从GM搬入L1 Buffer，再通过本接口搬至UB并回传GM，与Host侧输入进行比较。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng examples.asc -o main --npu-arch=dav-3510 && ./main
