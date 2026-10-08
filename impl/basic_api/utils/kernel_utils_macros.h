@@ -84,7 +84,8 @@ enum BinaryMetaType { // function level TLV type
     B_TYPE_DEBUG_INFO = 1,
     B_TYPE_DYNAMIC_PARAM = 2,
     B_TYPE_OPTIONAL_PARAM = 3,
-    B_TYPE_SK_INFO = 5
+    B_TYPE_SK_INFO = 5,
+    B_TYPE_ICACHE_PRELOAD_FLAG = 7
 };
 
 struct BaseTlv { // definition of TLV head
@@ -118,6 +119,12 @@ struct BinaryMetaOptionalParam {
 struct BinaryMetaAscFeature {
     BaseTlv head;
     uint32_t feature; // PRINT = 1, FFTS = 2, L2CACHE = 3
+};
+
+struct BinaryMetaIcachePreloadFlag {
+    BaseTlv head;
+    uint16_t icachePreloadFlag; // 0: no preload, 1: preload
+    uint16_t reserved;
 };
 
 enum FuncMetaType {                       // function level TLV type

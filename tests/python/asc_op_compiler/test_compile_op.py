@@ -151,6 +151,38 @@ def manifest_compile_include_options():
     ]
 
 
+def read_meta_entries_for_test(binary_file, meta_type):
+    objcopy = os.path.join(os.environ["ASCEND_HOME_PATH"], "bin", "llvm-objcopy")
+    with TemporaryDirectory() as temp_dir:
+        dump_file = os.path.join(temp_dir, "ascend_meta")
+        output_file = os.path.join(temp_dir, "binary.o")
+        result = subprocess.run(
+            [objcopy, "--dump-section", f".ascend.meta={dump_file}", binary_file, output_file],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            check=False,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise AssertionError(f"Failed to read .ascend.meta: {result.stdout}")
+        section_data = Path(dump_file).read_bytes()
+        head_size = 4  # TLV head: unsigned short type + unsigned short len
+        values = []
+        offset = 0
+        while offset + head_size <= len(section_data):
+            entry_type = int.from_bytes(section_data[offset : offset + 2], "little")
+            length = int.from_bytes(section_data[offset + 2 : offset + 4], "little")
+            if offset + head_size + length > len(section_data):
+                raise AssertionError("Truncated .ascend.meta entry")
+            value = section_data[offset + head_size : offset + head_size + length]
+            if entry_type == meta_type:
+                values.append(value)
+            offset += head_size + length
+        if offset != len(section_data):
+            raise AssertionError("Truncated .ascend.meta header")
+        return values
+
+
 def read_resource_id_section_for_test(binary_file):
     objcopy = os.path.join(os.environ["ASCEND_HOME_PATH"], "bin", "llvm-objcopy")
     with TemporaryDirectory() as temp_dir:
@@ -211,7 +243,72 @@ def compile_manifest_resources(manifest, manifest_dir, source_file_path):
                         raise AssertionError(f"Manifest output is missing: {output}")
 
 
+class TestIcachePreloadMeta(unittest.TestCase):
+    def test_icache_preload_meta(self):
+        repo = Path(TOP_PATH).resolve()
+        cann = Path(os.environ["ASCEND_HOME_PATH"])
+        compiler = cann / "tools/bisheng_compiler/bin/bisheng"
+        for arch in ("2201", "3510"):
+            for api in ("c_api", "basic_api"):
+                for enabled in (False, True):
+                    with self.subTest(arch=arch, api=api, preload=enabled), TemporaryDirectory() as temp_dir:
+                        source = Path(temp_dir) / "probe.asc"
+                        if api == "c_api":
+                            headers = '#include "c_api/utils/sys_var.h"\n#include "c_api/cache_ctrl/cache_ctrl.h"\n'
+                            call = (
+                                "int64_t pc = asc_get_program_counter() & 0xFFFFFFFFFFFF;\n"
+                                "asc_icache_preload(reinterpret_cast<void *>(pc), 2);"
+                            )
+                        else:
+                            headers = '#include "kernel_operator.h"\n'
+                            call = "AscendC::ICachePreLoad(2);"
+                        source.write_text(
+                            headers
+                            + 'extern "C" __global__ __vector__ void probe(__gm__ float* x) {\n'
+                            + (call if enabled else "")
+                            + "\nx[0] = 1.0f;\n}\n",
+                            encoding="utf-8",
+                        )
+                        command = [str(compiler), f"--npu-arch=dav-{arch}", "-c", "-save-temps"]
+                        # bisheng prepends installed headers to -I; quoted includes must use the checkout.
+                        for path in (repo / "include", repo / "include/basic_api", repo / "include/utils", repo):
+                            command.extend(("-iquote", str(path)))
+                        command.extend((str(source), "-o", "probe.o"))
+                        result = subprocess.run(command, cwd=temp_dir, capture_output=True, text=True, check=False)
+                        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                        device_objects = [
+                            path
+                            for path in Path(temp_dir).glob("probe-cce-*.o")
+                            if not path.name.endswith(("-vec.o", "-cube.o"))
+                        ]
+                        self.assertEqual(len(device_objects), 1, list(Path(temp_dir).iterdir()))
+                        values = read_meta_entries_for_test(device_objects[0], 7)
+                        # Payload: uint16_t flag = 1, uint16_t reserved = 0.
+                        self.assertEqual(values, [b"\x01\x00\x00\x00"] if enabled else [])
+
+
 class TestCompileOp(unittest.TestCase):
+    def test_oom_storage_shape_patterns(self):
+        init_source = ascendc_compile_gen_code.OOM_STORAGE_SHAPE_INIT_PATTERN.format(legacy_len_offset=32)
+        tensor_source = ascendc_compile_gen_code.OOM_TENSOR_REGISTER_PATTERN.format(
+            param_name="x", element_size=4, input_shape_len="inputShapeLen"
+        )
+        tensor_list_source = ascendc_compile_gen_code.OOM_TENSOR_LIST_REGISTER_PATTERN.format(
+            param_name="xs", element_size=2
+        )
+
+        self.assertIn("tmpTilingSizeForOOM + 32", init_source)
+        self.assertIn("OOMHasStorageShapeHeader(oomStorageShapeCursor)", init_source)
+        self.assertIn(
+            "OOMTryRegisterTensorWithStorageShape(oomStorageShapeCursor, x, static_cast<uint64_t>(4))", tensor_source
+        )
+        self.assertIn("OOMCheckAddrRange(x, inputShapeLen)", tensor_source)
+        self.assertIn(
+            "OOMTryRegisterTensorListWithStorageShape(oomStorageShapeCursor, xs, static_cast<uint64_t>(2))",
+            tensor_list_source,
+        )
+        self.assertIn("OOMCheckTensorListRange(xs, 2)", tensor_list_source)
+
     def setUp(self):
         # operator before each testcase
         print("-------------------SetUp----------------")

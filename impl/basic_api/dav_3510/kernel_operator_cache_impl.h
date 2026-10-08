@@ -36,7 +36,12 @@ __aicore__ inline void DataCachePreloadImpl(__gm__ uint64_t* src, const T cacheO
     dc_preload(src, cacheOffset);
 }
 
-__aicore__ inline void PreLoadImpl(void* pc, const int64_t preFetchLen) { preload(pc, preFetchLen); }
+__aicore__ inline void PreLoadImpl(void* pc, const int64_t preFetchLen)
+{
+    static const struct BinaryMetaIcachePreloadFlag ascIcachePreloadFlag
+        __attribute__((used, section(".ascend.meta"))) = {{B_TYPE_ICACHE_PRELOAD_FLAG, 2 * sizeof(uint16_t)}, 1, 0};
+    preload(pc, preFetchLen);
+}
 
 __aicore__ inline int64_t GetICachePreloadStatusImpl() { return get_icache_prl_st(); }
 

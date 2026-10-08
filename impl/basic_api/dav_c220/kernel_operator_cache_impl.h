@@ -37,7 +37,12 @@ __aicore__ inline void DataCachePreloadImpl(const GlobalTensor<uint64_t>& src, c
     }
 }
 
-__aicore__ inline void PreLoadImpl(void* pc, const int64_t preFetchLen) { preload(pc, preFetchLen); }
+__aicore__ inline void PreLoadImpl(void* pc, const int64_t preFetchLen)
+{
+    static const struct BinaryMetaIcachePreloadFlag ascIcachePreloadFlag
+        __attribute__((used, section(".ascend.meta"))) = {{B_TYPE_ICACHE_PRELOAD_FLAG, 2 * sizeof(uint16_t)}, 1, 0};
+    preload(pc, preFetchLen);
+}
 
 __aicore__ inline void PreLoad(const int64_t preFetchLen)
 {
