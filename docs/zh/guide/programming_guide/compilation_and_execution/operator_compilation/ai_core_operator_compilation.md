@@ -150,7 +150,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 >    <!-- end id15 -->
 >
 >    <!-- npu="310p" id16 -->
->    Atlas 推理系列产品  
+>    Atlas推理系列产品  
 >    <!-- end id16 -->
 >
 >    <!-- npu="910" id17 -->
@@ -177,7 +177,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 >    <!-- end id3 -->
 >
 >    <!-- npu="310p" id4 -->
->    Atlas 推理系列产品  
+>    Atlas推理系列产品  
 >    <!-- end id4 -->
 >
 >    <!-- npu="910" id5 -->
@@ -185,7 +185,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 >    <!-- end id5 -->
 ><!-- end id1 -->
 ><!-- npu="A3" id6 -->
->- 针对<term>Atlas A3 训练系列产品</term>/<term>Atlas A3 推理系列产品</term>，在安装AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>`id`：设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。<br>`chip_id`：芯片id，通过`npu-smi info -m`命令查出的Chip ID即为芯片id，命令中表示为`<chip_id>`。<br><br>
+>- 针对Atlas A3系列产品，在安装AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>`id`：设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。<br>`chip_id`：芯片id，通过`npu-smi info -m`命令查出的Chip ID即为芯片id，命令中表示为`<chip_id>`。<br><br>
 ><!-- end id6 -->
 ><!-- npu="950" id7 -->
 >- 针对Ascend 950PR&950DT系列产品，在安装AI处理器的服务器执行`npu-smi info -t board -i <id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。<br>其中：`id`为设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。
@@ -298,7 +298,7 @@ add_executable(demo
      ```
      当前ASCENDC\_DEBUG功能支持的产品型号为：
      <!-- npu="310p" id9 -->
-     Atlas 推理系列产品
+     Atlas推理系列产品
      <!-- end id9 -->
      <!-- npu="910b" id10 -->
      Atlas A2系列产品

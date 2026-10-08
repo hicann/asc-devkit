@@ -21,7 +21,7 @@
     - Atlas 200I/500 A2推理产品：3002
     <!-- end id4 -->
     <!-- npu="310p" id5 -->
-    - Atlas 推理系列产品：2002
+    - Atlas推理系列产品：2002
     <!-- end id5 -->
     <!-- npu="910" id6 -->
     - Atlas训练系列产品：1001
@@ -506,7 +506,7 @@ $$
 -   使用**基础API**时，应使用GetBlockIdx获取核的逻辑位置，而非直接使用内置变量。
 
     <!-- npu="310p" id7 -->
-    在Atlas 推理系列产品中，当启用KERNEL_TYPE_MIX_VECTOR_CORE时，算子会同时运行在AI Core和Vector Core上。此时，block_idx在这两种核心上都是从0开始计数，用户无法直接通过block_idx来切分数据和控制多核逻辑。而GetBlockIdx在Vector Core上对block_idx增加偏移量（AI Core的block_num），从而保证返回的值能够正确反映多核环境下的实际逻辑。
+    在Atlas推理系列产品中，当启用KERNEL_TYPE_MIX_VECTOR_CORE时，算子会同时运行在AI Core和Vector Core上。此时，block_idx在这两种核心上都是从0开始计数，用户无法直接通过block_idx来切分数据和控制多核逻辑。而GetBlockIdx在Vector Core上对block_idx增加偏移量（AI Core的block_num），从而保证返回的值能够正确反映多核环境下的实际逻辑。
     <!-- end id7 -->
 
 -   使用**C API**时，对于纯Cube/纯Vector/Mix（1,1）场景，应使用内置变量block_idx获取当前核的逻辑位置；对于Mix（1,2）场景，应使用内置变量block_idx、asc_get_sub_block_num和asc_get_sub_block_id按公式计算logic_idx。

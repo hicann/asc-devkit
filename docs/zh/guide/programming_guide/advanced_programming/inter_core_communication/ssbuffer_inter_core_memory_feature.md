@@ -79,7 +79,7 @@ SSBuffer适用于同一AI Core内的小数据量通信，常见场景如下。
 
 | 项目 | 说明 |
 | --- | --- |
-| 支持产品 | Ascend 950PR/Ascend 950DT，对应编译目标`dav-3510`。 |
+| 支持产品 | Ascend 950PR&950DT系列产品，对应编译目标`dav-3510`。 |
 | 总容量 | 3KB。 |
 | 非MIX模式 | AIC、AIV0、AIV1各自独立占用1KB，不构成供三者共同访问的3KB工作区。 |
 | `__mix__(1, 2)`模式 | AIC:AIV为1:2时，AIC、AIV0、AIV1共享整个3KB空间。 |

@@ -457,7 +457,7 @@ bash run.sh -r npu  -v <soc_version> -i <install_path> -b Debug -p <install-pref
 -   Atlas A2系列产品
 <!-- end id2 -->
 <!-- npu="310p" id3 -->
--   Atlas 推理系列产品
+-   Atlas推理系列产品
 <!-- end id3 -->
 
 下面代码以add\_custom算子为例，介绍算子核函数（Kernel）在CPU侧验证时，算子调用的应用程序如何编写（通过ACLRT\_LAUNCH\_KERNEL接口调用核函数（Kernel）的方式）。您在实现自己的应用程序时，需要关注由于算子核函数（Kernel）不同带来的修改，包括算子核函数（Kernel）名，入参出参的不同等，合理安排相应的内存分配、内存拷贝和文件读写等，相关API的调用方式直接复用即可。

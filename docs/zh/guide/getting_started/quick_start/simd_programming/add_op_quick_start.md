@@ -73,10 +73,10 @@
       > [!NOTE]说明
       > - 本Memory矢量计算示例支持以下型号：
       >     <!-- npu="A3" id1 -->
-      >     - Atlas A3训练系列产品/Atlas A3推理系列产品
+      >     - Atlas A3系列产品
       >     <!-- end id1 -->
       >     <!-- npu="910b" id2 -->
-      >     - Atlas A2训练系列产品/Atlas A2推理系列产品
+      >     - Atlas A2系列产品
       >     <!-- end id2 -->
       > - SIMD算子的核函数（Kernel）需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
       > - **性能提示**：示例中为简化同步操作，统一使用了 `asc_sync`。在实际算子开发中，建议根据流水线执行情况使用具体的同步控制指令，以获得更好的性能。详见[同步机制](../../../programming_guide/programming_model/ai_core_simd_programming/c_pointer_programming/c_programming_overview.md#同步机制)章节。
@@ -122,10 +122,10 @@
       >     - Ascend 950PR&950DT系列产品
       >     <!-- end id3 -->
       >     <!-- npu="A3" id4 -->
-      >     - Atlas A3训练系列产品/Atlas A3推理系列产品
+      >     - Atlas A3系列产品
       >     <!-- end id4 -->
       >     <!-- npu="910b" id5 -->
-      >     - Atlas A2训练系列产品/Atlas A2推理系列产品
+      >     - Atlas A2系列产品
       >     <!-- end id5 -->
       > - SIMD算子的核函数（Kernel）需要额外修饰符，[`__vector__`](../../../programming_guide/language_extension/simd_builtin_keywords.md)修饰符表明该算子仅在向量计算单元上执行。
 

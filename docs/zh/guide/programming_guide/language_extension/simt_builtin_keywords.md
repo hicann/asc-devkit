@@ -21,7 +21,7 @@ SIMT会提供内置的宏方便用户编写程序。预定义宏一节着重介�
     - Atlas 200I/500 A2推理产品：不支持SIMT
     <!-- end id4 -->
     <!-- npu="310p" id5 -->
-    - Atlas 推理系列产品：不支持SIMT
+    - Atlas推理系列产品：不支持SIMT
     <!-- end id5 -->
     <!-- npu="910" id6 -->
     - Atlas训练系列产品：不支持SIMT

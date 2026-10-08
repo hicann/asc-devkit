@@ -6,7 +6,7 @@
         - Ascend 950PR&950DT系列产品
         <!-- end id1 -->
         <!-- npu="310p" id2 -->
-        - Atlas 推理系列产品
+        - Atlas推理系列产品
         <!-- end id2 -->
 
 - 核函数（Kernel）使用 \_\_cube\_\_ / \_\_vector\_\_ / \_\_mix\_\_(cube, vec)进行标记。
