@@ -52,6 +52,25 @@ __simd_callee__ inline vector_fp8_e5m2_t asc_float2e5m2_rn<sat_mode>(vector_floa
 - `<sat_mode>`表示饱和/非饱和模式，为空时表示非饱和模式，取值为`_sat`时表示饱和模式。
 - `<quarter_pos>`支持`ASC_DISPERSE_FIRST_QUARTER`、`ASC_DISPERSE_SECOND_QUARTER`、`ASC_DISPERSE_THIRD_QUARTER`和`ASC_DISPERSE_FOURTH_QUARTER`。
 
+### 函数原型典型示例
+
+```c
+// 非饱和模式，通过引用参数输出结果
+__simd_callee__ inline void asc_float2e5m2_rn(
+    vector_fp8_e5m2_t& dst,
+    vector_float src,
+    vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode,
+                           asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_quarter_pos)
+
+// 非饱和模式，通过函数返回值返回结果
+__simd_callee__ inline vector_fp8_e5m2_t asc_float2e5m2_rn(
+    vector_float src,
+    vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode,
+                           asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> dst_quarter_pos)
+```
+
 ## 参数说明
 
 **表1** 参数说明

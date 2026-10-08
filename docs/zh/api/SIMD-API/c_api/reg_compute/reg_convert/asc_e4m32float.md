@@ -49,6 +49,25 @@ __simd_callee__ inline vector_float asc_e4m32float(vector_fp8_e4m3fn_t src,
 **占位符说明如下：**
 - `<quarter_pos>`支持`ASC_DISPERSE_FIRST_QUARTER`、`ASC_DISPERSE_SECOND_QUARTER`、`ASC_DISPERSE_THIRD_QUARTER`和`ASC_DISPERSE_FOURTH_QUARTER`。
 
+### 函数原型典型示例
+
+```c
+// 通过引用参数输出结果
+__simd_callee__ inline void asc_e4m32float(
+    vector_float& dst,
+    vector_fp8_e4m3fn_t src,
+    vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode,
+                           asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_quarter_pos)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_float asc_e4m32float(
+    vector_fp8_e4m3fn_t src,
+    vector_bool mask,
+    std::integral_constant<asc_position_quarter_mode,
+                           asc_position_quarter_mode::DISPERSE_FIRST_QUARTER> src_quarter_pos)
+```
+
 ## 参数说明
 
 **表1** 参数说明

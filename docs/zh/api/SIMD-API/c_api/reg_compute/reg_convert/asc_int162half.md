@@ -57,6 +57,19 @@ __simd_callee__ inline vector_half asc_int162half_<round_mode>(vector_int16_t sr
 **占位符说明如下：**
 - `<round_mode>`支持`rd`（FLOOR）、`rn`（RINT）、`rna`（ROUND）、`ru`（CEIL）和`rz`（TRUNC）。
 
+### 函数原型典型示例
+
+```c
+// 通过引用参数输出结果
+__simd_callee__ inline void asc_int162half_rn(vector_half& dst,
+                                               vector_int16_t src,
+                                               vector_bool mask)
+
+// 通过函数返回值返回结果
+__simd_callee__ inline vector_half asc_int162half_rn(vector_int16_t src,
+                                                      vector_bool mask)
+```
+
 ## 参数说明
 
 **表1** 参数说明
