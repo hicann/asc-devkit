@@ -225,16 +225,32 @@ class _KernelCompileRecordBuilder:
         recorded_commands = compile_info.compile_command_session.records
         if not recorded_commands:
             raise ManifestCommandError(f"{object_type} Manifest generation requires recorded dynamic compile commands")
-        return tuple(
-            replace(
-                spec,
-                compile_tiling_key=str(spec.tiling_key),
-                compile_symbol=spec.compiled_symbol,
-                object_type=object_type,
-                constant_info_files=self._constant_info_files,
+        # Import lazily because compile command generation also imports this module.
+        from .ascendc_compile_base import add_op_system_run_cfg_option
+
+        commands = []
+        for spec in recorded_commands:
+            argv = list(spec.argv)
+            if object_type == "basic":
+                add_op_system_run_cfg_option(
+                    argv,
+                    compile_info,
+                    self._snapshot.tiling_info,
+                    spec.tiling_key,
+                    spec.core_type,
+                    definition_key=spec.tiling_key,
+                )
+            commands.append(
+                replace(
+                    spec,
+                    argv=tuple(argv),
+                    compile_tiling_key=str(spec.tiling_key),
+                    compile_symbol=spec.compiled_symbol,
+                    object_type=object_type,
+                    constant_info_files=self._constant_info_files,
+                )
             )
-            for spec in recorded_commands
-        )
+        return tuple(commands)
 
 
 def static_tiling_template_text(dynamic_header):

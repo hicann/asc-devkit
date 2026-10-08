@@ -40,7 +40,6 @@ from adapter.compile_op import *
 from adapter.compile_op import (
     _gen_kernel_func_declare_head,
     _compile_ascendc_cce,
-    _generate_section_content,
     _get_sub_kernel_name,
     _compile_ascendc_cce_v200_with_kernel_type,
     _dynamic_kernel_list_to_json,
@@ -57,6 +56,7 @@ from adapter.compile_op import (
     _get_dcci_disable_cap_bitmap,
 )
 from adapter.ascendc_compile_v220 import (
+    _generate_section_content,
     call_bisheng_v220,
     get_ktype_section_variable,
     decode_mode,
@@ -1328,7 +1328,7 @@ class TestCompileOp(unittest.TestCase):
             gen_compile_cmd_v200(src_file, dst_file, compile_option_tuple, "dav-m200", tiling_file)
 
     def test_gen_compile_ascend_cmd_m510(self):
-        from adapter.compile_op import gen_compile_cmd_v220
+        from adapter.ascendc_compile_v220 import gen_compile_cmd_v220
 
         op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
@@ -1353,7 +1353,7 @@ class TestCompileOp(unittest.TestCase):
                     _compile_ascendc_cce_m510(compile_info, compile_option_tuple, tiling_info)
 
     def test_gen_compile_ascend_cmd_m5101(self):
-        from adapter.compile_op import gen_compile_cmd_v220
+        from adapter.ascendc_compile_v220 import gen_compile_cmd_v220
 
         op_info = OpInfo(kernel_name="AddCustom_0904bc1781946e62d385bfc6e6f99d97", op_type="AddCustom")
         CommonUtility.get_ascendc_compiler_path()
@@ -1414,7 +1414,7 @@ class TestCompileOp(unittest.TestCase):
         from adapter.ascendc_compile_v220 import _gen_compile_cmd_m510
 
         compile_cmd_bak = _gen_compile_cmd_m510(src_file, dst_file, compile_option_tuple, tiling_file, True)
-        from adapter.compile_op import gen_compile_cmd_v220
+        from adapter.ascendc_compile_v220 import gen_compile_cmd_v220
 
         with mock.patch.object(CommonUtility, "is_c310", return_value=False):
             with mock.patch.object(CommonUtility, "is_m510", return_value=True):
@@ -1447,7 +1447,7 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_v220(self, mock_shutil):
-        from adapter.compile_op import gen_compile_cmd_v220
+        from adapter.ascendc_compile_v220 import gen_compile_cmd_v220
 
         SetCurrentSocInfo("Ascend910B1")
         mock_shutil.return_value = "/tmp/ascendc_compiler"
@@ -1469,7 +1469,7 @@ class TestCompileOp(unittest.TestCase):
     @mock.patch("os.environ", {"ASCENDC_CCACHE_EXECUTABLE": "/usr/bin/ccache"})
     @mock.patch("shutil.which")
     def test_gen_compile_cmd_c310(self, mock_shutil):
-        from adapter.compile_op import gen_compile_cmd_v220
+        from adapter.ascendc_compile_v220 import gen_compile_cmd_v220
 
         SetCurrentSocInfo("Ascend950PR_9599")
         mock_shutil.return_value = "/tmp/ascendc_compiler"

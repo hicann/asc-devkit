@@ -38,7 +38,14 @@ from .ascendc_constants import (
     TILING_KEY_MACRO,
     InferChannelParams,
 )
-from .ascendc_compile_base import fatbin_objs, compile_multi_tilingkey, SingleTilingKeyCompileParams
+from .ascendc_compile_base import (
+    fatbin_objs,
+    compile_multi_tilingkey,
+    SingleTilingKeyCompileParams,
+    _kernel_type_for_key,
+    get_compile_core_types,
+    add_op_system_run_cfg_option,
+)
 from .ascendc_compile_dfx import DFXSectionGenerator
 from .super_kernel_sub_op_compile import gen_sub_kernel_name
 
@@ -375,43 +382,6 @@ def gen_compile_cmd_v220(
         return _gen_compile_cmd_v220(src_file, dst_file, compile_option_tuple, sub_arch, tiling_file, with_tiling_file)
 
 
-def _kernel_type_for_key(compile_info: CompileInfo, tiling_key: str):
-    """Return the explicit Kernel type registered for one Tiling Key."""
-
-    kernel_type = compile_info.tiling_key_kernel_type.get(str(tiling_key))
-    if kernel_type is None:
-        raise ValueError(f"kernel type is unavailable for tiling key {tiling_key}")
-    return kernel_type
-
-
-def get_compile_core_types(compile_info: CompileInfo, tiling_key: str):
-    """Resolve the physical cube/vector compile targets for one Tiling Key."""
-
-    if compile_info.no_set_kernel_type:
-        core_types = {CORE_TYPE_MIX: ("cube", "vec"), CORE_TYPE_CUBE: ("cube",), CORE_TYPE_VEC: ("vec",)}
-        try:
-            return core_types[compile_info.code_channel]
-        except KeyError as error:
-            raise ValueError(f"unsupported code channel: {compile_info.code_channel}") from error
-
-    kernel_type = _kernel_type_for_key(compile_info, tiling_key)
-    if kernel_type in {
-        KernelMetaType.KERNEL_TYPE_AIC_ONLY,
-        KernelMetaType.KERNEL_TYPE_MIX_AIC_HARD_SYNC,
-        KernelMetaType.KERNEL_TYPE_MIX_AIC_1_0,
-    }:
-        return ("cube",)
-    if kernel_type in {
-        KernelMetaType.KERNEL_TYPE_AIV_ONLY,
-        KernelMetaType.KERNEL_TYPE_MIX_AIV_HARD_SYNC,
-        KernelMetaType.KERNEL_TYPE_MIX_AIV_1_0,
-    }:
-        return ("vec",)
-    if kernel_type in {KernelMetaType.KERNEL_TYPE_MIX_AIC_1_1, KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2}:
-        return ("cube", "vec")
-    raise ValueError(f"unsupported kernel type: {kernel_type}")
-
-
 def get_compile_target_name(compile_info: CompileInfo, tiling_key: str, core_type: str):
     """Build the symbol name shared by dynamic compilation and Manifest replay."""
 
@@ -707,6 +677,14 @@ def call_bisheng_v220(
         CommonUtility().ascendc_write_file(compile_info.gen_kernel_func_file, new_sources)
 
         compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_info.tiling_key}UL"]
+        add_op_system_run_cfg_option(
+            compile_cmd,
+            compile_info,
+            tiling_info,
+            tiling_info.tiling_key,
+            sub_arch,
+            definition_key=tiling_info.tiling_key,
+        )
         CommonUtility.run_cmd_inner(compile_cmd, CompileStage.COMPILE, compile_info.compile_log_path)
         return [f"{tiling_info.tiling_key}"]
     else:
@@ -720,6 +698,14 @@ def call_bisheng_v220(
                 tiling_key, compile_info, sub_arch, tiling_info, code_channel, compile_option_tuple
             )
             compile_cmd, kernel_name = compile_single_tiling_v220(param)
+            add_op_system_run_cfg_option(
+                compile_cmd,
+                compile_info,
+                tiling_info,
+                tiling_key,
+                sub_arch,
+                definition_key=compile_info.tiling_key_list[0],
+            )
             core_type = (
                 "cube"
                 if (sub_arch is None and code_channel == CORE_TYPE_CUBE)
@@ -1044,3 +1030,99 @@ def get_code_channel_v220_by_first_tiling_key(params: InferChannelParams):
                     mode |= v220_mode(inst)
     code_channel = decode_mode(mode)
     return code_channel, hardware_sync_in_asm
+
+
+def _generate_section_content(
+    kernel_name: str, tiling_key: str, kernel_type: KernelMetaType, tiling_info: TilingInfo, compile_info: CompileInfo
+):
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
+        return ""
+    section_content = ""
+    section_content += f"\n#if {TILING_KEY_MACRO} == {tiling_key}UL\n"
+    section_content += get_ktype_section_variable(f"{kernel_name}_section", f"{kernel_name}", kernel_type)
+    if compile_info.tiling_key_group_map is not None:
+        if tiling_key in compile_info.tiling_key_group_map.keys():
+            for tiling_key_slave in compile_info.tiling_key_group_map[tiling_key]:
+                kernel_name_slave = get_kernel_fun_name_with_tiling_key_and_kernel_type(compile_info, tiling_key_slave)
+                if compile_info.tiling_key_kernel_type.get(tiling_key_slave) is not None:
+                    kernel_type_slave = compile_info.tiling_key_kernel_type.get(str(tiling_key_slave))
+                else:
+                    raise Exception(f"the kernel type of tiling key {tiling_key_slave} is None")
+                section_content += get_ktype_section_variable(
+                    f"{kernel_name_slave}_section", f"{kernel_name_slave}", kernel_type_slave
+                )
+    section_content += "#endif\n"
+    section_content += DFXSectionGenerator().generate_dfx_section(tiling_key, tiling_info, kernel_name, compile_info)
+    return section_content
+
+
+def _resolve_kernel_name_into_cmd(compile_cmd, compile_info, arch, tiling_info, tiling_key, kernel_type):
+    if tiling_info.static_shape_flag:
+        if kernel_type.value >= 2:
+            current_kernel_name = compile_info.kernel_name
+            current_kernel_name = gen_sub_kernel_name(
+                current_kernel_name, arch, kernel_type.name, compile_info.dst_file
+            )
+            compile_cmd += [f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"]
+        else:
+            current_kernel_name = compile_info.get_kernel_func_name()
+            current_kernel_name = gen_sub_kernel_name(
+                current_kernel_name, "AiCore", kernel_type.name, compile_info.dst_file
+            )
+            compile_cmd += [f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"]
+    else:
+        core_type = "cube" if arch.endswith("-cube") else "vec"
+        current_kernel_name = get_compile_target_name(compile_info, tiling_key, core_type)
+        compile_cmd += [f"-Dauto_gen_{compile_info.origin_func_name}_kernel={current_kernel_name}"]
+        if kernel_type.value >= 2:
+            set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group(
+                tiling_key, arch, kernel_type.name, current_kernel_name, compile_info
+            )
+        else:
+            set_dynamic_sub_func_names_of_super_kernel_with_kernel_type_group(
+                tiling_key, "AiCore", kernel_type.name, current_kernel_name, compile_info
+            )
+    return compile_cmd, current_kernel_name
+
+
+def _get_compile_cmd_and_section_content(
+    compile_info: CompileInfo, arch: str, compile_option_tuple, tiling_info: TilingInfo, tiling_key: str
+):
+    compile_cmd = gen_compile_cmd_v220(
+        compile_info.gen_kernel_func_file,
+        compile_info.dst_file,
+        compile_option_tuple,
+        arch,
+        tiling_info.tiling_data_file_path,
+    )
+
+    definition_key = tiling_info.tiling_key if tiling_info.static_shape_flag else compile_info.tiling_key_list[0]
+    add_op_system_run_cfg_option(
+        compile_cmd, compile_info, tiling_info, tiling_key, arch, definition_key=definition_key
+    )
+
+    current_kernel_name = ""
+    kernel_type = compile_info.tiling_key_kernel_type[str(tiling_key)]
+    compile_cmd, current_kernel_name = _resolve_kernel_name_into_cmd(
+        compile_cmd, compile_info, arch, tiling_info, tiling_key, kernel_type
+    )
+    compile_cmd.extend(get_compile_target_options(compile_info, tiling_key, CommonUtility.is_c310()))
+    compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_key}UL"]
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
+        tiling_data_hash_src = tiling_info.tiling_data
+        if isinstance(tiling_data_hash_src, str):
+            tiling_data_hash_src = tiling_data_hash_src.encode("utf-8")
+        elif not tiling_data_hash_src:
+            tiling_data_hash_src = tiling_info.file_content.encode("utf-8")
+        tiling_data_hash = hashlib.sha256(tiling_data_hash_src).hexdigest()[:8]
+        compile_cmd += [
+            f"-D{compile_info.origin_func_name}="
+            f"{compile_info.origin_func_name}_{tiling_data_hash}_{tiling_key}_tilingkey"
+        ]
+    else:
+        compile_cmd += [f"-D{compile_info.origin_func_name}={compile_info.origin_func_name}_{tiling_key}_tilingkey"]
+    section_content = _generate_section_content(current_kernel_name, tiling_key, kernel_type, tiling_info, compile_info)
+    if global_var_storage.get_variable("ascendc_sk_double_compile") is True:
+        compile_info.global_kernel_symbols.append(current_kernel_name)
+    compile_info.last_compiled_symbol = current_kernel_name
+    return compile_cmd, section_content
