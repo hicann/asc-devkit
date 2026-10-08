@@ -28,7 +28,26 @@ union ctrl_scalar_cache_bits {
     };
 };
 
-__aicore__ inline void asc_icache_preload(const void* addr, int64_t prefetch_len) { preload(addr, prefetch_len); }
+namespace internal {
+struct asc_base_tlv { // definition of TLV head
+    unsigned short type;
+    unsigned short len;
+};
+
+struct asc_binary_meta_icache_preload_flag {
+    asc_base_tlv head;
+    uint16_t icache_preload_flag; // 0: no preload, 1: preload
+    uint16_t reserved;
+};
+} // namespace internal
+
+__aicore__ inline void asc_icache_preload(const void* addr, int64_t prefetch_len)
+{
+    // Keep this TLV layout in sync with Basic API: type 7, 4-byte payload (enabled flag, reserved).
+    static const struct internal::asc_binary_meta_icache_preload_flag asc_icache_preload_flag_meta
+        __attribute__((used, section(".ascend.meta"))) = {{7, 4}, 1, 0};
+    preload(addr, prefetch_len);
+}
 
 __aicore__ inline void asc_datacache_preload(__gm__ uint64_t* address, int64_t offset) { dc_preload(address, offset); }
 

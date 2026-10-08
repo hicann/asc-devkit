@@ -7,11 +7,25 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
+#include <cstddef>
+#include <type_traits>
 #include <gtest/gtest.h>
 #include <mockcpp/mockcpp.hpp>
 #include "kernel_operator.h"
 
 using namespace AscendC;
+
+static_assert(sizeof(::BinaryMetaIcachePreloadFlag) == 8, "ICache preload TLV must occupy 8 bytes");
+static_assert(
+    std::is_same<decltype(::BinaryMetaIcachePreloadFlag::icachePreloadFlag), uint16_t>::value,
+    "ICache preload flag must be uint16_t");
+static_assert(
+    std::is_same<decltype(::BinaryMetaIcachePreloadFlag::reserved), uint16_t>::value,
+    "ICache preload reserved field must be uint16_t");
+static_assert(
+    offsetof(::BinaryMetaIcachePreloadFlag, icachePreloadFlag) == 4, "ICache preload flag must follow the TLV header");
+static_assert(
+    offsetof(::BinaryMetaIcachePreloadFlag, reserved) == 6, "ICache preload reserved field must follow the flag");
 
 class TestCacheSuite : public testing::Test {
 protected:
@@ -28,7 +42,7 @@ TEST_F(TestCacheSuite, DataCachePreloadTest)
 
 TEST_F(TestCacheSuite, PreloadImplTest)
 {
-    int64_t preFetchLen = 64;
+    int64_t preFetchLen = 2;
     void* pc = reinterpret_cast<void*>(0x1000);
     EXPECT_NO_THROW(AscendC::PreLoadImpl(pc, preFetchLen));
 }
@@ -37,6 +51,8 @@ TEST_F(TestCacheSuite, GetICachePreloadStatusTest) { EXPECT_EQ(AscendC::GetICach
 
 TEST_F(TestCacheSuite, PreloadTest)
 {
-    int64_t preFetchLen = 64;
+    int64_t preFetchLen = 2;
     EXPECT_NO_THROW(AscendC::PreLoad(preFetchLen));
 }
+
+TEST_F(TestCacheSuite, ICachePreLoadTest) { EXPECT_NO_THROW(AscendC::ICachePreLoad(2)); }
