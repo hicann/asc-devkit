@@ -179,7 +179,7 @@ PIPE_FIX
 本示例固定`M=N=K=128`，通过MMAD生成L0C Buffer结果，调用本接口转换为ND格式并搬至L1 Buffer，随后经UB回传GM与Host侧Golden结果比较。
 
 <!-- npu="950" id8 -->
-以Ascend 950PR&950DT系列产品产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng examples.asc -o main --npu-arch=dav-3510 && ./main

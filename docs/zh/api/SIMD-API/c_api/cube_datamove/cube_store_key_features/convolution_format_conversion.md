@@ -7,7 +7,7 @@
 ![](../../../../figures/Fixpipe_NC1HWC0_NHWC.png)
 
 <!-- npu="950" id1 -->
-特别的，针对Ascend 950PR&950DT系列产品产品，还支持Fixpipe指令通过[Nz2DN](NZ2DN.md)能力，将L0C Buffer上数据转为NCHW格式输出。转换示意图如下所示：
+特别的，针对Ascend 950PR&950DT系列产品，还支持Fixpipe指令通过[Nz2DN](NZ2DN.md)能力，将L0C Buffer上数据转为NCHW格式输出。转换示意图如下所示：
 
 **图2** NC1HWC0转换为NCHW格式
 

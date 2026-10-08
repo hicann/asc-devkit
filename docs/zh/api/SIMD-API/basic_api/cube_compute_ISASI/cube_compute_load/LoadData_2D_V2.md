@@ -74,7 +74,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | srcStride | 以M×K矩阵为例，源矩阵K方向前一个分形起始地址与后一个分形起始地址的间隔，单位：512字节。 |
 | dstStride | 以M×K矩阵为例，目标矩阵K方向前一个分形起始地址与后一个分形起始地址的间隔，单位：512字节。 |
 | ifTranspose | 是否启用转置功能，对每个分形矩阵进行转置，默认为false：<br>&nbsp;&nbsp;&bull; true：启用<br>&nbsp;&nbsp;&bull; false：不启用<br>注意：只有L1 Buffer（TPosition: A1）->L0A Buffer（TPosition: A2）和L1 Buffer（TPosition: B1）->L0B Buffer（TPosition: B2）通路才能开启转置。开启转置功能时，支持b4、b8、b16、b32数据类型。 |
-| sid | 预留参数，配置为0即可。<br>注：兼容旧款产品接口传入，Ascend 950PR&950DT系列产品产品不做处理。 |
+| sid | 预留参数，配置为0即可。<br>注：兼容旧款产品接口传入，Ascend 950PR&950DT系列产品不做处理。 |
 
 LoadData2DParamsV2结构体在不启用转置时，示意图如下，参数设置值和解释说明如下：
 

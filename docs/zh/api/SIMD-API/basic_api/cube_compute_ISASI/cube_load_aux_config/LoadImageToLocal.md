@@ -64,8 +64,8 @@ __aicore__ inline void LoadImageToLocal(const LocalTensor<T>& dst, const LoadIma
 ## 数据类型
 
 <!-- npu="950" id8 -->Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t、uint8_t、half。<!-- end id8 --><br>
-<!-- npu="A3" id9 -->Atlas A3训练系列产品/Atlas A3推理系列产品，支持数据类型：int8_t、half。<!-- end id9 --><br>
-<!-- npu="910b" id10 -->Atlas A2训练系列产品/Atlas A2推理系列产品，支持数据类型：int8_t、half。<!-- end id10 --><br>
+<!-- npu="A3" id9 -->Atlas A3系列产品，支持数据类型：int8_t、half。<!-- end id9 --><br>
+<!-- npu="910b" id10 -->Atlas A2系列产品，支持数据类型：int8_t、half。<!-- end id10 --><br>
 <!-- npu="310b" id11 -->Atlas 200I/500 A2推理产品，支持数据类型为：int8_t、uint8_t、half。<!-- end id11 --><br>
 <!-- npu="310p" id12 -->Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、half。<!-- end id12 -->
 

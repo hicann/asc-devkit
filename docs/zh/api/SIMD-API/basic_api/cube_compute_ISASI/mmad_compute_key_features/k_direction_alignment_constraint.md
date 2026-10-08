@@ -5,7 +5,7 @@
 Atlas A2系列产品/Atlas A3系列产品，Mmad接口支持开启此特性。
 
 <!-- npu="950" id1 -->
-Ascend 950PR&950DT系列产品产品上L0A Buffer为NZ排布，非ZZ排布，A矩阵转置非对齐float数据类型场景，L0A Buffer在K方向8对齐，无需开启此特性去确保计算正确性。
+Ascend 950PR&950DT系列产品上L0A Buffer为NZ排布，非ZZ排布，A矩阵转置非对齐float数据类型场景，L0A Buffer在K方向8对齐，无需开启此特性去确保计算正确性。
 <!-- end id1 -->
 
 K方向对齐的核心功能是通过kDirectionAlign参数控制在使用float数据类型（其他数据类型无需关注此特性）时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。

@@ -26,7 +26,7 @@
 
 ## 矢量数据寄存器
 
-矢量数据寄存器用于存储矢量数据，其长度为`VL`（Vector Length）。在Ascend 950PR&950DT系列产品产品中，`VL`为256字节，可存储`VL / sizeof(dtype)`个`dtype`类型的元素。例如，`vector_float`可存储`256 / sizeof(float) = 64`个`float`类型的元素。
+矢量数据寄存器用于存储矢量数据，其长度为`VL`（Vector Length）。在Ascend 950PR&950DT系列产品中，`VL`为256字节，可存储`VL / sizeof(dtype)`个`dtype`类型的元素。例如，`vector_float`可存储`256 / sizeof(float) = 64`个`float`类型的元素。
 
 矢量数据寄存器类型按位宽类别分类如下：
 

@@ -35,7 +35,7 @@ MxMmad（全称Microscaling Mmad）为带有量化系数的矩阵乘法，即左
 <!-- npu="910b,A3" id2 -->
 # 4选2稀疏矩阵计算流程<a name="ZH-CN_TOPIC_0000002538231116"></a>
 
-稀疏矩阵是一种特殊类型的矩阵，即矩阵中包含较多的零元素。4选2结构化稀疏矩阵计算，要求一个连续的4个权重或激活值的组（通常是张量中的一行或一列）中，最多只有2个值为非零，其余2个强制为零。针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，Ascend C针对4选2稀疏矩阵计算编程模型提供了对应sparse类接口，如下图所示：
+稀疏矩阵是一种特殊类型的矩阵，即矩阵中包含较多的零元素。4选2结构化稀疏矩阵计算，要求一个连续的4个权重或激活值的组（通常是张量中的一行或一列）中，最多只有2个值为非零，其余2个强制为零。针对Atlas A2系列产品和Atlas A3系列产品，Ascend C针对4选2稀疏矩阵计算编程模型提供了对应sparse类接口，如下图所示：
 
 **图 3** 4选2稀疏矩阵基础计算流程图<a name="zh-cn_topic_0000002566526987_fig12280145134813"></a>  
 ![](../../../../figures/sparse_matrix_computation_workflow.png "4选2稀疏矩阵基础计算流程图")
@@ -64,4 +64,4 @@ Conv2D前向计算的本质是将卷积运算转换为矩阵乘：先通过img2c
 
 3. 通过Mmad接口对L0A Buffer、L0B Buffer上的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[Mmad计算](../mmad_compute/Mmad.md)。
 
-4. 通过Fixpipe接口将L0C Buffer的数据进行处理并按指定格式搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。L0C Buffer上存放的卷积结果为NC1HWC0格式，Fixpipe通过[NZ2ND](../cube_store_key_features/NZ2ND.md)能力将其转为NHWC格式输出。<!-- npu="950" id3 -->特别地，针对Ascend 950PR&950DT系列产品产品，Fixpipe还支持通过[NZ2DN](../cube_store_key_features/NZ2DN.md)能力将L0C Buffer上的卷积结果转为NCHW格式输出。<!-- end id3 -->详细内容请参考[卷积格式转换](../cube_store_key_features/convolution_format_conversion.md)。更多搬出相关内容请参考[矩阵计算的搬出](../cube_compute_store/cube_compute_store.md)。
+4. 通过Fixpipe接口将L0C Buffer的数据进行处理并按指定格式搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。L0C Buffer上存放的卷积结果为NC1HWC0格式，Fixpipe通过[NZ2ND](../cube_store_key_features/NZ2ND.md)能力将其转为NHWC格式输出。<!-- npu="950" id3 -->特别地，针对Ascend 950PR&950DT系列产品，Fixpipe还支持通过[NZ2DN](../cube_store_key_features/NZ2DN.md)能力将L0C Buffer上的卷积结果转为NCHW格式输出。<!-- end id3 -->详细内容请参考[卷积格式转换](../cube_store_key_features/convolution_format_conversion.md)。更多搬出相关内容请参考[矩阵计算的搬出](../cube_compute_store/cube_compute_store.md)。

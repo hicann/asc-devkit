@@ -5,7 +5,7 @@
 Gemv的核心功能体现为：当矩阵A的维度M取值为1时，接口会自动启用Gemv功能，该操作退化为1×K维度的行向量与K×N维度矩阵之间的乘法运算。
 
 <!-- npu="950" id1 -->
-针对Ascend 950PR&950DT系列产品产品，可以通过设置MmadParams的disableGemv参数为true，将该功能关闭。
+针对Ascend 950PR&950DT系列产品，可以通过设置MmadParams的disableGemv参数为true，将该功能关闭。
 <!-- end id1 -->
 
 **特性约束：**
@@ -48,7 +48,7 @@ M=1时自动开启GEMV模式，则矩阵乘法将M方向作为非对齐场景进
 | B | 4096 * 256 | half |
 | C | 1 * 256 | float |
 
-A矩阵为1\* 4096的向量，从软件侧可以视为64\*64的（针对Ascend 950PR&950DT系列产品产品为NZ分形）数据，通过LoadData搬运到L0A Buffer上；
+A矩阵为1\* 4096的向量，从软件侧可以视为64\*64的（针对Ascend 950PR&950DT系列产品为NZ分形）数据，通过LoadData搬运到L0A Buffer上；
 
 C矩阵为1\* 256的向量，共可以划分为16个1 \* 16的子向量，占用16 \* 1024B = 16384B\(f162f32\)，其中有效数据仅仅为16 \* 64B = 1024B；
 
@@ -68,7 +68,7 @@ AscendC::Mmad(c, a, b, mmadParams);
 ```
 
 <!-- npu="950" id2 -->
-针对Ascend 950PR&950DT系列产品产品，可以通过设置MmadParams的disableGemv参数为true，将该功能关闭，示例如下：
+针对Ascend 950PR&950DT系列产品，可以通过设置MmadParams的disableGemv参数为true，将该功能关闭，示例如下：
 
 ```cpp
 AscendC::MmadParams mmadParams;

@@ -15,10 +15,10 @@
 - Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas推理系列产品 AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas推理系列产品 Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
@@ -104,7 +104,7 @@ Atlas 200I/500 A2推理产品，支持的数据类型为：half、float。
 <!-- end id11 -->
 
 <!-- npu="310p" id12 -->
-Atlas推理系列产品 AI Core，支持的数据类型为：int16_t、half、float。
+Atlas推理系列产品AI Core，支持的数据类型为：int16_t、half、float。
 <!-- end id12 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>

@@ -19,10 +19,10 @@
 - Ascend 950PR&950DT系列产品
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3训练系列产品 / Atlas A3推理系列产品
+- Atlas A3系列产品
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2训练系列产品 / Atlas A2推理系列产品
+- Atlas A2系列产品
 <!-- end id3 -->
 
 开始前需完成以下准备：

@@ -81,7 +81,7 @@
 <!-- end id_l12l0_950note -->
 
 <!-- npu="910b,A3" id3 -->
-针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，支持L1 Buffer->L0B Buffer如下接口，请开发者参考表6。
+针对Atlas A2系列产品和Atlas A3系列产品，支持L1 Buffer->L0B Buffer如下接口，请开发者参考表6。
 
 **表6** **L1 Buffer->L0B Buffer接口**
 
