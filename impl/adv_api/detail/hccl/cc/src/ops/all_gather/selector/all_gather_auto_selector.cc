@@ -162,6 +162,8 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
             selectAlgName = "AicpuAllGatherSoleNHR";
         } else if (topoInfo->level0Topo == Level0Shape::MESH_1D) {
             selectAlgName = "InsAllGatherParallelMesh1DNHR";
+        } else if (topoInfo->level0Topo == Level0Shape::CLOS) {
+            selectAlgName = "AicpuAllGatherSoleNHRMultiLink";
         } else {
             HCCL_ERROR("[AllGatherAutoSelector] topo not match");
             return SelectorStatus::NOT_MATCH;
@@ -202,7 +204,7 @@ SelectorStatus AllGatherAutoSelector::SelectAicpuAlgo(
                 selectAlgName = "AicpuAllGatherSoleNHR";
             }
         } else if (topoInfo->level0Topo == Level0Shape::CLOS) {
-            selectAlgName = "AicpuAllGatherSoleNHR";
+            selectAlgName = "AicpuAllGatherSoleNHRMultiLink";
         } else {
             HCCL_ERROR("[AllGatherAutoSelector] topo not match");
             return SelectorStatus::NOT_MATCH;
