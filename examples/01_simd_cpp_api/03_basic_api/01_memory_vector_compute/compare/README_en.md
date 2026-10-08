@@ -10,9 +10,9 @@ The example supports switching between different scenarios through compilation p
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -69,7 +69,7 @@ This example switches between different scenarios through the compilation parame
     ```
 - Parameters: src1Scalar=src1Local.GetValue(0), cmpMode=AscendC::CMPMODE::LT, srcDataSize=256
 
-**Scenario 4: Compares (Flexible Scalar Position) ---- This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 4: Compares (Flexible Scalar Position) ---- This scenario is only supported on Ascend 950PR&950DT products**
 - Description: Element-wise comparison of elements in `src0Local` (tensor) with `src1Scalar` (scalar), where the scalar supports both front and back positions
 - Input: src0Local=[1, 256], src1Local=[1, 16]  where `src1Scalar` is obtained from src1Local[idx] method to extract one element as scalar for comparison
 - Input data type: float
@@ -119,7 +119,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2`, `3`, `4` | Scenario number: 1: Compare, 2: Compare (result in register), 3: Compares, 4: Compares (flexible scalar) |
 
 - Execution result  

@@ -13,7 +13,7 @@ This example contains two cases:
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -321,7 +321,7 @@ Run the following steps in the root directory of this example to build and execu
 | Option                    | Valid Value | Description |
 |---------------------------|-------------|-------------|
 | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-| `CMAKE_ASC_ARCHITECTURES` | `dav-3510`  | NPU architecture. This example supports only dav-3510 (Ascend 950PR/Ascend 950DT) |
+| `CMAKE_ASC_ARCHITECTURES` | `dav-3510`  | NPU architecture. This example supports only dav-3510 (Ascend 950PR&950DT products) |
 | `SCENARIO_NUM`            | `1-4`       | Example scenario number. The default value is 1. 1: overflow scenario of Case 1; 2: optimized scenario of Case 1; 3: overflow scenario of Case 2; 4: optimized scenario of Case 2 |
 
 **Execution result example**:

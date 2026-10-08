@@ -11,8 +11,8 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -765,7 +765,7 @@ loadDataParams.fMatrixCtrl = false;
 
 ##### 6.1.2. A矩阵 L1 -> L0A 转置
 
-该场景同时发生小分形转置和大分形排布格式变化。Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品不支持B4数据类型；B8 / B16 / B32输入数据类型可用接口不同，下文分别以int8_t、half、float为例说明。
+该场景同时发生小分形转置和大分形排布格式变化。Atlas A3系列产品和Atlas A2系列产品不支持B4数据类型；B8 / B16 / B32输入数据类型可用接口不同，下文分别以int8_t、half、float为例说明。
 
 - **int8_t**：使用`LoadDataWithTranspose`。
 - **half**：可使用`Load2D`、`LoadDataWithTranspose`或`Load3Dv2`。
@@ -1333,7 +1333,7 @@ fixpipeParams.dstNdStride = 0;
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认） | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品 |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认） | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2`、`3`、`4`、`5`、`6`、`7`、`8`、`9`、`10`、`11`、`12`、`13`、`14` | 场景编号 |
 
 - 执行结果

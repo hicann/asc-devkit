@@ -8,7 +8,7 @@ This example uses matrix transpose to demonstrate memory access optimization str
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -285,9 +285,9 @@ In the current configuration, register spill has been eliminated and thread bloc
 - After synchronization, the UB-to-GM writing path is identical to Case 5.
 - This version does not change the algorithm path, nor the thread block and thread partitioning; it only adjusts the physical layout in UB.
 
-The following uses the UB partitioning rules of Ascend 950PR/Ascend 950DT as an example to explain how bank conflicts arise in this example, and the theoretical conflict intensity differences between Case 5 and Case 6.
+The following uses the UB partitioning rules of Ascend 950PR&950DT products as an example to explain how bank conflicts arise in this example, and the theoretical conflict intensity differences between Case 5 and Case 6.
 
-The bank partitioning in UB is shown in the figure below. The UB of Ascend 950PR/Ascend 950DT is divided into 16 banks and organized as 8 bank groups; in SIMT programming mode, each bank is further divided into 4 subbanks. If multiple threads in the same Warp access subbanks with the same index in the same bank group within one UB access instruction, the hardware needs to queue these requests, forming subbank conflicts and increasing access latency.
+The bank partitioning in UB is shown in the figure below. The UB of Ascend 950PR&950DT products is divided into 16 banks and organized as 8 bank groups; in SIMT programming mode, each bank is further divided into 4 subbanks. If multiple threads in the same Warp access subbanks with the same index in the same bank group within one UB access instruction, the hardware needs to queue these requests, forming subbank conflicts and increasing access latency.
 
 In SIMT programming, bank conflicts are more fine-grained subbank conflicts, mainly including the following two types:
 
@@ -435,7 +435,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option                      | Values      | Description                                                        |
   | --------------------------- | ----------- | ------------------------------------------------------------------ |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES`   | `dav-3510`  | NPU architecture: this example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES`   | `dav-3510`  | NPU architecture: this example only supports dav-3510 (Ascend 950PR&950DT products) |
   | `SCENARIO_NUM`              | `0`-`7`     | Example type, default is 7                                         |
 
   - `--cce-res-usage` outputs compilation resource information such as register and stack usage, making resource usage easier to analyze.

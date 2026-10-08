@@ -6,9 +6,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 ```
@@ -303,9 +303,9 @@ $$
 
 ### 2.3 注意事项
 
-#### (1) 当 `SCENARIO_NUM=3` 时，样例不支持 Ascend 950PR/Ascend 950DT。
-当`SCENARIO_NUM=1` 和 `SCENARIO_NUM=2`样例支持 Ascend 950PR/Ascend 950DT。
-当`SCENARIO_NUM=3` 时，调用 `DataCopy` 从L1向GM搬出数据，然而在Ascend 950PR/Ascend 950DT架构下，DataCopy接口不支持L1 Buffer -> GM通路，因此当 `SCENARIO_NUM=3` 时，样例不支持 Ascend 950PR/Ascend 950DT。如果要支持Ascend 950PR/Ascend 950DT，可以参考[基础API迁移指导](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/opdevg/Ascendcopdevg/atlas_ascendc_compatibility_10_00005.html)中的兼容性方案。
+#### (1) 当 `SCENARIO_NUM=3` 时，样例不支持 Ascend 950PR&950DT系列产品。
+当`SCENARIO_NUM=1` 和 `SCENARIO_NUM=2`样例支持 Ascend 950PR&950DT系列产品。
+当`SCENARIO_NUM=3` 时，调用 `DataCopy` 从L1向GM搬出数据，然而在Ascend 950PR&950DT系列产品架构下，DataCopy接口不支持L1 Buffer -> GM通路，因此当 `SCENARIO_NUM=3` 时，样例不支持 Ascend 950PR&950DT系列产品。如果要支持Ascend 950PR&950DT系列产品，可以参考[基础API迁移指导](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900beta2/opdevg/Ascendcopdevg/atlas_ascendc_compatibility_10_00005.html)中的兼容性方案。
 
 #### (2) 当 `SCENARIO_NUM=2` 时，样例不支持静态 tensor 编程方式。
 当SCENARIO_NUM=2 时，调用了`IBSet` 和 `IBWait` 做核间同步，然而以上两个接口内部实现需要借助TPipe框架做核内同步，因此当SCENARIO_NUM=2 时，样例不支持静态 tensor 编程方式。

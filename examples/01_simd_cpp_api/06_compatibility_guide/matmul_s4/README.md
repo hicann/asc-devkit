@@ -5,15 +5,15 @@
 
 本样例演示 int4 矩阵乘计算的端到端实现，通过编译时宏隔离不同硬件实现。
 - Atlas A2/A3 训练/推理系列产品支持int4数据类型，可直接进行Matmul计算。
-- Ascend 950PR/950DT的Cube计算单元不支持int4数据类型，需将int4x2解压为int8后再进行Matmul计算。
+- Ascend 950PR&950DT系列产品的Cube计算单元不支持int4数据类型，需将int4x2解压为int8后再进行Matmul计算。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -44,7 +44,7 @@
 ## 样例实现：
 
   - **Atlas A2/A3 训练/推理系列产品**：Cube计算单元支持int4数据类型，可直接执行Matmul计算。
-  - **Ascend 950PR/950DT**：Cube计算单元不支持int4数据类型，需通过mix模式在Vector Core执行Unzip操作，将int4x2解压为int8后再进行Matmul计算。
+  - **Ascend 950PR&950DT系列产品**：Cube计算单元不支持int4数据类型，需通过mix模式在Vector Core执行Unzip操作，将int4x2解压为int8后再进行Matmul计算。
 
 ## 编译运行
 
@@ -86,7 +86,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

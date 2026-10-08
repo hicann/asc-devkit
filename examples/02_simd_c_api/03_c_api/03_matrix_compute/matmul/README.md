@@ -8,7 +8,7 @@
 
 | 产品 | CANN 软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构
 
@@ -82,7 +82,7 @@ L1、L0A、L0B、L0C上的Buffer大小均按分形对齐要求计算，Mmad计�
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU 运行、NPU 仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU 架构，对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU 架构，对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

@@ -7,15 +7,15 @@
 
 通过编译时宏隔离不同硬件实现：
 - Atlas A2/A3：不支持Scatter指令，使用标量搬出方式（GetValue/SetValue循环）实现。
-- Ascend 950PR/Ascend 950DT：直接调用Scatter指令实现。
+- Ascend 950PR&950DT系列产品：直接调用Scatter指令实现。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -45,7 +45,7 @@
 ## 样例实现
 
 - Atlas A2/A3：不支持Scatter指令，使用标量GetValue/SetValue循环逐元素读取偏移地址和源数据，将源数据写入目标位置，实现数据离散。
-- Ascend 950PR/Ascend 950DT：调用Scatter指令将源数据按偏移地址离散写入目标张量。
+- Ascend 950PR&950DT系列产品：调用Scatter指令将源数据按偏移地址离散写入目标张量。
 
 ## 编译运行
 
@@ -87,7 +87,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

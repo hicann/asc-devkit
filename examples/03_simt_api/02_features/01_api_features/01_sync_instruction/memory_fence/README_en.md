@@ -10,7 +10,7 @@ The 2 scenarios correspond to reduction sum for small shape input and large shap
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -172,7 +172,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR&950DT products) |
   | `SCENARIO_NUM` | `1`, `2` | Scenario number: 1 indicates small shape reduction scenario, 2 indicates large shape reduction scenario |
 
   The following output indicates that the accuracy verification is successful.

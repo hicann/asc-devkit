@@ -8,7 +8,7 @@ This example demonstrates the behavioral differences of the Div operation in Asc
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -130,7 +130,7 @@ subnormal
   |:--------------------------|:----------------------|:---------------------------------------------|
   | `SCENARIO_NUM`            | `1` (default), `2`        | 1: Supports subnormal computation; <br/>2: Does not support subnormal computation;       |
   | `CMAKE_ASC_RUN_MODE`      | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation                      |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`            | NPU architecture: dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`            | NPU architecture: dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution result
   The following execution result indicates that the precision comparison is successful.

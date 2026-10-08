@@ -5,5 +5,5 @@
 ## 样例列表
 | 目录名称 | 功能描述 | 支持的产品 |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
-| [simple_printf](./simple_printf) | 使用静态Tensor编程模式实现矩阵乘法，展示AscendC::printf接口的基本使用方法 | Ascend 950PR/Ascend 950DT<br>Atlas A3训练系列产品/Atlas A3推理系列产品<br>Atlas A2训练系列产品/Atlas A2推理系列产品 |
-| [simd_vf_printf](./simd_vf_printf) | 使用vector编程模式，展示simd_vf侧printf接口的基本使用方法 | Ascend 950PR/Ascend 950DT |
+| [simple_printf](./simple_printf) | 使用静态Tensor编程模式实现矩阵乘法，展示AscendC::printf接口的基本使用方法 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
+| [simd_vf_printf](./simd_vf_printf) | 使用vector编程模式，展示simd_vf侧printf接口的基本使用方法 | Ascend 950PR&950DT系列产品 |

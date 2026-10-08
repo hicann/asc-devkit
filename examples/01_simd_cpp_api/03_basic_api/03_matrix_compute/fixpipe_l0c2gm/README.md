@@ -8,9 +8,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -29,7 +29,7 @@
 ## FixpipeParamsV220 与 FixpipeParamsArch3510 结构体对比
 
 不同产品支持的参数结构体不同：
-- **Ascend 950PR/Ascend 950DT**：支持 `FixpipeParamsV220` 和 `FixpipeParamsArch3510` 两种参数结构体，推荐使用 `FixpipeParamsArch3510`
+- **Ascend 950PR&950DT系列产品**：支持 `FixpipeParamsV220` 和 `FixpipeParamsArch3510` 两种参数结构体，推荐使用 `FixpipeParamsArch3510`
 - **Atlas A3 训练/推理系列、Atlas A2 训练/推理系列**：仅支持 `FixpipeParamsV220`
 
 本样例通过编译参数 `CMAKE_ASC_ARCHITECTURES` 选择不同架构，根据架构自动选择对应的参数结构体：
@@ -93,7 +93,7 @@
   <img src="figures/fixpipe_l0c2gm_NZ2ND.png" width="800">
 </p>
 
-**场景3：输出格式DN，输出数据类型float（仅Ascend 950PR/Ascend 950DT支持）**
+**场景3：输出格式DN，输出数据类型float（仅Ascend 950PR&950DT系列产品支持）**
 - 输入：A [128, 128] half类型，ND格式；B [128, 256] half类型，ND格式
 - 输出：C [256, 128] float类型，DN格式
 - 实现：使用 `Fixpipe<outputType, l0cType, AscendC::CFG_COLUMN_MAJOR>` 指定COLUMN_MAJOR格式转换
@@ -163,7 +163,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-7 | 场景编号 |
 
   执行结果如下，说明精度对比成功。

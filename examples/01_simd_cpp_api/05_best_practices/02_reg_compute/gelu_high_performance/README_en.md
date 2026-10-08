@@ -15,7 +15,7 @@ This example uses Gelu computation to introduce RegBase vector performance tunin
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -673,7 +673,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   | ----------------| -----------------------------| --------------------------------------------------------------------------------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `0`, `1`, `2` | Case number: 0=Gelu without VF fusion, 1=Enable RegBase API and VF fusion, 2=Enable RegBase API, VF fusion and loop unrolling |
   | `CMAKE_VF_MODE` | `true`, `false` | VF fusion mode: for case 0, set to false to disable automatic VF fusion; for case 1/2, set to true to enable VF fusion |
 

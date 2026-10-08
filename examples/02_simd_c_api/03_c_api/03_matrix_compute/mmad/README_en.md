@@ -8,7 +8,7 @@ This example uses int8_t, bfloat16, and float input data types to demonstrate ho
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -244,7 +244,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture, corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture, corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2`, `3` | Scenario number, corresponding to int8_t, bfloat16, and float input data types respectively |
 
 - Execution result

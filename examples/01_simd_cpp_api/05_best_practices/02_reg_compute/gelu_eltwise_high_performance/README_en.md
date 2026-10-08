@@ -16,7 +16,7 @@ This example uses Gelu+Element-wise computation (introducing a series of Element
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -579,7 +579,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   | ----------------| -----------------------------| --------------------------------------------------------------------------------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `0`, `1`, `2`, `3` | Case number: 0=Single loop+128bytes, 1=Single loop+256bytes, 2=Loop split, 3=Loop split+unroll |
 
 - Execution results

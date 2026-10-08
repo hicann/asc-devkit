@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -74,7 +74,7 @@
   | 选项 | 说明 |
   |------|------|
   | `CMAKE_ASC_RUN_MODE` | 指定为`sim`，开启NPU仿真模式 |
-  | `CMAKE_ASC_ARCHITECTURES` | 指定NPU架构版本号。本样例仅支持`dav-3510`（Ascend 950PR/Ascend 950DT） |
+  | `CMAKE_ASC_ARCHITECTURES` | 指定NPU架构版本号。本样例仅支持`dav-3510`（Ascend 950PR&950DT系列产品） |
 
   > 💡 CMakeLists.txt中已添加`-g`编译选项，用于生成调试信息，使仿真器能够采集指令流水图。如需在自有工程中使用仿真调优功能，请确保编译时同样添加该选项。
 
@@ -94,7 +94,7 @@ msopprof simulator --soc-version=<soc_version> ./demo
 
 > AI处理器的型号`<soc_version>`请通过如下方式获取：
 >
-> - Ascend 950PR/Ascend 950DT
+> - Ascend 950PR&950DT系列产品
 >   - 针对以上产品型号，在安装昇腾AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name_NPU Name。例如**Chip Name**取值为Ascendxxx，**NPU Name**取值为1234，实际配置值为Ascendxxx_1234。
 >
 > 其中，`id`为设备ID，通过`npu-smi info -l`命令查出的NPU ID即为设备ID；`chip_id`为芯片ID，通过`npu-smi info -m`命令查出的Chip ID即为芯片ID。

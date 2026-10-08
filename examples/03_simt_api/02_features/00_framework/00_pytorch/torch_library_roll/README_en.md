@@ -7,7 +7,7 @@ This example uses the Roll operator to demonstrate how to register custom operat
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -130,7 +130,7 @@ This example uses the Roll operator to demonstrate how to register custom operat
 
   | Option       | Values           | Description                                                         |
   | ----------------| -----------------------------| --------------------------------------------------------------------------------------|
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR&950DT products) |
 
 - Execution Result
 

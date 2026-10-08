@@ -13,12 +13,12 @@ This example demonstrates the usage of the GetUBSizeInBytes and GetRuntimeUBSize
   <tr>
     <td align="center">1</td>
     <td align="center">GetUBSizeInBytes</td>
-    <td>Returns a compile-time constant representing the maximum usable UB (Unified Buffer) size. For example, in the Ascend 950PR/Ascend 950DT scenario, the system reserves 8KB, UB totals 256KB, and returns 248KB</td>
+    <td>Returns a compile-time constant representing the maximum usable UB (Unified Buffer) size. For example, in the Ascend 950PR&950DT products scenario, the system reserves 8KB, UB totals 256KB, and returns 248KB</td>
   </tr>
   <tr>
     <td align="center">2</td>
     <td align="center">GetRuntimeUBSize</td>
-    <td>Returns a runtime variable representing the maximum usable UB (Unified Buffer) size. Applicable to SIMT and SIMD mixed programming scenarios, where SIMT scenarios reserve some space in UB for Dcache. For example, in the Ascend 950PR/Ascend 950DT scenario, SIMT programming allocates 32KB for Dcache, the system reserves 8KB, UB totals 256KB, and returns 216KB. In scenarios that do not use mixed SIMT and SIMD programming, it returns a fixed value of 248KB</td>
+    <td>Returns a runtime variable representing the maximum usable UB (Unified Buffer) size. Applicable to SIMT and SIMD mixed programming scenarios, where SIMT scenarios reserve some space in UB for Dcache. For example, in the Ascend 950PR&950DT products scenario, SIMT programming allocates 32KB for Dcache, the system reserves 8KB, UB totals 256KB, and returns 216KB. In scenarios that do not use mixed SIMT and SIMD programming, it returns a fixed value of 248KB</td>
   </tr>
 </table>
 
@@ -26,7 +26,7 @@ This example demonstrates the usage of the GetUBSizeInBytes and GetRuntimeUBSize
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -155,7 +155,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture: dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture: dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1`, `2` | Scenario number: 1=GetUBSizeInBytes, 2=GetRuntimeUBSize |
 
 - Execution result

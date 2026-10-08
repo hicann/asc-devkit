@@ -19,9 +19,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.1.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.1.0 |
+| Atlas A2系列产品 | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -146,7 +146,7 @@ opt_model = torch.compile(model, fullgraph=True, backend=npu_backend, dynamic=Fa
 
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU架构：`dav-2201` 对应Atlas A2训练系列产品/Atlas A2推理系列产品与Atlas A3训练系列产品/Atlas A3推理系列产品，`dav-3510` 对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU架构：`dav-2201` 对应Atlas A2系列产品与Atlas A3系列产品，`dav-3510` 对应Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

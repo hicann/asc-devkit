@@ -7,7 +7,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -241,7 +241,7 @@ __global__ __launch_bounds__(THREADS_PER_BLOCK) void vector_add_atomic(
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | CMAKE_ASC_RUN_MODE | npu/sim | 运行模式：NPU运行、NPU仿真，默认npu |
-  | CMAKE_ASC_ARCHITECTURES | dav-3510 | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+  | CMAKE_ASC_ARCHITECTURES | dav-3510 | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
   | SCENARIO_NUM | 0/1/2/3 | 场景编号：0/1为Case 0（三操作数乘加）的基线/优化，2/3为Case 1（两操作数加法）的基线/优化 |
   | SKIP_VALIDATION | ON/OFF | 是否跳过结果校验，默认OFF。使用msopprof采集性能时建议设为ON |
 

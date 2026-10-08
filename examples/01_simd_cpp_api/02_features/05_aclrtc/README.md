@@ -8,5 +8,5 @@
 
 | 目录名称 | 功能描述 | 支持的产品 |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
-|[rtc_hello_world](./rtc_hello_world) |  本样例介绍了使用aclrtc接口实现HelloWorld核函数的调用。 | Ascend 950PR/Ascend 950DT<br>Atlas A3训练系列产品/Atlas A3推理系列产品<br>Atlas A2训练系列产品/Atlas A2推理系列产品 |
-|[rtc_template_add](./rtc_template_add) |  基于aclrtc运行时编译 + LocalMemAllocator（静态Tensor）实现Add。 | Ascend 950PR/Ascend 950DT<br>Atlas A3训练系列产品/Atlas A3推理系列产品<br>Atlas A2训练系列产品/Atlas A2推理系列产品 |
+|[rtc_hello_world](./rtc_hello_world) |  本样例介绍了使用aclrtc接口实现HelloWorld核函数的调用。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
+|[rtc_template_add](./rtc_template_add) |  基于aclrtc运行时编译 + LocalMemAllocator（静态Tensor）实现Add。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |

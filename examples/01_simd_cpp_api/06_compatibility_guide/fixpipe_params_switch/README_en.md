@@ -7,7 +7,7 @@ This example demonstrates the switch between different parameter structures for 
 The Fixpipe interface transfers matrix multiplication results from L0C Buffer to GM. The 3510 architecture introduces a new native parameter structure `FixpipeParamsArch3510`, which has key field differences from the `FixpipeParamsV220` used by the 2201 architecture.
 
 - Atlas A2/A3 Training/Inference Series Products: Use the `FixpipeParamsV220` parameter structure.
-- Ascend 950PR/950DT: Use the `FixpipeParamsArch3510` native parameter structure. The 3510 also supports `FixpipeParamsV220` (auto-converted internally), but the native structure is recommended for full capabilities.
+- Ascend 950PR&950DT products: Use the `FixpipeParamsArch3510` native parameter structure. The 3510 also supports `FixpipeParamsV220` (auto-converted internally), but the native structure is recommended for full capabilities.
 
 ### Key Differences Between the Two Parameter Structures
 
@@ -34,9 +34,9 @@ The Fixpipe interface transfers matrix multiplication results from L0C Buffer to
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -105,7 +105,7 @@ Run the following steps in the root directory of this example to build and run t
   SCENARIO_NUM=2 python3 ../scripts/verify_result.py output/output.bin output/golden.bin
   ```
 
-  To build for Ascend 950PR/950DT:
+  To build for Ascend 950PR&950DT products:
 
   ```bash
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=1 ..;make -j;
@@ -118,7 +118,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 for Atlas A2/A3, dav-3510 for Ascend 950PR/950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 for Atlas A2/A3, dav-3510 for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2` | Scenario: 1=NZ2ND (CFG_ROW_MAJOR), 2=NZ2NZ (CFG_NZ) |
 
 - Execution results

@@ -5,15 +5,15 @@
 
   本样例实现L1 Buffer边界值的设置，通过编译时宏隔离不同硬件实现。
 
-  Atlas A2/A3系列产品通过`SetLoadDataBoundary`接口设置L1 Buffer的边界值，而Ascend 950PR/950DT新架构不支持该接口，需通过手动拆分LoadData（卷积数据搬运）接口实现数据循环读取的绕回功能。
+  Atlas A2/A3系列产品通过`SetLoadDataBoundary`接口设置L1 Buffer的边界值，而Ascend 950PR&950DT系列产品新架构不支持该接口，需通过手动拆分LoadData（卷积数据搬运）接口实现数据循环读取的绕回功能。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -43,7 +43,7 @@
    
 - **Atlas A2/A3 训练/推理系列产品**：通过SetLoadDataBoundary接口设置L1 Buffer的边界值为1024字节，当LoadData（卷积数据搬运）接口处理源操作数时，如果源操作数在L1 Buffer上的地址超出设置的边界，则会自动从L1 Buffer的起始地址开始读取数据，实现数据循环读取功能。
 
-- **Ascend 950PR/950DT**：新架构硬件删除了L1 Buffer的边界值设定相关寄存器，不再支持SetLoadDataBoundary接口。为实现相同的数据循环读取功能，需将LoadData（卷积数据搬运）接口手动拆分成多条指令，通过调整目的操作数的地址偏移量实现手动绕回。
+- **Ascend 950PR&950DT系列产品**：新架构硬件删除了L1 Buffer的边界值设定相关寄存器，不再支持SetLoadDataBoundary接口。为实现相同的数据循环读取功能，需将LoadData（卷积数据搬运）接口手动拆分成多条指令，通过调整目的操作数的地址偏移量实现手动绕回。
 
 ## 编译运行
 
@@ -85,7 +85,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

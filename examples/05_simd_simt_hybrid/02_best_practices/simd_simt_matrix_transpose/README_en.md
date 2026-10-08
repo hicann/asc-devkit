@@ -8,7 +8,7 @@ Based on the [matrix_transpose_practice sample](../../../03_simt_api/03_best_pra
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -200,7 +200,7 @@ Compared with the matrix_transpose_practice sample in the SIMT scenario, SIMD an
 - `out_tile` still uses a contiguous 32x32 layout. The SIMT VF writes it continuously along the output tile row direction, and MTE3 then stores it continuously to GM.
 - The SIMT VF still processes only the valid 32x32 data.
 
-On Ascend 950PR/Ascend 950DT, UB is divided into 16 banks and organized as 8 bank groups. Each bank is further divided into 4 subbanks. If multiple threads in the same Warp access subbanks with the same subbank ID in the same bank group in one UB access instruction inside the SIMT VF, the hardware queues the requests. This causes a subbank conflict and increases access latency.
+On Ascend 950PR&950DT products, UB is divided into 16 banks and organized as 8 bank groups. Each bank is further divided into 4 subbanks. If multiple threads in the same Warp access subbanks with the same subbank ID in the same bank group in one UB access instruction inside the SIMT VF, the hardware queues the requests. This causes a subbank conflict and increases access latency.
 
 **Figure 1: UB bank structure**
 
@@ -409,7 +409,7 @@ In the sample root directory, perform the following steps to build and run the s
   | Option | Value | Description |
   | ------ | ----- | ----------- |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR/Ascend 950DT). |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR&950DT products). |
   | `SCENARIO_NUM` | `0`-`4` | Sample type. The default value is 4. |
 
   The following output indicates that the accuracy comparison is successful.

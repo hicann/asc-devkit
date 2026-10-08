@@ -8,9 +8,9 @@ This example introduces matrix multiplication in GEMV (M=1) mode.
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -28,7 +28,7 @@ This example introduces matrix multiplication in GEMV (M=1) mode.
 
 ## Example Description
 
-The GEMV mode refers to the scenario in Mmad computation where M=1, and a left matrix A with shape (1, K) performs matrix multiplication with a right matrix B with shape (K, N). When M=1, GEMV mode is automatically enabled, and it can only be disabled by setting `mmadParams.disableGemv = true` on Ascend 950PR/Ascend 950DT. In this example, the compilation parameter `DISABLE_GEMV` selects whether to disable GEMV mode: 0 means GEMV is enabled, 1 means disabled.
+The GEMV mode refers to the scenario in Mmad computation where M=1, and a left matrix A with shape (1, K) performs matrix multiplication with a right matrix B with shape (K, N). When M=1, GEMV mode is automatically enabled, and it can only be disabled by setting `mmadParams.disableGemv = true` on Ascend 950PR&950DT products. In this example, the compilation parameter `DISABLE_GEMV` selects whether to disable GEMV mode: 0 means GEMV is enabled, 1 means disabled.
 
 Using M=1, K=256, N=32, with left and right matrix data type half as a specific example, the Mmad computation process in GEMV mode and non-GEMV mode is described below.
 
@@ -93,7 +93,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products/Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products/Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `DISABLE_GEMV` | `0` (default), `1` | Whether to disable GEMV mode, `only supported when CMAKE_ASC_ARCHITECTURES==dav-3510 to set to 1` |
 
 - Execution result

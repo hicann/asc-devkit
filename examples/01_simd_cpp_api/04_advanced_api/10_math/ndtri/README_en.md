@@ -10,7 +10,7 @@ For `p = 0`, the output is negative infinity. For `p = 1`, the output is positiv
 
 | Product | CANN version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | Community version, >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | Community version, >= CANN 9.1.0 |
 
 This sample uses the experimental Ndtri interface, which is not released on branches such as CANN 9.1.0 or CANN 9.2.0. To run this sample, verify it against the dedicated subpackage built from the master branch of this repository.
 
@@ -108,7 +108,7 @@ bash run.sh -r npu --size 1023 --is_perf 0 --api_mode 2
 bash run.sh -r npu --size 1023 --is_perf 0 --api_mode 3
 ```
 
-Run the full Ascend 950PR/950DT regression:
+Run the full Ascend 950PR&950DT products regression:
 
 ```bash
 bash run_all.sh npu 1

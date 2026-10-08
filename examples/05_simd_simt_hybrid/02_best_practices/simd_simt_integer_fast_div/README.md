@@ -15,7 +15,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -259,7 +259,7 @@ uint32_t result = asc_uintdiv(value, magic, shift);
   | 选项 | 可选值 | 说明 |
   |:---|:---|:---|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `0`、`1` | Case编号：0=普通除法版本，1=快速除法版本 |
 
 - 执行结果

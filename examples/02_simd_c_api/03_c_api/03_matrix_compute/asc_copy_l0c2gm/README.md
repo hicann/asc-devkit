@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -82,7 +82,7 @@
   <img src="figures/asc_copy_l0c2gm_NZ2ND.png" width="800">
 </p>
 
-**场景3：输出格式DN，输出数据类型float（仅Ascend 950PR/Ascend 950DT支持）**
+**场景3：输出格式DN，输出数据类型float（仅Ascend 950PR&950DT系列产品支持）**
 - 输入：A [128, 128] half类型，ND格式；B [128, 256] half类型，ND格式
 - 输出：C [256, 128] float类型，DN格式
 - 实现：调用`asc_set_l0c_copy_channel_para(1)`和`asc_set_l0c_copy_nz_para(1, 0, 0)`，再调用`asc_copy_l0c2gm`并设置`enable_nz2dn = true`
@@ -151,7 +151,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构，对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构，对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-7 | 场景编号 |
 
   执行结果如下，说明精度对比成功。

@@ -2,13 +2,13 @@
 
 ## Overview
 
-This example uses the Ascend C C API to move matrix data from UB (Unified Buffer) to L1 (L1 Buffer). It keeps the original Nz-input and ND-input UB-to-L1 matrix multiplication scenarios, changes the matrix shape to a non-aligned shape, and adds a GM->UB->L1->UB->GM bidirectional data path scenario. It applies to Ascend 950PR/Ascend 950DT (`dav-3510`) and can run in NPU execution or NPU simulation mode.
+This example uses the Ascend C C API to move matrix data from UB (Unified Buffer) to L1 (L1 Buffer). It keeps the original Nz-input and ND-input UB-to-L1 matrix multiplication scenarios, changes the matrix shape to a non-aligned shape, and adds a GM->UB->L1->UB->GM bidirectional data path scenario. It applies to Ascend 950PR&950DT products (`dav-3510`) and can run in NPU execution or NPU simulation mode.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -105,7 +105,7 @@ Run the following steps in the example root directory.
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1`, `2`, `3` | Scenario number |
 
 - Expected result

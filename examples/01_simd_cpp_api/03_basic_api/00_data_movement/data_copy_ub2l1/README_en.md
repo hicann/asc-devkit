@@ -8,7 +8,7 @@ This sample demonstrates data movement from UB (Unified Buffer) to L1 (L1 Buffer
 
 | Product | CANN Software Version |
 |---------|----------------------|
-| Ascend 950PR / Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -106,7 +106,7 @@ Execute the following steps in the sample root directory to build and run the sa
   | Option | Values | Description |
   | ------ | ------ | ----------- |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU run, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: dav-3510 corresponds to Ascend 950PR/950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2` | Copy scenario: 1 = contiguous copy (NZ input), 2 = on-the-fly ND2NZ copy (ND input) |
 
 - Execution Result

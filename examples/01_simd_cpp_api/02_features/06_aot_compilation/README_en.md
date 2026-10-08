@@ -8,4 +8,4 @@ A performance practice example based on AOT (Ahead-of-Time) compilation optimiza
 
 | Directory Name | Description | Supported Products |
 | --- | --- | --- |
-| [matmul_aot_compilation](./matmul_aot_compilation) | Introduces AOT compilation optimization on top of the Matmul high-level API, demonstrating the complete workflow of Tiling constant definition, AOT Registry registration, and runtime dispatch (AOTDispatcher). At runtime, it automatically matches AOT-specialized versions or falls back to the generic version based on Tiling parameters. | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series/Atlas A3 Inference Series<br>Atlas A2 Training Series/Atlas A2 Inference Series |
+| [matmul_aot_compilation](./matmul_aot_compilation) | Introduces AOT compilation optimization on top of the Matmul high-level API, demonstrating the complete workflow of Tiling constant definition, AOT Registry registration, and runtime dispatch (AOTDispatcher). At runtime, it automatically matches AOT-specialized versions or falls back to the generic version based on Tiling parameters. | Ascend 950PR&950DT products<br>Atlas A3 products<br>Atlas A2 products |

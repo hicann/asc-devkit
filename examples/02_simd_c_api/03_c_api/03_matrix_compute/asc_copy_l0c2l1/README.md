@@ -4,13 +4,13 @@
 
 本样例介绍如何使用SIMD C API `asc_copy_l0c2l1`将矩阵乘的结果从L0C Buffer搬出到L1 Buffer，支持多种数据类型转换、随路量化和ReLU等功能。该接口用于将L0C Buffer中的矩阵乘计算结果高效地传输到L1 Buffer中，并支持各种数据格式转换和预处理能力。
 
-注意：Ascend 950PR/Ascend 950DT不支持将数据从L1 Buffer直接搬运到GM。本样例调用`asc_copy_l0c2l1`完成L0C Buffer到L1 Buffer的搬运后，直接将第一次矩阵乘产生的L0C Buffer结果搬运到GM。最终生成的`output.bin`为float类型的原始矩阵乘结果，用于验证矩阵乘计算，不对L1 Buffer中的类型转换、量化或ReLU结果进行数值校验。
+注意：Ascend 950PR&950DT系列产品不支持将数据从L1 Buffer直接搬运到GM。本样例调用`asc_copy_l0c2l1`完成L0C Buffer到L1 Buffer的搬运后，直接将第一次矩阵乘产生的L0C Buffer结果搬运到GM。最终生成的`output.bin`为float类型的原始矩阵乘结果，用于验证矩阵乘计算，不对L1 Buffer中的类型转换、量化或ReLU结果进行数值校验。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -123,7 +123,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构，对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构，对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-4 | 场景编号 |
 
   执行结果如下，说明原始矩阵乘结果精度对比成功。

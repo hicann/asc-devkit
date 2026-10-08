@@ -4,15 +4,15 @@
 
 This example demonstrates the end-to-end implementation of int4 matrix multiplication, isolating different hardware implementations through compile-time macros.
 - Atlas A2/A3 Training/Inference Series Products support the int4 data type and can perform Matmul computation directly.
-- The Cube computation unit in Ascend 950PR/950DT does not support the int4 data type. int4x2 must be unzipped to int8 before performing Matmul computation.
+- The Cube computation unit in Ascend 950PR&950DT products does not support the int4 data type. int4x2 must be unzipped to int8 before performing Matmul computation.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -43,7 +43,7 @@ This example demonstrates the end-to-end implementation of int4 matrix multiplic
 ## Example Implementation:
 
   - **Atlas A2/A3 Training/Inference Series Products**: The Cube computation unit supports the int4 data type and can execute Matmul computation directly.
-  - **Ascend 950PR/950DT**: The Cube computation unit does not support the int4 data type. The Unzip operation must be performed on the Vector Core through mix mode to unzip int4x2 to int8 before performing Matmul computation.
+  - **Ascend 950PR&950DT products**: The Cube computation unit does not support the int4 data type. The Unzip operation must be performed on the Vector Core through mix mode to unzip int4x2 to int8 before performing Matmul computation.
 
 ## Build and Run
 
@@ -85,7 +85,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
 

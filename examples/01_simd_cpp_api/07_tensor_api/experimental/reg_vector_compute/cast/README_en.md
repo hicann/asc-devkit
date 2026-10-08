@@ -12,7 +12,7 @@ y[i] = convert<To>(x[i])
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

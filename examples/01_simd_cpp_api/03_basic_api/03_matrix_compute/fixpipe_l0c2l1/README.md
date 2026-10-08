@@ -5,16 +5,16 @@
 本样例介绍如何使用Fixpipe将矩阵乘的结果从L0C（L0C Buffer）搬出到L1（L1 Buffer），支持数据类型转换、随路量化、ReLU等功能。这些接口用于将L0C中的矩阵乘计算结果高效地传输到L1 Buffer，并支持各种数据格式转换和预处理能力。
 
 注意：
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品在L0C到L1通路下仅支持输出格式为Nz，且不支持输出数据类型为float，必须量化为其他数据类型。
-- Ascend 950PR/Ascend 950DT不支持将数据从L1直接搬运到GM，因此，本样例中从L0C搬运到L1上的结果矩阵将作为下一次矩阵乘的输入，再进行一次矩阵计算并将结果输出到GM。（Atlas A2/A3系列产品支持将数据从L1直接搬运到GM，本样例中选择直接搬出）
+- Atlas A3系列产品、Atlas A2系列产品在L0C到L1通路下仅支持输出格式为Nz，且不支持输出数据类型为float，必须量化为其他数据类型。
+- Ascend 950PR&950DT系列产品不支持将数据从L1直接搬运到GM，因此，本样例中从L0C搬运到L1上的结果矩阵将作为下一次矩阵乘的输入，再进行一次矩阵计算并将结果输出到GM。（Atlas A2/A3系列产品支持将数据从L1直接搬运到GM，本样例中选择直接搬出）
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -32,7 +32,7 @@
 ## FixpipeParamsV220 与 FixpipeParamsArch3510 结构体对比
 
 不同产品支持的参数结构体不同：
-- **Ascend 950PR/Ascend 950DT**：支持 `FixpipeParamsV220` 和 `FixpipeParamsArch3510` 两种参数结构体，推荐使用 `FixpipeParamsArch3510`
+- **Ascend 950PR&950DT系列产品**：支持 `FixpipeParamsV220` 和 `FixpipeParamsArch3510` 两种参数结构体，推荐使用 `FixpipeParamsArch3510`
 - **Atlas A3 训练/推理系列、Atlas A2 训练/推理系列**：仅支持 `FixpipeParamsV220`
 
 本样例通过编译参数 `CMAKE_ASC_ARCHITECTURES` 选择不同架构，根据架构自动选择对应的参数结构体：
@@ -137,7 +137,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-4 | 场景编号 |
 
   执行结果如下，说明精度对比成功。

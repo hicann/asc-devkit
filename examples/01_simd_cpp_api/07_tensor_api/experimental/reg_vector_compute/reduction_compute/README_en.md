@@ -16,7 +16,7 @@ Only the first element of each result region is valid. The remaining elements ar
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

@@ -10,7 +10,7 @@ GM和UB之间的数据搬运使用Tensor API的`copy`接口，ND到NZ重排的�
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -128,15 +128,15 @@ GM和UB之间的数据搬运使用Tensor API的`copy`接口，ND到NZ重排的�
 
   - UB Bank结构与本样例中的冲突：
 
-    Ascend 950PR/Ascend 950DT的Unified Buffer划分为16个物理bank，并组织为8个bank group。bank `i`和bank `i+8`属于同一个bank group，关系为`bank group = bank % 8`。UB地址采用低位交织，连续地址每经过一个32B DataBlock，物理bank编号加1并按16取模。
+    Ascend 950PR&950DT系列产品的Unified Buffer划分为16个物理bank，并组织为8个bank group。bank `i`和bank `i+8`属于同一个bank group，关系为`bank group = bank % 8`。UB地址采用低位交织，连续地址每经过一个32B DataBlock，物理bank编号加1并按16取模。
 
     本样例关注`asc_storealign`一次写入8个DataBlock时的写写冲突。相邻落点之间的间距由`dstNzC0Stride`决定；当多个落点落入同一个bank group时，写入需要串行处理。
 
-    **图：Ascend 950PR/Ascend 950DT UB Bank结构示意图**
+    **图：Ascend 950PR&950DT系列产品 UB Bank结构示意图**
 
     <img src="figures/ubBankStruct3510.png" width="80%">
 
-    **图：Ascend 950PR/Ascend 950DT UB Bank内存排布示意图**
+    **图：Ascend 950PR&950DT系列产品 UB Bank内存排布示意图**
 
     <img src="figures/UB-3510.png" width="80%">
 
@@ -183,7 +183,7 @@ GM和UB之间的数据搬运使用Tensor API的`copy`接口，ND到NZ重排的�
 
 ## 性能数据
 
-以下数据为Ascend 950PR/Ascend 950DT在`144 × 128` tile、64个block配置下的实测结果。
+以下数据为Ascend 950PR&950DT系列产品在`144 × 128` tile、64个block配置下的实测结果。
 
 | 场景 | `dstNzC0Stride` | Task Duration(μs) | `aiv_time`(μs) | `aiv_total_cycles` | `aiv_vec_time`(μs) | `aiv_vec_ratio` | `aiv_scalar_time`(μs) | `aiv_scalar_ratio` | `aiv_mte2_time`(μs) | `aiv_mte2_ratio` | `aiv_mte3_time`(μs) | `aiv_mte3_ratio` | `icache_miss_rate` |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -232,10 +232,10 @@ S2的`aiv_vec_time`由254.637μs降低到214.199μs，说明增加stride后写�
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：dav-3510对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：dav-3510对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1、2 | 1为紧凑排放，2为增加stride并偏移NZ buffer起点 |
 
-  > **说明：** 本样例仅支持dav-3510架构（对应Ascend 950PR/Ascend 950DT）。
+  > **说明：** 本样例仅支持dav-3510架构（对应Ascend 950PR&950DT系列产品）。
 
 - 执行结果
 

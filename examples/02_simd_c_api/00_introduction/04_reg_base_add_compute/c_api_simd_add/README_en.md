@@ -6,7 +6,7 @@ This sample implements the Add operator using the C_API interface. It is based o
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

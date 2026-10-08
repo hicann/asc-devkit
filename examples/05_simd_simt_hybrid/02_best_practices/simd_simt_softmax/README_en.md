@@ -8,7 +8,7 @@ This sample uses softmax as an example to introduce tuning methods for in-row re
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -355,7 +355,7 @@ In the sample root directory, perform the following steps to build and run the s
   | Option | Values | Description |
   |:---|:---|:---|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR/Ascend 950DT). |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR&950DT products). |
   | `SCENARIO_NUM` | `0`, `1`, `2` | Sample type. The default value is 2. 0 = SIMT direct GM read, 1 = UB staging with MTE double buffering, 2 = intermediate values in registers. |
 
 - Execution result

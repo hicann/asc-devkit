@@ -2,13 +2,13 @@
 
 ## 概述
 
-本样例使用Ascend C C API将矩阵数据从UB（Unified Buffer）搬运到L1 Buffer。样例保留原有Nz输入和ND输入两种UB->L1矩阵乘场景，将矩阵规格调整为非对齐shape；同时新增GM->UB->L1 Buffer->UB->GM双向数据通路场景。本样例适用于Ascend 950PR/Ascend 950DT（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行。
+本样例使用Ascend C C API将矩阵数据从UB（Unified Buffer）搬运到L1 Buffer。样例保留原有Nz输入和ND输入两种UB->L1矩阵乘场景，将矩阵规格调整为非对齐shape；同时新增GM->UB->L1 Buffer->UB->GM双向数据通路场景。本样例适用于Ascend 950PR&950DT系列产品（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行。
 
 ## 本样例支持的产品和CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -105,7 +105,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`、`2`、`3` | 场景编号 |
 
 - 执行结果

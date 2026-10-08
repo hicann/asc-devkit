@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -627,7 +627,7 @@ The extend info: errcode:(341) errorStr: The address for VEC to access UB is out
 | 选项 | 可选值 | 说明 |
 | --- | --- | --- |
 | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
 | `SCENARIO_NUM` | `0`~`14` | 场景编号，默认值为`3`。CMake根据该选项只编译对应Case的Ascend C文件 |
 | `CMAKE_ASC_FLAGS` | ASC编译选项 | Case 1中可通过追加`--cce-disable-vf-stack-reserved-ubuf`关闭6KB VF预留，追加`--cce-disable-asc-reserved-ubuf`关闭2KB Ascend C API预留 |
 | `CASE1_OVER_LIMIT` | `ON`、`OFF` | Case 1是否在可用UB上限基础上多申请4B，默认值为`OFF` |

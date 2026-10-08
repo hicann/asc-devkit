@@ -9,9 +9,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -86,7 +86,7 @@
   | 选项 | 说明 |
   |------|------|
   | `CMAKE_ASC_RUN_MODE` | 指定为`sim`，开启NPU仿真模式 |
-  | `CMAKE_ASC_ARCHITECTURES` | 指定NPU架构版本号。`dav-2201`对应Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，`dav-3510`对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | 指定NPU架构版本号。`dav-2201`对应Atlas A2系列产品和Atlas A3系列产品，`dav-3510`对应Ascend 950PR&950DT系列产品 |
 
   精度对比成功时，输出如下：
 
@@ -104,12 +104,12 @@ msopprof simulator --soc-version=<soc_version> ./demo
 
 > AI处理器的型号`<soc_version>`请通过如下方式获取：
 >
->- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+>- Atlas A2系列产品
 >   - 针对以上产品型号：在安装昇腾AI处理器的服务器执行`npu-smi info`命令进行查询，获取**Name**信息。实际配置值为AscendName，例如**Name**取值为xxxyy，实际配置值为Ascendxxxyy。
 >
 
-> - Ascend 950PR/Ascend 950DT
-> - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+> - Ascend 950PR&950DT系列产品
+> - Atlas A3系列产品
 >   - 针对以上产品型号，在安装昇腾AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取**Chip Name**和**NPU Name**信息，实际配置值为Chip Name_NPU Name。例如**Chip Name**取值为Ascendxxx，**NPU Name**取值为1234，实际配置值为Ascendxxx_1234。
 >
 > 其中，`id`为设备ID，通过`npu-smi info -l`命令查出的NPU ID即为设备ID；`chip_id`为芯片ID，通过`npu-smi info -m`命令查出的Chip ID即为芯片ID。

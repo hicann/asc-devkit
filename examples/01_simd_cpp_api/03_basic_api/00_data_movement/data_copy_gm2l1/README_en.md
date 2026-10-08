@@ -8,9 +8,9 @@ This example introduces how to use DataCopy to transfer input data from GM (Glob
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -60,11 +60,11 @@ This example selects different input scenarios through the build parameter `SCEN
   <img src="figures/data_copy_gm2l1_ND2NZ.png" width="800">
 </p>
 
-**Scenario 3: Input Format DN, Input Data Type half (Only Supported on Ascend 950PR/Ascend 950DT)**
+**Scenario 3: Input Format DN, Input Data Type half (Only Supported on Ascend 950PR&950DT products)**
 - Input: A [128, 128] half type, DN format; B [128, 256] half type, DN format
 - Output: C [128, 256] float type, ND format
 - Implementation: Uses `Dn2NzParams` to transfer DN format input data from GM to L1, automatically converting to Nz format
-- Description: Input data is in DN format, automatically converted to Nz format during transfer. DN format is only supported on Ascend 950PR/Ascend 950DT
+- Description: Input data is in DN format, automatically converted to Nz format during transfer. DN format is only supported on Ascend 950PR&950DT products
 <p align="center">
   <img src="figures/data_copy_gm2l1_DN2NZ.png" width="800">
 </p>
@@ -119,7 +119,7 @@ Run the following steps in the root directory of this example to build and run i
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-5 | Scenario number, scenario 3 only supports dav-3510 architecture |
 
 - Execution result

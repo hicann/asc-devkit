@@ -8,8 +8,8 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Atlas A3训练系列产品/Atlas A3推理系列产品 | >=CANN 9.0.0 |
-| Atlas A2训练系列产品/Atlas A2推理系列产品 | >=CANN 9.0.0 |
+| Atlas A3系列产品 | >=CANN 9.0.0 |
+| Atlas A2系列产品 | >=CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -407,7 +407,7 @@ UB的18位地址编码遵循如下规则：
 
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` | NPU架构：dav-2201对应Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品 |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` | NPU架构：dav-2201对应Atlas A2系列产品和Atlas A3系列产品 |
   | `SCENARIO_NUM` | `1`~`8` | 场景编号：1（无冲突基线）、2（同bank读读冲突）、3（同bank group读读冲突）、4（同bank读写冲突-硬件优化）、5（读写冲突）、6（地址重叠-硬件优化）、7（src0RepStride=1读读冲突）、8（src0RepStride=8无冲突） |
 
 - 执行结果

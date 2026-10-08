@@ -8,7 +8,7 @@ This sample uses an output accuracy issue caused by a UB out-of-bounds access in
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -629,7 +629,7 @@ Run the following steps in the sample root directory to build and execute the sa
 | Option | Valid Value | Description |
 | --- | --- | --- |
 | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR/Ascend 950DT) |
+| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR&950DT products) |
 | `SCENARIO_NUM` | `0`-`14` | Scenario number. The default value is `3`. CMake compiles only the Ascend C file of the selected Case |
 | `CMAKE_ASC_FLAGS` | ASC compiler options | In Case 1, add `--cce-disable-vf-stack-reserved-ubuf` to disable the 6 KB VF reserve, and add `--cce-disable-asc-reserved-ubuf` to disable the 2 KB Ascend C API reserve |
 | `CASE1_OVER_LIMIT` | `ON`, `OFF` | Whether Case 1 allocates 4 B more than the usable UB limit. The default is `OFF` |

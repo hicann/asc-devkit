@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -347,7 +347,7 @@ Case 1的 `Task Duration` 随cols增大持续上升：行内计算三轮串行�
   | 选项 | 可选值 | 说明 |
   |:---|:---|:---|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
   | `SCENARIO_NUM` | `0`、`1`、`2` | 样例类型，默认为2：0=SIMT直接读GM，1=UB中转与MTE双缓冲，2=中间值驻留寄存器 |
 
 - 执行结果

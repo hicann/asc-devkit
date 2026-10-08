@@ -8,9 +8,9 @@ This example implements per-token quantization group matrix multiplication (Quan
 
 | Products | CANN Software Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.2.0 |
-| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Introduction to directory structure
 
@@ -464,7 +464,7 @@ Perform the following steps in the root directory of this sample to compile and 
   |------|--------|------|
   | `SCENARIO_NUM` | `0`, `1`, `2` | Scenario number: 0-baseline single AIV, 1-double AIV with no flow, 2-double AIV+4-level flow |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Operation mode: NPU operation, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 training series products/Atlas A2 inference series products and Atlas A3 training series products/Atlas A3 inference series products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
   The execution results are as follows, indicating that the accuracy comparison is successful.

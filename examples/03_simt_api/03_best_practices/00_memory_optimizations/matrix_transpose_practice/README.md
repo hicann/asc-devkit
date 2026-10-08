@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -288,9 +288,9 @@ asc_syncthreads();
 - 同步后，从UB写入GM与Case 5完全一致。
 - 该版本没有改变算法路径，也没有改变Thread Block和线程切分，只是调整了UB中的物理布局。
 
-下面以Ascend 950PR/Ascend 950DT的UB划分规则为例，说明本样例中bank冲突是如何产生的，以及Case 5和Case 6理论上的冲突强度差异。
+下面以Ascend 950PR&950DT系列产品的UB划分规则为例，说明本样例中bank冲突是如何产生的，以及Case 5和Case 6理论上的冲突强度差异。
 
-UB中的bank划分如下图所示。Ascend 950PR/Ascend 950DT的UB划分为16个bank，并组织为8个bank group；SIMT编程模式下，每个bank进一步划分为4个subbank。若同一个Warp内多个线程在同一条UB访问指令中访问同一个bank group的相同编号subbank，硬件需要排队处理，从而形成subbank冲突并增加访问延迟。
+UB中的bank划分如下图所示。Ascend 950PR&950DT系列产品的UB划分为16个bank，并组织为8个bank group；SIMT编程模式下，每个bank进一步划分为4个subbank。若同一个Warp内多个线程在同一条UB访问指令中访问同一个bank group的相同编号subbank，硬件需要排队处理，从而形成subbank冲突并增加访问延迟。
 
 SIMT编程方式下，bank冲突为更细粒度的subbank冲突，主要有以下两类：
 
@@ -441,7 +441,7 @@ Case 6与Case 7的仿真指令流水图分别如图6、图7所示，其中耗时
   | 选项                        | 可选值       | 说明                                                       |
   | --------------------------- | ------------ | ---------------------------------------------------------- |
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
   | `SCENARIO_NUM`            | `0`-`7`  | 样例类型，默认为7                                          |
 
 

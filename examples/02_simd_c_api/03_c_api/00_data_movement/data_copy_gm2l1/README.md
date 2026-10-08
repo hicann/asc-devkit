@@ -4,13 +4,13 @@
 
 本样例介绍如何使用Ascend C C API将输入数据从GM（Global Memory）搬运到L1（L1 Buffer），支持多种输入格式（Nz、ND、DN）和向量量化参数搬入等功能。数据搬入后，样例继续完成L1 Buffer到L0A Buffer和L0B Buffer的数据搬运、矩阵乘计算，以及通过Fixpipe将L0C Buffer中的计算结果搬运到GM（Global Memory）。
 
-本样例适用于Ascend 950PR/Ascend 950DT（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行，不提供CPU域调试模式。
+本样例适用于Ascend 950PR&950DT系列产品（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行，不提供CPU域调试模式。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -64,7 +64,7 @@
   <img src="figures/data_copy_gm2l1_nd2nz.png" width="800">
 </p>
 
-**场景3：输入格式DN，输入数据类型half（仅Ascend 950PR/Ascend 950DT支持）**
+**场景3：输入格式DN，输入数据类型half（仅Ascend 950PR&950DT系列产品支持）**
 
 - 输入：A [128, 128] half类型，DN格式；B [128, 256] half类型，DN格式
 - 输出：C [128, 256] float类型，ND格式
@@ -124,7 +124,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-4 | 场景编号 |
 
 - 执行结果

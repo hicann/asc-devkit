@@ -6,7 +6,7 @@
 本样例基于基础的mmad样例，演示了 L1 Buffer -> L0A Buffer 通路的分形转换逻辑，通过编译时宏 `__NPU_ARCH__` 隔离不同硬件实现。
 
 - 在 Atlas A2/A3 系列产品中，L0A Buffer 的数据排布为 Zz 分形
-- 在 Ascend 950PR/Ascend 950DT 系列产品中，L0A Buffer 的数据排布为 Nz 分形
+- 在 Ascend 950PR&950DT系列产品中，L0A Buffer 的数据排布为 Nz 分形
 
 分形的转换涉及到以下两种典型场景的兼容性适配：
 
@@ -14,15 +14,15 @@
 2. L0A复用。切分M轴，A矩阵分为两块子矩阵，进行两次mmad计算。
 
 **对于场景1**，需要修改L1>L0A搬运过程的逻辑，由Nz->Zz分形转换变为Nz->Nz。具体可参考[样例实现](./README.md#样例实现)。  
-**对于场景2**，在Atlas A2/A3 系列产品上，由于Zz分形本身在M轴上连续，所以L1->L0A搬运逻辑和场景1相同，而对于Ascend 950PR/Ascend 950DT 系列产品，切分M轴会导致矩阵不连续，需要拆分为两个Nz矩阵。具体可参考[样例实现](./README.md#样例实现)。
+**对于场景2**，在Atlas A2/A3 系列产品上，由于Zz分形本身在M轴上连续，所以L1->L0A搬运逻辑和场景1相同，而对于Ascend 950PR&950DT系列产品，切分M轴会导致矩阵不连续，需要拆分为两个Nz矩阵。具体可参考[样例实现](./README.md#样例实现)。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 | ------ | ------------- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -58,7 +58,7 @@
 
 图1 展示了 L0A 不复用场景下两种芯片的 L1→L0A 数据搬运差异：
 - Atlas A2/A3 系列：L0A 为 Zz 分形，需通过 LoadData（2D矩阵搬运） 完成 Nz→Zz 分形转换。
-- Ascend 950PR/Ascend 950DT：L0A 为 Nz 分形，与 L1 一致，无需分形转换，LoadData（2D矩阵搬运） 参数更简洁。
+- Ascend 950PR&950DT系列产品：L0A 为 Nz 分形，与 L1 一致，无需分形转换，LoadData（2D矩阵搬运） 参数更简洁。
 
 ***图2 L0A复用场景概览***
 
@@ -66,7 +66,7 @@
 
 图2 展示了 L0A 复用（M 轴切分）场景下两种芯片的适配逻辑：
 - Atlas A2/A3 系列：Zz 分形下，M 轴切分后 A1 和 A2 在 L0A 中依然连续，仅需调整第二次 Mmad 的偏移量即可。
-- Ascend 950PR/Ascend 950DT：Nz 分形下，M 轴切分后 A1 和 A2 不连续，需通过两次 LoadData（2D矩阵搬运） 分别搬运上半和下半 Nz 子矩阵，不改变 Mmad 计算逻辑及流水排布。
+- Ascend 950PR&950DT系列产品：Nz 分形下，M 轴切分后 A1 和 A2 不连续，需通过两次 LoadData（2D矩阵搬运） 分别搬运上半和下半 Nz 子矩阵，不改变 Mmad 计算逻辑及流水排布。
 
 ### GM->L1
 
@@ -86,7 +86,7 @@ DataCopy 将 GM 中 ND 格式的矩阵 x[M, K] 和 y[K, N] 分别搬运到 L1 Bu
 
 ### L1->L0A
 
-Atlas A2/A3 系列产品中 L0A 数据排布为 Zz 分形，Ascend 950PR/Ascend 950DT 中变更为 Nz 分形，以下分场景介绍兼容性差异。通过编译宏 `SCENARIO_NUM` 区分场景：`SCENARIO_NUM=1` 为 L0A 不复用场景，`SCENARIO_NUM=2` 为 L0A 复用场景（M 轴切分）。
+Atlas A2/A3 系列产品中 L0A 数据排布为 Zz 分形，Ascend 950PR&950DT系列产品 中变更为 Nz 分形，以下分场景介绍兼容性差异。通过编译宏 `SCENARIO_NUM` 区分场景：`SCENARIO_NUM=1` 为 L0A 不复用场景，`SCENARIO_NUM=2` 为 L0A 复用场景（M 轴切分）。
 
 #### L0A不复用场景
 
@@ -108,7 +108,7 @@ for (uint32_t i = 0; i < mBlocks; ++i) {
 }
 ```
 
-在 Ascend 950PR/Ascend 950DT 中，L1->L0A不需要做分形转换，保持Nz分形，通过LoadData（2D矩阵搬运） 接口实现，相关代码如下：
+在 Ascend 950PR&950DT系列产品 中，L1->L0A不需要做分形转换，保持Nz分形，通过LoadData（2D矩阵搬运） 接口实现，相关代码如下：
 
 ```cpp
 constexpr uint32_t mBlocks = M / CUBE_BLOCK;
@@ -139,7 +139,7 @@ $$
 
 即可以将 A 按行拆分为 A1 和 A2，分别与 B 相乘得到 C1 和 C2，最终拼接为 C。
 在Atlas A2/A3系列产品中，由于L0A为Zz分形，因此切分M轴后，A1和A2依然连续，第二次mmad计算只需要修改A矩阵的偏移量即可。
-在Ascend 950PR/Ascend 950DT中，由于L0A为Nz分形，切分M轴后A1和A2不连续，为了不改变mmad计算的逻辑及后续的流水排布，需要通过LoadData（2D矩阵搬运）搬运指令，将整块Nz矩阵切分成两块子Nz矩阵，相关代码如下：
+在Ascend 950PR&950DT系列产品中，由于L0A为Nz分形，切分M轴后A1和A2不连续，为了不改变mmad计算的逻辑及后续的流水排布，需要通过LoadData（2D矩阵搬运）搬运指令，将整块Nz矩阵切分成两块子Nz矩阵，相关代码如下：
 
 ```cpp
 constexpr uint32_t mBlocks = M / CUBE_BLOCK;
@@ -182,7 +182,7 @@ for (uint32_t i = 0; i < kBlocks; ++i) {
 }
 ```
 
-Ascend 950PR/Ascend 950DT系列产品使用`LoadData2DParamsV2`，相关代码如下：
+Ascend 950PR&950DT系列产品使用`LoadData2DParamsV2`，相关代码如下：
 
 ```cpp
 constexpr uint32_t kBlocks = K / CUBE_BLOCK;
@@ -286,7 +286,7 @@ AscendC::Fixpipe(cGM[M * N / 2], co1Local[M * N / 2], fixpipeParams);
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU 调试、NPU 仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2/A3 系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2/A3 系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`、`2` | 场景编号：1 表示 L0A 不复用场景，2 表示 L0A 复用场景（M 轴切分） |
 
 - 执行结果

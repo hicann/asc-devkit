@@ -8,9 +8,9 @@ This example introduces how to execute a fixed-shape operator using the `aclopEx
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 | Atlas 200I/500 A2 Inference Products | >= CANN 9.0.0 |
 | Atlas Inference Series Products | >= CANN 9.0.0 |
 
@@ -65,7 +65,7 @@ This example uses the `aclopExecuteV2` interface to execute the single-operator 
 
   > Obtain the AI processor model `${soc_version}` as follows:
   > - For the following product models: Run the `npu-smi info` command on the server with the Ascend AI processor installed to query the **Name** information. The actual configuration value is AscendName. For example, if the **Name** value is xxxyy, the actual configuration value is Ascendxxxyy.
-  >   - Atlas A2 Training Series Products / Atlas A2 Inference Series Products
+  >   - Atlas A2 products
   >   - Atlas 200I/500 A2 Inference Products
   >   - Atlas Inference Series Products
   >   - Atlas Training Series Products
@@ -75,8 +75,8 @@ This example uses the `aclopExecuteV2` interface to execute the single-operator 
   >   id: device ID, obtained from the NPU ID queried by the `npu-smi info -l` command
   >
   >   chip_id: chip ID, obtained from the Chip ID queried by the `npu-smi info -m` command
-  >   - Ascend 950PR/Ascend 950DT
-  >   - Atlas A3 Training Series Products / Atlas A3 Inference Series Products
+  >   - Ascend 950PR&950DT products
+  >   - Atlas A3 products
   >
   >   Operator projects created based on AI processor models of the same series share the same basic functionality (operator development, compilation, and deployment based on the project).
 

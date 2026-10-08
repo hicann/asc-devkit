@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example implements a complete sorting pipeline based on four interfaces: ProposalConcat, RpSort16, MrgSort4, and ProposalExtract. First, ProposalConcat merges consecutive score values into Region Proposal format. Then RpSort16 sorts each group of 16 Region Proposals in descending order by the score field. Next, MrgSort4 merges 4 sorted groups of Region Proposals into 1 group. Finally, ProposalExtract extracts the score field from the merged Region Proposals to obtain globally descending-sorted consecutive score values.
+This example implements a complete sorting pipeline based on four interfaces: ProposalConcat, RpSort16, MrgSort4, and ProposalExtract. First, ProposalConcat merges consecutive score values into the Region Proposal format. Then RpSort16 sorts each group of 16 Region Proposals in descending order by the score field. Next, MrgSort4 merges 4 sorted groups of Region Proposals into 1 group. Finally, ProposalExtract extracts the score field from the merged Region Proposals to obtain globally descending-sorted consecutive score values.
 
 ## Supported Products and CANN Versions
 

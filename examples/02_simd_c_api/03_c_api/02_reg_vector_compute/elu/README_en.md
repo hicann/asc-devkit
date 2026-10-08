@@ -8,7 +8,7 @@ This example implements the ELU (Exponential Linear Unit) activation operator us
 
 | Product | CANN Version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.0.0 |
 
 ## Directory Structure
 

@@ -8,4 +8,4 @@ This directory provides C API best-practice samples for fusion compute, introduc
 
 | Directory Name | Description | Supported Products |
 | --- | --- | --- |
-| [ssbuf_aiv_aic_comm](./ssbuf_aiv_aic_comm) | This sample implements AIV-to-AIC ring queue communication using SSBuffer and C API inter-core synchronization, based on the KFC message state design. | Ascend 950PR/Ascend 950DT |
+| [ssbuf_aiv_aic_comm](./ssbuf_aiv_aic_comm) | This sample implements AIV-to-AIC ring queue communication using SSBuffer and C API inter-core synchronization, based on the KFC message state design. | Ascend 950PR&950DT products |

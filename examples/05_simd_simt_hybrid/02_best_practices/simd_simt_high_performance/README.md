@@ -18,7 +18,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -283,7 +283,7 @@ __aicore__ inline void process_tiles(
 
 Case 2的索引方式为 `index = tid * elems_per_thread + i`，其中 `elems_per_thread = 8`。从单个线程看，它会连续处理8个元素；
 
-Ascend 950PR/950DT的UB划分为16个bank、组织为8个bank group，每个bank每行为32B（连续每32B落到下一个bank），向量计算单元每拍可从每个bank group读/写一行（32B）。Warp内的32个线程同拍执行同一条指令、各自寻址。
+Ascend 950PR&950DT系列产品的UB划分为16个bank、组织为8个bank group，每个bank每行为32B（连续每32B落到下一个bank），向量计算单元每拍可从每个bank group读/写一行（32B）。Warp内的32个线程同拍执行同一条指令、各自寻址。
 
 在Case 2中，相邻线程 `tid` 与 `tid+1` 在同一轮迭代 `i` 下访问的元素相差 `elems_per_thread = 8`，即字节地址相差 `8 * sizeof(int32) = 32B`，恰好为一条bank行的跨度。这意味着相邻线程分别落在**不同的bank行**上，硬件无法用一次行读取（32B）同时服务多个线程，相同数量的数据需要更多拍才能取完，UB访问被拉长。
 
@@ -425,7 +425,7 @@ __aicore__ inline void process_tiles(
   | 选项 | 可选值 | 说明 |
   |:---|:---|:---|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `0`、`1`、`2`、`3` | Case编号：0=SIMT直接访问GM，1=SIMD Reg矢量计算，2=SIMT非连续访问，3=SIMT连续访问 |
 
 - 执行结果

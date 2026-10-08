@@ -8,7 +8,7 @@ This example introduces how to implement a high-performance MxFP4 Matmul kernel 
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 

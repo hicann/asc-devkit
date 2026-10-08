@@ -6,7 +6,7 @@ This sample demonstrates how to use the experimental Tensor API `asc::te::experi
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

@@ -17,7 +17,7 @@ This example uses the FloorMod computation to demonstrate performance tuning met
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -282,7 +282,7 @@ __aicore__ inline void process_tiles(
 
 The indexing pattern in Case 2 is `index = tid * elems_per_thread + i`, where `elems_per_thread = 8`. From a single thread's perspective, it processes 8 contiguous elements.
 
-The UB on Ascend 950PR/950DT is divided into 16 banks organized into 8 bank groups, with each bank row being 32B (every contiguous 32B falls into the next bank). The vector computation unit can read/write one row (32B) from each bank group per cycle. The 32 threads within a Warp execute the same instruction simultaneously, each with independent addressing.
+The UB on Ascend 950PR&950DT products is divided into 16 banks organized into 8 bank groups, with each bank row being 32B (every contiguous 32B falls into the next bank). The vector computation unit can read/write one row (32B) from each bank group per cycle. The 32 threads within a Warp execute the same instruction simultaneously, each with independent addressing.
 
 In Case 2, adjacent threads `tid` and `tid+1` access elements that differ by `elems_per_thread = 8` in the same iteration `i`, meaning the byte address difference is `8 * sizeof(int32) = 32B`, exactly one bank row span. This means adjacent threads fall on **different bank rows**, and the hardware cannot serve multiple threads with a single row read (32B). The same amount of data requires more cycles to fetch, and UB access is prolonged.
 
@@ -424,7 +424,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |:---|:---|:---|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture, corresponding to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture, corresponding to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `0`, `1`, `2`, `3` | Case number: 0=SIMT direct GM access, 1=SIMD Reg vector computation, 2=SIMT non-contiguous access, 3=SIMT contiguous access |
 
 - Execution result

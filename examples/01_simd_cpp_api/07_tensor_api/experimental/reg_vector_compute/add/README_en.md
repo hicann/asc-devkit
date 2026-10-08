@@ -12,7 +12,7 @@ dst[i] = src0[i] + src1[i]
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

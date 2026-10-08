@@ -12,9 +12,9 @@
 
 | 产品 | CANN软件版本 |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
-| Atlas A3训练系列产品/Atlas A3推理系列产品 | \>= CANN 9.1.0 |
-| Atlas A2训练系列产品/Atlas A2推理系列产品 | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.1.0 |
+| Atlas A3系列产品 | \>= CANN 9.1.0 |
+| Atlas A2系列产品 | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 

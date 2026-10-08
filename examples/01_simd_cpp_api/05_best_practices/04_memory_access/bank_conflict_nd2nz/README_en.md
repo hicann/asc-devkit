@@ -8,9 +8,9 @@ This example uses an `8192 × 8192` half ND matrix to globally compact NZ layout
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -68,7 +68,7 @@ rowSplit ↓      ┌───────┬───────┬───�
 
 | Parameter | Value | Meaning |
 |:---:|:---:|:---|
-| `rowSplits` | dav-2201 scenario = 6 / dav-3510 scenario = 8 | N direction split count, different architectures have different split logic, dav-2201 refers to Atlas A2/A3 Series Products, dav-3510 refers to Ascend 950PR/Ascend 950DT |
+| `rowSplits` | dav-2201 scenario = 6 / dav-3510 scenario = 8 | N direction split count, different architectures have different split logic, dav-2201 refers to Atlas A2/A3 Series Products, dav-3510 refers to Ascend 950PR&950DT products |
 | `colSplits` | 8 | D direction split count |
 | `totalBlocks` | dav-2201 scenario = 48 / dav-3510 scenario = 64 | Number of blocks to launch, equals `rowSplits * colSplits` |
 | `tileH` | 144 | Maximum N direction rows per transfer tile; tail block uses `actualTileH` = 128 |
@@ -173,7 +173,7 @@ The example enables a double buffer mechanism in `Process`, allocating two sets 
 
 **UB layout order**: 4 buffers are arranged as `[ndPing | ndPong | nzPing | nzPong]`.
 
-> The Ping-Pong pipeline implementation in Case 2 / Ascend 950PR/Ascend 950DT cases is identical and will not be repeated.
+> The Ping-Pong pipeline implementation in Case 2 / Ascend 950PR&950DT products cases is identical and will not be repeated.
 
 **Conflict Principle**:
 
@@ -280,21 +280,21 @@ With double buffering, each buffer set contains one `ndBuf` and one `nzBuf`. S1 
 
 ---
 
-### Ascend 950PR/Ascend 950DT (dav-3510)
+### Ascend 950PR&950DT products (dav-3510)
 
-> Select Ascend 950PR/Ascend 950DT at build time with `-DCMAKE_ASC_ARCHITECTURES=dav-3510`.
+> Select Ascend 950PR&950DT products at build time with `-DCMAKE_ASC_ARCHITECTURES=dav-3510`.
 
 #### UB Bank Structure and Conflict Types
 
-On Ascend 950PR/Ascend 950DT, the Unified Buffer is 256KB total, divided into 16 banks (each bank has 512 rows × 32B = 16KB); these 16 banks are further organized into **8 bank groups**, each bank group containing 2 banks (bank `i` and bank `i+8` belong to bank group `i`, that is, `bank group = bank % 8`). The Vector computation unit can read or write one row of data from each bank group per beat.
+On Ascend 950PR&950DT products, the Unified Buffer is 256KB total, divided into 16 banks (each bank has 512 rows × 32B = 16KB); these 16 banks are further organized into **8 bank groups**, each bank group containing 2 banks (bank `i` and bank `i+8` belong to bank group `i`, that is, `bank group = bank % 8`). The Vector computation unit can read or write one row of data from each bank group per beat.
 
-**Figure: Ascend 950PR/Ascend 950DT UB Bank Structure Diagram**
+**Figure: Ascend 950PR&950DT products UB Bank Structure Diagram**
 
 <img src="figures/ubBankStruct3510.png" width="80%">
 
 **Address uses low-bit interleaving**: Consecutive addresses in UB cycle across bank0~bank15 in 32B units — the 1st 32B block falls on bank0, the 2nd on bank1, ..., the 16th on bank15, the 17th returns to the next row of bank0, and so on.
 
-**Figure: Ascend 950PR/Ascend 950DT UB Bank Memory Layout Diagram** (arrow direction indicates memory layout order)
+**Figure: Ascend 950PR&950DT products UB Bank Memory Layout Diagram** (arrow direction indicates memory layout order)
 <img src="figures/UB-3510.png" width="80%">
 
 Bank conflicts are mainly categorized into three types:
@@ -321,7 +321,7 @@ The Ping-Pong pipeline implementation is identical to Atlas A2/A3 Case 1 (see [A
 
 **ND2NZ Implementation**:
 
-Ascend 950PR/Ascend 950DT implements Nd2Nz rearrangement based on Reg programming interface, using `__simd_vf__`, with outer vector column group and inner row loop:
+Ascend 950PR&950DT products implements Nd2Nz rearrangement based on Reg programming interface, using `__simd_vf__`, with outer vector column group and inner row loop:
 
 ```cpp
 for (uint16_t k = 0; k < vecsPerRow; ++k) {
@@ -363,11 +363,11 @@ Landing points of 8 writes from a single StoreAlign on UB:
   DataBlock 7 → 1008th 32B block  → bank 0 → bank group 0   ◀ same bank
 ```
 
-**Figure: Ascend 950PR/Ascend 950DT Case 1 UB Bank Group Conflict Diagram**
+**Figure: Ascend 950PR&950DT products Case 1 UB Bank Group Conflict Diagram**
 
 <img src="figures/s1bank3510.png" width="80%">
 
-**Performance Data** (Ascend 950PR/Ascend 950DT, current `144×128` configuration, 64 cores):
+**Performance Data** (Ascend 950PR&950DT products, current `144×128` configuration, 64 cores):
 
 | Task Duration(μs) | aiv_time(μs) | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_mte2_time(μs) | aiv_mte2_ratio | aiv_mte3_time(μs) | aiv_mte3_ratio |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -418,7 +418,7 @@ Landing points of 8 writes from a single StoreAlign on UB ("Nth 32B block" count
   DataBlock 7 → 1015th 32B block  → bank 15 → bank group 7
 ```
 
-**Figure: Ascend 950PR/Ascend 950DT Case 2 UB Bank Group Distributed Landing Point Diagram**
+**Figure: Ascend 950PR&950DT products Case 2 UB Bank Group Distributed Landing Point Diagram**
 
 <img src="figures/s2bank3510.png" width="80%">
 
@@ -439,9 +439,9 @@ Landing points of 8 writes from a single StoreAlign on UB ("Nth 32B block" count
 
 The extra row of allocated space is skipped during the UB→GM MTE3 phase by `outParams.srcStride = dstNzC0Stride - tileH`, and is not written back to GM.
 
-With double buffering, each buffer set contains one `ndBuf` and one `nzBuf`. S1 total UB usage is `2 × (36864 B + 36864 B) = 147456 B = 144 KB`; S2 also introduces a 256B bank-8 start offset for each of the two `nzBuf` blocks (see "Supplement" section above), total UB usage is `2 × (36864 B + 37120 B) + 2 × 256 B = 148480 B ≈ 145 KB`, satisfying the Ascend 950PR/Ascend 950DT 256 KB UB constraint.
+With double buffering, each buffer set contains one `ndBuf` and one `nzBuf`. S1 total UB usage is `2 × (36864 B + 36864 B) = 147456 B = 144 KB`; S2 also introduces a 256B bank-8 start offset for each of the two `nzBuf` blocks (see "Supplement" section above), total UB usage is `2 × (36864 B + 37120 B) + 2 × 256 B = 148480 B ≈ 145 KB`, satisfying the Ascend 950PR&950DT products 256 KB UB constraint.
 
-**Performance Data** (Ascend 950PR/Ascend 950DT, current `144×128` configuration, 64 cores):
+**Performance Data** (Ascend 950PR&950DT products, current `144×128` configuration, 64 cores):
 
 | Task Duration(μs) | aiv_time(μs) | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_mte2_time(μs) | aiv_mte2_ratio | aiv_mte3_time(μs) | aiv_mte3_ratio |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -484,7 +484,7 @@ $$
 
 In Case 1, because V itself is stretched to 8 beats for writing, interference between MTE2/V is masked; in Case 2, after V is reduced to 1 beat, under the ping-pong mechanism, MTE2 writing ndPong and V reading ndPing landing on the same bank causes read-write conflicts to become visible, so the measured 7.133μs in Case 2 is approximately 21% higher than the theoretical 5.904μs. End-to-end Task Duration decreases from `151.42μs` to `144.00μs`, a reduction of approximately 4.9%; the overall result still includes MTE2/MTE3 transfer and synchronization overhead, with bank conflict optimization primarily reflected in the Vec sub-pipeline.
 
-### Ascend 950PR/Ascend 950DT (dav-3510)
+### Ascend 950PR&950DT products (dav-3510)
 
 The current implementation selects `144×128`. S2 shows a significant decrease in Vec time, but the current end-to-end performance is primarily limited by MTE2/MTE3, so Task Duration only decreases from `141.691μs` to `140.403μs`.
 
@@ -493,7 +493,7 @@ The current implementation selects `144×128`. S2 shows a significant decrease i
 | 144×128 | S1 | 144 | 141.691 | 64  | 140.89 | 14125772 | **45.25** | 0.321 | 2.638 | 0.019 | 134.915 | 0.958 | 104.571 | 0.742 | 0.006 |
 | 144×128 | S2 | 145 | **140.403** | 64  | 139.68 | 14094639 | **9.14** | 0.065 | 2.765 | 0.020 | 135.115 | 0.967 | 116.921 | 0.837 | 0.006 |
 
-On Ascend 950PR/Ascend 950DT, the Reg path processes each group of `128` half data elements, requiring one `LoadAlign` and one `StoreAlign`.
+On Ascend 950PR&950DT products, the Reg path processes each group of `128` half data elements, requiring one `LoadAlign` and one `StoreAlign`.
 
 A single `LoadAlign` or `StoreAlign` processes `128` half elements per beat. `StoreAlign` and `LoadAlign` across loops can land on different physical registers without blocking each other, ideally processing `256 bytes/cycle`. With clock frequency at `1.65GHz` and core count of `64`, the base duration for processing all data in a single pass is:
 
@@ -549,7 +549,7 @@ The measured `aiv_vec_time` is `9.14μs`. The gap from the 4.965μs theoretical 
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2` | Bank conflict scenario number |
 
   The following execution result indicates that the accuracy comparison succeeded:

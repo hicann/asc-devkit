@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -100,7 +100,7 @@
   ```
   例如搬运A矩阵时，先调用`asc_set_gm2l1_nz_para(1, 1, baseM, 0)`，再调用`asc_copy_gm2l1_nd2nz(a1Local, aGM, K * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, baseM, baseK, 0, false)`，将baseM×baseK的ND数据转为Nz格式。
 
-  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)和[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — 描述Ascend 950PR/Ascend 950DT产品中A矩阵从L1 Buffer到L0A Buffer和B矩阵从L1 Buffer到L0B Buffer的数据搬运参数：
+  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)和[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — 描述Ascend 950PR&950DT系列产品中A矩阵从L1 Buffer到L0A Buffer和B矩阵从L1 Buffer到L0B Buffer的数据搬运参数：
   ```cpp
   asc_copy_l12l0a/asc_copy_l12l0b_transpose(
       dst,               // 目的L0A Buffer/L0B Buffer地址
@@ -112,7 +112,7 @@
       src_stride,        // 源矩阵K方向相邻分形的起始地址间隔，单位：512B
       dst_stride);       // 目的矩阵K方向相邻分形的起始地址间隔，单位：512B
   ```
-  Ascend 950PR/Ascend 950DT产品中，L0A Buffer上的排布格式为Nz。搬运A矩阵时使用`asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)`，一次完成A矩阵Nz到Nz搬运；搬运B矩阵时使用`asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)`，一次完成B矩阵Nz到Zn搬运。
+  Ascend 950PR&950DT系列产品中，L0A Buffer上的排布格式为Nz。搬运A矩阵时使用`asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)`，一次完成A矩阵Nz到Nz搬运；搬运B矩阵时使用`asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)`，一次完成B矩阵Nz到Zn搬运。
 
   **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)** — 描述矩阵乘参数：
   ```cpp
@@ -190,7 +190,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构：dav-3510对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU架构：dav-3510对应Ascend 950PR&950DT系列产品 |
 
 - 执行结果  
   执行结果如下，说明精度对比成功。

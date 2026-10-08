@@ -9,7 +9,7 @@ This example uses sincos computation to demonstrate thread configuration optimiz
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -257,7 +257,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option                        | Values        | Description                                                |
   |---------------------------|------------|---------------------------------------------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR&950DT products) |
 
   The following output indicates that the accuracy verification is successful.
 

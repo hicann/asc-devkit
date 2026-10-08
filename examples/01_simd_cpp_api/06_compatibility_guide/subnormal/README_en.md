@@ -7,15 +7,15 @@ This example uses the Ln interface to demonstrate the Subnormal computation mode
 SubNormal floating-point numbers are those with all exponent bits set to 0 and a non-zero mantissa, used to represent values smaller than the minimum normal number. The 3510 architecture version does not support Subnormal by default; Subnormal floating-point numbers are treated as 0 in computation (FTZ, Flush To Zero).
 
 - Atlas A2/A3 Training/Inference Series Products: The hardware supports Subnormal by default. No extra configuration is required when calling the `Ln` interface.
-- Ascend 950PR/950DT: Subnormal is not supported by default. The `algo` parameter of `LnConfig` must be set to `LnAlgo::PRECISION_1ULP_FTZ_FALSE` so that Subnormal computation results are preserved through software simulation.
+- Ascend 950PR&950DT products: Subnormal is not supported by default. The `algo` parameter of `LnConfig` must be set to `LnAlgo::PRECISION_1ULP_FTZ_FALSE` so that Subnormal computation results are preserved through software simulation.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -47,7 +47,7 @@ The data flow is: GM -> UB (Unified Buffer) -> GM.
 1. Copy the input data from GM to UB.
 2. Call the `Ln` interface to compute the natural logarithm, using different configurations depending on the architecture to preserve Subnormal computation results:
    - Atlas A2/A3 Training/Inference Series Products: Call the `Ln` interface directly; the hardware supports Subnormal by default.
-   - Ascend 950PR/950DT: Configure `algo` of `LnConfig` to `LnAlgo::PRECISION_1ULP_FTZ_FALSE` and then call the `Ln` interface; Subnormal computation results are preserved through software simulation.
+   - Ascend 950PR&950DT products: Configure `algo` of `LnConfig` to `LnAlgo::PRECISION_1ULP_FTZ_FALSE` and then call the `Ln` interface; Subnormal computation results are preserved through software simulation.
 3. Copy the computation result from UB back to GM.
 
 ## Build and Run
@@ -83,10 +83,10 @@ Run the following steps in the root directory of this example to build and run t
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..;make -j; # NPU simulation mode
   ```
 
-  To build for Ascend 950PR/950DT:
+  To build for Ascend 950PR&950DT products:
 
   ```bash
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # Build project (Ascend 950PR/950DT)
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # Build project (Ascend 950PR&950DT products)
   ```
 
   > **Notice:** Clear the cmake cache before switching build modes. Run `rm CMakeCache.txt` in the build directory and then re-run cmake.
@@ -96,7 +96,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
 

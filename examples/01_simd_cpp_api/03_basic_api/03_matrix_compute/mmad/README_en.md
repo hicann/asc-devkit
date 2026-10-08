@@ -8,9 +8,9 @@ This example introduces matrix multiplication with ND format input, covering B4 
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -49,7 +49,7 @@ A complete matrix multiplication involves the following data transfer process: G
   </tr>
   <tr>
     <td>L0A</td>
-    <td>For Ascend 950PR/Ascend 950DT products, A matrix is in Nz layout;<br>For Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products, A matrix is in Zz layout.</td>
+    <td>For Ascend 950PR&950DT products, A matrix is in Nz layout;<br>For Atlas A3 products and Atlas A2 products, A matrix is in Zz layout.</td>
   </tr>
   <tr>
     <td>L0B</td>
@@ -65,7 +65,7 @@ A complete matrix multiplication involves the following data transfer process: G
   </tr>
 </table>
 
-The general matrix multiplication formula: C = A x B + Bias, where A, B, Bias, C matrices must satisfy shapes [M,K], [K,N], [N] and [M,N] respectively. The correspondence between Bias data type and C matrix data type is shown in Table 2, where combinations using bfloat16 for Bias on GM/L1 are only supported on Ascend 950PR/Ascend 950DT.
+The general matrix multiplication formula: C = A x B + Bias, where A, B, Bias, C matrices must satisfy shapes [M,K], [K,N], [N] and [M,N] respectively. The correspondence between Bias data type and C matrix data type is shown in Table 2, where combinations using bfloat16 for Bias on GM/L1 are only supported on Ascend 950PR&950DT products.
 <a name="table2"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
@@ -184,7 +184,7 @@ Figure 1: int8_t type, B not transposed, N axis actual alignment requirement dif
 Figure 2: float type, A transposed, K axis actual alignment differs from Mmad instruction default requirement
 </p>
 
-**Scenario 4: int4b_t input, int32_t output, C matrix initial value is 0, only supported on Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products**
+**Scenario 4: int4b_t input, int32_t output, C matrix initial value is 0, only supported on Atlas A3 products and Atlas A2 products**
 
 - Input:
   - A not transposed [30, 70] int4b_t type, ND format
@@ -199,7 +199,7 @@ The following describes how to configure the members of the MmadParams structure
 
 Note that when executing the Mmad instruction, the matrix computation unit continuously reads multiple fractals from L0A/L0B to participate in matrix multiplication computation. The number of fractals read is determined by the values of MmadParams structure members m, n, k, and the alignment requirements of the Mmad instruction for A and B matrix axes on L0A/L0B.
 
-Taking b16 input type as an example, the Mmad instruction reads data continuously according to A matrix fractal [16, 16] and B matrix fractal [16, 16]. At this point, the total number of fractals read by the matrix computation unit from L0A/L0B are 2 x 5 = 10 and 5 x 3 = 15 respectively, and the total number of fractals written to L0C is 2 x 3 = 6. As shown in the figures below, Figure 3 corresponds to Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Figure 4 corresponds to Ascend 950PR/Ascend 950DT; the two differ in data layout on L0A, the former being Zz and the latter being Nz.
+Taking b16 input type as an example, the Mmad instruction reads data continuously according to A matrix fractal [16, 16] and B matrix fractal [16, 16]. At this point, the total number of fractals read by the matrix computation unit from L0A/L0B are 2 x 5 = 10 and 5 x 3 = 15 respectively, and the total number of fractals written to L0C is 2 x 3 = 6. As shown in the figures below, Figure 3 corresponds to Atlas A3 products and Atlas A2 products, Figure 4 corresponds to Ascend 950PR&950DT products; the two differ in data layout on L0A, the former being Zz and the latter being Nz.
 
 <p align="center">
   <img src="figures/mmad_f16_A3.png" width="900">
@@ -256,7 +256,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim`, `cpu` | Run mode: NPU execution, NPU simulation, CPU debug |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products/Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products/Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` |  `1` (default), `2`, `3`, `4` | Scenario number, corresponding to int8_t / bfloat16 / float / int4b_t input data types respectively; `only supported when CMAKE_ASC_ARCHITECTURES=dav-2201 to set to 4` |
 
 - Execution result

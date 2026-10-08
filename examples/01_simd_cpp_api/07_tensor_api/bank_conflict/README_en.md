@@ -10,7 +10,7 @@ Data movement between GM and UB uses the Tensor API `copy` interface. Register a
 
 | Product | CANN Software Version |
 |---------|------------------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -128,15 +128,15 @@ Data movement between GM and UB uses the Tensor API `copy` interface. Register a
 
   - UB bank structure and conflicts in this example:
 
-    The Unified Buffer of Ascend 950PR/Ascend 950DT is divided into 16 physical banks and organized into eight bank groups. Banks `i` and `i+8` belong to the same bank group, so `bank group = bank % 8`. UB addresses use low-order interleaving: for every 32-byte DataBlock traversed by a consecutive address, the physical bank number increases by one modulo 16.
+    The Unified Buffer of Ascend 950PR&950DT products is divided into 16 physical banks and organized into eight bank groups. Banks `i` and `i+8` belong to the same bank group, so `bank group = bank % 8`. UB addresses use low-order interleaving: for every 32-byte DataBlock traversed by a consecutive address, the physical bank number increases by one modulo 16.
 
     This example focuses on write-write conflicts when one `asc_storealign` writes eight DataBlocks. The distance between adjacent destinations is controlled by `dstNzC0Stride`; when multiple destinations fall into the same bank group, the writes must be serialized.
 
-    **Figure: UB bank structure of Ascend 950PR/Ascend 950DT**
+    **Figure: UB bank structure of Ascend 950PR&950DT products**
 
     <img src="figures/ubBankStruct3510.png" width="80%">
 
-    **Figure: UB bank memory layout of Ascend 950PR/Ascend 950DT**
+    **Figure: UB bank memory layout of Ascend 950PR&950DT products**
 
     <img src="figures/UB-3510.png" width="80%">
 
@@ -183,7 +183,7 @@ Data movement between GM and UB uses the Tensor API `copy` interface. Register a
 
 ## Performance Data
 
-The following data was measured on Ascend 950PR/Ascend 950DT with `144 x 128` tiles and 64 launched blocks.
+The following data was measured on Ascend 950PR&950DT products with `144 x 128` tiles and 64 launched blocks.
 
 | Scenario | `dstNzC0Stride` | Task Duration (us) | `aiv_time` (us) | `aiv_total_cycles` | `aiv_vec_time` (us) | `aiv_vec_ratio` | `aiv_scalar_time` (us) | `aiv_scalar_ratio` | `aiv_mte2_time` (us) | `aiv_mte2_ratio` | `aiv_mte3_time` (us) | `aiv_mte3_ratio` | `icache_miss_rate` |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -234,10 +234,10 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Available Values | Description |
   |--------|------------------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture; dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture; dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1, 2 | 1: compact placement; 2: increased stride and shifted NZ buffer base |
 
-  > **Note:** This example only supports the dav-3510 architecture (Ascend 950PR/Ascend 950DT).
+  > **Note:** This example only supports the dav-3510 architecture (Ascend 950PR&950DT products).
 
 - Execution result
 

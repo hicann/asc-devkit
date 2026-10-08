@@ -8,5 +8,5 @@ This sample demonstrates the implementation methods for Aclnn and Aclop operator
 
 | Directory Name | Description | Supported Products |
 | -------------- | ----------- | --- |
-| [aclnn_invocation](./aclnn_invocation) |  This sample demonstrates the implementation method for Aclnn operator invocation | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series Products/Atlas A3 Inference Series Products<br>Atlas A2 Training Series Products/Atlas A2 Inference Series Products<br>Atlas 200I/500 A2 Inference Products<br>Atlas Inference Series Products |
-| [aclop_invocation](./aclop_invocation) |  This sample demonstrates the implementation method for Aclop operator invocation | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series Products/Atlas A3 Inference Series Products<br>Atlas A2 Training Series Products/Atlas A2 Inference Series Products<br>Atlas 200I/500 A2 Inference Products<br>Atlas Inference Series Products |
+| [aclnn_invocation](./aclnn_invocation) |  This sample demonstrates the implementation method for Aclnn operator invocation | Ascend 950PR&950DT products<br>Atlas A3 products<br>Atlas A2 products<br>Atlas 200I/500 A2 Inference Products<br>Atlas Inference Series Products |
+| [aclop_invocation](./aclop_invocation) |  This sample demonstrates the implementation method for Aclop operator invocation | Ascend 950PR&950DT products<br>Atlas A3 products<br>Atlas A2 products<br>Atlas 200I/500 A2 Inference Products<br>Atlas Inference Series Products |

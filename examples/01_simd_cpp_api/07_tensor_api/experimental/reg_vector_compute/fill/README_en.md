@@ -8,7 +8,7 @@ This example implements the `fill` operation in scalar fill mode based on the Te
 
 | Product | CANN Version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -74,7 +74,7 @@ Perform the following steps in the example root directory to build and run the e
 | Option | Values | Description |
 | --- | --- | --- |
 | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: `dav-3510` corresponds to Ascend 950PR/Ascend 950DT |
+| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: `dav-3510` corresponds to Ascend 950PR&950DT products |
 | `CANN_ASC_USE_EXPERIMENTAL` | `ON` (required for this example), `OFF` (default) | Enables experimental ASC interfaces |
 
 - Execution result

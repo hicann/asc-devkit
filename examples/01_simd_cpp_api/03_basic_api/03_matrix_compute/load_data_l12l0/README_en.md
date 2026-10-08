@@ -10,8 +10,8 @@ The example covers A / B matrix transposed and non-transposed input combinations
 
 | Product | CANN Version |
 |---------|-------------|
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -764,7 +764,7 @@ loadDataParams.fMatrixCtrl = false;
 
 ##### 6.1.2. Transpose of A matrix L1 -> L0A
 
-The scenario undergoes small fractal transposition and large fractal layout format changes at the same time. Atlas A3 training series products/Atlas A3 inference series products and Atlas A2 training series products/Atlas A2 inference series products do not support the B4 data type; the available interfaces for B8 / B16 / B32 input data types are different. The following uses int8_t, half, and float as examples respectively.
+The scenario undergoes small fractal transposition and large fractal layout format changes at the same time. Atlas A3 products and Atlas A2 products do not support the B4 data type; the available interfaces for B8 / B16 / B32 input data types are different. The following uses int8_t, half, and float as examples respectively.
 
 - **int8_t**: Use `LoadDataWithTranspose`.
 - **half**: `Load2D`, `LoadDataWithTranspose` or `Load3Dv2` can be used.

@@ -8,4 +8,4 @@
 
 | 目录名称 | 功能描述 | 支持的产品 |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
-| [simd_simt_ub_usage_limit](./simd_simt_ub_usage_limit) | 展示SIMD与SIMT混合编程场景下UB静态内存、动态内存、预留空间、Data Cache布局，以及UB越界问题定位方法。 | Ascend 950PR/Ascend 950DT |
+| [simd_simt_ub_usage_limit](./simd_simt_ub_usage_limit) | 展示SIMD与SIMT混合编程场景下UB静态内存、动态内存、预留空间、Data Cache布局，以及UB越界问题定位方法。 | Ascend 950PR&950DT系列产品 |

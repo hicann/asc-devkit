@@ -10,9 +10,9 @@ For more log function details, refer to: [Ascend Log Function Reference](https:/
 
 | Product | CANN Software Version |
 |---------|-----------------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.0.0 |
-| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -122,7 +122,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debugging, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture:<br>dav-2201 corresponds to Atlas A2 training series products/Atlas A2 inference series products and Atlas A3 training series products/Atlas A3 inference series products<br>dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture:<br>dav-2201 corresponds to Atlas A2 products and Atlas A3 products<br>dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution Result (NPU mode, using non-screen-output mode as an example; for file storage details, refer to [Ascend Log Function Reference](https://hiascend.com/document/redirect/CannCommunitylogref))
   After execution, the following information is printed:

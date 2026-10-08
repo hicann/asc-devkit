@@ -11,9 +11,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -70,7 +70,7 @@
     ```
 - 参数：src1Scalar=src1Local.GetValue(0), cmpMode=AscendC::CMPMODE::LT，srcDataSize=256
 
-**场景4：Compares（灵活标量位置）----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景4：Compares（灵活标量位置）----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 说明：逐元素比较`src0Local`（tensor）中的元素和`src1Scalar`（标量）的大小，其中标量可以支持在前和在后两种场景
 - 输入：src0Local=[1, 256], src1Local=[1, 16]  其中`src1Scalar`通过src1Local[idx]方法从中获取一个元素作为标量进行比较
 - 输入数据类型：float
@@ -120,7 +120,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2`、`3`、`4` | 场景编号<br>1：Compare<br>2：Compare（结果存入寄存器）<br>3：Compares<br>4：Compares（灵活标量位置） |
 
 - 执行结果  

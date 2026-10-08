@@ -8,7 +8,7 @@ This sample implements `C = A * B` with the Matmul high-level API. It provides t
 
 | Product | CANN Version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 

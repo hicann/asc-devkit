@@ -8,7 +8,7 @@ shape为`[1024]` 的一维 tensor，场景5将 `[32, 24]` 输入填充为 `[32, 
 
 ## 支持的产品
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT系列产品
 
 ## 样例场景
 

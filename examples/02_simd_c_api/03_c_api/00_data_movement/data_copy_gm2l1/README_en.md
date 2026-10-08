@@ -4,13 +4,13 @@
 
 This example shows how to use the Ascend C C API to move input data from GM (Global Memory) to L1 Buffer. It supports Nz, ND, and DN input formats and vector-quantization parameter movement. After the input is moved, the example moves data from L1 Buffer to L0A Buffer and L0B Buffer, performs matrix multiplication, and uses Fixpipe to move the L0C Buffer result to GM (Global Memory).
 
-This example applies to Ascend 950PR/Ascend 950DT (`dav-3510`) and can run in NPU execution or NPU simulation mode. CPU debug mode is not provided.
+This example applies to Ascend 950PR&950DT products (`dav-3510`) and can run in NPU execution or NPU simulation mode. CPU debug mode is not provided.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -64,7 +64,7 @@ All device-side movement and compute use asynchronous Ascend C C API calls. `asc
   <img src="figures/data_copy_gm2l1_nd2nz.png" width="800">
 </p>
 
-**Scenario 3: DN input, half input type (Ascend 950PR/Ascend 950DT only)**
+**Scenario 3: DN input, half input type (Ascend 950PR&950DT products only)**
 
 - Input: A [128, 128] in `half` DN format; B [128, 256] in `half` DN format
 - Output: C [128, 256] in `float` ND format
@@ -125,7 +125,7 @@ Run the following steps in the example root directory to build and execute the e
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-4 | Scenario number |
 
 - Expected result

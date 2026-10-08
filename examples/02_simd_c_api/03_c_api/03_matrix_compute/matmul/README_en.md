@@ -8,7 +8,7 @@ This sample takes the float data type as an example to demonstrate how to implem
 
 | Product | CANN Version |
 |---------|--------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -82,7 +82,7 @@ Run the following steps in the root directory of this sample to build and run th
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: on NPU or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture, corresponding to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture, corresponding to Ascend 950PR&950DT products |
 
 - Expected result
 

@@ -8,7 +8,7 @@ This sample implements multi-core matrix multiplication computation based on the
 
 | Product | CANN Software Version |
 |---------|-----------------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -100,7 +100,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   For example, when transferring matrix A, first call `asc_set_gm2l1_nz_para(1, 1, baseM, 0)`, and then call `asc_copy_gm2l1_nd2nz(a1Local, aGM, K * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, baseM, baseK, 0, false)` to convert baseM×baseK ND data to Nz format.
 
-  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) and [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — Describe the parameters for transferring matrix A from L1 Buffer to L0A Buffer and matrix B from L1 Buffer to L0B Buffer on Ascend 950PR/Ascend 950DT products:
+  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) and [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — Describe the parameters for transferring matrix A from L1 Buffer to L0A Buffer and matrix B from L1 Buffer to L0B Buffer on Ascend 950PR&950DT products:
   ```cpp
   asc_copy_l12l0a/asc_copy_l12l0b_transpose(
       dst,               // Destination L0A Buffer/L0B Buffer address
@@ -112,7 +112,7 @@ This sample implements multi-core matrix multiplication computation based on the
       src_stride,        // Source start address interval between adjacent K-direction fractals, unit: 512B
       dst_stride);       // Destination start address interval between adjacent K-direction fractals, unit: 512B
   ```
-  On Ascend 950PR/Ascend 950DT products, the layout format in L0A Buffer is Nz. When transferring matrix A, use `asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)` to complete the A matrix Nz-to-Nz transfer in one operation. When transferring matrix B, use `asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)` to complete the B matrix Nz-to-Zn transfer in one operation.
+  On Ascend 950PR&950DT products, the layout format in L0A Buffer is Nz. When transferring matrix A, use `asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)` to complete the A matrix Nz-to-Nz transfer in one operation. When transferring matrix B, use `asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)` to complete the B matrix Nz-to-Zn transfer in one operation.
 
   **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)** — Describes matrix multiplication parameters:
   ```cpp
@@ -190,7 +190,7 @@ Execute the following steps in the root directory of this sample to compile and 
   | Option | Available Values | Description |
   |--------|------------------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR&950DT products |
 
 - Execution Result  
   The execution result is as follows, indicating successful precision comparison.

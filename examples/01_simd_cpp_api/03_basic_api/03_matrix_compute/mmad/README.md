@@ -8,9 +8,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -49,7 +49,7 @@
   </tr>
   <tr>
     <td>L0A</td>
-    <td>Ascend 950PR/Ascend 950DT产品，A矩阵为Nz排列；<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品和Atlas A2 训练系列产品/Atlas A2 推理系列产品，A矩阵为Zz排列。</td>
+    <td>Ascend 950PR&950DT系列产品，A矩阵为Nz排列；<br>Atlas A3系列产品和Atlas A2系列产品，A矩阵为Zz排列。</td>
   </tr>
   <tr>
     <td>L0B</td>
@@ -65,7 +65,7 @@
   </tr>
 </table>
 
-通常的矩阵乘法计算公式：C = A × B + Bias，其中A、B、Bias、C矩阵的需要满足的shape分别为[M,K]、[K,N]、[N]和[M,N]。Bias的数据类型与C矩阵数据类型的对应关系，如表2所示，其中Bias在GM/L1上使用 bfloat16 的组合仅支持Ascend 950PR/Ascend 950DT。
+通常的矩阵乘法计算公式：C = A × B + Bias，其中A、B、Bias、C矩阵的需要满足的shape分别为[M,K]、[K,N]、[N]和[M,N]。Bias的数据类型与C矩阵数据类型的对应关系，如表2所示，其中Bias在GM/L1上使用 bfloat16 的组合仅支持Ascend 950PR&950DT系列产品。
 <a name="表2"></a>
 <table border="2" align="center">
 <caption style="font-weight: normal;">
@@ -184,7 +184,7 @@
 图2：float类型，A转置，K轴实际对齐与Mmad指令默认要求不一致
 </p>
 
-**场景4 int4b_t输入，int32_t输出，C矩阵初始值为0，仅支持Atlas A3 训练系列产品/Atlas A3 推理系列产品、Atlas A2 训练系列产品/Atlas A2 推理系列产品**
+**场景4 int4b_t输入，int32_t输出，C矩阵初始值为0，仅支持Atlas A3系列产品、Atlas A2系列产品**
 
 - 输入：
   - A 不转置 [30, 70] int4b_t类型，ND格式
@@ -200,7 +200,7 @@ Mmad指令的MmadParams结构体的成员，各个成员变量的具体含义这
 
 需要注意的是，执行Mmad指令时，矩阵计算单元会从L0A/L0B连续读入多个分形参与矩阵乘计算。读入分形的数量由MmadParams结构体成员m、n、k的取值，以及Mmad指令对L0A/L0B上A矩阵、B矩阵各轴的对齐要求共同决定。
 
-以b16输入类型为例，Mmad指令会按照A矩阵分形[16, 16]、B矩阵分形[16, 16]连续读入数据。此时，矩阵计算单元从L0A/L0B读入的分形总数分别为2 x 5 = 10和5 x 3 = 15，写入L0C的分形总数为2 x 3 = 6。如下图所示，图3对应Atlas A3训练系列产品/Atlas A3推理系列产品和Atlas A2训练系列产品/Atlas A2推理系列产品，图4对应Ascend 950PR/Ascend 950DT；两者在L0A上的数据排布不同，前者为Zz，后者为Nz。
+以b16输入类型为例，Mmad指令会按照A矩阵分形[16, 16]、B矩阵分形[16, 16]连续读入数据。此时，矩阵计算单元从L0A/L0B读入的分形总数分别为2 x 5 = 10和5 x 3 = 15，写入L0C的分形总数为2 x 3 = 6。如下图所示，图3对应Atlas A3系列产品和Atlas A2系列产品，图4对应Ascend 950PR&950DT系列产品；两者在L0A上的数据排布不同，前者为Zz，后者为Nz。
 
 <p align="center">
   <img src="figures/mmad_f16_A3.png" width="900">
@@ -257,7 +257,7 @@ Mmad计算中包含了补齐的无效数据，需要配合Fixpipe指令在L0C搬
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim`、`cpu` | 运行模式：NPU运行、NPU仿真、CPU调试 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品/Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品/Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` |  `1`（默认）、`2`、`3`、`4` | 场景编号，分别对应int8_t / bfloat16 / float / int4b_t输入数据类型；`仅在CMAKE_ASC_ARCHITECTURES=dav-2201时支持设为4` |
 
 - 执行结果

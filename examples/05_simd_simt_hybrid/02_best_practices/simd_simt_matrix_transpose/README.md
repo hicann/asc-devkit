@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -199,7 +199,7 @@ Case 2将Thread Block数固定为硬件vector core数。相比Case 1按tile分�
 - `out_tile`仍采用32×32连续布局，SIMT VF按输出tile行方向连续写入，MTE3再连续搬出到GM。
 - SIMT VF仍只处理有效的32×32数据。
 
-以Ascend 950PR/Ascend 950DT为例，UB划分为16个bank，并组织为8个bank group，每个bank又划分为4个subbank。SIMT VF内若同一个Warp内多个线程在同一条UB访问指令中访问同一个bank group的相同编号subbank，硬件需要排队处理，从而形成subbank冲突并增加访问延迟。
+以Ascend 950PR&950DT系列产品为例，UB划分为16个bank，并组织为8个bank group，每个bank又划分为4个subbank。SIMT VF内若同一个Warp内多个线程在同一条UB访问指令中访问同一个bank group的相同编号subbank，硬件需要排队处理，从而形成subbank冲突并增加访问延迟。
 
 **图1　UB bank结构示意图**
 
@@ -407,7 +407,7 @@ Case 0距离理论下限较远，主要原因是转置写回导致同一Warp内�
   | 选项                        | 可选值       | 说明                                                       |
   | --------------------------- | ------------ | ---------------------------------------------------------- |
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
   | `SCENARIO_NUM`            | `0`-`4`  | 样例类型，默认为4                                          |
 
   执行结果如下，说明精度对比成功。

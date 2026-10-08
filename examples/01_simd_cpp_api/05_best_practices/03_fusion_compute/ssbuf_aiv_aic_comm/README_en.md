@@ -8,7 +8,7 @@ This sample shows how to use SSBuffer with the Ascend C basic APIs to exchange m
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 This sample uses the `dav-3510` architecture and supports only NPU and NPU simulation modes.
 
@@ -154,7 +154,7 @@ Run the following steps in the root directory of this sample to build and run it
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture, corresponding to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture, corresponding to Ascend 950PR&950DT products |
 
 ## Execution Result
 

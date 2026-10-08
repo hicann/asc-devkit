@@ -9,9 +9,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -36,7 +36,7 @@
 
 ## 样例实现与性能分析
 
-为便于表格展示，下文将 Atlas A2 训练系列产品/Atlas A2 推理系列产品、Atlas A3 训练系列产品/Atlas A3 推理系列产品简称为 Atlas A2/A3 系列，将 Ascend 950PR/Ascend 950DT 简称为 Ascend 950 系列。
+为便于表格展示，下文将 Atlas A2系列产品、Atlas A3系列产品简称为 Atlas A2/A3 系列，将 Ascend 950PR&950DT系列产品 简称为 Ascend 950 系列。
 
 本章围绕数据搬运优化中最常见的几个问题展开：先说明性能指标含义，再分别比较分块粒度、非对齐数据、L2Cache 复用和多核同地址访问冲突。每个优化点都包含实现方式、对比方式、性能数据和结论，便于将代码行为和性能变化对应起来。
 

@@ -12,7 +12,7 @@ This example uses MxFP4 matrix multiplication to introduce MxMatmul performance 
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 

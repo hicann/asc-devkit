@@ -8,7 +8,7 @@ This example demonstrates how to use the SIMD C API `asc_copy_l0c2gm` to transfe
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -82,7 +82,7 @@ This example selects different output scenarios through the compilation paramete
   <img src="figures/asc_copy_l0c2gm_NZ2ND.png" width="800">
 </p>
 
-**Scenario 3: Output format DN, output data type float (only supported on Ascend 950PR/Ascend 950DT)**
+**Scenario 3: Output format DN, output data type float (only supported on Ascend 950PR&950DT products)**
 - Input: A [128, 128] half type, ND format; B [128, 256] half type, ND format
 - Output: C [256, 128] float type, DN format
 - Implementation: Call `asc_set_l0c_copy_channel_para(1)` and `asc_set_l0c_copy_nz_para(1, 0, 0)`, then call `asc_copy_l0c2gm` with `enable_nz2dn = true`
@@ -151,7 +151,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-7 | Scenario number |
 
   The following execution result indicates that the accuracy comparison is successful.

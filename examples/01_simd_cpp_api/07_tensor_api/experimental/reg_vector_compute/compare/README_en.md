@@ -13,7 +13,7 @@ The sample supports the following two comparison scenarios, selected by the CMak
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

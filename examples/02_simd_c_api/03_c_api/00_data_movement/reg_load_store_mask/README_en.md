@@ -8,7 +8,7 @@ This example demonstrates loading, storing, and using mask registers with the As
 
 | Product | CANN Version |
 | --- | --- |
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -100,7 +100,7 @@ Before changing the scenario or run mode, delete `CMakeCache.txt` in the `build`
 | --- | --- | --- |
 | `SCENARIO_NUM` | `1`, `2` | Selects the mask-register load, store, or selection scenario. |
 | `CMAKE_ASC_RUN_MODE` | `npu`, `sim` | Selects NPU execution or NPU simulation mode. |
-| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | Specifies the NPU architecture for Ascend 950PR/Ascend 950DT. |
+| `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | Specifies the NPU architecture for Ascend 950PR&950DT products. |
 
 ## Expected Result
 

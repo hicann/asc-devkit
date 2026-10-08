@@ -5,15 +5,15 @@
 This example demonstrates the end-to-end flow of L1 data transfer to GM, isolating different hardware implementations through compile-time macros.
 
 - Atlas A2/A3 Training/Inference Series Products use the DataCopy interface directly for the transfer.
-- The new Ascend 950PR/950DT architecture does not support direct transfer. Data is output to the L0C Buffer through Mmad matrix multiplication, and then transferred from the L0C Buffer to GM through Fixpipe.
+- The new Ascend 950PR&950DT products architecture does not support direct transfer. Data is output to the L0C Buffer through Mmad matrix multiplication, and then transferred from the L0C Buffer to GM through Fixpipe.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -45,11 +45,11 @@ This example has different implementation logic depending on the architecture:
   </table>
 - Example implementation: Call the DataCopy instruction to implement data transfer from GM to L1 and then to GM.
 
-### Ascend 950PR/950DT
+### Ascend 950PR&950DT products
 
 - Example specifications:
   <table>
-  <caption>Ascend 950PR/950DT Product Example Specification Table</caption>
+  <caption>Ascend 950PR&950DT products Product Example Specification Table</caption>
   <tr><td rowspan="1" align="center">Category</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td rowspan="3" align="center">Example Input</td></tr>
   <tr><td align="center">x</td><td align="center">[64, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
@@ -57,7 +57,7 @@ This example has different implementation logic depending on the architecture:
   <tr><td rowspan="1" align="center">Example Output</td><td align="center">z</td><td align="center">[64, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">data_copy_l1togm</td></tr>
   </table>
-- Example implementation: The new Ascend 950PR/950DT architecture does not support direct L1 to GM transfer. In the cube-only scenario, matrix multiplication can be used to achieve the transfer effect. An identity matrix is allocated in GM (original matrix × identity matrix = original matrix). The data is output to the L0C Buffer through Mmad matrix multiplication, and then transferred from the L0C Buffer to GM through Fixpipe. The data flow is: GM -> A1/B1 -> L0A/L0B -> L0C -> GM.
+- Example implementation: The new Ascend 950PR&950DT products architecture does not support direct L1 to GM transfer. In the cube-only scenario, matrix multiplication can be used to achieve the transfer effect. An identity matrix is allocated in GM (original matrix × identity matrix = original matrix). The data is output to the L0C Buffer through Mmad matrix multiplication, and then transferred from the L0C Buffer to GM through Fixpipe. The data flow is: GM -> A1/B1 -> L0A/L0B -> L0C -> GM.
 
 ## Build and Run
 
@@ -99,7 +99,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
 

@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -319,7 +319,7 @@ asc_copy_ub2gm_align(output_data + output_base_offset, output_ub, active_output_
   | 选项             | 可选值      | 说明              |
   | ---------------- | ----------- | ----------------- |
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT）。 |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品）。 |
   | `GRAD_DHW` | `1`、`2`、`4`、`8`、`16` | `grad/argmax`的D/H/W取值，三者相同，默认为`8`。每个`NC`平面回填的梯度数即`grad/argmax`的D×H×W，用于复现性能对比表格中的各档数据。 |
 
 - 运行参数说明

@@ -8,7 +8,7 @@ This example uses Add computation to demonstrate the compilation, execution, res
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -74,7 +74,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option | Description |
   |------|------|
   | `CMAKE_ASC_RUN_MODE` | Set to `sim` to enable NPU simulation mode |
-  | `CMAKE_ASC_ARCHITECTURES` | Specify the NPU architecture version. This example only supports `dav-3510` (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | Specify the NPU architecture version. This example only supports `dav-3510` (Ascend 950PR&950DT products) |
 
   > The `-g` compilation option has been added in CMakeLists.txt to generate debug information, enabling the simulator to collect instruction pipeline diagrams. To use the simulation tuning feature in your own project, ensure this option is also added during compilation.
 
@@ -94,7 +94,7 @@ msopprof simulator --soc-version=<soc_version> ./demo
 
 > Obtain the AI processor model `<soc_version>` through the following method:
 >
-> - Ascend 950PR/Ascend 950DT
+> - Ascend 950PR&950DT products
 >   - For the above product models, run the `npu-smi info -t board -i <id> -c <chip_id>` command on the server with the Ascend AI Processor installed to query and obtain the **Chip Name** and **NPU Name** information. The actual configuration value is Chip Name_NPU Name. For example, if **Chip Name** is Ascendxxx and **NPU Name** is 1234, the actual configuration value is Ascendxxx_1234.
 >
 > Where `id` is the device ID, obtained from the NPU ID shown by the `npu-smi info -l` command; `chip_id` is the chip ID, obtained from the Chip ID shown by the `npu-smi info -m` command.

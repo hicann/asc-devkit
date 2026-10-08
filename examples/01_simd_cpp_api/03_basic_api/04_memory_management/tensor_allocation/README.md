@@ -27,7 +27,7 @@
   </tr>
 </table>
 
-> **注意：** RegTensor仅适用于Ascend 950PR/Ascend 950DT产品。
+> **注意：** RegTensor仅适用于Ascend 950PR&950DT系列产品。
 
 本样例包含4个场景，场景1~3为LocalTensor的三种申请方式，场景4为RegTensor的申请与使用，具体描述如下：
 
@@ -55,7 +55,7 @@
   <tr>
     <td align="center">4</td>
     <td align="center">在LocalTensor的基础上使用RegTensor</td>
-    <td>通过Reg编程接口直接对芯片的vector寄存器进行操作，实现更大的灵活性和更好的性能<br>Reg编程中LocalTensor的部分，场景1~3都适用<br>仅适用于Ascend 950PR/Ascend 950DT产品</td>
+    <td>通过Reg编程接口直接对芯片的vector寄存器进行操作，实现更大的灵活性和更好的性能<br>Reg编程中LocalTensor的部分，场景1~3都适用<br>仅适用于Ascend 950PR&950DT系列产品</td>
   </tr>
 </table>
 
@@ -67,9 +67,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -159,7 +159,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`、`2`、`3`、`4` | 场景编号：1（使用TQue队列机制）、2（使用LocalMemAllocator分配器）、3（使用地址偏移手动管理）、4（基于Reg编程实现RegTensor的加法）|
 
   > **注意：** 当`SCENARIO_NUM`设置为`4`时，仅支持`CMAKE_ASC_ARCHITECTURES`设置为`dav-3510`。

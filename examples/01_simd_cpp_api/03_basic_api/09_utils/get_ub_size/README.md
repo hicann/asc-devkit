@@ -14,12 +14,12 @@
   <tr>
     <td align="center">1</td>
     <td align="center">GetUBSizeInBytes</td>
-    <td>返回编译时常量，表示用户最大可使用的UB（Unified Buffer）大小。例如Ascend 950PR/Ascend 950DT场景，系统预留8KB，UB总共256KB，返回248KB</td>
+    <td>返回编译时常量，表示用户最大可使用的UB（Unified Buffer）大小。例如Ascend 950PR&950DT系列产品场景，系统预留8KB，UB总共256KB，返回248KB</td>
   </tr>
   <tr>
     <td align="center">2</td>
     <td align="center">GetRuntimeUBSize</td>
-    <td>返回运行时变量，表示用户最大可使用的UB（Unified Buffer）大小。在SIMT和SIMD混合编程场景下，SIMT场景会在UB预留一部分空间用于Dcache。例如Ascend 950PR/Ascend 950DT场景，SIMT编程申请32KB空间用于Dcache，系统预留8KB，UB总共256KB，返回216KB。在非SIMT和SIMD混合编程场景下，返回固定值248KB</td>
+    <td>返回运行时变量，表示用户最大可使用的UB（Unified Buffer）大小。在SIMT和SIMD混合编程场景下，SIMT场景会在UB预留一部分空间用于Dcache。例如Ascend 950PR&950DT系列产品场景，SIMT编程申请32KB空间用于Dcache，系统预留8KB，UB总共256KB，返回216KB。在非SIMT和SIMD混合编程场景下，返回固定值248KB</td>
   </tr>
 </table>
 
@@ -27,7 +27,7 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -156,7 +156,7 @@
   | 选项　　　　　 | 可选值　　　　　　　　　　　| 说明　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 |
   | ----------------| -----------------------------| --------------------------------------------------------------------------------------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真　　　　　　　　　　　　　　　　　　　　　　　　 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU 架构：dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510`（默认） | NPU 架构：dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`、`2`　　　　　| 场景编号：1=GetUBSizeInBytes，2=GetRuntimeUBSize |
 
 - 执行结果

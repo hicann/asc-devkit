@@ -68,7 +68,7 @@ Run the following steps in the root directory of this example to build and run i
   python3 ../scripts/verify_result.py output/output.bin output/golden.bin   # Verify whether the output result is correct, confirming algorithm logic correctness
   ```
 
-  To use CPU debug or NPU simulation mode, add the `-DCMAKE_ASC_RUN_MODE=cpu` or `-DCMAKE_ASC_RUN_MODE=sim` parameter.
+  To use CPU debug or NPU simulation mode, add the `-DCMAKE_ASC_RUN_MODE=cpu` or `-DCMAKE_ASC_RUN_MODE=sim` parameters.
 
   Examples:
   ```bash

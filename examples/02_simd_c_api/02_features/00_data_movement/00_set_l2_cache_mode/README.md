@@ -16,7 +16,7 @@ MTE2将数据从Global Memory（GM）搬运到Unified Buffer（UB）时，可通
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -48,7 +48,7 @@ C-API的GM→UB搬运接口[asc_copy_gm2ub_align](../../../../../docs/zh/api/SIM
 
 ### 性能指标说明
 
-本章节性能数据在Ascend 950系列产品上采集，将Ascend 950PR/Ascend 950DT简称为Ascend 950系列。
+本章节性能数据在Ascend 950系列产品上采集，将Ascend 950PR&950DT系列产品简称为Ascend 950系列。
 
 采用不同的性能采集指令，分别获取不同的性能指标：
 

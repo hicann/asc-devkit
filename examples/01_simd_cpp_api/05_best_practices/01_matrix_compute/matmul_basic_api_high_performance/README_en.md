@@ -8,9 +8,9 @@ This example is based on the static Tensor programming paradigm, implementing hi
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -153,7 +153,7 @@ if ((kOffsetInChunkA + 1) == stepKa) {
 
 #### 3. Multi-Core Parallel Splitting
 
-Split the matrix evenly along the M/N directions for parallel computation across multiple cores. On Atlas A2/A3 (`dav-2201`), use a 4×6 splitting strategy (4 blocks in the M direction and 6 blocks in the N direction, 24 cores in total) to satisfy 512B address alignment and reduce same-address access conflicts. On Ascend 950PR/Ascend 950DT (`dav-3510`), use a 32-core split (see the performance data section below):
+Split the matrix evenly along the M/N directions for parallel computation across multiple cores. On Atlas A2/A3 (`dav-2201`), use a 4×6 splitting strategy (4 blocks in the M direction and 6 blocks in the N direction, 24 cores in total) to satisfy 512B address alignment and reduce same-address access conflicts. On Ascend 950PR&950DT products (`dav-3510`), use a 32-core split (see the performance data section below):
 
 ```cpp
 constexpr uint32_t mIter = AscendC::Std::ceil_div(M, singleCoreM);
@@ -461,7 +461,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`, `dav-3510` | NPU hardware architecture: dav-2201 corresponds to A2/A3, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`, `dav-3510` | NPU hardware architecture: dav-2201 corresponds to A2/A3, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1`, `2` | Scenario number: 1=L2Cache splitting disabled, 2=L2Cache splitting enabled |
 
 - Execution results

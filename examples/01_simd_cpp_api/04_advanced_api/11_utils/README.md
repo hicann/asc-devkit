@@ -5,4 +5,4 @@
 ## 样例列表
 | 目录名称 | 功能描述 | 支持的产品 |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
-| [type_traits](./type_traits) |  本样例介绍了数据类型特性的典型用法，类型特性接口包括is_void/remove_const/add_const等对类型判断、增加、删除、转换的功能给出了对应的端到端实现。 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
+| [type_traits](./type_traits) |  本样例介绍了数据类型特性的典型用法，类型特性接口包括is_void/remove_const/add_const等对类型判断、增加、删除、转换的功能给出了对应的端到端实现。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |

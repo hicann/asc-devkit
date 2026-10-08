@@ -8,7 +8,7 @@ A Matmul example with A and B matrices as hifloat8, fp8_e4m3fn, or fp8_e5m2 data
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -109,7 +109,7 @@ Run the following steps in the root directory of this example to build and run t
   | ----------------| -----------------------------| --------------------------------------------------------------------------------------|
   | `SCENARIO_NUM` | `0`, `1`, `2`, `3`, `4` | Scenario number, see example description for details |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU run, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution Result
 

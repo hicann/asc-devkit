@@ -10,7 +10,7 @@ This example demonstrates how to use the `assert()` and `ascendc_assert()` inter
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -91,7 +91,7 @@ Run the following steps in the root directory of this example to build and execu
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this example only supports dav-3510 (Ascend 950PR&950DT products) |
 
   After execution, the following print information is displayed, indicating that the function works correctly.
   ```

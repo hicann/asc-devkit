@@ -5,7 +5,7 @@
 
 ![UB Architecture](./figures/ub_arch.png)
 
-- In Ascend 950PR/Ascend 950DT, the UB space size is 256KB;
+- In Ascend 950PR&950DT products, the UB space size is 256KB;
 - There are 16 **banks**, forming 8 **bank groups**, each bank group contains 2 banks (`bank_id` = 0, 1);
 - Each bank consists of 512 rows (`BANK_DEPTH = 512`), each row is 32B long (`BANK_WIDTH = 32B`), i.e., each bank size is 16KB;
 - Each bank group supports up to two reads or one read and one write.
@@ -22,7 +22,7 @@ bank internal layout (one row 32B):
 
 ## UB Address Encoding Rules
 
-The Ascend 950PR/Ascend 950DT UB 18-bit address uses **low-bit interleaving** encoding rules:
+The Ascend 950PR&950DT products UB 18-bit address uses **low-bit interleaving** encoding rules:
 
 `UB_ADDR[17:0] = { DEPTH[8:0], BANK[0], BG[2:0], WIDTH[4:0] }`
 
@@ -107,7 +107,7 @@ This document focuses on verification and analysis of bank conflict scenarios fo
 
 ### Continuous Aligned Load/Store Bank Conflict Scenarios (Case 1-8)
 
-**Note: In Ascend 950PR/Ascend 950DT, the scenario where src0/src1/dst starting addresses are distributed in different banks of different bank groups does not exist, and the read-write conflict cannot be avoided in two-read-one-write scenarios**
+**Note: In Ascend 950PR&950DT products, the scenario where src0/src1/dst starting addresses are distributed in different banks of different bank groups does not exist, and the read-write conflict cannot be avoided in two-read-one-write scenarios**
 
 | Case | Formula | Scenario Description | Bank Conflict | src0 Address | src1 Address | dst Address | Single VF Data Volume (B) | Benchmark Performance (cycles) | LDU Conflict Ratio (%) | STU Conflict Ratio (%) | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -216,7 +216,7 @@ This document focuses on verification and analysis of bank conflict scenarios fo
 ### Analysis Conclusion
 
 - src0 and dst starting addresses are completely identical (0x0000), src1 is in bank1 (0x5100), all three belong to BG=0.
-- Compared to Case2, performance is basically the same, indicating that on the Ascend 950PR/Ascend 950DT architecture, read-write address overlap does not eliminate bank conflicts, which differs from some older architectures.
+- Compared to Case2, performance is basically the same, indicating that on the Ascend 950PR&950DT products architecture, read-write address overlap does not eliminate bank conflicts, which differs from some older architectures.
 
 
 ## Case 4: Two Reads One Write, src1/dst Same Bank, src0/src1 Same Bank Group
@@ -266,7 +266,7 @@ This document focuses on verification and analysis of bank conflict scenarios fo
 ### Analysis Conclusion
 
 - src1 and dst starting addresses are completely identical, src0 is in bank1, all three belong to BG=0.
-- Compared to Case4, performance is basically the same, indicating that on the Ascend 950PR/Ascend 950DT architecture, read-write address overlap does not eliminate bank conflicts, which differs from some older architectures.
+- Compared to Case4, performance is basically the same, indicating that on the Ascend 950PR&950DT products architecture, read-write address overlap does not eliminate bank conflicts, which differs from some older architectures.
 
 
 ## Case 6: Two Reads One Write, src0/src1/dst Same Bank
@@ -485,7 +485,7 @@ Same as Case 6.
 
 ## Summary
 
-1. On Ascend 950PR/Ascend 950DT, two-read-one-write inevitably has bank conflicts. In actual scenarios, since the Regbase architecture is adopted, UB read/write frequency is reduced, and bank conflicts are often not the bottleneck.
+1. On Ascend 950PR&950DT products, two-read-one-write inevitably has bank conflicts. In actual scenarios, since the Regbase architecture is adopted, UB read/write frequency is reduced, and bank conflicts are often not the bottleneck.
 7. When using scatter and gather APIs, continuous indices dispersed across subbanks can reduce conflicts.
 8. Loop unrolling can optimize bank conflicts, as shown in the following trace analysis.
     | case6 pipeline | case7 pipeline |

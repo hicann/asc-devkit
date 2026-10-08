@@ -5,15 +5,15 @@
 This example demonstrates how to use the Fill interface to initialize the L0A Buffer and L0B Buffer, isolating different hardware implementations through compile-time macros.
 
 - In Atlas A2/A3 Series Products, the Fill interface can be used directly to initialize the L0A/L0B Buffer.
-- In the Ascend 950PR/Ascend 950DT platform, since the hardware instructions related to L0A Buffer/L0B Buffer initialization have been removed, the Fill interface cannot be used directly to initialize the L0A/L0B Buffer. Instead, the L1 Buffer must be initialized first, and then the initialized data must be transferred into L0A/L0B to indirectly complete the L0A/L0B Buffer initialization.
+- In the Ascend 950PR&950DT products platform, since the hardware instructions related to L0A Buffer/L0B Buffer initialization have been removed, the Fill interface cannot be used directly to initialize the L0A/L0B Buffer. Instead, the L1 Buffer must be initialized first, and then the initialized data must be transferred into L0A/L0B to indirectly complete the L0A/L0B Buffer initialization.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -45,7 +45,7 @@ This example demonstrates how to use the Fill interface to initialize the L0A Bu
 
    1. First, initialize the L0A Buffer and L0B Buffer. Different hardware architectures use different methods:
       - Atlas A2/A3 Training/Inference Series Products: Call the `Fill` interface to directly initialize the L0A Buffer and L0B Buffer to a specified value (initialized to 1 in this example).
-      - Ascend 950PR/950DT: Use the `Fill` interface to initialize the L1 Buffer to a specified value (initialized to 1 in this example), then transfer the data to the L0A Buffer and L0B Buffer through the `LoadData` interface.
+      - Ascend 950PR&950DT products: Use the `Fill` interface to initialize the L1 Buffer to a specified value (initialized to 1 in this example), then transfer the data to the L0A Buffer and L0B Buffer through the `LoadData` interface.
    2. Call the `Mmad` interface to perform matrix multiplication.
    3. Transfer the result to Global Memory through the `Fixpipe` interface.
 
@@ -82,10 +82,10 @@ Run the following steps in the root directory of this example to build and run t
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..;make -j; # NPU simulation mode
   ```
 
-  To build for Ascend 950PR/950DT:
+  To build for Ascend 950PR&950DT products:
 
   ```bash
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # Build the project (Ascend 950PR/950DT)
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # Build the project (Ascend 950PR&950DT products)
   ```
 
   > **Notice:** Clear the cmake cache before switching build modes. Run `rm CMakeCache.txt` in the build directory and then re-run cmake.
@@ -95,7 +95,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
 

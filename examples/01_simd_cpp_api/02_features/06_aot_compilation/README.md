@@ -8,4 +8,4 @@
 
 | 目录名称 | 功能描述 | 支持的产品 |
 | --- | --- | --- |
-| [matmul_aot_compilation](./matmul_aot_compilation) | 在Matmul高阶API基础上引入AOT编译优化，演示Tiling常量定义、AOT Registry注册、运行时分发（AOTDispatcher）的完整流程，运行时根据Tiling参数自动匹配AOT特化版本或回退到通用版本。 | Ascend 950PR/Ascend 950DT<br>Atlas A3训练系列产品/Atlas A3推理系列产品<br>Atlas A2训练系列产品/Atlas A2推理系列产品 |
+| [matmul_aot_compilation](./matmul_aot_compilation) | 在Matmul高阶API基础上引入AOT编译优化，演示Tiling常量定义、AOT Registry注册、运行时分发（AOTDispatcher）的完整流程，运行时根据Tiling参数自动匹配AOT特化版本或回退到通用版本。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |

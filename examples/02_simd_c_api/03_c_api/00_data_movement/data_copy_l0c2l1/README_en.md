@@ -4,13 +4,13 @@
 
 This example uses the Ascend C C API to move matrix-multiplication results from L0C Buffer to L1 (L1 Buffer) through Fixpipe. It performs scalar or vector quantization, ReLU activation, and NZ2ND conversion during the movement. The ND-format input matrices A and B are converted to Nz while moved from GM to L1 Buffer, then processed through L0A Buffer and L0B Buffer by two K-axis matrix-multiplication chunks. For host-side verification, the example then copies the L1 output back to GM through UB.
 
-This example applies to Ascend 950PR/Ascend 950DT (`dav-3510`) and can run in NPU execution or NPU simulation mode. CPU debug mode is not provided.
+This example applies to Ascend 950PR&950DT products (`dav-3510`) and can run in NPU execution or NPU simulation mode. CPU debug mode is not provided.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -119,7 +119,7 @@ Run the following steps in the example root directory.
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-6 | Scenario number |
 
 - Expected result

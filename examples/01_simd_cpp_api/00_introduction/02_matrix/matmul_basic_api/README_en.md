@@ -8,9 +8,9 @@ This sample implements multi-core matrix multiplication computation based on the
 
 | Product | CANN Software Version |
 |---------|-----------------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -99,7 +99,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   For example, when transferring matrix A, `{1, baseM, baseK, 0, K, baseM, 1, 0}` converts baseM×baseK ND data to Nz format.
 
-  **[`AscendC::LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Atlas A3 Training Series Products/Atlas A3 Inference Series Products:
+  **[`AscendC::LoadData2DParams`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Atlas A2 products, Atlas A3 products:
 
   ```cpp
   struct LoadData2DParams {
@@ -112,10 +112,10 @@ This sample implements multi-core matrix multiplication computation based on the
       bool    addrMode;     // Address update mode, false=increment, true=decrement, default false
   };
   ```
-  For example: In Atlas A2 Training Series Products/Atlas A2 Inference Series Products, Atlas A3 Training Series Products/Atlas A3 Inference Series Products, the layout format on L0A is Zz. When transferring matrix A, use `{0, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, 0, 0, false, 0}`; <br>
+  For example: In Atlas A2 products, Atlas A3 products, the layout format on L0A is Zz. When transferring matrix A, use `{0, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, 0, 0, false, 0}`; <br>
   When transferring matrix B, set `ifTranspose=true` to complete Nz to Zn transpose transfer.
 
-  **[`AscendC::LoadData2DParamsV2`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Ascend 950PR/Ascend 950DT products:
+  **[`AscendC::LoadData2DParamsV2`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md)** — Used by [`LoadData`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D.md) interface, describes data transfer parameters for matrix A L1 to L0A and matrix B L1 to L0B in Ascend 950PR&950DT products:
   ```cpp
   struct LoadData2DParamsV2 {
       uint32_t mStartPosition;  // M direction start position, unit: 512B
@@ -128,7 +128,7 @@ This sample implements multi-core matrix multiplication computation based on the
       uint8_t  sid;             // Reserved, set to 0
   };
   ```
-  In Ascend 950PR/Ascend 950DT products, the layout format on L0A is Nz. When transferring matrix A, use `{0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK, false, 0}` to complete A matrix Nz to Nz transfer in one operation; when transferring matrix B, use `{0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, true, 0}` to complete B matrix Nz to Zn transfer in one operation.
+  In Ascend 950PR&950DT products, the layout format on L0A is Nz. When transferring matrix A, use `{0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK, false, 0}` to complete A matrix Nz to Nz transfer in one operation; when transferring matrix B, use `{0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, true, 0}` to complete B matrix Nz to Zn transfer in one operation.
 
   **[`AscendC::MmadParams`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md)** — Used by [`Mmad`](../../../../../docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md) interface, describes matrix multiplication parameters:
 
@@ -198,7 +198,7 @@ Execute the following steps in the root directory of this sample to compile and 
   | Option | Available Values | Description |
   |--------|------------------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution Result  
   The execution result is as follows, indicating successful precision comparison.

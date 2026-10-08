@@ -6,9 +6,9 @@ This sample demonstrates the basic process of verifying operator kernel function
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products
-- Atlas A2 Training Series Products/Atlas A2 Inference Series Products
+- Ascend 950PR&950DT products
+- Atlas A3 products
+- Atlas A2 products
 
 ## Directory Structure
 

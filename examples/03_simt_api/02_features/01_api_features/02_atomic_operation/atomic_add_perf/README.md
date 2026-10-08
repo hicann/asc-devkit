@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.1.0 |
 
 ## 目录结构介绍
 
@@ -441,7 +441,7 @@ int32_t与int64_t在两种情形下的性能关系相反：不使用返回值时
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR/Ascend 950DT） |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构：本样例仅支持dav-3510（Ascend 950PR&950DT系列产品） |
   | `SCENARIO_NUM` | `1`-`16` | 待测场景编号。每个场景的规模（Block×Thread）、数据类型、是否使用返回值、`target_count`、`threads_per_target`和`target_stride`等均由源码中`get_scenario_config()`统一配置 |
   | `SKIP_VALIDATION` | `ON`/`OFF` | 是否跳过结果校验，默认`OFF`。Case 1/3的UB-only场景没有GM结果，会自动跳过校验；使用`msopprof`采集GM写回场景时建议设为`ON` |
 

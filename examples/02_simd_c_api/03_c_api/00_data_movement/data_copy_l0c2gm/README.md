@@ -4,13 +4,13 @@
 
 本样例演示如何使用Ascend C C API，通过Fixpipe将矩阵乘计算结果从L0C Buffer搬运到GM（Global Memory），并在搬运过程中完成标量/Vector量化、ReLU激活和NZ2ND格式转换。输入矩阵A和B均为ND格式，先从GM搬运到L1 Buffer并转换为Nz格式，再经L0A Buffer和L0B Buffer完成两次K轴分块矩阵乘。
 
-本样例适用于Ascend 950PR/Ascend 950DT（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行，不提供CPU域调试模式。
+本样例适用于Ascend 950PR&950DT系列产品（`dav-3510`），可在NPU运行模式或NPU仿真模式下执行，不提供CPU域调试模式。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -119,7 +119,7 @@ data_copy_l0c2gm
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU架构，对应Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-6 | 场景编号 |
 
 - 执行结果

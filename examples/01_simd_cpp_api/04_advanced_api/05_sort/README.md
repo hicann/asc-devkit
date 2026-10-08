@@ -8,5 +8,5 @@
  
 | 目录名称 | 功能描述 | 支持的产品 |
 |--------------------| --------------------------------------------------- | --- |
-| [sort](./sort) |  本样例基于Kernel直调算子工程，介绍了调用Sort高阶API实现sort单算子，按照数值大小进行降序排序 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
-| [topk](./topk) |  本样例基于Kernel直调算子工程，介绍了调用TopK高阶API实现topk单算子，获取最后一个维度的前k个最大值或最小值及其对应的索引 | Ascend 950PR/Ascend 950DT<br>Atlas A3 训练系列产品/Atlas A3 推理系列产品<br>Atlas A2 训练系列产品/Atlas A2 推理系列产品 |
+| [sort](./sort) |  本样例基于Kernel直调算子工程，介绍了调用Sort高阶API实现sort单算子，按照数值大小进行降序排序 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
+| [topk](./topk) |  本样例基于Kernel直调算子工程，介绍了调用TopK高阶API实现topk单算子，获取最后一个维度的前k个最大值或最小值及其对应的索引 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |

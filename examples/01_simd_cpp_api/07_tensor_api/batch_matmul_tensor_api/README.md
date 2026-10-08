@@ -11,7 +11,7 @@ C[b] = A[b] * B[b] + Bias[b], b = 0, 1, ..., B - 1
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| <cann-filter npu-type="950">Ascend 950PR/Ascend 950DT</cann-filter> | >= CANN 9.2.0 |
+| <cann-filter npu-type="950">Ascend 950PR&950DT系列产品</cann-filter> | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -171,7 +171,7 @@ copy(copyL0C2GMAtom,
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU 运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` |`dav-3510` | NPU 架构：dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` |`dav-3510` | NPU 架构：dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
   执行结果如下，说明精度对比成功。
 

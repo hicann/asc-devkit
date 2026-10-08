@@ -4,13 +4,13 @@
 
 This example demonstrates how to use the SIMD C API `asc_copy_l0c2l1` to transfer matrix multiplication results from L0C Buffer to L1 Buffer, supporting multiple data type conversions, inline quantization, and ReLU. This API efficiently transfers matrix multiplication results from L0C Buffer to L1 Buffer and supports various data format conversions and preprocessing capabilities.
 
-Note: Ascend 950PR/Ascend 950DT does not support direct L1 Buffer-to-GM transfer. After `asc_copy_l0c2l1` transfers the data from L0C Buffer to L1 Buffer, this example directly transfers the L0C Buffer result produced by the first matrix multiplication to GM. The generated `output.bin` contains the original float matrix multiplication result and is used to verify the matrix multiplication computation. It does not numerically verify the type conversion, quantization, or ReLU result in L1 Buffer.
+Note: Ascend 950PR&950DT products does not support direct L1 Buffer-to-GM transfer. After `asc_copy_l0c2l1` transfers the data from L0C Buffer to L1 Buffer, this example directly transfers the L0C Buffer result produced by the first matrix multiplication to GM. The generated `output.bin` contains the original float matrix multiplication result and is used to verify the matrix multiplication computation. It does not numerically verify the type conversion, quantization, or ReLU result in L1 Buffer.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -122,7 +122,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` (default) | NPU architecture for Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-4 | Scenario number |
 
   The following output indicates that the accuracy comparison of the original matrix multiplication result is successful.

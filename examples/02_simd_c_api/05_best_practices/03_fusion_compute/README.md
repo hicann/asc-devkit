@@ -8,4 +8,4 @@
 
 | 目录名称 | 功能描述 | 支持的产品 |
 | --- | --- | --- |
-| [ssbuf_aiv_aic_comm](./ssbuf_aiv_aic_comm) | 本样例参考KFC消息状态设计，使用SSBuffer和C API核间同步接口实现AIV到AIC环形消息队列通信。 | Ascend 950PR/Ascend 950DT |
+| [ssbuf_aiv_aic_comm](./ssbuf_aiv_aic_comm) | 本样例参考KFC消息状态设计，使用SSBuffer和C API核间同步接口实现AIV到AIC环形消息队列通信。 | Ascend 950PR&950DT系列产品 |

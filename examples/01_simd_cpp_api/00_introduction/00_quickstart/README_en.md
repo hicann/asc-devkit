@@ -8,4 +8,4 @@ Introduces the kernel function direct invocation method based on Ascend C, demon
 
 | Directory Name | Description | Supported Products |
 | -------------- | ----------- | --- |
-| [hello_world](./hello_world) |  HelloWorld sample for direct kernel invocation based on Ascend C | Ascend 950PR/Ascend 950DT<br>Atlas A3 Training Series Products/Atlas A3 Inference Series Products<br>Atlas A2 Training Series Products/Atlas A2 Inference Series Products |
+| [hello_world](./hello_world) |  HelloWorld sample for direct kernel invocation based on Ascend C | Ascend 950PR&950DT products<br>Atlas A3 products<br>Atlas A2 products |

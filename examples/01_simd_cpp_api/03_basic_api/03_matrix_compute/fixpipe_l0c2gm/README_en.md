@@ -8,9 +8,9 @@ This example introduces how to use Fixpipe to transfer matrix multiplication res
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -29,7 +29,7 @@ This example introduces how to use Fixpipe to transfer matrix multiplication res
 ## FixpipeParamsV220 vs FixpipeParamsArch3510 Structure Comparison
 
 Different products support different parameter structures:
-- **Ascend 950PR/Ascend 950DT**: Supports both `FixpipeParamsV220` and `FixpipeParamsArch3510` parameter structures, `FixpipeParamsArch3510` is recommended
+- **Ascend 950PR&950DT products**: Supports both `FixpipeParamsV220` and `FixpipeParamsArch3510` parameter structures, `FixpipeParamsArch3510` is recommended
 - **Atlas A3 Training/Inference Series, Atlas A2 Training/Inference Series**: Only supports `FixpipeParamsV220`
 
 This example selects different architectures through the compilation parameter `CMAKE_ASC_ARCHITECTURES`, automatically selecting the corresponding parameter structure based on architecture:
@@ -93,7 +93,7 @@ This example selects different output scenarios through the compilation paramete
   <img src="figures/fixpipe_l0c2gm_NZ2ND.png" width="800">
 </p>
 
-**Scenario 3: Output format DN, output data type float (only supported on Ascend 950PR/Ascend 950DT)**
+**Scenario 3: Output format DN, output data type float (only supported on Ascend 950PR&950DT products)**
 - Input: A [128, 128] half type, ND format; B [128, 256] half type, ND format
 - Output: C [256, 128] float type, DN format
 - Implementation: Use `Fixpipe<outputType, l0cType, AscendC::CFG_COLUMN_MAJOR>` to specify COLUMN_MAJOR format conversion
@@ -163,7 +163,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-7 | Scenario number |
 
   The following execution result indicates that the accuracy comparison is successful.

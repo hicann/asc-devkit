@@ -12,7 +12,7 @@ dst[i] = src0[i] + src1[i]
 
 ## 支持的产品
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT系列产品
 
 ## 目录结构介绍
 

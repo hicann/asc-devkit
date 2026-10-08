@@ -14,7 +14,7 @@ For example, `3.75` produces `3.0`, and `-3.75` produces `-3.0`.
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Directory Structure
 

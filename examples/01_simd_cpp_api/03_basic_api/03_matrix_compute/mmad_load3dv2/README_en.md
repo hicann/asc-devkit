@@ -8,9 +8,9 @@ This example introduces the usage scenarios and methods of the LoadData (convolu
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -28,15 +28,15 @@ This example introduces the usage scenarios and methods of the LoadData (convolu
 ## Example Description
 
 The LoadData (convolution data transfer) v2 instruction (referred to as load3dv2 in this example) supports the following data types:
-- Ascend 950PR/Ascend 950DT: int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Ascend 950PR&950DT products: int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, half, bfloat16_t, int32_t, uint32_t, float.
 
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products:
+- Atlas A3 products and Atlas A2 products:
     - When the destination address is on A2: int4b_t, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, float.
     - When the destination address is on B2: half, bfloat16_t, int32_t, uint32_t, float.
 
 Transpose capabilities of the load3dv2 instruction for 2D matrices:
-- Ascend 950PR/Ascend 950DT: the enTranspose parameter takes effect only when the destination address is on A2 and the data type is B8/B16/B32.
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products: the enTranspose parameter takes effect only when the destination address is on A2 and the data type is B16/B32.
+- Ascend 950PR&950DT products: the enTranspose parameter takes effect only when the destination address is on A2 and the data type is B8/B16/B32.
+- Atlas A3 products and Atlas A2 products: the enTranspose parameter takes effect only when the destination address is on A2 and the data type is B16/B32.
 
 Since this example does not currently support int4b_t input data type, it demonstrates the following five load3dv2 usage scenarios in matrix multiplication:
 
@@ -50,7 +50,7 @@ Since this example does not currently support int4b_t input data type, it demons
 | 4 | float | Transpose | No transpose |
 | 5 | int8_t | No transpose | Transpose |
 
-Note: For Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products, when the input data type is B8 and the destination address is on L0B, the load3dv2 instruction is not supported. For compatibility, when scenarioNum=5, SplitB calls the load2d instruction.
+Note: For Atlas A3 products and Atlas A2 products, when the input data type is B8 and the destination address is on L0B, the load3dv2 instruction is not supported. For compatibility, when scenarioNum=5, SplitB calls the load2d instruction.
 
   In this example, the A matrix in scenarioNum=3 and 4 is consistent with scenarioNum=12 and 13 in the [load_data_l12l0](../load_data_l12l0/README_en.md) example respectively, and the B matrix is consistent with scenarioNum=13 in that example. Therefore, the specific parameter configuration and diagrams of the load3dv2 instruction can be found in the "6. L1 to L0 (LoadData)" section of that example's readme.
 
@@ -94,7 +94,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim`, `cpu` | Run mode: NPU execution, NPU simulation, CPU debug |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2/A3 training and inference products; dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2/A3 training and inference products; dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1`, `2`, `3`, `4` (default), `5` | Scenario number |
 
 - Execution result

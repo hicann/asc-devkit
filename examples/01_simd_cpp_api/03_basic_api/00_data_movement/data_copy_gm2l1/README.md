@@ -8,9 +8,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -60,11 +60,11 @@
   <img src="figures/data_copy_gm2l1_ND2NZ.png" width="800">
 </p>
 
-**场景3：输入格式DN，输入数据类型half（仅Ascend 950PR/Ascend 950DT支持）**
+**场景3：输入格式DN，输入数据类型half（仅Ascend 950PR&950DT系列产品支持）**
 - 输入：A [128, 128] half类型，DN格式；B [128, 256] half类型，DN格式
 - 输出：C [128, 256] float类型，ND格式
 - 实现：使用 `Dn2NzParams` 将DN格式的输入数据从GM搬运到L1，自动转换为Nz格式
-- 说明：输入数据为DN格式，在搬运过程中自动转换为Nz格式，DN格式仅Ascend 950PR/Ascend 950DT支持
+- 说明：输入数据为DN格式，在搬运过程中自动转换为Nz格式，DN格式仅Ascend 950PR&950DT系列产品支持
 <p align="center">
   <img src="figures/data_copy_gm2l1_DN2NZ.png" width="800">
 </p>
@@ -119,7 +119,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | 1-5 | 场景编号，场景3仅支持dav-3510架构 |
 
 - 执行结果

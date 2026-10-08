@@ -8,7 +8,7 @@ This example is a SIMT programming introductory example. It uses the `<<<>>>` ke
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -53,7 +53,7 @@ Execute the following steps in the root directory of this example to compile and
   | Option | Available Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution or NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: This example only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: This example only supports dav-3510 (Ascend 950PR&950DT products) |
 
 - Execution Result
   The execution result is as follows, indicating successful execution.

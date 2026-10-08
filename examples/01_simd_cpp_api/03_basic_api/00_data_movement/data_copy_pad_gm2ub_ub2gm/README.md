@@ -10,9 +10,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -59,14 +59,14 @@
 - 参数配置：isPad=true, leftPadding=0, rightPadding=5
 - 说明：**无需使用SetPadValue**，isPad=true时填充值默认为0，右侧填充5个元素。
 
-**场景3：使用Compact模式进行数据搬运 ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景3：使用Compact模式进行数据搬运 ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：[3, 24]
 - 输出shape：[1, 80]
 - 数据类型：half
 - 参数配置：blockLen=48, blockCount=3, leftPadding=0, rightPadding=16, isPad=false
 - 说明：紧凑模式，允许单次搬运不对齐，统一在整块数据末尾补齐至32字节对齐。此处示例中，leftPadding为0，rightPadding为16，在最后一个数据块右侧填充16字节。目的操作数的数据量为160字节。
 
-**场景4：使用SetLoopModePara使能loop mode（Compact模式） ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景4：使用SetLoopModePara使能loop mode（Compact模式） ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：[1, 320]，如图 1 所示
 - 输出shape：[1, 576]，如图 2 所示
 - 数据类型：int8
@@ -84,7 +84,7 @@
 
 <img src="figures/datacopypad2.png">
 
-**场景5：使用SetLoopModePara使能loop mode（Normal模式） ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景5：使用SetLoopModePara使能loop mode（Normal模式） ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：[1, 320]，如图 1 所示
 - 输出shape：[1, 576]，如图 3 所示
 - 数据类型：int8
@@ -98,7 +98,7 @@
 
 <img src="figures/datacopypad3.png">
 
-**场景6：使用SetLoopModePara使能loop mode（Normal模式）进行五维数据搬运 ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景6：使用SetLoopModePara使能loop mode（Normal模式）进行五维数据搬运 ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：[2, 4, 3, 128, 126]，五维数据
 - 输出shape：[512, 128]，UB中连续存放
 - 数据类型：int8
@@ -148,7 +148,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`sim` | 运行模式：NPU 运行、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和Atlas A3 训练系列产品/Atlas A3 推理系列产品、dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | dav-2201 对应 Atlas A2系列产品和Atlas A3系列产品、dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2`、`3`、`4`、`5`、`6` | 场景编号：1（SetPadValue填充）、2（rightPadding）、3（Compact模式）、4（SetLoopModePara loop mode Compact）、5（SetLoopModePara loop mode Normal）、6（五维LoopMode Normal） |
 
 - 执行结果

@@ -10,7 +10,7 @@ tensor with a shape of `[1024]`. Scenario 5 pads an input of shape `[32, 24]` to
 
 ## Supported Products
 
-- Ascend 950PR/Ascend 950DT
+- Ascend 950PR&950DT products
 
 ## Sample Scenarios
 

@@ -10,9 +10,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -61,7 +61,7 @@
     AscendC::Select(dst, selMask, src0, src1, cmpMode, count);
     ```
 
-**场景4：Select（灵活标量位置）----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景4：Select（灵活标量位置）----此场景仅在 Ascend 950PR&950DT系列产品支持**
 
   - 说明：与场景2功能类似，只是标量位置更灵活。
   - 实现：
@@ -124,7 +124,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2`、`3`、`4` | 场景编号：1 对应 Select、2 对应 Select（标量）、3 对应 Select（selMask无有效位数据限制）、4 对应 Select（灵活标量位置） |
 
 - 执行结果

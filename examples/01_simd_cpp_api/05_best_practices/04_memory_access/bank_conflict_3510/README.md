@@ -4,7 +4,7 @@
 
 ![UB Architecture](./figures/ub_arch.png)
 
-- 在Ascend 950PR/Ascend 950DT中，UB空间大小为256KB；
+- 在Ascend 950PR&950DT系列产品中，UB空间大小为256KB；
 - 共有16个 **bank**，组成8个 **bank group**，每个bank group包含2个bank（`bank_id` = 0, 1）；
 - 每个bank由512行组成（`BANK_DEPTH = 512`），每行长度为32B（`BANK_WIDTH = 32B`），即每个bank大小为16KB；
 - 每个bank group最多支持两读或者一读一写。
@@ -21,7 +21,7 @@ bank内部layout（一行32B）：
 
 ## UB地址编码规则
 
-Ascend 950PR/Ascend 950DT的UB 18位地址采用**低位交织**编码规则：
+Ascend 950PR&950DT系列产品的UB 18位地址采用**低位交织**编码规则：
 
 `UB_ADDR[17:0] = { DEPTH[8:0], BANK[0], BG[2:0], WIDTH[4:0] }`
 
@@ -106,7 +106,7 @@ Ascend 950PR/Ascend 950DT的UB 18位地址采用**低位交织**编码规则：
 
 ### 连续对齐搬入/搬出的bank冲突场景（Case 1-8）
 
-**注意：在Ascend 950PR/Ascend 950DT中，src0/src1/dst首地址分布在不同bank group的不同bank的场景不存在，二读一写场景无法避免读写冲突**
+**注意：在Ascend 950PR&950DT系列产品中，src0/src1/dst首地址分布在不同bank group的不同bank的场景不存在，二读一写场景无法避免读写冲突**
 
 | case | 计算公式 | 场景描述 | bank冲突情况 | src0首地址 | src1首地址 | dst首地址 | 单次VF计算数据量(B) | 打点性能(cycles) | LDU冲突率(%) | STU冲突率(%) | 备注 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -215,7 +215,7 @@ Ascend 950PR/Ascend 950DT的UB 18位地址采用**低位交织**编码规则：
 ### 分析结论
 
 - src0 与 dst 起始地址完全相同（0x0000），src1 在 bank1（0x5100），三者同属 BG=0。
-- 对比Case2，性能基本一致，说明在 Ascend 950PR/Ascend 950DT 架构上，读写地址重叠不会消除 bank 冲突，这与部分旧架构的行为不同。
+- 对比Case2，性能基本一致，说明在 Ascend 950PR&950DT系列产品 架构上，读写地址重叠不会消除 bank 冲突，这与部分旧架构的行为不同。
 
 
 ## Case 4：二读一写，src1/dst同bank，src0/src1同bank group
@@ -265,7 +265,7 @@ Ascend 950PR/Ascend 950DT的UB 18位地址采用**低位交织**编码规则：
 ### 分析结论
 
 - src1 与 dst 起始地址完全相同，src0 在 bank1，三者同属 BG=0。
-- 对比Case4，性能基本一致，说明在 Ascend 950PR/Ascend 950DT 架构上，读写地址重叠不会消除 bank 冲突，这与部分旧架构的行为不同。
+- 对比Case4，性能基本一致，说明在 Ascend 950PR&950DT系列产品 架构上，读写地址重叠不会消除 bank 冲突，这与部分旧架构的行为不同。
 
 
 ## Case 6：二读一写，src0/src1/dst同bank
@@ -484,7 +484,7 @@ Ascend 950PR/Ascend 950DT的UB 18位地址采用**低位交织**编码规则：
 
 ## 小结
 
-1. Ascend 950PR/Ascend 950DT上二读一写必然存在bank冲突，而在实际场景中，由于采用Regbase架构，UB读写频率降低，bank冲突往往为非瓶颈点。
+1. Ascend 950PR&950DT系列产品上二读一写必然存在bank冲突，而在实际场景中，由于采用Regbase架构，UB读写频率降低，bank冲突往往为非瓶颈点。
 7. 使用离散与聚合API时，连续index跨subbank分散可减少冲突
 8. 循环展开可以优化bank冲突，可结合以下trace分析。
     | case6流水 | case7流水 |

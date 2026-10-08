@@ -8,7 +8,7 @@
 Fixpipe接口用于将矩阵乘结果从L0C Buffer搬运到GM。3510架构引入了新的原生参数结构体`FixpipeParamsArch3510`，与2201架构使用的`FixpipeParamsV220`存在关键字段差异。
 
 - Atlas A2/A3 训练/推理系列产品：使用`FixpipeParamsV220`参数结构体。
-- Ascend 950PR/950DT：使用`FixpipeParamsArch3510`原生参数结构体。3510也兼容`FixpipeParamsV220`（内部自动转换），但推荐使用原生结构体以获得完整能力。
+- Ascend 950PR&950DT系列产品：使用`FixpipeParamsArch3510`原生参数结构体。3510也兼容`FixpipeParamsV220`（内部自动转换），但推荐使用原生结构体以获得完整能力。
 
 ### 两种参数结构体的关键差异
 
@@ -35,9 +35,9 @@ Fixpipe接口用于将矩阵乘结果从L0C Buffer搬运到GM。3510架构引入
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -108,7 +108,7 @@ Fixpipe接口用于将矩阵乘结果从L0C Buffer搬运到GM。3510架构引入
 
   使用CPU调试或NPU仿真模式时，添加`-DCMAKE_ASC_RUN_MODE=cpu`或`-DCMAKE_ASC_RUN_MODE=sim`参数即可。
 
-  针对Ascend 950PR/950DT编译：
+  针对Ascend 950PR&950DT系列产品编译：
 
   ```bash
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=1 ..;make -j;
@@ -121,7 +121,7 @@ Fixpipe接口用于将矩阵乘结果从L0C Buffer搬运到GM。3510架构引入
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2/A3 训练/推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2/A3 训练/推理系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2` | 场景编号：1=NZ2ND（CFG_ROW_MAJOR），2=NZ2NZ（CFG_NZ） |
 
 - 执行结果

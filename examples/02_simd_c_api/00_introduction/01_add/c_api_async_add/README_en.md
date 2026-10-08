@@ -6,8 +6,8 @@ This sample implements an Add operator using C_API interfaces, based on asynchro
 
 ## Supported Products
 
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products
-- Atlas A2 Training Series Products/Atlas A2 Inference Series Products
+- Atlas A3 products
+- Atlas A2 products
 
 ## Directory Structure
 

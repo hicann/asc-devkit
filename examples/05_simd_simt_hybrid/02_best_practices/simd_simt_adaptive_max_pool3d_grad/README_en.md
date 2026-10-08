@@ -8,7 +8,7 @@ This sample uses the adaptive_max_pool3d_grad operator to compare the implementa
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -322,7 +322,7 @@ Run the following steps in the root directory of this sample to build and execut
   | Option | Value | Description |
   | ---------------- | ----------- | ----------------- |
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR/Ascend 950DT). |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture. This sample supports only dav-3510 (Ascend 950PR&950DT products). |
   | `GRAD_DHW` | `1`, `2`, `4`, `8`, `16` | D/H/W of `grad/argmax`, using the same value for all three. Defaults to `8`. The number of gradients scattered per `NC` plane is the D×H×W of `grad/argmax`. Use it to reproduce each row of the performance comparison tables. |
 
 - Runtime parameter description.

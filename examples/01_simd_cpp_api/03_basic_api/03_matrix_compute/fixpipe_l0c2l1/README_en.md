@@ -5,16 +5,16 @@
 This example introduces how to use Fixpipe to transfer matrix multiplication results from L0C (L0C Buffer) to L1 (L1 Buffer), supporting data type conversion, inline quantization, ReLU, and other features. These interfaces efficiently transfer matrix multiplication computation results from L0C to L1 Buffer, with support for various data format conversions and preprocessing capabilities.
 
 Note:
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products and Atlas A2 Training Series Products/Atlas A2 Inference Series Products only support Nz output format in the L0C to L1 path, and do not support float output data type; it must be quantized to other data types.
-- Ascend 950PR/Ascend 950DT does not support direct data transfer from L1 to GM. Therefore, in this example, the result matrix transferred from L0C to L1 serves as input for the next matrix multiplication, performing another matrix computation and outputting the result to GM. (Atlas A2/A3 series products support direct data transfer from L1 to GM; this example chooses direct transfer out)
+- Atlas A3 products and Atlas A2 products only support Nz output format in the L0C to L1 path, and do not support float output data type; it must be quantized to other data types.
+- Ascend 950PR&950DT products does not support direct data transfer from L1 to GM. Therefore, in this example, the result matrix transferred from L0C to L1 serves as input for the next matrix multiplication, performing another matrix computation and outputting the result to GM. (Atlas A2/A3 series products support direct data transfer from L1 to GM; this example chooses direct transfer out)
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -32,7 +32,7 @@ Note:
 ## FixpipeParamsV220 vs FixpipeParamsArch3510 Structure Comparison
 
 Different products support different parameter structures:
-- **Ascend 950PR/Ascend 950DT**: Supports both `FixpipeParamsV220` and `FixpipeParamsArch3510` parameter structures, `FixpipeParamsArch3510` is recommended
+- **Ascend 950PR&950DT products**: Supports both `FixpipeParamsV220` and `FixpipeParamsArch3510` parameter structures, `FixpipeParamsArch3510` is recommended
 - **Atlas A3 Training/Inference Series, Atlas A2 Training/Inference Series**: Only supports `FixpipeParamsV220`
 
 This example selects different architectures through the compilation parameter `CMAKE_ASC_ARCHITECTURES`, automatically selecting the corresponding parameter structure based on architecture:
@@ -137,7 +137,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | 1-4 | Scenario number |
 
   The following execution result indicates that the accuracy comparison is successful.

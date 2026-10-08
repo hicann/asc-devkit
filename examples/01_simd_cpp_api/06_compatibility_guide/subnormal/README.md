@@ -8,15 +8,15 @@
 SubNormal浮点数指指数位全为0、尾数不为0的浮点数，用于表示比最小正常数更小的值。3510架构版本默认不支持Subnormal，Subnormal浮点数在计算中被视为0（FTZ，Flush To Zero）。
 
 - Atlas A2/A3 训练/推理系列产品：硬件默认支持Subnormal，调用`Ln`接口时无需额外配置。
-- Ascend 950PR/950DT：默认不支持Subnormal，需通过`LnConfig`将参数`algo`配置为`LnAlgo::PRECISION_1ULP_FTZ_FALSE`，由软件仿真保留Subnormal数据的计算结果。
+- Ascend 950PR&950DT系列产品：默认不支持Subnormal，需通过`LnConfig`将参数`algo`配置为`LnAlgo::PRECISION_1ULP_FTZ_FALSE`，由软件仿真保留Subnormal数据的计算结果。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -48,7 +48,7 @@ SubNormal浮点数指指数位全为0、尾数不为0的浮点数，用于表示
 1. 将输入数据从GM搬运到UB。
 2. 调用`Ln`接口计算自然对数，根据架构采用不同配置以保留Subnormal数据的计算结果：
    - Atlas A2/A3 训练/推理系列产品：直接调用`Ln`接口，硬件默认支持Subnormal。
-   - Ascend 950PR/950DT：通过`LnConfig`将`algo`配置为`LnAlgo::PRECISION_1ULP_FTZ_FALSE`后调用`Ln`接口，由软件仿真保留Subnormal计算结果。
+   - Ascend 950PR&950DT系列产品：通过`LnConfig`将`algo`配置为`LnAlgo::PRECISION_1ULP_FTZ_FALSE`后调用`Ln`接口，由软件仿真保留Subnormal计算结果。
 3. 将计算结果从UB搬运回GM。
 
 ## 编译运行
@@ -84,10 +84,10 @@ SubNormal浮点数指指数位全为0、尾数不为0的浮点数，用于表示
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..;make -j; # NPU仿真模式
   ```
 
-  针对Ascend 950PR/950DT编译：
+  针对Ascend 950PR&950DT系列产品编译：
 
   ```bash
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # 编译工程（Ascend 950PR/950DT）
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # 编译工程（Ascend 950PR&950DT系列产品）
   ```
 
   > **注意：** 切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
@@ -97,7 +97,7 @@ SubNormal浮点数指指数位全为0、尾数不为0的浮点数，用于表示
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

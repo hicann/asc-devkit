@@ -5,15 +5,15 @@
 本样例演示L1数据搬运到GM的端到端流程，通过编译时宏隔离不同硬件实现。
 
 - Atlas A2/A3 训练/推理系列产品直接使用DataCopy接口进行搬运。
-- Ascend 950PR/950DT新架构不支持直接搬运，通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。
+- Ascend 950PR&950DT系列产品新架构不支持直接搬运，通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -45,11 +45,11 @@
   </table>
 - 样例实现：调用DataCopy指令实现GM到L1再到GM的数据搬运。
 
-### Ascend 950PR/950DT
+### Ascend 950PR&950DT系列产品
 
 - 样例规格：
   <table>
-  <caption>Ascend 950PR/950DT产品样例规格表</caption>
+  <caption>Ascend 950PR&950DT系列产品样例规格表</caption>
   <tr><td rowspan="1" align="center">类别</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td rowspan="3" align="center">样例输入</td></tr>
   <tr><td align="center">x</td><td align="center">[64, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
@@ -57,7 +57,7 @@
   <tr><td rowspan="1" align="center">样例输出</td><td align="center">z</td><td align="center">[64, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">data_copy_l1togm</td></tr>
   </table>
-- 样例实现：Ascend 950PR/950DT新架构下不支持L1直接搬运到GM，在cube only场景下，可以借助矩阵乘来达到搬运的效果。在GM多分配一个单位矩阵（原矩阵 × 单位矩阵 = 原矩阵），通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。数据流为：GM -> A1/B1 -> L0A/L0B -> L0C -> GM。
+- 样例实现：Ascend 950PR&950DT系列产品新架构下不支持L1直接搬运到GM，在cube only场景下，可以借助矩阵乘来达到搬运的效果。在GM多分配一个单位矩阵（原矩阵 × 单位矩阵 = 原矩阵），通过Mmad矩阵乘法计算输出到L0C Buffer，再从L0C Buffer通过Fixpipe搬运到GM。数据流为：GM -> A1/B1 -> L0A/L0B -> L0C -> GM。
 
 ## 编译运行
 
@@ -99,7 +99,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

@@ -8,9 +8,9 @@ This example demonstrates data transfer practices from Global Memory to UB and f
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -35,7 +35,7 @@ The input for this example is a half-type 2D matrix in ND format. The aligned sc
 
 ## Example Implementation and Performance Analysis
 
-For table presentation convenience, the following text refers to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products collectively as Atlas A2/A3 Series, and Ascend 950PR/Ascend 950DT as Ascend 950 Series.
+For table presentation convenience, the following text refers to Atlas A2 products and Atlas A3 products collectively as Atlas A2/A3 Series, and Ascend 950PR&950DT products as Ascend 950 Series.
 
 This chapter addresses the most common issues in data transfer optimization: it first explains performance metric meanings, then compares block granularity, unaligned data, L2Cache reuse, and multi-core same-address access conflicts. Each optimization point includes implementation method, comparison method, performance data, and conclusions, making it easy to correlate code behavior with performance changes.
 

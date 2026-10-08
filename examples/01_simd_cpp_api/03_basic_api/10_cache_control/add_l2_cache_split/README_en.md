@@ -13,9 +13,9 @@ The sample uses one 384MB GM data buffer and runs two rounds of `data = data + 1
 
 | Product | CANN version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.0.0 |
-| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -137,7 +137,7 @@ Run the following steps from the sample root directory.
   | Option | Value | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Project mode: NPU run, CPU debug, or NPU simulation. The `sim` mode supports full execution verification, but the 384MB workload takes a long time to simulate and simulation time is not used to evaluate L2 Cache performance benefits. |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture. `dav-2201` maps to Atlas A2 training series products/Atlas A2 inference series products and Atlas A3 training series products/Atlas A3 inference series products, and `dav-3510` maps to Ascend 950PR/Ascend 950DT. |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture. `dav-2201` maps to Atlas A2 products and Atlas A3 products, and `dav-3510` maps to Ascend 950PR&950DT products. |
   | `SCENARIO_NUM` | `1`, `2` | Scenario number: 1=no L2 Cache split, 2=L2 Cache split enabled. |
 
 - Execution result

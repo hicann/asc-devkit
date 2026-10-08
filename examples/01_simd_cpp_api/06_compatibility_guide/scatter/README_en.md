@@ -6,15 +6,15 @@ This example demonstrates the data scatter function, which can scatter the input
 
 Different hardware implementations are isolated through compile-time macros:
 - Atlas A2/A3: Does not support the Scatter instruction. Uses the scalar transfer method (GetValue/SetValue loop) for implementation.
-- Ascend 950PR/Ascend 950DT: Directly calls the Scatter instruction for implementation.
+- Ascend 950PR&950DT products: Directly calls the Scatter instruction for implementation.
 
 ## Supported Products and CANN Versions
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -44,7 +44,7 @@ Different hardware implementations are isolated through compile-time macros:
 ## Example Implementation
 
 - Atlas A2/A3: Does not support the Scatter instruction. Uses scalar GetValue/SetValue loops to read offset addresses and source data element by element, writing source data to the target position to implement data scatter.
-- Ascend 950PR/Ascend 950DT: Calls the Scatter instruction to scatter source data to the target tensor based on offset addresses.
+- Ascend 950PR&950DT products: Calls the Scatter instruction to scatter source data to the target tensor based on offset addresses.
 
 ## Build and Run
 
@@ -86,7 +86,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
 
 - Execution results
 

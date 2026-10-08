@@ -6,15 +6,15 @@
 本样例展示如何使用Fill接口对L0A Buffer和L0B Buffer进行初始化，通过编译时宏隔离不同硬件实现。
 
 - 在Atlas A2/A3 系列产品中，可以直接使用Fill接口进行L0A/L0B Buffer的初始化。
-- 但在Ascend 950PR/Ascend 950DT平台中，由于删除了L0A Buffer/L0B Buffer初始化的相关硬件指令，因此无法直接使用Fill接口进行L0A/L0B Buffer的初始化，需要先对L1 Buffer初始化，再将初始化数据搬入L0A/L0B中，来间接完成L0A/L0B Buffer的初始化。
+- 但在Ascend 950PR&950DT系列产品平台中，由于删除了L0A Buffer/L0B Buffer初始化的相关硬件指令，因此无法直接使用Fill接口进行L0A/L0B Buffer的初始化，需要先对L1 Buffer初始化，再将初始化数据搬入L0A/L0B中，来间接完成L0A/L0B Buffer的初始化。
 
 ## 本样例支持的产品及CANN软件版本
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.2.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Atlas A3系列产品 | >= CANN 9.2.0 |
+| Atlas A2系列产品 | >= CANN 9.2.0 |
 
 ## 目录结构介绍
 
@@ -46,7 +46,7 @@
 
   1. 首先初始化 L0A Buffer 和 L0B Buffer，不同硬件架构方式不一样：
      - Atlas A2/A3 训练/推理系列产品：调用`Fill`接口直接初始化 L0A Buffer 和 L0B Buffer 为指定值（本样例初始化为1）。
-     - Ascend 950PR/950DT：使用`Fill`接口初始化 L1 Buffer 为指定值（本样例初始化为1），再通过`LoadData`接口搬运到 L0A Buffer 和 L0B Buffer。
+     - Ascend 950PR&950DT系列产品：使用`Fill`接口初始化 L1 Buffer 为指定值（本样例初始化为1），再通过`LoadData`接口搬运到 L0A Buffer 和 L0B Buffer。
   2. 调用`Mmad`接口进行矩阵乘计算。
   3. 通过`Fixpipe`接口将结果搬运到Global Memory。
 
@@ -83,10 +83,10 @@
   cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..;make -j; # NPU仿真模式
   ```
 
-  针对Ascend 950PR/950DT编译：
+  针对Ascend 950PR&950DT系列产品编译：
 
   ```bash
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # 编译工程（Ascend 950PR/950DT）
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;                      # 编译工程（Ascend 950PR&950DT系列产品）
   ```
 
   > **注意：** 切换编译模式前需清理cmake缓存，可在build目录下执行`rm CMakeCache.txt`后重新cmake。
@@ -96,7 +96,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
 
 - 执行结果
 

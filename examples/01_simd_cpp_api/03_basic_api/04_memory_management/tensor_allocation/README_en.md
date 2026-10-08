@@ -27,7 +27,7 @@ This example introduces the allocation and usage of GlobalTensor, LocalTensor, a
   </tr>
 </table>
 
-> **Note:** RegTensor is only applicable to Ascend 950PR/Ascend 950DT products.
+> **Note:** RegTensor is only applicable to Ascend 950PR&950DT products.
 
 This example includes 4 scenarios. Scenarios 1 to 3 demonstrate three allocation methods for LocalTensor, and scenario 4 demonstrates the allocation and usage of RegTensor. The detailed descriptions are as follows:
 
@@ -55,7 +55,7 @@ This example includes 4 scenarios. Scenarios 1 to 3 demonstrate three allocation
   <tr>
     <td align="center">4</td>
     <td align="center">Using RegTensor based on LocalTensor</td>
-    <td>Directly operates on vector registers of the chip through Reg programming interfaces, achieving greater flexibility and better performance<br>For the LocalTensor part in Reg programming, scenarios 1 to 3 are all applicable<br>Only applicable to Ascend 950PR/Ascend 950DT products</td>
+    <td>Directly operates on vector registers of the chip through Reg programming interfaces, achieving greater flexibility and better performance<br>For the LocalTensor part in Reg programming, scenarios 1 to 3 are all applicable<br>Only applicable to Ascend 950PR&950DT products</td>
   </tr>
 </table>
 
@@ -67,9 +67,9 @@ This example includes 4 scenarios. Scenarios 1 to 3 demonstrate three allocation
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.2.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.2.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Atlas A3 products | >= CANN 9.2.0 |
+| Atlas A2 products | >= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -159,7 +159,7 @@ Run the following steps in the root directory of this example to build and run i
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1`, `2`, `3`, `4` | Scenario number: 1 (using TQue queue mechanism), 2 (using LocalMemAllocator allocator), 3 (using address offset for manual management), 4 (implementing RegTensor addition based on Reg programming) |
 
   > **Notice:** When `SCENARIO_NUM` is set to `4`, only `CMAKE_ASC_ARCHITECTURES` set to `dav-3510` is supported.

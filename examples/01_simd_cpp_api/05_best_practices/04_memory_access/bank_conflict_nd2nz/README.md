@@ -9,9 +9,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -69,7 +69,7 @@ rowSplit ↓      ┌───────┬───────┬───�
 
 | 参数 | 值 | 含义 |
 |:---:|:---:|:---|
-| `rowSplits` | dav-2201场景 = 6 / dav-3510场景 = 8 | N 方向切分数，不同的架构切分逻辑不同，dav-2201 指 Atlas A2/A3 系列产品，dav-3510 指 Ascend 950PR/Ascend 950DT |
+| `rowSplits` | dav-2201场景 = 6 / dav-3510场景 = 8 | N 方向切分数，不同的架构切分逻辑不同，dav-2201 指 Atlas A2/A3 系列产品，dav-3510 指 Ascend 950PR&950DT系列产品 |
 | `colSplits` | 8 | D 方向切分数 |
 | `totalBlocks` | dav-2201场景 = 48 / dav-3510场景 = 64 | 启动 block 数，等于 `rowSplits * colSplits` |
 | `tileH` | 144 | 单次搬运 tile  N 方向最大行数；尾块通过 `actualTileH` 变为 128 |
@@ -174,7 +174,7 @@ for (uint32_t k = 0; k < tileW / vecLenHalf; ++k) {
 
 **UB 上的摆放顺序**：4 个 buf 按 `[ndPing | ndPong | nzPing | nzPong]` 顺序摆放。
 
-> 下文 Case 2 / Ascend 950PR/Ascend 950DT 各 case 的 Ping-Pong 流水实现完全一致，不再重复展开。
+> 下文 Case 2 / Ascend 950PR&950DT系列产品 各 case 的 Ping-Pong 流水实现完全一致，不再重复展开。
 
 **冲突原理**：
 
@@ -281,21 +281,21 @@ Ping-Pong 流水与 Case 1 完全一致，参见上文。
 
 ---
 
-### Ascend 950PR/Ascend 950DT（dav-3510）
+### Ascend 950PR&950DT系列产品（dav-3510）
 
-> 编译时通过 `-DCMAKE_ASC_ARCHITECTURES=dav-3510` 选择 Ascend 950PR/Ascend 950DT。
+> 编译时通过 `-DCMAKE_ASC_ARCHITECTURES=dav-3510` 选择 Ascend 950PR&950DT系列产品。
 
 #### UB Bank 结构与冲突类型
 
-Ascend 950PR/Ascend 950DT 上，Unified Buffer 总大小 256KB，划分为 16 个 bank（每个 bank 512 行 × 32B = 16KB）；这 16 个 bank 进一步组织为 **8 个 bank group**，每个 bank group 包含 2 个 bank（bank `i` 与 bank `i+8` 同属 bank group `i`，即 `bank group = bank % 8`）。Vector 计算单元每拍能从每个 bank group 中读取或写入一行数据。
+Ascend 950PR&950DT系列产品 上，Unified Buffer 总大小 256KB，划分为 16 个 bank（每个 bank 512 行 × 32B = 16KB）；这 16 个 bank 进一步组织为 **8 个 bank group**，每个 bank group 包含 2 个 bank（bank `i` 与 bank `i+8` 同属 bank group `i`，即 `bank group = bank % 8`）。Vector 计算单元每拍能从每个 bank group 中读取或写入一行数据。
 
-**图：Ascend 950PR/Ascend 950DT UB Bank 结构示意图**
+**图：Ascend 950PR&950DT系列产品 UB Bank 结构示意图**
 
 <img src="figures/ubBankStruct3510.png" width="80%">
 
 **地址采用低位交织**：UB 内连续地址以 32B 为单位在 bank0~bank15 间循环 —— 第 1 个 32B 块落到 bank0、第 2 个落到 bank1、……、第 16 个落到 bank15，第 17 个回到 bank0 的下一行，依次类推。
 
-**图：Ascend 950PR/Ascend 950DT UB Bank 内存排布示意图**（其中箭头方向表示内存排布顺序）
+**图：Ascend 950PR&950DT系列产品 UB Bank 内存排布示意图**（其中箭头方向表示内存排布顺序）
 <img src="figures/UB-3510.png" width="80%">
 
 bank 冲突主要分为三类：
@@ -322,7 +322,7 @@ Ping-Pong 流水的实现与 Atlas A2/A3 Case 1 完全相同（参见上文 [Atl
 
 **ND2NZ 实现**：
 
-Ascend 950PR/Ascend 950DT 基于 Reg 编程接口实现 Nd2Nz 重排，使用 `__simd_vf__`，外层向量列组、内层行循环：
+Ascend 950PR&950DT系列产品 基于 Reg 编程接口实现 Nd2Nz 重排，使用 `__simd_vf__`，外层向量列组、内层行循环：
 
 ```cpp
 for (uint16_t k = 0; k < vecsPerRow; ++k) {
@@ -364,11 +364,11 @@ for (uint16_t k = 0; k < vecsPerRow; ++k) {
   DataBlock 7 → 第1008 个 32B 块  → bank 0 → bank group 0   ◀ 同一 bank
 ```
 
-**图：Ascend 950PR/Ascend 950DT Case 1 的 UB bank group 冲突示意图**
+**图：Ascend 950PR&950DT系列产品 Case 1 的 UB bank group 冲突示意图**
 
 <img src="figures/s1bank3510.png" width="80%">
 
-**性能数据**（Ascend 950PR/Ascend 950DT，当前 `144×128` 配置，64 核）：
+**性能数据**（Ascend 950PR&950DT系列产品，当前 `144×128` 配置，64 核）：
 
 | Task Duration(μs) | aiv_time(μs) | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_mte2_time(μs) | aiv_mte2_ratio | aiv_mte3_time(μs) | aiv_mte3_ratio |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -419,7 +419,7 @@ constexpr uint32_t dstNzC0Stride = (SCENARIO == 1) ? tileH : (tileH + 1);
   DataBlock 7 → 第1015 个 32B 块  → bank 15 → bank group 7
 ```
 
-**图：Ascend 950PR/Ascend 950DT Case 2 的 UB bank group 分散落点示意图**
+**图：Ascend 950PR&950DT系列产品 Case 2 的 UB bank group 分散落点示意图**
 
 <img src="figures/s2bank3510.png" width="80%">
 
@@ -440,9 +440,9 @@ constexpr uint32_t dstNzC0Stride = (SCENARIO == 1) ? tileH : (tileH + 1);
 
 多申请的这一行空间在 UB→GM 的 MTE3 阶段由 `outParams.srcStride = dstNzC0Stride - tileH` 跳过，不会写回 GM。
 
-双缓冲后，每套 buffer 包含一个 `ndBuf` 和一个 `nzBuf`。S1 总 UB 占用为 `2 × (36864 B + 36864 B) = 147456 B = 144 KB`；S2 还为两块 `nzBuf` 各引入一段 256 B 的 bank-8 起步偏移（详见上文"补充"小节），总 UB 占用为 `2 × (36864 B + 37120 B) + 2 × 256 B = 148480 B ≈ 145 KB`，满足 Ascend 950PR/Ascend 950DT 256 KB UB 的约束。
+双缓冲后，每套 buffer 包含一个 `ndBuf` 和一个 `nzBuf`。S1 总 UB 占用为 `2 × (36864 B + 36864 B) = 147456 B = 144 KB`；S2 还为两块 `nzBuf` 各引入一段 256 B 的 bank-8 起步偏移（详见上文"补充"小节），总 UB 占用为 `2 × (36864 B + 37120 B) + 2 × 256 B = 148480 B ≈ 145 KB`，满足 Ascend 950PR&950DT系列产品 256 KB UB 的约束。
 
-**性能数据**（Ascend 950PR/Ascend 950DT，当前 `144×128` 配置，64 核）：
+**性能数据**（Ascend 950PR&950DT系列产品，当前 `144×128` 配置，64 核）：
 
 | Task Duration(μs) | aiv_time(μs) | aiv_vec_time(μs) | aiv_vec_ratio | aiv_scalar_time(μs) | aiv_scalar_ratio | aiv_mte2_time(μs) | aiv_mte2_ratio | aiv_mte3_time(μs) | aiv_mte3_ratio |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -485,7 +485,7 @@ $$
 
 Case 1 因 V 自身被拉长至 8 拍写, MTE2/V 之间的干扰会被掩盖; Case 2 V 砍到 1 拍写后, ping-pong 机制下 MTE2 写 ndPong 和 V 读 ndPing 落到同一 bank 引发的读写冲突变得可见，因此 Case2 实测 7.133μs 比理论 5.904μs 高约 21%。端到端 Task Duration 从 `151.42μs` 降到 `144.00μs`，降低约 4.9%；整体仍包含 MTE2/MTE3 搬运和同步开销，bank 冲突优化主要体现在 Vec 子流水。
 
-### Ascend 950PR/Ascend 950DT（dav-3510）
+### Ascend 950PR&950DT系列产品（dav-3510）
 
 当前实现选择 `144×128`，S2 的 Vec 时间明显下降，但当前端到端主要受 MTE2/MTE3 限制，因此 Task Duration 只从 `141.691μs` 降到 `140.403μs`。
 
@@ -494,7 +494,7 @@ Case 1 因 V 自身被拉长至 8 拍写, MTE2/V 之间的干扰会被掩盖; Ca
 | 144×128 | S1 | 144 | 141.691 | 64  | 140.89 | 14125772 | **45.25** | 0.321 | 2.638 | 0.019 | 134.915 | 0.958 | 104.571 | 0.742 | 0.006 |
 | 144×128 | S2 | 145 | **140.403** | 64  | 139.68 | 14094639 | **9.14** | 0.065 | 2.765 | 0.020 | 135.115 | 0.967 | 116.921 | 0.837 | 0.006 |
 
-Ascend 950PR/Ascend 950DT 上，Reg 路径每处理一组 `128` 个 half 数据，需要执行一次 `LoadAlign` 和一次 `StoreAlign`。
+Ascend 950PR&950DT系列产品 上，Reg 路径每处理一组 `128` 个 half 数据，需要执行一次 `LoadAlign` 和一次 `StoreAlign`。
 
 单条 `LoadAlign` 或 `StoreAlign` 每拍处理 `128` 个 half，跨循环的 `StoreAlign` 与 `LoadAlign` 可以落到不同物理 reg 上、互不阻塞，理想状态下每拍处理 `256 bytes/cycle`。主频按 `1.65GHz`、核数按 `64` 计算，单遍处理全量数据的基础耗时为：
 
@@ -550,7 +550,7 @@ $$
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU 调试、NPU 仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品 |
   | `SCENARIO_NUM` | `1`（默认）、`2` | bank 冲突场景编号 |
 
   执行结果如下，说明精度对比成功：

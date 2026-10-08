@@ -8,11 +8,11 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
-| Atlas 200I/500 A2 推理产品 | >= CANN 9.0.0 |
-| Atlas 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
+| Atlas 200I/500 A2推理产品 | >= CANN 9.0.0 |
+| Atlas推理系列产品 | >= CANN 9.0.0 |
 
 > 注意: 本样例中涉及多个算子示例，请以各个算子示例实际支持的产品型号为准。
 

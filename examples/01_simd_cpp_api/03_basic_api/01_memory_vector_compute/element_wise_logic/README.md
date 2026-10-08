@@ -8,9 +8,9 @@
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -55,7 +55,7 @@
   - 输入src1: [512 511 510 ... 1]
   - 输出dst: [1 0 3 ... 0]
 
-**场景2：Ors矢量与标量或操作（标量在前）** ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景2：Ors矢量与标量或操作（标量在前）** ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：src0=[1, 512]（取src0Local[0]作为标量），src1=[1, 512]（矢量）
 - 输出shape：dst=[1, 512]
 - 数据类型：uint16
@@ -73,7 +73,7 @@
   - 输入src1: [1 2 3 ... 512]
   - 输出dst: [1 3 3 5 5 .. 513]
 
-**场景3：ShiftLeft左移操作（tensor形式）** ----此场景仅在 Ascend 950PR/Ascend 950DT产品支持**
+**场景3：ShiftLeft左移操作（tensor形式）** ----此场景仅在 Ascend 950PR&950DT系列产品支持**
 - 输入shape：src0=[1, 512]（待移位数据，uint16），src1=[1, 512]（左移位数，int16）
 - 输出shape：dst=[1, 512]
 - 数据类型：uint16
@@ -145,7 +145,7 @@
   | 选项 | 可选值 | 说明 |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu`（默认）、`cpu`、`sim` | 运行模式：NPU 运行、CPU调试、NPU仿真 |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2 训练系列产品/Atlas A2 推理系列产品和 Atlas A3 训练系列产品/Atlas A3 推理系列产品，dav-3510 对应 Ascend 950PR/Ascend 950DT。注意：场景2和场景3仅支持 dav-3510，编译时会自动切换 |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201`（默认）、`dav-3510` | NPU 架构：dav-2201 对应 Atlas A2系列产品和 Atlas A3系列产品，dav-3510 对应 Ascend 950PR&950DT系列产品。注意：场景2和场景3仅支持 dav-3510，编译时会自动切换 |
   | `SCENARIO_NUM` | `1`（默认）、`2`、`3`、`4` | 场景编号：1（And按位与）、2（Ors矢量标量或）、3（ShiftLeft左移tensor形式）、4（ShiftRight右移scalar形式） |
 
 - 执行结果

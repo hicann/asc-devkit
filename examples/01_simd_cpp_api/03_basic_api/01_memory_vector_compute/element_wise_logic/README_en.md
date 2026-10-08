@@ -8,9 +8,9 @@ This example implements bitwise logic operation functionality based on And, Ors,
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -55,7 +55,7 @@ This example switches between different scenarios through the compilation parame
   - Input src1: [512 511 510 ... 1]
   - Output dst: [1 0 3 ... 0]
 
-**Scenario 2: Ors Vector-Scalar OR (Scalar at Front) ---- This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 2: Ors Vector-Scalar OR (Scalar at Front) ---- This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: src0=[1, 512] (src0Local[0] as scalar), src1=[1, 512] (vector)
 - Output shape: dst=[1, 512]
 - Data type: uint16
@@ -73,7 +73,7 @@ This example switches between different scenarios through the compilation parame
   - Input src1: [1 2 3 ... 512]
   - Output dst: [1 3 3 5 5 .. 513]
 
-**Scenario 3: ShiftLeft Left Shift (Tensor Form) ---- This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 3: ShiftLeft Left Shift (Tensor Form) ---- This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: src0=[1, 512] (data to shift, uint16), src1=[1, 512] (left shift amounts, int16)
 - Output shape: dst=[1, 512]
 - Data type: uint16
@@ -145,7 +145,7 @@ Run the following steps in the root directory of this example to build and run t
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debug, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT. Note: Scenarios 2 and 3 only support dav-3510, automatically switched during compilation |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products. Note: Scenarios 2 and 3 only support dav-3510, automatically switched during compilation |
   | `SCENARIO_NUM` | `1` (default), `2`, `3`, `4` | Scenario number: 1 (And bitwise AND), 2 (Ors vector-scalar OR), 3 (ShiftLeft tensor form), 4 (ShiftRight scalar form) |
 
 - Execution result

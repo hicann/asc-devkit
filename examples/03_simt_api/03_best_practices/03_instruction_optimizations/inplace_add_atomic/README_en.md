@@ -8,7 +8,7 @@ This sample uses two in-place accumulation operations — three-operand multiply
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | \>= CANN 9.2.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.2.0 |
 
 ## Directory Structure
 
@@ -238,7 +238,7 @@ Run the following steps in the root directory of this sample to build and execut
   | Option | Values | Description |
   |------|--------|------|
   | CMAKE_ASC_RUN_MODE | npu/sim | Run mode: NPU execution, NPU simulation, default npu |
-  | CMAKE_ASC_ARCHITECTURES | dav-3510 | NPU architecture: this sample only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | CMAKE_ASC_ARCHITECTURES | dav-3510 | NPU architecture: this sample only supports dav-3510 (Ascend 950PR&950DT products) |
   | SCENARIO_NUM | 0/1/2/3 | Scenario number: 0/1 are the baseline/optimized scenarios of Case 0 (three-operand multiply-add), 2/3 are the baseline/optimized scenarios of Case 1 (two-operand add) |
   | SKIP_VALIDATION | ON/OFF | Whether to skip result validation, default OFF. Recommended to set to ON when collecting performance with msopprof |
 

@@ -10,9 +10,9 @@ The data transfer process includes: Global Memory (GM) -> Unified Buffer (UB) (u
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -59,14 +59,14 @@ This example selects different scenarios through the build parameter `SCENARIO_N
 - Parameter configuration: isPad=true, leftPadding=0, rightPadding=5
 - Description: **No need to use SetPadValue**. When isPad=true, the default padding value is 0, padding 5 elements on the right.
 
-**Scenario 3: Data Transfer Using Compact Mode ----This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 3: Data Transfer Using Compact Mode ----This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: [3, 24]
 - Output shape: [1, 80]
 - Data type: half
 - Parameter configuration: blockLen=48, blockCount=3, leftPadding=0, rightPadding=16, isPad=false
 - Description: Compact mode allows a single transfer to be unaligned, uniformly padding to 32-byte alignment at the end of the entire data block. In this example, leftPadding is 0, rightPadding is 16, padding 16 bytes on the right of the last data block. The destination operand data volume is 160 bytes.
 
-**Scenario 4: Enable Loop Mode Using SetLoopModePara (Compact Mode) ----This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 4: Enable Loop Mode Using SetLoopModePara (Compact Mode) ----This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: [1, 320], as shown in Figure 1
 - Output shape: [1, 576], as shown in Figure 2
 - Data type: int8
@@ -84,7 +84,7 @@ This example selects different scenarios through the build parameter `SCENARIO_N
 
 <img src="figures/datacopypad2.png">
 
-**Scenario 5: Enable Loop Mode Using SetLoopModePara (Normal Mode) ----This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 5: Enable Loop Mode Using SetLoopModePara (Normal Mode) ----This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: [1, 320], as shown in Figure 1
 - Output shape: [1, 576], as shown in Figure 3
 - Data type: int8
@@ -98,7 +98,7 @@ This example selects different scenarios through the build parameter `SCENARIO_N
 
 <img src="figures/datacopypad3.png">
 
-**Scenario 6: Five-Dimensional Data Transfer Using SetLoopModePara (Normal Mode) ----This scenario is only supported on Ascend 950PR/Ascend 950DT products**
+**Scenario 6: Five-Dimensional Data Transfer Using SetLoopModePara (Normal Mode) ----This scenario is only supported on Ascend 950PR&950DT products**
 - Input shape: [2, 4, 3, 128, 126], five-dimensional data
 - Output shape: [512, 128], stored contiguously in UB
 - Data type: int8
@@ -148,7 +148,7 @@ Run the following steps in the root directory of this example to build and run i
   | Option | Values | Description |
   |--------|--------|-------------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | dav-2201 corresponds to Atlas A2 Training Series Products/Atlas A2 Inference Series Products and Atlas A3 Training Series Products/Atlas A3 Inference Series Products, dav-3510 corresponds to Ascend 950PR/Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | dav-2201 corresponds to Atlas A2 products and Atlas A3 products, dav-3510 corresponds to Ascend 950PR&950DT products |
   | `SCENARIO_NUM` | `1` (default), `2`, `3`, `4`, `5`, `6` | Scenario number: 1 (SetPadValue padding), 2 (rightPadding), 3 (Compact mode), 4 (SetLoopModePara loop mode Compact), 5 (SetLoopModePara loop mode Normal), 6 (five-dimensional LoopMode Normal) |
 
 - Execution result

@@ -10,9 +10,9 @@ The sample uses 8 Cores. The main tile data volume in each core is 3200 `half` e
 
 | Product | CANN software version |
 |------|--------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
-| Atlas A3 training series products/Atlas A3 inference series products | >= CANN 9.0.0 |
-| Atlas A2 training series products/Atlas A2 inference series products | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
+| Atlas A3 products | >= CANN 9.0.0 |
+| Atlas A2 products | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -208,7 +208,7 @@ In the sample root directory, perform the following steps to build and run the s
   | Option | Optional value | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `cpu`, `sim` | Run mode: NPU execution, CPU debugging, and NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: `dav-2201` maps to Atlas A2 training series products, Atlas A2 inference series products, Atlas A3 training series products, and Atlas A3 inference series products. `dav-3510` maps to Ascend 950PR and Ascend 950DT |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-2201` (default), `dav-3510` | NPU architecture: `dav-2201` maps to Atlas A2 products and Atlas A3 products. `dav-3510` maps to Ascend 950PR and Ascend 950DT |
   | `SCENARIO_NUM` | `0` (default), `1`, `2`, `3` | Scenario number: 0 (main tile equal split), 1 (tail block equal split), 2 (tail core split), and 3 (tail core split with tail blocks) |
 
 - Execution result.

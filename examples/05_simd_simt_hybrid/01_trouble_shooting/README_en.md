@@ -8,4 +8,4 @@ This directory provides troubleshooting samples for Ascend C SIMD and SIMT hybri
 
 | Directory Name | Description | Supported Products |
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
-| [simd_simt_ub_usage_limit](./simd_simt_ub_usage_limit) | Demonstrates UB static memory, dynamic memory, reserved space, Data Cache layout, and out-of-bounds troubleshooting in SIMD and SIMT hybrid programming. | Ascend 950PR/Ascend 950DT |
+| [simd_simt_ub_usage_limit](./simd_simt_ub_usage_limit) | Demonstrates UB static memory, dynamic memory, reserved space, Data Cache layout, and out-of-bounds troubleshooting in SIMD and SIMT hybrid programming. | Ascend 950PR&950DT products |

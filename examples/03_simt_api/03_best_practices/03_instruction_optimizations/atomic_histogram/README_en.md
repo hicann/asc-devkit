@@ -10,7 +10,7 @@ A histogram is a statistical method used to count the frequency of each value in
 
 | Product | CANN Version |
 |------|-------------|
-| Ascend 950PR/Ascend 950DT | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | >= CANN 9.1.0 |
 
 ## Directory Structure
 
@@ -228,7 +228,7 @@ Run the following steps in the root directory of this sample to build and execut
   | Option | Values | Description |
   |------|--------|------|
   | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | Run mode: NPU execution, NPU simulation |
-  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this sample only supports dav-3510 (Ascend 950PR/Ascend 950DT) |
+  | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | NPU architecture: this sample only supports dav-3510 (Ascend 950PR&950DT products) |
   | `SKIP_VALIDATION` | `ON`/`OFF` | Whether to skip result validation, default `OFF`. Recommended to set to `ON` when collecting performance with `msopprof` |
 
   The following output indicates that the accuracy verification is successful.
