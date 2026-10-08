@@ -6,9 +6,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 
 -   支持的数据类型有变化。
 
-    **表1**  数据类型兼容性情况
+    **表1**  数据类型兼容性情况<a name="table1534819819338"></a>
 
-    <a name="table1534819819338"></a>
     <table><thead align="left"><tr id="row1234720819332"><th class="cellrowborder" valign="top" width="20.849999999999998%" id="mcps1.2.6.1.1"><p id="p43471486333"><a name="p43471486333"></a><a name="p43471486333"></a>A矩阵</p>
     </th>
     <th class="cellrowborder" valign="top" width="19.05%" id="mcps1.2.6.1.2"><p id="p14347686337"><a name="p14347686337"></a><a name="p14347686337"></a>B矩阵</p>
@@ -105,9 +104,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 
 ## 其它高阶API<a name="section14195124865717"></a>
 
-**表2**  数学计算
+**表2**  数学计算<a name="table1011733113422"></a>
 
-<a name="table1011733113422"></a>
 <table><thead align="left"><tr id="row3118531154217"><th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.1"><p id="p0118031104211"><a name="p0118031104211"></a><a name="p0118031104211"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.2"><p id="p8118143124210"><a name="p8118143124210"></a><a name="p8118143124210"></a>兼容说明</p>
@@ -142,9 +140,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表3**  激活函数
+**表3**  激活函数<a name="table192231726173811"></a>
 
-<a name="table192231726173811"></a>
 <table><thead align="left"><tr id="row1422362623814"><th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.1"><p id="p1041413536446"><a name="p1041413536446"></a><a name="p1041413536446"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.2"><p id="p9414175314412"><a name="p9414175314412"></a><a name="p9414175314412"></a>兼容说明</p>
@@ -159,9 +156,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表4**  数据归一化
+**表4**  数据归一化<a name="table1488319115396"></a>
 
-<a name="table1488319115396"></a>
 <table><thead align="left"><tr id="row138831103911"><th class="cellrowborder" valign="top" width="49.980000000000004%" id="mcps1.2.3.1.1"><p id="p8665135824416"><a name="p8665135824416"></a><a name="p8665135824416"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50.019999999999996%" id="mcps1.2.3.1.2"><p id="p1466513582447"><a name="p1466513582447"></a><a name="p1466513582447"></a>兼容说明</p>
@@ -194,9 +190,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表5**  量化操作
+**表5**  量化操作<a name="table432310426394"></a>
 
-<a name="table432310426394"></a>
 <table><thead align="left"><tr id="row18324164212392"><th class="cellrowborder" valign="top" width="33.95%" id="mcps1.2.3.1.1"><p id="p1247120164516"><a name="p1247120164516"></a><a name="p1247120164516"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="66.05%" id="mcps1.2.3.1.2"><p id="p1247130184515"><a name="p1247130184515"></a><a name="p1247130184515"></a>兼容说明</p>
@@ -230,9 +225,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表6**  归约操作
+**表6**  归约操作<a name="table17561457193915"></a>
 
-<a name="table17561457193915"></a>
 <table><thead align="left"><tr id="row8756357163920"><th class="cellrowborder" valign="top" width="60.709999999999994%" id="mcps1.2.3.1.1"><p id="p102601213455"><a name="p102601213455"></a><a name="p102601213455"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="39.290000000000006%" id="mcps1.2.3.1.2"><p id="p726010113457"><a name="p726010113457"></a><a name="p726010113457"></a>兼容说明</p>
@@ -259,9 +253,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表7**  排序操作
+**表7**  排序操作<a name="table4855685408"></a>
 
-<a name="table4855685408"></a>
 <table><thead align="left"><tr id="row78561987407"><th class="cellrowborder" valign="top" width="50.33%" id="mcps1.2.3.1.1"><p id="p18599528455"><a name="p18599528455"></a><a name="p18599528455"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="49.669999999999995%" id="mcps1.2.3.1.2"><p id="p115995284510"><a name="p115995284510"></a><a name="p115995284510"></a>兼容说明</p>
@@ -288,9 +281,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表8**  索引计算
+**表8**  索引计算<a name="table748063194016"></a>
 
-<a name="table748063194016"></a>
 <table><thead align="left"><tr id="row8480531134011"><th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.1"><p id="p1944815184518"><a name="p1944815184518"></a><a name="p1944815184518"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.2"><p id="p1244845124510"><a name="p1244845124510"></a><a name="p1244845124510"></a>兼容说明</p>
@@ -306,9 +298,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表9**  数据过滤
+**表9**  数据过滤<a name="table1937505494013"></a>
 
-<a name="table1937505494013"></a>
 <table><thead align="left"><tr id="row03769549406"><th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.1"><p id="p182236817450"><a name="p182236817450"></a><a name="p182236817450"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.2"><p id="p422388174510"><a name="p422388174510"></a><a name="p422388174510"></a>兼容说明</p>
@@ -329,9 +320,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表10**  张量变换
+**表10**  张量变换<a name="table68071919174115"></a>
 
-<a name="table68071919174115"></a>
 <table><thead align="left"><tr id="row1880713195411"><th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.1"><p id="p2655161904519"><a name="p2655161904519"></a><a name="p2655161904519"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.2.3.1.2"><p id="p14655719124519"><a name="p14655719124519"></a><a name="p14655719124519"></a>兼容说明</p>
@@ -366,9 +356,8 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </tbody>
 </table>
 
-**表11**  Hccl
+**表11**  Hccl<a name="table12265143614414"></a>
 
-<a name="table12265143614414"></a>
 <table><thead align="left"><tr id="row1126583611410"><th class="cellrowborder" valign="top" width="43.35%" id="mcps1.2.3.1.1"><p id="p16138821104518"><a name="p16138821104518"></a><a name="p16138821104518"></a>AscendC高阶API</p>
 </th>
 <th class="cellrowborder" valign="top" width="56.65%" id="mcps1.2.3.1.2"><p id="p61381215456"><a name="p61381215456"></a><a name="p61381215456"></a>兼容说明</p>

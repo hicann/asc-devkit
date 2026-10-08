@@ -26,9 +26,8 @@
 
 【性能数据】
 
-输入shape为30000，数据类型为float时，如下示例的性能数据对比如下，数据单位为cycle，使用GetSystemCycle接口获取。
+输入shape为30000，数据类型为float时，如下示例的性能数据对比如下，数据单位为cycle，使用GetSystemCycle接口获取。<a name="table1240852315316"></a>
 
-<a name="table1240852315316"></a>
 <table><thead align="left"><tr id="row140811238537"><th class="cellrowborder" valign="top" width="50%" id="mcps1.1.3.1.1"><p id="p12319202885319"><a name="p12319202885319"></a><a name="p12319202885319"></a>二分累加方案</p>
 </th>
 <th class="cellrowborder" valign="top" width="50%" id="mcps1.1.3.1.2"><p id="p1788511331538"><a name="p1788511331538"></a><a name="p1788511331538"></a>ReduceRepeat单指令操作</p>
@@ -120,9 +119,8 @@ __aicore__ inline void ReduceRepeatSumImpl(const AscendC::LocalTensor<float>& ds
 
 输入shape为256，数据类型为float。如下示例的性能数据如下：
 
-**表1**  两次ReduceRepeat、三次ReduceDataBlock、一次ReduceDataBlock加一次ReduceRepeat，三种归约操作的性能数据（循环100次的时间总和）
+**表1**  两次ReduceRepeat、三次ReduceDataBlock、一次ReduceDataBlock加一次ReduceRepeat，三种归约操作的性能数据（循环100次的时间总和）<a name="table174575114592"></a>
 
-<a name="table174575114592"></a>
 <table><thead align="left"><tr id="row3758185125915"><th class="cellrowborder" valign="top" width="33.33333333333333%" id="mcps1.2.4.1.1"><p id="p57581151175915"><a name="p57581151175915"></a><a name="p57581151175915"></a>两次ReduceRepeat</p>
 </th>
 <th class="cellrowborder" valign="top" width="33.33333333333333%" id="mcps1.2.4.1.2"><p id="p1960391014012"><a name="p1960391014012"></a><a name="p1960391014012"></a>三次ReduceDataBlock</p>

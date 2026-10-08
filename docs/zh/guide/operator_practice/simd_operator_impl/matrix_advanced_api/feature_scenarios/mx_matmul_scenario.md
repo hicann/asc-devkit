@@ -19,9 +19,7 @@ MX格式是一种块数据格式，若干个数据可以组成一个块（或者
 
 MX格式的数据类型包含多种，例如MXFP8、MXFP4、MXFP16、MXINT4等。下表列举了[MxMatmul场景](#zh-cn_topic_0000002270097206_section310824820358)（全称Microscaling Matmul）支持的数据类型。
 
-**表1**  MxMatmul支持MX格式的数据类型
-
-<a name="zh-cn_topic_0000002270097206_table5383144710452"></a>
+**表1**  MxMatmul支持MX格式的数据类型<a name="zh-cn_topic_0000002270097206_table5383144710452"></a>
 
 | 数据类型 | 私有元素数据类型 | 私有元素位宽（d） | 块大小(k) | 共享缩放因子数据类型 | 共享缩放因子位宽(w) |
 | --- | --- | --- | --- | --- | --- |
@@ -205,9 +203,7 @@ Host侧自动获取Tiling参数的关键步骤介绍如下：
 
 ## 参数说明
 
-**表3**  MatmulTypeWithScale参数说明
-
-<a name="zh-cn_topic_0000002270097206_table14759942142014"></a>
+**表3**  MatmulTypeWithScale参数说明<a name="zh-cn_topic_0000002270097206_table14759942142014"></a>
 
 | 参数 | 说明 |
 | --- | --- |

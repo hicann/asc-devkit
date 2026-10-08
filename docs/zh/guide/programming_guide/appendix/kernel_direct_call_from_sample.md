@@ -177,9 +177,8 @@ AddKernelInvocationNeo
 
 本节会介绍CMake文件中一些关键环境变量和Cmake命令参数的说明，通常情况下不需要开发者修改，但是这些参数可以帮助开发者更好的理解编译原理，方便有能力的开发者对Cmake进行定制化处理。
 
-**表1**  环境变量说明
+**表1**  环境变量说明<a name="table8269104175818"></a>
 
-<a name="table8269104175818"></a>
 <table><thead align="left"><tr id="row126924116583"><th class="cellrowborder" valign="top" width="24.54%" id="mcps1.2.3.1.1"><p id="p182692415584"><a name="p182692415584"></a><a name="p182692415584"></a>环境变量</p>
 </th>
 <th class="cellrowborder" valign="top" width="75.46000000000001%" id="mcps1.2.3.1.2"><p id="p12269124113588"><a name="p12269124113588"></a><a name="p12269124113588"></a>配置说明</p>
@@ -219,9 +218,8 @@ AddKernelInvocationNeo
 </tbody>
 </table>
 
-**表2**  Cmake命令语法说明
+**表2**  Cmake命令语法说明<a name="table481718169817"></a>
 
-<a name="table481718169817"></a>
 <table><thead align="left"><tr id="row1981751617812"><th class="cellrowborder" valign="top" width="24.67%" id="mcps1.2.3.1.1"><p id="p188171016288"><a name="p188171016288"></a><a name="p188171016288"></a>Cmake命令</p>
 </th>
 <th class="cellrowborder" valign="top" width="75.33%" id="mcps1.2.3.1.2"><p id="p481751615812"><a name="p481751615812"></a><a name="p481751615812"></a>语法说明</p>
@@ -386,9 +384,8 @@ bash run.sh --run-mode=npu  --soc-version=<soc_version> --install-path=<install_
 bash run.sh -r npu  -v <soc_version> -i <install_path> -b Debug -p <install-prefix>
 ```
 
-**表3**  脚本参数介绍
+**表3**  脚本参数介绍<a name="table98393011180"></a>
 
-<a name="table98393011180"></a>
 <table><thead align="left"><tr id="row98396051814"><th class="cellrowborder" valign="top" width="16.14%" id="mcps1.2.4.1.1"><p id="p283916071814"><a name="p283916071814"></a><a name="p283916071814"></a>参数名</p>
 </th>
 <th class="cellrowborder" valign="top" width="11.690000000000001%" id="mcps1.2.4.1.2"><p id="p1872572854511"><a name="p1872572854511"></a><a name="p1872572854511"></a>参数简写</p>

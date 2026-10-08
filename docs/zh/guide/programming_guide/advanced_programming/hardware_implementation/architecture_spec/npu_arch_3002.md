@@ -30,9 +30,8 @@
 
 开发者可以通过[平台信息获取](../../../../../api/Utils-API/platform_info/platform_info.md)接口查询各存储单元的内存空间大小。
 
-**各存储单元的最小访问粒度（对齐要求）**
+**各存储单元的最小访问粒度（对齐要求）**<a name="table12348145512210"></a>
 
-<a name="table12348145512210"></a>
 <table><thead align="left"><tr id="row3348175522218"><th class="cellrowborder" valign="top" width="7.5200000000000005%" id="mcps1.1.4.1.1"><p id="p1680716381143"><a name="p1680716381143"></a><a name="p1680716381143"></a>核</p>
 </th>
 <th class="cellrowborder" valign="top" width="46.22%" id="mcps1.1.4.1.2"><p id="p5348145515229"><a name="p5348145515229"></a><a name="p5348145515229"></a>存储单元</p>

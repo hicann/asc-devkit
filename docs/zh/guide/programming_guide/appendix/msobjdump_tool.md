@@ -95,9 +95,7 @@
     msobjdump --list-elf <elf_file>
     ```
 
-    **表3**  参数说明
-
-    <a name="table121952819427"></a>
+    **表3**  参数说明<a name="table121952819427"></a>
 
     | 参数（区分大小写） | 可选/必选 | 说明 |
     | ---- | ---- | ---- |
@@ -133,9 +131,7 @@
 | `FUNCTION_ENTRY` | 算子TilingKey的值。<br><!-- npu="950" id55 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id55 --><!-- npu="A3" id56 -->Atlas A3系列产品：不支持<br><!-- end id56 --><!-- npu="910b" id57 -->Atlas A2系列产品：不支持<br><!-- end id57 --><!-- npu="310b" id58 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id58 --><!-- npu="310p" id59 -->Atlas推理系列产品：不支持<br><!-- end id59 --><!-- npu="910" id60 -->Atlas训练系列产品：不支持<!-- end id60 --> | 否 | 不设置`--verbose`，默认打印。 |
 | `elf header infos` | 包括ELF Header、Section Headers、Key to Flags、Program Headers、Symbol表等信息。 | 否 | 设置`--verbose`，开启全量打印。 |
 
-**表6**  核函数（Kernel）类型信息
-
-<a name="table187419221164"></a>
+**表6**  核函数（Kernel）类型信息<a name="table187419221164"></a>
 
 | KERNEL_TYPE | 说明 |
 | ---- | ---- |

@@ -14,9 +14,8 @@
 
 本案例的算子规格如下：
 
-**表1**  算子规格
+**表1**  算子规格<a name="table9129161439"></a>
 
-<a name="table9129161439"></a>
 <table><thead align="left"><tr id="row4121116114317"><th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.1"><p id="p1712111610439"><a name="p1712111610439"></a><a name="p1712111610439"></a>输入</p>
 </th>
 <th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.2"><p id="p15129162437"><a name="p15129162437"></a><a name="p15129162437"></a>Shape</p>

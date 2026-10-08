@@ -33,9 +33,8 @@
     -   算子涉及Matmul左右矩阵在外部存储和内部存储间的数据搬运，查看Ascend C  API参考中的数据搬运接口，需要使用[DataCopy](../../../../../api/SIMD-API/basic_api/data_move_guide/overview/data_move_concept.md)来实现数据搬运。
     -   计算过程涉及矩阵计算操作，查看Ascend C  API参考中的矩阵计算相关接口，需要使用[Matmul高阶API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)实现矩阵乘计算。
 
-**表1**  AllGatherMatmulCustom算子规格
+**表1**  AllGatherMatmulCustom算子规格<a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_table164881913121819"></a>
 
-<a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_table164881913121819"></a>
 <table><tbody><tr id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_row1848911314188"><th class="firstcol" valign="top" id="mcps1.2.6.1.1"><p id="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_p54891613141818"><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_p54891613141818"></a><a name="zh-cn_topic_0000002400208581_zh-cn_topic_0000001514387805_zh-cn_topic_0229825559_zh-cn_topic_0229823837_zh-cn_topic_0211294710_p54891613141818"></a>算子类型（OpType）</p>
 </th>
 <td class="cellrowborder" colspan="4" valign="top" headers="mcps1.2.6.1.1 "><p id="zh-cn_topic_0000002400208581_p13423114244112"><a name="zh-cn_topic_0000002400208581_p13423114244112"></a><a name="zh-cn_topic_0000002400208581_p13423114244112"></a><span>AllGatherMatmulCustom</span></p>

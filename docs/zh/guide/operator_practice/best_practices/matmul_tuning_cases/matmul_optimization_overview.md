@@ -4,9 +4,8 @@
 
 -   Tiling优化
 
-    **表1**  Tiling优化策略总览
+    **表1**  Tiling优化策略总览<a name="table11377439144919"></a>
 
-    <a name="table11377439144919"></a>
     <table><thead align="left"><tr id="row7377639104916"><th class="cellrowborder" valign="top" width="30.086991300869915%" id="mcps1.2.4.1.1"><p id="p4377123917495"><a name="p4377123917495"></a><a name="p4377123917495"></a>分类</p>
     </th>
     <th class="cellrowborder" valign="top" width="40.82591740825918%" id="mcps1.2.4.1.2"><p id="p2377193920493"><a name="p2377193920493"></a><a name="p2377193920493"></a>适用场景</p>
@@ -27,9 +26,8 @@
 
 -   并行度优化
 
-    **表2**  并行度优化策略总览
+    **表2**  并行度优化策略总览<a name="table225712267501"></a>
 
-    <a name="table225712267501"></a>
     <table><thead align="left"><tr id="row18257182614507"><th class="cellrowborder" valign="top" width="30.086991300869915%" id="mcps1.2.4.1.1"><p id="p1925717267508"><a name="p1925717267508"></a><a name="p1925717267508"></a>分类</p>
     </th>
     <th class="cellrowborder" valign="top" width="40.82591740825918%" id="mcps1.2.4.1.2"><p id="p182571626155016"><a name="p182571626155016"></a><a name="p182571626155016"></a>适用场景</p>
@@ -65,9 +63,8 @@
 
 -   内存优化
 
-    **表3**  内存优化策略总览
+    **表3**  内存优化策略总览<a name="table136011854115018"></a>
 
-    <a name="table136011854115018"></a>
     <table><thead align="left"><tr id="row1060112547508"><th class="cellrowborder" valign="top" width="30.086991300869915%" id="mcps1.2.4.1.1"><p id="p860113549502"><a name="p860113549502"></a><a name="p860113549502"></a>分类</p>
     </th>
     <th class="cellrowborder" valign="top" width="40.82591740825918%" id="mcps1.2.4.1.2"><p id="p460185475011"><a name="p460185475011"></a><a name="p460185475011"></a>适用场景</p>
@@ -96,9 +93,8 @@
 
 -   Scalar优化
 
-    **表4**  Scalar优化策略总览
+    **表4**  Scalar优化策略总览<a name="table214614239517"></a>
 
-    <a name="table214614239517"></a>
     <table><thead align="left"><tr id="row514716230519"><th class="cellrowborder" valign="top" width="30.086991300869915%" id="mcps1.2.4.1.1"><p id="p16147112355116"><a name="p16147112355116"></a><a name="p16147112355116"></a>分类</p>
     </th>
     <th class="cellrowborder" valign="top" width="40.82591740825918%" id="mcps1.2.4.1.2"><p id="p12147112318519"><a name="p12147112318519"></a><a name="p12147112318519"></a>适用场景</p>
@@ -127,9 +123,8 @@
 
 -   搬运优化
 
-    **表5**  搬运优化策略总览
+    **表5**  搬运优化策略总览<a name="table2401471518"></a>
 
-    <a name="table2401471518"></a>
     <table><thead align="left"><tr id="row44094713510"><th class="cellrowborder" valign="top" width="30.086991300869915%" id="mcps1.2.4.1.1"><p id="p114013470517"><a name="p114013470517"></a><a name="p114013470517"></a>分类</p>
     </th>
     <th class="cellrowborder" valign="top" width="40.82591740825918%" id="mcps1.2.4.1.2"><p id="p164015478513"><a name="p164015478513"></a><a name="p164015478513"></a>适用场景</p>

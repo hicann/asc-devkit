@@ -48,8 +48,7 @@
     └──visualize_data.bin         # MindStudio Insight呈现文件
     ```
     
-**表2 msopprof文件介绍**
-<a name="table244174535419"></a>
+**表2 msopprof文件介绍**<a name="table244174535419"></a>
 <table><thead align="left"><tr id="row17451145145411"><th class="cellrowborder" valign="top" width="24.54%" id="mcps1.2.3.1.1"><p id="p18451345115414"><a name="p18451345115414"></a><a name="p18451345115414"></a>名称</p>
 </th>
 <th class="cellrowborder" valign="top" width="75.46000000000001%" id="mcps1.2.3.1.2"><p id="p4451245115415"><a name="p4451245115415"></a><a name="p4451245115415"></a>说明</p>
@@ -160,9 +159,8 @@
 
         其中仿真编译所依赖的库介绍如下，开启仿真编译时，需要优先链接，确保优先使用仿真库的符号，防止出现运行时coredump等异常情况。
 
-        **表3 仿真编译依赖库介绍**
+        **表3 仿真编译依赖库介绍**<a name="table84131311195116"></a>
 
-        <a name="table84131311195116"></a>
         <table><thead align="left"><tr id="row4413911115113"><th class="cellrowborder" valign="top" width="45.97%" id="mcps1.2.3.1.1"><p id="p1841381120511"><a name="p1841381120511"></a><a name="p1841381120511"></a>名称</p>
         </th>
         <th class="cellrowborder" valign="top" width="54.03%" id="mcps1.2.3.1.2"><p id="p15413191116515"><a name="p15413191116515"></a><a name="p15413191116515"></a>作用描述</p>

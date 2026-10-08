@@ -15,9 +15,8 @@
 -   删除L1 Buffer-\> Global Memory的数据通路。
 -   SSBuffer，用于AIC和AIV的核间通信。
 -   增加SIMD Register File存储层次，在SIMD程序中，数据从Unified Buffer（UB）搬运到Register进行计算，产生的中间结果可以不用传回UB，直接在寄存器计算。
--   新增SIMT相关硬件单元。SIMT相关硬件单元介绍如下：
+-   新增SIMT相关硬件单元。SIMT相关硬件单元介绍如下：<a name="table45836437171"></a>
 
-    <a name="table45836437171"></a>
     <table><thead align="left"><tr id="row1558324391711"><th class="cellrowborder" valign="top" width="18.85%" id="mcps1.1.3.1.1"><p id="p558318431177"><a name="p558318431177"></a><a name="p558318431177"></a>SIMT硬件单元名称</p>
     </th>
     <th class="cellrowborder" valign="top" width="81.15%" id="mcps1.1.3.1.2"><p id="p3583443191718"><a name="p3583443191718"></a><a name="p3583443191718"></a>说明</p>
@@ -79,9 +78,7 @@
 
 开发者可以通过[平台信息获取](../../../../../api/Utils-API/platform_info/platform_info.md)接口查询各存储单元的内存空间大小。
 
-**各存储单元的参数规格**
-
-<a name="table12348145512210"></a>
+**各存储单元的参数规格**<a name="table12348145512210"></a>
 
 | 存储单元名称 | 存储空间大小 | 对齐要求 | 核函数（Kernel）侧常量名称及大小（单位：字节） |
 | --- | --- | --- | --- |
@@ -104,9 +101,7 @@
 | 非对齐搬入寄存器 | 32B | 4 |
 | 非对齐搬入出寄存器 | 32B | 4 |
 
-<a id="compile-options-description"></a>
-
-> [!NOTE]说明
+> [!NOTE]说明<a id="compile-options-description"></a>
 >
 > UB总容量为256KB，其中部分空间可能用于系统预留或划分为Data Cache。因此，用户可使用的UB空间大小会随编译选项和编程场景变化。
 >

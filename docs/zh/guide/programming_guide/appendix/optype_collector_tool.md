@@ -133,9 +133,7 @@ optype_collector工具用于采集内置/自定义算子包中指定AI处理器�
     | ---- | ---- | ---- |
     | `--detect-conflicts {soc_version}` | 必选 | 检测指定AI处理器版本下自定义算子OpType是否与CANN内置算子OpType或其他自定义算子OpType重名。`{soc_version}`表示待检测的AI处理器型号，可填写CANN支持的产品AI处理器型号。 |
 
-## 返回值<a name="section_optype_collector_return_code"></a>
-
-<a name="table_optype_collector_return_code"></a>
+## 返回值<a name="section_optype_collector_return_code"></a><a name="table_optype_collector_return_code"></a>
 
 | 返回值 | 说明 |
 | ---- | ---- |
@@ -145,9 +143,7 @@ optype_collector工具用于采集内置/自定义算子包中指定AI处理器�
 
 ## 输出说明<a name="section_optype_collector_output"></a>
 
-工具执行后会根据命令模式输出如下信息。
-
-<a name="table_optype_collector_output"></a>
+工具执行后会根据命令模式输出如下信息。<a name="table_optype_collector_output"></a>
 
 | 输出项 | 说明 |
 | ---- | ---- |

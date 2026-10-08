@@ -2,9 +2,8 @@
 
 除了前述[基础知识](../basics.md)和[算子实现](../operator_impl.md)中介绍的基本计算能力外，Matmul矩阵编程还提供了适用于不同场景的处理能力及多种功能，具体场景和功能列于下表中，详细内容请见后续章节。
 
-**表1**  Matmul功能特性表
+**表1**  Matmul功能特性表<a name="zh-cn_topic_0000002298078557_table1220612410208"></a>
 
-<a name="zh-cn_topic_0000002298078557_table1220612410208"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000002298078557_row19206141132015"><th class="cellrowborder" valign="top" width="23.64%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000002298078557_p52061441122017"><a name="zh-cn_topic_0000002298078557_p52061441122017"></a><a name="zh-cn_topic_0000002298078557_p52061441122017"></a>特性描述</p>
 </th>
 <th class="cellrowborder" valign="top" width="76.36%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000002298078557_p1206124122015"><a name="zh-cn_topic_0000002298078557_p1206124122015"></a><a name="zh-cn_topic_0000002298078557_p1206124122015"></a>功能简介</p>
@@ -84,9 +83,8 @@
 </tbody>
 </table>
 
-**表2**  BatchMatmu功能l特性表
+**表2**  BatchMatmul功能特性表<a name="zh-cn_topic_0000002298078557_table1558122415575"></a>
 
-<a name="zh-cn_topic_0000002298078557_table1558122415575"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000002298078557_row1255852419575"><th class="cellrowborder" valign="top" width="24.04%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000002298078557_p4558162445718"><a name="zh-cn_topic_0000002298078557_p4558162445718"></a><a name="zh-cn_topic_0000002298078557_p4558162445718"></a>特性描述</p>
 </th>
 <th class="cellrowborder" valign="top" width="75.96000000000001%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000002298078557_p105581124185715"><a name="zh-cn_topic_0000002298078557_p105581124185715"></a><a name="zh-cn_topic_0000002298078557_p105581124185715"></a>功能简介</p>

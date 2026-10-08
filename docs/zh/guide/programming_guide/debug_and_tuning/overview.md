@@ -6,9 +6,8 @@ Ascend C算子调试的整体方案如下：开发者通过调用Ascend C类库�
 
 具体的调试调优方法和使用的工具列表如下：
 
-**表1**  调试调优方法和使用的工具列表
+**表1**  调试调优方法和使用的工具列表<a name="table3879116815"></a>
 
-<a name="table3879116815"></a>
 <table><thead align="left"><tr id="row128713114816"><th class="cellrowborder" valign="top" width="10.41104110411041%" id="mcps1.2.4.1.1"><p id="p98701186"><a name="p98701186"></a><a name="p98701186"></a>分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="15.541554155415543%" id="mcps1.2.4.1.2"><p id="p16871313811"><a name="p16871313811"></a><a name="p16871313811"></a>子分类</p>

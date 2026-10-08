@@ -18,9 +18,7 @@ AI Core的抽象硬件架构可以分为[**计算单元**](#section_compute_unit
 
 AI Core中的计算单元主要包括Scalar、Vector和Cube三类。
 
-**表1** 计算单元
-
-<a name="zh-cn_topic_0000001588832845_table14884154362"></a>
+**表1** 计算单元<a name="zh-cn_topic_0000001588832845_table14884154362"></a>
 
 | 组件名称 | 组件功能 | 对应编程概念 |
 | --- | --- | --- |

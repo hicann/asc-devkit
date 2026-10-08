@@ -10,9 +10,8 @@
 
 本案例的算子规格如下：
 
-**表1**  算子规格
+**表1**  算子规格<a name="table101751125175213"></a>
 
-<a name="table101751125175213"></a>
 <table><thead align="left"><tr id="row8175525185219"><th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.1"><p id="p1417582516529"><a name="p1417582516529"></a><a name="p1417582516529"></a>输入</p>
 </th>
 <th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.2"><p id="p417532575212"><a name="p417532575212"></a><a name="p417532575212"></a>Shape</p>
@@ -113,9 +112,8 @@
 -   优化后的Cube流水图如下所示，不使用随路ND2NZ指令对B矩阵进行格式转换后，MTE2的占比明显下降。![](../../../figures/zh-cn_image_0000002443251985.png)
 -   优化后的Profiling数据如下，可以看到同时使用Cube单元和Vector单元，aic\_time最大耗时90.95us，其中aic\_mte2\_ratio占比明显降低。![](../../../figures/zh-cn_image_0000002381162386.png)![](../../../figures/zh-cn_image_0000002414561861.png)
 
-**表2**  端到端性能对比
+**表2**  端到端性能对比<a name="table135810433437"></a>
 
-<a name="table135810433437"></a>
 <table><thead align="left"><tr id="row65820433437"><th class="cellrowborder" valign="top" width="22.61%" id="mcps1.2.5.1.1"><p id="p75827438435"><a name="p75827438435"></a><a name="p75827438435"></a>优化方法</p>
 </th>
 <th class="cellrowborder" valign="top" width="21.88%" id="mcps1.2.5.1.2"><p id="p3582204311439"><a name="p3582204311439"></a><a name="p3582204311439"></a>总耗时(us)</p>

@@ -18,9 +18,8 @@
 
 下表列出了不同类型的算子对上述实现代码的要求。
 
-**表1**  不同的类型的算子对入图实现代码的要求
+**表1**  不同的类型的算子对入图实现代码的要求<a name="table772183710452"></a>
 
-<a name="table772183710452"></a>
 <table><thead align="left"><tr id="row1372110374457"><th class="cellrowborder" valign="top" width="35.8%" id="mcps1.2.3.1.1"><p id="p572263714456"><a name="p572263714456"></a><a name="p572263714456"></a>分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="64.2%" id="mcps1.2.3.1.2"><p id="p117222376454"><a name="p117222376454"></a><a name="p117222376454"></a>对入图实现代码的要求</p>

@@ -35,9 +35,7 @@
 
 开发者可以通过[平台信息获取](../../../../../api/Utils-API/platform_info/platform_info.md)接口查询各存储单元的内存空间大小。
 
-**各存储单元的参数规格**
-
-<a name="table12348145512210"></a>
+**各存储单元的参数规格**<a name="table12348145512210"></a>
 
 | 存储单元名称 | 存储空间大小 | 对齐要求 | 核函数（Kernel）侧常量名称及大小（单位：字节） |
 | --- | --- | --- | --- |
@@ -220,9 +218,7 @@ Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配�
 
         同一flagId的计数器最多可以设置15次。
 
-    <a id="cross_core_wait_flag_default_values"></a>
-
-    -   **默认值**
+    -   **默认值**<a id="cross_core_wait_flag_default_values"></a>
 
         - modeId：默认值为0。建议显式配置与CrossCoreSetFlag相同的modeId。
         - pipe：默认值为PIPE\_S。CrossCoreWaitFlag接口提供pipe模板参数，但本架构版本的硬件指令不区分等待的流水，因此pipe取值不影响实际执行效果，CrossCoreWaitFlag会阻塞全部流水的后续指令。

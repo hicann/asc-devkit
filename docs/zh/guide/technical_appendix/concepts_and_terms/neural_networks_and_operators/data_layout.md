@@ -43,8 +43,7 @@
 
 ![](../../../figures/zn_abc.png)
 
--   **FRACTAL\_NZ/NZ**
-<a name="li19960204116136"></a>
+-   **FRACTAL\_NZ/NZ**<a name="li19960204116136"></a>
 
     FRACTAL\_NZ格式，简称NZ格式，是对一个Tensor最低两维（一个Tensor的所有维度，右侧为低维，左侧为高维）进行填充（pad）、拆分（reshape）和转置（transpose）操作后得到的格式。具体的转换过程如下：
 

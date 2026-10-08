@@ -163,9 +163,7 @@ AI Core SIMT的基本编译流程如下：Host代码使用Host编译器编译成
 
 更多的编译命令和用法可以参见[《毕昇编译器用户指南》](https://www.hiascend.com/document/redirect/CannCommunityBiSheng)。
 
-<a id="note-reference"></a>
-
->[!NOTE]说明 
+>[!NOTE]说明<a id="note-reference"></a>
 ><!-- npu="910b,910,310p,310b" id1 -->
 >- 针对如下产品：在安装AI处理器的服务器执行`npu-smi info`命令进行查询，获取Name信息。实际配置值为AscendName，例如Name取值为xxxyy，实际配置值为Ascendxxxyy。<br><br>
 >    <!-- npu="910b" id2 -->

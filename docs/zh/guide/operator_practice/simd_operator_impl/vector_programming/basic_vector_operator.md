@@ -48,9 +48,8 @@
 -   算子类型（OpType）：Add
 -   算子输入输出：
 
-    **表1**  Add算子输入输出规格
+    **表1**  Add算子输入输出规格<a name="table4934296305"></a>
 
-    <a name="table4934296305"></a>
     <table><thead align="left"><tr id="row59358913304"><th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.1"><p id="p5503181819300"><a name="p5503181819300"></a><a name="p5503181819300"></a><strong id="b1850331853010"><a name="b1850331853010"></a><a name="b1850331853010"></a>name</strong></p>
     </th>
     <th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.2"><p id="p1550381833017"><a name="p1550381833017"></a><a name="p1550381833017"></a><strong id="b7503171811309"><a name="b7503171811309"></a><a name="b7503171811309"></a>shape</strong></p>
@@ -215,8 +214,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 
 基于矢量编程范式，将核函数（Kernel）的实现分为3个基本任务：CopyIn，Compute，CopyOut。再根据编程范式上面的算法分析，将整个计算拆分成三个Stage，用户单独编写每个Stage的代码，三阶段流程示意图参见[图3](#zh-cn_topic_0000002201157438_fig4134406304)，具体流程如下：
 
-1.  Stage1：CopyIn实现。
-<a id="copyin-implementation"></a> 
+1.  Stage1：CopyIn实现。<a id="copyin-implementation"></a>
 
     1.  使用[DataCopy](../../../../api/SIMD-API/basic_api/data_move_guide/overview/data_move_concept.md)接口将GlobalTensor数据拷贝到LocalTensor。
     2.  使用[EnQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/EnQue.md)将LocalTensor放入UB（VECIN）的Queue中。
@@ -254,8 +252,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
     inQueueY.FreeTensor(yLocal);
     ```
 
-3.  Stage3：CopyOut实现。
-<a id="copyout-implementation"></a>
+3.  Stage3：CopyOut实现。<a id="copyout-implementation"></a>
 
     1.  使用[DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md)接口从UB（VECOUT）的Queue中取出LocalTensor。
     2.  使用[DataCopy](../../../../api/SIMD-API/basic_api/data_move_guide/overview/data_move_concept.md)接口将LocalTensor拷贝到GlobalTensor上。

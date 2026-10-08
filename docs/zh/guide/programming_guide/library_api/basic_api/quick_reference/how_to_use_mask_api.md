@@ -2,9 +2,8 @@
 
 Mask用于控制矢量计算中参与计算的元素个数，支持以下工作模式及配置方式：
 
-**表1**  Mask工作模式
+**表1**  Mask工作模式<a name="zh-cn_topic_0000002267504584_table414483923116"></a>
 
-<a name="zh-cn_topic_0000002267504584_table414483923116"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000002267504584_row51452039163114"><th class="cellrowborder" valign="top" width="14.14%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000002267504584_p814513911319"><a name="zh-cn_topic_0000002267504584_p814513911319"></a><a name="zh-cn_topic_0000002267504584_p814513911319"></a>工作模式</p>
 </th>
 <th class="cellrowborder" valign="top" width="85.86%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000002267504584_p14145239103115"><a name="zh-cn_topic_0000002267504584_p14145239103115"></a><a name="zh-cn_topic_0000002267504584_p14145239103115"></a>说明</p>
@@ -28,9 +27,8 @@ Mask用于控制矢量计算中参与计算的元素个数，支持以下工作�
 </tbody>
 </table>
 
-**表2**  Mask配置方式
+**表2**  Mask配置方式<a name="zh-cn_topic_0000002267504584_table642464733119"></a>
 
-<a name="zh-cn_topic_0000002267504584_table642464733119"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000002267504584_row8425134710316"><th class="cellrowborder" valign="top" width="14.12%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000002267504584_p194258470311"><a name="zh-cn_topic_0000002267504584_p194258470311"></a><a name="zh-cn_topic_0000002267504584_p194258470311"></a>配置方式</p>
 </th>
 <th class="cellrowborder" valign="top" width="85.88%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000002267504584_p442513473313"><a name="zh-cn_topic_0000002267504584_p442513473313"></a><a name="zh-cn_topic_0000002267504584_p442513473313"></a>说明</p>
@@ -52,9 +50,8 @@ Mask用于控制矢量计算中参与计算的元素个数，支持以下工作�
 
 Mask操作的使用方式如下：
 
-**表3**  Mask操作的使用方式
+**表3**  Mask操作的使用方式<a name="zh-cn_topic_0000002267504584_table1957843418427"></a>
 
-<a name="zh-cn_topic_0000002267504584_table1957843418427"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000002267504584_row657817341420"><th class="cellrowborder" valign="top" width="8.58%" id="mcps1.2.5.1.1"><p id="zh-cn_topic_0000002267504584_p19578634194213"><a name="zh-cn_topic_0000002267504584_p19578634194213"></a><a name="zh-cn_topic_0000002267504584_p19578634194213"></a>配置方式</p>
 </th>
 <th class="cellrowborder" valign="top" width="8.37%" id="mcps1.2.5.1.2"><p id="zh-cn_topic_0000002267504584_p165791734184211"><a name="zh-cn_topic_0000002267504584_p165791734184211"></a><a name="zh-cn_topic_0000002267504584_p165791734184211"></a>工作模式</p>

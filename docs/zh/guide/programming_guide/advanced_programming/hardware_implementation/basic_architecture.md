@@ -123,9 +123,8 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 **图6**  存储单元<a name="fig2032418113610"></a>  
 ![](../../../figures/storage_unit.png "存储单元")
 
-**表1**  存储单元介绍
+**表1**  存储单元介绍<a name="table1692510612218"></a>
 
-<a name="table1692510612218"></a>
 <table><thead align="left"><tr id="row1692576132110"><th class="cellrowborder" valign="top" width="30.11%" id="mcps1.2.3.1.1"><p id="p189252069218"><a name="p189252069218"></a><a name="p189252069218"></a>存储单元</p>
 </th>
 <th class="cellrowborder" valign="top" width="69.89%" id="mcps1.2.3.1.2"><p id="p17925161215"><a name="p17925161215"></a><a name="p17925161215"></a>描述</p>
@@ -165,9 +164,8 @@ AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输
 </tbody>
 </table>
 
-**表2**  搬运单元介绍
+**表2**  搬运单元介绍<a name="table288493152012"></a>
 
-<a name="table288493152012"></a>
 <table><thead align="left"><tr id="row19884103142012"><th class="cellrowborder" valign="top" width="30.049999999999997%" id="mcps1.2.3.1.1"><p id="p288473114204"><a name="p288473114204"></a><a name="p288473114204"></a>搬运单元</p>
 </th>
 <th class="cellrowborder" valign="top" width="69.95%" id="mcps1.2.3.1.2"><p id="p8884531162011"><a name="p8884531162011"></a><a name="p8884531162011"></a>描述</p>

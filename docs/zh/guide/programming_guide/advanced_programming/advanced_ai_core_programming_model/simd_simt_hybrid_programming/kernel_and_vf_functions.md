@@ -2,9 +2,7 @@
 
 SIMD与SIMT混合编程涉及多种类型的函数，它们之间遵循严格的调用关系和层级约束。本章节将介绍整体函数类型和调用关系，再详细展开每种函数的定义、调用语法及约束。
 
-SIMD与SIMT混合编程中涉及的函数类型如下表所示：
-
-<a name="zh-cn_topic_0000002571578013_table1818191292017"></a>
+SIMD与SIMT混合编程中涉及的函数类型如下表所示：<a name="zh-cn_topic_0000002571578013_table1818191292017"></a>
 
 | 修饰符 | 函数功能 | 调用方式 |
 | --- | --- | --- |
@@ -35,9 +33,7 @@ SIMD与SIMT混合编程中涉及的函数类型如下表所示：
 __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2, ...);
 ```
 
-关键修饰符说明如下：
-
-<a name="zh-cn_topic_0000002571578013_table4811406341"></a>
+关键修饰符说明如下：<a name="zh-cn_topic_0000002571578013_table4811406341"></a>
 
 | 修饰符 | 作用 | 必需性 |
 | --- | --- | --- |
@@ -56,9 +52,7 @@ __global__ __vector__ void kernel_name(__gm__ type* param1, __gm__ type* param2,
 kernel_name<<<block_num, dyn_ub_size, stream>>>(args...);
 ```
 
-核函数（Kernel）调用符内的配置参数说明如下：
-
-<a name="zh-cn_topic_0000002571578013_table942016184315"></a>
+核函数（Kernel）调用符内的配置参数说明如下：<a name="zh-cn_topic_0000002571578013_table942016184315"></a>
 
 | 参数 | 类型 | 说明 | 约束 |
 | --- | --- | --- | --- |
@@ -77,9 +71,7 @@ __simt_vf__ __launch_bounds__(MAX_THREAD_COUNT) inline void function_name(
     type scalar_param, ...);
 ```
 
-SIMT VF函数定义中的关键修饰符说明如下：
-
-<a name="zh-cn_topic_0000002571578013_table7661145014492"></a>
+SIMT VF函数定义中的关键修饰符说明如下：<a name="zh-cn_topic_0000002571578013_table7661145014492"></a>
 
 | 修饰符 | 作用 |
 | --- | --- |

@@ -185,9 +185,8 @@
 ## 支持的API范围<a name="section2633193623711"></a>
 
 <!-- npu="310p" id1 -->
-**表1**  针对Atlas推理系列产品AI Core，支持的API范围
+**表1**  针对Atlas推理系列产品AI Core，支持的API范围<a name="table56285428438"></a>
 
-<a name="table56285428438"></a>
 <table><thead align="left"><tr id="row46697425436"><th class="cellrowborder" valign="top" width="30.28%" id="mcps1.2.3.1.1"><p id="p866911429430"><a name="p866911429430"></a><a name="p866911429430"></a>接口分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="69.72%" id="mcps1.2.3.1.2"><p id="p186691442174319"><a name="p186691442174319"></a><a name="p186691442174319"></a>接口名称</p>
@@ -295,9 +294,8 @@
 <!-- end id1 -->
 
 <!-- npu="910b" id2 -->
-**表2**  针对Atlas A2系列产品，支持的API范围
+**表2**  针对Atlas A2系列产品，支持的API范围<a name="table1842818536431"></a>
 
-<a name="table1842818536431"></a>
 <table><thead align="left"><tr id="row104742531436"><th class="cellrowborder" valign="top" width="29.9%" id="mcps1.2.4.1.1"><p id="p10474205364319"><a name="p10474205364319"></a><a name="p10474205364319"></a>接口分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="44.25%" id="mcps1.2.4.1.2"><p id="p1047418533430"><a name="p1047418533430"></a><a name="p1047418533430"></a>接口名称</p>
@@ -498,9 +496,8 @@
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-**表3**  针对Atlas A3系列产品，支持的API范围
+**表3**  针对Atlas A3系列产品，支持的API范围<a name="table167051848128"></a>
 
-<a name="table167051848128"></a>
 <table><thead align="left"><tr id="row07054481922"><th class="cellrowborder" valign="top" width="29.630000000000003%" id="mcps1.2.4.1.1"><p id="p135155581014"><a name="p135155581014"></a><a name="p135155581014"></a>接口分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="44.519999999999996%" id="mcps1.2.4.1.2"><p id="p12351955181013"><a name="p12351955181013"></a><a name="p12351955181013"></a>接口名称</p>
@@ -714,9 +711,8 @@
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
-**表4**  针对Ascend 950PR&950DT系列产品，支持的API范围
+**表4**  针对Ascend 950PR&950DT系列产品，支持的API范围<a name="table1798673512413"></a>
 
-<a name="table1798673512413"></a>
 <table><thead align="left"><tr id="row109864353413"><th class="cellrowborder" valign="top" width="29.630000000000003%" id="mcps1.2.4.1.1"><p id="p1098613524117"><a name="p1098613524117"></a><a name="p1098613524117"></a>接口分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="44.519999999999996%" id="mcps1.2.4.1.2"><p id="p29871535174117"><a name="p29871535174117"></a><a name="p29871535174117"></a>接口名称</p>

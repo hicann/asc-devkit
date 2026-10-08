@@ -1,8 +1,7 @@
 # 优化建议总览表<a name="ZH-CN_TOPIC_0000002351966029"></a>
 
-**表1**  性能优化建议总览表
+**表1**  性能优化建议总览表<a name="table1318114421218"></a>
 
-<a name="table1318114421218"></a>
 <table><thead align="left"><tr id="row8182944131211"><th class="cellrowborder" valign="top" width="12.55%" id="mcps1.2.4.1.1"><p id="p918218445121"><a name="p918218445121"></a><a name="p918218445121"></a>分类</p>
 </th>
 <th class="cellrowborder" valign="top" width="42.89%" id="mcps1.2.4.1.2"><p id="p1165171215245"><a name="p1165171215245"></a><a name="p1165171215245"></a>分类描述</p>

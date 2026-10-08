@@ -16,9 +16,8 @@ for i in range(g):
 
 优化分析以如下算子规格为例：
 
-**表1**  算子规格
+**表1**  算子规格<a name="table162628535334"></a>
 
-<a name="table162628535334"></a>
 <table><thead align="left"><tr id="row17263115333315"><th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.1"><p id="p528831925514"><a name="p528831925514"></a><a name="p528831925514"></a>input</p>
 </th>
 <th class="cellrowborder" valign="top" width="25%" id="mcps1.2.5.1.2"><p id="p1726365314337"><a name="p1726365314337"></a><a name="p1726365314337"></a>shape</p>

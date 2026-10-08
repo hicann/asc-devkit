@@ -19,9 +19,8 @@
 
 Tensor是算子计算数据的容器，包含如下属性信息。
 
-**表1**  Tensor属性信息
+**表1**  Tensor属性信息<a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_table196765568157"></a>
 
-<a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_table196765568157"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_ra39c1f8353b1438b9aeba38c06570057"><th class="cellrowborder" valign="top" width="28.199999999999996%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_zh-cn_topic_0116955499_p6480165326"><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_zh-cn_topic_0116955499_p6480165326"></a><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_zh-cn_topic_0116955499_p6480165326"></a>属性</p>
 </th>
 <th class="cellrowborder" valign="top" width="71.8%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_ab4f79bcaae2544bfad2388951768e902"><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_ab4f79bcaae2544bfad2388951768e902"></a><a name="zh-cn_topic_0000001265237154_zh-cn_topic_0228422146_zh-cn_topic_0187054064_zh-cn_topic_0160787607_ab4f79bcaae2544bfad2388951768e902"></a>定义</p>
@@ -56,9 +55,8 @@ Tensor是算子计算数据的容器，包含如下属性信息。
 
 形状的第一个元素对应张量最外层中括号中的元素个数，形状的第二个元素对应张量中从左边开始数第二个中括号中的元素个数，依此类推。例如：
 
-**表2**  张量的形状举例
+**表2**  张量的形状举例<a name="table08211915203"></a>
 
-<a name="table08211915203"></a>
 <table><thead align="left"><tr id="row482209142014"><th class="cellrowborder" valign="top" width="27.339999999999996%" id="mcps1.2.4.1.1"><p id="p28223992018"><a name="p28223992018"></a><a name="p28223992018"></a>张量</p>
 </th>
 <th class="cellrowborder" valign="top" width="34.4%" id="mcps1.2.4.1.2"><p id="p1082213919205"><a name="p1082213919205"></a><a name="p1082213919205"></a>形状</p>

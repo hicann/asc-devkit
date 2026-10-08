@@ -1,8 +1,7 @@
 # 术语表<a name="ZH-CN_TOPIC_0000002191896252"></a>
 
-**表1**  术语表
+**表1**  术语表<a name="table276611752817"></a>
 
-<a name="table276611752817"></a>
 <table><thead align="left"><tr id="row117661277289"><th class="cellrowborder" valign="top" width="22.978822978822976%" id="mcps1.2.3.1.1"><p id="p17766117132820"><a name="p17766117132820"></a><a name="p17766117132820"></a>术语/缩略语</p>
 </th>
 <th class="cellrowborder" valign="top" width="77.02117702117702%" id="mcps1.2.3.1.2"><p id="p47664714282"><a name="p47664714282"></a><a name="p47664714282"></a>含义</p>
