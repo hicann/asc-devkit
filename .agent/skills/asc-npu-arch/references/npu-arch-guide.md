@@ -153,7 +153,7 @@
 
 | 产品范围 | 文档声明的支持 dtype |
 |---------|----------------------|
-| Ascend 950PR / Ascend 950DT | `bool`, `int8_t`, `uint8_t`, `fp4x2_e2m1_t`, `fp4x2_e1m2_t`, `hifloat8_t`, `fp8_e5m2_t`, `fp8_e4m3fn_t`, `fp8_e8m0_t`, `int4x2_t`, `int16_t`, `uint16_t`, `half`, `bfloat16_t`, `int32_t`, `uint32_t`, `float`, `complex32`, `int64_t`, `uint64_t`, `double`, `complex64` |
+| Ascend 950PR&950DT系列产品 | `bool`, `int8_t`, `uint8_t`, `fp4x2_e2m1_t`, `fp4x2_e1m2_t`, `hifloat8_t`, `fp8_e5m2_t`, `fp8_e4m3fn_t`, `fp8_e8m0_t`, `int4x2_t`, `int16_t`, `uint16_t`, `half`, `bfloat16_t`, `int32_t`, `uint32_t`, `float`, `complex32`, `int64_t`, `uint64_t`, `double`, `complex64` |
 | Atlas A2 / A3 训练和推理系列 | `int8_t`, `uint8_t`, `int16_t`, `uint16_t`, `int32_t`, `uint32_t`, `int64_t`, `uint64_t`, `half`, `bfloat16_t`, `float`, `double` |
 
 复数章节还声明 `complex32` / `complex64` 当前仅昇腾 910_95 AI 处理器支持；如果与产品支持表或本地代码存在差异，生成 UT 前必须以目标 API 和本地实现为准。

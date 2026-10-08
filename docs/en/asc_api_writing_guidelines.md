@@ -294,13 +294,13 @@ Some interfaces are Host interfaces that do not differentiate by product. In thi
 ## Product Support
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products: Not supported
+- Atlas A3 products: Not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 Training Series Products/Atlas A2 Inference Series Products: Not supported
+- Atlas A2 products: Not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 Inference Products: Not supported
@@ -328,13 +328,13 @@ Some interfaces are Host interfaces that do not differentiate by product. In thi
 ## Product Support
 
 <!-- npu="950" id8 -->
-- Ascend 950PR/Ascend 950DT: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 Training Series Products/Atlas A3 Inference Series Products: Not supported
+- Atlas A3 products: Not supported
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 Training Series Products/Atlas A2 Inference Series Products: Not supported
+- Atlas A2 products: Not supported
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 Inference Products: Not supported
@@ -597,15 +597,15 @@ For scenarios with too many function prototypes, using only unordered lists woul
 - This prototype supports the following product models:
 
     <!-- npu="950" id16 -->
-    Ascend 950PR/Ascend 950DT 
+    Ascend 950PR&950DT products 
     <!-- end id16 -->
 
     <!-- npu="A3" id17 -->
-    Atlas A3 Training Series Products/Atlas A3 Inference Series Products 
+    Atlas A3 products 
     <!-- end id17 -->
 
     <!-- npu="910b" id18 -->
-    Atlas A2 Training Series Products/Atlas A2 Inference Series Products 
+    Atlas A2 products 
     <!-- end id18 -->
 
     <!-- npu="310b" id19 -->
@@ -788,7 +788,7 @@ Only lists the parameter units as 16 Bytes and 32 Bytes without the necessary pr
 
 - When the inter-core synchronization mode is mode 0, 1, or 2, the supported value range is 0-15.
 <!-- npu="950" id26 -->
-- For Ascend 950PR/Ascend 950DT, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
+- For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
     - CrossCoreSetFlag operations with flagId 0-10 initiated by AIV0 correspond to CrossCoreWaitFlag operations with flagId 0-10 on AIC.
     - CrossCoreSetFlag operations with flagId 0-10 initiated by AIV1 correspond to CrossCoreWaitFlag operations with flagId 16-26 on AIC.
     - CrossCoreSetFlag operations with flagId 0-10 initiated by AIC correspond to CrossCoreWaitFlag operations with flagId 0-10 on AIV0.
@@ -1193,7 +1193,7 @@ Content customization refers to the ability to dynamically display different con
 
 ```text
 <!-- npu="950" id27 -->
-This interface supports counter mode on Ascend 950PR/Ascend 950DT.
+This interface supports counter mode on Ascend 950PR&950DT products.
 <!-- end id27 -->
 ```
 

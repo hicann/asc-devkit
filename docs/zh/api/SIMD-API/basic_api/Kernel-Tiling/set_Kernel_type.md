@@ -171,7 +171,7 @@
     -   Atlas A2系列产品，支持KERNEL\_TYPE\_AIV\_ONLY、 KERNEL\_TYPE\_AIC\_ONLY、KERNEL\_TYPE\_MIX\_AIV\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_0、KERNEL\_TYPE\_MIX\_AIC\_1\_1、KERNEL\_TYPE\_MIX\_AIC\_1\_2。
     <!-- end id102 -->
     <!-- npu="310p" id103 -->
-    -   Atlas 推理系列产品，支持KERNEL\_TYPE\_AICORE、KERNEL\_TYPE\_MIX\_VECTOR\_CORE。
+    -   Atlas推理系列产品，支持KERNEL\_TYPE\_AICORE、KERNEL\_TYPE\_MIX\_VECTOR\_CORE。
     <!-- end id103 -->
 
 -   **KERNEL\_TASK\_TYPE**优先级高于**KERNEL\_TASK\_TYPE\_DEFAULT**，同时设置了全局核函数（Kernel）类型和某一个tiling key的核函数（Kernel）类型，该tiling key的核函数（Kernel）类型以**KERNEL\_TASK\_TYPE**设置的为准。

@@ -229,7 +229,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id27 -->
 
 <!-- npu="x90" id28 -->
-- Kirin X90处理器系列产品产品：
+- Kirin X90处理器系列产品：
     - TPosition为A1/A2时，支持数据类型为：int8_t、half。
     - TPosition为B1/B2时，支持数据类型为：int8_t、half。
 <!-- end id28 -->

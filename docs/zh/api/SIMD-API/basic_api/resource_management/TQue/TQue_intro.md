@@ -50,7 +50,7 @@ que.FreeTensor(a2);</pre>
 </td>
 <td class="cellrowborder" valign="top" width="85.9%" headers="mcps1.2.3.1.2 "><a name="ul4317543497"></a><a name="ul4317543497"></a><ul id="ul4317543497"><li>mask是int类型时，采用比特位表达信息：<a name="ul196262325012"></a><a name="ul196262325012"></a><ul id="ul196262325012"><li>bit 0位为1表示，数据格式从ND转换为NZ，TPosition仅支持A1或B1；</li><li>bit 1位为1表示，数据格式从NZ转换为ND，TPosition仅支持CO2。</li></ul>
 <p id="p17324473167"><a name="p17324473167"></a><a name="p17324473167"></a>支持的型号如下：</p>
-<p id="p9732447121610"><a name="p9732447121610"></a><a name="p9732447121610"></a><span id="ph1429142166"><a name="ph1429142166"></a><a name="ph1429142166"></a><term id="zh-cn_topic_0000001312391781_term1964153212227"><a name="zh-cn_topic_0000001312391781_term1964153212227"></a><a name="zh-cn_topic_0000001312391781_term1964153212227"></a>Atlas 推理系列产品</term>AI Core</span></p>
+<p id="p9732447121610"><a name="p9732447121610"></a><a name="p9732447121610"></a><span id="ph1429142166"><a name="ph1429142166"></a><a name="ph1429142166"></a><term id="zh-cn_topic_0000001312391781_term1964153212227"><a name="zh-cn_topic_0000001312391781_term1964153212227"></a><a name="zh-cn_topic_0000001312391781_term1964153212227"></a>Atlas推理系列产品</term>AI Core</span></p>
 </li><li>mask是const TQueConfig*类型时，TQueConfig结构定义和参数说明如下，调用示例见<a href="#section45805354920">调用示例</a>:<a name="screen13896155731115"></a><a name="screen13896155731115"></a><pre class="screen" codetype="Cpp" id="screen13896155731115">struct TQueConfig {
     bool nd2nz = false;  // true代表数据格式从ND转换为NZ，仅支持TPosition为A1或B1，默认为false
     bool nz2nd = false;  // true代表数据格式从NZ转换为ND，仅支持TPosition为CO2，默认为false
@@ -63,7 +63,7 @@ que.FreeTensor(a2);</pre>
     bool enableLoopQueue = false;   // 预留参数
 };</pre>
 <p id="p8601939151319"><a name="p8601939151319"></a><a name="p8601939151319"></a>上述ND、NZ格式转换相关参数支持的型号如下：</p>
-<p id="p11601163917138"><a name="p11601163917138"></a><a name="p11601163917138"></a><span id="ph760153981316"><a name="ph760153981316"></a><a name="ph760153981316"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas 推理系列产品</term>AI Core</span></p>
+<p id="p11601163917138"><a name="p11601163917138"></a><a name="p11601163917138"></a><span id="ph760153981316"><a name="ph760153981316"></a><a name="ph760153981316"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas推理系列产品</term>AI Core</span></p>
 </li></ul>
 </td>
 </tr>

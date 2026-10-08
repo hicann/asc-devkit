@@ -86,7 +86,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             <!-- end id31 -->
 
             <!-- npu="310p" id32 -->
-            Atlas 推理系列产品采用方式二。
+            Atlas推理系列产品采用方式二。
             <!-- end id32 -->
 
             <!-- npu="x90" id3 -->
@@ -116,7 +116,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             <!-- end id35 -->
 
             <!-- npu="310p" id36 -->
-            Atlas 推理系列产品采用方式二。
+            Atlas推理系列产品采用方式二。
             <!-- end id36 -->
 
             <!-- npu="x90" id5 -->
@@ -141,7 +141,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
         6.  isLargest参数为false，则给数据乘以-1还原数据。
 
         <!-- npu="310p" id41 -->
-        注意：Atlas 推理系列产品上使用ProposalConcat基础API将data和index组合起来后，再使用RpSort16基础API对数据排序；使用MrgSort4进行归并；使用ProposalExtract基础API提取data和index。
+        注意：Atlas推理系列产品上使用ProposalConcat基础API将data和index组合起来后，再使用RpSort16基础API对数据排序；使用MrgSort4进行归并；使用ProposalExtract基础API提取data和index。
         <!-- end id41 -->
 
     -   计算TopK SMALL模式，过程如下：
@@ -161,7 +161,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
             <!-- end id39 -->
 
             <!-- npu="310p" id40 -->
-            Atlas 推理系列产品采用方式二。
+            Atlas推理系列产品采用方式二。
             <!-- end id40 -->
 
             <!-- npu="x90" id7 -->
@@ -181,7 +181,7 @@ TopK提供了两种不同的排序算法，MERGE\_SORT算法和RADIX\_SELECT算�
         5.  isLargest参数为false，则给输入数据乘以-1还原数据。
 
         <!-- npu="310p" id42 -->
-        注意：Atlas 推理系列产品上使用ProposalConcat基础API将data和index组合起来后，再使用RpSort16基础API对数据排序；由于small模式下inner为32，RpSort16排序后为每16个数据有序，因此在步骤3和步骤4之间，使用MrgSort4基础API进行一次归并排序。
+        注意：Atlas推理系列产品上使用ProposalConcat基础API将data和index组合起来后，再使用RpSort16基础API对数据排序；由于small模式下inner为32，RpSort16排序后为每16个数据有序，因此在步骤3和步骤4之间，使用MrgSort4基础API进行一次归并排序。
         <!-- end id42 -->
 
 -   **RADIX\_SELECT算法**

@@ -52,7 +52,7 @@ __aicore__ inline void MrgSort4(const LocalTensor<T>& dst, const MrgSortSrcList<
 </td>
 <td class="cellrowborder" valign="top" width="86.48%" headers="mcps1.2.3.1.2 "><p id="p168351657155818"><a name="p168351657155818"></a><a name="p168351657155818"></a>操作数数据类型。</p>
 <p id="p332994321818"><a name="p332994321818"></a><a name="p332994321818"></a><span id="ph732984311185"><a name="ph732984311185"></a><a name="ph732984311185"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas训练系列产品</term></span>，支持的数据类型为：half</p>
-<p id="p13291943201812"><a name="p13291943201812"></a><a name="p13291943201812"></a><span id="ph4329104311814"><a name="ph4329104311814"></a><a name="ph4329104311814"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas 推理系列产品</term>AI Core</span>，支持的数据类型为：half/float</p>
+<p id="p13291943201812"><a name="p13291943201812"></a><a name="p13291943201812"></a><span id="ph4329104311814"><a name="ph4329104311814"></a><a name="ph4329104311814"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas推理系列产品</term>AI Core</span>，支持的数据类型为：half/float</p>
 </td>
 </tr>
 </tbody>

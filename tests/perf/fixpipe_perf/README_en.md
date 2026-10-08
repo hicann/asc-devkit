@@ -10,7 +10,7 @@ This is a non-functional performance test. It does not verify computation result
 
 | Product | Architecture Code | CANN Version |
 |---------|-------------------|--------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | dav-3510 | >= CANN 9.1.0 |
 | Atlas A3 Training/Inference Series | dav-2201 | >= CANN 9.0.0 |
 | Atlas A2 Training/Inference Series | dav-2201 | >= CANN 9.0.0 |
 
@@ -45,7 +45,7 @@ The supported test scenarios vary by platform architecture:
 | 1 | float | L0C Buffer | L0C Buffer -> L1 Buffer | DataCopy egress with inline F322F16 conversion to half | 128 | 20 |
 | 2 | float | L0C Buffer | L0C Buffer -> L1 Buffer | DataCopy egress with inline QF322B8_PRE quantization to int8_t | 64 | 20 |
 
-### Ascend 950PR/950DT Platform Scenarios
+### Ascend 950PR&950DT products Platform Scenarios
 
 | SCENARIO_NUM | Input Data Type | Data Source | Execution Path | Description | Theoretical Bandwidth (Byte/cycle) | Bandwidth Latency (cycle) |
 |--------------|-----------------|-------------|----------------|-------------|-----------------------------------|---------------------------|
@@ -81,7 +81,7 @@ make -j
 cd ..
 ```
 
-Build for Ascend 950PR/950DT Platform (dav-3510):
+Build for Ascend 950PR&950DT products Platform (dav-3510):
 
 ```bash
 mkdir -p build && cd build
@@ -99,7 +99,7 @@ The runtime parameter order is `SCENARIO_NUM M K N`:
 ./build/demo 1 128 64 128
 ./build/demo 2 128 64 128
 
-# Ascend 950PR/950DT Platform examples (scenarios 11-14)
+# Ascend 950PR&950DT products Platform examples (scenarios 11-14)
 ./build/demo 11 128 64 128
 ./build/demo 12 128 64 128
 ./build/demo 13 128 64 128
@@ -108,7 +108,7 @@ The runtime parameter order is `SCENARIO_NUM M K N`:
 
 | Parameter | Description |
 |-----------|-------------|
-| `SCENARIO_NUM` | Test scenario number. Use 1, 2 for Atlas A3/A2 Training/Inference Platform; use 11-14 for Ascend 950PR/950DT Platform |
+| `SCENARIO_NUM` | Test scenario number. Use 1, 2 for Atlas A3/A2 Training/Inference Platform; use 11-14 for Ascend 950PR&950DT products Platform |
 | `M` | Number of matrix rows |
 | `K` | Number of columns in matrix A (number of rows in matrix B) |
 | `N` | Number of matrix columns |
@@ -277,7 +277,7 @@ The platform clock frequency is set automatically by `perf.sh` based on the scen
 | Platform | Architecture Code | Clock Frequency | Applicable Scenarios |
 |----------|-------------------|-----------------|----------------------|
 | Atlas A3/A2 Training/Inference Platform | dav-2201 | 1800 MHz | 1, 2 |
-| Ascend 950PR/950DT Platform | dav-3510 | 1650 MHz | 11-14 |
+| Ascend 950PR&950DT products Platform | dav-3510 | 1650 MHz | 11-14 |
 
 ## Roofline Analysis
 

@@ -33,7 +33,7 @@ LoadDataWithSparse主要用于搬运以512Byte为单位存放的稠密权重矩�
     
 <!-- npu="910b,A3" id2 -->
 
-### 针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品
+### 针对Atlas A2系列产品和Atlas A3系列产品
 
 常用分形支持情况如下，供开发者参考：
 
@@ -230,7 +230,7 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 ## 数据类型约束
 
 <!-- npu="910b,A3" id4 -->
-针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，数据类型约束如表3所示：
+针对Atlas A2系列产品和Atlas A3系列产品，数据类型约束如表3所示：
 
 **表3** 数据类型约束
 
@@ -278,7 +278,7 @@ LoadData（MX矩阵搬运）在搬运左右矩阵的时候，在不使能转置�
 <!-- npu="910b,A3" id7 -->
 结合上述数据类型与分形等约束条件，我们对数据搬入接口的使用场景进行了归纳总结，现提供如下，供开发者参考。
 
-针对Atlas A2训练系列产品/Atlas A2推理系列产品和Atlas A3训练系列产品/Atlas A3推理系列产品，**从L1 Buffer->L0A Buffer/L0B Buffer通路，常用的搬运指令有LoadData（2D矩阵搬运）、LoadDataWithTranspose和LoadData（卷积数据搬运），可以调用指令总结如表5所示：**
+针对Atlas A2系列产品和Atlas A3系列产品，**从L1 Buffer->L0A Buffer/L0B Buffer通路，常用的搬运指令有LoadData（2D矩阵搬运）、LoadDataWithTranspose和LoadData（卷积数据搬运），可以调用指令总结如表5所示：**
 
 **表5** L1 Buffer->L0A Buffer/L0B Buffer通路调用指令总结
 

@@ -8,9 +8,9 @@
 
 | 产品 | 架构代号 | CANN软件版本 |
 |------|----------|-------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | dav-3510 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | dav-2201 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -32,7 +32,7 @@
 | 平台架构 | 支持场景 | 说明 |
 |----------|----------|------|
 | Atlas A3/A2训练/推理平台（dav-2201） | 1-4 | 普通Mmad的b8、b16、b32与结构化稀疏b8 |
-| Ascend 950PR/950DT平台（dav-3510） | 11-15 | 普通Mmad的b8、b16、b32与MX量化mxfp8、mxfp4 |
+| Ascend 950PR&950DT系列产品平台（dav-3510） | 11-15 | 普通Mmad的b8、b16、b32与MX量化mxfp8、mxfp4 |
 
 ### Atlas A3/A2训练/推理平台场景
 
@@ -43,7 +43,7 @@
 | 3 | `Mmad`           | float  | float  | float   | b32普通矩阵乘 |
 | 4 | `MmadWithSparse` | int8_t | int8_t | int32_t | b8的4:2结构化稀疏矩阵乘 |
 
-### Ascend 950PR/950DT平台场景
+### Ascend 950PR&950DT系列产品平台场景
 
 | SCENARIO_NUM | 接口 | 左矩阵A | 右矩阵B | Scale | 结果矩阵C | 说明 |
 |--------------|------|---------|---------|-------|-----------|------|
@@ -75,7 +75,7 @@ source ${install_path}/cann/set_env.sh
 # dav-2201（Atlas A3/A2训练/推理平台）
 export LD_LIBRARY_PATH=${ASCEND_HOME_PATH}/tools/simulator/Ascend910B3/lib:$LD_LIBRARY_PATH
 
-# dav-3510（Ascend 950PR/950DT平台）
+# dav-3510（Ascend 950PR&950DT系列产品平台）
 export LD_LIBRARY_PATH=${ASCEND_HOME_PATH}/tools/simulator/Ascend950PR_9589/lib:$LD_LIBRARY_PATH
 ```
 
@@ -92,7 +92,7 @@ make -j
 cd ..
 ```
 
-针对Ascend 950PR/950DT平台（dav-3510）编译：
+针对Ascend 950PR&950DT系列产品平台（dav-3510）编译：
 
 ```bash
 mkdir -p build && cd build
@@ -110,14 +110,14 @@ cd ..
 ./build/demo 1 128 128 128
 ./build/demo 4 128 256 128
 
-# Ascend 950PR/950DT平台示例（场景11-15）
+# Ascend 950PR&950DT系列产品平台示例（场景11-15）
 ./build/demo 11 128 128 128
 ./build/demo 14 128 512 128
 ```
 
 | 参数 | 说明 |
 |------|------|
-| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2训练/推理平台使用1-4，Ascend 950PR/950DT平台使用11-15 |
+| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2训练/推理平台使用1-4，Ascend 950PR&950DT系列产品平台使用11-15 |
 | `M` | 左矩阵A的行数 |
 | `K` | 左矩阵A的列数，即右矩阵B的行数 |
 | `N` | 右矩阵B的列数 |
@@ -256,7 +256,7 @@ Mmad性能用`MAC/cycle`表达，计算量按MAC数`M*N*K`计（乘加算1次MAC
 | 平台 | 架构代号 | 主频 | 适用场景 |
 |------|----------|------|----------|
 | Atlas A3/A2训练/推理平台 | dav-2201 | 1800MHz | 1-4 |
-| Ascend 950PR/950DT平台 | dav-3510 | 1650MHz | 11-15 |
+| Ascend 950PR&950DT系列产品平台 | dav-3510 | 1650MHz | 11-15 |
 
 ## Roofline分析
 

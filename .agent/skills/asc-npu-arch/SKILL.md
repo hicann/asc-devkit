@@ -47,7 +47,7 @@ description: Ascend NPU 架构知识技能。触发：当用户需要确认芯�
 | 2002 | ASCEND310P | Atlas 推理系列 | Ascend310P1, Ascend310P3, Ascend610 |
 | 2201 | ASCEND910B | Atlas A2 训练/推理系列 | Ascend910B1~B4, Ascend910B2C |
 | 2201 | ASCEND910B | Atlas A3 训练/推理系列 | Ascend910_93 |
-| 3002 | ASCEND310B | Atlas 200I/500 A2 推理产品 | Ascend310B1~B4 |
+| 3002 | ASCEND310B | Atlas 200I/500 A2推理产品 | Ascend310B1~B4 |
 | 3510 | ASCEND950 | Atlas A5 训练系列 | Ascend950DT |
 | 3510 | ASCEND950 | Atlas A5 推理系列 | Ascend950PR |
 

@@ -10,9 +10,9 @@
 
 | 产品 | 架构代号 | CANN软件版本 |
 |------|----------|-------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | dav-3510 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | dav-2201 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -45,7 +45,7 @@
 | 1 | float | L0C Buffer | L0C Buffer -> L1 Buffer | DataCopy 搬出，随路 F322F16 转 half | 128 | 20 |
 | 2 | float | L0C Buffer | L0C Buffer -> L1 Buffer | DataCopy 搬出，随路 QF322B8_PRE 量化为 int8_t | 64 | 20 |
 
-### Ascend 950PR/950DT平台场景
+### Ascend 950PR&950DT系列产品平台场景
 
 | SCENARIO_NUM | 输入数据类型 | 数据源 | 执行路径 | 说明 | 理论带宽(Byte/cycle) | 带宽延迟(cycle) |
 |--------------|--------------|--------|----------|------|----------------------|-----------------|
@@ -81,7 +81,7 @@ make -j
 cd ..
 ```
 
-针对Ascend 950PR/950DT平台（dav-3510）编译：
+针对Ascend 950PR&950DT系列产品平台（dav-3510）编译：
 
 ```bash
 mkdir -p build && cd build
@@ -98,7 +98,7 @@ cd ..
 ./build/demo 1 128 64 128
 ./build/demo 2 128 64 128
 
-# Ascend 950PR/950DT平台示例（场景11-14）
+# Ascend 950PR&950DT系列产品平台示例（场景11-14）
 ./build/demo 11 128 64 128
 ./build/demo 12 128 64 128
 ./build/demo 13 128 64 128
@@ -107,7 +107,7 @@ cd ..
 
 | 参数 | 说明 |
 |------|------|
-| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2训练/推理平台使用1、2，Ascend 950PR/950DT平台使用11-14 |
+| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2训练/推理平台使用1、2，Ascend 950PR&950DT系列产品平台使用11-14 |
 | `M` | 矩阵行数 |
 | `K` | 矩阵 A 的列数（矩阵 B 的行数） |
 | `N` | 矩阵列数 |
@@ -276,7 +276,7 @@ BandwidthUtilization = MeasuredBandwidth(GB/s) / TheoryBandwidth(GB/s) * 100%
 | 平台 | 架构代号 | 主频 | 适用场景 |
 |------|----------|------|----------|
 | Atlas A3/A2训练/推理平台 | dav-2201 | 1800MHz | 1、2 |
-| Ascend 950PR/950DT平台 | dav-3510 | 1650MHz | 11-14 |
+| Ascend 950PR&950DT系列产品平台 | dav-3510 | 1650MHz | 11-14 |
 
 ## Roofline分析
 

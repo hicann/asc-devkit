@@ -103,7 +103,7 @@ Release Date: 2026/01/23
 
 ### 🚀 Key Features
 
-Based on Atlas A3 training series products/Atlas A3 inference series products, Atlas A2 training series products/Atlas A2 inference series products fully open source, including the following new features:
+Based on Atlas A3 products, Atlas A2 products fully open source, including the following new features:
 - Implemented repository separation and packaging, supporting independent installation and deployment of separate packages, including core repository asc-devkit for Ascend C operator development, debugging tool repository [asc-tools](https://gitcode.com/cann/asc-tools), Vector operator template library repository [atvc](https://gitcode.com/cann/atvc) and [atvoss](https://gitcode.com/cann/atvoss), Python frontend repository [pyasc](https://gitcode.com/cann/pyasc).
 - Programming API capability expansion
   - Added language extension layer C API, providing industry-similar programming experience.

@@ -51,11 +51,11 @@
     无参构造函数只支持如下产品型号：
 
     <!-- npu="910b" id1 -->
-    Atlas A2训练系列产品/Atlas 800I A2推理产品
+    Atlas A2系列产品
     <!-- end id1 -->
 
     <!-- npu="A3" id2 -->
-    Atlas A3 训练系列产品
+    Atlas A3系列产品
     <!-- end id2 -->
 <!-- end id3 -->
 

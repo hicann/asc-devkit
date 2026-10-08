@@ -20,7 +20,7 @@ uint32_t GetCoreNumAic(void) const
 Atlas训练系列产品，耦合模式，返回AI Core的核数
 <!-- end id1 -->
 <!-- npu="310p" id2 -->
-Atlas 推理系列产品，耦合模式，返回AI Core的核数
+Atlas推理系列产品，耦合模式，返回AI Core的核数
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
 Atlas A2系列产品，分离模式，返回Cube Core的核数

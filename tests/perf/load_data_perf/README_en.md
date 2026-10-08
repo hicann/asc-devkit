@@ -9,9 +9,9 @@ This is a non-business test sample and does not include matrix computation instr
 
 | Product | Architecture Code | CANN Version |
 |------|----------|-------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
-| Atlas A3 Training Series Products/Atlas A3 Inference Series Products | dav-2201 | >= CANN 9.0.0 |
-| Atlas A2 Training Series Products/Atlas A2 Inference Series Products | dav-2201 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT products | dav-3510 | >= CANN 9.1.0 |
+| Atlas A3 products | dav-2201 | >= CANN 9.0.0 |
+| Atlas A2 products | dav-2201 | >= CANN 9.0.0 |
 
 ## Directory Structure
 
@@ -33,7 +33,7 @@ The supported test scenarios vary by platform architecture:
 | Platform Architecture | Supported Scenarios | Description |
 |----------|----------|------|
 | Atlas A3/A2 Training/Inference platform (dav-2201) | 1-9 | LoadData interface scenarios supported by the Atlas A3/A2 Training/Inference platform |
-| Ascend 950PR/950DT platform (dav-3510) | 11-19 | LoadData interface scenarios supported by the Ascend 950PR/950DT platform |
+| Ascend 950PR&950DT products platform (dav-3510) | 11-19 | LoadData interface scenarios supported by the Ascend 950PR&950DT products platform |
 
 ### Atlas A3/A2 Training/Inference Platform Scenarios (1-9)
 
@@ -49,7 +49,7 @@ The supported test scenarios vary by platform architecture:
 | 8 | float | Bias | L1 -> BiasTable Buffer | Loads data from L1 to BiasTable Buffer | 32 | 20 |
 | 9 | uint64_t | FixPipe | L1 -> Fixpipe Buffer | Loads data from L1 to Fixpipe Buffer | 32 | 20 |
 
-### Ascend 950PR/950DT Platform Scenarios (11-19)
+### Ascend 950PR&950DT products Platform Scenarios (11-19)
 
 | SCENARIO_NUM | Input Data Type | Data Source | Execution Path | Description | Theoretical Bandwidth (Byte/cycle) | Bandwidth Latency (cycle) |
 |--------------|--------------|--------|----------|------|----------------------|-----------------|
@@ -85,7 +85,7 @@ cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..
 make -j
 ```
 
-To build for the Ascend 950PR/950DT platform:
+To build for the Ascend 950PR&950DT products platform:
 
 ```bash
 cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
@@ -99,7 +99,7 @@ make -j
 ./demo 1 64 128 128
 ./demo 2 256 128 128
 
-# Ascend 950PR/950DT platform examples (scenarios 11-19)
+# Ascend 950PR&950DT products platform examples (scenarios 11-19)
 ./demo 11 64 128 128
 ./demo 13 256 128 128
 ```
@@ -108,7 +108,7 @@ The runtime parameter order is `SCENARIO_NUM M K N`:
 
 | Parameter | Description |
 |------|------|
-| `SCENARIO_NUM` | Test scenario ID. Use 1-9 for the Atlas A3/A2 Training/Inference platform and 11-19 for the Ascend 950PR/950DT platform |
+| `SCENARIO_NUM` | Test scenario ID. Use 1-9 for the Atlas A3/A2 Training/Inference platform and 11-19 for the Ascend 950PR&950DT products platform |
 | `M` | Number of rows in matrix A |
 | `K` | Number of columns in matrix A, also the number of rows in matrix B |
 | `N` | Number of columns in matrix B |
@@ -218,7 +218,7 @@ For example, when the Atlas A3/A2 Training/Inference platform frequency is 1800 
 Cycle = 0.021111 * 1800 = 38.00 cycles
 ```
 
-When the Ascend 950PR/950DT platform frequency is 1650 MHz and `msopprof` collects `aic_mte1_time(us) = 0.030000`:
+When the Ascend 950PR&950DT products platform frequency is 1650 MHz and `msopprof` collects `aic_mte1_time(us) = 0.030000`:
 
 ```text
 Cycle = 0.030000 * 1650 = 49.50 cycles
@@ -281,7 +281,7 @@ The script automatically sets the platform frequency by scenario:
 | Platform | Architecture Code | Frequency | Applicable Scenarios |
 |------|----------|------|----------|
 | Atlas A3/A2 Training/Inference platform | dav-2201 | 1800 MHz | 1-9 |
-| Ascend 950PR/950DT platform | dav-3510 | 1650 MHz | 11-19 |
+| Ascend 950PR&950DT products platform | dav-3510 | 1650 MHz | 11-19 |
 
 ## Roofline Analysis
 
@@ -323,7 +323,7 @@ The following is an example Roofline chart generated for scenario 1:
 
 ## Notes
 
-1. The scenario ID must match the platform architecture: use scenarios 1-9 for the Atlas A3/A2 Training/Inference platform and scenarios 11-19 for the Ascend 950PR/950DT platform.
+1. The scenario ID must match the platform architecture: use scenarios 1-9 for the Atlas A3/A2 Training/Inference platform and scenarios 11-19 for the Ascend 950PR&950DT products platform.
 2. Scenario 7 (LoadSparse) supports only the dav-2201 architecture.
 3. Scenarios 13/14 (LoadData (MX matrix transfer)) support only the dav-3510 architecture.
 4. Different scenarios have different matrix shape alignment requirements. Use matrix shapes that meet the alignment requirements, such as multiples of 16, 32, or 64.

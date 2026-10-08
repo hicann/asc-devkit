@@ -55,89 +55,20 @@ class ListTensorDesc {
 
 **表1**  模板参数说明
 
-<a name="table13588175515344"></a>
-<table><thead align="left"><tr id="row1160915519346"><th class="cellrowborder" valign="top" width="21.8%" id="mcps1.2.3.1.1"><p id="p9609105553412"><a name="p9609105553412"></a><a name="p9609105553412"></a>参数名</p>
-</th>
-<th class="cellrowborder" valign="top" width="78.2%" id="mcps1.2.3.1.2"><p id="p156091955143419"><a name="p156091955143419"></a><a name="p156091955143419"></a>描述</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row1545073919457"><td class="cellrowborder" valign="top" width="21.8%" headers="mcps1.2.3.1.1 "><p id="p1745103924512"><a name="p1745103924512"></a><a name="p1745103924512"></a>T</p>
-</td>
-<td class="cellrowborder" valign="top" width="78.2%" headers="mcps1.2.3.1.2 "><p id="p11700113714195"><a name="p11700113714195"></a><a name="p11700113714195"></a>Tensor中元素的数据类型。</p>
-</td>
-</tr>
-</tbody>
-</table>
+| 参数名 | 描述 |
+|---|---|
+| T | Tensor中元素的数据类型。 |
 
 **表2**  函数及参数说明
 
-<a name="table153364918102"></a>
-<table><thead align="left"><tr id="row7363209171013"><th class="cellrowborder" valign="top" width="22.58%" id="mcps1.2.4.1.1"><p id="p136399171010"><a name="p136399171010"></a><a name="p136399171010"></a><strong id="b137544519107"><a name="b137544519107"></a><a name="b137544519107"></a>函数名称</strong></p>
-</th>
-<th class="cellrowborder" valign="top" width="32.879999999999995%" id="mcps1.2.4.1.2"><p id="p7363209141012"><a name="p7363209141012"></a><a name="p7363209141012"></a><strong id="b1767135119100"><a name="b1767135119100"></a><a name="b1767135119100"></a>入参说明</strong></p>
-</th>
-<th class="cellrowborder" valign="top" width="44.54%" id="mcps1.2.4.1.3"><p id="p736369161015"><a name="p736369161015"></a><a name="p736369161015"></a><strong id="b3770145112107"><a name="b3770145112107"></a><a name="b3770145112107"></a>含义</strong></p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row8679452171114"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p048812536114"><a name="p048812536114"></a><a name="p048812536114"></a>ListTensorDesc</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p20679185210116"><a name="p20679185210116"></a><a name="p20679185210116"></a>-</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p66799524117"><a name="p66799524117"></a><a name="p66799524117"></a>默认构造函数，需配合Init函数使用。</p>
-</td>
-</tr>
-<tr id="row2036317913108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p836312981011"><a name="p836312981011"></a><a name="p836312981011"></a>ListTensorDesc</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p412513492010"><a name="p412513492010"></a><a name="p412513492010"></a>data：待解析数据的首地址</p>
-<p id="p13363493109"><a name="p13363493109"></a><a name="p13363493109"></a>length：待解析内存的长度</p>
-<p id="p133633981020"><a name="p133633981020"></a><a name="p133633981020"></a>shapeSize：数据指针的个数</p>
-<p id="p5441241210"><a name="p5441241210"></a><a name="p5441241210"></a>length和shapeSize仅用于校验，不填写时不进行校验</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p736312951011"><a name="p736312951011"></a><a name="p736312951011"></a>ListTensorDesc类的构造函数，用于解析对应的内存排布。</p>
-</td>
-</tr>
-<tr id="row18487145155715"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p727005014572"><a name="p727005014572"></a><a name="p727005014572"></a>Init</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p337451113583"><a name="p337451113583"></a><a name="p337451113583"></a>data：待解析数据的首地址</p>
-<p id="p637411135819"><a name="p637411135819"></a><a name="p637411135819"></a>length：待解析内存的长度</p>
-<p id="p11374171114582"><a name="p11374171114582"></a><a name="p11374171114582"></a>shapeSize：数据指针的个数</p>
-<p id="p10374131114583"><a name="p10374131114583"></a><a name="p10374131114583"></a>length和shapeSize仅用于校验，不填写时不进行校验</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p1848724515571"><a name="p1848724515571"></a><a name="p1848724515571"></a>初始化函数，用于解析对应的内存排布。</p>
-</td>
-</tr>
-<tr id="row6363594108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p203647981019"><a name="p203647981019"></a><a name="p203647981019"></a>GetDesc</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p036429151011"><a name="p036429151011"></a><a name="p036429151011"></a>desc：出参，解析后的Tensor描述信息</p>
-<p id="p1836410919102"><a name="p1836410919102"></a><a name="p1836410919102"></a>index：索引值</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p1364129101013"><a name="p1364129101013"></a><a name="p1364129101013"></a>根据index获得功能说明图中对应的TensorDesc信息。</p>
-<p id="zh-cn_topic_0000001441184464_p4760716131514"><a name="zh-cn_topic_0000001441184464_p4760716131514"></a><a name="zh-cn_topic_0000001441184464_p4760716131514"></a>使用GetDesc前需要先调用TensorDesc.SetShapeAddr为desc指定用于储存shape信息的地址，调用GetDesc后会将shape信息写入该地址。</p>
-<p id="p1163195320433"><a name="p1163195320433"></a><a name="p1163195320433"></a><span id="ph340755317588"><a name="ph340755317588"></a><a name="ph340755317588"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas 推理系列产品</term>AI Core</span>支持该功能</p>
-<p id="p4601733194519"><a name="p4601733194519"></a><a name="p4601733194519"></a><span id="ph176033374518"><a name="ph176033374518"></a><a name="ph176033374518"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas训练系列产品</term></span>不支持该功能</p>
-<p id="p173433415610"><a name="p173433415610"></a><a name="p173433415610"></a><span id="ph113414344611"><a name="ph113414344611"></a><a name="ph113414344611"></a><term id="zh-cn_topic_0000001312391781_term11962195213215_1"><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term184716139811_1"><a name="zh-cn_topic_0000001312391781_term184716139811_1"></a><a name="zh-cn_topic_0000001312391781_term184716139811_1"></a>Atlas A2 推理系列产品</term></span>支持该功能</p>
-<p id="p286194811518"><a name="p286194811518"></a><a name="p286194811518"></a><span id="ph14862134820150"><a name="ph14862134820150"></a><a name="ph14862134820150"></a><term id="zh-cn_topic_0000001312391781_term1253731311225_1"><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term131434243115_1"><a name="zh-cn_topic_0000001312391781_term131434243115_1"></a><a name="zh-cn_topic_0000001312391781_term131434243115_1"></a>Atlas A3 推理系列产品</term></span>支持该功能</p>
-<p id="p830124417119"><a name="p830124417119"></a><a name="p830124417119"></a><span id="ph15301744513"><a name="ph15301744513"></a><a name="ph15301744513"></a><term id="zh-cn_topic_0000001312391781_term354143892110_1"><a name="zh-cn_topic_0000001312391781_term354143892110_1"></a><a name="zh-cn_topic_0000001312391781_term354143892110_1"></a>Atlas 200I/500 A2推理产品</term></span>不支持该功能</p>
-</td>
-</tr>
-<tr id="row936499191010"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p1636415981013"><a name="p1636415981013"></a><a name="p1636415981013"></a>GetDataPtr</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p93647921018"><a name="p93647921018"></a><a name="p93647921018"></a>index：索引值</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p4364996106"><a name="p4364996106"></a><a name="p4364996106"></a>根据index获取储存对应数据的地址。</p>
-</td>
-</tr>
-<tr id="row1936417910103"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p133641294106"><a name="p133641294106"></a><a name="p133641294106"></a>GetSize</p>
-</td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p636449101018"><a name="p636449101018"></a><a name="p636449101018"></a>-</p>
-</td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p2036420914106"><a name="p2036420914106"></a><a name="p2036420914106"></a>获取ListTensor中包含的数据指针的个数。</p>
-</td>
-</tr>
-</tbody>
-</table>
+| 函数名称 | 入参说明 | 含义 |
+|---|---|---|
+| ListTensorDesc | - | 默认构造函数，需配合Init函数使用。 |
+| ListTensorDesc | data：待解析数据的首地址<br>length：待解析内存的长度<br>shapeSize：数据指针的个数<br>length和shapeSize仅用于校验，不填写时不进行校验 | ListTensorDesc类的构造函数，用于解析对应的内存排布。 |
+| Init | data：待解析数据的首地址<br>length：待解析内存的长度<br>shapeSize：数据指针的个数<br>length和shapeSize仅用于校验，不填写时不进行校验 | 初始化函数，用于解析对应的内存排布。 |
+| GetDesc | desc：出参，解析后的Tensor描述信息<br>index：索引值 | 根据index获得功能说明图中对应的TensorDesc信息。<br>使用GetDesc前需要先调用TensorDesc.SetShapeAddr为desc指定用于储存shape信息的地址，调用GetDesc后会将shape信息写入该地址。<br>Atlas推理系列产品AI Core支持该功能<br>Atlas训练系列产品不支持该功能<br>Atlas A2系列产品支持该功能<br>Atlas A3系列产品支持该功能<br>Atlas 200I/500 A2推理产品不支持该功能 |
+| GetDataPtr | index：索引值 | 根据index获取储存对应数据的地址。 |
+| GetSize | - | 获取ListTensor中包含的数据指针的个数。 |
 
 ## 调用示例<a name="section1742652412511"></a>
 

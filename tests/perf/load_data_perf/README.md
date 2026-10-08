@@ -9,9 +9,9 @@
 
 | 产品 | 架构代号 | CANN软件版本 |
 |------|----------|-------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
-| Atlas A3 训练系列产品/Atlas A3 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
-| Atlas A2 训练系列产品/Atlas A2 推理系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Ascend 950PR&950DT系列产品 | dav-3510 | >= CANN 9.1.0 |
+| Atlas A3系列产品 | dav-2201 | >= CANN 9.0.0 |
+| Atlas A2系列产品 | dav-2201 | >= CANN 9.0.0 |
 
 ## 目录结构介绍
 
@@ -33,7 +33,7 @@
 | 平台架构 | 支持场景 | 说明 |
 |----------|----------|------|
 | Atlas A3/A2 训练/推理平台（dav-2201） | 1-9 | Atlas A3/A2 训练/推理平台支持的 LoadData 接口场景 |
-| Ascend 950PR/950DT 平台（dav-3510） | 11-19 | Ascend 950PR/950DT 平台支持的 LoadData 接口场景 |
+| Ascend 950PR&950DT系列产品 平台（dav-3510） | 11-19 | Ascend 950PR&950DT系列产品 平台支持的 LoadData 接口场景 |
 
 ### Atlas A3/A2 训练/推理平台场景（1-9）
 
@@ -49,7 +49,7 @@
 | 8 | float | Bias | L1 -> BiasTable Buffer | 从 L1 加载到 BiasTable Buffer | 32 | 20 |
 | 9 | uint64_t | FixPipe | L1 -> Fixpipe Buffer | 从 L1 加载到 Fixpipe Buffer | 32 | 20 |
 
-### Ascend 950PR/950DT 平台场景（11-19）
+### Ascend 950PR&950DT系列产品 平台场景（11-19）
 
 | SCENARIO_NUM | 输入数据类型 | 数据源 | 执行路径 | 说明 | 理论带宽(Byte/cycle) | 带宽延迟(cycle) |
 |--------------|--------------|--------|----------|------|----------------------|-----------------|
@@ -85,7 +85,7 @@ cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 ..
 make -j
 ```
 
-针对 Ascend 950PR/950DT 平台编译：
+针对 Ascend 950PR&950DT系列产品 平台编译：
 
 ```bash
 cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..
@@ -99,7 +99,7 @@ make -j
 ./demo 1 64 128 128
 ./demo 2 256 128 128
 
-# Ascend 950PR/950DT 平台示例（场景 11-19）
+# Ascend 950PR&950DT系列产品 平台示例（场景 11-19）
 ./demo 11 64 128 128
 ./demo 13 256 128 128
 ```
@@ -108,7 +108,7 @@ make -j
 
 | 参数 | 说明 |
 |------|------|
-| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2 训练/推理平台使用 1-9，Ascend 950PR/950DT 平台使用 11-19 |
+| `SCENARIO_NUM` | 测试场景编号，Atlas A3/A2 训练/推理平台使用 1-9，Ascend 950PR&950DT系列产品 平台使用 11-19 |
 | `M` | 矩阵 A 的行数 |
 | `K` | 矩阵 A 的列数（矩阵 B 的行数） |
 | `N` | 矩阵 B 的列数 |
@@ -219,7 +219,7 @@ Cycle = Time(us) * Frequency(MHz)
 Cycle = 0.021111 * 1800 = 38.00 cycles
 ```
 
-当 Ascend 950PR/950DT 平台主频为 1650 MHz 时，若 `msopprof` 采集到 `aic_mte1_time(us) = 0.030000`：
+当 Ascend 950PR&950DT系列产品 平台主频为 1650 MHz 时，若 `msopprof` 采集到 `aic_mte1_time(us) = 0.030000`：
 
 ```text
 Cycle = 0.030000 * 1650 = 49.50 cycles
@@ -282,7 +282,7 @@ BandwidthUtilization = MeasuredBandwidth(GB/s) / TheoryBandwidth(GB/s) * 100%
 | 平台 | 架构代号 | 主频 | 适用场景 |
 |------|----------|------|----------|
 | Atlas A3/A2 训练/推理平台 | dav-2201 | 1800 MHz | 1-9 |
-| Ascend 950PR/950DT 平台 | dav-3510 | 1650 MHz | 11-19 |
+| Ascend 950PR&950DT系列产品 平台 | dav-3510 | 1650 MHz | 11-19 |
 
 ## Roofline 分析
 
@@ -324,7 +324,7 @@ python3 generate_roofline_with_latency.py \
 
 ## 注意事项
 
-1. 场景编号与平台架构必须匹配：Atlas A3/A2 训练/推理平台使用场景 1-9，Ascend 950PR/950DT 平台使用场景 11-19。
+1. 场景编号与平台架构必须匹配：Atlas A3/A2 训练/推理平台使用场景 1-9，Ascend 950PR&950DT系列产品 平台使用场景 11-19。
 2. 场景 7（LoadSparse）仅支持 dav-2201 架构。
 3. 场景 13/14（LoadData（MX矩阵搬运））仅支持 dav-3510 架构。
 4. 不同场景对矩阵规格有不同的对齐要求，建议使用符合对齐要求的矩阵规格（如 16、32、64 的倍数）。

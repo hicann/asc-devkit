@@ -68,7 +68,7 @@
     <!-- end id12 -->
     <!-- npu="310p" id13 -->
     <tr>
-        <td>Atlas 推理系列产品 AI Core</td>
+        <td>Atlas推理系列产品AI Core</td>
         <td>支持</td>
         <td>不支持</td>
         <td>不支持</td>
@@ -76,7 +76,7 @@
     <!-- end id13 -->
     <!-- npu="310p" id14 -->
     <tr>
-        <td>Atlas 推理系列产品 Vector Core</td>
+        <td>Atlas推理系列产品Vector Core</td>
         <td>支持</td>
         <td>不支持</td>
         <td>不支持</td>

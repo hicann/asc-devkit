@@ -15,10 +15,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品 AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品 Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="310b" id7 -->
 - Atlas 200I/500 A2推理产品：不支持
@@ -60,7 +60,7 @@
 <!-- end id8 -->
 
 <!-- npu="310p" id12 -->
-- 针对Atlas 推理系列产品 AI Core，`len`不控制预取长度，预取长度固定为128Byte。
+- 针对Atlas推理系列产品AI Core，`len`不控制预取长度，预取长度固定为128Byte。
 <!-- end id12 -->
 
 ## 返回值说明

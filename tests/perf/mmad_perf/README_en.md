@@ -8,7 +8,7 @@ This example tests the performance of matrix multiply-add operations using Mmad 
 
 | Product | Architecture Code | CANN Version |
 |---------|-------------------|--------------|
-| Ascend 950PR/Ascend 950DT | dav-3510 | >= CANN 9.1.0 |
+| Ascend 950PR&950DT products | dav-3510 | >= CANN 9.1.0 |
 | Atlas A3 Training/Inference Series | dav-2201 | >= CANN 9.0.0 |
 | Atlas A2 Training/Inference Series | dav-2201 | >= CANN 9.0.0 |
 
@@ -32,7 +32,7 @@ The supported test scenarios vary by platform architecture:
 | Platform Architecture | Supported Scenarios | Description |
 |-----------------------|---------------------|-------------|
 | Atlas A3/A2 Training/Inference Platform (dav-2201) | 1-4 | Standard Mmad for b8, b16, b32, and structured sparse b8 |
-| Ascend 950PR/950DT Platform (dav-3510) | 11-15 | Standard Mmad for b8, b16, b32, and MX quantization mxfp8, mxfp4 |
+| Ascend 950PR&950DT products Platform (dav-3510) | 11-15 | Standard Mmad for b8, b16, b32, and MX quantization mxfp8, mxfp4 |
 
 ### Atlas A3/A2 Training/Inference Platform Scenarios
 
@@ -43,7 +43,7 @@ The supported test scenarios vary by platform architecture:
 | 3 | `Mmad`           | float  | float  | float   | b32 standard matrix multiplication |
 | 4 | `MmadWithSparse` | int8_t | int8_t | int32_t | b8 4:2 structured sparse matrix multiplication |
 
-### Ascend 950PR/950DT Platform Scenarios
+### Ascend 950PR&950DT products Platform Scenarios
 
 | SCENARIO_NUM | Interface | Left Matrix A | Right Matrix B | Scale | Result Matrix C | Description |
 |--------------|-----------|---------------|----------------|-------|-----------------|-------------|
@@ -75,7 +75,7 @@ To run this example in a simulation environment, configure the simulator dynamic
 # dav-2201 (Atlas A3/A2 Training/Inference Platform)
 export LD_LIBRARY_PATH=${ASCEND_HOME_PATH}/tools/simulator/Ascend910B3/lib:$LD_LIBRARY_PATH
 
-# dav-3510 (Ascend 950PR/950DT Platform)
+# dav-3510 (Ascend 950PR&950DT products Platform)
 export LD_LIBRARY_PATH=${ASCEND_HOME_PATH}/tools/simulator/Ascend950PR_9589/lib:$LD_LIBRARY_PATH
 ```
 
@@ -92,7 +92,7 @@ make -j
 cd ..
 ```
 
-Build for Ascend 950PR/950DT Platform (dav-3510):
+Build for Ascend 950PR&950DT products Platform (dav-3510):
 
 ```bash
 mkdir -p build && cd build
@@ -110,14 +110,14 @@ The runtime parameter order is `SCENARIO_NUM M K N`:
 ./build/demo 1 128 128 128
 ./build/demo 4 128 256 128
 
-# Ascend 950PR/950DT Platform examples (scenarios 11-15)
+# Ascend 950PR&950DT products Platform examples (scenarios 11-15)
 ./build/demo 11 128 128 128
 ./build/demo 14 128 512 128
 ```
 
 | Parameter | Description |
 |-----------|-------------|
-| `SCENARIO_NUM` | Test scenario number. Use 1-4 for Atlas A3/A2 Training/Inference Platform; use 11-15 for Ascend 950PR/950DT Platform |
+| `SCENARIO_NUM` | Test scenario number. Use 1-4 for Atlas A3/A2 Training/Inference Platform; use 11-15 for Ascend 950PR&950DT products Platform |
 | `M` | Number of rows in left matrix A |
 | `K` | Number of columns in left matrix A, which equals the number of rows in right matrix B |
 | `N` | Number of columns in right matrix B |
@@ -256,7 +256,7 @@ The platform clock frequency is set automatically by `perf.sh` based on the scen
 | Platform | Architecture Code | Clock Frequency | Applicable Scenarios |
 |----------|-------------------|-----------------|----------------------|
 | Atlas A3/A2 Training/Inference Platform | dav-2201 | 1800 MHz | 1-4 |
-| Ascend 950PR/950DT Platform | dav-3510 | 1650 MHz | 11-15 |
+| Ascend 950PR&950DT products Platform | dav-3510 | 1650 MHz | 11-15 |
 
 ## Roofline Analysis
 

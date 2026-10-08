@@ -4,7 +4,7 @@
 
 用于获取硬件平台独立的Vector Core的核数。
 
-该接口仅在Atlas 推理系列产品有效，其他硬件平台型号均返回0。
+该接口仅在Atlas推理系列产品有效，其他硬件平台型号均返回0。
 
 ## 函数原型<a name="zh-cn_topic_0000001817714666_zh-cn_topic_0000001442758437_section13230182415108"></a>
 
@@ -26,7 +26,7 @@ uint32_t GetCoreNumVector(void) const
 Atlas训练系列产品，不支持该接口，返回0
 <!-- end id1 -->
 <!-- npu="310p" id2 -->
-Atlas 推理系列产品，支持该接口，返回硬件平台Vector Core的核数
+Atlas推理系列产品，支持该接口，返回硬件平台Vector Core的核数
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
 Atlas A2系列产品不支持该接口，返回0

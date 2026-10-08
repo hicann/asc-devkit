@@ -295,25 +295,25 @@ Neg_ISASI.md的内容如下：
 ## 产品支持情况
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id7 -->
 ```
 
@@ -329,25 +329,25 @@ Neg_ISASI.md的内容如下：
 ## 产品支持情况
 
 <!-- npu="950" id8 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id12 -->
 <!-- npu="310p" id13 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id13 -->
 <!-- npu="910" id14 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id14 -->
 ```
 
@@ -598,19 +598,19 @@ Gather的功能说明中未给出图示说明，仅通过文字难以理解。
 - 该原型支持如下产品型号：
 
     <!-- npu="950" id16 -->
-    Ascend 950PR/Ascend 950DT 
+    Ascend 950PR&950DT系列产品 
     <!-- end id16 -->
 
     <!-- npu="A3" id17 -->
-    Atlas A3 训练系列产品/Atlas A3 推理系列产品 
+    Atlas A3系列产品 
     <!-- end id17 -->
 
     <!-- npu="910b" id18 -->
-    Atlas A2 训练系列产品/Atlas A2 推理系列产品 
+    Atlas A2系列产品 
     <!-- end id18 -->
 
     <!-- npu="310b" id19 -->
-    Atlas 200I/500 A2 推理产品 
+    Atlas 200I/500 A2推理产品 
     <!-- end id19 -->
 
     <!-- npu="x90" id20 -->
@@ -631,15 +631,15 @@ Gather的功能说明中未给出图示说明，仅通过文字难以理解。
 - 该原型支持如下产品型号：
 
     <!-- npu="310p" id23 -->
-    Atlas 推理系列产品AI Core 
+    Atlas推理系列产品AI Core 
     <!-- end id23 -->
 
     <!-- npu="310p" id24 -->
-    Atlas 推理系列产品Vector Core 
+    Atlas推理系列产品Vector Core 
     <!-- end id24 -->
 
     <!-- npu="910" id25 -->
-    Atlas 训练系列产品 
+    Atlas训练系列产品 
     <!-- end id25 -->
 
     ```cpp
@@ -789,7 +789,7 @@ dataCopyParams给出了其数据类型所在的头文件目录和详细介绍。
 
 - 核间同步的模式为模式0、1、2时，支持的取值范围为0-15。
 <!-- npu="950" id26 -->
-- 针对Ascend 950PR/Ascend 950DT，核间同步的模式为模式4时，支持的取值范围情况如下：
+- 针对Ascend 950PR&950DT系列产品，核间同步的模式为模式4时，支持的取值范围情况如下：
     - AIV0发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 0-10的操作。
     - AIV1发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 16-26的操作。
     - AIC发起的flagId 0-10的CrossCoreSetFlag操作对应AIV0 CrossCoreWaitFlag中flagId 0-10的操作。
@@ -1194,7 +1194,7 @@ __aicore__ inline void Exp(const LocalTensor<T>& dst, const LocalTensor<T>& src,
 
 ```text
 <!-- npu="950" id27 -->
-本接口在Ascend 950PR/Ascend 950DT上支持counter模式。
+本接口在Ascend 950PR&950DT系列产品上支持counter模式。
 <!-- end id27 -->
 ```
 

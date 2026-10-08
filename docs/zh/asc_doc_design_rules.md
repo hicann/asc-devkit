@@ -143,8 +143,8 @@ Ascend C资料体系由**五份**核心文档组成，通过交叉链接形成�
 | 编程模型 | 支持范围 | 芯片支持 |
 |----------|----------|----------|
 | **SIMD(主)** | 向量、矩阵、融合计算 | 昇腾全系列 |
-| **SIMT(辅)** | 仅向量计算 | 仅限Ascend 950PR/Ascend 950DT |
-| **SIMD+SIMT混合** | 向量、矩阵、融合计算 | 仅限Ascend 950PR/Ascend 950DT |
+| **SIMT(辅)** | 仅向量计算 | 仅限Ascend 950PR&950DT系列产品 |
+| **SIMD+SIMT混合** | 向量、矩阵、融合计算 | 仅限Ascend 950PR&950DT系列产品 |
 
 **关联层**：
 
@@ -261,25 +261,25 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 ### 不传入config的原型
 
 <!-- npu="950" id1 -->
-- Ascend 950PR/Ascend 950DT：不支持
+- Ascend 950PR&950DT系列产品：不支持
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：支持
+- Atlas A3系列产品：支持
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：支持
+- Atlas A2系列产品：支持
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
-- Atlas 200I/500 A2 推理产品：支持
+- Atlas 200I/500 A2推理产品：支持
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas 推理系列产品AI Core：支持
+- Atlas推理系列产品AI Core：支持
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas 训练系列产品：支持
+- Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
 - Kirin X90处理器系列产品：支持
@@ -291,25 +291,25 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 ### 传入config的原型
 
 <!-- npu="950" id10 -->
-- Ascend 950PR/Ascend 950DT：支持
+- Ascend 950PR&950DT系列产品：支持
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品：不支持
+- Atlas A3系列产品：不支持
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品：不支持
+- Atlas A2系列产品：不支持
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
-- Atlas 200I/500 A2 推理产品：不支持
+- Atlas 200I/500 A2推理产品：不支持
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas 推理系列产品AI Core：不支持
+- Atlas推理系列产品AI Core：不支持
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas 推理系列产品Vector Core：不支持
+- Atlas推理系列产品Vector Core：不支持
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas 训练系列产品：不支持
+- Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
 - Kirin X90处理器系列产品：不支持
@@ -495,8 +495,8 @@ inQueueY.FreeTensor(yLocal);
 
 <!-- npu="910b,A3" id19 -->
 - 针对如下产品型号：
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A2系列产品
+    - Atlas A3系列产品
 
     在跨卡通信算子开发场景，DataCopy类接口支持跨卡数据搬运，仅支持HCCS物理链路，不支持其他通路；开发者开发过程中，需要关注涉及卡间通信的物理通路，可通过`npu-smi info -t topo`命令查询HCCS物理链路。
 <!-- end id19 -->
@@ -686,31 +686,31 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 源操作数和目的操作数支持的数据类型保持一致，Global Memory -> Unified Buffer和Unified Buffer -> Global Memory两个数据通路对同一产品支持的数据类型相同，具体如下：
 
 <!-- npu="950" id20 -->
-- Ascend 950PR/Ascend 950DT，支持的数据类型为：b8、b16、b32、b64。
+- Ascend 950PR&950DT系列产品，支持的数据类型为：b8、b16、b32、b64。
 <!-- end id20 -->
 
 <!-- npu="A3" id21 -->
-- Atlas A3 训练系列产品/Atlas A3 推理系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas A3系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id21 -->
 
 <!-- npu="910b" id22 -->
-- Atlas A2 训练系列产品/Atlas A2 推理系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas A2系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id22 -->
 
 <!-- npu="310b" id23 -->
-- Atlas 200I/500 A2 推理产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas 200I/500 A2推理产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id23 -->
 
 <!-- npu="310p" id24 -->
-- Atlas 推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id24 -->
 
 <!-- npu="310p" id25 -->
-- Atlas 推理系列产品Vector Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas推理系列产品Vector Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id25 -->
 
 <!-- npu="910" id26 -->
-- Atlas 训练系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
+- Atlas训练系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 <!-- end id26 -->
 
 <!-- npu="x90" id27 -->
@@ -735,8 +735,8 @@ AscendC::Mutex::Unlock<PIPE_MTE2>(mutex_id);
 
 <!-- npu="910b,A3" id29 -->
 - 针对如下产品型号：
-    - Atlas A2 训练系列产品/Atlas A2 推理系列产品
-    - Atlas A3 训练系列产品/Atlas A3 推理系列产品
+    - Atlas A2系列产品
+    - Atlas A3系列产品
 
     在跨卡通信算子开发场景，DataCopy类接口支持跨卡数据搬运，仅支持HCCS物理链路，不支持其他通路；开发者开发过程中，需要关注涉及卡间通信的物理通路，可通过`npu-smi info -t topo`命令查询HCCS物理链路。
 <!-- end id29 -->
@@ -946,10 +946,10 @@ int32_t main(int32_t argc, char* argv[])
 >[!NOTE]说明
 >该性能优化建议适用于如下产品型号：
 ><!-- npu="A3" id30 -->
->- Atlas A3 训练系列产品/Atlas A3 推理系列产品
+>- Atlas A3系列产品
 ><!-- end id30 -->
 ><!-- npu="910b" id31 -->
->- Atlas A2 训练系列产品/Atlas A2 推理系列产品
+>- Atlas A2系列产品
 ><!-- end id31 -->
 ```
 

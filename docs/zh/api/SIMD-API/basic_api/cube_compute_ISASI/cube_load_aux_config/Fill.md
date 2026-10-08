@@ -84,8 +84,8 @@ __aicore__ inline void Fill(const LocalTensor<T>& dst, const InitConstValueParam
 
 <!-- npu="910" id10 -->Atlas训练系列产品，支持的数据类型为：half。<!-- end id10 --><br>
 <!-- npu="310p" id11 -->Atlas推理系列产品AI Core，支持的数据类型为：int16_t、uint16_t、half。<!-- end id11 --><br>
-<!-- npu="910b" id12 -->Atlas A2训练系列产品/Atlas A2推理系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id12 --><br>
-<!-- npu="A3" id13 -->Atlas A3训练系列产品/Atlas A3推理系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id13 --><br>
+<!-- npu="910b" id12 -->Atlas A2系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id12 --><br>
+<!-- npu="A3" id13 -->Atlas A3系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id13 --><br>
 <!-- npu="310b" id14 -->Atlas 200I/500 A2推理产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id14 --><br>
 <!-- npu="950" id15 -->Ascend 950PR&950DT系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id15 --><br>
 <!-- npu="x90" id16 -->Kirin X90处理器系列产品，支持的数据类型为：int8_t、half。<!-- end id16 --><br>

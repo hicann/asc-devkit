@@ -427,7 +427,7 @@ TEST_F(TestTiling, TestAxpyTiling)
 }
 ```
 ##### Modify cmake file
-Before executing UT cases, modify the [CMakeLists.txt](../../../tests/api/adv_api/CMakeLists.txt) file. Since kernel function-side UTs and Tiling-side UTs have different test targets, add the test files to their respective targets. Using the kernel function-side UT for Atlas A2 training series products/Atlas A2 inference series products as an example, add the UT test file path to the case source file list `ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`, that is, add the new file path `${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`. For the Tiling-side UT, add the test file to the `ASCENDC_TILING_TEST_SRC_FILES` list.
+Before executing UT cases, modify the [CMakeLists.txt](../../../tests/api/adv_api/CMakeLists.txt) file. Since kernel function-side UTs and Tiling-side UTs have different test targets, add the test files to their respective targets. Using the kernel function-side UT for Atlas A2 products as an example, add the UT test file path to the case source file list `ASCENDC_TEST_ASCEND910B1_AIV_CASE_SRC_PART_FILES`, that is, add the new file path `${ASCENDC_TESTS_DIR}/math/axpy/test_operator_axpy.cpp`. For the Tiling-side UT, add the test file to the `ASCENDC_TILING_TEST_SRC_FILES` list.
 ##### Execute UT
 - Execute all UT cases
   
