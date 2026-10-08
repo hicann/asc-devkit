@@ -40,6 +40,17 @@ const std::map<std::string, MarkerRequirement> GENERIC_MARKER_REQUIREMENTS = {
     {SOURCE_FILE_PATH_MARKER, MarkerRequirement::SourceFile},
 };
 
+using FieldSet = std::set<std::string>;
+const FieldSet MANIFEST_FIELDS = {"resource_id", "soc_version", "source_file", "resource_path", "options", "kernels"};
+const FieldSet KERNEL_FIELDS = {"kernel_name", "constant_infos", "link_options", "objects"};
+const FieldSet CONSTANT_FIELDS = {"name", "parameter_index", "arg_type", "byte_size", "file", "template"};
+const FieldSet OBJECT_FIELDS = {"object_name", "object_type", "commands", "outputs"};
+const FieldSet COMMAND_FIELDS = {"type", "cmd", "stage"};
+constexpr const char* BASIC_OBJECT_TYPE = "basic";
+constexpr const char* SK_OBJECT_TYPE = "sk";
+constexpr const char* COMPILE_COMMAND_TYPE = "compile";
+constexpr const char* OBJCOPY_COMMAND_TYPE = "objcopy";
+
 bool CheckAndLog(bool condition, int lineNumber, const std::string& message) noexcept
 {
     if (condition) {
@@ -49,6 +60,18 @@ bool CheckAndLog(bool condition, int lineNumber, const std::string& message) noe
     return false;
 }
 
+bool ValidateObjectFields(const Json& object, const FieldSet& allowedFields, const std::string& level)
+{
+    for (const auto& item : object.items()) {
+        if (allowedFields.count(item.key()) == 0U) {
+            return CheckAndLog(
+                false, __LINE__,
+                "unrecognized " + level + " field in the current version: " + item.key() +
+                    ". Please check whether the field is correct or the tool version is too old.");
+        }
+    }
+    return true;
+}
 } // namespace
 
 ResourceManifestValidator::ResourceManifestValidator(const Json& manifest, const std::string& manifestPath)
@@ -96,6 +119,7 @@ std::string ResourceManifestValidator::ExtractNamedMarkerName(const std::string&
 bool ResourceManifestValidator::ValidateManifestBaseFields()
 {
     return CheckAndLog(manifest_.is_object(), __LINE__, "invalid manifest: expected an object") &&
+           ValidateObjectFields(manifest_, MANIFEST_FIELDS, "manifest") &&
            CheckAndLog(manifest_.contains("resource_id"), __LINE__, "missing required field: resource_id") &&
            CheckAndLog(manifest_.at("resource_id").is_string(), __LINE__, "invalid resource_id: expected a string") &&
            CheckAndLog(
@@ -314,6 +338,10 @@ bool ResourceManifestValidator::ValidateOptionArray(const std::string& name)
 
 bool ResourceManifestValidator::ValidateConstant(const Json& constant, std::set<std::string>& constantNames)
 {
+    if (!CheckAndLog(constant.is_object(), __LINE__, "invalid constant: expected an object") ||
+        !ValidateObjectFields(constant, CONSTANT_FIELDS, "constant")) {
+        return false;
+    }
     ManifestConstant parsed;
     if (!parsed.ParseDefinition(constant)) {
         return false;
@@ -343,9 +371,14 @@ bool ResourceManifestValidator::ValidateConstants(const Json& constantInfos)
 
 bool ResourceManifestValidator::ValidateObjectOutputs(const Json& outputs)
 {
+    std::set<std::string> outputNames;
     for (const Json& output : outputs) {
         if (!CheckAndLog(output.is_string(), __LINE__, "invalid object output: expected a string") ||
             !ValidateOutputMarker(output.get_ref<const std::string&>())) {
+            return false;
+        }
+        const std::string& value = output.get_ref<const std::string&>();
+        if (!CheckAndLog(outputNames.insert(value).second, __LINE__, "duplicate object output: value=" + value)) {
             return false;
         }
     }
@@ -355,11 +388,22 @@ bool ResourceManifestValidator::ValidateObjectOutputs(const Json& outputs)
 bool ResourceManifestValidator::ValidateObjectOutputReferences(
     const Json& outputs, const std::set<std::string>& referencedOutputs) const
 {
+    std::set<std::string> declaredOutputs;
     for (const Json& output : outputs) {
         const std::string value = output.get_ref<const std::string&>();
+        declaredOutputs.insert(value);
         if (!CheckAndLog(
                 referencedOutputs.count(value) != 0U, __LINE__,
-                "invalid object output: output is not referenced by its commands, value=" + value)) {
+                "invalid object output: output is not referenced by its commands, value=" + value +
+                    ". Please check that this object's outputs and commands are consistent.")) {
+            return false;
+        }
+    }
+    for (const std::string& value : referencedOutputs) {
+        if (!CheckAndLog(
+                declaredOutputs.count(value) != 0U, __LINE__,
+                "invalid object output: command references undeclared output, value=" + value +
+                    ". Please declare this output in this object's outputs field.")) {
             return false;
         }
     }
@@ -392,6 +436,7 @@ bool ResourceManifestValidator::ValidateCommandOptions(
 bool ResourceManifestValidator::ValidateCommand(const Json& command, std::set<std::string>& referencedOutputs)
 {
     if (!CheckAndLog(command.is_object(), __LINE__, "invalid command: expected an object") ||
+        !ValidateObjectFields(command, COMMAND_FIELDS, "command") ||
         !CheckAndLog(command.contains("type"), __LINE__, "missing required command field: type") ||
         !CheckAndLog(command.at("type").is_string(), __LINE__, "invalid command type: expected a string") ||
         !CheckAndLog(command.contains("cmd"), __LINE__, "missing required command field: cmd") ||
@@ -400,6 +445,12 @@ bool ResourceManifestValidator::ValidateCommand(const Json& command, std::set<st
     }
 
     const std::string type = command.at("type").get_ref<const std::string&>();
+    if (!CheckAndLog(
+            type == COMPILE_COMMAND_TYPE || type == OBJCOPY_COMMAND_TYPE, __LINE__,
+            "invalid command type: the current version only supports compile or objcopy, value=" + type +
+                ". Please check whether the value is correct or the tool version is too old.")) {
+        return false;
+    }
     if (!ValidateCommandOptions(command.at("cmd"), referencedOutputs)) {
         return false;
     }
@@ -420,6 +471,7 @@ bool ResourceManifestValidator::ValidateCommands(const Json& commands, std::set<
 bool ResourceManifestValidator::ValidateObject(const Json& object, std::set<std::string>& objectNames)
 {
     if (!CheckAndLog(object.is_object(), __LINE__, "invalid object: expected an object") ||
+        !ValidateObjectFields(object, OBJECT_FIELDS, "object") ||
         !CheckAndLog(object.contains("object_name"), __LINE__, "missing required object field: object_name") ||
         !CheckAndLog(object.at("object_name").is_string(), __LINE__, "invalid object_name: expected a string") ||
         !CheckAndLog(
@@ -439,6 +491,10 @@ bool ResourceManifestValidator::ValidateObject(const Json& object, std::set<std:
     const std::string objectName = object.at("object_name").get_ref<const std::string&>();
     const std::string objectType = object.at("object_type").get_ref<const std::string&>();
     if (!CheckAndLog(
+            objectType == BASIC_OBJECT_TYPE || objectType == SK_OBJECT_TYPE, __LINE__,
+            "invalid object_type: the current version only supports basic or sk, value=" + objectType +
+                ". Please check whether the value is correct or the tool version is too old.") ||
+        !CheckAndLog(
             FileUtils::IsSafeRelativePath(objectName) && FileUtils::FileName(objectName) == objectName, __LINE__,
             "invalid object_name: expected a plain name") ||
         !CheckAndLog(
@@ -461,17 +517,23 @@ bool ResourceManifestValidator::ValidateObject(const Json& object, std::set<std:
 bool ResourceManifestValidator::ValidateObjects(const Json& objects)
 {
     std::set<std::string> objectNames;
+    bool hasBasicObject = false;
     for (const Json& object : objects) {
         if (!ValidateObject(object, objectNames)) {
             return false;
         }
+        hasBasicObject = hasBasicObject || object.at("object_type").get_ref<const std::string&>() == BASIC_OBJECT_TYPE;
     }
-    return true;
+    return CheckAndLog(
+        hasBasicObject, __LINE__,
+        "missing required basic object: each kernel's objects field must contain at least one object with object_type "
+        "set to basic");
 }
 
 bool ResourceManifestValidator::ValidateKernel(const Json& kernel, std::set<std::string>& kernelNames)
 {
     if (!CheckAndLog(kernel.is_object(), __LINE__, "invalid kernel: expected an object") ||
+        !ValidateObjectFields(kernel, KERNEL_FIELDS, "kernel") ||
         !CheckAndLog(kernel.contains("kernel_name"), __LINE__, "missing required kernel field: kernel_name") ||
         !CheckAndLog(kernel.at("kernel_name").is_string(), __LINE__, "invalid kernel_name: expected a string") ||
         !CheckAndLog(
@@ -487,6 +549,14 @@ bool ResourceManifestValidator::ValidateKernel(const Json& kernel, std::set<std:
             !kernel.contains("link_options") || kernel.at("link_options").is_array(), __LINE__,
             "invalid link_options: expected an array")) {
         return false;
+    }
+
+    if (kernel.contains("link_options")) {
+        for (const Json& option : kernel.at("link_options")) {
+            if (!CheckAndLog(option.is_string(), __LINE__, "invalid link_options item: expected a string")) {
+                return false;
+            }
+        }
     }
 
     const std::string kernelName = kernel.at("kernel_name").get_ref<const std::string&>();
