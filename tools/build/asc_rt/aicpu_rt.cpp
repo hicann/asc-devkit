@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <cstring>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <chrono>
 
@@ -117,6 +118,7 @@ AicpuDumpThreadRes::~AicpuDumpThreadRes()
 int AicpuGetDumpConfig(void** addr, size_t* size)
 {
     static void* dumpAddr[16] = {nullptr};
+    static std::unique_ptr<AicpuDumpThreadRes> dumpThreads[16];
     static std::mutex dumpMutex;
     int32_t deviceId = -1;
     CHECK_ACL_ERR(aclrtGetDevice(&deviceId));
@@ -139,7 +141,7 @@ int AicpuGetDumpConfig(void** addr, size_t* size)
         CHECK_ACL_ERR(aclmdlRICaptureThreadExchangeMode(&mode));
         *addr = dumpAddr[deviceId];
         *size = DUMP_SIZE;
-        static AicpuDumpThreadRes dumpThread(*addr, *size, deviceId);
+        dumpThreads[deviceId] = std::make_unique<AicpuDumpThreadRes>(*addr, *size, deviceId);
     }
     return 0;
 }
