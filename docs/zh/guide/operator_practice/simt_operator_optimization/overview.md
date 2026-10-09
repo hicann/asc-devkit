@@ -91,6 +91,7 @@ SIMT编程模式以线程（Thread）为基本编程单位，由开发者编写�
 | 优化建议 | 优先级 | 样例 |
 | --- | :---: | --- |
 | [同一Warp内避免分支跳转](./control_flow/avoid_warp_branch.md) | 高 | [warp_divergence](../../../../../examples/03_simt_api/03_best_practices/02_control_flow/warp_divergence) |
+| [分支处理](./control_flow/branch_handing.md) | 中 | [predicate_optimization](../../../../../examples/03_simt_api/03_best_practices/02_control_flow/predicate_optimization) |
 
 表4 最大化指令吞吐量（指令优化）
 

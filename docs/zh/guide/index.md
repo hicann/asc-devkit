@@ -339,6 +339,7 @@
             -   [合理配置线程数避免寄存器溢出](operator_practice/simt_operator_optimization/execution_config/thread_count_register_overflow.md)
         -   [控制流](operator_practice/simt_operator_optimization/control_flow/avoid_warp_branch.md)
             -   [同一Warp内避免分支跳转](operator_practice/simt_operator_optimization/control_flow/avoid_warp_branch.md)
+            -   [分支处理](operator_practice/simt_operator_optimization/control_flow/branch_handing.md)
         -   [指令优化](operator_practice/simt_operator_optimization/instruction_optimization/atomic_instruction_optimization.md)
             -   [原子操作指令优化](operator_practice/simt_operator_optimization/instruction_optimization/atomic_instruction_optimization.md)
             -   [原地加法指令优化](operator_practice/simt_operator_optimization/instruction_optimization/inplace_add_instruction_optimization.md)
