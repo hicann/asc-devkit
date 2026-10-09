@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.16.0)
 set(CMAKE_CXX_STANDARD 17)
 find_package(tikicpulib REQUIRED)
 
-set(SIMT_PRODUCT_TYPE_LIST_INIT ascend950pr_9599)
+set(SIMT_PRODUCT_TYPE_LIST_INIT ascend950pr_9599 ascend960dt)
 set(SIMT_PRODUCT_TYPE_LIST ${SIMT_PRODUCT_TYPE_LIST_INIT} CACHE STRING "Supported product types")
 
 set(ASCENDC_TEST_HEADER_FILES
@@ -46,6 +46,11 @@ file(GLOB ASCENDC_TEST_ascend950pr_9599_SIMT_CASE_SRC_FILES
 file(GLOB ASCENDC_TEST_mc62cm12aa_SIMT_CASE_SRC_FILES
     common_simt/*.cpp
     ascendc_case_mc62cm12aa_simt/*.cpp
+)
+
+# ascend960dt simt test cases
+file(GLOB ASCENDC_TEST_ascend960dt_SIMT_CASE_SRC_FILES
+    ascendc_case_ascend960dt_simt/*.cpp
 )
 
 add_library(simt_api_test_common INTERFACE)
@@ -85,6 +90,7 @@ foreach(product_type ${SIMT_PRODUCT_TYPE_LIST})
     target_compile_definitions(ascendc_ut_simt_api_${product_type} PRIVATE
         $<$<STREQUAL:${product_type},ascend950pr_9599>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__>
         $<$<STREQUAL:${product_type},mc62cm12aa>:__NPU_ARCH__=5102>
+        $<$<STREQUAL:${product_type},ascend960dt>:__NPU_ARCH__=9201>
         __callee__=
     )
 

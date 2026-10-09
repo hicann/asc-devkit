@@ -17,20 +17,21 @@
 #endif
 
 #include "simt_api/device_types.h"
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
 #include "impl/utils/debug/asc_printf_simt_impl.h"
 #endif
 #include "utils/debug/asc_assert.h"
 #include "utils/debug/asc_time.h"
 
 #ifndef SPLIT_CORE_VEC
-#if (defined(__DAV_VEC__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510))
+#if defined(__DAV_VEC__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202)
 #define SPLIT_CORE_VEC
 #endif
 #endif
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
 
 template <auto funcPtr, typename... Args>
 __aicore__ inline void asc_vf_call(dim3 threadNums, Args&&... args)

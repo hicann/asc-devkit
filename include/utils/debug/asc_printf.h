@@ -23,7 +23,7 @@
 
 #include "../../../impl/utils/sys_macros_impl.h"
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
 #include "simt_api/device_types.h"
 
 #ifndef __CHECK_FEATURE_AT_PRECOMPILE
@@ -57,7 +57,7 @@ __simd_callee__ inline void printf(__ubuf__ const char* fmt, Args&&... args);
 #include "impl/utils/debug/asc_simd_debug_enable.h"
 
 #ifndef __CHECK_FEATURE_AT_PRECOMPILE
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
 #include "impl/utils/debug/asc_printf_simt_impl.h"
 #endif
 

@@ -31,7 +31,7 @@
 #include "simt_stub.h"
 #endif
 
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
 #include "simt_api/device_types.h"
 #include "simt_api/cpp/kernel_simt_common_intf.h"
 #include "simt_api/cpp/kernel_simt_atomic_intf.h"
