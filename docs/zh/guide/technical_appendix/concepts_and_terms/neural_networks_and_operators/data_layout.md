@@ -43,8 +43,7 @@
 
 ![](../../../figures/zn_abc.png)
 
--   **FRACTAL\_NZ/NZ**
-<a name="li19960204116136"></a>
+-   **FRACTAL\_NZ/NZ**<a name="li19960204116136"></a>
 
     FRACTAL\_NZ格式，简称NZ格式，是对一个Tensor最低两维（一个Tensor的所有维度，右侧为低维，左侧为高维）进行填充（pad）、拆分（reshape）和转置（transpose）操作后得到的格式。具体的转换过程如下：
 
@@ -330,8 +329,8 @@
 
     ![](../../../figures/nd2nz.png)
 
--   **VECTOR**：VECTOR是
-<a name="li51557161818"></a>[GEMV](../../../operator_practice/simd_operator_impl/matrix_advanced_api/feature_scenarios/matrix_vector_multiply.md)（矩阵向量乘，General Matrix-Vector Multiply）场景使用的一种数据格式，配置矩阵为VECTOR数据排布格式即代表输入数据是一个向量。
+<a name="li51557161818"></a>
+-   **VECTOR**：VECTOR是[GEMV](../../../operator_practice/simd_operator_impl/matrix_advanced_api/feature_scenarios/matrix_vector_multiply.md)（矩阵向量乘，General Matrix-Vector Multiply）场景使用的一种数据格式，配置矩阵为VECTOR数据排布格式即代表输入数据是一个向量。
 
     **图2**  GEMV场景输入Vector格式的A矩阵示意图<a name="fig172015331814"></a>  
     ![](../../../figures/gemv_vec_a.png "GEMV场景输入Vector格式的A矩阵示意图")
