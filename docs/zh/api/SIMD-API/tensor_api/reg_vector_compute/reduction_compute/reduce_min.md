@@ -103,11 +103,13 @@ __simd_vf__ inline void reduce_min_example(InputTensor input, OutputTensor outpu
     auto src = asc::te::experimental::load(input, asc::te::make_coord(0)).with_mask(mask);
 
     auto elemMin = asc::te::experimental::reduce_min(src);
-    elemMin.with_mask(asc::te::experimental::update_mask<float>(2));
+    elemMin.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl2, float>());
     asc::te::experimental::store(output, asc::te::make_coord(0), elemMin);
 
     auto blockMin = asc::te::experimental::reduce_min<asc::te::experimental::reduce_scope::datablock>(src);
-    blockMin.with_mask(asc::te::experimental::update_mask<float>(8));
+    blockMin.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl8, float>());
     asc::te::experimental::store(output, asc::te::make_coord(8), blockMin);
 }
 ```

@@ -103,11 +103,13 @@ __simd_vf__ inline void reduce_max_example(InputTensor input, OutputTensor outpu
     auto src = asc::te::experimental::load(input, asc::te::make_coord(0)).with_mask(mask);
 
     auto elemMax = asc::te::experimental::reduce_max(src);
-    elemMax.with_mask(asc::te::experimental::update_mask<float>(2));
+    elemMax.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl2, float>());
     asc::te::experimental::store(output, asc::te::make_coord(0), elemMax);
 
     auto blockMax = asc::te::experimental::reduce_max<asc::te::experimental::reduce_scope::datablock>(src);
-    blockMax.with_mask(asc::te::experimental::update_mask<float>(8));
+    blockMax.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl8, float>());
     asc::te::experimental::store(output, asc::te::make_coord(8), blockMax);
 }
 ```

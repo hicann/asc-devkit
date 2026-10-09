@@ -117,15 +117,18 @@ __simd_vf__ inline void reduce_sum_example(InputTensor input, OutputTensor outpu
     auto src = asc::te::experimental::load(input, asc::te::make_coord(0)).with_mask(mask);
 
     auto elemSum = asc::te::experimental::reduce_sum<asc::te::experimental::reduce_scope::element, float>(src);
-    elemSum.with_mask(asc::te::experimental::update_mask<float>(1));
+    elemSum.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl1, float>());
     asc::te::experimental::store(output, asc::te::make_coord(0), elemSum);
 
     auto blockSum = asc::te::experimental::reduce_sum<asc::te::experimental::reduce_scope::datablock, float>(src);
-    blockSum.with_mask(asc::te::experimental::update_mask<float>(8));
+    blockSum.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl8, float>());
     asc::te::experimental::store(output, asc::te::make_coord(8), blockSum);
 
     auto pairSum = asc::te::experimental::reduce_sum<asc::te::experimental::reduce_scope::pair, float>(src);
-    pairSum.with_mask(asc::te::experimental::update_mask<float>(32));
+    pairSum.with_mask(
+        asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::vl32, float>());
     asc::te::experimental::store(output, asc::te::make_coord(16), pairSum);
 }
 ```
