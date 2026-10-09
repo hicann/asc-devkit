@@ -63,7 +63,20 @@ __aicore__ inline void IBSet(const GlobalTensor<int32_t>& gmWorkspace, const Loc
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- gmWorkspace申请的空间最少要求为：核数*32Bytes*eventID_max+blockIdx_max*32Bytes+32Bytes（eventID_max和blockIdx_max分别指eventID、blockIdx的最大值）。需要注意的是，如果是AIVOnly模式，核数=GetBlockNum()；如果是MIX模式，核数=GetBlockNum()*2。
+- `gmWorkspace`申请的空间须满足以下公式：
+
+    $$
+    \text{gmWorkspace空间大小} \geq (\mathrm{eventStride} \times \mathrm{eventID\_max} + \mathrm{blockIdx\_max} + 1) \times 32\text{字节}
+    $$
+
+    - `eventID_max`和`blockIdx_max`分别表示共享同一`gmWorkspace`的所有IBSet和IBWait调用中，`eventID`和`blockIdx`可能取到的最大值。`blockIdx_max`不一定等于`blockIdx`合法范围的上限，例如`__mix__(1, 2)`修饰核函数且`numBlocks`为4时，`blockIdx`合法范围为`[0, 7]`；若共享同一`gmWorkspace`的所有调用中只使用`blockIdx = 0`和`blockIdx = 1`，则`blockIdx_max = 1`。
+    - `eventStride`的取值与模板参数isAIVOnly有关：
+        - 当`isAIVOnly`为true时，`eventStride = GetBlockNum()`;
+        - 当`isAIVOnly`为false时，`eventStride = GetBlockNum() × 2`，与AIC:AIV的配比无关。
+
+    以下以AIVOnly模式下的多事件同步场景为例，说明上述参数取值和`gmWorkspace`空间大小的计算方法。
+
+    AIVOnly模式下`GetBlockNum() = 4`，核0作为生产者分别通过`IBSet(sync_gm, sync_buf, 0, 0)`和`IBSet(sync_gm, sync_buf, 0, 1)`通知两个不同同步事件，核2作为生产者通过`IBSet(sync_gm, sync_buf, 2, 0)`通知另一个同步事件。对应的IBWait必须分别传入相同的`blockIdx`和`eventID`，例如`IBWait(sync_gm, sync_buf, 0, 1)`只能等待`IBSet(sync_gm, sync_buf, 0, 1)`设置的同步标志；如果误传为`blockIdx = 1`或`eventID = 0`，会访问另一处同步标志并可能卡死。该场景中`blockIdx_max = 2`、`eventID_max = 1`、`eventStride = 4`，因此`gmWorkspace`至少需要`(4 × 1 + 2 + 1) × 32 = 224`字节。
 - ubWorkspace申请的空间最少要求为：32Bytes。
 - 使用该接口进行多核控制时，算子调用时指定的逻辑AI Core核数numBlocks必须保证不大于实际运行该算子的AI处理器核数，否则框架进行多轮调度时会插入异常同步，导致核函数（Kernel）“卡死”现象。
 - IBSet和IBWait配对使用时，除了ubWorkspace其余所有参数都必须相同，否则程序会在IBWait处卡死。
