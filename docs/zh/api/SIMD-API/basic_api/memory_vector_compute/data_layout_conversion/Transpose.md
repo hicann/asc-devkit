@@ -29,6 +29,18 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id10 -->
+- Kirin 9050处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="kirin1" id11 -->
+- KirinDev0001处理器系列产品：支持
+<!-- end id11 -->
+<!-- npu="kirin2" id12 -->
+- KirinDev0002处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="kirin3" id13 -->
+- KirinDev0003处理器系列产品：支持
+<!-- end id13 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/Transpose_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -221,6 +233,22 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   Kirin 9030处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
   <!-- end id24 -->
 
+  <!-- npu="9050" id36 -->
+  Kirin 9050处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  <!-- end id36 -->
+
+  <!-- npu="kirin1" id37 -->
+  KirinDev0001处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  <!-- end id37 -->
+
+  <!-- npu="kirin2" id38 -->
+  KirinDev0002处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  <!-- end id38 -->
+
+  <!-- npu="kirin3" id39 -->
+  KirinDev0003处理器系列产品，操作数支持的数据类型为：int16_t、uint16_t、half。
+  <!-- end id39 -->
+
 - 增强转置：
   - transposeType为TRANSPOSE\_ND2ND\_B16：
 
@@ -269,6 +297,22 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
     <!-- npu="9030" id35 -->
     Kirin 9030处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
     <!-- end id35 -->
+
+    <!-- npu="9050" id40 -->
+    Kirin 9050处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    <!-- end id40 -->
+
+    <!-- npu="kirin1" id41 -->
+    KirinDev0001处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    <!-- end id41 -->
+
+    <!-- npu="kirin2" id42 -->
+    KirinDev0002处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    <!-- end id42 -->
+
+    <!-- npu="kirin3" id43 -->
+    KirinDev0003处理器系列产品，操作数支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+    <!-- end id43 -->
 
 ## 返回值说明
 

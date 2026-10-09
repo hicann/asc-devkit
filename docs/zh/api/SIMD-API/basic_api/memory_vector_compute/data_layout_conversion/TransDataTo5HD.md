@@ -29,6 +29,18 @@
 <!-- npu="9030" id9 -->
 - Kirin 9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id10 -->
+- Kirin 9050处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="kirin1" id11 -->
+- KirinDev0001处理器系列产品：支持
+<!-- end id11 -->
+<!-- npu="kirin2" id12 -->
+- KirinDev0002处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="kirin3" id13 -->
+- KirinDev0003处理器系列产品：支持
+<!-- end id13 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/TransDataTo5HD_res.md#id1 -->
 
 ## 功能说明<a name="zh-cn_topic_0000001521260417_section618mcpsimp"></a>
@@ -123,6 +135,22 @@ Kirin X90处理器系列产品，支持的数据类型为：int8_t、uint8_t、i
 <!-- npu="9030" id17 -->
 Kirin 9030处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id17 -->
+
+<!-- npu="9050" id18 -->
+Kirin 9050处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id18 -->
+
+<!-- npu="kirin1" id19 -->
+KirinDev0001处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id19 -->
+
+<!-- npu="kirin2" id20 -->
+KirinDev0002处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id20 -->
+
+<!-- npu="kirin3" id21 -->
+KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id21 -->
 
 ## 约束说明<a name="zh-cn_topic_0000001521260417_section633mcpsimp"></a>
 

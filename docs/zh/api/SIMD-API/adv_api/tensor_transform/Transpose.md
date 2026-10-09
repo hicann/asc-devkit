@@ -21,6 +21,18 @@
 <!-- npu="910" id6 -->
 - Atlas训练系列产品：不支持
 <!-- end id6 -->
+<!-- npu="9050" id7 -->
+- Kirin 9050处理器系列产品：支持
+<!-- end id7 -->
+<!-- npu="kirin1" id8 -->
+- KirinDev0001处理器系列产品：支持
+<!-- end id8 -->
+<!-- npu="kirin2" id9 -->
+- KirinDev0002处理器系列产品：支持
+<!-- end id9 -->
+<!-- npu="kirin3" id10 -->
+- KirinDev0003处理器系列产品：支持
+<!-- end id10 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/tensor_transform/Transpose_res.md#id1 -->
 
 ## 功能说明

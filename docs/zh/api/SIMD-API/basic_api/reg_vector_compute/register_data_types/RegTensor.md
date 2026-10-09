@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="9050" id8 -->
+- Kirin 9050处理器系列产品：支持
+<!-- end id8 -->
+<!-- npu="kirin1" id9 -->
+- KirinDev0001处理器系列产品：支持
+<!-- end id9 -->
+<!-- npu="kirin2" id10 -->
+- KirinDev0002处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="kirin3" id11 -->
+- KirinDev0003处理器系列产品：支持
+<!-- end id11 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/register_data_types/RegTensor_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -48,6 +60,7 @@ template <typename T, const RegTrait& regTrait = RegTraitNumOne> struct RegTenso
 
 -   RegTensor寄存器数量上限为32。超出限制上限的寄存器数据会写入预留的8KUB内存中，可能会引起性能劣化。编译器会自动复用生命周期结束的寄存器和预留内存，若寄存器与预留内存均存在可用空间，将优先复用寄存器。
 -   寄存器的生命周期限定于单个VF内部。
+-   Kirin 9050/KirinDev0001/KirinDev0002/KirinDev0003 处理器系列产品不支持 complex32, complex64, b64 类型
 
 ## 关键特性
 
