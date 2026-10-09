@@ -329,8 +329,8 @@
 
     ![](../../../figures/nd2nz.png)
 
--   **VECTOR**：VECTOR是
-<a name="li51557161818"></a>[GEMV](../../../operator_practice/simd_operator_impl/matrix_advanced_api/feature_scenarios/matrix_vector_multiply.md)（矩阵向量乘，General Matrix-Vector Multiply）场景使用的一种数据格式，配置矩阵为VECTOR数据排布格式即代表输入数据是一个向量。
+<a name="li51557161818"></a>
+-   **VECTOR**：VECTOR是[GEMV](../../../operator_practice/simd_operator_impl/matrix_advanced_api/feature_scenarios/matrix_vector_multiply.md)（矩阵向量乘，General Matrix-Vector Multiply）场景使用的一种数据格式，配置矩阵为VECTOR数据排布格式即代表输入数据是一个向量。
 
     **图2**  GEMV场景输入Vector格式的A矩阵示意图<a name="fig172015331814"></a>  
     ![](../../../figures/gemv_vec_a.png "GEMV场景输入Vector格式的A矩阵示意图")
