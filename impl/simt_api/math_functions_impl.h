@@ -3708,7 +3708,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ static inline float __asc_make_float_from_mantiss
         } else if (result_exponent < -149) { // -149: exponent of the smallest fp32 subnormal, below it underflows to 0
             result = 0.0f;
         } else if (result_exponent >= -126) { // -126: smallest normal fp32 exponent
-            // Normal result: normalize mantissa and pack signless fp32 bits.
+                                              // Normal result: normalize mantissa and pack signless fp32 bits.
             const uint32_t normalized_mantissa = mantissa << static_cast<uint32_t>(23 - mantissa_log2);
             const uint32_t bits =
                 (static_cast<uint32_t>(result_exponent + 127) << 23U) | (normalized_mantissa & ASCRT_MAN_BIT_FLOAT_U);
@@ -4958,18 +4958,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x)
     // Add the separate exponent contribution back as ln(2) * exponent.
     output = fmaf(exponent, 0.69314718246459960938f, output);
 
-    // Positive infinity/NaN and all negative inputs enter the tail correction.
-    if (x_bits >= fp32_positive_inf_bits) {
-        // x is +inf/NaN or x < -1: generate the result via x * +inf + +inf.
-        // x == -1 keeps the -inf produced by the reduction and polynomial path above.
-        if (!(x_bits >= fp32_sign_bit && x_bits < log1p_lower_bound_bits)) {
-            output = fmaf(x, ASCRT_INF_F, ASCRT_INF_F);
-        }
-        // Inputs comparing equal to 0 select -0 so the sign of zero is preserved.
-        if (x == 0.0f) {
-            output = ASCRT_NEG_ZERO_F;
-        }
-    }
+    // Compute the candidate unconditionally; it is only meaningful for special
+    // inputs and discarded by the select on the normal path.
+    const float inf_path = fmaf(x, ASCRT_INF_F, ASCRT_INF_F);
+
+    // Merge the outer and inner conditions: the inf path is taken when both hold.
+    const bool need_inf =
+        (x_bits >= fp32_positive_inf_bits) && !(x_bits >= fp32_sign_bit && x_bits < log1p_lower_bound_bits);
+    // Only x == -0 matches here (the outer condition already excludes +0).
+    const bool need_neg_zero = (x_bits >= fp32_positive_inf_bits) && (x == 0.0f);
+
+    output = need_inf ? inf_path : output;
+    output = need_neg_zero ? ASCRT_NEG_ZERO_F : output;
     return output;
 }
 
@@ -5532,15 +5532,6 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x)
 {
-    // 10^x = 2^(x * log2(10)). Split x*log2(10) into an integer k and a small remainder r, then compute
-    // 2^k * 2^r with 2^k constructed exactly from the bit pattern.
-    if (__isnan(x)) {
-        return x;
-    }
-    if (__isinf(x)) {
-        return x > 0.0f ? x : 0.0f;
-    }
-
     // t = x * (log2(10) / 252) + 0.5, a scaled-and-biased form of x * log2(10) used for floor reduction.
     // log2(10) / 252 is precomputed so that floor(t * 252) directly yields the integer index k in the
     // range [0, 252] (covering the full float32 overflow/underflow domain of 10^x).
@@ -5563,25 +5554,22 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x)
     // drops from ~1e-8 to ~1e-15. r is confined to [-0.5, 0.5], where __powf(2, r) is most accurate.
     float r = __fma(x, 3.3219280242919921875f, -k);
     r = __fma(x, 7.0595369550119357882e-08f, r);
-    return scale * __powf(2.0f, r);
+    float result = scale * __powf(2.0f, r);
+
+    // 10^x = 2^(x * log2(10)). Split x*log2(10) into an integer k and a small remainder r, then compute
+    // 2^k * 2^r with 2^k constructed exactly from the bit pattern.
+    if (__isinf(x)) {
+        result = x > 0.0f ? x : 0.0f;
+    }
+
+    if (__isnan(x)) {
+        result = x;
+    }
+    return result;
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x)
 {
-    // expm1f(x) = e^x - 1, computed accurately for small |x| where e^x-1 would otherwise lose
-    // precision to catastrophic cancellation. The approach follows the same range-reduction +
-    // 2^k * 2^r decomposition as expf: split x * log2(e) into integer k and remainder r, build
-    // 2^k exactly from its bit pattern, then reconstruct (2^k * 2^r) - 1 in a cancellation-safe form.
-    if (x == 0.0f) {
-        return x;
-    }
-    if (__isnan(x)) {
-        return x;
-    }
-    if (__isinf(x)) {
-        return x > 0.0f ? x : -1.0f;
-    }
-
     // Clamp |x| to the float32 overflow threshold (log2(e) * 128 ~= 88.72) so the reduction below
     // stays within the representable range; the clamped value still selects the correct overflow path.
     float ax = __fabsf(x);
@@ -5629,6 +5617,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x)
     if (large_k) {
         y = y + y;
     }
+
+    // expm1f(x) = e^x - 1, computed accurately for small |x| where e^x-1 would otherwise lose
+    // precision to catastrophic cancellation. The approach follows the same range-reduction +
+    // 2^k * 2^r decomposition as expf: split x * log2(e) into integer k and remainder r, build
+    // 2^k exactly from its bit pattern, then reconstruct (2^k * 2^r) - 1 in a cancellation-safe form.
+    if (__isinf(x)) {
+        y = x > 0.0f ? x : -1.0f;
+    }
+
+    if (__isnan(x) || x == 0.0f) {
+        y = x;
+    }
     return y;
 }
 
@@ -5657,35 +5657,38 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t __internal_ilogbf_finite_abs(float
 // logbf(x) = (float) floor(log2(|x|)) = the unbiased exponent of |x| as a float.
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
 {
-    if (__isnan(x)) {
-        return x; // NaN propagates.
-    }
-
     float ax = __fabsf(x);
-    if (ax == 0.0f) {
-        return -ASCRT_INF_F; // logb(0) = -inf, matching the C standard.
-    }
+    float result = static_cast<float>(__internal_ilogbf_finite_abs(ax));
+
     if (ax == ASCRT_INF_F) {
-        return ASCRT_INF_F; // logb(inf) = +inf.
+        result = ASCRT_INF_F; // logb(inf) = +inf.
     }
 
-    return static_cast<float>(__internal_ilogbf_finite_abs(ax));
+    if (ax == 0.0f) {
+        result = -ASCRT_INF_F; // logb(0) = -inf, matching the C standard.
+    }
+
+    if (__isnan(x)) {
+        result = x; // NaN propagates.
+    }
+    return result;
 }
 
 // ilogbf(x): integer variant of logbf. Returns the unbiased exponent as int32_t, with the IEEE-754
 // special-value encoding: NaN or 0 -> INT_MIN (0x80000000), +inf / -inf -> INT_MAX (0x7FFFFFFF).
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
 {
-    if (__isnan(x) || x == 0.0f) {
-        return static_cast<int32_t>(0x80000000U); // INT_MIN: NaN and 0 map to this sentinel.
-    }
-
     float ax = __fabsf(x);
+    int32_t result = __internal_ilogbf_finite_abs(ax);
+
     if (ax == ASCRT_INF_F) {
-        return static_cast<int32_t>(0x7FFFFFFFU); // INT_MAX: infinity maps to this sentinel.
+        result = ASCRT_MAX_VAL_S; // INT_MAX: infinity maps to this sentinel.
+    }
+    if (__isnan(x) || x == 0.0f) {
+        result = ASCRT_MIN_VAL_S; // INT_MIN: NaN and 0 map to this sentinel.
     }
 
-    return __internal_ilogbf_finite_abs(ax);
+    return result;
 }
 
 /*
