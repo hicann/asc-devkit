@@ -27,7 +27,7 @@ int32_t ElfHeaderCheck(uint8_t* elf, size_t elfSize, bool checkProgHeader)
         return ELF_ERR_NULL_POINTER;
     }
     // check elf min size
-    if (elfSize <= EI_CLASS) {
+    if (elfSize < sizeof(Elf_Ehdr)) {
         printf("[Error] elf file size %zu is too small!\n", elfSize);
         return ELF_ERR_BUFFER_TOO_SMALL;
     }
@@ -116,7 +116,7 @@ size_t ElfAddSection(
 
 int32_t ElfGetSymbolOffset(uint8_t* elf, size_t elfSize, const char* symbolName, size_t* offset, size_t* size)
 {
-    if (ElfHeaderCheck(elf, elfSize, true) == ELF_ERR_NULL_POINTER) {
+    if (ElfHeaderCheck(elf, elfSize, true) != ELF_SUCCESS) {
         return ELF_NO_TABLE;
     }
     size_t symbolNameLen = strnlen(symbolName, MAX_SYMNAME_LEN);

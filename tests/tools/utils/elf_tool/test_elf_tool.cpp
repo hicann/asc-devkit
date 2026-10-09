@@ -247,6 +247,16 @@ TEST_F(TEST_ELFTOOL, elfGetSymbolOffsetNullPtr)
     EXPECT_EQ(ret, ELF_NO_TABLE);
 }
 
+TEST_F(TEST_ELFTOOL, elfGetSymbolOffsetTruncatedHeader)
+{
+    uint8_t elf[EI_CLASS + 1U] = {0};
+    elf[EI_CLASS] = ELFCLASS64;
+    size_t offset = 0;
+    size_t size = 0;
+
+    EXPECT_EQ(ElfGetSymbolOffset(elf, sizeof(elf), "g_aicpuDumpConfig", &offset, &size), ELF_NO_TABLE);
+}
+
 TEST_F(TEST_ELFTOOL, elfGetSymbolOffsetNoSymbol)
 {
     char elf[618433];
