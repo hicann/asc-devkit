@@ -52,13 +52,13 @@ __simd_callee__ inline reg_pair<T, bool> add_carry(
 
 ## 参数说明
 
-**表1**模板参数说明
+**表1** 模板参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 
-**表2**参数说明
+**表2** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -72,7 +72,7 @@ __simd_callee__ inline reg_pair<T, bool> add_carry(
 
 ## 数据类型
 
-**表3**数据类型组合
+**表3** 数据类型组合
 
 | src0 | src1 | carry_src | first | second |
 | --- | --- | --- | --- | --- |
@@ -84,7 +84,9 @@ __simd_callee__ inline reg_pair<T, bool> add_carry(
 - src0.mask需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与计算的元素位置错误。
 - carry_src.reg必须已初始化。
 
-## 不带输入进位的调用示例
+## 调用示例
+
+### 不带输入进位
 
 ```cpp
 #include "tensor_api/experimental/vector_compute.h"
@@ -108,7 +110,7 @@ __simd_vf__ inline void add_carry_vf(
 }
 ```
 
-## 带输入进位的调用示例
+### 带输入进位
 
 ```cpp
 #include "tensor_api/experimental/vector_compute.h"

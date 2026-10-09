@@ -45,7 +45,7 @@ __simd_callee__ inline reg_tensor<T> muls_cast(const reg_tensor<U>& src, const U
 
 ## 参数说明
 
-**表1**模板参数说明
+**表1** 模板参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
@@ -53,7 +53,7 @@ __simd_callee__ inline reg_tensor<T> muls_cast(const reg_tensor<U>& src, const U
 | T | 返回值元素类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | U | 源操作数和标量类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 
-**表2**参数说明
+**表2** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -66,7 +66,7 @@ __simd_callee__ inline reg_tensor<T> muls_cast(const reg_tensor<U>& src, const U
 
 ## 数据类型
 
-**表3**数据类型组合
+**表3** 数据类型组合
 
 | src | scalar | dst |
 | --- | --- | --- |

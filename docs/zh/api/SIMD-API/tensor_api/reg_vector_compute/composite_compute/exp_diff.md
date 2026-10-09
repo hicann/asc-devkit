@@ -56,7 +56,7 @@ __simd_callee__ inline reg_tensor<T> exp_diff(const reg_tensor<U>& src0, const r
 
 ## 参数说明
 
-**表1**模板参数说明
+**表1** 模板参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
@@ -64,7 +64,7 @@ __simd_callee__ inline reg_tensor<T> exp_diff(const reg_tensor<U>& src0, const r
 | U | 源操作数的元素类型。`half`表示16位浮点类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | PositionType | 位置参数类型，由`src_pos`自动推导。 |
 
-**表2**参数说明
+**表2** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ __simd_callee__ inline reg_tensor<T> exp_diff(const reg_tensor<U>& src0, const r
 
 ## 数据类型
 
-**表3**数据类型组合
+**表3** 数据类型组合
 
 | src0 | src1 | dst |
 | --- | --- | --- |

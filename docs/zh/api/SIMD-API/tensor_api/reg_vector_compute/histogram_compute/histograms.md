@@ -58,7 +58,7 @@ $$
 
 其中，$(\mathrm{src.mask})_j$为`1`时，`src`的第$j$个元素参与统计；为`0`时不参与统计。`high`与`cumulative`组合使用时，第$i$个输出统计所有不大于$128+i$的输入值，因此包含`[0, 127]`范围内的输入值。
 
-**表1**配置项说明
+**表1** 配置项说明
 
 | 配置项 | 取值 | 含义 |
 | --- | --- | --- |
@@ -76,7 +76,7 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
 
 ## 参数说明
 
-**表2**模板参数说明
+**表2** 模板参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
@@ -84,7 +84,7 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
 | T | 输出元素类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | U | 输入元素类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 
-**表3**参数说明
+**表3** 参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
@@ -97,7 +97,7 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
 
 ## 数据类型
 
-**表4**数据类型组合
+**表4** 数据类型组合
 
 | src | dst |
 | --- | --- |
