@@ -290,13 +290,12 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
         self,
         records,
         *,
-        sk_cap_bitmap=None,
         sk_kernel_attribute="",
         basic_kernel_attribute="",
         sk_bind_compile_options=(),
         sk_bind_command=None,
     ):
-        if sk_bind_command is None and sk_cap_bitmap is not None:
+        if sk_bind_command is None and sk_bind_compile_options:
             sk_bind_output = os.path.join(self.input_root, "sk_bind.o")
             sk_bind_command = _SkBindCommand(
                 source_path=self.sk_bind_path,
@@ -331,7 +330,6 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
             tiling_info=snapshot.tiling_info,
             workspace_idx=snapshot.workspace_idx,
             sk_compile_info=snapshot.sk_compile_info,
-            sk_cap_bitmap=sk_cap_bitmap,
             constant_infos=snapshot.constant_infos,
             constant_info_size_by_tiling_key=(snapshot.constant_info_size_by_tiling_key),
         )
@@ -736,7 +734,6 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
         result = self.generate(
             self.make_request(
                 records,
-                sk_cap_bitmap=3,
                 sk_kernel_attribute="__global__ [aicore]",
                 basic_kernel_attribute="__global__ [aicore]",
                 sk_bind_compile_options=[*options.compile_options, "-DREAL_BIND_ARGV"],
@@ -787,7 +784,9 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
         ).read_text(encoding="utf-8")
         for core_suffix in ("aic", "aiv"):
             self.assertIn(
-                f"SK_BIND(add_custom_100001_mix_{core_suffix}, 3, add_custom_100001_mix_{core_suffix}_static_sk,",
+                f"SK_BIND(add_custom_100001_mix_{core_suffix}, "
+                "(__ASCENDC_SK_CAP_WAIT_FLAG__ | __ASCENDC_SK_CAP_SET_FLAG__ | __ASCENDC_SK_CAP_DISABLE_DCCI__), "
+                f"add_custom_100001_mix_{core_suffix}_static_sk,",
                 bind_source,
             )
         sk_wrapper_reference = next(
@@ -815,7 +814,6 @@ class TestStaticCompileResourceGenerator(unittest.TestCase):
         result = self.generate(
             self.make_request(
                 records,
-                sk_cap_bitmap=3,
                 sk_kernel_attribute="__global__ [aicore]",
                 basic_kernel_attribute="__global__ [aicore]",
                 sk_bind_compile_options=options.compile_options,

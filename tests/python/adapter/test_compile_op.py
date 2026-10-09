@@ -2161,7 +2161,7 @@ class TestCompileOp(unittest.TestCase):
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         with open(compile_info.gen_kernel_func_file, "r") as generated_kernel_file:
-            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", generated_kernel_file.read())
+            self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", generated_kernel_file.read())
         os.remove(compile_info.gen_kernel_func_file)
         assert "-DASCENDC_DUMP=0" not in compile_option_tuple.compile_options
         gen_kernel_fun(compile_info, origin_func_name, op_info, tiling_info, CompileOptionTuple(compile_options, []))
@@ -8085,7 +8085,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         with open(compile_info.gen_kernel_func_file, "r") as file:
-            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", file.read())
+            self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", file.read())
         os.remove(compile_info.gen_kernel_func_file)
         compile_info.super_kernel_info["sp_options"]["debug-per-op-max-core-num"] = "1"
         with tbe.common.context.op_context.OpContext() as ctx:
@@ -8099,7 +8099,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
             lines = " ".join(lines)
             self.assertNotEqual(lines.find(" __attribute__((aligned(512))) "), -1)
             self.assertNotEqual(lines.find(" __sk__"), -1)
-            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", lines)
+            self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", lines)
             self.assertIn(
                 "AscendC::g_superKernelSetWaitFlagCountDifference = "
                 "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;",
@@ -8552,6 +8552,13 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         self.assertTrue(_match_regex("", ""))
         self.assertFalse(_match_regex("", "a"))
         self.assertFalse(_match_regex("a", ""))
+
+    def test_get_dcci_disable_cap_bitmap_comma_separated_patterns(self):
+        compile_info = CompileInfo()
+        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": " kernel_a, kernel_.* , "}}
+        self.assertEqual(_get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"]), 4)
+        self.assertEqual(_get_dcci_disable_cap_bitmap(compile_info, ["kernel_b"]), 4)
+        self.assertEqual(_get_dcci_disable_cap_bitmap(compile_info, ["other"]), 0)
 
     def test_get_dcci_disable_cap_bitmap_empty_patterns(self):
         compile_info = CompileInfo()

@@ -69,7 +69,6 @@ from asc_op_compile_base.asc_op_compiler.compile_op import (
     _update_compile_option,
     gen_meta_info_section,
     _match_regex,
-    _get_dcci_disable_cap_bitmap,
 )
 from asc_op_compile_base.asc_op_compiler.ascendc_compile_base import get_compile_core_types
 from asc_op_compile_base.asc_op_compiler.ascendc_compile_v220 import (
@@ -680,7 +679,6 @@ class TestCompileOp(unittest.TestCase):
         kernel_spec.resource_id = "resource-id"
         kernel_spec.basic_compile_info = compile_info
         kernel_spec.sk_compile_info = None
-        kernel_spec.sk_cap_bitmap = None
 
         cases = (
             (
@@ -2940,7 +2938,7 @@ class TestCompileOp(unittest.TestCase):
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         wrapper_text = Path(compile_info.gen_kernel_func_file).read_text(encoding="utf-8")
-        self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", wrapper_text)
+        self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", wrapper_text)
         self.assertIn(f'#include "{cce_file}"', wrapper_text)
         source_include = ["-I", os.path.dirname(os.path.realpath(cce_file))]
         self.assertEqual(
@@ -9089,7 +9087,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         )
         self.assertTrue(os.path.exists(compile_info.gen_kernel_func_file))
         with open(compile_info.gen_kernel_func_file, "r") as file:
-            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", file.read())
+            self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", file.read())
         os.remove(compile_info.gen_kernel_func_file)
         compile_info.super_kernel_info["sp_options"]["debug-per-op-max-core-num"] = "1"
         with asc_op_compile_base.common.context.op_context.OpContext() as ctx:
@@ -9103,7 +9101,7 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
             lines = " ".join(lines)
             self.assertNotEqual(lines.find(" __attribute__((aligned(512))) "), -1)
             self.assertNotEqual(lines.find(" __sk__"), -1)
-            self.assertNotIn("__ASCENDC_SUPER_KERNEL_DEBUG__", lines)
+            self.assertIn("#ifdef __ASCENDC_SUPER_KERNEL_DEBUG__", lines)
             self.assertIn(
                 "AscendC::g_superKernelSetWaitFlagCountDifference = "
                 "AscendC::SUPER_KERNEL_SET_WAIT_FLAG_COUNT_INITIAL_VALUE;",
@@ -9559,63 +9557,3 @@ const static uint64_t L0A_SIZE = 65536 * block_idx;
         self.assertTrue(_match_regex("", ""))
         self.assertFalse(_match_regex("", "a"))
         self.assertFalse(_match_regex("a", ""))
-
-    def test_get_dcci_disable_cap_bitmap_empty_patterns(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 0)
-
-    def test_get_dcci_disable_cap_bitmap_patterns_not_list(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": "not_a_list"}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 0)
-
-    def test_get_dcci_disable_cap_bitmap_patterns_empty_list(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": []}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 0)
-
-    def test_get_dcci_disable_cap_bitmap_matched(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_a", "kernel_b"]}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 4)
-
-    def test_get_dcci_disable_cap_bitmap_not_matched(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_x", "kernel_y"]}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 0)
-
-    def test_get_dcci_disable_cap_bitmap_wildcard_match(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_.*", ".*_test"]}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_abc"])
-        self.assertEqual(result, 4)
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["op_test"])
-        self.assertEqual(result, 4)
-
-    def test_get_dcci_disable_cap_bitmap_multi_symbols_first_match(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_b"]}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a", "kernel_b", "kernel_c"])
-        self.assertEqual(result, 4)
-
-    def test_get_dcci_disable_cap_bitmap_multi_symbols_no_match(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"sp_options": {"dcci-disable-on-kernel": ["kernel_x"]}}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a", "kernel_b", "kernel_c"])
-        self.assertEqual(result, 0)
-
-    def test_get_dcci_disable_cap_bitmap_no_sp_options(self):
-        compile_info = CompileInfo()
-        compile_info.super_kernel_info = {"other_option": "value"}
-        result = _get_dcci_disable_cap_bitmap(compile_info, ["kernel_a"])
-        self.assertEqual(result, 0)
-
-
-if __name__ == "__main__":
-    unittest.main()
