@@ -122,7 +122,7 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopyUB2L1Impl(
         (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(src)) % ONE_BLK_SIZE == 0),
         KERNEL_LOG_INTERNAL(KERNEL_ERROR, "src address should be 32B aligned \n"));
     copy_ubuf_to_cbuf(
-        (__cbuf__ void*)dst, (__ubuf__ void*)src, 0, intriParams.blockCount, intriParams.blockLen,
+        (__cbuf__ void*)dst, (__ubuf__ void*)src, static_cast<uint8_t>(0), intriParams.blockCount, intriParams.blockLen,
         intriParams.srcStride, intriParams.dstStride);
 #endif
 }

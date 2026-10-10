@@ -59,7 +59,7 @@ __aicore__ inline void asc_copy_ub2l1(
     uint16_t dst_gap)
 {
     if ASC_IS_AIV {
-        copy_ubuf_to_cbuf(dst, src, 0, burst_count, burst_len, src_gap, dst_gap);
+        copy_ubuf_to_cbuf(dst, src, static_cast<uint8_t>(0), burst_count, burst_len, src_gap, dst_gap);
     }
 }
 

@@ -655,8 +655,8 @@ __aicore__ inline void asc_copy_ub2l1_sync(__cbuf__ void* dst, __ubuf__ void* sr
 {
     if ASC_IS_AIV {
         copy_ubuf_to_cbuf(
-            dst, src, 0, static_cast<uint16_t>(1), size / ASC_C_API_ONE_DATABLOCK_SIZE, static_cast<uint16_t>(0),
-            static_cast<uint16_t>(0));
+            dst, src, static_cast<uint8_t>(0), static_cast<uint16_t>(1), size / ASC_C_API_ONE_DATABLOCK_SIZE,
+            static_cast<uint16_t>(0), static_cast<uint16_t>(0));
         asc_sync_post_process();
     }
 }
