@@ -18,6 +18,7 @@
 #include "include/adv_api/hccl/hccl_common.h"
 #include "securec.h"
 #include "../../detail/host_log.h"
+#include "../../detail/hccl/cc/src/ops/op_common/external_alg/external_alg_parser.h"
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "include/adv_api/hccl/internal/hccl_tiling_msg.h"
 #include "tiling/platform/platform_ascendc.h"
@@ -50,8 +51,7 @@ static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
     "CcuSchedReduceScatterConcurMeshNHRMultiLink",
     "CcuSchedReduceScatterSoleNHR"};
 
-// 外部名（含 '['）在此宽松放行：精确判断在 mc2 侧 CheckCcuAlgorithmsRegistered
-// （排在 version 校验之前），语法错/无候选由其报错，信息更详细。
+// 外部名先过语法校验：语法错不设101（version影响CCU链后续流程），词法错误明细由mc2侧报出。
 // commEngine 非 CCU 系直接 false——version=101 仅 CCU 链消费。
 uint8_t ResolveDevType(const std::string& socVersion)
 {
@@ -80,7 +80,16 @@ bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
     if (REGISTERED_CCU_ALGORITHMS.count(algConfig) != 0U) {
         return true;
     }
-    return algConfig.find('[') != std::string::npos;
+    if (algConfig.find('[') == std::string::npos) {
+        return false;
+    }
+    mc2_ops_hccl::ExternalAlgSpec spec;
+    std::string errMsg;
+    if (!mc2_ops_hccl::ParseExternalAlg(algConfig, spec, errMsg)) {
+        TILING_LOG_WARNING("external algConfig[%s] parse failed, reason[%s].", algConfig.c_str(), errMsg.c_str());
+        return false;
+    }
+    return true;
 }
 
 void PrintMc2InitTiling(const Mc2InitTilingInner& tiling)

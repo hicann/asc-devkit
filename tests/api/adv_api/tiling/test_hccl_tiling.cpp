@@ -291,11 +291,12 @@ TEST_F(TestHcclTilingCcuKfc, ExternalAlgNameAicpuOnlyAlsoUsesCcuNewVersion)
         static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), "pipeline[mesh,nhr]", 6U, INIT_TILING_CCU_NEW_VERSION);
 }
 
-// 语法错的外部名 + CCU 引擎：同样设 101（真报错在 mc2 侧，带具体词法错误）
-TEST_F(TestHcclTilingCcuKfc, ExternalAlgNameBadSyntaxStillUsesCcuNewVersion)
+// 语法错的外部名 + CCU 引擎：不设 101——version 影响 CCU 链后续流程，坏输入不带新版本标记；
+// 词法错误明细由 mc2 侧 CheckCcuAlgorithmsRegistered 报出。
+TEST_F(TestHcclTilingCcuKfc, ExternalAlgNameBadSyntaxKeepsCcuOldVersion)
 {
     ExpectInitTilingVersion(
-        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_BROADCAST), "sole[ring", 6U, INIT_TILING_CCU_NEW_VERSION);
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_BROADCAST), "sole[ring", 6U, INIT_TILING_VERSION);
 }
 
 // ============================================================================
