@@ -285,9 +285,9 @@ def parse_scenario_values_from_cmake(cmake_file: Path) -> List[int]:
 
     values: set[int] = set()
     for match in re.finditer(r"set\s*\(\s*SCENARIO_NUM\s+[^)]*CACHE\s+STRING\s+\"([^\"]*)\"", text):
-        values.update(parse_scenario_values_from_text(match.group(1)))
+        values.update(parse_scenario_values_from_description(match.group(1)))
     for match in re.finditer(r"set\s*\(\s*SCENARIO\s+[^)]*CACHE\s+STRING\s+\"([^\"]*)\"", text):
-        values.update(parse_scenario_values_from_text(match.group(1)))
+        values.update(parse_scenario_values_from_description(match.group(1)))
     for match in re.finditer(r"SCENARIO_NUM[^\n\r\"]*\"([^\"]*)\"", text):
         values.update(parse_scenario_values_from_text(match.group(1)))
     for match in re.finditer(r"set\s*\(\s*VALID_SCENARIOS\s+([^)]+)\)", text):
@@ -295,6 +295,13 @@ def parse_scenario_values_from_cmake(cmake_file: Path) -> List[int]:
     for match in re.finditer(r"SCENARIO_NUM[^\n\r]*(?:must be|Valid values are|specify)[^\n\r]*", text):
         values.update(parse_scenario_values_from_text(match.group(0)))
     return sorted(value for value in values if 0 <= value <= 32)
+
+
+def parse_scenario_values_from_description(text: str) -> List[int]:
+    mapping_keys = re.findall(r"(?:^|[(:,;]\s*)(\d+)\s*=", text)
+    if mapping_keys:
+        return sorted({int(value) for value in mapping_keys})
+    return parse_scenario_values_from_text(text)
 
 
 def parse_scenario_values_from_readme(readme_file: Path) -> List[int]:

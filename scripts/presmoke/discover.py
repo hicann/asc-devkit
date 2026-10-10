@@ -21,7 +21,7 @@ def discover_examples(examples_root: Path) -> List[Path]:
     examples: List[Path] = []
     for readme in examples_root.rglob("README.md"):
         text = readme.read_text(encoding="utf-8", errors="ignore")
-        if "## 编译运行" in text or "## 运行方式" in text:
+        if "## 编译运行" in text or "## 编译与运行" in text or "## 运行方式" in text:
             examples.append(readme.parent)
     return sorted(examples, key=lambda p: p.relative_to(examples_root).as_posix())
 

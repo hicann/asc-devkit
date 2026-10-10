@@ -49,7 +49,7 @@ def read_readme_text(example_dir: Path, rel_path: str, suggestions: List[Suggest
 def readme_commands(
     example_dir: Path, rel_path: str, text: str, suggestions: List[Suggestion]
 ) -> tuple[List[Command], str, str]:
-    run_section = _section(text, "编译运行") or _section(text, "运行方式")
+    run_section = _section(text, "编译运行") or _section(text, "编译与运行") or _section(text, "运行方式")
     if not run_section:
         suggestions.append(
             _suggest(

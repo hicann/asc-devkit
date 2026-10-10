@@ -38,3 +38,4 @@
 01_simd_cpp_api/03_basic_api/00_data_movement/copy_ub2ub__scenario_3
 01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0__scenario_8
 01_simd_cpp_api/03_basic_api/03_matrix_compute/load_data_l12l0__scenario_14
+02_simd_c_api/03_c_api/01_memory_vector_compute/reduce__scenario_2

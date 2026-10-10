@@ -163,6 +163,16 @@ class GenerateCaseRunnersTest(unittest.TestCase):
 
         self.assertEqual(parse_scenario_values_from_cmake(cmake_file), [0, 1, 2, 3, 4, 5])
 
+    def test_scenario_description_does_not_treat_type_widths_as_scenarios(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            cmake_file = Path(tmp) / "CMakeLists.txt"
+            cmake_file.write_text(
+                'set(SCENARIO_NUM "1" CACHE STRING "Scenario: 1=half-to-int4b_t, 2=half-to-int32_t")\n',
+                encoding="utf-8",
+            )
+
+            self.assertEqual(parse_scenario_values_from_cmake(cmake_file), [1, 2])
+
     def test_scenario_range_can_be_discovered_from_readme_table(self) -> None:
         project_root = Path(__file__).resolve().parents[3]
         readme_file = project_root / "examples/01_simd_cpp_api/04_advanced_api/08_transpose/transdata/README.md"

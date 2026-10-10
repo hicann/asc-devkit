@@ -32,3 +32,5 @@
 01_simd_cpp_api/04_advanced_api/08_transpose/transdata__scenario_3
 01_simd_cpp_api/04_advanced_api/10_math/clampmin__scenario_0
 01_simd_cpp_api/04_advanced_api/10_math/power__scenario_1
+02_simd_c_api/03_c_api/01_memory_vector_compute/cast__scenario_1
+02_simd_c_api/03_c_api/01_memory_vector_compute/cast__scenario_2
