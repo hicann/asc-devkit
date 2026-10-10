@@ -1,7 +1,7 @@
 # Ascend C API参考
 
 -   [Ascend C API列表](api_list.md)
--   [SIMD API](SIMD-API/SIMD-API.md)
+-   [SIMD API<a npu_parse_enabled="true"></a>](SIMD-API/SIMD-API.md)
     -   [通用说明和约束](SIMD-API/general_description_and_constraints.md)
     -   [基础API](SIMD-API/basic_api/basic_api.md)
         -   [基础API列表](SIMD-API/basic_api/basic_api_list.md)
@@ -2446,7 +2446,7 @@
         -   [随机函数](SIMD-API/adv_api/random_functions/random_functions.md)
             -   [PhiloxRandom](SIMD-API/adv_api/random_functions/PhiloxRandom.md)
 
--   [SIMT API](SIMT-API/SIMT-API.md)
+-   [SIMT API<a npu_parse_enabled="true"></a>](SIMT-API/SIMT-API.md)
     -   [概述](SIMT-API/overview.md)
     -   [SIMT编程简介](SIMT-API/SIMT_programming_intro/SIMT_programming_intro.md)
         -   [编程模型](SIMT-API/SIMT_programming_intro/programming_model.md)
@@ -3300,7 +3300,7 @@
         -   [tiled_partition](SIMT-API/cooperative_groups/tiled_partition.md)
         -   [binary_partition](SIMT-API/cooperative_groups/binary_partition.md)
 
--   [Utils API](Utils-API/Utils-API.md)
+-   [Utils API<a npu_parse_enabled="true"></a>](Utils-API/Utils-API.md)
     -   [Utils API列表](Utils-API/utils_api_list.md)
     -   [C++标准库](Utils-API/cpp_stdlib/cpp_stdlib.md)
         -   [算法](Utils-API/cpp_stdlib/algorithms/algorithms.md)
@@ -3535,7 +3535,7 @@
     -   [SuperKernel](Utils-API/SuperKernel/SuperKernel.md)
         -   [SK\_BIND](Utils-API/SuperKernel/SK_BIND.md)
 
--   [AI CPU API](AI-CPU-API/AI-CPU-API.md)
+-   [AI CPU API<a npu_parse_enabled="true"></a>](AI-CPU-API/AI-CPU-API.md)
     -   [AI CPU API列表](AI-CPU-API/ai_cpu_api_list.md)
     -   [printf](AI-CPU-API/printf.md)
     -   [assert](AI-CPU-API/assert.md)
