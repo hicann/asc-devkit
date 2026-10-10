@@ -203,6 +203,7 @@
 - **[asc_copy_ub2l1_sync（废弃）](asc_copy_ub2l1_sync_deprecated.md)**
 - **[asc_copy_ub2ub_sync（废弃）](asc_copy_ub2ub_sync_deprecated.md)**
 - **[asc_set_gm2ub_pad（废弃）](asc_set_gm2ub_pad_deprecated.md)**
+- **[asc_ndim_copy_gm2ub（废弃）](asc_ndim_copy_gm2ub_deprecated.md)**
 
 ## Reg矢量计算
 
