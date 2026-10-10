@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------------------------------------
 
 # 后续如果更新asc-comm代码需要同步更新至devkit run包需要更新change id
-set(ASC_COMM_TAG_ID 0eff184c367e6d67263745e57abc485237d34019)
+set(ASC_COMM_TAG_ID 140efa94dc4090ddc84f7b34e6b56ea0c1b313d0)
 
 # asc-comm 与 asc-devkit 按同级目录放置。路径以本文件所在目录(<devkit>/cmake/third_party)为锚，
 # 对于CI环境已经存在asc-comm代码, 不去拉取代码否则使用submodule方式拉取asc-comm仓代码
@@ -78,6 +78,7 @@ install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
+    PATTERN "hcomm" EXCLUDE
     REGEX "aicore/hcomm" EXCLUDE
     REGEX "direct_drive" EXCLUDE
 )
@@ -102,22 +103,13 @@ install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTA
 install(CODE "file(CREATE_LINK ../../adv_api/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../adv_api/detail/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
 
-# 构建 asc-comm CCU 组件动态库，并将库和公开头文件打包进 asc-devkit run 包。
+# 构建 asc-comm CCU 动态库（数据面实现 + host-launch 兼容 wrapper），
+# 并将库与公开 DSL 头文件交付到 asc-devkit run 包。
+# CCU 源码归属 asc-comm，跨 SO 依赖通过已安装 CANN pkg_inc 和 POD ABI 解决。
 set(ASC_COMM_CCU_CMAKE_DIR ${ASC_COMM_SOURCE_PATH}/src/ccu)
 if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
-    if(DEFINED HCCL_CC_DIR)
-        set(ASCCOMM_HCOMM_SOURCE_DIR "${HCCL_CC_DIR}")
-    else()
-        set(ASCCOMM_HCOMM_SOURCE_DIR "${_ASC_COMM_DEVKIT_ROOT}/impl/adv_api/detail/hccl/cc")
-    endif()
-    message(STATUS "[ThirdPartyLib][asc-comm] ASCCOMM_HCOMM_SOURCE_DIR=${ASCCOMM_HCOMM_SOURCE_DIR}")
-
-    set(_ASC_COMM_INSTALL_LIBRARY_DIR_BAK "${INSTALL_LIBRARY_DIR}")
-    set(INSTALL_LIBRARY_DIR "${CMAKE_SYSTEM_PROCESSOR}-linux/lib64")
-    set(ASCCOMM_BUILD_CCU ON CACHE BOOL "Build asc-comm CCU component library" FORCE)
-
     if(NOT TARGET asccomm_ccu)
-        add_subdirectory(${ASC_COMM_SOURCE_PATH} asccomm EXCLUDE_FROM_ALL)
+        add_subdirectory(${ASC_COMM_CCU_CMAKE_DIR} ${CMAKE_BINARY_DIR}/asccomm_ccu)
     endif()
 
     if(TARGET asccomm_ccu)
@@ -127,9 +119,11 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
         install(TARGETS asccomm_ccu
             LIBRARY DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64 ${INSTALL_OPTIONAL}
             COMPONENT asc-devkit)
+        install(DIRECTORY ${ASC_COMM_SOURCE_PATH}/include/ccu/hcomm/
+            DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/include/ccu/hcomm
+            COMPONENT asc-devkit
+            FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
     endif()
-
-    set(INSTALL_LIBRARY_DIR "${_ASC_COMM_INSTALL_LIBRARY_DIR_BAK}")
 else()
     message(STATUS "[ThirdPartyLib][asc-comm] Missing CCU cmake dir: ${ASC_COMM_CCU_CMAKE_DIR}, skip CCU so build")
 endif()

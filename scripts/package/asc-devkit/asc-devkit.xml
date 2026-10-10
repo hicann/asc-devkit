@@ -56,6 +56,8 @@
         <path value="$(TARGET_ENV)/ascendc/include/highlevel_api/utils"/>
         <path value="$(TARGET_ENV)/ascendc/include/highlevel_api/utils/log"/>
         <path value="$(TARGET_ENV)/include/acl"/>
+        <path value="$(TARGET_ENV)/include/ccu"/>
+        <path value="$(TARGET_ENV)/include/ccu/hcomm"/>
         <path value="$(TARGET_ENV)/include/ascendc"/>
         <path value="$(TARGET_ENV)/include/ascendc/include"/>
         <path value="$(TARGET_ENV)/include/ascendc/highlevel_api"/>
@@ -177,6 +179,14 @@
 
     <file_info value="op_build" copy_type="delivery" src_path="lib/host/" dst_path="tools/opbuild" install_path="tools/opbuild" install_mod="555" feature="ascendc">
         <file value="op_build" file_type= "executable"/>
+    </file_info>
+
+    <!-- asc-comm CCU：动态库（数据面 + host-launch wrapper 合一）与公开 DSL 头，由 cmake install 落 staging 后经此处声明进 filelist.csv -->
+    <file_info value="asccomm_ccu" copy_type="delivery" src_path="lib/host" dst_path="$(TARGET_ENV)/lib64" install_path="$(TARGET_ENV)/lib64" install_type="all" install_mod="440">
+        <file value="libasccomm_ccu.so" file_type="shared"/>
+    </file_info>
+    <file_info value="asccomm_ccu_headers" copy_type="delivery" src_path="lib/host/asc/include" dst_path="$(TARGET_ENV)/include/ccu" install_path="$(TARGET_ENV)/include/ccu" install_type="all" install_mod="440">
+        <file value="hcomm"/>
     </file_info>
     <file_info value="asc_compile_exporter" copy_type="delivery" src_path="lib/host/" dst_path="tools/asc_compile_exporter" install_path="tools/asc_compile_exporter" install_mod="555" feature="ascendc">
         <file value="asc_compile_exporter" file_type= "executable"/>
