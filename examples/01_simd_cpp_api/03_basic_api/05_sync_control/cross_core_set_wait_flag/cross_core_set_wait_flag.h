@@ -20,8 +20,6 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
-#include "acl/acl.h"
-#include "kernel_operator.h"
 
 constexpr uint32_t BUFFER_NUM = 1;
 
@@ -29,6 +27,7 @@ constexpr uint32_t M = 32;
 constexpr uint32_t N = 64;
 constexpr uint32_t K = 32;
 constexpr uint32_t NUM_BLOCKS = 8;
+constexpr uint32_t FUSED_NUM_BLOCKS = SCENARIO_NUM == 3 ? 1 : NUM_BLOCKS;
 
 constexpr uint16_t FRACTAL_SHAPE_0 = 16;
 constexpr uint16_t FRACTAL_SHAPE_1 = 16; // 32 / sizeof(half) = 16
@@ -38,7 +37,7 @@ constexpr uint16_t CeilAlignConst(uint16_t value, uint16_t align) { return (valu
 
 // 每个block处理的矩阵维度
 constexpr uint16_t AIC_M = M;
-constexpr uint16_t AIC_K = K / NUM_BLOCKS;
+constexpr uint16_t AIC_K = K / FUSED_NUM_BLOCKS;
 constexpr uint16_t AIC_N = N;
 
 // 对齐后的shape
@@ -52,10 +51,10 @@ constexpr uint32_t B_SIZE_ALIGN_L1 = CEIL_ALIGN_K * CeilAlignConst(AIC_N, FRACTA
 constexpr uint32_t C_SIZE_ALIGN_L0 = CEIL_ALIGN_M * CEIL_ALIGN_N;
 
 // blocks长度
-constexpr uint32_t A_BLOCKS_LENGTH = M * K / NUM_BLOCKS;
-constexpr uint32_t B_BLOCKS_LENGTH = K / NUM_BLOCKS * N;
+constexpr uint32_t A_BLOCKS_LENGTH = M * K / FUSED_NUM_BLOCKS;
+constexpr uint32_t B_BLOCKS_LENGTH = K / FUSED_NUM_BLOCKS * N;
 constexpr uint32_t C_AIC_BLOCKS_LENGTH = M * N;
-constexpr uint32_t C_AIV_BLOCKS_LENGTH = M / (NUM_BLOCKS * 2) * N;
+constexpr uint32_t C_AIV_BLOCKS_LENGTH = M / (FUSED_NUM_BLOCKS * 2) * N;
 
 // 模式0的flagId
 constexpr uint16_t SYNC_AIC_FLAG = 11;
@@ -63,6 +62,24 @@ constexpr uint16_t SYNC_AIC_FLAG = 11;
 constexpr uint16_t SYNC_AIV_AIC_FLAG = 12;
 // 模式2的flagId,AIV等AIC
 constexpr uint16_t SYNC_AIC_AIV_FLAG = 13;
+// 模式4中，AIV1的flagId映射到AIC时需要加16。
+constexpr uint16_t SYNC_MODE4_INPUT_FLAG = 14;
+constexpr uint16_t SYNC_MODE4_OUTPUT_FLAG = 15;
+constexpr uint16_t SYNC_MODE4_AIV1_OFFSET = 16;
+
+constexpr AscendC::FixpipeConfig CFG_ROW_MAJOR_UB = {AscendC::CO2Layout::ROW_MAJOR, true};
+
+// dav-3510将CrossCoreWaitFlag的pipe模板参数作为硬件指令输入，模式0/1/2不支持默认的PIPE_S；
+// dav-2201上该参数不影响硬件指令，保持省略参数可兼容两类架构。
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void CrossCoreWaitFlagForArch(uint16_t flagId)
+{
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+    AscendC::CrossCoreWaitFlag<modeId, pipe>(flagId);
+#else
+    AscendC::CrossCoreWaitFlag<modeId>(flagId);
+#endif
+}
 
 /**
  * @brief Cube与Vector融合计算场景的Kernel实现类，实现矩阵乘和LeakyRelu运算
@@ -97,21 +114,35 @@ public:
         AscendC::LocalTensor<half> b2Local(AscendC::TPosition::B2, b2LocalAddr, B_SIZE_ALIGN_L1);
         AscendC::LocalTensor<float> c1Local(AscendC::TPosition::CO1, c1LocalAddr, C_SIZE_ALIGN_L0);
 
-        // 模式2：AIC等待本AI Core内2个AIV完成精度转换
-        AscendC::CrossCoreWaitFlag<2>(SYNC_AIV_AIC_FLAG);
+        if constexpr (SCENARIO_NUM == 3) {
+            // 模式4：分别等待AIV0和AIV1完成A、B矩阵的精度转换。
+            AscendC::CrossCoreWaitFlag<4, PIPE_MTE2>(SYNC_MODE4_INPUT_FLAG);
+            AscendC::CrossCoreWaitFlag<4, PIPE_MTE2>(SYNC_MODE4_INPUT_FLAG + SYNC_MODE4_AIV1_OFFSET);
+        } else {
+            // 模式2：AIC等待本AI Core内2个AIV完成精度转换。
+            CrossCoreWaitFlagForArch<2, PIPE_MTE2>(SYNC_AIV_AIC_FLAG);
+        }
 
         CopyIn(a1Local, b1Local);
         SplitA(a1Local, a2Local);
         SplitBTranspose(b1Local, b2Local);
         Compute(a2Local, b2Local, c1Local);
-        CopyOut(c1Local);
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+        if constexpr (SCENARIO_NUM == 3) {
+            CopyOutMode4(c1Local);
+        } else {
+#endif
+            CopyOut(c1Local);
 
-        // 模式0：8个AIC全核同步，确保原子累加结果正确
-        AscendC::CrossCoreSetFlag<0, PIPE_FIX>(SYNC_AIC_FLAG);
-        AscendC::CrossCoreWaitFlag<0>(SYNC_AIC_FLAG);
+            // 模式0：8个AIC全核同步，确保原子累加结果正确。
+            AscendC::CrossCoreSetFlag<0, PIPE_FIX>(SYNC_AIC_FLAG);
+            CrossCoreWaitFlagForArch<0, PIPE_FIX>(SYNC_AIC_FLAG);
 
-        // 模式2：AIC通知本AI Core内2个AIV可以执行LeakyRelu
-        AscendC::CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_AIV_FLAG);
+            // 模式2：AIC通知本AI Core内2个AIV可以执行LeakyRelu。
+            AscendC::CrossCoreSetFlag<2, PIPE_FIX>(SYNC_AIC_AIV_FLAG);
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+        }
+#endif
     }
 
     __aicore__ inline void ProcessAIV()
@@ -141,16 +172,31 @@ public:
             AscendC::DataCopy(BVectorGM, castBLocal, B_BLOCKS_LENGTH);
         }
 
-        // 模式2：AIV通知本AI Core内AIC精度转换完成
-        AscendC::CrossCoreSetFlag<2, PIPE_MTE3>(SYNC_AIV_AIC_FLAG);
+        if constexpr (SCENARIO_NUM == 3) {
+            // 模式4：每个AIV独立通知AIC精度转换完成。
+            AscendC::CrossCoreSetFlag<4, PIPE_MTE3>(SYNC_MODE4_INPUT_FLAG);
+            if (AscendC::GetSubBlockIdx() == 0) {
+                // AIV0等待L0C直接搬入本核UB。
+                AscendC::CrossCoreWaitFlag<4, PIPE_V>(SYNC_MODE4_OUTPUT_FLAG);
+            } else {
+                // AIV1等待另一半结果搬入GM，再从GM搬入本核UB。
+                AscendC::CrossCoreWaitFlag<4, PIPE_MTE2>(SYNC_MODE4_OUTPUT_FLAG);
+                AscendC::DataCopy(cLocal, CVectorGM, C_AIV_BLOCKS_LENGTH);
+                AscendC::SetFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+                AscendC::WaitFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+            }
+        } else {
+            // 模式2：AIV通知本AI Core内AIC精度转换完成。
+            AscendC::CrossCoreSetFlag<2, PIPE_MTE3>(SYNC_AIV_AIC_FLAG);
 
-        // 模式2：AIV等待本AI Core内AIC完成矩阵乘
-        AscendC::CrossCoreWaitFlag<2>(SYNC_AIC_AIV_FLAG);
+            // 模式2：AIV等待本AI Core内AIC完成矩阵乘。
+            CrossCoreWaitFlagForArch<2, PIPE_MTE2>(SYNC_AIC_AIV_FLAG);
+            AscendC::DataCopy(cLocal, CVectorGM, C_AIV_BLOCKS_LENGTH);
+            AscendC::SetFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+            AscendC::WaitFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+        }
 
         float alpha = 0.001;
-        AscendC::DataCopy(cLocal, CVectorGM, C_AIV_BLOCKS_LENGTH);
-        AscendC::SetFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
-        AscendC::WaitFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
         AscendC::LeakyRelu(reluCLocal, cLocal, alpha, C_AIV_BLOCKS_LENGTH);
         AscendC::SetFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
         AscendC::WaitFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
@@ -192,6 +238,15 @@ private:
         AscendC::SetFlag<AscendC::HardEvent::MTE2_MTE1>(EVENT_ID0);
         AscendC::WaitFlag<AscendC::HardEvent::MTE2_MTE1>(EVENT_ID0);
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+        AscendC::LoadData2DParamsV2 loadDataParams;
+        loadDataParams.mStep = AscendC::Std::ceil_div(AIC_M, FRACTAL_SHAPE_0);
+        loadDataParams.kStep = AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_1);
+        loadDataParams.srcStride = loadDataParams.mStep;
+        loadDataParams.dstStride = loadDataParams.mStep;
+        loadDataParams.ifTranspose = false;
+        AscendC::LoadData(a2Local, a1Local, loadDataParams);
+#else
         uint32_t dstOffset = AscendC::Std::ceil_div(AIC_K, FRACTAL_SHAPE_1) * FRACTAL_SIZE;
         uint32_t srcOffset = FRACTAL_SIZE;
         AscendC::LoadData2DParams loadDataParams;
@@ -202,6 +257,7 @@ private:
         for (int i = 0; i < AscendC::Std::ceil_div(AIC_M, FRACTAL_SHAPE_0); ++i) {
             AscendC::LoadData(a2Local[i * dstOffset], a1Local[i * srcOffset], loadDataParams);
         }
+#endif
     }
     __aicore__ inline void SplitBTranspose(AscendC::LocalTensor<half>& b1Local, AscendC::LocalTensor<half>& b2Local)
     {
@@ -236,20 +292,51 @@ private:
         AscendC::SetFlag<AscendC::HardEvent::M_FIX>(EVENT_ID0);
         AscendC::WaitFlag<AscendC::HardEvent::M_FIX>(EVENT_ID0);
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+        AscendC::FixpipeParamsArch3510<AscendC::CO2Layout::ROW_MAJOR> fixpipeParams;
+#else
         AscendC::FixpipeParamsV220 fixpipeParams;
+#endif
         fixpipeParams.nSize = AIC_N;
         fixpipeParams.mSize = AIC_M;
         fixpipeParams.srcStride = CEIL_ALIGN_M;
         fixpipeParams.dstStride = AIC_N;
+#if !defined(__NPU_ARCH__) || __NPU_ARCH__ != 3510
         fixpipeParams.ndNum = 1;
         fixpipeParams.srcNdStride = 0;
         fixpipeParams.dstNdStride = 0;
+#endif
         // 对L0C-->GM搬出的数据，启用原子累加（分块矩阵乘结果累加得到完整矩阵乘结果）
         AscendC::SetAtomicAdd<float>();
         AscendC::Fixpipe(CCUBEGM, c1Local, fixpipeParams);
         // 清空原子操作
         AscendC::DisableDmaAtomic();
     }
+
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+    __aicore__ inline void CopyOutMode4(AscendC::LocalTensor<float>& c1Local)
+    {
+        AscendC::SetFlag<AscendC::HardEvent::M_FIX>(EVENT_ID0);
+        AscendC::WaitFlag<AscendC::HardEvent::M_FIX>(EVENT_ID0);
+
+        AscendC::FixpipeParamsArch3510<AscendC::CO2Layout::ROW_MAJOR> fixpipeParams;
+        fixpipeParams.nSize = AIC_N;
+        fixpipeParams.mSize = AIC_M / 2;
+        fixpipeParams.srcStride = CEIL_ALIGN_M;
+        fixpipeParams.dstStride = AIC_N;
+
+        // 前半矩阵从L0C直达AIV0的UB。
+        AscendC::LocalTensor<float> cUb(AscendC::TPosition::VECIN, cAddr, C_AIV_BLOCKS_LENGTH);
+        fixpipeParams.subBlockId = 0;
+        AscendC::Fixpipe<float, float, CFG_ROW_MAJOR_UB>(cUb, c1Local, fixpipeParams);
+        AscendC::CrossCoreSetFlag<4, PIPE_FIX>(SYNC_MODE4_OUTPUT_FLAG);
+
+        // 后半矩阵从L0C搬到GM，由AIV1再搬入UB。
+        constexpr uint32_t l0cOffset = FRACTAL_SIZE;
+        AscendC::Fixpipe(CCUBEGM[C_AIV_BLOCKS_LENGTH], c1Local[l0cOffset], fixpipeParams);
+        AscendC::CrossCoreSetFlag<4, PIPE_FIX>(SYNC_MODE4_OUTPUT_FLAG + SYNC_MODE4_AIV1_OFFSET);
+    }
+#endif
 
 private:
     AscendC::GlobalTensor<uint8_t> aGM;
@@ -262,18 +349,19 @@ private:
     AscendC::GlobalTensor<half> BCUBEGM;
 
     int32_t blockIdx = 0;
+    // 起始地址单位是字节数。
     uint32_t a1LocalAddr = 0;
-    uint32_t b1LocalAddr = A_SIZE_ALIGN_L1;
+    uint32_t b1LocalAddr = A_SIZE_ALIGN_L1 * sizeof(half);
     uint32_t a2LocalAddr = 0;
     uint32_t b2LocalAddr = 0;
     uint32_t c1LocalAddr = 0;
 
     uint32_t aAddr = 0;
-    uint32_t bAddr = A_BLOCKS_LENGTH;
-    uint32_t cAddr = A_BLOCKS_LENGTH + B_BLOCKS_LENGTH;
-    uint32_t castAAddr = 0;
-    uint32_t castBAddr = A_BLOCKS_LENGTH;
-    uint32_t reluCAddr = A_BLOCKS_LENGTH + B_BLOCKS_LENGTH;
+    uint32_t bAddr = A_BLOCKS_LENGTH * sizeof(uint8_t);
+    uint32_t cAddr = (A_BLOCKS_LENGTH + B_BLOCKS_LENGTH) * sizeof(uint8_t);
+    uint32_t castAAddr = cAddr;
+    uint32_t castBAddr = cAddr;
+    uint32_t reluCAddr = cAddr + C_AIV_BLOCKS_LENGTH * sizeof(float);
 };
 
 /**
@@ -322,7 +410,7 @@ public:
         // 当本AIV完成前置PIPE_MTE3(DataCopy)流水操作后，通知其他AIV核，本AIV已经完成
         AscendC::CrossCoreSetFlag<0, PIPE_MTE3>(0);
         // 阻塞本AIV继续往下执行指令，直到其他AIV全部都完成PIPE_MTE3流水操作，才解除阻塞往下执行。
-        AscendC::CrossCoreWaitFlag<0>(0);
+        CrossCoreWaitFlagForArch<0, PIPE_MTE2>(0);
         // 关闭原子累加
         AscendC::DisableDmaAtomic();
 
@@ -355,7 +443,7 @@ public:
             AscendC::SetAtomicAdd<float>();
             AscendC::DataCopy(atomicResultGm, xLocal, this->blockLength);
             AscendC::CrossCoreSetFlag<1, PIPE_MTE3>(0);
-            AscendC::CrossCoreWaitFlag<1>(0);
+            CrossCoreWaitFlagForArch<1, PIPE_MTE2>(0);
             AscendC::DisableDmaAtomic();
 
             if (AscendC::GetBlockIdx() == 2) {

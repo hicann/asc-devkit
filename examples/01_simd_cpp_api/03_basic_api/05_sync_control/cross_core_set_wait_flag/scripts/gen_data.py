@@ -62,9 +62,9 @@ def gen_golden_data_scenario1():
     golden.tofile("./output/golden.bin")
 
 
-def gen_golden_data_scenario2():
+def gen_golden_data_fused(scenario_num):
     """
-    SCENARIO=2: Cube与Vector融合计算场景
+    SCENARIO=2/3: Cube与Vector融合计算场景
     计算公式：C = LeakyRelu(Cast(A) × Cast(B))
     A: [32, 32] uint8
     B: [32, 64] uint8
@@ -73,12 +73,12 @@ def gen_golden_data_scenario2():
     M = 32
     K = 32
     N = 64
-    num_blocks = 8
+    num_blocks = 1 if scenario_num == 3 else 8
     input_type = np.uint8
     output_type = np.float32
 
-    x1_gm = np.random.uniform(0, 1, [M, K]).astype(input_type)
-    x2_gm = np.random.uniform(0, 1, [K, N]).astype(input_type)
+    x1_gm = np.random.randint(0, 10, [M, K], dtype=input_type)
+    x2_gm = np.random.randint(0, 10, [K, N], dtype=input_type)
 
     x11_gm = np.zeros_like(x1_gm).astype(np.half)
     x22_gm = np.zeros_like(x2_gm).astype(np.half)
@@ -102,14 +102,16 @@ def gen_golden_data(scenario_num):
         gen_golden_data_scenario0()
     elif scenario_num == 1:
         gen_golden_data_scenario1()
-    elif scenario_num == 2:
-        gen_golden_data_scenario2()
+    elif scenario_num in (2, 3):
+        gen_golden_data_fused(scenario_num)
     else:
-        raise ValueError(f"Invalid scenario_num: {scenario_num}, must be 0, 1, or 2")
+        raise ValueError(f"Invalid scenario_num: {scenario_num}, must be 0, 1, 2, or 3")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-scenarioNum", type=int, default=0, choices=[0, 1, 2], help="Scenario number: 0, 1, or 2")
+    parser.add_argument(
+        "-scenarioNum", type=int, default=0, choices=[0, 1, 2, 3], help="Scenario number: 0, 1, 2, or 3"
+    )
     args = parser.parse_args()
     gen_golden_data(args.scenarioNum)

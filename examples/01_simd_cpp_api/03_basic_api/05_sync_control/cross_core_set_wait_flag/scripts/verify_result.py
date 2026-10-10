@@ -25,15 +25,22 @@ def verify_result(output, golden):
     output_type = np.float32
     output = np.fromfile(output, dtype=output_type).reshape(-1)
     golden = np.fromfile(golden, dtype=output_type).reshape(-1)
+    if output.size != golden.size:
+        print(f"size mismatch: expected {golden.size} elements, actual {output.size} elements")
+        return False
+    if not np.all(np.isfinite(output)):
+        print("output contains NaN or Inf")
+        return False
     different_element_results = np.isclose(output, golden, rtol=relative_tol, atol=absolute_tol, equal_nan=True)
     different_element_indexes = np.where(different_element_results == False)[0]
     for index in range(len(different_element_indexes)):
         real_index = different_element_indexes[index]
         golden_data = golden[real_index]
         output_data = output[real_index]
+        relative_diff = abs(output_data - golden_data) / max(abs(golden_data), absolute_tol)
         print(
             "data index: %06d, expected: %-.9f, actual: %-.9f, rdiff: %-.6f"
-            % (real_index, golden_data, output_data, abs(output_data - golden_data) / golden_data)
+            % (real_index, golden_data, output_data, relative_diff)
         )
         if index == 100:
             break
