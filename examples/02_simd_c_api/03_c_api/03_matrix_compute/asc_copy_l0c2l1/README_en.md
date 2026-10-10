@@ -27,7 +27,7 @@ Note: Ascend 950PR&950DT products does not support direct L1 Buffer-to-GM transf
 
 ## `asc_copy_l0c2l1` Parameters
 
-This `dav-3510` example describes each L0C Buffer-to-L1 Buffer transfer through the addresses, shape, strides, and feature controls of [`asc_copy_l0c2l1`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md). Scalar and vector quantization values are set through companion configuration APIs.
+This `dav-3510` example describes each L0C Buffer-to-L1 Buffer transfer through the addresses, shape, strides, and feature controls of [`asc_copy_l0c2l1`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md). Scalar and vector quantization values are set through companion configuration APIs.
 
 <a name="table1"></a>
 <table border="2" align="center">

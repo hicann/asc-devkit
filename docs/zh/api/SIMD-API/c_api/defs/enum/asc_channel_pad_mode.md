@@ -2,13 +2,13 @@
 
 头文件路径为：`"c_api/defs/enum.h"`。
 
-asc_channel_pad_mode用于表示从GM搬运到L1 Buffer时，每个32字节通道块的填充或压缩模式，可用于[asc_copy_gm2l1](../../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md)高维切分数据搬运接口。该模式为硬件`pad_func_mode`的类型化定义，对每个32字节通道数据块生效，取值范围为[0, 8]。
+asc_channel_pad_mode用于表示从GM搬运到L1 Buffer时，每个32字节通道块的填充或压缩模式，可用于[asc_copy_gm2l1](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md)高维切分数据搬运接口。该模式为硬件`pad_func_mode`的类型化定义，对每个32字节通道数据块生效，取值范围为[0, 8]。
 
-`EXPAND_*`为填充模式，在目的数据中插入padding值。通道填充值通过[asc_set_gm2l1_padding](../../cube_datamove/asc_set_gm2l1_padding.md)设置。
+`EXPAND_*`为填充模式，在目的数据中插入padding值。通道填充值通过[asc_set_gm2l1_padding](../../cube_datamove/cube_load_aux_config/asc_set_gm2l1_padding.md)设置。
 
 `COMPACT_*`为删除模式，从每个32字节源数据块中移除高位部分数据，仅保留低位有效区域。
 
-该枚举控制的是通道块内部的填充或删除，区别于通过[asc_set_gm2l1_pad](../../cube_datamove/asc_set_gm2l1_pad.md)配置的左右填充。
+该枚举控制的是通道块内部的填充或删除，区别于通过[asc_set_gm2l1_pad](../../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)配置的左右填充。
 
 ## 枚举类具体定义
 

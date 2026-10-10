@@ -8,6 +8,8 @@ Gemv的核心功能体现为：当矩阵A的维度M取值为1时，接口会自�
 针对Ascend 950PR&950DT系列产品，可以通过设置asc_mmad的disable_gemv参数为true，将该功能关闭。
 <!-- end id1 -->
 
+计算参数参见[asc_mmad](../mmad_compute/asc_mmad.md)；输入向量的搬入接口参见[asc_copy_l12l0a](../../cube_datamove/cube_compute_load/asc_copy_l12l0a.md)，结果存储空间的组织参见[L0C Buffer内存结构介绍](../../cube_datamove/cube_compute_store/L0C_memory_structure_intro.md)。
+
 **特性约束：**
 
 1. 1×K矩阵A需满足512B地址对齐，K个数据连续存储；以half类型为例，当K=256时，软件侧可视作16\*16分块，配置m=1后硬件解析为1\*256向量，可通过asc_copy_l12l0a接口将256个half数据从L1 Buffer搬至L0A Buffer。

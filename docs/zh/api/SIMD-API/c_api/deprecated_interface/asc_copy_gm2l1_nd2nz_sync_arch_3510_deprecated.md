@@ -28,11 +28,11 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_gm2l1_nd2nz_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
+**`asc_copy_gm2l1_nd2nz_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将数据从Global Memory搬运到L1 Buffer，并在搬运过程中将源端按N维连续排布的ND格式数据转换为L1 Buffer侧的Nz分形排布，使其满足后续矩阵计算对分形列连续性的要求。该接口也适用于卷积格式NHWC（ND）转换为NC1HWC0格式等转换场景。
 
-进行ND2Nz格式搬运前，需先通过[asc_set_gm2l1_nz_para](../cube_datamove/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵的stride与ND矩阵搬运个数。
+进行ND2Nz格式搬运前，需先通过[asc_set_gm2l1_nz_para](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵的stride与ND矩阵搬运个数。
 
 本接口仅在AIC上执行有效。
 
@@ -122,7 +122,7 @@ PIPE_MTE2
 
 ### ND2Nz搬运约束
 
-- 调用本指令前，需要先调用[asc_set_gm2l1_nz_para](../cube_datamove/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵步长与ND矩阵搬运个数。
+- 调用本指令前，需要先调用[asc_set_gm2l1_nz_para](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)接口配置ND2Nz搬运的目的Nz矩阵步长与ND矩阵搬运个数。
 - `loop1_src_stride`取值范围为[0, $2^{40}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `n_value`取值范围为[1, 65535]，超出取值范围的值会被截断，导致搬运结果不符合预期。
 - `d_value`取值范围为[1, $2^{21}-1$]，超出取值范围的值会被截断，导致搬运结果不符合预期。

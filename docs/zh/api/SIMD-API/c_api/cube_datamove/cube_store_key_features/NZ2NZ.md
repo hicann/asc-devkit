@@ -33,7 +33,7 @@ for (j = 0; j < m_size; j++) {
 - 目的操作数中Nz矩阵每一行的起始地址为dst\_temp\_n\_addr。
 - 在每一行中，以16个数据为粒度进行数据块切分，源操作数每一块数据块的起始地址为src\_block\_addr，目的操作数中每一数据块起始地址为dst\_block\_addr。
 
-以下参数为Nz2Nz用户可配置参数（2201目的步长参数名为dst_stride_dst_d，本文统一记为dst_stride），含义及取值范围参见[C API搬出参数](../asc_copy_l0c2gm/asc_copy_l0c2gm.md)：
+以下参数为Nz2Nz用户可配置参数（2201目的步长参数名为dst_stride_dst_d，本文统一记为dst_stride），含义及取值范围参见[C API搬出参数](../cube_compute_store/asc_copy_l0c2gm.md)：
 
 - m_size与n_size分别表示矩阵M方向和N方向上的维度。
 - src_stride表示源Nz矩阵中不同Z分形列的间隔，单位为C0\_Size（C0\_Size=16\*sizeof\(T\)，T为操作数的数据类型）。
@@ -62,12 +62,14 @@ for (j = 0; j < m_size; j++) {
 - 目的操作数中Nz矩阵每一行的起始地址为dst\_temp\_n\_addr。
 - 在每一行中，以16个数据为粒度进行数据块切分，源操作数每一块数据块的起始地址为src\_block\_addr，目的操作数中每一数据块起始地址为dst\_block\_addr。
 
-以下参数为Nz2Nz用户可配置参数，含义及取值范围参见[C API搬出参数](../asc_copy_l0c2gm/asc_copy_l0c2gm.md)：
+以下参数为Nz2Nz用户可配置参数，含义及取值范围参见[C API搬出参数](../cube_compute_store/asc_copy_l0c2gm.md)：
 
 - m_size与n_size分别表示矩阵M方向和N方向上的维度。
 - src_stride表示源Nz矩阵中不同Z分形列的间隔，单位为C0\_Size（C0\_Size=16\*sizeof\(T\)，T为操作数的数据类型）。
 - dst_stride表示目标Nz矩阵中不同Z分形列的间隔，单位为element。
 <!-- end id4 -->
+
+本特性用于保持分形输出布局的场景。各架构的搬出参数见[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm.md)和[asc_copy_l0c2l1](../cube_compute_store/asc_copy_l0c2l1.md)；输出类型与小分形宽度的关系见[随路量化](accompanying_quantization.md)、[F32 Channel Split](F32-Channel-Split.md)和[Int8 Channel Merge](Int8-Channel-Merge.md)。
 
 ## 特性约束
 

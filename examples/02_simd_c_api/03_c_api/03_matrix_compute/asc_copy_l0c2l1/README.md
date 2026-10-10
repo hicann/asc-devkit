@@ -27,7 +27,7 @@
 
 ## `asc_copy_l0c2l1`参数说明
 
-本样例面向`dav-3510`，通过[`asc_copy_l0c2l1`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)的位置、形状、步长和功能控制参数描述L0C Buffer到L1 Buffer搬运；Scalar和Vector量化参数由配套配置接口设置。
+本样例面向`dav-3510`，通过[`asc_copy_l0c2l1`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md)的位置、形状、步长和功能控制参数描述L0C Buffer到L1 Buffer搬运；Scalar和Vector量化参数由配套配置接口设置。
 
 <a name="表1"></a>
 <table border="2" align="center">

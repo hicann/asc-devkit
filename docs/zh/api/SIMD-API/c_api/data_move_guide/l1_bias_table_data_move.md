@@ -1,6 +1,6 @@
 # L1到BiasTable数据搬运
 
-BiasTable Buffer保存Mmad使用的bias。NPU架构版本3510通过[asc_copy_l12bt](../cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_3510.md)把L1中的偏置数据搬入BiasTable，接口运行在PIPE_MTE1，仅在AIC生效，支持连续和高维切分两种模式。
+BiasTable Buffer保存Mmad使用的bias。NPU架构版本3510通过[asc_copy_l12bt](../cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md)把L1中的偏置数据搬入BiasTable，接口运行在PIPE_MTE1，仅在AIC生效，支持连续和高维切分两种模式。
 
 ## 数据类型与随路转换
 

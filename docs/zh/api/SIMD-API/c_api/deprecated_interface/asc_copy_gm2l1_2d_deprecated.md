@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_copy_gm2l1`使用`uint8_t decomp_mode`和`uint8_t l2_cache_ctl`的旧常规重载及其`asc_copy_gm2l1_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_arch_3510（2D矩阵搬运模式）](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md)接口。**
+**`asc_copy_gm2l1`使用`uint8_t decomp_mode`和`uint8_t l2_cache_ctl`的旧常规重载及其`asc_copy_gm2l1_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_arch_3510（2D矩阵搬运模式）](../cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md)接口。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
@@ -142,7 +142,7 @@ bisheng examples.asc -o main --npu-arch=dav-3510 && ./main
 ```
 <!-- end id8 -->
 
-样例中A、B、C矩阵的shape均为[128,128]，数据格式均为Nz。A和B在GM中以Nz格式存储，分别按8个分形列循环调用本接口的2D矩阵搬运重载搬运到L1 Buffer，每次搬运一个分形列。随后A经[asc_copy_l12l0a](../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)搬运到L0A Buffer，B经[asc_copy_l12l0b_transpose](../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)搬运到L0B Buffer，调用[asc_mmad](../cube_compute/asc_mmad.md)完成计算。C从L0C Buffer搬出到GM时关闭Nz2ND和Nz2DN，保持Nz格式。样例单核占用64KB L1 Buffer、32KB L0A Buffer、32KB L0B Buffer和64KB L0C Buffer。样例依次复用`EVENT_ID0`完成MTE2到MTE1、MTE1到M、M到FIX的同步。
+样例中A、B、C矩阵的shape均为[128,128]，数据格式均为Nz。A和B在GM中以Nz格式存储，分别按8个分形列循环调用本接口的2D矩阵搬运重载搬运到L1 Buffer，每次搬运一个分形列。随后A经[asc_copy_l12l0a](../cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)搬运到L0A Buffer，B经[asc_copy_l12l0b_transpose](../cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md)搬运到L0B Buffer，调用[asc_mmad](../cube_compute/mmad_compute/asc_mmad.md)完成计算。C从L0C Buffer搬出到GM时关闭Nz2ND和Nz2DN，保持Nz格式。样例单核占用64KB L1 Buffer、32KB L0A Buffer、32KB L0B Buffer和64KB L0C Buffer。样例依次复用`EVENT_ID0`完成MTE2到MTE1、MTE1到M、M到FIX的同步。
 
 ```cpp
 #include <cstdint>

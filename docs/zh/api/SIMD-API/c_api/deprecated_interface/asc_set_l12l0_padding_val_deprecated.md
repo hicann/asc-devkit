@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_set_l12l0_padding_val`接口已废弃。请使用[asc_set_l12l0b_3d_padding](../cube_datamove/asc_set_l12l0b_3d_padding.md)接口替代。**
+**`asc_set_l12l0_padding_val`接口已废弃。请使用[asc_set_l12l0b_3d_padding](../cube_datamove/cube_load_aux_config/asc_set_l12l0b_3d_padding.md)接口替代。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 

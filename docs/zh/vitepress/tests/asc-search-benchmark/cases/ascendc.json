@@ -49,8 +49,8 @@
       "expect": {
         "minResults": 1,
         "targets": [
-          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 },
-          { "prefix": "/api/SIMD-API/c_api/cube_compute/asc_mmad_", "grade": 1 }
+          { "exact": "/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad", "grade": 3 },
+          { "prefix": "/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_", "grade": 1 }
         ]
       }
     },
@@ -126,7 +126,7 @@
       "expect": {
         "minResults": 1,
         "targets": [
-          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 }
+          { "exact": "/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad", "grade": 3 }
         ]
       }
     },
@@ -138,7 +138,7 @@
       "expect": {
         "minResults": 1,
         "targets": [
-          { "exact": "/api/SIMD-API/c_api/cube_compute/asc_mmad", "grade": 3 }
+          { "exact": "/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad", "grade": 3 }
         ]
       }
     },

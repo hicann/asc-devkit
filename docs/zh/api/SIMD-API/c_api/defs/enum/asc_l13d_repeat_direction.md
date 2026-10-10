@@ -1,6 +1,6 @@
 # asc_l13d_repeat_direction
 
-`asc_l13d_repeat_direction`用于表示3D img2col搬运的repeat迭代方向，作为[asc_set_l13d_rpt](../../cube_datamove/asc_set_l13d_rpt.md)和[asc_set_l13d_rpt_b](../../cube_datamove/asc_set_l13d_rpt_b.md)接口的`repeat_direction`参数类型。
+`asc_l13d_repeat_direction`用于表示3D img2col搬运的repeat迭代方向，作为[asc_set_l13d_rpt](../../cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md)和[asc_set_l13d_rpt_b](../../cube_datamove/cube_load_aux_config/asc_set_l13d_rpt_b.md)接口的`repeat_direction`参数类型。
 
 头文件路径为：`"c_api/defs/enum.h"`。
 

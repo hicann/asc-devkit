@@ -57,7 +57,7 @@
     ![列优先排布](../../../../figures/column_major_layout.png)
 - 场景：通常存在于Global Memory（GM）中。若此输入要作为矩阵计算的输入，需要转换成Nz格式。
 <!-- npu="950" id5 -->
-- 转换示例：针对Ascend 950PR&950DT系列产品，可以使用[矩阵搬入数据搬运 DN2Nz接口](../../cube_datamove/asc_copy_gm2l1_dn2nz.md)将其转换为Nz格式以适配Cube单元。
+- 转换示例：针对Ascend 950PR&950DT系列产品，可以使用[矩阵搬入数据搬运 DN2Nz接口](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md)将其转换为Nz格式以适配Cube单元。
 <!-- end id5 -->
 
 <!-- npu="910b,A3" id6 -->
@@ -227,7 +227,7 @@ C0表示元素个数。对于这里的输入FeatureMap，`C0 = 32B / sizeof(Data
 
 - **物理位置：** 通常位于Global Memory（GM）或者L1 Buffer中，作为卷积的Feature Map输入。
 
-- **格式转换过程：** 通常使用[数据搬运（GMToL1随路转换-ND2Nz搬运）](../../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz.md)指令来进行NHWC格式到NC1HWC0格式的转换。
+- **格式转换过程：** 通常使用[数据搬运（GMToL1随路转换-ND2Nz搬运）](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz.md)指令来进行NHWC格式到NC1HWC0格式的转换。
 
     通过二维数据排布变换表达格式转换过程：
 

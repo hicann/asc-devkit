@@ -66,13 +66,13 @@
       - `b1Local`：B矩阵在L1 Buffer中的临时存储。
       - `b2Local`：B矩阵在L0B Buffer中的临时存储，供`asc_mmad`读取。
       - `cLocal`：矩阵乘结果在L0C Buffer中的临时存储。
-    - 调用[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_gm2l1_nz_para.md)配置目的Nz排布，再调用[`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)将A、B矩阵从GM搬运到L1 Buffer，在搬运过程中将输入的[ND](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式数据转换为Cube计算需要的[Nz](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式。
+    - 调用[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)配置目的Nz排布，再调用[`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)将A、B矩阵从GM搬运到L1 Buffer，在搬运过程中将输入的[ND](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式数据转换为Cube计算需要的[Nz](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md)格式。
     - 调用[`asc_sync_notify`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md)和[`asc_sync_wait`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md)进行同步。`asc_copy_gm2l1_nd2nz`属于MTE2流水，后续L1 Buffer到L0A Buffer/L0B Buffer的搬运属于[MTE1](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md)流水，MTE1必须等待MTE2完成，避免读取到尚未搬运完成的L1 Buffer数据。
-    - 调用[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)将A矩阵从L1 Buffer搬运到L0A Buffer，调用[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)将B矩阵从L1 Buffer转置搬运到L0B Buffer。L0A Buffer和L0B Buffer是Cube矩阵计算单元直接读取的输入缓存。
+    - 调用[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)将A矩阵从L1 Buffer搬运到L0A Buffer，调用[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md)将B矩阵从L1 Buffer转置搬运到L0B Buffer。L0A Buffer和L0B Buffer是Cube矩阵计算单元直接读取的输入缓存。
     - 调用`asc_sync_notify`和`asc_sync_wait`进行同步。L1 Buffer到L0A Buffer/L0B Buffer的搬运属于MTE1流水，后续`asc_mmad`属于PIPE_M流水，PIPE_M流水必须等待MTE1完成，避免读取到尚未搬运完成的L0A Buffer/L0B Buffer数据。
-    - 调用[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)`(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)`执行矩阵乘。这里`baseM = 128`、`baseN = 256`、`baseK = 64`，对应单个核一次计算的矩阵块大小。
-    - 调用`asc_sync_notify`和`asc_sync_wait`进行同步。`asc_mmad`属于PIPE_M流水，后续[`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)属于FIX流水，FIX流水必须等待PIPE_M流水完成，避免读取到尚未计算完成的L0C Buffer结果。
-    - 调用[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_nz_para.md)配置Nz到ND的单矩阵搬运，再调用`asc_copy_l0c2gm`将L0C Buffer中的`float`累加结果转换为`half`并搬运回GM中的C矩阵输出位置。
+    - 调用[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md)`(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)`执行矩阵乘。这里`baseM = 128`、`baseN = 256`、`baseK = 64`，对应单个核一次计算的矩阵块大小。
+    - 调用`asc_sync_notify`和`asc_sync_wait`进行同步。`asc_mmad`属于PIPE_M流水，后续[`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)属于FIX流水，FIX流水必须等待PIPE_M流水完成，避免读取到尚未计算完成的L0C Buffer结果。
+    - 调用[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md)配置Nz到ND的单矩阵搬运，再调用`asc_copy_l0c2gm`将L0C Buffer中的`float`累加结果转换为`half`并搬运回GM中的C矩阵输出位置。
     - 最后调用[`asc_sync_pipe`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md)`(PIPE_ALL)`，确保当前核内相关流水任务完成。
 
   - 调用实现  
@@ -80,7 +80,7 @@
 
 - 接口参数说明：
 
-  **[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_gm2l1_nz_para.md)和[`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)** — 配置目的Nz排布，并完成GM到L1 Buffer的ND→Nz格式转换：
+  **[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)和[`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)** — 配置目的Nz排布，并完成GM到L1 Buffer的ND→Nz格式转换：
   ```cpp
   asc_set_gm2l1_nz_para(
       matrix_num,             // 源操作数中ND矩阵的数量
@@ -100,7 +100,7 @@
   ```
   例如搬运A矩阵时，先调用`asc_set_gm2l1_nz_para(1, 1, baseM, 0)`，再调用`asc_copy_gm2l1_nd2nz(a1Local, aGM, K * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, baseM, baseK, 0, false)`，将baseM×baseK的ND数据转为Nz格式。
 
-  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)和[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — 描述Ascend 950PR&950DT系列产品中A矩阵从L1 Buffer到L0A Buffer和B矩阵从L1 Buffer到L0B Buffer的数据搬运参数：
+  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)和[`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md)** — 描述Ascend 950PR/Ascend 950DT产品中A矩阵从L1 Buffer到L0A Buffer和B矩阵从L1 Buffer到L0B Buffer的数据搬运参数：
   ```cpp
   asc_copy_l12l0a/asc_copy_l12l0b_transpose(
       dst,               // 目的L0A Buffer/L0B Buffer地址
@@ -114,7 +114,7 @@
   ```
   Ascend 950PR&950DT系列产品中，L0A Buffer上的排布格式为Nz。搬运A矩阵时使用`asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)`，一次完成A矩阵Nz到Nz搬运；搬运B矩阵时使用`asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)`，一次完成B矩阵Nz到Zn搬运。
 
-  **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)** — 描述矩阵乘参数：
+  **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md)** — 描述矩阵乘参数：
   ```cpp
   asc_mmad(
       c_matrix,          // 结果矩阵C在L0C Buffer中的起始地址
@@ -130,7 +130,7 @@
   ```
   本样例使用`asc_mmad(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)`，计算baseM×baseN输出块并在K方向累加baseK长度，计算前将C矩阵初始值清零。
 
-  **[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_nz_para.md)和[`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)** — 配置Nz矩阵转换参数，完成L0C Buffer到GM的数据搬运和精度转换：
+  **[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md)和[`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)** — 配置Nz矩阵转换参数，完成L0C Buffer到GM的数据搬运和精度转换：
   ```cpp
   asc_set_l0c_copy_nz_para(
       matrix_num,          // 源Nz矩阵数量

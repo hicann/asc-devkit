@@ -1,78 +1,11 @@
 # 矩阵计算搬运
 
-- **[矩阵搬入总体说明](cube_compute_load_overall_description.md)**
-- **[矩阵计算输入搬运约束](cube_compute_input_move_constraint.md)**
-- **[L1 Buffer、L0A Buffer/L0B Buffer内存结构介绍](L1_L0A_B_memory_structure_intro.md)**
-- **[矩阵搬出总体说明](cube_compute_store_overall_description.md)**
-- **[L0C Buffer内存结构介绍](L0C_memory_structure_intro.md)**
+- **[矩阵计算的搬入](cube_compute_load/cube_compute_load.md)**
+
+- **[矩阵搬入辅助配置接口](cube_load_aux_config/cube_load_aux_config.md)**
+
+- **[矩阵计算的搬出](cube_compute_store/cube_compute_store.md)**
+
 - **[矩阵搬出关键特性说明](cube_store_key_features/cube_store_key_features.md)**
-- **[asc_copy_gm2l0a](asc_copy_gm2l0a.md)**
-- **[asc_copy_gm2l0b](asc_copy_gm2l0b.md)**
-- **[asc_copy_gm2l1_align](asc_copy_gm2l1_align.md)**
-- **[asc_copy_gm2l1_dn2nz](asc_copy_gm2l1_dn2nz.md)**
-- **[asc_copy_l0c2ub](asc_copy_l0c2ub.md)**
-- **[asc_copy_l12gm](asc_copy_l12gm.md)**
-- **[asc_copy_l12l0a_mx](asc_copy_l12l0a_mx.md)**
-- **[asc_copy_l12l0a_trans](asc_copy_l12l0a_trans.md)**
-- **[asc_copy_l12l0b_mx](asc_copy_l12l0b_mx.md)**
-- **[asc_copy_l12l0b_sparse](asc_copy_l12l0b_sparse.md)**
-- **[asc_copy_l12l0c](asc_copy_l12l0c.md)**
-- **[asc_copy_l12ub](asc_copy_l12ub.md)**
-- **[asc_fill_l0a](asc_fill_l0a.md)**
-- **[asc_fill_l0b](asc_fill_l0b.md)**
-- **[asc_fill_l1](asc_fill_l1.md)**
-- **[asc_get_l0c2gm_prequant](asc_get_l0c2gm_prequant.md)**
-- **[asc_get_l0c2gm_relu](asc_get_l0c2gm_relu.md)**
-- **[asc_get_l0c2gm_unitflag](asc_get_l0c2gm_unitflag.md)**
-- **[asc_load_image_to_cbuf](asc_load_image_to_cbuf.md)**
-- **[asc_set_gm2l1_loop1_stride](asc_set_gm2l1_loop1_stride.md)**
-- **[asc_set_gm2l1_loop2_stride](asc_set_gm2l1_loop2_stride.md)**
-- **[asc_set_gm2l1_loop_size](asc_set_gm2l1_loop_size.md)**
-- **[asc_set_gm2l1_nz_para](asc_set_gm2l1_nz_para.md)**
-- **[asc_set_gm2l1_pad](asc_set_gm2l1_pad.md)**
-- **[asc_set_gm2l1_padding](asc_set_gm2l1_padding.md)**
-- **[asc_set_l0c_copy_nz_para](asc_set_l0c_copy_nz_para.md)**
-- **[asc_set_l0c_copy_channel_para](asc_set_l0c_copy_channel_para.md)**
-- **[asc_set_l0c_copy_config](./asc_set_l0c_copy_config.md)**
-- **[asc_set_l0c_copy_lrelu_alpha](asc_set_l0c_copy_lrelu_alpha.md)**
-- **[asc_set_l0c_copy_relu_alpha](asc_set_l0c_copy_relu_alpha.md)**
-- **[asc_set_l0c_copy_params](asc_set_l0c_copy_params.md)**
-- **[asc_set_l0c_copy_prequant](asc_set_l0c_copy_prequant.md)**
-- **[asc_set_l13d_fmatrix](asc_set_l13d_fmatrix.md)**
-- **[asc_set_l13d_fmatrix_b](asc_set_l13d_fmatrix_b.md)**
-- **[asc_set_l12l0a_3d_padding](asc_set_l12l0a_3d_padding.md)**
-- **[asc_set_l12l0b_3d_padding](asc_set_l12l0b_3d_padding.md)**
-- **[asc_set_l13d_rpt](asc_set_l13d_rpt.md)**
-- **[asc_set_l13d_rpt_b](asc_set_l13d_rpt_b.md)**
-- **[asc_set_l13d_size](asc_set_l13d_size.md)**
-- **[asc_set_l3d_rpt_b](asc_set_l3d_rpt_b.md)**
-- **[asc_copy_gm2l1](asc_copy_gm2l1/asc_copy_gm2l1.md)**
-- **[asc_copy_gm2l1_arch_2201](asc_copy_gm2l1/asc_copy_gm2l1_arch_2201.md)**
-- **[asc_copy_gm2l1_highdim_split_arch_3510](asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md)**
-- **[asc_copy_gm2l1_2d_arch_3510](asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md)**
-- **[asc_copy_gm2l1_nd2nz](asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz.md)**
-- **[asc_copy_gm2l1_nd2nz_arch_2201](asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_2201.md)**
-- **[asc_copy_gm2l1_nd2nz_arch_3510](asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)**
-- **[asc_copy_l0c2gm](asc_copy_l0c2gm/asc_copy_l0c2gm.md)**
-- **[asc_copy_l0c2gm_arch_2201](asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)**
-- **[asc_copy_l0c2gm_arch_3510](asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)**
-- **[asc_copy_l0c2l1](asc_copy_l0c2l1/asc_copy_l0c2l1.md)**
-- **[asc_copy_l0c2l1_arch_2201](asc_copy_l0c2l1/asc_copy_l0c2l1_arch_2201.md)**
-- **[asc_copy_l0c2l1_arch_3510](asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)**
-- **[asc_copy_l12bt](asc_copy_l12bt/asc_copy_l12bt.md)**
-- **[asc_copy_l12bt_arch_2201](asc_copy_l12bt/asc_copy_l12bt_arch_2201.md)**
-- **[asc_copy_l12bt_arch_3510](asc_copy_l12bt/asc_copy_l12bt_arch_3510.md)**
-- **[asc_copy_l12fb](asc_copy_l12fb/asc_copy_l12fb.md)**
-- **[asc_copy_l12fb_arch_2201](asc_copy_l12fb/asc_copy_l12fb_arch_2201.md)**
-- **[asc_copy_l12fb_arch_3510](asc_copy_l12fb/asc_copy_l12fb_arch_3510.md)**
-- **[asc_copy_l12l0a](asc_copy_l12l0a/asc_copy_l12l0a.md)**
-- **[asc_copy_l12l0a_2d_arch_3510](asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)**
-- **[asc_copy_l12l0a_3d_arch_3510](asc_copy_l12l0a/asc_copy_l12l0a_3d_arch_3510.md)**
-- **[asc_copy_l12l0a_arch_2201](asc_copy_l12l0a/asc_copy_l12l0a_arch_2201.md)**
-- **[asc_copy_l12l0b](asc_copy_l12l0b/asc_copy_l12l0b.md)**
-- **[asc_copy_l12l0b_2d_arch_3510](asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)**
-- **[asc_copy_l12l0b_3d_arch_3510](asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)**
-- **[asc_copy_l12l0b_arch_2201](asc_copy_l12l0b/asc_copy_l12l0b_arch_2201.md)**
-- **[asc_copy_l12l0b_trans](asc_copy_l12l0b_trans/asc_copy_l12l0b_trans.md)**
-- **[asc_copy_l12l0b_trans_arch_2201](asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_2201.md)**
-- **[asc_copy_l12l0b_trans_arch_3510](asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_3510.md)**
+
+- **[矩阵搬出辅助配置接口](cube_store_aux_config/cube_store_aux_config.md)**

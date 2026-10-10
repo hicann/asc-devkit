@@ -68,7 +68,7 @@ MX矩阵乘法为带有量化系数X的矩阵乘法，即左矩阵和右矩阵�
     **图4** scaleB矩阵在不同位置上的排布格式  
     ![](../../../../figures/mx_scaleB_format.png "scaleB矩阵在不同位置上的排布格式")
 
-系数搬运接口见[asc_copy_l12l0a_mx](../../cube_datamove/asc_copy_l12l0a_mx.md)和[asc_copy_l12l0b_mx](../../cube_datamove/asc_copy_l12l0b_mx.md)。
+系数搬运接口见[asc_copy_l12l0a_mx](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md)和[asc_copy_l12l0b_mx](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md)。
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->
@@ -125,3 +125,5 @@ MX矩阵乘法为带有量化系数X的矩阵乘法，即左矩阵和右矩阵�
 
 - **分形大小约束：** 存储为uint8数据类型时，分形大小为16x8（N0，K0）。
 <!-- end id2 -->
+
+准备Bias矩阵时，搬运接口参见[asc_copy_l12bt](../../cube_datamove/cube_compute_load/asc_copy_l12bt.md)，Bias参与计算的方式见[asc_mmad](../mmad_compute/asc_mmad.md)；Scale矩阵用于[asc_mmad_mx](../mmad_compute/asc_mmad_mx.md)，稀疏权重与索引矩阵的搬入和计算分别参见[asc_copy_l12l0b_sparse](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_sparse.md)与[asc_mmad_sparse](../mmad_compute/asc_mmad_sparse.md)。

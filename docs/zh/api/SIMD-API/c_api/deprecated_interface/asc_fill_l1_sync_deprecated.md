@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_fill_l1_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_fill_l1.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
+**`asc_fill_l1_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/cube_load_aux_config/asc_fill_l1.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 将一个标量填充值写入L1 Buffer的目的地址，并将填充值广播到多个32字节分形块中，可用于L1 Buffer的内存初始化。需要通过[asc_fill_value_config](../defs/union/asc_fill_value_config.md)配置的重复次数、单次分形块数、相邻重复之间的间隔。
 

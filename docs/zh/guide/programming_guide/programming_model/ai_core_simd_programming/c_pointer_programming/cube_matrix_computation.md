@@ -257,7 +257,7 @@ __aicore__ inline void asc_set_l0c_copy_nz_para(
 __aicore__ inline void asc_set_l0c_copy_lrelu_alpha(float scalar_relu_pre_alpha);
 ```
 
-详细说明可参考接口说明文档[Cube接口说明](../../../../../api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm.md)。
+详细说明可参考接口说明文档[Cube接口说明](../../../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm.md)。
 
 
 ## 矩阵计算能力说明

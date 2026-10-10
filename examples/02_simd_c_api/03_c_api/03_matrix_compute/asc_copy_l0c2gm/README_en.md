@@ -26,7 +26,7 @@ This example demonstrates how to use the SIMD C API `asc_copy_l0c2gm` to transfe
 
 ## `asc_copy_l0c2gm` Parameters
 
-This `dav-3510` example describes each transfer through the addresses, shape, strides, and feature controls of [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md). Layout conversion and quantization settings that require additional state are configured by `asc_set_l0c_copy_*` APIs.
+This `dav-3510` example describes each transfer through the addresses, shape, strides, and feature controls of [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md). Layout conversion and quantization settings that require additional state are configured by `asc_set_l0c_copy_*` APIs.
 
 <a name="table1"></a>
 <table border="2" align="center">

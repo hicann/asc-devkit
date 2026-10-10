@@ -4,6 +4,13 @@
 
 矩阵计算的搬出过程中对于目标类型为f32，如果开启了Channel Split（通道拆分），硬件就能够将16×16的分形矩阵转换为16×8的小z分形矩阵，此时每个16×16的分形矩阵将被拆分为2个独立的16×8的小z分形矩阵。
 
+<!-- npu="A3,910b" id7 -->
+Atlas A3系列产品和Atlas A2系列产品在[asc_copy_l0c2gm（Atlas A3系列产品和Atlas A2系列产品）](../cube_compute_store/asc_copy_l0c2gm_arch_2201.md)中设置`channel_split=true`。使用时同时满足下文对输出格式和[UnitFlag](../../cube_compute/mmad_compute_key_features/UnitFlag.md)的限制；格式转换的区别见[NZ2ND](NZ2ND.md)。
+<!-- end id7 -->
+<!-- npu="950" id8 -->
+Ascend 950PR&950DT系列产品在[asc_copy_l0c2gm（Ascend 950PR&950DT系列产品）](../cube_compute_store/asc_copy_l0c2gm_arch_3510.md)中设置`enable_channel_split=true`。使用时同时满足下文对输出格式和[UnitFlag](../../cube_compute/mmad_compute_key_features/UnitFlag.md)的限制；格式转换的区别见[NZ2ND](NZ2ND.md)和[NZ2DN](NZ2DN.md)。
+<!-- end id8 -->
+
 ## 特性约束
 
 <!-- npu="A3,910b" id3 -->

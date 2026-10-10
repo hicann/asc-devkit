@@ -10,3 +10,5 @@
 
 - 大Y（Z/N）：表示分形矩阵之间的排列顺序（Z为row major（行主序），N为column major（列主序））。
 - 小x（z/n）：表示分形矩阵内部元素的排列顺序（z为row major（行主序），n为column major（列主序））。
+
+矩阵A、B、C在各存储层级中的具体排布参见[关键分形格式详解](key_fractal_format_details.md)；Bias、Scale和稀疏索引等辅助数据参见[辅助矩阵分形格式详解](aux_cube_fractal_format_details.md)。

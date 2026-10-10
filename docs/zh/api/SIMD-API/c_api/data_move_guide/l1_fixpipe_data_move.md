@@ -1,6 +1,6 @@
 # L1到Fixpipe Buffer数据搬运
 
-Fixpipe Buffer保存L0C搬出时使用的随路Vector量化参数和随路ReLU参数。NPU架构版本3510通过[asc_copy_l12fb](../cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_3510.md)从L1装载参数，接口运行在PIPE_FIX，仅在AIC生效，支持连续和高维切分两种模式。
+Fixpipe Buffer保存L0C搬出时使用的随路Vector量化参数和随路ReLU参数。NPU架构版本3510通过[asc_copy_l12fb](../cube_datamove/cube_compute_load/asc_copy_l12fb_arch_3510.md)从L1装载参数，接口运行在PIPE_FIX，仅在AIC生效，支持连续和高维切分两种模式。
 
 ## 参数地址空间
 
@@ -51,4 +51,4 @@ __aicore__ inline void asc_copy_l12fb(__fbuf__ void* dst,
 - Fixpipe Buffer越界时硬件可能截断写入并产生错误结果，不能依赖截断保护。
 - 参数装载和L0C结果搬出都运行在PIPE_FIX。参数必须在消费它的L0C搬出指令之前准备完成，不得在对应搬出仍执行时覆盖。
 - 参数由其他流水写入L1时，需要先建立到PIPE_FIX的依赖；多条`asc_copy_l12fb`写入重叠区域时，使用[asc_sync_pipe](../sync/intra_core_sync/asc_sync_pipe.md)保证先后顺序。
-- 量化、激活模式以及参数在Fixpipe Buffer中的布局由L0C搬出接口决定，装载前应先根据[asc_copy_l0c2gm](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2ub](../cube_datamove/asc_copy_l0c2ub.md)的功能组合准备参数。
+- 量化、激活模式以及参数在Fixpipe Buffer中的布局由L0C搬出接口决定，装载前应先根据[asc_copy_l0c2gm](../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](../cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2ub](../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)的功能组合准备参数。

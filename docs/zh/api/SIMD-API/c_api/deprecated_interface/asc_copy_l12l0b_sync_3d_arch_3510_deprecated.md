@@ -28,13 +28,13 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l12l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
+**`asc_copy_l12l0b_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 3D卷积数据搬运是用于将NC1HWC0格式的Feature Map完成Image to Column展开，按卷积步长、卷积核大小、膨胀系数配置生成img2col二维矩阵，再从展开后的矩阵中选取指定数据块搬运到L0B Buffer，用于3D卷积场景的矩阵计算数据加载。
 
 搬运过程中是以512字节的数据分形为单位进行搬运的，此接口也可以用于普通矩阵计算所需的2D格式数据的搬运。如何使用此接口进行2D格式数据的搬运可以参考[关键特性说明](#l12l0b_3d_key_features)。支持从L1 Buffer到L0B Buffer的数据搬运。
 
-3D img2col搬运模式下，Feature Map的属性描述（fm_w、fm_h及四周padding）需通过[asc_set_l13d_fmatrix_b](../cube_datamove/asc_set_l13d_fmatrix_b.md)预先配置，填充值与填充模式需通过[asc_set_l12l0b_3d_padding](../cube_datamove/asc_set_l12l0b_3d_padding.md)预先配置；如需使用repeat模式，repeat方向、次数与步长需通过[asc_set_l13d_rpt_b](../cube_datamove/asc_set_l3d_rpt_b.md)预先配置。
+3D img2col搬运模式下，Feature Map的属性描述（fm_w、fm_h及四周padding）需通过[asc_set_l13d_fmatrix_b](../cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix_b.md)预先配置，填充值与填充模式需通过[asc_set_l12l0b_3d_padding](../cube_datamove/cube_load_aux_config/asc_set_l12l0b_3d_padding.md)预先配置；如需使用repeat模式，repeat方向、次数与步长需通过[asc_set_l13d_rpt_b](../cube_datamove/cube_load_aux_config/asc_set_l3d_rpt_b.md)预先配置。
 
 本接口仅在AIC上执行有效。
 
@@ -85,7 +85,7 @@ dtype支持的数据类型为`int8_t`、`uint8_t`、`hifloat8_t`、`fp8_e5m2_t`�
 | `filter_size_w` | 输入 | 是否在`filter_w`的基础上将卷积核width增加256个元素。<br>&nbsp;&nbsp;&bull; `true`：增加；<br>&nbsp;&nbsp;&bull; `false`：不增加。 |
 | `filter_size_h` | 输入 | 是否在`filter_h`的基础上将卷积核height增加256个元素。<br>&nbsp;&nbsp;&bull; `true`：增加；<br>&nbsp;&nbsp;&bull; `false`：不增加。 |
 | `transpose` | 输入 | 是否启用转置功能，本接口对写入L0B Buffer的分形矩阵自动执行转置，该参数被硬件忽略，传入true或false不影响转置行为。 |
-| `f_matrix_ctrl` | 输入 | 3D数据搬运Feature Map的属性描述寄存器组选择位。<br>&nbsp;&nbsp;&bull; `true`：从右矩阵中获取Feature Map的属性描述，配合[asc_set_l13d_fmatrix_b](../cube_datamove/asc_set_l13d_fmatrix_b.md)、[asc_set_l12l0b_3d_padding](../cube_datamove/asc_set_l12l0b_3d_padding.md)、[asc_set_l13d_rpt_b](../cube_datamove/asc_set_l3d_rpt_b.md)使用；<br>&nbsp;&nbsp;&bull; `false`：从左矩阵中获取FeatureMap的属性描述，配合[asc_set_l13d_fmatrix](../cube_datamove/asc_set_l13d_fmatrix.md)、[asc_set_l12l0a_3d_padding](../cube_datamove/asc_set_l12l0a_3d_padding.md)、[asc_set_l13d_rpt](../cube_datamove/asc_set_l13d_rpt.md)使用。 |
+| `f_matrix_ctrl` | 输入 | 3D数据搬运Feature Map的属性描述寄存器组选择位。<br>&nbsp;&nbsp;&bull; `true`：从右矩阵中获取Feature Map的属性描述，配合[asc_set_l13d_fmatrix_b](../cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix_b.md)、[asc_set_l12l0b_3d_padding](../cube_datamove/cube_load_aux_config/asc_set_l12l0b_3d_padding.md)、[asc_set_l13d_rpt_b](../cube_datamove/cube_load_aux_config/asc_set_l3d_rpt_b.md)使用；<br>&nbsp;&nbsp;&bull; `false`：从左矩阵中获取FeatureMap的属性描述，配合[asc_set_l13d_fmatrix](../cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix.md)、[asc_set_l12l0a_3d_padding](../cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md)、[asc_set_l13d_rpt](../cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md)使用。 |
 | `channel_size` | 输入 | 源操作数的通道数N。<br>对于b32类型，`channel_size`除8的余数应当为0或4，最大值可取为65532。<br>对于b16类型，`channel_size`除16的余数应当为0，4或8，最大值可取为65528。<br>对于b8类型，`channel_size`除32的余数应当为0，4，8或16，最大值可取为65520。 |
 
 ## 返回值说明
@@ -109,8 +109,8 @@ PIPE_MTE1
 
 ### 3D img2col搬运模式约束
 
-- 此接口必须先调用[asc_set_l13d_rpt_b](../cube_datamove/asc_set_l3d_rpt_b.md)接口配置dst_stride参数，dst_stride为输出矩阵在height维度对齐后的大小。
-- 此接口需要先调用配套的寄存器设置接口[asc_set_l13d_fmatrix_b](../cube_datamove/asc_set_l13d_fmatrix_b.md)与[asc_set_l12l0b_3d_padding](../cube_datamove/asc_set_l12l0b_3d_padding.md)预先配置feature map描述、填充值与填充模式，否则会导致搬运接口不符合预期。如需使用repeat模式，须先调用[asc_set_l13d_rpt_b](../cube_datamove/asc_set_l3d_rpt_b.md)接口配置repeat方向、次数与步长。
+- 此接口必须先调用[asc_set_l13d_rpt_b](../cube_datamove/cube_load_aux_config/asc_set_l3d_rpt_b.md)接口配置dst_stride参数，dst_stride为输出矩阵在height维度对齐后的大小。
+- 此接口需要先调用配套的寄存器设置接口[asc_set_l13d_fmatrix_b](../cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix_b.md)与[asc_set_l12l0b_3d_padding](../cube_datamove/cube_load_aux_config/asc_set_l12l0b_3d_padding.md)预先配置feature map描述、填充值与填充模式，否则会导致搬运接口不符合预期。如需使用repeat模式，须先调用[asc_set_l13d_rpt_b](../cube_datamove/cube_load_aux_config/asc_set_l3d_rpt_b.md)接口配置repeat方向、次数与步长。
 - 3D格式搬运到L0B Buffer时会自动进行转置，transpose参数无效，不支持非转置场景。
 - `k_extension`、`m_extension`或`channel_size`为`0`，`filter_w`为`0`且`filter_size_w`为`false`，或`filter_h`为`0`且`filter_size_h`为`false`时不执行搬运，本接口被视为NOP（空操作）。
 - 对于b32类型，`channel_size`除8的余数应当为0或4，最大值可取为65532。对于b16类型，`channel_size`除16的余数应当为0，4或8，最大值可取为65528。对于b8类型，`channel_size`除32的余数应当为0，4，8或16，最大值可取为65520。否则会导致搬运结果不符合预期。

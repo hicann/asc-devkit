@@ -46,13 +46,13 @@ AI Core采用分层存储架构。计算单元包括Cube、Vector和Scalar；存
 
 | 源（SRC） | 目的（DST） | 流水 | 功能 | C API |
 | --- | --- | --- | --- | --- |
-| GM | L1 Buffer | PIPE_MTE2 | 连续搬运；配置一个数据块，源、目的步长设为0 | [asc_copy_gm2l1](../../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md) |
-| GM | L1 Buffer | PIPE_MTE2 | 高维切分搬运；通过数据块个数、块长和源/目的步长描述排布 | [asc_copy_gm2l1](../../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md) |
-| GM | L1 Buffer | PIPE_MTE2 | 以512字节分形为单位执行二维矩阵搬运 | [asc_copy_gm2l1](../../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md) |
-| GM | L1 Buffer | PIPE_MTE2 | 搬运时将ND数据转换为Nz排布 | [asc_copy_gm2l1_nd2nz](../../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md) |
-| GM | L1 Buffer | PIPE_MTE2 | 搬运时将DN数据转换为Nz排布 | [asc_copy_gm2l1_dn2nz](../../cube_datamove/asc_copy_gm2l1_dn2nz.md) |
-| GM | L1 Buffer | PIPE_MTE2 | 非对齐搬运，支持Compact、Normal、左右Padding和循环填充 | [asc_copy_gm2l1_align](../../cube_datamove/asc_copy_gm2l1_align.md) |
-| L0C Buffer | GM | PIPE_FIX | 搬出矩阵结果，可组合量化、激活、Nz2ND/Nz2DN和通道处理 | [asc_copy_l0c2gm](../../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 连续搬运；配置一个数据块，源、目的步长设为0 | [asc_copy_gm2l1](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 高维切分搬运；通过数据块个数、块长和源/目的步长描述排布 | [asc_copy_gm2l1](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 以512字节分形为单位执行二维矩阵搬运 | [asc_copy_gm2l1](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 搬运时将ND数据转换为Nz排布 | [asc_copy_gm2l1_nd2nz](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 搬运时将DN数据转换为Nz排布 | [asc_copy_gm2l1_dn2nz](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md) |
+| GM | L1 Buffer | PIPE_MTE2 | 非对齐搬运，支持Compact、Normal、左右Padding和循环填充 | [asc_copy_gm2l1_align](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md) |
+| L0C Buffer | GM | PIPE_FIX | 搬出矩阵结果，可组合量化、激活、Nz2ND/Nz2DN和通道处理 | [asc_copy_l0c2gm](../../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md) |
 | GM | UB | PIPE_MTE2 | 连续搬运 | [asc_copy_gm2ub](../../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md) |
 | GM | UB | PIPE_MTE2 | 高维切分搬运 | [asc_copy_gm2ub](../../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md) |
 | GM | UB | PIPE_MTE2 | 非对齐连续搬运，目的端补齐到32字节边界 | [asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) |
@@ -65,23 +65,23 @@ AI Core采用分层存储架构。计算单元包括Cube、Vector和Scalar；存
 | UB | GM | PIPE_MTE3 | 非对齐高维切分搬运，支持Compact和Normal源排布 | [asc_copy_ub2gm_align](../../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md) |
 | UB | L1 Buffer | PIPE_MTE3 | 连续搬运 | [asc_copy_ub2l1](../../vector_datamove/asc_copy_ub2l1.md) |
 | UB | L1 Buffer | PIPE_MTE3 | 高维切分搬运 | [asc_copy_ub2l1](../../vector_datamove/asc_copy_ub2l1.md) |
-| L1 Buffer | UB | PIPE_MTE1 | 连续搬运，可指定目的AIV | [asc_copy_l12ub](../../cube_datamove/asc_copy_l12ub.md) |
-| L1 Buffer | UB | PIPE_MTE1 | 高维切分搬运，可指定目的AIV | [asc_copy_l12ub](../../cube_datamove/asc_copy_l12ub.md) |
-| L1 Buffer | L0A Buffer | PIPE_MTE1 | 二维分形矩阵搬运 | [asc_copy_l12l0a](../../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) |
-| L1 Buffer | L0A Buffer | PIPE_MTE1 | 二维分形矩阵伴转置搬运 | [asc_copy_l12l0a_transpose](../../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) |
-| L1 Buffer | L0A Buffer | PIPE_MTE1 | 三维img2col搬运，支持Feature Map、Filter、Padding和Repeat配置 | [asc_copy_l12l0a](../../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_3d_arch_3510.md) |
-| L1 Buffer | L0A_MX Buffer | PIPE_MTE1 | 搬运MX矩阵计算使用的左矩阵量化系数 | [asc_copy_l12l0a_mx](../../cube_datamove/asc_copy_l12l0a_mx.md) |
-| L1 Buffer | L0B Buffer | PIPE_MTE1 | 二维分形矩阵搬运 | [asc_copy_l12l0b](../../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md) |
-| L1 Buffer | L0B Buffer | PIPE_MTE1 | 二维分形矩阵伴转置搬运 | [asc_copy_l12l0b_transpose](../../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md) |
-| L1 Buffer | L0B Buffer | PIPE_MTE1 | 三维img2col搬运，搬运时自动转置 | [asc_copy_l12l0b](../../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_3d_arch_3510.md) |
-| L1 Buffer | L0B Buffer | PIPE_MTE1 | 按Repeat和分形间隔执行二维分形转置 | [asc_copy_l12l0b_trans](../../cube_datamove/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_3510.md) |
-| L1 Buffer | L0B_MX Buffer | PIPE_MTE1 | 搬运MX矩阵计算使用的右矩阵量化系数 | [asc_copy_l12l0b_mx](../../cube_datamove/asc_copy_l12l0b_mx.md) |
-| L0C Buffer | L1 Buffer | PIPE_FIX | 搬出矩阵结果，可组合量化、激活和格式转换 | [asc_copy_l0c2l1](../../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md) |
-| L0C Buffer | UB | PIPE_FIX | 搬出矩阵结果，可组合量化、激活、格式转换和双目标搬运 | [asc_copy_l0c2ub](../../cube_datamove/asc_copy_l0c2ub.md) |
-| L1 Buffer | BiasTable Buffer | PIPE_MTE1 | 连续bias搬运，可执行`half`/`bfloat16_t`到32位数据的处理 | [asc_copy_l12bt](../../cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_3510.md) |
-| L1 Buffer | BiasTable Buffer | PIPE_MTE1 | 高维切分bias搬运 | [asc_copy_l12bt](../../cube_datamove/asc_copy_l12bt/asc_copy_l12bt_arch_3510.md) |
-| L1 Buffer | Fixpipe Buffer | PIPE_FIX | 连续搬运量化或ReLU参数 | [asc_copy_l12fb](../../cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_3510.md) |
-| L1 Buffer | Fixpipe Buffer | PIPE_FIX | 高维切分搬运量化或ReLU参数 | [asc_copy_l12fb](../../cube_datamove/asc_copy_l12fb/asc_copy_l12fb_arch_3510.md) |
+| L1 Buffer | UB | PIPE_MTE1 | 连续搬运，可指定目的AIV | [asc_copy_l12ub](../../cube_datamove/cube_compute_store/asc_copy_l12ub.md) |
+| L1 Buffer | UB | PIPE_MTE1 | 高维切分搬运，可指定目的AIV | [asc_copy_l12ub](../../cube_datamove/cube_compute_store/asc_copy_l12ub.md) |
+| L1 Buffer | L0A Buffer | PIPE_MTE1 | 二维分形矩阵搬运 | [asc_copy_l12l0a](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md) |
+| L1 Buffer | L0A Buffer | PIPE_MTE1 | 二维分形矩阵伴转置搬运 | [asc_copy_l12l0a_transpose](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md) |
+| L1 Buffer | L0A Buffer | PIPE_MTE1 | 三维img2col搬运，支持Feature Map、Filter、Padding和Repeat配置 | [asc_copy_l12l0a](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md) |
+| L1 Buffer | L0A_MX Buffer | PIPE_MTE1 | 搬运MX矩阵计算使用的左矩阵量化系数 | [asc_copy_l12l0a_mx](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md) |
+| L1 Buffer | L0B Buffer | PIPE_MTE1 | 二维分形矩阵搬运 | [asc_copy_l12l0b](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md) |
+| L1 Buffer | L0B Buffer | PIPE_MTE1 | 二维分形矩阵伴转置搬运 | [asc_copy_l12l0b_transpose](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md) |
+| L1 Buffer | L0B Buffer | PIPE_MTE1 | 三维img2col搬运，搬运时自动转置 | [asc_copy_l12l0b](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md) |
+| L1 Buffer | L0B Buffer | PIPE_MTE1 | 按Repeat和分形间隔执行二维分形转置 | [asc_copy_l12l0b_trans](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_trans_arch_3510.md) |
+| L1 Buffer | L0B_MX Buffer | PIPE_MTE1 | 搬运MX矩阵计算使用的右矩阵量化系数 | [asc_copy_l12l0b_mx](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md) |
+| L0C Buffer | L1 Buffer | PIPE_FIX | 搬出矩阵结果，可组合量化、激活和格式转换 | [asc_copy_l0c2l1](../../cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md) |
+| L0C Buffer | UB | PIPE_FIX | 搬出矩阵结果，可组合量化、激活、格式转换和双目标搬运 | [asc_copy_l0c2ub](../../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md) |
+| L1 Buffer | BiasTable Buffer | PIPE_MTE1 | 连续bias搬运，可执行`half`/`bfloat16_t`到32位数据的处理 | [asc_copy_l12bt](../../cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md) |
+| L1 Buffer | BiasTable Buffer | PIPE_MTE1 | 高维切分bias搬运 | [asc_copy_l12bt](../../cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md) |
+| L1 Buffer | Fixpipe Buffer | PIPE_FIX | 连续搬运量化或ReLU参数 | [asc_copy_l12fb](../../cube_datamove/cube_compute_load/asc_copy_l12fb_arch_3510.md) |
+| L1 Buffer | Fixpipe Buffer | PIPE_FIX | 高维切分搬运量化或ReLU参数 | [asc_copy_l12fb](../../cube_datamove/cube_compute_load/asc_copy_l12fb_arch_3510.md) |
 | UB | UB | PIPE_V | 连续复制 | [asc_copy_ub2ub](../../vector_datamove/asc_copy_ub2ub.md) |
 | UB | UB | PIPE_V | 高维切分复制 | [asc_copy_ub2ub](../../vector_datamove/asc_copy_ub2ub.md) |
 | UB | SIMD Register File | Vector Function | 对齐、非对齐、广播或掩码加载 | [Reg数据搬入](../../reg_compute/load/reg_load_overview.md) |

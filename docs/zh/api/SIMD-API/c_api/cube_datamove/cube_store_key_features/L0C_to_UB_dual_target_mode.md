@@ -7,6 +7,8 @@
 - 双目标模式（M维度）：按M维度拆分成形状为M / 2 \* N的两个矩阵，分别写入两个UB。
 - 双目标模式（N维度）：按N维度拆分成形状为M \* N / 2的两个矩阵，分别写入两个UB。
 
+调用[asc_copy_l0c2ub](../cube_compute_store/asc_copy_l0c2ub.md)，通过[asc_dual_dst_mode](../../defs/enum/asc_dual_dst_mode.md)选择M或N方向拆分。输出布局参见[NZ2NZ](NZ2NZ.md)或[NZ2ND](NZ2ND.md)，并遵循下文对随路功能及维度的限制。
+
 ## 特性约束
 
 - 双目标模式仅支持在L0C Buffer到UB通路，普通搬运模式（Nz2Nz）或Nz2ND搬运场景下使用，不支持随路功能场景。
@@ -49,4 +51,4 @@ M方向切分：
 
 ![](../../../../figures/nz2nd_l0c2ub_dual_dst_c_api.png)
 
-图中`nd_num`、`src_nd_stride`、`dst_nd_stride`分别对应[asc_set_l0c_copy_nz_para](../asc_set_l0c_copy_nz_para.md)的`matrix_num`、`src_nz_matrix_stride`、`dst_matrix_stride`，本例取2、240、4096。`asc_copy_l0c2ub`通过`asc_dual_dst_mode::DUAL_DST_SPLIT_M`或`DUAL_DST_SPLIT_N`选择切分方向。Nz输出示例中的C0为16，`dst_stride`按目标元素计数。
+图中`nd_num`、`src_nd_stride`、`dst_nd_stride`分别对应[asc_set_l0c_copy_nz_para](../cube_store_aux_config/asc_set_l0c_copy_nz_para.md)的`matrix_num`、`src_nz_matrix_stride`、`dst_matrix_stride`，本例取2、240、4096。`asc_copy_l0c2ub`通过`asc_dual_dst_mode::DUAL_DST_SPLIT_M`或`DUAL_DST_SPLIT_N`选择切分方向。Nz输出示例中的C0为16，`dst_stride`按目标元素计数。

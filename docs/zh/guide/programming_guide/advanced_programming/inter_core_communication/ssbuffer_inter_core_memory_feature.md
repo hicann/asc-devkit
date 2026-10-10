@@ -283,8 +283,8 @@ SSBuffer传递控制消息，大块数据使用相应搬运接口。根据CV融�
 | 数据流 | 基础API | C API | 与通信的关系 |
 | --- | --- | --- | --- |
 | AIV UB → AIC L1 Buffer | [DataCopy连续搬运](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_continuous.md)、[高维切分搬运](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_highdim_split.md)、[ND2NZ搬运](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_UBToL1_ND2NZ.md)、[DataCopyPad](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopyPad_UBToL1.md)。 | [asc_copy_ub2l1](../../../../api/SIMD-API/c_api/vector_datamove/asc_copy_ub2l1.md)。 | 可以先交换L1地址等参数，再通过硬通道搬运；消息已发布不表示输入已搬完。 |
-| AIC L1 Buffer → AIV UB | [DataCopyL1ToUB](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md)。 | [asc_copy_l12ub](../../../../api/SIMD-API/c_api/cube_datamove/asc_copy_l12ub.md)。 | 用于L1数据提供给Vector侧，仍需满足目的UB及读写同步约束。 |
-| AIC L0C Buffer → AIV UB | [Fixpipe](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md)。 | [asc_copy_l0c2ub](../../../../api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2ub.md)。 | 将矩阵输出直接交给Vector处理，需要保证FIX输出完成后再消费。 |
+| AIC L1 Buffer → AIV UB | [DataCopyL1ToUB](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md)。 | [asc_copy_l12ub](../../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l12ub.md)。 | 用于L1数据提供给Vector侧，仍需满足目的UB及读写同步约束。 |
+| AIC L0C Buffer → AIV UB | [Fixpipe](../../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md)。 | [asc_copy_l0c2ub](../../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)。 | 将矩阵输出直接交给Vector处理，需要保证FIX输出完成后再消费。 |
 
 基础API的UB到L1 Buffer硬通道路径与GM软件仿真路径不同：前者在相应配置下直接搬运，后者需要借助Matmul注册及GM中转空间。C API直接使用对应硬件接口，不能套用基础API兼容路径的注册要求。数据搬运能力也不意味着每次调用都要求用户另写一条SSBuffer消息，是否交换地址和参数取决于算子设计。
 

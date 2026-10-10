@@ -39,7 +39,7 @@ for (int h = 0; h < matrix_num; h++) {
 - 在上述源自DN矩阵的每一组数据中，再以每行元素为一组数据，每一组数据的起始地址为dst\_block\_addr。
 - src\_ele\_addr为Nz矩阵一列的每个元素的地址，dst\_ele\_addr为DN矩阵一行的每个元素的地址，二者为一一对应关系，对应完成Nz2DN格式转换。
 
-以下参数为Nz2DN用户可配置参数，含义取值范围参见[asc_copy_l0c2gm](../asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)：
+以下参数为Nz2DN用户可配置参数，含义取值范围参见[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm_arch_3510.md)：
 
 - matrix_num表示需要做Nz2DN转化的矩阵个数。
 - m_size与n_size分别表示矩阵m方向和n方向上的维度。
@@ -48,6 +48,10 @@ for (int h = 0; h < matrix_num; h++) {
 - src_nz_matrix_stride表示不同源Nz矩阵的起始地址的间隔，单位为C0\_Size。
 - dst_matrix_stride表示相邻目的DN矩阵起始地址间的间隔，单位为element。
 - src_nz_fractal_stride表示源矩阵Nz分形相邻行的地址偏移，单位为C0\_Size。
+
+<!-- npu="950" id1 -->
+本特性适用于Ascend 950PR&950DT系列产品。以[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm_arch_3510.md)为例，通过`enable_nz2dn`启用；矩阵数量、矩阵间隔由[asc_set_l0c_copy_nz_para](../cube_store_aux_config/asc_set_l0c_copy_nz_para.md)配置，源Nz分形行间隔由[asc_set_l0c_copy_channel_para](../cube_store_aux_config/asc_set_l0c_copy_channel_para.md)配置。通道拆分/合并与[双目标模式](L0C_to_UB_dual_target_mode.md)的互斥关系见下文特性约束。
+<!-- end id1 -->
 
 ## 特性约束
 

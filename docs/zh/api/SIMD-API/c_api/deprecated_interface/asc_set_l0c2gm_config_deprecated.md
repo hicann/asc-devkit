@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_set_l0c2gm_config`接口已废弃。请使用[asc_set_l0c_copy_config](../cube_datamove/asc_set_l0c_copy_config.md)接口替代。**
+**`asc_set_l0c2gm_config`接口已废弃。请使用[asc_set_l0c_copy_config](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md)接口替代。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 

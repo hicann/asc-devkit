@@ -8,9 +8,9 @@ NPU架构版本3510支持L1到UB、UB到L1以及L0C到UB三条片上通路，用
 | --- | --- | --- | --- | --- |
 | UB到L1 | 连续 | [asc_copy_ub2l1](../vector_datamove/asc_copy_ub2l1.md) | PIPE_MTE3 | AIV |
 | UB到L1 | 高维切分 | [asc_copy_ub2l1](../vector_datamove/asc_copy_ub2l1.md) | PIPE_MTE3 | AIV |
-| L1到UB | 连续 | [asc_copy_l12ub](../cube_datamove/asc_copy_l12ub.md) | PIPE_MTE1 | AIC |
-| L1到UB | 高维切分 | [asc_copy_l12ub](../cube_datamove/asc_copy_l12ub.md) | PIPE_MTE1 | AIC |
-| L0C到UB | 搬出矩阵结果，可组合量化、激活、格式转换或双目标写入 | [asc_copy_l0c2ub](../cube_datamove/asc_copy_l0c2ub.md) | PIPE_FIX | AIC |
+| L1到UB | 连续 | [asc_copy_l12ub](../cube_datamove/cube_compute_store/asc_copy_l12ub.md) | PIPE_MTE1 | AIC |
+| L1到UB | 高维切分 | [asc_copy_l12ub](../cube_datamove/cube_compute_store/asc_copy_l12ub.md) | PIPE_MTE1 | AIC |
+| L0C到UB | 搬出矩阵结果，可组合量化、激活、格式转换或双目标写入 | [asc_copy_l0c2ub](../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md) | PIPE_FIX | AIC |
 
 ## asc_copy_ub2l1（UB到L1连续数据搬运）
 
@@ -95,11 +95,11 @@ __aicore__ inline void asc_copy_l0c2ub(__ubuf__ <dst_dtype>* dst,
 
 | 功能 | 主接口参数 | 前置配置 |
 | --- | --- | --- |
-| Nz2ND | `enable_nz2nd` | [asc_set_l0c_copy_nz_para](../cube_datamove/asc_set_l0c_copy_nz_para.md) |
-| Nz2DN | `enable_nz2dn` | `asc_set_l0c_copy_nz_para`、[asc_set_l0c_copy_channel_para](../cube_datamove/asc_set_l0c_copy_channel_para.md) |
-| scalar量化 | `quant_pre_mode` | [asc_set_l0c_copy_prequant](../cube_datamove/asc_set_l0c_copy_prequant.md) |
-| tensor量化 | `quant_pre_mode` | [asc_set_l0c_copy_config](../cube_datamove/asc_set_l0c_copy_config.md) |
-| ReLU/Leaky ReLU | `relu_pre_mode`、`enable_clip_relu_pre` | [asc_set_l0c_copy_relu_alpha](../cube_datamove/asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/asc_set_l0c_copy_lrelu_alpha.md) |
+| Nz2ND | `enable_nz2nd` | [asc_set_l0c_copy_nz_para](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md) |
+| Nz2DN | `enable_nz2dn` | `asc_set_l0c_copy_nz_para`、[asc_set_l0c_copy_channel_para](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md) |
+| scalar量化 | `quant_pre_mode` | [asc_set_l0c_copy_prequant](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md) |
+| tensor量化 | `quant_pre_mode` | [asc_set_l0c_copy_config](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md) |
+| ReLU/Leaky ReLU | `relu_pre_mode`、`enable_clip_relu_pre` | [asc_set_l0c_copy_relu_alpha](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_lrelu_alpha.md) |
 
 `src_dtype`为`int32_t`或`float`，目的类型由量化或Cast模式决定。源、目的数据类型必须与`quant_pre_mode`匹配，量化系数不能为INF、NAN或非规格化数。
 

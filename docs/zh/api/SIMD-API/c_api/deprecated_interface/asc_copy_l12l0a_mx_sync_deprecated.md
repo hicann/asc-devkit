@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l12l0a_mx_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l12l0a_mx.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
+**`asc_copy_l12l0a_mx_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 负责完成MX矩阵计算过程中所需的左矩阵对应的量化系数的搬运，数据通路为L1 Buffer->L0A_MX Buffer。其中左量化系数矩阵以32字节（固定数据类型为`fp8_e8m0_t`、分形大小为16×2的）的数据分形为单位进行搬运。
 
@@ -38,7 +38,7 @@ $$
 L0A\_MX\ Buffer\ Address = L0A\ Buffer\ Address / 16
 $$
 
-本接口为MX矩阵计算量化系数搬运接口，需要与对应数据搬运接口[asc_copy_l12l0a](../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)配合使用。
+本接口为MX矩阵计算量化系数搬运接口，需要与对应数据搬运接口[asc_copy_l12l0a](../cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)配合使用。
 
 本接口仅在AIC上执行有效。
 
@@ -105,7 +105,7 @@ PIPE_MTE1
 
 ### 搬运约束
 
-- 本接口需要与对应数据搬运接口[asc_copy_l12l0a](../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md)配合使用，使量化系数与左矩阵数据写入相互映射的L0A_MX Buffer和L0A Buffer地址。
+- 本接口需要与对应数据搬运接口[asc_copy_l12l0a](../cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)配合使用，使量化系数与左矩阵数据写入相互映射的L0A_MX Buffer和L0A Buffer地址。
 - `x_step`或`y_step`设置为0时，该接口将被视为NOP（空操作）。应避免无意传入0，否则不会产生有效数据且会增加指令调度开销。
 - 量化系数矩阵的分形固定为$(16, 2)$，对应L0A Buffer的分形为$(16, 32)$，占L0A Buffer地址空间的$1/16$。接口以32字节的完整分形为最小搬运粒度，不支持仅搬运分形内的部分元素；分形中的无效元素需要在调用前按照后续矩阵计算要求完成填充。`dst`与`dst_stride`需按地址约束设置，否则触发搬运异常。
 

@@ -26,3 +26,5 @@ Cube计算单元专用于执行矩阵运算，直接访问的专用缓存如下�
 | L1 Buffer | AI Core内部物理存储单元，空间相对较大，通常用于缓存矩阵计算的输入数据。矩阵计算的输入一般需要从GM搬运到L1 Buffer，然后分别搬运到L0A Buffer和L0B Buffer。 |
 | Fixpipe Buffer | AI Core内部物理存储单元，通常用于存储Fixpipe搬运过程中所需的量化参数等数据。 |
 | BiasTable Buffer | 偏置存储，AI Core内部物理存储单元，通常用于存储矩阵计算所需的Bias（偏置）数据。 |
+
+各存储单元和流水在计算过程中的配合参见[矩阵计算流程](cube_compute_flow.md)；搬入、搬出通路及配套接口分别参见[矩阵搬入总体说明](../../cube_datamove/cube_compute_load/cube_compute_load_overall_description.md)和[矩阵搬出总体说明](../../cube_datamove/cube_compute_store/cube_compute_store_overall_description.md)。

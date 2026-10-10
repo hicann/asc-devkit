@@ -7,13 +7,13 @@
 | 功能类别 | 主要用途 | 代表接口 |
 | --- | --- | --- |
 | 连续数据搬运 | 搬运一段连续数据，格式和内容保持不变 | [asc_copy_gm2ub](../../vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md)、[asc_copy_ub2gm](../../vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm_arch_3510.md) |
-| 高维切分数据搬运 | 按固定块数、块长和步长搬运非连续数据 | [asc_copy_gm2l1](../../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md)、[asc_copy_ub2ub](../../vector_datamove/asc_copy_ub2ub.md) |
+| 高维切分数据搬运 | 按固定块数、块长和步长搬运非连续数据 | [asc_copy_gm2l1](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md)、[asc_copy_ub2ub](../../vector_datamove/asc_copy_ub2ub.md) |
 | 多维切片及重排 | 按1至5维循环、步长和Padding搬运数据 | [asc_ndim_copy_gm2ub](../../vector_datamove/asc_ndim_copy_gm2ub.md) |
-| 随路格式转换 | 搬运时完成ND、DN、Nz等格式转换 | [asc_copy_gm2l1_nd2nz](../../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)、[asc_copy_l0c2gm](../../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md) |
-| 随路量化激活 | 搬出L0C结果时完成类型转换、量化或激活 | [asc_copy_l0c2gm](../../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2ub](../../cube_datamove/asc_copy_l0c2ub.md) |
-| 非对齐数据搬运 | 显式控制非32字节块长的片上补齐布局或Padding | [asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)、[asc_copy_gm2l1_align](../../cube_datamove/asc_copy_gm2l1_align.md) |
+| 随路格式转换 | 搬运时完成ND、DN、Nz等格式转换 | [asc_copy_gm2l1_nd2nz](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)、[asc_copy_l0c2gm](../../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md) |
+| 随路量化激活 | 搬出L0C结果时完成类型转换、量化或激活 | [asc_copy_l0c2gm](../../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2ub](../../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md) |
+| 非对齐数据搬运 | 显式控制非32字节块长的片上补齐布局或Padding | [asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)、[asc_copy_gm2l1_align](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md) |
 | UB内部复制 | 在UB内连续或按块复制数据 | [asc_copy_ub2ub](../../vector_datamove/asc_copy_ub2ub.md) |
-| 矩阵分形搬运 | 在L1与L0A/L0B之间搬运二维、三维或MX矩阵 | [asc_copy_l12l0a](../../cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a.md)、[asc_copy_l12l0b](../../cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b.md) |
+| 矩阵分形搬运 | 在L1与L0A/L0B之间搬运二维、三维或MX矩阵 | [asc_copy_l12l0a](../../cube_datamove/cube_compute_load/asc_copy_l12l0a.md)、[asc_copy_l12l0b](../../cube_datamove/cube_compute_load/asc_copy_l12l0b.md) |
 | Reg与UB数据交换 | 在Vector Function中加载或存储矢量、掩码数据 | [Reg数据搬入](../../reg_compute/load/reg_load_overview.md)、[Reg数据搬出](../../reg_compute/store/reg_store_overview.md) |
 
 ## 连续数据搬运
@@ -57,9 +57,9 @@
 
 矩阵计算输入通常需要采用Nz分形排布，输出也可能需要恢复为ND或DN排布。随路格式转换可在数据搬运的同时完成排布变化，减少额外的重排操作：
 
-- [asc_copy_gm2l1_nd2nz](../../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)将GM中的ND数据搬到L1并转换为Nz；调用前通过[asc_set_gm2l1_nz_para](../../cube_datamove/asc_set_gm2l1_nz_para.md)配置目的Nz矩阵步长和矩阵个数。
-- [asc_copy_gm2l1_dn2nz](../../cube_datamove/asc_copy_gm2l1_dn2nz.md)将GM中的DN数据搬到L1并转换为Nz。
-- [asc_copy_l0c2gm](../../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](../../cube_datamove/asc_copy_l0c2l1/asc_copy_l0c2l1_arch_3510.md)和[asc_copy_l0c2ub](../../cube_datamove/asc_copy_l0c2ub.md)可在搬出L0C结果时执行Nz2ND或Nz2DN转换。
+- [asc_copy_gm2l1_nd2nz](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)将GM中的ND数据搬到L1并转换为Nz；调用前通过[asc_set_gm2l1_nz_para](../../cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)配置目的Nz矩阵步长和矩阵个数。
+- [asc_copy_gm2l1_dn2nz](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md)将GM中的DN数据搬到L1并转换为Nz。
+- [asc_copy_l0c2gm](../../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](../../cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md)和[asc_copy_l0c2ub](../../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)可在搬出L0C结果时执行Nz2ND或Nz2DN转换。
 
 随路转换会改变目的端的数据排布和实际占用空间，目的步长和边界应按转换后的格式计算。
 
@@ -79,7 +79,7 @@
 
 - GM到UB使用[asc_copy_gm2ub_align](../../vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md)。高维切分原型的目的端可选择Compact或Normal模式，并支持常量或首元素填充。
 - UB到GM使用[asc_copy_ub2gm_align](../../vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md)。硬件读取UB时补充dummy数据，写入GM时丢弃补充部分。
-- GM到L1使用[asc_copy_gm2l1_align](../../cube_datamove/asc_copy_gm2l1_align.md)，支持Compact、Normal、左右Padding和循环填充模式。
+- GM到L1使用[asc_copy_gm2l1_align](../../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md)，支持Compact、Normal、左右Padding和循环填充模式。
 
 非对齐接口可能访问对齐补齐后的片上空间。即使只有少量有效数据，也必须为补齐后的范围预留足够容量，不能通过普通接口扩大搬运范围访问未分配地址。
 
@@ -95,7 +95,7 @@ L1到L0A/L0B的接口以矩阵分形为主要搬运粒度，为Cube矩阵计算�
 
 - 二维分形搬运：按行列起始位置、分形步长和源/目的矩阵间距装载数据，可选择伴随转置的原型。
 - 三维img2col搬运：按Feature Map、Filter、Stride和Padding配置提取卷积窗口，并支持Repeat模式。
-- 二维分形转置：通过[asc_copy_l12l0b_trans](../../cube_datamove/asc_copy_l12l0b_trans/asc_copy_l12l0b_trans_arch_3510.md)按重复次数和分形间隔完成转置。
+- 二维分形转置：通过[asc_copy_l12l0b_trans](../../cube_datamove/cube_compute_load/asc_copy_l12l0b_trans_arch_3510.md)按重复次数和分形间隔完成转置。
 - MX量化系数搬运：通过`asc_copy_l12l0a_mx`或`asc_copy_l12l0b_mx`将量化系数搬到对应MX Buffer，并与矩阵数据地址建立映射。
 
 二维搬运的完整分形通常为512字节，L0A/L0B目的地址通常需要512字节对齐。具体分形形状随数据位宽和A/B矩阵方向变化。

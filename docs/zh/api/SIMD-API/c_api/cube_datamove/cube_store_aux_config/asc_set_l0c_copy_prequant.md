@@ -1,0 +1,250 @@
+# asc_set_l0c_copy_prequant
+
+## 产品支持情况
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT系列产品：支持
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3系列产品：支持
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2系列产品：支持
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2推理产品：不支持
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas推理系列产品AI Core：不支持
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas推理系列产品Vector Core：不支持
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas训练系列产品：不支持
+<!-- end id7 -->
+
+## 功能说明
+
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+
+本接口用于在L0C Buffer搬出过程中进行随路Scalar量化时，配置量化计算所需的缩放系数、偏移量和量化结果符号。本接口仅在AIC上生效，实际量化由后续的矩阵搬出接口执行，因此还需在搬出接口中选择对应的Scalar量化模式。
+
+<!-- npu="950" id11 -->
+针对Ascend 950PR&950DT系列产品：
+
+先调用本接口配置量化参数，再调用[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1](../cube_compute_store/asc_copy_l0c2l1_arch_3510.md)或[asc_copy_l0c2ub](../cube_compute_store/asc_copy_l0c2ub.md)搬出，并通过`quant_pre_mode`选择[asc_quant_mode](../../defs/enum/asc_quant_mode.md)中的Scalar量化模式。
+
+`quant_pre_mode`量化模式参数支持的Scalar量化枚举值如下：
+
+- DEQF16：int32_t量化成half， scalar量化。
+- REQ4：int32_t量化成int4b_t，scalar量化。
+- REQ8：int32_t量化成int8_t/uint8_t，scalar量化。
+- QS322BF16_PRE：int32_t量化成bfloat16_t，scalar量化。
+- QF322F16_PRE：float量化成half，scalar量化。
+- QF322BF16_PRE：float量化成bfloat16_t，scalar量化。
+- QF322S4_PRE：float量化成int4b_t，scalar量化。
+- QF322B8_PRE：float量化成int8_t/uint8_t，scalar量化。
+- QF322FP8_PRE：float量化成fp8_e4m3fn_t，scalar量化。
+- QF322HIF8_PRE：float量化成hifloat8_t(Half to Away Round)，scalar量化。
+- QF322HIF8_PRE_HYBRID：float量化成hifloat8_t(Hybrid Round)，scalar量化。
+- QF322F32_PRE：float量化成float，scalar量化，精度可以达到双千分之一，无法达到双万分之一。
+<!-- end id11 -->
+
+<!-- npu="A3,910b" id12 -->
+针对以下产品型号：
+
+<!-- npu="A3" id13 -->
+- Atlas A3系列产品
+<!-- end id13 -->
+<!-- npu="910b" id14 -->
+- Atlas A2系列产品
+<!-- end id14 -->
+
+仅支持调用入参为`uint64_t config`的接口配置量化参数，再通过[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm_arch_2201.md)或[asc_copy_l0c2l1](../cube_compute_store/asc_copy_l0c2l1_arch_2201.md)搬出。
+<!-- end id12 -->
+
+量化模式、参数编码和准备流程见[随路量化](../cube_store_key_features/accompanying_quantization.md)；量化与激活参数的配合见[随路量化与随路ReLU场景组合](../cube_store_key_features/accompanying_quantization_and_relu_scenario_combination.md)。
+
+## 函数原型
+
+<!-- npu="950" id18 -->
+Ascend 950PR&950DT系列产品支持以下两种参数传入方式的函数原型：
+
+```cpp
+__aicore__ inline void asc_set_l0c_copy_prequant(float scale, uint16_t offset, bool is_signed);
+
+__aicore__ inline void asc_set_l0c_copy_prequant(uint64_t config);
+```
+<!-- end id18 -->
+
+<!-- npu="A3,910b" id17 -->
+以下产品仅支持传入打包后的参数：
+
+<!-- npu="A3" id9 -->
+- Atlas A3系列产品
+<!-- end id9 -->
+<!-- npu="910b" id10 -->
+- Atlas A2系列产品
+<!-- end id10 -->
+
+```cpp
+__aicore__ inline void asc_set_l0c_copy_prequant(uint64_t config);
+```
+<!-- end id17 -->
+
+## 参数说明
+
+<!-- npu="950" id20 -->
+针对Ascend 950PR&950DT系列产品，参数说明和config比特位含义如下：
+
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| scale | 输入 | 随路scalar量化所使用的缩放系数。取值不能为inf或nan。 |
+| offset | 输入 | 随路量化计算所需的偏移量，取值范围为[0, 511]。不使用偏移量时，配置为0。在REQ8/QF322B8_PRE/REQ4/QF322S4_PRE模式下生效。 |
+| is_signed | 输入 | 量化结果是否为有符号数据。取值为`true`时，量化结果为int8_t；取值为`false`时，量化结果为uint8_t。在REQ8/QF322B8_PRE模式下生效。 |
+| config | 输入 | Scalar量化参数，由`scale`，`offset`，`is_signed`拼装而成，config各比特位含义参见表2。 |
+
+**表2** config比特位含义
+
+| 比特位数 | 变量名 | 描述 |
+| --- | --- | --- |
+| 0~12 | - | 无效比特位。 |
+| 13~31 | scale | 数据类型视为float，硬件以(1, 8, 10)格式进行计算。其中第31位为符号位，第23~30位为指数位，第13~22位为尾数位。取值不能为inf或nan。 |
+| 32~36 | - | 无效比特位。 |
+| 37~45 | offset | 9位整型数据。源数据乘以量化系数后的结果与Offset相加。不使用偏移量时，配置为0。在REQ8/QF322B8_PRE/REQ4/QF322S4_PRE模式下生效。 |
+| 46 | is_signed | 取值为1时，量化结果为int8_t；取值为0时，量化结果为uint8_t。在REQ8/QF322B8_PRE模式下生效。 |
+| 47~63 | - | 无效比特位。 |
+<!-- end id20 -->
+
+<!-- npu="A3,910b" id19 -->
+针对以下产品型号：
+
+<!-- npu="A3" id15 -->
+- Atlas A3系列产品
+<!-- end id15 -->
+<!-- npu="910b" id16 -->
+- Atlas A2系列产品
+<!-- end id16 -->
+
+`config`编码见[随路量化参数编码表](../cube_store_key_features/accompanying_quantization.md#quant-pre-2201)，不能跨产品直接复用编码值。
+<!-- end id19 -->
+
+当前提供了REQ8量化算法Python示例代码，请参考[\(V\)REQ8量化算法](../../../../../../../examples/01_simd_cpp_api/03_basic_api/03_matrix_compute/fixpipe_l0c2gm/scripts/gen_data_s322s8.py)。
+
+## 返回值说明
+
+无
+
+## 流水类型
+
+PIPE_S
+
+## 约束说明
+
+- 量化参数不能为inf/nan和非规格化数。
+- 本接口非AIC调用直接返回。
+- 本接口需在对应的L0C Buffer搬出接口执行前调用，并在搬出接口中配置对应的Scalar量化模式。
+
+## 调用示例
+
+将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
+
+<!-- npu="950" id8 -->
+以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
+
+```bash
+bisheng example.asc -o main --npu-arch=dav-3510 && ./main
+```
+
+以下调用示例代码仅Ascend 950PR&950DT系列产品支持。
+
+```cpp
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include "c_api/asc_simd.h"
+#include "acl/acl.h"
+
+namespace {
+constexpr uint32_t DIM = 16;
+constexpr uint32_t ELEMENTS = DIM * DIM;
+constexpr uint16_t HALF_ONE = 0x3c00;
+constexpr float SCALE = 2.0f;
+constexpr uint16_t OFFSET = 3;
+
+__global__ __cube__ void asc_set_l0c_copy_prequant_kernel(
+    __gm__ uint16_t* a, __gm__ uint16_t* b, __gm__ int8_t* output)
+{
+    asc_init();
+    __cbuf__ half a_l1[ELEMENTS], b_l1[ELEMENTS];
+    __ca__ half a_l0[ELEMENTS];
+    __cb__ half b_l0[ELEMENTS];
+    __cc__ float c_l0[ELEMENTS];
+
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
+    asc_copy_gm2l1_nd2nz(a_l1, reinterpret_cast<__gm__ half*>(a), DIM * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, DIM, DIM, 0, false);
+    asc_set_gm2l1_nz_para(1, 1, 16, 0);
+    asc_copy_gm2l1_nd2nz(b_l1, reinterpret_cast<__gm__ half*>(b), DIM * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, DIM, DIM, 0, false);
+    asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
+    asc_copy_l12l0a(a_l0, a_l1, 0, 0, 1, 1, 1, 1);
+    asc_copy_l12l0b_transpose(b_l0, b_l1, 0, 0, 1, 1, 1, 1);
+    asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
+    asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
+    asc_mmad(c_l0, a_l0, b_l0, DIM, DIM, DIM, asc_unit_flag_mode::DISABLE, false, false, true);
+    asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
+    asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
+
+    asc_set_l0c_copy_prequant(SCALE, OFFSET, true);
+    asc_set_l0c_copy_nz_para(1, 0, 0);
+    asc_copy_l0c2gm(output, c_l0, DIM, DIM, DIM, DIM, asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM,
+        asc_unit_flag_mode::DISABLE, QuantMode_t::QF322B8_PRE, asc_relu_pre_mode::NONE, false, true, false, false);
+    asc_sync_pipe(PIPE_ALL);
+}
+
+void print_row(const char* label, const std::vector<int8_t>& data)
+{
+    std::cout << label << ':';
+    for (uint32_t i = 0; i < 8; ++i) std::cout << ' ' << static_cast<int32_t>(data[i]);
+    std::cout << " ..." << std::endl;
+}
+} // namespace
+
+int main()
+{
+    std::vector<uint16_t> a(ELEMENTS), b(ELEMENTS);
+    std::vector<int8_t> output(ELEMENTS), golden(ELEMENTS, static_cast<int8_t>(OFFSET));
+    for (uint32_t i = 0; i < DIM; ++i) {
+        a[i * DIM + i] = HALF_ONE;
+        b[i * DIM + i] = HALF_ONE;
+        golden[i * DIM + i] = static_cast<int8_t>(SCALE + OFFSET);
+    }
+
+    aclInit(nullptr);
+    aclrtSetDevice(0);
+    uint16_t *a_device = nullptr, *b_device = nullptr;
+    int8_t* output_device = nullptr;
+    aclrtMalloc(reinterpret_cast<void**>(&a_device), a.size() * sizeof(uint16_t), ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&b_device), b.size() * sizeof(uint16_t), ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMalloc(reinterpret_cast<void**>(&output_device), output.size() * sizeof(int8_t), ACL_MEM_MALLOC_HUGE_FIRST);
+    aclrtMemcpy(a_device, a.size() * sizeof(uint16_t), a.data(), a.size() * sizeof(uint16_t), ACL_MEMCPY_HOST_TO_DEVICE);
+    aclrtMemcpy(b_device, b.size() * sizeof(uint16_t), b.data(), b.size() * sizeof(uint16_t), ACL_MEMCPY_HOST_TO_DEVICE);
+    asc_set_l0c_copy_prequant_kernel<<<1, 0>>>(a_device, b_device, output_device);
+    aclrtSynchronizeDevice();
+    aclrtMemcpy(output.data(), output.size() * sizeof(int8_t), output_device, output.size() * sizeof(int8_t),
+        ACL_MEMCPY_DEVICE_TO_HOST);
+    print_row("Quantized output row 0", output);
+    print_row("Golden row 0", golden);
+    const bool passed = output == golden;
+    std::cout << (passed ? "[Success] asc_set_l0c_copy_prequant scalar quantization passed."
+                         : "[Failed] asc_set_l0c_copy_prequant result mismatch.") << std::endl;
+    aclrtFree(a_device); aclrtFree(b_device); aclrtFree(output_device);
+    aclrtResetDevice(0);
+    aclFinalize();
+    return passed ? 0 : 1;
+}
+```
+<!-- end id8 -->

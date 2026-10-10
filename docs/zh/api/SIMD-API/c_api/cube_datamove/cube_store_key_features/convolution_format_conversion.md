@@ -13,3 +13,5 @@
 
 ![](../../../../figures/Fixpipe_NC1HWC0_NCHW.png)
 <!-- end id1 -->
+
+卷积输入的im2col搬入、矩阵计算与结果搬出之间的关系见[矩阵计算流程](../../cube_compute/overview/cube_compute_flow.md)中的卷积场景。C API结果搬出入口为[asc_copy_l0c2gm](../cube_compute_store/asc_copy_l0c2gm.md)；选择当前架构版本后，再按目标布局设置格式转换参数。

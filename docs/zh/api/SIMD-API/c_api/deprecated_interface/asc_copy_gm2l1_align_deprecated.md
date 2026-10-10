@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-**`asc_copy_gm2l1_align`的旧常规重载和`asc_copy_gm2l1_align_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_align](../cube_datamove/asc_copy_gm2l1_align.md)接口；同步场景请额外调用[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
+**`asc_copy_gm2l1_align`的旧常规重载和`asc_copy_gm2l1_align_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_align](../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md)接口；同步场景请额外调用[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
@@ -34,7 +34,7 @@
 
 若搬运数据长度非32字节对齐，会将搬运数据补齐至32字节对齐。可通过配置参数`burst_dst_stride`选择Normal模式或Compact模式。非32字节对齐场景支持以下两种填充方式：
 
-- 手动填充：搬运前调用[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)设置填充值，并将`data_select_bit`设置为`true`。
+- 手动填充：搬运前调用[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)设置填充值，并将`data_select_bit`设置为`true`。
 - 自动填充：将`data_select_bit`设置为`false`，由硬件自动填充dummy假数据，dummy假数据的值为数据块的第一个元素的值。
 
 数据搬运模式说明如下：
@@ -60,7 +60,7 @@
 
 当只搬运1个数据块，或`len_burst`已经32字节对齐且无左右Padding时，两种模式的搬运结果相同。
 
-循环填充模式即支持多次循环调用Normal填充模式与Compact填充模式，不支持多次循环调用左右填充模式。必须配合[asc_set_gm2l1_loop_size](../cube_datamove/asc_set_gm2l1_loop_size.md)、[asc_set_gm2l1_loop1_stride](../cube_datamove/asc_set_gm2l1_loop1_stride.md)、[asc_set_gm2l1_loop2_stride](../cube_datamove/asc_set_gm2l1_loop2_stride.md)使用，通过上述接口配置loop1/loop2的搬运次数与源/目步长。
+循环填充模式即支持多次循环调用Normal填充模式与Compact填充模式，不支持多次循环调用左右填充模式。必须配合[asc_set_gm2l1_loop_size](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop_size.md)、[asc_set_gm2l1_loop1_stride](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop1_stride.md)、[asc_set_gm2l1_loop2_stride](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop2_stride.md)使用，通过上述接口配置loop1/loop2的搬运次数与源/目步长。
 
 本接口仅在AIC上执行有效。
 
@@ -123,7 +123,7 @@ __aicore__ inline void asc_copy_gm2l1_align(__cbuf__ int8_t* dst,
 | len_burst | 输入 | 待搬运的每个连续数据块的长度，单位字节。取值范围：[1, $2^{21}-1$]。需满足dtype字节对齐：dtype为`b16`类型时len_burst需为2的倍数，dtype为`b32`时len_burst需为4的倍数。 |
 | left_padding_count | 输入 | 左侧填充元素个数。填充字节数需满足`left_padding_count × sizeof(dtype) ≤ 32`字节，对应dtype上限：dtype为`b8`时取值范围：[0, 32]，dtype为`b16`时取值范围：[0, 16]，dtype为`b32`时取值范围：[0, 8]。 |
 | right_padding_count | 输入 | 右侧填充元素个数。填充字节数需满足`right_padding_count × sizeof(dtype) ≤ 32`字节，对应dtype上限：dtype为`b8`时取值范围：[0, 32]，dtype为`b16`时取值范围：[0, 16]，dtype为`b32`时取值范围：[0, 8]。 |
-| data_select_bit | 输入 | 填充数据来源选择。<br>&nbsp;&nbsp;&bull; `false`：首元素填充模式，填充数据取每个burst的首元素；<br>&nbsp;&nbsp;&bull; `true`：常量填充模式，填充数据取[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)预先配置的填充值。当`left_padding_count`与`right_padding_count`至少有一个非0时，硬件强制使用预先配置的常量填充值，本参数设置无效。 |
+| data_select_bit | 输入 | 填充数据来源选择。<br>&nbsp;&nbsp;&bull; `false`：首元素填充模式，填充数据取每个burst的首元素；<br>&nbsp;&nbsp;&bull; `true`：常量填充模式，填充数据取[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)预先配置的填充值。当`left_padding_count`与`right_padding_count`至少有一个非0时，硬件强制使用预先配置的常量填充值，本参数设置无效。 |
 | l2_cache_ctl | 输入 | 配置数据在L2 Cache中的管理策略。取值说明请参见[表2](#l2_cache_ctl_values)。 |
 | burst_src_stride | 输入 | 相邻连续数据块在源端（Global Memory）的步长，单位字节。取值范围：[1, $2^{40}-1$]。 |
 | burst_dst_stride | 输入 | 相邻连续数据块在目的端（L1 Buffer）的步长，单位字节。取值范围：[1, $2^{21}-1$]。当`burst_dst_stride`不等于`len_burst`时（即存在padding），`burst_dst_stride`需32字节对齐，否则触发异常（即使`n_burst`为1）。 |
@@ -155,7 +155,7 @@ PIPE_MTE2
 - 如果本指令与其他指令存在目的地址重叠，需要插入同步指令（[asc_sync_notify](../sync/intra_core_sync/asc_sync_notify.md)和[asc_sync_wait](../sync/intra_core_sync/asc_sync_wait.md)），保证多个指令串行化，防止出现异常数据。
 - L1 Buffer容量上限：L1 Buffer总容量512KB，dst偏移与搬运大小之和不可越界，否则触发目的地址越界异常。
 - `len_burst`、`n_burst`、`burst_src_stride`、`burst_dst_stride`、`left_padding_count`与`right_padding_count`需满足参数说明的取值范围，否则会导致搬运结果不符合预期。
-- `data_select_bit`设置为true时，或者左右填充模式（`left_padding_count`和`right_padding_count`任意不为0）时，须先调用[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)配置填充值。
+- `data_select_bit`设置为true时，或者左右填充模式（`left_padding_count`和`right_padding_count`任意不为0）时，须先调用[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)配置填充值。
 
 ### Normal填充模式约束
 
@@ -163,7 +163,7 @@ PIPE_MTE2
 
 ### 左右填充模式约束
 
-- 左右填充模式下，`left_padding_count×sizeof(dtype) + right_padding_count×sizeof(dtype) + len_burst + pad`需32字节对齐，其中`pad`为不满足32字节对齐需要填充的部分，填充值不受`data_select_bit`控制，必须先调用[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)配置填充值。
+- 左右填充模式下，`left_padding_count×sizeof(dtype) + right_padding_count×sizeof(dtype) + len_burst + pad`需32字节对齐，其中`pad`为不满足32字节对齐需要填充的部分，填充值不受`data_select_bit`控制，必须先调用[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)配置填充值。
 
 ### 循环填充模式约束
 

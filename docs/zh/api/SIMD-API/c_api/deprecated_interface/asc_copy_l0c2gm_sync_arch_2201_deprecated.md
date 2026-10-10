@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/composite/cube_datamove_composite.h"`。
 
-**`asc_copy_l0c2gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
+**`asc_copy_l0c2gm_sync`接口已废弃，请使用[对应的非同步接口](../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_2201.md)和同步接口[asc_sync](../sync/intra_core_sync/asc_sync.md)替代。**
 
 矩阵计算完成后，对结果进行量化处理，之后将处理结果搬运到GM中。量化模式共分为9种，分别为：
 - NoQuant：不开启量化功能。
@@ -70,7 +70,7 @@
 | dst_stride_dst_d | 输入 | <br> - 不开启NZ2ND功能,目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位：element。<br> - 开启NZ2ND/NZ2DN功能,目的ND矩阵每一行中的元素个数，取值不为0 ，单位：element。|
 | src_stride | 输入 | 源NZ矩阵中相邻Z排布的起始地址偏移，取值范围：[0, 65535]，单位：C0_Size(16*sizeof(T), T为src的数据类型)。 |
 | unit_flag_mode | 输入 | 与unit_flag参数相关，取值如下：<br>0：保留值；<br>2：开启unit_flag，硬件执行完指令之后，不会设置寄存器；<br>3：开启unit_flag，硬件执行完指令后，会将unit_flag关闭。 |
-| quant_pre |输入|量化参数。取值见[功能说明](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_2201.md#功能说明)。|
+| quant_pre |输入|量化参数。取值见[功能说明](../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_2201.md#功能说明)。|
 | relu_pre | 输入 | 开启relu。 |
 | channel_split | 输入 | 是否开启通道拆分的功能，默认false，不开启该功能。仅在src和dst都为float时才能开启通道拆分，且不能同时开启channel_split和NZ2ND功能。 |
 | nz2nd_en | 输入 |开启nz2nd开关，false：不开启；true：开启。 |

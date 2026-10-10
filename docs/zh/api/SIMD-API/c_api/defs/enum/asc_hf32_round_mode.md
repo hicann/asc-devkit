@@ -1,6 +1,6 @@
 # asc_hf32_round_mode
 
-asc_hf32_round_mode用于Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略，在调用[asc_set_hf32_round_mode](../../cube_compute/asc_set_hf32_round_mode.md)时使用。
+asc_hf32_round_mode用于Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略，在调用[asc_set_hf32_round_mode](../../cube_compute/mmad_compute_aux_config/asc_set_hf32_round_mode.md)时使用。
 
 ## 枚举类具体定义
 

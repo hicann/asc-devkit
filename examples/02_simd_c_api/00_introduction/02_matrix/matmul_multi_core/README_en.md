@@ -66,13 +66,13 @@ This sample implements multi-core matrix multiplication computation based on the
       - `b1Local`: Temporary storage of matrix B in L1 Buffer.
       - `b2Local`: Temporary storage of matrix B in L0B Buffer, for `asc_mmad` to read.
       - `cLocal`: Temporary storage of the matrix multiplication result in L0C Buffer.
-    - Call [`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_gm2l1_nz_para.md) to configure the destination Nz layout, and then call [`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md) to transfer matrices A and B from GM to L1 Buffer. During the transfer, the input data is converted from [ND](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) format to the [Nz](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) format required by Cube computation.
+    - Call [`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md) to configure the destination Nz layout, and then call [`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md) to transfer matrices A and B from GM to L1 Buffer. During the transfer, the input data is converted from [ND](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) format to the [Nz](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md) format required by Cube computation.
     - Call [`asc_sync_notify`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md) and [`asc_sync_wait`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md) for synchronization. `asc_copy_gm2l1_nd2nz` belongs to the MTE2 pipeline, and the subsequent L1 Buffer-to-L0A Buffer/L0B Buffer transfer belongs to the [MTE1](../../../../../docs/zh/guide/technical_appendix/concepts_and_terms/glossary.md) pipeline. MTE1 must wait for MTE2 to complete, to avoid reading L1 Buffer data that has not finished transferring.
-    - Call [`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) to transfer matrix A from L1 Buffer to L0A Buffer, and call [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md) to transfer and transpose matrix B from L1 Buffer to L0B Buffer. L0A Buffer and L0B Buffer are input buffers read directly by the Cube matrix computation unit.
+    - Call [`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md) to transfer matrix A from L1 Buffer to L0A Buffer, and call [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md) to transfer and transpose matrix B from L1 Buffer to L0B Buffer. L0A Buffer and L0B Buffer are input buffers read directly by the Cube matrix computation unit.
     - Call `asc_sync_notify` and `asc_sync_wait` for synchronization. The L1 Buffer-to-L0A Buffer/L0B Buffer transfers belong to the MTE1 pipeline, and the subsequent `asc_mmad` belongs to the `PIPE_M` pipeline. `PIPE_M` must wait for MTE1 to complete, to avoid reading L0A Buffer/L0B Buffer data that has not finished transferring.
-    - Call [`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)`(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)` to execute matrix multiplication. Here `baseM = 128`, `baseN = 256`, and `baseK = 64`, corresponding to the matrix block size computed by a single core at one time.
-    - Call `asc_sync_notify` and `asc_sync_wait` for synchronization. `asc_mmad` belongs to the `PIPE_M` pipeline, and the subsequent [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md) belongs to the FIX pipeline. The FIX pipeline must wait for `PIPE_M` to complete, to avoid reading L0C Buffer results that have not finished computing.
-    - Call [`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_nz_para.md) to configure a single-matrix Nz-to-ND transfer, and then call `asc_copy_l0c2gm` to convert the `float` accumulation result in L0C Buffer to `half` and transfer it back to the matrix C output location in GM.
+    - Call [`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md)`(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)` to execute matrix multiplication. Here `baseM = 128`, `baseN = 256`, and `baseK = 64`, corresponding to the matrix block size computed by a single core at one time.
+    - Call `asc_sync_notify` and `asc_sync_wait` for synchronization. `asc_mmad` belongs to the `PIPE_M` pipeline, and the subsequent [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md) belongs to the FIX pipeline. The FIX pipeline must wait for `PIPE_M` to complete, to avoid reading L0C Buffer results that have not finished computing.
+    - Call [`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md) to configure a single-matrix Nz-to-ND transfer, and then call `asc_copy_l0c2gm` to convert the `float` accumulation result in L0C Buffer to `half` and transfer it back to the matrix C output location in GM.
     - Finally, call [`asc_sync_pipe`](../../../../../docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md)`(PIPE_ALL)` to ensure that related pipeline tasks within the current core complete.
 
   - Invocation Implementation  
@@ -80,7 +80,7 @@ This sample implements multi-core matrix multiplication computation based on the
 
 - API Parameter Description:
 
-  **[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_gm2l1_nz_para.md) and [`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md)** — Configure the destination Nz layout and perform GM-to-L1 Buffer ND-to-Nz format conversion:
+  **[`asc_set_gm2l1_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md) and [`asc_copy_gm2l1_nd2nz`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md)** — Configure the destination Nz layout and perform GM-to-L1 Buffer ND-to-Nz format conversion:
   ```cpp
   asc_set_gm2l1_nz_para(
       matrix_num,             // Number of ND matrices in the source operand
@@ -100,7 +100,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   For example, when transferring matrix A, first call `asc_set_gm2l1_nz_para(1, 1, baseM, 0)`, and then call `asc_copy_gm2l1_nd2nz(a1Local, aGM, K * sizeof(half), asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, baseM, baseK, 0, false)` to convert baseM×baseK ND data to Nz format.
 
-  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0a/asc_copy_l12l0a_2d_arch_3510.md) and [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l12l0b/asc_copy_l12l0b_2d_arch_3510.md)** — Describe the parameters for transferring matrix A from L1 Buffer to L0A Buffer and matrix B from L1 Buffer to L0B Buffer on Ascend 950PR&950DT products:
+  **[`asc_copy_l12l0a`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md) and [`asc_copy_l12l0b_transpose`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md)** — Describe the parameters for transferring matrix A from L1 Buffer to L0A Buffer and matrix B from L1 Buffer to L0B Buffer on Ascend 950PR/Ascend 950DT products:
   ```cpp
   asc_copy_l12l0a/asc_copy_l12l0b_transpose(
       dst,               // Destination L0A Buffer/L0B Buffer address
@@ -114,7 +114,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   On Ascend 950PR&950DT products, the layout format in L0A Buffer is Nz. When transferring matrix A, use `asc_copy_l12l0a(a2Local, a1Local, 0, 0, baseM / CUBE_BLOCK, baseK / CUBE_BLOCK, baseM / CUBE_BLOCK, baseM / CUBE_BLOCK)` to complete the A matrix Nz-to-Nz transfer in one operation. When transferring matrix B, use `asc_copy_l12l0b_transpose(b2Local, b1Local, 0, 0, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK, baseK / CUBE_BLOCK, baseN / CUBE_BLOCK)` to complete the B matrix Nz-to-Zn transfer in one operation.
 
-  **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/asc_mmad.md)** — Describes matrix multiplication parameters:
+  **[`asc_mmad`](../../../../../docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md)** — Describes matrix multiplication parameters:
   ```cpp
   asc_mmad(
       c_matrix,          // Starting address of result matrix C in L0C Buffer
@@ -130,7 +130,7 @@ This sample implements multi-core matrix multiplication computation based on the
   ```
   This sample uses `asc_mmad(cLocal, a2Local, b2Local, baseM, baseK, baseN, asc_unit_flag_mode::DISABLE, false, false, true)` to compute a baseM×baseN output block and accumulate baseK elements in the K direction, clearing the initial value of matrix C before computation.
 
-  **[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_set_l0c_copy_nz_para.md) and [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md)** — Configure Nz matrix conversion parameters and perform L0C Buffer-to-GM data transfer and precision conversion:
+  **[`asc_set_l0c_copy_nz_para`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md) and [`asc_copy_l0c2gm`](../../../../../docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)** — Configure Nz matrix conversion parameters and perform L0C Buffer-to-GM data transfer and precision conversion:
   ```cpp
   asc_set_l0c_copy_nz_para(
       matrix_num,          // Number of source Nz matrices

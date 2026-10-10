@@ -29,7 +29,7 @@ mmad和copy接口将unit_flag设置为`unit_flag_mode::enable_keep`或`unit_flag
 
 当开启unit_flag后，mmad和Fixpipe会对同一块分形的L0C Buffer进行读写操作，因此mmad计算和Fixpipe保持一致的读写顺序，有助于获得更优的性能表现。
 
-在调用mmad接口时，需要通过[asc_set_mmad_direction_m](../../../c_api/cube_compute/asc_set_mmad_direction_m.md)或[asc_set_mmad_direction_n](../../../c_api/cube_compute/asc_set_mmad_direction_n.md)接口设置mmad的计算方向。当Fixpipe使能了NZ2ND或ChannelMerge等layout变换时，需将mmad的计算方向设置为N方向优先，即调用`asc_set_mmad_direction_n`。反之，若未使用这些特性，则应将计算方向设置为M方向优先，即调用`asc_set_mmad_direction_m`。
+在调用mmad接口时，需要通过[asc_set_mmad_direction_m](../../../c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_m.md)或[asc_set_mmad_direction_n](../../../c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_n.md)接口设置mmad的计算方向。当Fixpipe使能了NZ2ND或ChannelMerge等layout变换时，需将mmad的计算方向设置为N方向优先，即调用`asc_set_mmad_direction_n`。反之，若未使用这些特性，则应将计算方向设置为M方向优先，即调用`asc_set_mmad_direction_m`。
 
 **图1**  mmad和Fixpipe同时沿M方向写/读
 
@@ -46,8 +46,8 @@ mmad和copy接口将unit_flag设置为`unit_flag_mode::enable_keep`或`unit_flag
 - [mmad](../mmad_compute/mmad.md)
 - [copy（L0C到GM数据搬运）](../cube_compute_store/copy_l0c_to_gm.md)
 - [copy（L0C到UB数据搬运）](../cube_compute_store/copy_l0c_to_ub.md)
-- [asc_set_mmad_direction_m](../../../c_api/cube_compute/asc_set_mmad_direction_m.md)
-- [asc_set_mmad_direction_n](../../../c_api/cube_compute/asc_set_mmad_direction_n.md)
+- [asc_set_mmad_direction_m](../../../c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_m.md)
+- [asc_set_mmad_direction_n](../../../c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_n.md)
 
 ## 沿K轴迭代循环使用示例片段
 

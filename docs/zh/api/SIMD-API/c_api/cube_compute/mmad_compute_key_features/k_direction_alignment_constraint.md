@@ -35,6 +35,10 @@ K方向对齐的核心功能是通过k_direction_align参数控制在使用float
 
 ![K方向对齐转置示意图](../../../../figures/kdirectionalign_demo.png)
 
+<!-- npu="A3,910b" id4 -->
+该参数在[asc_mmad](../mmad_compute/asc_mmad.md)的Atlas A3系列产品和Atlas A2系列产品对应重载中提供；A、B矩阵的分形排布可参见[关键分形格式详解](../cube_compute_fractal_intro/key_fractal_format_details.md)，转置搬入可参见[asc_copy_l12l0a_trans](../../cube_datamove/cube_compute_load/asc_copy_l12l0a_trans.md)。
+<!-- end id4 -->
+
 **使用示例：**
 
 ```cpp

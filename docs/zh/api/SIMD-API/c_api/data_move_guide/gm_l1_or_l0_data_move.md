@@ -6,13 +6,13 @@ NPU架构版本3510提供GM到L1 Buffer和L0C Buffer到GM两类直达通路。�
 
 | 方向 | 搬运模式 | 接口 | 流水 |
 | --- | --- | --- | --- |
-| GM到L1 | 连续搬运，支持通道Padding | [asc_copy_gm2l1](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md) | PIPE_MTE2 |
-| GM到L1 | 高维切分搬运，支持通道Padding | [asc_copy_gm2l1](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_highdim_split_arch_3510.md) | PIPE_MTE2 |
-| GM到L1 | 二维分形矩阵搬运 | [asc_copy_gm2l1](../cube_datamove/asc_copy_gm2l1/asc_copy_gm2l1_2d_arch_3510.md) | PIPE_MTE2 |
-| GM到L1 | ND到Nz格式转换 | [asc_copy_gm2l1_nd2nz](../cube_datamove/asc_copy_gm2l1_nd2nz/asc_copy_gm2l1_nd2nz_arch_3510.md) | PIPE_MTE2 |
-| GM到L1 | DN到Nz格式转换 | [asc_copy_gm2l1_dn2nz](../cube_datamove/asc_copy_gm2l1_dn2nz.md) | PIPE_MTE2 |
-| GM到L1 | 非对齐搬运和Padding | [asc_copy_gm2l1_align](../cube_datamove/asc_copy_gm2l1_align.md) | PIPE_MTE2 |
-| L0C到GM | 矩阵结果搬出，可组合量化、激活和格式转换 | [asc_copy_l0c2gm](../cube_datamove/asc_copy_l0c2gm/asc_copy_l0c2gm_arch_3510.md) | PIPE_FIX |
+| GM到L1 | 连续搬运，支持通道Padding | [asc_copy_gm2l1](../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md) | PIPE_MTE2 |
+| GM到L1 | 高维切分搬运，支持通道Padding | [asc_copy_gm2l1](../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md) | PIPE_MTE2 |
+| GM到L1 | 二维分形矩阵搬运 | [asc_copy_gm2l1](../cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md) | PIPE_MTE2 |
+| GM到L1 | ND到Nz格式转换 | [asc_copy_gm2l1_nd2nz](../cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md) | PIPE_MTE2 |
+| GM到L1 | DN到Nz格式转换 | [asc_copy_gm2l1_dn2nz](../cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md) | PIPE_MTE2 |
+| GM到L1 | 非对齐搬运和Padding | [asc_copy_gm2l1_align](../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md) | PIPE_MTE2 |
+| L0C到GM | 矩阵结果搬出，可组合量化、激活和格式转换 | [asc_copy_l0c2gm](../cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md) | PIPE_FIX |
 
 ## asc_copy_gm2l1（GM到L1连续或高维切分数据搬运）
 
@@ -29,7 +29,7 @@ __aicore__ inline void asc_copy_gm2l1(__cbuf__ void* dst,
 ```
 
 - `dst`需要32字节对齐，`src`需要1字节对齐。
-- `pad_mode`用于选择不处理、按通道插入Padding或删除Padding。使用插入Padding模式时，先通过[asc_set_gm2l1_padding](../cube_datamove/asc_set_gm2l1_padding.md)配置填充值；该配置接口不设置Padding模式。
+- `pad_mode`用于选择不处理、按通道插入Padding或删除Padding。使用插入Padding模式时，先通过[asc_set_gm2l1_padding](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_padding.md)配置填充值；该配置接口不设置Padding模式。
 - 插入Padding时，每个数据块的`len_burst`需要按接口要求设置，实际写入L1的数据量可能与GM读取量不同。
 - 删除Padding时，目的端实际写入量由删除模式决定，计算L1空间时不能只使用源端读取量。
 
@@ -68,7 +68,7 @@ __aicore__ inline void asc_copy_gm2l1_nd2nz(__cbuf__ <dtype>* dst,
                                             bool enable_small_c0)
 ```
 
-- 调用前通过[asc_set_gm2l1_nz_para](../cube_datamove/asc_set_gm2l1_nz_para.md)设置目的Nz矩阵步长和ND矩阵个数。
+- 调用前通过[asc_set_gm2l1_nz_para](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md)设置目的Nz矩阵步长和ND矩阵个数。
 - `src_d_value`和`src_nd_matrix_stride`单位为字节，`n_value`和`d_value`单位为元素。
 - 当每行有效数据不足32字节对齐时，标准模式在目的矩阵补0到32字节边界。
 - 仅当`d_value`不大于4时可开启SmallC0模式；此时按4个元素粒度补齐。
@@ -100,9 +100,9 @@ __aicore__ inline void asc_copy_gm2l1_align(__cbuf__ <dtype>* dst,
 
 - **Compact模式：** `dst_stride`等于`burst_len`，左右Padding为0。多个数据块在L1中紧密排列，仅在整体末尾补齐到32字节边界。
 - **Normal模式：** `dst_stride`不等于`burst_len`且为32字节的整数倍，每个数据块分别补齐。该对齐约束在`burst_count`为1时仍生效。
-- **填充值来源：** 左右Padding均为0时，`enable_data_select`为`false`表示使用每个数据块的首元素填充，为`true`表示使用[asc_set_gm2l1_pad](../cube_datamove/asc_set_gm2l1_pad.md)预先配置的常量。`enable_data_select`为`true`时，即使左右Padding均为0，也必须先配置填充值。
+- **填充值来源：** 左右Padding均为0时，`enable_data_select`为`false`表示使用每个数据块的首元素填充，为`true`表示使用[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)预先配置的常量。`enable_data_select`为`true`时，即使左右Padding均为0，也必须先配置填充值。
 - **左右Padding模式：** `left_padding_count`或`right_padding_count`非0时，左、右数量的单位为元素，`enable_data_select`不生效，硬件强制使用常量填充。此时必须先调用`asc_set_gm2l1_pad`配置填充值。
-- **循环填充模式：** 通过[asc_set_gm2l1_loop_size](../cube_datamove/asc_set_gm2l1_loop_size.md)、[asc_set_gm2l1_loop1_stride](../cube_datamove/asc_set_gm2l1_loop1_stride.md)和[asc_set_gm2l1_loop2_stride](../cube_datamove/asc_set_gm2l1_loop2_stride.md)配置两层循环，不能与左右Padding同时开启。
+- **循环填充模式：** 通过[asc_set_gm2l1_loop_size](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop_size.md)、[asc_set_gm2l1_loop1_stride](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop1_stride.md)和[asc_set_gm2l1_loop2_stride](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop2_stride.md)配置两层循环，不能与左右Padding同时开启。
 
 `burst_len`、`src_stride`和`dst_stride`的单位均为字节；`src`需要1字节对齐，`dst`需要32字节对齐。循环填充模式的loop1、loop2目的步长也必须32字节对齐，对应循环次数为1时仍生效。目的L1空间需要包含有效数据、左右Padding、补齐到32字节边界的dummy数据，以及`dst_stride`和loop目的步长产生的最大偏移。
 
@@ -121,11 +121,11 @@ __aicore__ inline void asc_copy_gm2l1_align(__cbuf__ <dtype>* dst,
 
 | 功能 | 配置接口 |
 | --- | --- |
-| Nz2ND/Nz2DN | [asc_set_l0c_copy_nz_para](../cube_datamove/asc_set_l0c_copy_nz_para.md) |
-| Nz2DN通道参数 | [asc_set_l0c_copy_channel_para](../cube_datamove/asc_set_l0c_copy_channel_para.md) |
-| scalar量化 | [asc_set_l0c_copy_prequant](../cube_datamove/asc_set_l0c_copy_prequant.md) |
-| tensor量化参数地址 | [asc_set_l0c_copy_config](../cube_datamove/asc_set_l0c_copy_config.md) |
-| ReLU/Leaky ReLU参数 | [asc_set_l0c_copy_relu_alpha](../cube_datamove/asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/asc_set_l0c_copy_lrelu_alpha.md) |
+| Nz2ND/Nz2DN | [asc_set_l0c_copy_nz_para](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md) |
+| Nz2DN通道参数 | [asc_set_l0c_copy_channel_para](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md) |
+| scalar量化 | [asc_set_l0c_copy_prequant](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md) |
+| tensor量化参数地址 | [asc_set_l0c_copy_config](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md) |
+| ReLU/Leaky ReLU参数 | [asc_set_l0c_copy_relu_alpha](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_relu_alpha.md)、[asc_set_l0c_copy_lrelu_alpha](../cube_datamove/cube_store_aux_config/asc_set_l0c_copy_lrelu_alpha.md) |
 
 `src`需要64字节对齐，`dst`需要1字节对齐。`n_size`、`m_size`、`dst_stride`和源、目的数据类型必须与格式转换、量化及激活组合匹配；目的GM空间应按转换后的数据类型和排布计算。
 
