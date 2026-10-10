@@ -51,31 +51,12 @@ __simd_callee__ inline void FusedAbsSubImpl(U& dstReg, U& srcReg0, U& srcReg1, M
 {
     using ActualT = typename U::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
-    static_assert(
-        SupportType<ActualT, half, float, int64_t>(), "current data type is not supported on current device!");
+    static_assert(SupportType<ActualT, half, float>(), "current data type is not supported on current device!");
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(),
         "current FusedAbsSub api only supported Mode ZEROING on current device!");
-    if constexpr (sizeof(ActualT) == 8) {
-        if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
-            MaskReg maskTrait2;
-            MaskPack(maskTrait2, mask);
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg0;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg1;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-            B64TraitOneToTraitTwo(traitTwoSrcReg0, srcReg0);
-            B64TraitOneToTraitTwo(traitTwoSrcReg1, srcReg1);
-            Sub(traitTwoDstReg, traitTwoSrcReg0, traitTwoSrcReg1, maskTrait2);
-            Abs(traitTwoDstReg, traitTwoDstReg, maskTrait2);
-            B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-        } else if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-            Sub(dstReg, srcReg0, srcReg1, mask);
-            Abs(dstReg, dstReg, mask);
-        }
-    } else {
-        constexpr auto modeValue = GetMaskMergeMode<mode>();
-        vabsdif(dstReg, srcReg0, srcReg1, mask, modeValue);
-    }
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    vabsdif(dstReg, srcReg0, srcReg1, mask, modeValue);
 }
 
 template <typename T, typename U, RegLayout layout, MaskMergeMode mode, typename S, typename V>
@@ -85,7 +66,7 @@ __simd_callee__ inline void FusedExpSubImpl(S& dstReg, V& srcReg0, V& srcReg1, M
     using ActualU = typename V::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(Std::is_same_v<U, DefaultType> || Std::is_same_v<U, ActualU>, "U type is not correct!");
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     static_assert(
         SupportType<Tuple<ActualT, ActualU>, Tuple<half, half>, Tuple<float, float>>(),
         "current data type is not supported on current device!");

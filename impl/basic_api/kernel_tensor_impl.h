@@ -1034,7 +1034,7 @@ __aicore__ inline void LocalTensor<T>::SetBufferLen(uint32_t dataLen)
     if ASCEND_IS_AIV {
         this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(PrimType));
     }
-#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if (GetPhyType(AscendC::TPosition(this->GetPosition())) == Hardware::UB) {
         this->address_.bufferAddr = set_ub_addr_upper_bound(this->address_.bufferAddr, dataLen * sizeof(PrimType));
     }

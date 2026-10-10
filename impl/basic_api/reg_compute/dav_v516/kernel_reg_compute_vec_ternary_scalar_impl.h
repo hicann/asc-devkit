@@ -33,22 +33,13 @@ __simd_callee__ inline void AxpyImpl(S& dstReg, S& srcReg, const U scalarValue, 
 {
     using ActualT = typename S::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
-    static_assert(
-        SupportType<ActualT, half, float, uint64_t, int64_t>(),
-        "current Axpy data type is not supported on current device!");
-    static_assert(
-        SupportType<U, half, float, uint64_t, int64_t>(), "current Axpy data type is not supported on current device!");
+    static_assert(SupportType<ActualT, half, float>(), "current Axpy data type is not supported on current device!");
+    static_assert(SupportType<U, half, float>(), "current Axpy data type is not supported on current device!");
     static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(), "current Axpy api only supported Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<mode>();
-    if constexpr (sizeof(ActualT) != 8) {
-        vaxpy(dstReg, srcReg, scalarValue, mask, modeValue);
-    } else {
-        S midReg;
-        Muls<ActualT, U, mode, S>(midReg, srcReg, scalarValue, mask);
-        Add<ActualT, mode, S>(dstReg, midReg, dstReg, mask);
-    }
+    vaxpy(dstReg, srcReg, scalarValue, mask, modeValue);
 }
 } // namespace Reg
 } // namespace AscendC

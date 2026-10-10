@@ -794,7 +794,7 @@ template <typename T>
 __aicore__ inline void DataCopyCheck(const uint32_t count, DataCopyParams& repeatParams)
 {
     using PrimType = PrimT<T>;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if constexpr (Std::is_same<PrimType, int2b_t>::value) {
         ASCENDC_ASSERT((count % ConstantsInternal::ONE_BLK_B2_NUM == 0), {
             KERNEL_LOG(

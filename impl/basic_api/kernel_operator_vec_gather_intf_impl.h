@@ -37,6 +37,8 @@
 #include "dav_3510/kernel_operator_vec_gather_impl.h"
 #elif (__NPU_ARCH__ == 5102)
 #include "dav_m510/kernel_operator_vec_gather_impl.h"
+#elif (__NPU_ARCH__ == 5162)
+#include "dav_v516/kernel_operator_vec_gather_impl.h"
 #elif __NPU_ARCH__ == 3003
 #include "dav_l300/kernel_operator_vec_gather_impl.h"
 #elif __NPU_ARCH__ == 3113
@@ -179,8 +181,8 @@ __aicore__ inline void Gather(
     const uint32_t srcBaseOffset, const uint32_t count)
 {
     using PrimType = PrimT<T>;
-#if defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || \
+                              (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     ASCENDC_ASSERT(
         (SupportType<PrimType, uint8_t, int8_t, half, bfloat16_t, uint16_t, int16_t, float, uint32_t, int32_t>()), {
             KERNEL_LOG(

@@ -56,6 +56,7 @@ __simd_vf__ inline void ReduceARCastLessThanVL(__ubuf__ T* dstAddr, __ubuf__ T* 
         Reg::RegTensor<U, Trait> vreg0CastB32;
         Reg::RegTensor<U, Trait> vreg1CastB32;
         Reg::UnalignReg uDst;
+        Reg::UnalignRegForLoad ureg0;
         uint32_t sreg1 = dimR;
         Reg::MaskReg fullMask = Reg::CreateMask<T, Reg::MaskPattern::ALL, Trait>();
         Reg::MaskReg mask = Reg::UpdateMask<U>(sreg1);
@@ -63,7 +64,12 @@ __simd_vf__ inline void ReduceARCastLessThanVL(__ubuf__ T* dstAddr, __ubuf__ T* 
         Reg::MaskPack(mask, mask);
         for (uint16_t loopA = 0; loopA < static_cast<uint16_t>(dimA); loopA++) {
             Reg::LoadAlign(vreg0, srcAddr + loopA * dimR);
-            Reg::LoadAlign(vreg1, srcAddr + vlSize / 2 + loopA * dimR);
+            if constexpr (vlSize > ONE_BLK_SIZE) {
+                Reg::LoadAlign(vreg1, srcAddr + vlSize / 2 + loopA * dimR);
+            } else {
+                Reg::LoadUnAlignPre(ureg0, srcAddr + vlSize / 2 + loopA * dimR);
+                Reg::LoadUnAlign(vreg1, ureg0, srcAddr + vlSize / 2 + loopA * dimR);
+            }
             Binaryfunc(vreg2, vreg0, vreg1, mask);
             Select(vreg2, vreg2, vreg0, mask);
             if constexpr (IsSameType<T, bfloat16_t>::value) {

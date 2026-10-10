@@ -27,42 +27,17 @@
 
 namespace AscendC {
 namespace Reg {
-template <IndexOrder order = IndexOrder::INCREASE_ORDER, typename T, typename U>
-__simd_callee__ inline void ArangeB64Impl(U& dstReg, T scalarValue)
-{
-    using ActualT = typename U::ActualT;
-    static_assert((SupportType<ActualT, int64_t>()), "ArangeB64Impl only support B64 data type");
-    constexpr auto orderMode = std::integral_constant<::Order, static_cast<::Order>(order)>();
-    static_assert(CheckRegTrait<U, RegTraitNumTwo>(), "ArangeB64Impl only support RegTraitNumTwo");
-    MaskReg maskReg = AscendC::Reg::CreateMask<uint8_t, AscendC::Reg::MaskPattern::ALL>();
-    Duplicate((RegTensor<int32_t>&)dstReg.reg[1], int32_t(0), maskReg);
-    Arange<DefaultType, order>((RegTensor<int32_t>&)dstReg.reg[0], int32_t(0));
-    Adds(dstReg, dstReg, scalarValue, maskReg);
-}
-
 template <typename T = DefaultType, IndexOrder order = IndexOrder::INCREASE_ORDER, typename U, typename S>
 __simd_callee__ inline void ArangeImpl(S& dstReg, U scalarValue)
 {
     using ActualT = typename S::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        (SupportType<ActualT, int8_t, int16_t, int32_t, float, half, int64_t>()),
+        (SupportType<ActualT, int8_t, int16_t, int32_t, float, half>()),
         "current Arange data type is not supported on current device!");
     static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
     constexpr auto orderMode = std::integral_constant<::Order, static_cast<::Order>(order)>();
-    if constexpr (sizeof(ActualT) != 8) {
-        vci(dstReg, scalarValue, orderMode);
-    } else {
-        if constexpr (CheckRegTrait<S, RegTraitNumOne>()) {
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-            ArangeB64Impl(traitTwoDstReg, scalarValue);
-            B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-        } else if constexpr (CheckRegTrait<S, RegTraitNumTwo>()) {
-            S dstTemp;
-            ArangeB64Impl<order, U, S>(dstTemp, scalarValue);
-            dstReg = dstTemp;
-        }
-    }
+    vci(dstReg, scalarValue, orderMode);
 }
 } // namespace Reg
 } // namespace AscendC

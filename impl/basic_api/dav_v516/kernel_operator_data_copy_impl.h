@@ -188,7 +188,7 @@ __aicore__ inline void CopyCbufToUbuf(
     __ubuf__ T* dst, __cbuf__ T* src, const uint16_t blockCount, const uint16_t blockLen, const uint16_t srcStride,
     const uint16_t dstStride)
 {
-    copy_cbuf_to_ubuf((__ubuf__ void*)dst, (__cbuf__ void*)src, 0, blockCount, blockLen, srcStride, dstStride);
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "CopyCbufToUbuf not support type void*"); });
 }
 
 // only support CubeCore   PIPE_MTE1
@@ -1102,68 +1102,16 @@ __aicore__ inline bool IsSupportQuantMode(QuantMode_t quantPre)
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
 {
-    static_assert(
-        (SupportType<
-            Tuple<U, T>, Tuple<float, float>, Tuple<float, half>, Tuple<float, bfloat16_t>, Tuple<float, int8_t>,
-            Tuple<float, uint8_t>, Tuple<int32_t, int32_t>, Tuple<int32_t, int16_t>, Tuple<int32_t, int8_t>,
-            Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
-        "Failed to check dtype in "
-        "DataCopy from CO1 to A1 / B1, current api support dtype combination is "
-        "src: float, dst: half / bfloat16_t / float / int8_t / uint8_t; "
-        "src: int32_t, dst: half / int32_t / int16_t / int8_t / uint8_t.");
-    if (IsSupportQuantMode(intriParams.quantPre)) {
-        uint32_t dstStride = intriParams.dstStride;
-        if (!intriParams.nz2ndEn) {
-            dstStride = dstStride * ONE_BLK_SIZE / sizeof(T);
-        }
-        return copy_matrix_cc_to_cbuf(
-            dst, src, intriParams.sid, intriParams.nSize, intriParams.mSize, dstStride, intriParams.srcStride, 0, 0,
-            intriParams.unitFlag, static_cast<uint64_t>(intriParams.quantPre), intriParams.reluPre,
-            intriParams.channelSplit, intriParams.nz2ndEn, 0, 0, false, false, 0, false, false, false, false, false,
-            false);
-    } else {
-        ASCENDC_ASSERT(false, {
-            KERNEL_LOG(
-                KERNEL_ERROR,
-                "Failed to check quantPre value in DataCopy from CO1 "
-                "to A1 / B1, supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / VDEQF16 / QF322B8_PRE / "
-                "VQF322B8_PRE / REQ8 / VREQ8.");
-        });
-    }
+    ASCENDC_ASSERT(
+        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported data copy from cc to cbuf with pad on current device"); });
 }
 
 template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2GMImpl(
     __gm__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams, uint8_t cacheMode)
 {
-    static_assert(
-        (SupportType<
-            Tuple<U, T>, Tuple<float, float>, Tuple<float, half>, Tuple<float, bfloat16_t>, Tuple<float, int8_t>,
-            Tuple<float, uint8_t>, Tuple<int32_t, int32_t>, Tuple<int32_t, int16_t>, Tuple<int32_t, int8_t>,
-            Tuple<int32_t, uint8_t>, Tuple<int32_t, half>>()),
-        "Failed to check dtype in "
-        "DataCopy from CO1 to GM, current api support dtype combination is "
-        "src: float, dst: half / bfloat16_t / float / int8_t / uint8_t; "
-        "src: int32_t, dst: half / int32_t / int16_t / int8_t / uint8_t.");
-    if (IsSupportQuantMode(intriParams.quantPre)) {
-        uint32_t dstStride = intriParams.dstStride;
-        if (!intriParams.nz2ndEn) {
-            dstStride = dstStride * ONE_BLK_SIZE / sizeof(T);
-        }
-        return copy_matrix_cc_to_gm(
-            dst, src, intriParams.sid, intriParams.nSize, intriParams.mSize, dstStride, intriParams.srcStride,
-            cacheMode, 0, intriParams.unitFlag, static_cast<uint64_t>(intriParams.quantPre), intriParams.reluPre,
-            intriParams.channelSplit, intriParams.nz2ndEn, 0, 0, false, false, 0, false, false, false, false, false,
-            false);
-    } else {
-        ASCENDC_ASSERT(false, {
-            KERNEL_LOG(
-                KERNEL_ERROR,
-                "Failed to check quantPre value in DataCopy from CO1 "
-                "to GM, supported values are NoQuant / F322F16 / F322BF16 / DEQF16 / VDEQF16 / QF322B8_PRE / "
-                "VQF322B8_PRE / REQ8 / VREQ8.");
-        });
-    }
+    ASCENDC_ASSERT(
+        (false), { KERNEL_LOG(KERNEL_ERROR, "unsupported data copy from cc to gm with pad on current device"); });
 }
 
 template <typename T>
@@ -1197,10 +1145,9 @@ template <typename T>
 __aicore__ inline __in_pipe__(FIX)
     __out_pipe__(FIX) void DataCopyL12FBImpl(__fbuf__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams)
 {
-    constexpr uint16_t unitCoeff = 2;
-    copy_cbuf_to_fbuf(
-        (__fbuf__ void*)dst, (__cbuf__ void*)src, intriParams.blockCount, intriParams.blockLen * unitCoeff,
-        intriParams.srcStride, intriParams.dstStride * unitCoeff);
+    copy_cbuf_to_fbuf_v2(
+        (__fbuf__ void*)dst, (__cbuf__ void*)src, 0, intriParams.blockCount, intriParams.blockLen,
+        intriParams.srcStride, intriParams.dstStride);
 }
 
 template <typename T>

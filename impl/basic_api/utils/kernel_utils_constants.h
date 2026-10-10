@@ -25,7 +25,11 @@
 #include "../../utils/common_types.h"
 
 namespace AscendC {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5162))
+const int32_t DEFAULT_BLK_NUM = 1;
+#else
 const int32_t DEFAULT_BLK_NUM = 8;
+#endif
 const int32_t POWER_MASK_NUM = 8;
 const int32_t HALF_FACTOR = 2;
 const int32_t DOUBLE_FACTOR = 2;
@@ -288,8 +292,9 @@ const int32_t SRC_GAP_SIZE_BYTE = 32;
 const int32_t DST_BURST_LEN_SIZE_ELE = 256;
 const int32_t VREDUCE_PER_REP_OUTPUT = 2;
 const uint16_t ONE_PARAM_SIZE = 8;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+     __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
 const int32_t BLOCK_COUT = 16;
 const uint16_t TWO_BLK_SIZE = 64;
 #endif
@@ -299,12 +304,6 @@ const uint16_t AIV_CORE_NUM = 72;
 const uint16_t AIV_CORE_NUM = 50;
 #endif
 const uint16_t DUMP_MSG_HEAD_SIZE = 24;
-#if defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
-const int32_t ONE_REPEAT_BYTE_SIZE = 64;
-#else
-const int32_t ONE_REPEAT_BYTE_SIZE = 256;
-#endif
 const int32_t FULL_MASK_LEN = 128;
 const int32_t HALF_MASK_LEN = 64;
 const int32_t DEFAULT_REDUCE_DST_REP_STRIDE = 1;
@@ -316,9 +315,15 @@ const uint8_t B32_DATA_NUM_PER_BLOCK = 8;
 const uint8_t B16_DATA_NUM_PER_BLOCK = 16;
 #if defined(__NPU_ARCH__) && \
     (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+const int32_t ONE_REPEAT_BYTE_SIZE = 64;
 const int32_t B16_DATA_NUM_PER_REPEAT = 32;
 const int32_t B32_DATA_NUM_PER_REPEAT = 16;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+const int32_t ONE_REPEAT_BYTE_SIZE = 32;
+const int32_t B16_DATA_NUM_PER_REPEAT = 16;
+const int32_t B32_DATA_NUM_PER_REPEAT = 8;
 #else
+const int32_t ONE_REPEAT_BYTE_SIZE = 256;
 const int32_t B16_DATA_NUM_PER_REPEAT = 128;
 const int32_t B32_DATA_NUM_PER_REPEAT = 64;
 #endif
@@ -389,9 +394,15 @@ const uint32_t ONE_BLK_HALF_NUM = ONE_BLK_SIZE / B16_BYTE_SIZE;
 const uint32_t ONE_BLK_FLOAT_NUM = ONE_BLK_SIZE / B32_BYTE_SIZE;
 
 namespace ConstantsInternal {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+const uint32_t ONE_BLK_FP4_NUM = 8;
+const uint32_t ONE_BLK_B2_NUM = 16;
+const uint32_t ONE_BLK_B1_NUM = 32;
+#else
 const uint32_t ONE_BLK_FP4_NUM = 64;
 const uint32_t ONE_BLK_B2_NUM = 128;
 const uint32_t ONE_BLK_B1_NUM = 256;
+#endif
 } // namespace ConstantsInternal
 
 const uint32_t BRCB_BROADCAST_NUMBER = 8;
@@ -579,7 +590,7 @@ struct GetPadValueType {
     using Type = T;
 };
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 // To support FP8 datacopypad, pad type needs transfer to b8
 template <>
 struct GetPadValueType<fp8_e5m2_t> {
@@ -692,13 +703,13 @@ using int1b_t = IntegerSubType<INT1_BIT_NUM, true>;
 using uint1b_t = IntegerSubType<INT1_BIT_NUM, false>;
 #endif
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
-                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) &&                                                                         \
+    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
+     __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
 using uint4b_t = IntegerSubType<INT4_BIT_NUM, false>;
 using uint3b_t = IntegerSubType<INT3_BIT_NUM, false>;
 using uint2b_t = IntegerSubType<INT2_BIT_NUM, false>;
 #endif
-
 #if !defined(ASCENDC_CPU_DEBUG)
 using fp8_e8m0_t = float8_e8m0_t;
 #endif
@@ -727,6 +738,28 @@ struct GetDstType<mx_fp8_e8m0_t> {
     using Type = fp8_e8m0_t;
 };
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+template <>
+struct GetDstType<half> {
+    using Type = int32_t;
+};
+
+template <>
+struct GetDstType<int4b_t> {
+    using Type = int32_t;
+};
+
+template <>
+struct GetDstType<int8_t> {
+    using Type = int32_t;
+};
+
+template <>
+struct GetDstType<int16_t> {
+    using Type = int32_t;
+};
+#endif
+
 struct BasicAPIMaskStruct {
     uint64_t maskArray[MASK_ARRAY_SIZE] = {0};
 };
@@ -734,7 +767,7 @@ struct BasicAPIMaskStruct {
 template <typename T>
 __aicore__ constexpr bool IsHalfByteDataType()
 {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     return SupportType<T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>();
 #else
     return IsSameType<T, int4b_t>::value;
@@ -751,7 +784,7 @@ struct SizeOfBits<int4b_t> {
     static int const value = INT4_BIT_NUM;
 };
 
-#if (__NPU_ARCH__ == 5102)
+#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
 template <>
 struct SizeOfBits<int2b_t> {
     static constexpr uint32_t value = INT2_BIT_NUM;
@@ -781,7 +814,7 @@ struct SizeOfBits<uint2b_t> {
 };
 #endif
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
 template <>
 struct SizeOfBits<fp4x2_e2m1_t> {
     static constexpr uint32_t value = INT4_BIT_NUM;

@@ -48,17 +48,13 @@ __simd_callee__ inline void DuplicateB64Impl(U& dstReg, T scalarValue)
     using ActualT = typename U::ActualT;
     static_assert(sizeof(ActualT) == 8, "data type should be B64");
     static_assert(CheckRegTrait<U, RegTraitNumTwo>(), "U should be RegTraitNumTwo for DuplicateB64Impl");
-    if constexpr (SupportType<ActualT, complex64>()) {
-        DuplicateComplexTraitTwoImpl(dstReg, scalarValue);
+    vbr((RegTensor<uint32_t>&)dstReg.reg[0], static_cast<uint32_t>(scalarValue));
+    if constexpr (sizeof(T) == 8) {
+        vbr((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 32));
+    } else if constexpr (IsSameType<T, uint32_t>::value) {
+        vbr((RegTensor<uint32_t>&)dstReg.reg[1], 0);
     } else {
-        vbr((RegTensor<uint32_t>&)dstReg.reg[0], static_cast<uint32_t>(scalarValue));
-        if constexpr (sizeof(T) == 8) {
-            vbr((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 32));
-        } else if constexpr (IsSameType<T, uint32_t>::value) {
-            vbr((RegTensor<uint32_t>&)dstReg.reg[1], 0);
-        } else {
-            vbr((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 31));
-        }
+        vbr((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 31));
     }
 }
 
@@ -127,17 +123,13 @@ __simd_callee__ inline void DuplicateB64Impl(U& dstReg, T scalarValue, MaskReg& 
     static_assert(sizeof(ActualT) == 8, "data type should be B64");
     static_assert(CheckRegTrait<U, RegTraitNumTwo>(), "U should be RegTraitNumTwo for DuplicateB64Impl");
     constexpr auto modeValue = GetMaskMergeMode<mode>();
-    if constexpr (SupportType<ActualT, complex64>()) {
-        DuplicateComplexTraitTwoImpl(dstReg, scalarValue, mask);
+    vdup((RegTensor<uint32_t>&)dstReg.reg[0], static_cast<uint32_t>(scalarValue), mask, modeValue);
+    if constexpr (sizeof(T) == 8) {
+        vdup((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 32), mask, modeValue);
+    } else if constexpr (IsSameType<T, uint32_t>::value) {
+        vdup((RegTensor<uint32_t>&)dstReg.reg[1], 0, mask, modeValue);
     } else {
-        vdup((RegTensor<uint32_t>&)dstReg.reg[0], static_cast<uint32_t>(scalarValue), mask, modeValue);
-        if constexpr (sizeof(T) == 8) {
-            vdup((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 32), mask, modeValue);
-        } else if constexpr (IsSameType<T, uint32_t>::value) {
-            vdup((RegTensor<uint32_t>&)dstReg.reg[1], 0, mask, modeValue);
-        } else {
-            vdup((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 31), mask, modeValue);
-        }
+        vdup((RegTensor<uint32_t>&)dstReg.reg[1], static_cast<uint32_t>(scalarValue >> 31), mask, modeValue);
     }
 }
 
@@ -149,8 +141,7 @@ __simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue, MaskReg& mas
     static_assert(
         (SupportType<
             ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
-            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half, uint64_t, int64_t, complex32,
-            complex64>()),
+            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half, uint64_t, int64_t, complex32>()),
         "current data type is not supported on current device!");
     static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
     ASCENDC_ASSERT((mode != MaskMergeMode::UNKNOWN), {
@@ -223,14 +214,10 @@ __simd_callee__ inline void DuplicateB64Impl(T& dstReg, T& srcReg, MaskReg& mask
     using ActualT = typename T::ActualT;
     static_assert(sizeof(ActualT) == 8, "data type should be B64");
     static_assert(CheckRegTrait<T, RegTraitNumTwo>(), "T should be RegTraitNumTwo for DuplicateB64Impl");
-    if constexpr (SupportType<ActualT, complex64>()) {
-        DuplicateComplexTraitTwoImpl(dstReg, srcReg, mask);
-    } else {
-        constexpr auto posValue = std::integral_constant<::Pos, static_cast<::Pos>(pos)>();
-        constexpr auto modeValue = GetMaskMergeMode<mode>();
-        vdup((RegTensor<uint32_t>&)dstReg.reg[0], (RegTensor<uint32_t>&)srcReg.reg[0], mask, posValue, modeValue);
-        vdup((RegTensor<uint32_t>&)dstReg.reg[1], (RegTensor<uint32_t>&)srcReg.reg[1], mask, posValue, modeValue);
-    }
+    constexpr auto posValue = std::integral_constant<::Pos, static_cast<::Pos>(pos)>();
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    vdup((RegTensor<uint32_t>&)dstReg.reg[0], (RegTensor<uint32_t>&)srcReg.reg[0], mask, posValue, modeValue);
+    vdup((RegTensor<uint32_t>&)dstReg.reg[1], (RegTensor<uint32_t>&)srcReg.reg[1], mask, posValue, modeValue);
 }
 
 template <
@@ -243,8 +230,7 @@ __simd_callee__ inline void DuplicateImpl(U& dstReg, U& srcReg, MaskReg& mask)
     static_assert(
         (SupportType<
             ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
-            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half, uint64_t, int64_t, complex32,
-            complex64>()),
+            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half, uint64_t, int64_t, complex32>()),
         "current data type is not supported on current device!");
     ASCENDC_ASSERT((mode != MaskMergeMode::UNKNOWN), {
         KERNEL_LOG(KERNEL_ERROR, "The MergeMode only support: MODE_MERGING, MODE_ZEROING.");

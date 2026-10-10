@@ -106,6 +106,7 @@ def check_is_regbase_v2():
     from .platform.platform_info import ASCEND_950
     from .platform.platform_info import ASCEND_960DT
     from .platform.platform_info import ASCEND_960PR
+    from .platform.platform_info import ASCEND_5162
     from .platform.platform_info import KIRIN_X90
     from .platform.platform_info import KIRIN_9030
     from .platform.platform_info import KIRIN_DEV_0000
@@ -129,6 +130,7 @@ def check_is_regbase_v2():
         KIRIN_DEV_0001,
         KIRIN_DEV_0002,
         KIRIN_DEV_0003,
+        ASCEND_5162,
     ]:
         return True
     return False
@@ -183,6 +185,7 @@ def _build_aicore_compile_cmd(src_file, dst_file, name="", is_ffts_needed=False,
     from .platform.platform_info import ASCEND_610
     from .platform.platform_info import ASCEND_310P
     from .platform.platform_info import ASCEND_610LITE
+    from .platform.platform_info import ASCEND_5162
     from .platform.platform_info import BS9SX2A
     from .platform.platform_info import MC61AM21A
     from .platform.platform_info import ASCEND_950
@@ -263,6 +266,9 @@ def _build_aicore_compile_cmd(src_file, dst_file, name="", is_ffts_needed=False,
             cmd += ["-mllvm", "-cce-aicore-weight-for-reg-operand-remat=higher"]
     elif get_soc_spec("SHORT_SOC_VERSION") == ASCEND_910:
         cmd += ["-mllvm", "-cce-aicore-function-stack-size=16000"]
+        cmd = _set_cce_overflow(cmd)
+    elif get_soc_spec("SHORT_SOC_VERSION") == ASCEND_5162:
+        cmd += ["-mllvm", "-cce-aicore-function-stack-size=4000"]
         cmd = _set_cce_overflow(cmd)
     elif get_soc_spec("SOC_VERSION") in [HI3796CV300ES, HI3796CV300CS, SD3403]:
         cmd += ["-mllvm", "-cce-aicore-sk-transform"]

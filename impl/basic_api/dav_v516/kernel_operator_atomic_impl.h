@@ -22,48 +22,35 @@ namespace AscendC {
 template <typename T>
 __aicore__ inline T AtomicAddImpl(__gm__ T* address, T value)
 {
-    static_assert(
-        SupportType<T, uint32_t, int32_t, uint64_t, int64_t, float>(),
-        "AtomicAdd only support uint32_t/int32_t/uint64_t/int64_t/float data type on current device!");
-    return atomicAdd(address, value);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "AtomicAdd is not supported on current device"); });
 }
 
 // atomic_max
 template <typename T>
 __aicore__ inline T AtomicMaxImpl(__gm__ T* address, T value)
 {
-    static_assert(
-        SupportType<T, uint32_t, int32_t, uint64_t, int64_t, float>(),
-        "AtomicMax only support uint32_t/int32_t/uint64_t/int64_t/float data type on current device!");
-    return atomicMax(address, value);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "AtomicMax is not supported on current device"); });
 }
 
 // atomic_min
 template <typename T>
 __aicore__ inline T AtomicMinImpl(__gm__ T* address, T value)
 {
-    static_assert(
-        SupportType<T, uint32_t, int32_t, uint64_t, int64_t, float>(),
-        "AtomicMin only support uint32_t/int32_t/uint64_t/int64_t/float data type on current device!");
-    return atomicMin(address, value);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "AtomicMin is not supported on current device"); });
 }
 
 // atomic_cas
 template <typename T>
 __aicore__ inline T AtomicCasImpl(__gm__ T* address, T value1, T value2)
 {
-    static_assert(
-        SupportType<T, uint32_t, uint64_t>(), "AtomicCas only support uint32_t/uint64_t data type on current device!");
-    return atomicCAS(address, value1, value2);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "AtomicCas is not supported on current device"); });
 }
 
 // atomic_exch
 template <typename T>
 __aicore__ inline T AtomicExchImpl(__gm__ T* address, T value)
 {
-    static_assert(
-        SupportType<T, uint32_t, uint64_t>(), "AtomicExch only support uint32_t/uint64_t data type on current device!");
-    return atomicExch(address, value);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "AtomicExch is not supported on current device"); });
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_ATOMIC_ADD_IMPL_H

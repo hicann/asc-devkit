@@ -440,22 +440,20 @@ __aicore__ inline void ReduceSumCounterMode(
     __ubuf__ T* dstLocal, __ubuf__ T* srcLocal, __ubuf__ T* workLocal, uint32_t count, const int32_t srcRepStride)
 {
     constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
-    if constexpr (shapeScope == 1) {
+    if constexpr (shapeScope <= oneRepSize) {
         ReduceSumCount(dstLocal, srcLocal, count, 1, srcRepStride);
-    } else if constexpr (shapeScope == 2) {
-        uint32_t count2 = CeilDivision(count, oneRepSize);
-        ReduceSumCount(workLocal, srcLocal, count, count2, srcRepStride);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(dstLocal, workLocal, count2, 1, 8);
-    } else {
-        uint32_t count2 = CeilDivision(count, oneRepSize);
-        uint32_t count3 = CeilDivision(count2, oneRepSize);
-        ReduceSumCount(workLocal, srcLocal, count, count2, srcRepStride);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(workLocal, workLocal, count2, count3, 8);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(dstLocal, workLocal, count3, 1, 8);
+        return;
     }
+    uint32_t curCount = CeilDivision(count, oneRepSize);
+    ReduceSumCount(workLocal, srcLocal, count, curCount, srcRepStride);
+    Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
+    while (curCount > oneRepSize) {
+        uint32_t nextCount = CeilDivision(count, oneRepSize);
+        ReduceSumCount(workLocal, workLocal, curCount, nextCount, srcRepStride);
+        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
+        curCount = nextCount;
+    }
+    ReduceSumCount(workLocal, workLocal, curCount, 1, srcRepStride);
 }
 
 template <typename T, int shapeScope, bool isBitMask>
@@ -469,14 +467,14 @@ __aicore__ inline void ReduceSumNormalMode(
     } else if constexpr (shapeScope == 2) {
         ReduceSumMask<T, isBitMask>(workLocal, srcLocal, mask, repeat, srcRepStride);
         Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(dstLocal, workLocal, repeat, 1, 8);
+        ReduceSumCount(dstLocal, workLocal, repeat, 1, srcRepStride);
     } else {
         uint32_t count = CeilDivision(repeat, oneRepSize);
         ReduceSumMask<T, isBitMask>(workLocal, srcLocal, mask, repeat, srcRepStride);
         Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(workLocal, workLocal, repeat, count, 8);
+        ReduceSumCount(workLocal, workLocal, repeat, count, srcRepStride);
         Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-        ReduceSumCount(dstLocal, workLocal, count, 1, 8);
+        ReduceSumCount(dstLocal, workLocal, count, 1, srcRepStride);
     }
 }
 
@@ -571,12 +569,13 @@ __aicore__ inline void ReduceSumImpl(__ubuf__ T* dstLocal, __ubuf__ T* srcLocal,
         VF_CALL<ReduceB64SumImpl<T>>(dstLocal, srcLocal, workLocal, count);
     } else {
         constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
+        constexpr uint32_t srcRepStride = GetVecLen() / GetDataBlockSizeInBytes();
         if (count <= oneRepSize) {
-            VF_CALL<ReduceSumCounterMode<T, 1>>(dstLocal, srcLocal, workLocal, count, 8);
+            VF_CALL<ReduceSumCounterMode<T, 1>>(dstLocal, srcLocal, workLocal, count, srcRepStride);
         } else if (count <= oneRepSize * oneRepSize) {
-            VF_CALL<ReduceSumCounterMode<T, 2>>(dstLocal, srcLocal, workLocal, count, 8);
+            VF_CALL<ReduceSumCounterMode<T, 2>>(dstLocal, srcLocal, workLocal, count, srcRepStride);
         } else {
-            VF_CALL<ReduceSumCounterMode<T, 3>>(dstLocal, srcLocal, workLocal, count, 8);
+            VF_CALL<ReduceSumCounterMode<T, 3>>(dstLocal, srcLocal, workLocal, count, srcRepStride);
         }
     }
 }

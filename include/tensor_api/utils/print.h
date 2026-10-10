@@ -44,7 +44,7 @@ __aicore__ inline void print(__gm__ const char* fmt, Arg0&& arg0, Args&&... args
  * @brief Prints a scalar, tuple, layout, or tensor description.
  * @param value : Value to print.
  */
-template <typename Value, typename Std::enable_if_t<!detail::is_print_string_v<Value>, int> Enable>
+template <typename Value, typename Std::enable_if_t<!detail::is_print_string_v<Value>, int> Enable = 0>
 __aicore__ inline void print(const Value& value);
 
 /**

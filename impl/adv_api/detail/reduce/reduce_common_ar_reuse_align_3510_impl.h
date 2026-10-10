@@ -38,9 +38,15 @@ __simd_callee__ inline void ReduceARCastfoldZero(
     Reg::RegTensor<T, Trait> vreg0;
     Reg::RegTensor<T, Trait> vreg1;
     Reg::UnalignReg uDst;
+    Reg::UnalignRegForLoad ureg0;
     for (uint16_t loopA = 0; loopA < static_cast<uint16_t>(dimA); loopA++) {
         Reg::LoadAlign(vreg0, srcAddr + loopA * dimR);
-        Reg::LoadAlign(vreg1, srcAddr + vlSize / 2 + loopA * dimR);
+        if constexpr (vlSize > ONE_BLK_SIZE) {
+            Reg::LoadAlign(vreg1, srcAddr + vlSize / 2 + loopA * dimR);
+        } else {
+            Reg::LoadUnAlignPre(ureg0, srcAddr + vlSize / 2 + loopA * dimR);
+            Reg::LoadUnAlign(vreg1, ureg0, srcAddr + vlSize / 2 + loopA * dimR);
+        }
         Binaryfunc(vreg0, vreg0, vreg1, fullMask);
         Reg::UnPack((Reg::RegTensor<UnpackDstT, Trait>&)vreg0, (Reg::RegTensor<UnpackSrcT, Trait>&)vreg0);
         Reg::Cast<U, T, ReduceOpInternal::CastTraitBF16F32>(vreg0CastB32, vreg0, fullMask);

@@ -181,7 +181,7 @@ __aicore__ inline void TPipe::AllocAddrs(TBufType* ptr, const First& addr, const
     constexpr bool useAltBufId = T::config.consumerSize > 1;
     ptr->state = TBufState::FREE;
     ptr->freeBufEvt = T::freeBufEvt;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     if constexpr (UseBufIdSync<T>()) {
         ptr->bufId = AllocMutexID();
         ptr->bufIdAlt = INVALID_TBUFID;
@@ -307,7 +307,7 @@ __aicore__ inline bool TPipe::InitBuffer(T& que, uint8_t num, uint32_t len)
     for (int32_t i = 0; i < num; i++, ptr++) {
         ptr->state = TBufState::FREE;
         ptr->freeBufEvt = T::freeBufEvt;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
         if constexpr (UseBufIdSync<T>()) {
             ptr->bufId = AllocMutexID();
             ptr->bufIdAlt = INVALID_TBUFID;
@@ -657,7 +657,7 @@ __aicore__ inline void InitShareBufStart(
     tpipe->g_tpipeImpl.bufPool_[static_cast<uint8_t>(Hardware::L0B)].maxAddr = 0;
     // v100 Shouldn't Use Bias Table
     tpipe->g_tpipeImpl.bufPool_[static_cast<uint8_t>(Hardware::BIAS)].maxAddr = 0;
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     Internal::g_sharedEvtId = Internal::g_bufId;
 #endif
     return;
@@ -674,7 +674,7 @@ __aicore__ inline void InitShareBufEnd(TPipe* tpipe)
     tpipe->g_tpipeImpl.bufPool_[static_cast<uint8_t>(Hardware::UB)].maxAddr =
         tpipe->g_tpipeImpl.shareBufPool_.maxAddr[static_cast<uint8_t>(TShareBuf::ShareHard::UB)];
 #endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162))
     Internal::g_bufId = Internal::g_sharedEvtId;
 #endif
     return;

@@ -23,6 +23,7 @@ from .platform_info import ASCEND_910P
 from .platform_info import HI3796CV300ES
 from .platform_info import HI3796CV300CS
 from .platform_info import SD3403
+from .platform_info import ASCEND_5162
 from .platform_info import ASCEND_610
 from .platform_info import ASCEND_610LITE
 from .platform_info import BS9SX2A

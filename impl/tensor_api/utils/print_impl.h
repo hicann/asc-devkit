@@ -273,7 +273,7 @@ __aicore__ inline void print(__gm__ const char* fmt, Arg0&& arg0, Args&&... args
     detail::print_format(fmt, static_cast<Arg0&&>(arg0), static_cast<Args&&>(args)...);
 }
 
-template <typename Value, typename Std::enable_if_t<!detail::is_print_string_v<Value>, int> = 0>
+template <typename Value, typename Std::enable_if_t<!detail::is_print_string_v<Value>, int>>
 __aicore__ inline void print(const Value& value)
 {
 #if !(defined(ASCENDC_DUMP) && (ASCENDC_DUMP == 0))

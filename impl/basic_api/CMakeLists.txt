@@ -167,6 +167,7 @@ install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/dav_m200 \$ENV{DES
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/dav_m300 \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/dav_m300 SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/dav_m310 \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/dav_m310 SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/dav_m510 \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/dav_m510 SYMBOLIC)" COMPONENT asc-devkit)
+install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/dav_v516 \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/dav_v516 SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_check.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/kernel_check.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_check_util.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/kernel_check_util.h SYMBOLIC)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../../../asc/impl/basic_api/kernel_event.h \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/ascendc/include/basic_api/impl/kernel_event.h SYMBOLIC)" COMPONENT asc-devkit)

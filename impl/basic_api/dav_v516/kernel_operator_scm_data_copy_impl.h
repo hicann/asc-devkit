@@ -16,7 +16,6 @@
 
 #ifndef ASCENDC_MODULE_OPERATOR_SCM_DATA_COPY_IMPL_H
 #define ASCENDC_MODULE_OPERATOR_SCM_DATA_COPY_IMPL_H
-#include "kfc/kfc_comm_client.h"
 
 namespace AscendC {
 struct Gm2L1Params {
@@ -49,48 +48,13 @@ struct Gm2L1Nd2NzParams {
 __aicore__ inline void ScmDataCopyMsg(
     __cbuf__ void* dst, __gm__ void* src, const DataCopyParams& intriParams, int32_t ubAddr)
 {
-    ASSERT(GetKfcClient() != nullptr);
-    auto msg = GetKfcClient()->AllocMessage();
-    ASSERT(sizeof(msg->buffer) >= sizeof(struct Gm2L1Params));
-
-    __ssbuf__ struct Gm2L1Params* p = (__ssbuf__ struct Gm2L1Params*)&(msg->buffer);
-    p->dst = dst;
-    p->src = src;
-    p->subBlockID = GetSubBlockIdxImpl();
-    p->blockCount = intriParams.blockCount;
-    p->blockLen = intriParams.blockLen;
-    p->srcStride = intriParams.srcStride;
-    p->dstStride = intriParams.dstStride;
-    msg->head = KfcMsgMakeFlag(KFC_Enum::SCMFUN_GM2L1, 0);
-    set_intra_block(PIPE_MTE3, static_cast<uint8_t>(CUBE_WAIT_INTRA_Enum::GM_L1_UB_GM));
-    GetKfcClient()->PostMessage<false>(msg);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ScmDataCopyMsg is not supported on current device"); });
 }
 
 __aicore__ inline void ScmDataCopyND2NZMsg(
     __cbuf__ void* dst, __gm__ void* src, const uint8_t dataTypeSize, const Nd2NzParams& intriParams, int32_t ubAddr)
 {
-    ASSERT(dst != nullptr);
-    ASSERT(src != nullptr);
-    ASSERT(GetKfcClient() != nullptr);
-    auto msg = GetKfcClient()->AllocMessage();
-    ASSERT(sizeof(msg->buffer) >= sizeof(struct Gm2L1Nd2NzParams));
-
-    auto p = (__ssbuf__ struct Gm2L1Nd2NzParams*)&(msg->buffer);
-    p->dst = dst;
-    p->src = src;
-    p->subBlockID = GetSubBlockIdxImpl();
-    p->dataTypeLen = dataTypeSize;
-    p->ndNum = intriParams.ndNum;
-    p->nValue = intriParams.nValue;
-    p->dValue = intriParams.dValue;
-    p->srcNdMatrixStride = intriParams.srcNdMatrixStride;
-    p->dstNzC0Stride = intriParams.dstNzC0Stride;
-    p->dstNzNStride = intriParams.dstNzNStride;
-    p->dstNzMatrixStride = intriParams.dstNzMatrixStride;
-    p->srcDValue = intriParams.srcDValue;
-    msg->head = KfcMsgMakeFlag(KFC_Enum::SCMFUN_GM2L1ND2NZ, 0);
-    set_intra_block(PIPE_MTE3, static_cast<uint8_t>(CUBE_WAIT_INTRA_Enum::GM_L1_UB_GM));
-    GetKfcClient()->PostMessage<false>(msg);
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ScmDataCopyND2NZMsg is not supported on current device"); });
 }
 } // namespace AscendC
 #endif

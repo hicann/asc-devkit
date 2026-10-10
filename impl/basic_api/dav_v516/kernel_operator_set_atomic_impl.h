@@ -24,188 +24,170 @@ __aicore__ inline void SetAtomicNoneImpl() { set_atomic_none(); }
 template <typename T>
 __aicore__ inline void SetAtomicAddImpl()
 {
-    static_assert(SupportType<T, float, half, int16_t, int32_t, int8_t, bfloat16_t>(), "Error type for SetAtomicAdd.");
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<float>()
 {
-    set_atomic_f32();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<half>()
 {
-    set_atomic_f16();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<int16_t>()
 {
-    set_atomic_s16();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<int32_t>()
 {
-    set_atomic_s32();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<int8_t>()
 {
-    set_atomic_s8();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicAddImpl<bfloat16_t>()
 {
-    set_atomic_bf16();
-    set_atomic_add();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicAdd is not supported on current device"); });
 }
 // set_atomic_max
 template <typename T>
 __aicore__ inline void SetAtomicMaxImpl()
 {
-    static_assert(SupportType<T, float, half, int16_t, int32_t, int8_t, bfloat16_t>(), "Error type for SetAtomicMax.");
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<float>()
 {
-    set_atomic_max();
-    set_atomic_f32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<half>()
 {
-    set_atomic_max();
-    set_atomic_f16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<int16_t>()
 {
-    set_atomic_max();
-    set_atomic_s16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<int32_t>()
 {
-    set_atomic_max();
-    set_atomic_s32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<int8_t>()
 {
-    set_atomic_max();
-    set_atomic_s8();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMaxImpl<bfloat16_t>()
 {
-    set_atomic_max();
-    set_atomic_bf16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMax is not supported on current device"); });
 }
 
 // set_atomic_min
 template <typename T>
 __aicore__ inline void SetAtomicMinImpl()
 {
-    static_assert(SupportType<T, float, half, int16_t, int32_t, int8_t, bfloat16_t>(), "Error type for SetAtomicMin.");
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<float>()
 {
-    set_atomic_min();
-    set_atomic_f32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<half>()
 {
-    set_atomic_min();
-    set_atomic_f16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<int16_t>()
 {
-    set_atomic_min();
-    set_atomic_s16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<int32_t>()
 {
-    set_atomic_min();
-    set_atomic_s32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<int8_t>()
 {
-    set_atomic_min();
-    set_atomic_s8();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicMinImpl<bfloat16_t>()
 {
-    set_atomic_min();
-    set_atomic_bf16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicMin is not supported on current device"); });
 }
 
 template <typename T>
 __aicore__ inline void SetAtomicTypeImpl()
 {
-    static_assert(SupportType<T, float, half, int16_t, int32_t, int8_t, bfloat16_t>(), "Error type for SetAtomicType.");
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<float>()
 {
-    set_atomic_f32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<half>()
 {
-    set_atomic_f16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<int16_t>()
 {
-    set_atomic_s16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<int32_t>()
 {
-    set_atomic_s32();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<int8_t>()
 {
-    set_atomic_s8();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 
 template <>
 __aicore__ inline void SetAtomicTypeImpl<bfloat16_t>()
 {
-    set_atomic_bf16();
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "SetAtomicType is not supported on current device"); });
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_SET_ATOMIC_ADD_IMPL_H

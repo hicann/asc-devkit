@@ -44,7 +44,7 @@ template <typename T>
 __aicore__ inline void VbitsortCal(
     __ubuf__ T* dstLocal, __ubuf__ T* src0Local, __ubuf__ uint32_t* src1Local, const ProposalIntriParams& intriParams)
 {
-    static_assert(SupportType<T, float, half>(), "current data type is not supported on current device");
+    static_assert(SupportType<T, half>(), "current data type is not supported on current device");
     uint64_t config = static_cast<uint64_t>(intriParams.repeat) << 56;
     vbs(dstLocal, src0Local, src1Local, config);
 }

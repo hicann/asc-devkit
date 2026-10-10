@@ -112,7 +112,7 @@ uint32_t GetSoftMaxMaxTmpSize(
 
     uint32_t needSize;
     if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_3003 ||
-        npuArch == NpuArch::DAV_5102) {
+        npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_5162) {
         uint32_t needSize1 = srcM * (BASIC_TILE_NUM + srcK) + SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_TMPFLASHUPDATE_COUNT +
                              (srcM + BASIC_TILE_NUM - 1) / BASIC_TILE_NUM * BASIC_TILE_NUM;
         uint32_t needSize2 = srcM * (elementNumPerBlk + srcK + SOFTMAX_BASICBLOCK_UNIT);
@@ -147,7 +147,7 @@ uint32_t GetSoftMaxMinTmpSize(
 
     uint32_t needSize;
     if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_3003 ||
-        npuArch == NpuArch::DAV_5102) {
+        npuArch == NpuArch::DAV_5102 || npuArch == NpuArch::DAV_5162) {
         uint32_t needSize1 = srcM * (BASIC_TILE_NUM + srcK) + SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_TMPFLASHUPDATE_COUNT +
                              (srcM + BASIC_TILE_NUM - 1) / BASIC_TILE_NUM * BASIC_TILE_NUM;
         uint32_t needSize2 = srcM * (elementNumPerBlk + srcK);
@@ -246,7 +246,8 @@ uint32_t GetSoftMaxFlashMaxTmpSize(
     const auto npuArch = platform->GetCurNpuArch();
 
     uint32_t needSize;
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_5162) {
         uint32_t needSize2 = srcM * (elementNumPerBlk + srcK + SOFTMAX_BASICBLOCK_UNIT);
         if (!isUpdate) {
             uint32_t needSize1 = srcM * (BASIC_TILE_NUM + srcK) + SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_FLOAT_SIZE +
@@ -289,7 +290,8 @@ uint32_t GetSoftMaxFlashMinTmpSize(
     const auto npuArch = platform->GetCurNpuArch();
 
     uint32_t needSize;
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_5162) {
         uint32_t needSize2 = srcM * (elementNumPerBlk + srcK);
         if (!isUpdate) {
             uint32_t needSize1 = srcM * (BASIC_TILE_NUM + srcK) + SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_FLOAT_SIZE +
@@ -426,7 +428,8 @@ uint32_t GetSoftMaxGradMinTmpSize(
     platform_ascendc::PlatformAscendC* platform = platform_ascendc::PlatformAscendCManager::GetInstance();
     ASCENDC_HOST_ASSERT((platform != nullptr), return 0, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_5162) {
         uint32_t needSize1 = (srcM * SOFTMAX_TMPBUFFER_COUNT + SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_TMPBUFFER_COUNT - 1) /
                              (SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_TMPBUFFER_COUNT) *
                              (SOFTMAX_BASICBLOCK_UNIT * SOFTMAX_TMPBUFFER_COUNT);
@@ -568,7 +571,8 @@ uint32_t GetSoftMaxFlashV2MaxTmpSize(
     const auto npuArch = platform->GetCurNpuArch();
 
     uint32_t needMaxSize = 0;
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_5162) {
         if (isUpdate) {
             if (srcM <= SOFTMAX_TMPBUFFER_COUNT) {
                 if (dataTypeSize1 == SOFTMAX_HALF_SIZE) {
@@ -661,7 +665,8 @@ uint32_t GetSoftMaxFlashV2MinTmpSize(
     const auto npuArch = platform->GetCurNpuArch();
 
     uint32_t needMinSize = 0;
-    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102) {
+    if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
+        npuArch == NpuArch::DAV_5162) {
         if (isUpdate) {
             if (dataTypeSize1 == SOFTMAX_HALF_SIZE) {
                 uint32_t size1 =
@@ -846,7 +851,7 @@ void GetSoftMaxFlashV3MaxMinTmpSize(
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
     if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
-        npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
+        npuArch == NpuArch::DAV_5162 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
         if (!isUpdate) {
             minValue = (srcM * SOFTMAX_BASICBLOCK_UNIT + srcM * srcK) * SOFTMAX_FLOAT_SIZE;
         } else {

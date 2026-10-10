@@ -45,7 +45,7 @@ __aicore__ inline void SiluCalcSimplified(
     Exp<T, false>(dstAddr, dstAddr, MASK_PLACEHOLDER, repeatTimes, unaryParams);
     PipeBarrier<PIPE_V>();
 
-    Adds<T, false>(dstAddr, dstAddr, 1.0, MASK_PLACEHOLDER, repeatTimes, unaryParams);
+    Adds<T, false>(dstAddr, dstAddr, 1.0f, MASK_PLACEHOLDER, repeatTimes, unaryParams);
     PipeBarrier<PIPE_V>();
 
     // silu(x) = x / x1
@@ -65,7 +65,8 @@ __aicore__ inline __inout_pipe__(V) void SiluCompute(
     ans = (std::is_same<T, half>::value) || (std::is_same<T, float>::value);
     ASCENDC_ASSERT(ans, { KERNEL_LOG(KERNEL_ERROR, "type must be half or float"); });
 #endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 5102)
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
     SetMaskCount();
     SetVectorMask<T>(0, dataSize);
     SiluCalcSimplified<T>(dstLocal, srcLocal, 1);

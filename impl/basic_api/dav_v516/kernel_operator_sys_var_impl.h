@@ -29,7 +29,7 @@ __aicore__ inline int64_t GetSubBlockIdxImpl()
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     return 0;
 #else
-    return get_subblockid();
+    return 0;
 #endif
 }
 

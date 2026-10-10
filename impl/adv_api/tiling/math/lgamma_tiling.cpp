@@ -64,7 +64,7 @@ void GetLgammaMaxMinTmpSize(
     ASCENDC_HOST_ASSERT((platform != nullptr), return, "Failed to get PlatformAscendC.");
     const auto npuArch = platform->GetCurNpuArch();
     if (npuArch == NpuArch::DAV_3510 || npuArch == NpuArch::DAV_9201 || npuArch == NpuArch::DAV_5102 ||
-        npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
+        npuArch == NpuArch::DAV_5162 || npuArch == NpuArch::DAV_3003 || npuArch == NpuArch::DAV_3113) {
         minValue = inputSize * LGAMMA_FLOAT_SIZE;
         maxValue = minValue;
     } else {

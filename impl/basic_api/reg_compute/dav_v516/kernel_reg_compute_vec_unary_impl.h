@@ -91,22 +91,6 @@ __aicore__ inline constexpr Log10SpecificMode GetLog10SpecificMode(const Log10Sp
     return {.mrgMode = sprMode->mrgMode, .algo = sprMode->algo};
 }
 } // namespace Internal
-template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
-__simd_callee__ inline void AbsB64Impl(T& dstReg, T& srcReg, MaskReg& mask)
-{
-    using ActualT = typename T::ActualT;
-    static_assert(sizeof(ActualT) == 8, "AbsB64Impl data type should be B64");
-    static_assert(CheckRegTrait<T, RegTraitNumTwo>(), "AbsB64Impl T should be RegTraitNumTwo");
-    constexpr auto modeValue = GetMaskMergeMode<mode>();
-    RegTensor<int32_t, RegTraitNumOne> zeroReg, lowReg, highReg;
-    MaskReg carryMask, carryLow, carryHigh;
-    vbr(zeroReg, 0);
-    vcmp_lt(carryMask, (RegTensor<int32_t>&)srcReg.reg[1], zeroReg, mask);
-    Sub(carryLow, lowReg, zeroReg, (RegTensor<int32_t>&)srcReg.reg[0], carryMask);
-    SubC(carryHigh, highReg, zeroReg, (RegTensor<int32_t>&)srcReg.reg[1], carryLow, carryMask);
-    vsel((RegTensor<int32_t>&)dstReg.reg[0], lowReg, (RegTensor<int32_t>&)srcReg.reg[0], carryMask);
-    vsel((RegTensor<int32_t>&)dstReg.reg[1], highReg, (RegTensor<int32_t>&)srcReg.reg[1], carryMask);
-}
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void AbsImpl(U& dstReg, U& srcReg, MaskReg& mask)
@@ -114,28 +98,12 @@ __simd_callee__ inline void AbsImpl(U& dstReg, U& srcReg, MaskReg& mask)
     using ActualT = typename U::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        SupportType<ActualT, int8_t, int16_t, int32_t, half, float, int64_t>(),
+        SupportType<ActualT, int8_t, int16_t, int32_t, half, float>(),
         "current data type is not supported on current device!");
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(), "current Abs api only supported Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<mode>();
-    if constexpr (sizeof(ActualT) != 8) {
-        vabs(dstReg, srcReg, mask, modeValue);
-    } else {
-        if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
-            MaskReg maskTrait2;
-            MaskPack(maskTrait2, mask);
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-            B64TraitOneToTraitTwo(traitTwoSrcReg, srcReg);
-            AbsB64Impl<mode>(traitTwoDstReg, traitTwoSrcReg, maskTrait2);
-            B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-        } else if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-            U dstTemp;
-            AbsB64Impl<mode>(dstTemp, srcReg, mask);
-            dstReg = dstTemp;
-        }
-    }
+    vabs(dstReg, srcReg, mask, modeValue);
 }
 
 template <
@@ -401,39 +369,24 @@ __simd_callee__ inline void SqrtImpl(U& dstReg, U& srcReg, MaskReg& mask)
                 "Reg Sqrt for high precision mode by using fast_inverse approach only supports float.");
             SqrtFastInverseImpl<T, mode, U>(dstReg, srcReg, mask);
         } else if constexpr (sprMode.algo == SqrtAlgo::PRECISION_1ULP_FTZ_FALSE) {
+            static_assert(SupportType<T, half>(), "Sqrt for PRECISION_1ULP_FALSE only supports half on current device");
             RegTensor<T> tmpReg;
             RegTensor<T> dstRegCopy;
             RegTensor<T> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
-            if constexpr (IsSameType<ActualT, half>::value) {
-                HalfUnion multiplyFactor0;
-                multiplyFactor0.i = 0x6C00;
-                HalfUnion multiplyFactor1;
-                multiplyFactor1.i = 0x2400;
-                HalfUnion subnormalThreshold;
-                subnormalThreshold.i = 0x03FF;
+            HalfUnion multiplyFactor0;
+            multiplyFactor0.i = 0x6C00;
+            HalfUnion multiplyFactor1;
+            multiplyFactor1.i = 0x2400;
+            HalfUnion subnormalThreshold;
+            subnormalThreshold.i = 0x03FF;
 
-                vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
-                vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
-                vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
-                vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
-                vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
-                vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
-            } else if constexpr (IsSameType<ActualT, float>::value) {
-                NotNumUnion multiplyFactor0;
-                multiplyFactor0.i = 0x4B800000;
-                NotNumUnion multiplyFactor1;
-                multiplyFactor1.i = 0x39800000;
-                NotNumUnion subnormalThreshold;
-                subnormalThreshold.i = 0x007FFFFF;
-
-                vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
-                vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
-                vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
-                vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
-                vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
-                vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
-            }
+            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
+            vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
+            vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
+            vmuls(tmpReg, dstRegCopy, multiplyFactor1.f, mask, modeValue);
+            vsel(dstReg, tmpReg, dstRegCopy, cmpMaskReg);
         } else {
             vsqrt(dstReg, srcReg, mask, modeValue);
         }
@@ -688,44 +641,18 @@ __simd_callee__ inline void Log10Impl(U& dstReg, U& srcReg, MaskReg& mask)
     }
 }
 
-template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
-__simd_callee__ inline void NegB64Impl(T& dstReg, T& srcReg, MaskReg& mask)
-{
-    using ActualT = typename T::ActualT;
-    static_assert(sizeof(ActualT) == 8, "T data type should be B64");
-    static_assert(CheckRegTrait<T, RegTraitNumTwo>(), "T should be RegTraitNumTwo");
-    constexpr auto modeValue = GetMaskMergeMode<mode>();
-    T zeroReg;
-    Duplicate(zeroReg, (int64_t)0, mask);
-    Sub(dstReg, zeroReg, srcReg, mask);
-}
-
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void NegImpl(U& dstReg, U& srcReg, MaskReg& mask)
 {
     using ActualT = typename U::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
-        SupportType<ActualT, int8_t, int16_t, int32_t, int64_t, half, float>(),
+        SupportType<ActualT, int8_t, int16_t, int32_t, half, float>(),
         "current data type is not supported on current device!");
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(), "current Neg api only supported Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<mode>();
-    if constexpr (sizeof(ActualT) != 8) {
-        vneg(dstReg, srcReg, mask, modeValue);
-    } else {
-        if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
-            MaskReg maskTrait2;
-            MaskPack(maskTrait2, mask);
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-            B64TraitOneToTraitTwo(traitTwoSrcReg, srcReg);
-            NegB64Impl<mode>(traitTwoDstReg, traitTwoSrcReg, maskTrait2);
-            B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-        } else if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-            NegB64Impl<mode>(dstReg, srcReg, mask);
-        }
-    }
+    vneg(dstReg, srcReg, mask, modeValue);
 }
 
 template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
