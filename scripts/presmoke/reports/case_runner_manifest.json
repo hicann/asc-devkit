@@ -15990,31 +15990,6 @@
     ]
   },
   {
-    "case": "03_simt_api/02_features/01_api_features/02_atomic_operation/histogram",
-    "runner": "scripts/presmoke/cases/03_simt_api/02_features/01_api_features/02_atomic_operation/histogram/run.sh",
-    "source": "readme",
-    "confidence": "medium",
-    "source_case": "03_simt_api/02_features/01_api_features/02_atomic_operation/histogram",
-    "supported_archs": [
-      "dav-3510"
-    ],
-    "supported_modes": [
-      "npu"
-    ],
-    "target_runnable": false,
-    "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "reasons": [
-      "unsupported_on_target_arch_or_mode"
-    ],
-    "commands": [
-      "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
-      "make -j",
-      "./histogram"
-    ]
-  },
-  {
     "case": "03_simt_api/02_features/01_api_features/03_warp_instruction/sobel_warp_shfl",
     "runner": "scripts/presmoke/cases/03_simt_api/02_features/01_api_features/03_warp_instruction/sobel_warp_shfl/run.sh",
     "source": "readme",
