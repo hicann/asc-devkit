@@ -42,13 +42,13 @@
 下图展示了随路量化、随路ReLU、随路格式转换、随路通道拆分以及随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
 
 <!-- npu="A3,910b" id11 -->
-**图1** L0C2GM流程图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002542828493_fig542810249417"></a>  
+**图1** L0C2GM流程图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002542828493_fig542810249417"></a>
 
 ![](../../../../figures/L0C2GM_Function_Combination.png)
 <!-- end id11 -->
 
 <!-- npu="950" id13 -->
-**图 2** L0C2GM流程图（[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002542828493_fig542810249613"></a>  
+**图 2** L0C2GM流程图（[NPU架构版本3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002542828493_fig542810249613"></a>
 
 ![](../../../../figures/L0C2GM_Function_Combination_950.png)
 <!-- end id13 -->
@@ -297,6 +297,7 @@
     对于整数类型只有饱和模式。
     L0C Buffer到GM搬运接口的边界值汇总请见[矩阵计算搬出相关接口边界值汇总](../../../../appendix/matrix_compute_move_out_interface_boundary_value_summary.md)。
 <!-- end id29 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM_res.md#id3 -->
 
 ## 调用示例<a id="zh-cn_topic_0000002542828493_section088124295117"></a>
 
@@ -308,7 +309,7 @@ Fixpipe完整样例请参考[fixpipe\_l0c2gm样例](../../../../../../../example
     ```cpp
         AscendC::GlobalTensor<outputType> cGM;
         cGM.SetGlobalBuffer((__gm__ outputType *)c);
-    
+
     #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2201)
         AscendC::FixpipeParamsV220 fixpipeParams;
         fixpipeParams.ndNum = 1;

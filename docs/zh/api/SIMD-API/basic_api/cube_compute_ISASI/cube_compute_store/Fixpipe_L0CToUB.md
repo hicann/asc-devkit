@@ -40,7 +40,7 @@
 <!-- npu="950" id10 -->
 以Ascend 950PR&950DT系列产品为例，下图展示了随路量化、随路ReLU、随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
 
-**图2** L0C2UB流程图<a id="zh-cn_topic_0000002542828493_fig1828513492547"></a>  
+**图2** L0C2UB流程图<a id="zh-cn_topic_0000002542828493_fig1828513492547"></a>
 
 ![](../../../../figures/L0C2UB_Function_Combination_950.png)
 <!-- end id10 -->
@@ -204,6 +204,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 <!-- end id18 -->
 
 <!-- npu="950" id20 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB_res.md#id3 -->
 
 ## 关键特性说明
 
@@ -222,7 +223,7 @@ L0C Buffer到UB数据搬运提供矩阵搬出的组合接口Fixpipe，接口内�
 - srcStride = 64，表示源NZ矩阵中待搬运矩阵相邻Z排布的起始地址偏移，即下图中第一个蓝色Z排布的起始地址与第二个蓝色Z排布的起始地址之间的间隔为64 \* C0\_Size。
 - dstStride = 40 \* C0，表示目的NZ矩阵中相邻Z排布的起始地址偏移，即下图中第一个蓝色Z排布的起始地址与第二个蓝色Z排布的起始地址之间的间隔为40 \* 16个元素。
 
-**图1** 不开启NZ2ND参数的单搬运模式设置示意图<a name="fig128961542184620"></a>  
+**图1** 不开启NZ2ND参数的单搬运模式设置示意图<a name="fig128961542184620"></a>
 
 ![](../../../../figures/no_nz2nd_single_mode.png "不开启NZ2ND参数的单搬运模式设置示意图")
 
@@ -244,7 +245,7 @@ M方向切分：
 - srcStride = 64，表示源NZ矩阵中待搬运矩阵相邻Z排布的起始地址偏移，即下图中第一个块Z排布矩阵的起始地址与第二个Z排布矩阵的起始地址之间的间隔为64 \* C0\_Size。
 - dstStride = 40 \* C0，表示目的NZ矩阵中相邻Z排布的起始地址偏移，即下图中UB0（或UB1）中第一个Z排布的起始地址与第二个Z排布的起始地址之间的间隔为40 \*  16个元素。
 
-**图2** 不开启NZ2ND参数和NZ2DN参数的双目标搬运模式设置示意图<a name="fig6561154491913"></a>  
+**图2** 不开启NZ2ND参数和NZ2DN参数的双目标搬运模式设置示意图<a name="fig6561154491913"></a>
 
 ![](../../../../figures/no_nz2nd_dual_target_mode.png "不开启NZ2ND参数和NZ2DN参数的双目标搬运模式设置示意图")
 
@@ -260,7 +261,7 @@ M方向切分：
 - srcNdStride = 16，表示不同NZ矩阵起始地址之间的间隔为16 \*  16 \* C0\_Size。
 - dstNdStride  = 4096，表示目的相邻ND矩阵起始地址之间的偏移为4096个元素。
 
-**图3** 开启NZ2ND参数设置示意图<a name="fig79783143556"></a>  
+**图3** 开启NZ2ND参数设置示意图<a name="fig79783143556"></a>
 
 ![](../../../../figures/enable_nz2nd_config.png "开启NZ2ND参数设置示意图")
 
@@ -274,7 +275,7 @@ M方向切分：
 - srcNdStride = 256，表示不同NZ矩阵起始地址之间的间隔为256，单位为C0\_Size。
 - dstNdStride  = 4096，表示目的相邻ND矩阵起始地址之间的偏移为4096个元素。
 
-**图4** 开启NZ2ND参数的单搬入模式设置示意图<a name="fig11991024112516"></a>  
+**图4** 开启NZ2ND参数的单搬入模式设置示意图<a name="fig11991024112516"></a>
 
 ![](../../../../figures/enable_nz2nd_single_load.png "开启NZ2ND参数的单搬入模式设置示意图")
 
@@ -289,7 +290,7 @@ M方向切分：
 - srcNdStride = 240，表示不同NZ矩阵起始地址之间的间隔为240 \* C0\_Size。
 - dstNdStride  = 4096，表示目的相邻ND矩阵起始地址之间的偏移为4096个元素。
 
-    **图5** 开启NZ2ND参数双搬入模式设置示意图<a name="fig8810182815117"></a>  
+    **图5** 开启NZ2ND参数双搬入模式设置示意图<a name="fig8810182815117"></a>
 
     ![](../../../../figures/enable_nz2nd_dual_load.png "开启NZ2ND参数双搬入模式设置示意图")
 
@@ -311,7 +312,7 @@ M方向切分：
 - srcNzC0Stride = 1：表示源矩阵NZ分形相邻行的地址偏移。
 - dstDnMatrixStride：表示相邻DN矩阵起始地址间的偏移为48 \* 80 =3840个元素。
 
-**图6** 开启NZ2DN单搬运模式示意图1<a name="fig19772110476"></a>  
+**图6** 开启NZ2DN单搬运模式示意图1<a name="fig19772110476"></a>
 
 ![](../../../../figures/enable_nz2dn_single_mode1.png "开启NZ2DN单搬运模式示意图1")
 
@@ -327,7 +328,7 @@ M方向切分：
 - srcNzC0Stride = 2：表示源矩阵NZ分形相邻行的地址偏移。
 - dstDnMatrixStride：表示相邻DN矩阵起始地址间的偏移为48 \* 60 = 2880个元素。
 
-**图7** 开启NZ2DN单搬运模式示意图2<a name="fig769114585716"></a>  
+**图7** 开启NZ2DN单搬运模式示意图2<a name="fig769114585716"></a>
 
 ![](../../../../figures/enable_nz2dn_single_mode2.png "开启NZ2DN单搬运模式示意图2")
 <!-- end id20 -->
@@ -345,7 +346,7 @@ M方向切分：
 
     AscendC::LocalTensor<outputType> cUB;
     cUB = AscendC::LocalTensor<outputType>(AscendC::TPosition::VECOUT, 0, cSingleSize);
-    
+
     AscendC::FixpipeParamsArch3510<AscendC::CO2Layout::ROW_MAJOR> fixpipeParams;
     fixpipeParams.mSize = baseM;
     fixpipeParams.nSize = baseN;
