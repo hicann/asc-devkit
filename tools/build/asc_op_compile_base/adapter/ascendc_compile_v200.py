@@ -19,7 +19,6 @@ from tbe.common.buildcfg import get_current_build_config
 from .get_op_tiling import TilingInfo
 from .log_utils import CompileStage
 from .global_storage import global_var_storage
-from .ascendc_constants import ASCENDC_OOM
 from .ascendc_compile_base import SingleTilingKeyCompileParams, add_op_system_run_cfg_option
 from .ascendc_compile_dfx import DFXSectionGenerator
 from .ascendc_common_utility import CommonUtility, CompileInfo
