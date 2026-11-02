@@ -113,9 +113,9 @@ $$
   <caption>表4：LeakyRelu样例规格描述</caption>
   <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="4" align="center">LeakyRelu</td></tr>
   <tr><td rowspan="3" align="center">样例输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">x</td><td align="center">[8, 200, 1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td align="center">x</td><td align="center">[8, 16, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td align="center">negative_slope</td><td align="center">0.0</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td rowspan="1" align="center">样例输出</td><td align="center">y</td><td align="center">[8, 200, 1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td rowspan="1" align="center">样例输出</td><td align="center">y</td><td align="center">[8, 16, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">leaky_relu_custom</td></tr>
   </table>
 

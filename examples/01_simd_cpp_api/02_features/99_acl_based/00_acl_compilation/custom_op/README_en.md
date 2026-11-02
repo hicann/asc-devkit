@@ -113,9 +113,9 @@ where a is a scalar value.
   <caption>Table 4: LeakyRelu Example Specification Description</caption>
   <tr><td rowspan="1" align="center">Example Type (OpType)</td><td colspan="4" align="center">LeakyRelu</td></tr>
   <tr><td rowspan="3" align="center">Example Input</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
-  <tr><td align="center">x</td><td align="center">[8, 200, 1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td align="center">x</td><td align="center">[8, 16, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td align="center">negative_slope</td><td align="center">0.0</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td rowspan="1" align="center">Example Output</td><td align="center">y</td><td align="center">[8, 200, 1024]</td><td align="center">float</td><td align="center">ND</td></tr>
+  <tr><td rowspan="1" align="center">Example Output</td><td align="center">y</td><td align="center">[8, 16, 128]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">leaky_relu_custom</td></tr>
   </table>
 

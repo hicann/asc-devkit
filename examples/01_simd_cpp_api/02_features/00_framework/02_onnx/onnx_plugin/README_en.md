@@ -60,7 +60,7 @@ This example uses the `aclmdlExecute` interface to perform model inference. The 
   mkdir -p build; cd build
   python3 ../leaky_relu.py
   # Use the ATC model conversion tool to convert the *.onnx model to a *.om model
-  atc --model=./leaky_relu.onnx --framework=5 --soc_version=${soc_version} --output=./leaky_relu_custom --input_shape="X:8,16,1024" --input_format=ND
+  atc --model=./leaky_relu.onnx --framework=5 --soc_version=${soc_version} --output=./leaky_relu_custom --input_shape="X:8,16,128" --input_format=ND
   cmake .. && make -j
   ./execute_leaky_relu_op
   ```

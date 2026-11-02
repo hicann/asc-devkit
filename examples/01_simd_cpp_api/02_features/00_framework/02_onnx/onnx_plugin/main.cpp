@@ -53,7 +53,7 @@ int32_t main(int32_t argc, char** argv)
     aclDataBuffer* output0Buffer = aclCreateDataBuffer(output0DeviceMem, modelOutputSize);
     CHECK_ACL(aclmdlAddDatasetBuffer(modelOutputDataset, output0Buffer));
 
-    const std::vector<int64_t> shape = {8, 16, 1024};
+    const std::vector<int64_t> shape = {8, 16, 128};
     const int64_t elementCount = shape[0] * shape[1] * shape[2];
     std::vector<float> input0HostData(elementCount);
     for (int64_t i = 0; i < elementCount; ++i) {

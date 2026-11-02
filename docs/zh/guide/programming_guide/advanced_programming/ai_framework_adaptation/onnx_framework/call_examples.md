@@ -15,7 +15,7 @@ LeakyRelu算子实现的完整样例请参考[LINK](../../../../../../../example
 2.  执行如下命令生成离线模型。（如下命令中使用的目录以及文件均为样例，请以实际为准）
 
     ```
-    atc --model=$HOME/module/leaky_relu.onnx --framework=5 --soc_version=<soc_version> --output=$HOME/module/out/leaky_relu --input_shape="X:8,16,1024" --input_format=ND
+    atc --model=$HOME/module/leaky_relu.onnx --framework=5 --soc_version=<soc_version> --output=$HOME/module/out/leaky_relu --input_shape="X:8,16,128" --input_format=ND
     ```
 
     关键参数的解释如下：
@@ -25,7 +25,7 @@ LeakyRelu算子实现的完整样例请参考[LINK](../../../../../../../example
     -   --output：转换后的离线模型的路径以及文件名。请注意，记录保存该om模型文件的路径，后续开发应用时需要使用。
     -   --soc\_version：AI处理器的型号。
 
-    -   --input\_shape：指定模型输入数据的shape，请基于算子支持的shape范围和实际使用场景进行设置，这里设置输入X为固定shape \[8,16,1024\]。
+    -   --input\_shape：指定模型输入数据的shape，请基于算子支持的shape范围和实际使用场景进行设置，这里设置输入X为固定shape \[8,16,128\]。
     -   --input\_format：指定模型输入数据的格式，请基于算子支持的格式和实际使用场景进行设置，这里配置为ND。
 
 3.  使用export ASCEND\_GLOBAL\_LOG\_LEVEL=1改变日志级别为INFO，若出现如下提示信息，则说明进入了Ascend C自定义算子编译流程且模型转换成功。
