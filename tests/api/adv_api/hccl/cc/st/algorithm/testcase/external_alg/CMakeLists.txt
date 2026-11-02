@@ -205,6 +205,7 @@ add_executable(${HCCL_EXTERNAL_ALG_TARGET}
     ../main.cc
     external_alg_testcase.cc
     external_alg_full_testcase.cpp
+    ../half_alltoallv_selector_testcase.cc
     ${EXT_ALG_EXECUTORS}
     ${EXT_ALG_SELECTORS}
     ${EXT_ALG_TEMPLATES}

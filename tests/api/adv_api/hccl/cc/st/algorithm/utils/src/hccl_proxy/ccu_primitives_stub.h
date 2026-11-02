@@ -267,6 +267,9 @@ Result NotifyWait(ChannelHandle channel, uint32_t localNotifyIndex, uint16_t mas
 Result NotifyRecord(ChannelHandle channel, uint32_t remoteNotifyIndex, uint16_t mask = 1);
 Result EventRecord(Event event, uint16_t mask = 1);
 Result EventWait(Event event, uint16_t mask = 1);
+// 同卡内跨 core 通知（与真实现的 tag 配对语义对齐；UT 侧按普通通知原语捕获）
+Result EventRecord(const char* notifyTag, uint16_t mask = 1);
+Result EventWait(const char* notifyTag, uint16_t mask = 1);
 Result Write(
     ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, Event event, uint16_t mask = 1);
 Result LocalCopy(LocalAddr destination, LocalAddr source, Variable length, Event event, uint16_t mask = 1);

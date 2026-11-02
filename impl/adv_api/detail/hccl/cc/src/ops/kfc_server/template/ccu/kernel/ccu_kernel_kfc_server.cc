@@ -22,6 +22,7 @@
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d_multi_jetty.h"
+#include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_half_alltoallv_mesh1d.h"
 #include "ccu_kernel_kfc_server.h"
 #include "ccu_variable_dl.hpp"
 #include "ccu_func_dl.hpp"
@@ -137,13 +138,40 @@ static CcuResult CompArgs(KfcServerContext& ctx)
     return CCU_SUCCESS;
 }
 
-void MissionPreSync(const ccu::Variable& func, const KfcServerContext& ctx)
+CcuResult MissionPreSync(const ccu::Variable& func, KfcServerContext& ctx)
 {
     (void)func;
-    (void)ctx;
+
+    // 单 mission 时短路；门控必须用宿主常量（CCU_IF 两分支构图期都会执行）
+    const uint32_t hostMissionNum = GetKfcServerMissionNum(ctx.arg->opParam.algName);
+    if (hostMissionNum == 1) {
+        return CCU_SUCCESS;
+    }
+
+    // tag 栅栏实现 mission 间互斥等待。tag 按发出方 mission 命名，每个 kernel 只
+    // export 一个 tag（同名 tag 会在 ProcessInterCtxRes 合并时冲突）；record 注册到
+    // imported（发信号侧）、wait 注册到 exported（等信号侧），跨 mission 配对。
+    if (ctx.arg->hostMissionIndex == 0) {
+        // mission 0: post bit 0, wait bit 1
+        CCU_CHK_RET(ccu::EventRecord("MiSync_m0", 1 << 0));
+        CCU_CHK_RET(ccu::EventWait("MiSync_m1", 1 << 1));
+    } else {
+        // mission 1: post bit 1, wait bit 0
+        CCU_CHK_RET(ccu::EventRecord("MiSync_m1", 1 << 1));
+        CCU_CHK_RET(ccu::EventWait("MiSync_m0", 1 << 0));
+    }
+    return CCU_SUCCESS;
 }
 
-void MissionPostSync(const KfcServerContext& ctx) { (void)ctx; }
+CcuResult MissionPostSync(KfcServerContext& ctx)
+{
+    // 单 mission 时短路；双 mission 下远程 Post 由算子 kernel 的 PostSync 实现
+    const uint32_t hostMissionNum = GetKfcServerMissionNum(ctx.arg->opParam.algName);
+    if (hostMissionNum == 1) {
+        return CCU_SUCCESS;
+    }
+    return CCU_SUCCESS;
+}
 
 CcuResult WaitTurnStartSig(const ccu::Variable& hbmSigAddr, ccu::Variable& turnStartSig, const KfcServerContext& ctx)
 {
@@ -403,6 +431,13 @@ static void DispatchKfcSubKernel(
                 param[HBM_PARAM_IDX_8], param[HBM_PARAM_IDX_9], param[HBM_PARAM_IDX_10], ctx.arg->channels,
                 ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->loadFromMem);
         }
+    } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_HALF_ALLTOALLV) {
+        CcuKfcHalfAlltoAllVMesh1DKernel(
+            param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], param[HBM_PARAM_IDX_3], param[HBM_PARAM_IDX_4],
+            param[HBM_PARAM_IDX_5], param[HBM_PARAM_IDX_6], param[HBM_PARAM_IDX_7], param[HBM_PARAM_IDX_8], ctx.token,
+            ctx.arg->channels, ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId,
+            ctx.arg->localWinAddr, ctx.missionNum, ctx.missionIndex, ctx.arg->hostMissionIndex,
+            GetKfcServerMissionNum(ctx.arg->opParam.algName));
     }
 }
 
@@ -447,9 +482,9 @@ CcuResult KfcServerGenCircularQueue(KfcServerContext& ctx)
         CCU_IF(param[HBM_PARAM_IDX_0] == INVALID_U64) { repeatCond = 1; }
         CCU_IF(param[HBM_PARAM_IDX_0] != INVALID_U64)
         {
-            MissionPreSync(param[HBM_PARAM_IDX_0], ctx);
+            CCU_CHK_RET(MissionPreSync(param[HBM_PARAM_IDX_0], ctx));
             DispatchKfcSubKernel(param, ctx, recordAddr);
-            MissionPostSync(ctx);
+            CCU_CHK_RET(MissionPostSync(ctx));
             // D3：SoleNHR AG kernel 已在末步同步后、PostSync 前写 turn-end（AIV 提前返回），
             // 其余角色维持 dispatch 后统一发放。条件为宿主侧常量，不产生运行时分支指令。
             if (!KernelEmitsEarlyTurnEnd(ctx)) {
@@ -473,28 +508,44 @@ CcuResult KfcServerGenCircularQueue(KfcServerContext& ctx)
 
 CcuResult SlaveKfcServerGenCircularQueue(KfcServerContext& ctx)
 {
-    ccu::Variable signature; // 算子签名
-
+    ccu::Variable signature;  // 算子签名
     ccu::Variable repeatCond; // 存放《控制repeat循环执行的条件》的寄存器
     repeatCond = 0;
 
     ccu::Variable paramAddr;
     paramAddr = ctx.xnAddr;
 
+    // 参数循环队列 wraparound 游标（声明即初始化见下方赋值，参数帧推进与回绕共用）。
+    // 不可写为 "Variable x = imm"：Variable 无整型转换构造，须经 operator= 赋值。
+    ccu::Variable paramSize;
+    paramSize = CCU_PARAM_NUM_MAX * CCU_ONE_PARAM_SIZE;
+    ccu::Variable queueIdx;
+    queueIdx = 0;
+    ccu::Variable one;
+    one = 1;
+
     ccu::Array<ccu::Variable> param(CCU_PARAM_NUM_PER_DIE); // 存放<每轮算子参数>的寄存器
 
     CCU_WHILE(repeatCond == 0)
     {
-        MissionPreSync(signature, ctx);                              // 在context中依次加入8轮指令
-        CCU_CHK_RET(LoadFuncParamFromMemory(paramAddr, param, ctx)); // 读取本轮参数
-
+        // 哨兵轮次不进 barrier，保持 slave 与 master 的 barrier 对称
+        CCU_CHK_RET(LoadFuncParamFromMemory(paramAddr, param, ctx));
         CCU_IF(param[HBM_PARAM_IDX_0] == INVALID_U64) { repeatCond = 1; }
         CCU_IF(param[HBM_PARAM_IDX_0] != INVALID_U64)
         {
+            CCU_CHK_RET(MissionPreSync(param[HBM_PARAM_IDX_0], ctx));
             // turnEndAddr 仅 SoleNHR AG 消费；slave 不会以该角色 dispatch（死代码路径，保持编译）。
             DispatchKfcSubKernel(param, ctx, ctx.recordAddr);
+            CCU_CHK_RET(MissionPostSync(ctx));
         }
-        MissionPostSync(ctx);
+        // 推进参数地址游标，wraparound at CCU_TASK_NUM_MAX
+        paramAddr += paramSize;
+        queueIdx += one;
+        CCU_IF(queueIdx == static_cast<u64>(CCU_TASK_NUM_MAX))
+        {
+            paramAddr = ctx.xnAddr;
+            queueIdx = 0;
+        }
     }
     return CCU_SUCCESS;
 }

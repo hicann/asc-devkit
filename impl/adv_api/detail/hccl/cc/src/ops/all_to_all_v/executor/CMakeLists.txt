@@ -16,3 +16,9 @@ if(NOT HCCL_CANN_COMPAT_850)
         ${CMAKE_CURRENT_SOURCE_DIR}/ins_v2_all_to_all_concurrent_executor.cc
     )
 endif()
+
+if(MC2_CLIENT_ENABLE_CCU)
+    target_sources(mc2_client PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/ins_v2_half_all_to_all_v_sole_executor.cc
+    )
+endif()

@@ -352,6 +352,9 @@ struct CcuKernelInfo {
     void* kernelArg;
     // kernel所需channel
     std::vector<HcclChannelDesc> channels;
+    // 本端window基址，仅HALF_ALLTOALLV使用：设备侧AlltoAllvWrite契约不传recvBuf，
+    // 本rank自留分片的落点需在建图期确定，由模板CalcRes填充、KfcServer继承
+    uint64_t localWinAddr = 0;
 
 private:
     std::shared_ptr<CcuKernelArgBase> kernelArgSmartPtr;
@@ -503,6 +506,7 @@ struct AlgHierarchyInfoForAllLevel {
     std::vector<std::vector<std::vector<u32>>> infos; // 第一维表示有多少level，第二维是每个level的rankID
     std::vector<std::vector<PhysicalLevelIndex>> physicalIdxForAlgoLevels; // 每个算法层可对应多个物理层
 };
+
 // 如果能够序列化那么就是下面的结构体
 // 先序列化，把东西考到device，然后把指针存到OpParam，在device侧反序列该指针执行的内存
 struct AlgResourceCtxSerializable {

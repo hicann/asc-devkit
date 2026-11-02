@@ -40,6 +40,7 @@ constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_KERNEL_NAME[] = "CcuKernelKfcReduceS
 constexpr char KFC_RS_SOLE_NHR_ALG_NAME[] = "CcuSchedReduceScatterSoleNHRMultiLink";
 constexpr char KFC_RS_SOLE_NHR_2DIE_ALG_NAME[] = "CcuSchedReduceScatterSoleNHR";
 constexpr char KFC_AG_SOLE_NHR_ALG_NAME[] = "CcuSchedAllGatherSoleNHR";
+constexpr char KFC_HALF_ALLTOALLV_ALG_NAME[] = "CcuHalfAll2AllVMesh1D";
 
 struct KfcNhrStepInfo {
     uint32_t step = 0;
@@ -59,7 +60,8 @@ inline uint32_t GetKfcServerMissionNum(const char* algName)
     if (std::strcmp(algName, KFC_CONCURRENT_ALL_GATHER_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_PARALLEL_ALL_GATHER_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME) == 0 ||
-        std::strcmp(algName, KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME) == 0) {
+        std::strcmp(algName, KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME) == 0 ||
+        std::strcmp(algName, KFC_HALF_ALLTOALLV_ALG_NAME) == 0) {
         return KFC_MAX_MISSION_NUM;
     }
     return 1U;

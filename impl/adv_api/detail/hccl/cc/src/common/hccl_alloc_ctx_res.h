@@ -48,6 +48,9 @@ constexpr uint32_t INIT_TILING_VERSION = 100U;
 constexpr uint32_t INIT_TILING_CCU_NEW_VERSION = 101U;
 constexpr uint32_t MAX_CC_TILING_NUM = 8U;
 
+constexpr uint32_t RES_IDX_CCL_BUFFER_ADDR = 3U;
+constexpr uint32_t RES_IDX_CCL_BUFFER_SIZE = 4U;
+
 struct Mc2ServerCfg {
     uint32_t version;
     uint8_t debugMode;
@@ -132,7 +135,8 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedAllGatherSoleNHR", AlgorithmType::CcuSchedAllGatherSoleNHR},
     {"CcuSchedReduceScatterConcurMeshNHRMultiLink", AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink},
     {"CcuSchedReduceScatterSoleNHRMultiLink", AlgorithmType::CcuSchedReduceScatterSoleNHRMultiLink},
-    {"CcuSchedReduceScatterSoleNHR", AlgorithmType::CcuSchedReduceScatterSoleNHR}};
+    {"CcuSchedReduceScatterSoleNHR", AlgorithmType::CcuSchedReduceScatterSoleNHR},
+    {"CcuHalfAll2AllVMesh1D", AlgorithmType::CcuHalfAll2AllVMesh1D}};
 
 typedef HcclResult (*OpParamPrepareFunc)(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);
@@ -182,6 +186,9 @@ HcclResult PrepareParamForAlltoAll(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);
 
 HcclResult PrepareParamForAlltoAllV(
+    HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);
+
+HcclResult PrepareParamForHalfAlltoAllV(
     HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param);
 
 HcclResult PrepareOpParams(HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& opParam);

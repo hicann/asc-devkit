@@ -58,6 +58,8 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_2die_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d_multi_jetty.cc
+    # kfc_server 的 HALF_ALLTOALLV 分支引用该 kernel 符号，须一并编入
+    ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_half_alltoallv_mesh1d.cc
     # executor 注册项经 vtable 急切实例化引用 sliced 模板 out-of-line 虚函数符号，必须编入
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/ccu_temp_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/selector/all_reduce_auto_selector.cc

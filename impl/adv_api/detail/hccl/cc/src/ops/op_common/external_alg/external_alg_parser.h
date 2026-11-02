@@ -72,7 +72,8 @@ struct ExternalAlgSpec {
 //   含 '=' -> LEGACY（HCCL_ALGO 老语法，保持现状拒绝语义，由调用方走默认 selector）
 //   含 '[' -> EXTERNAL（解析成功: spec 有效/errMsg 空; 解析失败: errMsg 给出词法错误，
 //   spec 已复位为默认值——但默认值 canonical() 为 "sole[]" 并非失败标记，失败判据只能是 errMsg 非空）
-enum class ForcedAlgKind { NONE, LEGACY, EXTERNAL };
+//   其余 -> BARE_NAME（裸注册名，直接作为强制算法）
+enum class ForcedAlgKind { NONE, LEGACY, EXTERNAL, BARE_NAME };
 
 namespace external_alg_internal {
 inline bool WordInTable(const std::string& word, const char* const* table, size_t size)
@@ -209,8 +210,10 @@ inline bool ParseExternalAlg(const std::string& algConfig, ExternalAlgSpec& spec
     return true;
 }
 
-inline ForcedAlgKind ClassifyForcedAlgConfig(const std::string& algConfig, ExternalAlgSpec& spec, std::string& errMsg)
+inline ForcedAlgKind ClassifyForcedAlgConfig(
+    const std::string& algConfig, std::string& bareName, ExternalAlgSpec& spec, std::string& errMsg)
 {
+    bareName.clear();
     errMsg.clear();
     spec = ExternalAlgSpec();
     if (algConfig.empty()) {
@@ -225,7 +228,8 @@ inline ForcedAlgKind ClassifyForcedAlgConfig(const std::string& algConfig, Exter
         }
         return ForcedAlgKind::EXTERNAL;
     }
-    return ForcedAlgKind::NONE;
+    bareName = algConfig;
+    return ForcedAlgKind::BARE_NAME;
 }
 
 } // namespace mc2_ops_hccl

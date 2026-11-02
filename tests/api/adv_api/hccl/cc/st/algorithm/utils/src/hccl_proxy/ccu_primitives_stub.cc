@@ -643,6 +643,26 @@ Result EventWait(Event event, uint16_t mask)
     return Result::SUCCESS;
 }
 
+Result EventRecord(const char* notifyTag, uint16_t mask)
+{
+    Operation operation;
+    operation.code = OpCode::NOTIFY_RECORD;
+    operation.immediate = reinterpret_cast<uint64_t>(notifyTag);
+    operation.mask = mask;
+    CompilerContext::Current().Append(operation);
+    return Result::SUCCESS;
+}
+
+Result EventWait(const char* notifyTag, uint16_t mask)
+{
+    Operation operation;
+    operation.code = OpCode::NOTIFY_WAIT;
+    operation.immediate = reinterpret_cast<uint64_t>(notifyTag);
+    operation.mask = mask;
+    CompilerContext::Current().Append(operation);
+    return Result::SUCCESS;
+}
+
 Result Write(ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, Event event, uint16_t mask)
 {
     Operation operation;

@@ -44,6 +44,8 @@ const char* GetMc2OpTypeName(HcclCMDType opType)
             return "AllToAll";
         case HcclCMDType::HCCL_CMD_ALLTOALLV:
             return "AllToAllV";
+        case HcclCMDType::HCCL_CMD_HALF_ALLTOALLV:
+            return "AllToAllvWrite";
         default:
             return "Unknown";
     }
@@ -432,12 +434,25 @@ bool IsCcuForcedAlgUsable(const Mc2CcTilingInner* ccTiling)
         HCCL_WARNING("[AllocComResourceByTilingCcu] algName[] is not supported in mc2_client.");
         return false;
     }
+    std::string algName;
     ExternalAlgSpec extSpec;
     std::string extParseErrMsg;
-    const ForcedAlgKind kind = ClassifyForcedAlgConfig(ccTiling->algConfig, extSpec, extParseErrMsg);
+    const ForcedAlgKind kind = ClassifyForcedAlgConfig(ccTiling->algConfig, algName, extSpec, extParseErrMsg);
     if (kind == ForcedAlgKind::NONE || kind == ForcedAlgKind::LEGACY) {
         HCCL_WARNING("[MC2_EXT_ALG] algConfig[%s] is not supported in mc2_client.", ccTiling->algConfig);
         return false;
+    }
+    if (kind == ForcedAlgKind::BARE_NAME) {
+        if (!HcclIsCcuAlgorithmRegistered(ccTiling->opType, algName.c_str())) {
+            // 未注册裸名回退默认 selector 兜底，selector 无法兜底才向上报不支持
+            HCCL_WARNING(
+                "[MC2_EXT_ALG] algorithm[%s] is not registered in mc2_client for opType[%u], fallback to default "
+                "selector.",
+                algName.c_str(), ccTiling->opType);
+            return false;
+        }
+        HCCL_INFO("[MC2_EXT_ALG] ccu gate passed, algConfig[%s], algorithm registered.", ccTiling->algConfig);
+        return true;
     }
     if (!extParseErrMsg.empty()) {
         HCCL_WARNING(
@@ -511,6 +526,7 @@ HcclResult AllocComResourceByTilingCcu(
 
     // 构建 OpResCtx 基础字段（workspace、XN、CKE等）
     OpResCtx resCtx{};
+    resCtx.version = static_cast<uint32_t>(HcclApi::Mc2LaunchVersion::MC2_CCU_LAUNCH_VERSION);
     if (checkOnly) {
         resCtx.rankId = userRank;
         resCtx.rankSize = rankSize;

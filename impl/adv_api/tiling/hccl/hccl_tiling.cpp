@@ -23,6 +23,7 @@
 #include "include/adv_api/hccl/internal/hccl_tiling_msg.h"
 #include "tiling/platform/platform_ascendc.h"
 #include "hccl_symbol_loader.h"
+#include <set>
 
 using namespace std;
 using namespace HcclApi;
@@ -33,6 +34,23 @@ namespace {
 constexpr uint8_t DEV_TYPE_A2 = 1U;
 constexpr uint8_t DEV_TYPE_A5 = 6U;
 constexpr uint8_t DEV_TYPE_A6 = 8U;
+
+static const std::set<std::string> REGISTERED_CCU_ALGORITHMS = {
+    "CcuSchedAllGatherSoleMesh",
+    "CcuSchedAllGatherSoleNHR",
+    "CcuSchedAllGatherConcurMeshNHRMultiLink",
+    "CcuSchedAllGatherParallelMeshNHRMultiLink",
+    "CcuSchedReduceScatterSoleMesh",
+    "CcuSchedAllToAllSoleMesh",
+    "CcuSchedAllToAllVSoleMesh",
+    "CcuSchedAllReduceSoleMesh",
+    "CcuSchedReduceScatterSoleMeshPeerOnly",
+    "CcuSchedAllToAllMesh1DMultiJetty",
+    "CcuSchedReduceScatterSoleNHRMultiLink",
+    "CcuSchedAllToAllSoleMeshConcurrent",
+    "CcuSchedReduceScatterConcurMeshNHRMultiLink",
+    "CcuSchedReduceScatterSoleNHR",
+    "CcuHalfAll2AllVMesh1D"};
 
 // 外部名先过语法校验：语法错不设101（version影响CCU链后续流程），词法错误明细由mc2侧报出。
 // commEngine 非 CCU 系直接 false——version=101 仅 CCU 链消费。
@@ -60,6 +78,11 @@ bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
     if (commEngine != 5U && commEngine != 6U) {
         return false;
     }
+    // 已注册算法裸名（--alg 直指算法）与外部名文法均走 CCU 新流程
+    if (REGISTERED_CCU_ALGORITHMS.count(algConfig) != 0U) {
+        return true;
+    }
+
     if (algConfig.find('[') == std::string::npos) {
         return false;
     }

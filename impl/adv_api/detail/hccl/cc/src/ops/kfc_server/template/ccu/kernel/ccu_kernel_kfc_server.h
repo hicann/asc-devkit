@@ -40,6 +40,13 @@ struct CcuKernelArgKfcServer : CcuKernelArgBase {
     std::vector<std::vector<uint32_t>> subCommRanks;
     std::vector<KfcNhrStepInfo> nhrStepInfoVector;
     std::map<uint32_t, uint32_t> nhrRank2ChannelIdx;
+    // 仅HALF_ALLTOALLV使用，见CcuKernelInfo::localWinAddr
+    uint64_t localWinAddr = 0;
+    // 构图期宿主常量（与运行时 kfcServerArgs[4] 同值）。MissionPreSync 按 mission 分支选择
+    // tag 时必须用它：CCU_IF(Variable) 是运行时分支，构图期 IF/ELSE 两分支都会执行，
+    // 会导致双 mission 两个 kernel 各自 export 同一对 tag，注册期 ProcessInterCtxRes
+    // 合并 exported sharedNotifies 时同名冲突（HCCL_E_PARA）。
+    uint32_t hostMissionIndex = 0;
 };
 
 // 多mission由Host使用独立start/done区域调度；Server之间不在CCU侧同步。

@@ -12,6 +12,7 @@
 #include "external_alg_resolver.h"
 #include "kfc_server_protocol.h"
 #include "mc2_comm_info_reporter.h"
+#include "hccl_res.h"
 
 #include <limits>
 
@@ -26,6 +27,7 @@ std::unordered_map<HcclCMDType, OpParamPrepareFunc> opParamPrepareFuncMap = {
     {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, PrepareParamForReduceScatter},
     {HcclCMDType::HCCL_CMD_ALLTOALL, PrepareParamForAlltoAll},
     {HcclCMDType::HCCL_CMD_ALLTOALLV, PrepareParamForAlltoAllV},
+    {HcclCMDType::HCCL_CMD_HALF_ALLTOALLV, PrepareParamForHalfAlltoAllV},
 };
 
 CommEngine OpExecuteConfigToCommEngine(uint8_t commEngine)
@@ -149,7 +151,8 @@ bool IsCcuKfcSupportedOp(uint32_t opType)
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER) ||
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALL) ||
            opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALLV) ||
-           opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE);
+           opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE) ||
+           opType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_HALF_ALLTOALLV);
 }
 } // namespace
 
@@ -229,6 +232,18 @@ HcclResult AllocCcuOpResCtx(HcclComm comm, const std::string& ctxTag, u32 rankSi
     opResCtx.ckeAddr = reinterpret_cast<uint64_t>(comSyncPtr);
     // ReduceScatter KFC follows pr_4523 and partitions this fixed 16 MiB buffer as rankSize * sliceSize.
     opResCtx.res[0] = reinterpret_cast<uint64_t>(scratchPtr);
+    {
+        void* cclBufferAddr = nullptr;
+        uint64_t cclBufferSize = 0;
+        CHK_RET(HcclGetHcclBuffer(comm, &cclBufferAddr, &cclBufferSize));
+        opResCtx.res[RES_IDX_CCL_BUFFER_ADDR] = reinterpret_cast<uint64_t>(cclBufferAddr);
+        opResCtx.res[RES_IDX_CCL_BUFFER_SIZE] = cclBufferSize;
+        HCCL_INFO(
+            "[AllocCcuOpResCtx] cclBuffer[0x%llx], cclBufferSize[%llu] via res[%u]/res[%u].",
+            static_cast<unsigned long long>(opResCtx.res[RES_IDX_CCL_BUFFER_ADDR]),
+            static_cast<unsigned long long>(opResCtx.res[RES_IDX_CCL_BUFFER_SIZE]), RES_IDX_CCL_BUFFER_ADDR,
+            RES_IDX_CCL_BUFFER_SIZE);
+    }
 
     HCCL_INFO(
         "[AllocCcuOpResCtx] workspace[%p], workspaceSize[%llu], scratch[%p], scratchSize[%llu], "
@@ -585,6 +600,39 @@ HcclResult PrepareParamForAlltoAllV(
     return HCCL_SUCCESS;
 }
 
+// MC2 变长 AllToAll。与 AlltoAllV 共用 all2AllVDataDes 联合体成员，但分片大小/偏移由 AIC
+// 运行时写入 varData 变长区，故此处指针置空，由 CCU kernel 按地址从设备内存读取。
+HcclResult PrepareParamForHalfAlltoAllV(
+    HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& param)
+{
+    HCCL_INFO("PrepareParamForHalfAlltoAllV, ccTiling[%p]", ccTiling);
+    u32 userRankSize;
+    CHK_RET(HcclGetRankSize(comm, &userRankSize));
+
+    HcclResult ret = PrepareOpsCommParam(tag, param);
+    if (ret != HCCL_SUCCESS) {
+        HCCL_ERROR("failed to fill OpsCommParam");
+    }
+
+    param.varMemSize = ALL_TO_ALL_V_VECTOR_NUM * userRankSize * sizeof(u64);
+    param.opType = HcclCMDType::HCCL_CMD_HALF_ALLTOALLV;
+    // CCU_IF 构图期会执行所有分支体，ReduceScatter 分支要求 reduceType 有效，运行时不走该分支
+    param.reduceType = HcclReduceOp::HCCL_REDUCE_SUM;
+    param.all2AllVDataDes.sendType = static_cast<HcclDataType>(ccTiling->srcDataType);
+    param.all2AllVDataDes.recvType = static_cast<HcclDataType>(ccTiling->dstDataType);
+    param.all2AllVDataDes.sendCounts = nullptr;
+    param.all2AllVDataDes.recvCounts = nullptr;
+    param.all2AllVDataDes.sdispls = nullptr;
+    param.all2AllVDataDes.rdispls = nullptr;
+
+    HCCL_INFO("Print PrepareParamForHalfAlltoAllV.");
+    CHK_RET(PrintOpsCommParam(param));
+    HCCL_INFO("varMemSize %lu", param.varMemSize);
+    HCCL_INFO("opType %u", static_cast<uint32_t>(param.opType));
+    HCCL_INFO("Execute PrepareParamForHalfAlltoAllV success.");
+    return HCCL_SUCCESS;
+}
+
 HcclResult PrepareOpParams(HcclComm comm, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& opParam)
 {
     auto it = opParamPrepareFuncMap.find(static_cast<HcclCMDType>(ccTiling->opType));
@@ -754,10 +802,11 @@ static HcclResult TryForcedAlgAndPrepareEngine(
 {
     forcedAlgAccepted = false;
     std::string forcedAlgName;
+    std::string bareName;
     ExternalAlgSpec extSpec;
     std::string classifyErrMsg;
-    const ForcedAlgKind kind =
-        ClassifyForcedAlgConfig(algConfig == nullptr ? std::string() : std::string(algConfig), extSpec, classifyErrMsg);
+    const ForcedAlgKind kind = ClassifyForcedAlgConfig(
+        algConfig == nullptr ? std::string() : std::string(algConfig), bareName, extSpec, classifyErrMsg);
 
     OpParam opParamBackup = opParam; // topo 准备会改写 opParam，失败恢复以入口现场为基线
     if (kind == ForcedAlgKind::EXTERNAL) {
@@ -765,6 +814,9 @@ static HcclResult TryForcedAlgAndPrepareEngine(
         if (!ResolveExternalAlgName(comm, algConfig, opParam, topoInfo, forcedAlgName)) {
             return HCCL_SUCCESS;
         }
+    } else if (kind == ForcedAlgKind::BARE_NAME) {
+        forcedAlgName = bareName;
+        CHK_RET(PrepareTopoInfoForOp(comm, opParam, topoInfo));
     } else {
         if (kind == ForcedAlgKind::LEGACY) {
             HCCL_INFO("[MC2_FORCE_ALG] legacy algConfig[%s], use default selector.", algConfig);
@@ -1102,15 +1154,20 @@ HcclResult SelectCcuAlgorithm(
     }
 
     // 外部名需 topo 参与消歧，单独定名
+    std::string bareName;
     ExternalAlgSpec extSpec;
     std::string classifyErrMsg;
     const char* forcedConfig = ccTiling == nullptr ? nullptr : ccTiling->algConfig;
     const ForcedAlgKind kind = ClassifyForcedAlgConfig(
-        forcedConfig == nullptr ? std::string() : std::string(forcedConfig), extSpec, classifyErrMsg);
+        forcedConfig == nullptr ? std::string() : std::string(forcedConfig), bareName, extSpec, classifyErrMsg);
 
     bool forcedAccepted = false;
     if (kind == ForcedAlgKind::EXTERNAL) {
         forcedAccepted = ResolveExternalAlgName(comm, forcedConfig, opParam, topoInfo, algName);
+    } else if (kind == ForcedAlgKind::BARE_NAME) {
+        algName = bareName;
+        CHK_RET(PrepareTopoInfoForOp(comm, opParam, topoInfo));
+        forcedAccepted = true;
     } else if (kind == ForcedAlgKind::LEGACY) {
         HCCL_INFO("[MC2_FORCE_ALG] legacy algConfig[%s], use default selector.", forcedConfig);
     }
