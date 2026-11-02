@@ -35,7 +35,7 @@ bool LoadTilingLibrary(const char *tilingSoPath) const
 
 true: The Tiling dynamic library is loaded successfully; false: The Tiling dynamic library fails to load. For details about the error, see the log information.
 
-For log configuration and viewing, see the log-related environment variables in [Environment Variable Reference](https://gitcode.com/cann/docs/blob/9.2.0/docs/zh/env-vars/README.md).
+For log configuration and viewing, see the log-related environment variables in [Environment Variable Reference](https://gitcode.com/cann/docs/blob/9.2.0/docs/en/env-vars/README.md).
 
 ## Constraints<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section19165124931511"></a>
 
@@ -52,4 +52,3 @@ if (flag == false) {
 }
 // ...
 ```
-

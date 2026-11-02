@@ -49,7 +49,7 @@ None
 
 - Only the SIMT programming scenario is supported. The SIMD and SIMT hybrid programming scenario is not supported.
 - Ensure that all threads in the grid can reach the same `sync()` call; otherwise, the behavior is undefined.
-- Ensure that the total number of thread blocks in the grid does not exceed the number of AIV physical cores of the device to avoid program hangs. Developers can query the number of AIV physical cores of the device through the [aclrtGetDeviceInfo](https://gitcode.com/cann/runtime/blob/9.2.0/docs/zh/api_ref/04_device_management.md#aclrtGetDeviceInfo) API.
+- Ensure that the total number of thread blocks in the grid does not exceed the number of AIV physical cores of the device to avoid program hangs. Developers can query the number of AIV physical cores of the device through the [aclrtGetDeviceInfo](https://gitcode.com/cann/runtime/blob/9.2.0/docs/en/api_ref/04_device_management.md#aclrtGetDeviceInfo) API.
 - The `sync()` API only ensures synchronization of thread instruction execution. It does not guarantee [cache coherence](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md) between the Data Cache and Global Memory of each thread block.
 
 ## Examples

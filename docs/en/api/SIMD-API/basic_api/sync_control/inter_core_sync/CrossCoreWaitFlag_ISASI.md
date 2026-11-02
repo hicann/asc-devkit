@@ -158,7 +158,7 @@ None
 
     Specifically, in a multi-stream scenario, although the inter-core synchronization operator of a stream is allocated n physical cores, only n-m cores may be scheduled and executed first, while the remaining m cores have not yet started because they are preempted by the inter-core synchronization operators of other streams. The n-m cores that start first wait for the remaining m cores to complete when they reach the inter-core synchronization point, while the remaining m cores cannot be released because they are occupied by the inter-core synchronization operators of other streams, resulting in a deadlock.
 
-    In the kernel function (Kernel) launch scenario, the batchmode mode is set through the [\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md) qualifier; in the engineering operator development scenario, the batchmode mode is set through the SetScheduleMode API of TilingContext. For details, see [Basic Data Structures and APIs](https://gitcode.com/cann/metadef/blob/9.2.0/docs/zh/api/README.md).
+    In the kernel function (Kernel) launch scenario, the batchmode mode is set through the [\_\_schedmode\_\_\(mode\)](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md) qualifier; in the engineering operator development scenario, the batchmode mode is set through the SetScheduleMode API of TilingContext. For details, see [Basic Data Structures and APIs](https://gitcode.com/cann/metadef/blob/9.2.0/docs/en/api/README.md).
 
 ## Example<a id="section837496171220"></a>
 

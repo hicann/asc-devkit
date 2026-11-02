@@ -20,7 +20,7 @@ extern HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
 | comm | Input | Pointer to the initialized communicator.<br>For the definition of the HcclComm type, see [HcclComm](https://gitcode.com/cann/hcomm/blob/9.2.0/docs/en/api_ref/comm_mgr_c/data_type_definition/HcclComm.md). |
-| stream | Input | The stream type is aclrtStream, which is used to maintain the execution order of some asynchronous operations and ensure that they are executed on the Device in the order in which the code is called in the application. For stream creation and other management APIs, see [*Runtime API*](https://gitcode.com/cann/runtime/blob/9.2.0/docs/zh/api_ref/README.md). |
+| stream | Input | The stream type is aclrtStream, which is used to maintain the execution order of some asynchronous operations and ensure that they are executed on the Device in the order in which the code is called in the application. For stream creation and other management APIs, see [*Runtime API*](https://gitcode.com/cann/runtime/blob/9.2.0/docs/en/api_ref/README.md). |
 | mc2Tiling | Input | Tiling information of the MC2 operator, assembled into the operator [TilingData structure](TilingData_struct.md) through the [GetTiling](GetTiling.md) API. |
 
 ## Return Value

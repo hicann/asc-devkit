@@ -9,7 +9,7 @@ Sets the hardware platform information for use in operator Tiling function debug
 -   **Automatically obtain the current hardware platform information**: Pass a null pointer to automatically obtain the current hardware information and add it to the ContextBuilder class.
 -   **Specify the hardware platform information**: Pass a specific AI processor model to add the corresponding hardware information to the ContextBuilder class.
 
-If the setting fails, an error message is printed. For details about log configuration and viewing, see the log-related environment variables in [*Environment Variable Reference*](https://gitcode.com/cann/docs/blob/9.2.0/docs/zh/env-vars/README.md).
+If the setting fails, an error message is printed. For details about log configuration and viewing, see the log-related environment variables in [*Environment Variable Reference*](https://gitcode.com/cann/docs/blob/9.2.0/docs/en/env-vars/README.md).
 
 ## Prototype<a name="zh-cn_topic_0000001867409741_zh-cn_topic_0000001389787297_section13230182415108"></a>
 
@@ -44,4 +44,3 @@ void AddPlatformInfoDemo(......)
     // ... ...
 }
 ```
-
