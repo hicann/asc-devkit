@@ -2,7 +2,7 @@
 
 ## 功能说明
 
-`reg_tensor<DataType>`同时保存数据寄存器`reg`和与数据关联的掩码寄存器`mask`。计算接口根据输入`reg_tensor`的`mask`选择参与计算的有效元素，并将计算所使用的mask传递给返回的`reg_tensor`。`local_tensor::store`的单源`direct`、`pack`和`pack_quarter`模式继续使用源`reg_tensor`中保存的mask控制写回。
+`reg_tensor<DataType>`同时保存数据寄存器`reg`和与数据关联的掩码寄存器`mask`。计算接口根据输入`reg_tensor`的`mask`选择参与计算的有效元素，并将计算所使用的mask传递给返回的`reg_tensor`。`asc::te::experimental::store`的单源`direct`、`pack`和`pack_quarter`模式继续使用源`reg_tensor`中保存的mask控制写回。
 
 `reg_tensor`的默认构造函数不初始化`reg`和`mask`。作为计算接口的输入参数前，必须保证其`mask`已初始化；否则，参与计算和写回的有效元素不确定。若计算链中的有效范围发生变化，应在下一次计算或写回前重新调用`with_mask`绑定新的mask。
 

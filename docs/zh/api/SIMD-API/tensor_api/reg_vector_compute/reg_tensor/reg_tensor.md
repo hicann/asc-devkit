@@ -62,7 +62,7 @@ struct reg_tensor {
 | `elem_type` | 元素类型，等同于`DataType`。 |
 | `reg_type` | `DataType`对应的原生矢量寄存器类型。 |
 | `reg` | 原生寄存器数据；对于`reg_tensor<bool>`，该成员保存谓词寄存器。 |
-| `mask` | 与数据寄存器关联的谓词，供计算和单源`local_tensor::store`使用。 |
+| `mask` | 与数据寄存器关联的谓词，供计算和单源`asc::te::experimental::store`使用。 |
 
 ## 数据类型
 

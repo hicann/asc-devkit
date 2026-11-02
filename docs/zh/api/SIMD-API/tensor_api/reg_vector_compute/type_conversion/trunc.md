@@ -45,7 +45,7 @@ src[i] <  0：dst[i] = ceil(src[i])
 
 例如，输入`3.75`时输出`3.0`，输入`-3.75`时输出`-3.0`；输入本身为整数值时，数值保持不变。输出元素类型与输入元素类型相同。
 
-接口使用`src.mask`筛选参与计算的元素，底层固定采用向0舍入和zeroing模式：mask未选中的返回值数据元素置0。返回值的mask与`src.mask`保持一致，可继续用于后续寄存器计算或`local_tensor::store`写回。
+接口使用`src.mask`筛选参与计算的元素，底层固定采用向0舍入和zeroing模式：mask未选中的返回值数据元素置0。返回值的mask与`src.mask`保持一致，可继续用于后续寄存器计算或`asc::te::experimental::store`写回。
 
 ## 函数原型
 
@@ -89,10 +89,10 @@ __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src)
 
 ## 约束说明
 
-- 调用前必须初始化`src.reg`和`src.mask`。`local_tensor::load`只初始化返回对象的`reg`，需通过`with_mask`绑定与元素类型匹配的mask。
+- 调用前必须初始化`src.reg`和`src.mask`。`asc::te::experimental::load`只初始化返回对象的`reg`，需通过`with_mask`绑定与元素类型匹配的mask。
 - 舍入模式固定为向0舍入，不支持参考Reg矢量计算`Truncate`接口中的其他舍入模式，也不提供舍入模式模板参数。
 - 接口不改变元素类型，也不提供饱和或非饱和模式配置。
-- mask合并模式固定为zeroing，不支持merging模式。mask未选中的返回值数据元素置0；后续使用单源`local_tensor::store`时，写回仍由返回值中传递的mask控制。
+- mask合并模式固定为zeroing，不支持merging模式。mask未选中的返回值数据元素置0；后续使用单源`asc::te::experimental::store`时，写回仍由返回值中传递的mask控制。
 - 寄存器计算应在`__simd_vf__`函数或`__simd_callee__`函数中完成。
 
 ## 调用示例
@@ -127,4 +127,4 @@ __simd_vf__ inline void TruncRegLoop(
 ```
 
 > [!NOTE]  
-> `local_tensor::load`每次搬入一个完整寄存器块。使用上述尾块写法时，源UB Tensor在逻辑数据末尾需预留足够的可读空间；`update_mask`只控制参与计算和写回的有效元素，不会缩小实际搬入宽度。
+> `asc::te::experimental::load`每次搬入一个完整寄存器块。使用上述尾块写法时，源UB Tensor在逻辑数据末尾需预留足够的可读空间；`update_mask`只控制参与计算和写回的有效元素，不会缩小实际搬入宽度。

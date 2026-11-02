@@ -36,7 +36,7 @@
 - [cast_round_mode](../aux_data_types/cast_round_mode.md)：指定发生精度损失时的舍入方式。
 - [cast_sat_mode](../aux_data_types/cast_sat_mode.md)：指定转换结果超出目的类型表示范围时采用饱和还是非饱和处理。
 
-接口使用`src.mask`筛选源操作数中的有效元素，底层转换采用zeroing模式，mask未选中的目的元素置0。返回值保存转换结果，并原样传递`src.mask`，便于后续计算或`local_tensor::store`写回。
+接口使用`src.mask`筛选源操作数中的有效元素，底层转换采用zeroing模式，mask未选中的目的元素置0。返回值保存转换结果，并原样传递`src.mask`，便于后续计算或`asc::te::experimental::store`写回。
 
 ## 函数原型
 
@@ -124,7 +124,7 @@ __simd_callee__ inline reg_tensor<DstType> cast(const reg_tensor<SrcType>& src)
 - 位宽比为4时，可选择`zero`、`one`、`two`或`three`，对应每组中的第0至第3个位置。
 - 源、目的类型位宽相同时，使用`zero`。
 
-`cast`只完成寄存器计算，不会隐式调整Unified Buffer（UB）中的数据排布。连续处理Tensor数据时，应使`local_tensor::load`、`cast_options::layout`和`local_tensor::store`的排布保持一致。常见用法如下：
+`cast`只完成寄存器计算，不会隐式调整Unified Buffer（UB）中的数据排布。连续处理Tensor数据时，应使`asc::te::experimental::load`、`cast_options::layout`和`asc::te::experimental::store`的排布保持一致。常见用法如下：
 
 | 转换方向 | 搬入 | 搬出 |
 | --- | --- | --- |
