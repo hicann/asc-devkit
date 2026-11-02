@@ -46,3 +46,22 @@ mc2CcTilingConfig.SetSkipLocalRankCopy(0);
 mc2CcTilingConfig.SetSkipBufferWindowCopy(1);
 mc2CcTilingConfig.GetTiling(tiling->allGatherTiling);
 ```
+
+<!-- npu="950" id4 -->
+针对Ascend 950PR&950DT系列产品，支持配置通信算法（语法与各通信任务可用取值见[SetAlgConfig](SetAlgConfig.md)），配置方式如下：
+
+```cpp
+const char* groupName = "testGroup";
+uint32_t opType = HCCL_CMD_ALLGATHER;
+std::string algConfig = "parallel[mesh, nhr]"; // 通信算法可在构造时传入
+AscendC::Mc2CcTilingConfig mc2CcTilingConfig(groupName, opType, algConfig);
+mc2CcTilingConfig.GetTiling(tiling->mc2InitTiling);
+mc2CcTilingConfig.GetTiling(tiling->allGatherTiling);
+
+// 也可通过SetOpType与SetAlgConfig接口切换通信任务并设置通信算法
+mc2CcTilingConfig.SetOpType(HCCL_CMD_ALLREDUCE); // 设置通信任务类型
+mc2CcTilingConfig.SetAlgConfig("sole[mesh.two_shot]");
+mc2CcTilingConfig.GetTiling(tiling->allReduceTiling);
+```
+<!-- end id4 -->
+
