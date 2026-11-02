@@ -100,7 +100,7 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
     </tbody>
     </table>
 
--   不支持4:2稀疏特性。具体兼容方案请参考[4：2结构化稀疏功能](basic_api_migration.md#li69092585134)。
+-   不支持4:2稀疏特性。具体兼容方案请参考[4：2结构化稀疏功能](basic_api_migration.md#structured-sparsity-migration)。
 
 ## 其它高阶API<a name="section14195124865717"></a>
 

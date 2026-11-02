@@ -284,7 +284,7 @@ __simd_vf__ inline void load_store_unalign_vf(__ubuf__ uint32_t* dst, __ubuf__ u
 | `int64_t`、`uint64_t` | [asc_loadalign](asc_loadalign.md)<br>[asc_loadalign_postupdate](asc_loadalign_postupdate.md) |
 | `int64_t` | [asc_load](asc_load.md)<br>[asc_loadunalign_pre](asc_loadunalign_pre.md)<br>[asc_loadunalign](asc_loadunalign.md)<br>[asc_loadunalign_postupdate](asc_loadunalign_postupdate.md) |
 
-当`asc_loadalign`、`asc_loadunalign_pre`或`asc_loadunalign_postupdate`通过地址寄存器访问b64数据时，地址寄存器更新接口不支持b64模式，应使用[asc_update_addr_reg_b32](../reg_addr_reg/asc_update_addr_reg.md)生成地址寄存器。一个b64元素占用两个b32寻址单元，因此各维偏移量以及`asc_loadunalign_postupdate`的`inc`应设置为期望b64元素偏移量的2倍。
+当`asc_loadalign`、`asc_loadunalign_pre`或`asc_loadunalign_postupdate`通过地址寄存器访问b64数据时，使用[asc_update_addr_reg_b32](../reg_addr_reg/asc_update_addr_reg.md)生成地址寄存器。该接口的各维偏移量以4字节为单位，因此，期望偏移N个b64元素时，对应的参数应设置为`2 × N`。`asc_loadunalign_postupdate`的`inc`以源数据类型的元素个数为单位，期望每次前进N个b64元素时，应设置为N，无需乘2。
 
 `asc_loadalign`和`asc_loadalign_postupdate`的非连续对齐搬入模式中，处理`int64_t`数据时，掩码创建接口不支持b64模式。应先使用[asc_create_mask_b32](../reg_mask/asc_create_mask.md)创建b32掩码，再使用[asc_unpack_lower](../reg_permute_sel/asc_unpack.md)将其展开为b64数据对应的掩码。展开后的掩码以连续8个bit为一组，仅每组最低位的bit有效，用于控制一个b64元素。
 

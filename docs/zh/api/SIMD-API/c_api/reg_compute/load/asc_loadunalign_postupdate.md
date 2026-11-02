@@ -112,8 +112,8 @@ __simd_callee__ inline void asc_loadunalign_postupdate(vector_int8_t& dst,
 | dst | 输出 | 目的矢量数据寄存器。dtype必须与`src1`一致，搬入VL长度数据。 |
 | src0 | 输入/输出 | 非对齐寄存器，大小为32字节。本接口调用后，`src0`中缓存的数据更新为`src1`与更新后的`offset`所确定的实际读取地址所需的前置数据，可供当前循环迭代内的下一次搬入使用。 |
 | src1 | 输入 | 源UB基地址。该地址与`offset`共同确定实际读取地址，实际读取地址必须按dtype对齐。 |
-| offset | 输入/输出 | 地址寄存器，类型为`addr_reg`。该寄存器记录相对`src1`起始地址的偏移，单位为元素个数。`b8`、`b16`、`b32`模式分别表示每个元素占1字节、2字节、4字节。本接口完成搬入后会根据`inc`更新`offset`。 |
-| inc | 输入 | Post Update步长，单位为元素个数。接口使用当前`offset`完成搬入后，将`offset`记录的元素偏移量增加`inc`，即更新为`offset = offset + inc`。 |
+| offset | 输入/输出 | 地址寄存器，类型为`addr_reg`，表示相对`src1`基地址的偏移。由[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)系列接口生成，生成接口的偏移参数单位由所选模式决定，b8、b16、b32模式分别以1字节、2字节、4字节为单位。本接口完成搬入后，根据`inc`更新该寄存器。 |
+| inc | 输入 | Post Update步长，单位为元素个数。本接口使用当前`offset`完成搬入后，将其表示的字节偏移量增加`inc × sizeof(dtype)`。当dtype为`int64_t`时，`inc=4`表示偏移32字节。 |
 
 ## 返回值说明
 
@@ -137,7 +137,7 @@ __simd_callee__ inline void asc_loadunalign_postupdate(vector_int8_t& dst,
 
 - 每次循环迭代中，必须先调用`asc_update_addr_reg`生成该次迭代的起始偏移，再调用[asc_loadunalign_pre](asc_loadunalign_pre.md)初始化`src0`。该初始化调用与紧随其后的首次搬入必须使用相同的`src1`和`offset`。
 - 同一循环迭代内，后续搬入继续使用上一次本接口调用按`inc`更新后的`offset`时，可复用同步更新后的`src0`。如果`src1`或`offset`被另行修改，必须根据修改后的实际读取地址重新初始化`src0`。
-- 当dtype为`int64_t`时，由于地址寄存器更新接口不支持b64模式，需要使用[asc_update_addr_reg_b32](../reg_addr_reg/asc_update_addr_reg.md)生成地址寄存器。一个b64元素占用两个b32寻址单元，因此传入`asc_update_addr_reg_b32`的各维偏移量以及本接口的`inc`都必须设置为期望的b64元素偏移量的2倍。
+- 当dtype为`int64_t`时，使用[asc_update_addr_reg_b32](../reg_addr_reg/asc_update_addr_reg.md)生成地址寄存器。该接口的各维偏移量以4字节为单位，因此，期望偏移N个`int64_t`元素时，对应的参数应设置为`2 × N`。本接口的`inc`以元素个数为单位，地址寄存器所表示的偏移在每次搬入后增加`inc × sizeof(dtype)`字节；对于`int64_t`，每次前进N个元素时，`inc`应设置为N，无需乘2。
 
     ```c
     vector_int64_t src_reg;

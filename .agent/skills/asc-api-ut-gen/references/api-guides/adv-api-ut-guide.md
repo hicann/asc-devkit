@@ -30,13 +30,13 @@
 
 | 类别 | 典型 API |
 |------|----------|
-| 激活和融合激活 | `Softmax`、`LogSoftmax`、`SoftmaxGrad`、`Gelu`、`Silu`、`Swish`、`Sigmoid`、`SwiGLU`、`GeGLU`、`ReGLU` |
-| 归一化 | `LayerNorm`、`RMSNorm`、`BatchNorm`、`GroupNorm`、`DeepNorm`、`Normalize`、`WelfordFinalize` |
+| 激活和融合激活 | `Softmax`、`LogSoftMax`、`SoftmaxGrad`、`Gelu`、`Silu`、`Swish`、`Sigmoid`、`SwiGLU`、`GeGLU`、`ReGLU` |
+| 归一化 | `LayerNorm`、`RmsNorm`、`BatchNorm`、`GroupNorm`、`DeepNorm`、`Normalize`、`WelfordFinalize` |
 | Matmul / Conv | `Matmul`、`BatchMatmul`、`Conv3D`、`Conv3DBackpropInput`、`Conv3DBackpropFilter` |
 | 量化/反量化 | `Quantize`、`AntiQuantize`、`Dequantize`、`AscendQuant`、`AscendDequant`、`AscendAntiQuant` |
 | Reduce / Select / Sort | `ReduceSum`、`ReduceMean`、`TopK`、`Sort`、`SelectWithBytesMask` |
 | Transpose / Pad / Filter / Index | `TransData`、`ConfusionTranspose`、`Pad`、`Broadcast`、`DropOut`、`ArithProgression` |
-| 高阶 math | `Exp`、`Log`、`Sin`、`Cos`、`Tanh`、`Power`、`Clamp`、`Fma`、`Cumsum`、`Where`，仅指 `include/adv_api/math/` 下的高阶封装 |
+| 高阶 math | `Exp`、`Log`、`Sin`、`Cos`、`Tanh`、`Power`、`Clamp`、`Fma`、`CumSum`、`Where`，仅指 `include/adv_api/math/` 下的高阶封装 |
 | 通信类 | `Hccl`、`Hcomm` 相关接口 |
 
 ---

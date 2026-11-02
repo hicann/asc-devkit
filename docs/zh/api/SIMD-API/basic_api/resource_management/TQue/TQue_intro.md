@@ -74,22 +74,37 @@ que.FreeTensor(a2);</pre>
 
 由于TQue分配的Buffer存储着同步事件eventID，故同一个TPosition上TQue Buffer的数量与硬件的同步事件eventID有关。
 
-针对Atlas训练系列产品，eventID的数量为4
+<!-- npu="950" id1 -->
+针对Ascend 950PR&950DT系列产品，eventID的数量为8。
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+针对Atlas A3系列产品，eventID的数量为8。
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+针对Atlas A2系列产品，eventID的数量为8。
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+针对Atlas 200I/500 A2推理产品，eventID的数量为8。
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+针对Atlas推理系列产品AI Core，eventID的数量为8。
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+针对Atlas推理系列产品Vector Core，eventID的数量为8。
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+针对Atlas训练系列产品，eventID的数量为4。
+<!-- end id7 -->
 
-Atlas推理系列产品AI Core，eventID的数量为8
+同一个TPosition上，TQue可分配的Buffer总数受对应同步事件资源数量限制。使用TPipe的InitBuffer申请TQue时，每个队列分配的Buffer数量由num参数指定，因此可申请的队列数量还取决于每个队列分配的Buffer数量。以下数量说明和示例均假设对应事件资源未被其他操作占用。
 
-Atlas推理系列产品Vector Core，eventID的数量为8
-
-Atlas A2系列产品，eventID的数量为8
-
-Atlas A3系列产品，eventID的数量为8
-
-Atlas 200I/500 A2推理产品，eventID的数量为8
-
-QUE的Buffer数量最大也分别为8个或4个，即能插入的同步事件的个数为8个或4个。当用TPipe的InitBuffer申请TQue时，会受到Buffer数量的限制，TQue能申请到的最大个数分别为8个或4个。
+<!-- npu="910" id8 -->
+针对Atlas训练系列产品，不开启double buffer、每个队列分配1个Buffer时，最多可申请4个TQue；开启double buffer、每个队列分配2个Buffer时，最多可申请2个TQue。
+<!-- end id8 -->
 
 如果同时使用的QUE Buffer超出限制，则无法再申请TQue。如果想要继续申请，可以调用FreeAllEvent接口来释放一些暂时不用的TQue。在使用完对应TQue后，用该接口释放对应队列中的所有事件，之后便可再次申请TQue。样例如下：
 
+<!-- npu="950,A3,910b,310b,310p" id9 -->
 -   不开启double buffer
 
     ```cpp
@@ -131,6 +146,7 @@ QUE的Buffer数量最大也分别为8个或4个，即能插入的同步事件的
     pipe.InitBuffer(que2, 2, len);
     pipe.InitBuffer(que3, 2, len);
     ```
+<!-- end id9 -->
 
 -   多次申请TQue
 
