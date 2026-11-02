@@ -172,7 +172,7 @@
 
 - GM -> VECIN/VECOUT配置示例<a name="li73127579197"></a>
 
-    下面通过三个示例展示DataCopyPad在GM -> VECIN/VECOUT通路上的不同配置场景。示例1演示32字节对齐场景下的数据搬运，示例2演示非32字节对齐时的dummy填充机制，示例3（仅Ascend 950PR&950DT系列产品支持）演示负stride实现重复搬运同一数据块的场景。
+    通过如下示例展示DataCopyPad在GM -> VECIN/VECOUT通路上的不同配置场景。示例1演示32字节对齐场景下的数据搬运，示例2演示非32字节对齐时的dummy填充机制<!-- npu="950" id39 -->，示例3（仅Ascend 950PR&950DT系列产品支持）演示负stride实现重复搬运同一数据块的场景<!-- end id39 -->。
 
     - 参数解释
         - 当blockLen+leftPadding+rightPadding满足32字节对齐时，若isPad为false，左右两侧填充的数据值会默认为随机值；否则为paddingValue。
@@ -212,11 +212,10 @@
 
     <!-- end id18 -->
 
+<!-- npu="950" id19 -->
 - 搬运模式的配置示例（仅Ascend 950PR&950DT系列产品支持）
 
     下面通过两个示例展示Ascend 950PR&950DT系列产品上Normal和Compact两种搬运模式的区别。
-
-    <!-- npu="950" id19 -->
 
     - 示例1：Normal模式
 
@@ -231,8 +230,7 @@
         blockLen * blockCount + leftPadding + rightPadding满足32字节对齐，isPad为false，左右两侧填充的数据值会默认为随机值，否则为paddingValue。此处示例中，leftPadding为0，rightPadding为16，在最后一个数据块右侧填充16字节。目的操作数的总长度为160字节。
 
         ![](../../../../figures/paddingMode.png)
-
-    <!-- end id19 -->
+<!-- end id19 -->
 
 ## 数据类型<a name="section4219135304818"></a>
 
@@ -358,6 +356,7 @@
     AscendC::DataCopyPad(srcLocal, srcGlobal, copyParams, padParams);
     ```
 
+<!-- npu="950" id40 -->
 - 场景3：使用Compact模式进行紧凑填充（仅支持Ascend 950PR&950DT系列产品）
 
     ```cpp
@@ -445,5 +444,6 @@
 
     AscendC::ResetLoopModePara(AscendC::DataCopyMVType::OUT_TO_UB);
     ```
+<!-- end id40 -->
 
 完整样例请参考[DataCopyPad样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_pad_gm2ub_ub2gm)。

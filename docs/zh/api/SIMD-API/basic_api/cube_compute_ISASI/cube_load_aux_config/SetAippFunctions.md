@@ -155,16 +155,33 @@
 | dtcMeanCh0 | 输入 | 计算公式内的mean值，channel0，数据类型为uint8_t，默认值为0。 |
 | dtcMeanCh1 | 输入 | 计算公式内的mean值，channel1，数据类型为uint8_t，默认值为0。 |
 | dtcMeanCh2 | 输入 | 计算公式内的mean值，channel2，数据类型为uint8_t，默认值为0。 |
-| dtcMinCh0 | 输入 | 计算公式内的min值，channel0，数据类型为half，默认值为0。<br>Atlas 200I/500 A2推理产品不支持配置该参数。 |
-| dtcMinCh1 | 输入 | 计算公式内的min值，channel1，数据类型为half，默认值为0。<br>Atlas 200I/500 A2推理产品不支持配置该参数。 |
-| dtcMinCh2 | 输入 | 计算公式内的min值，channel2，数据类型为half，默认值为0。<br>Atlas 200I/500 A2推理产品不支持配置该参数。 |
+| dtcMinCh0 | 输入 | 计算公式内的min值，channel0，数据类型为half，默认值为0。<!-- npu="310b" id15 --><br>Atlas 200I/500 A2推理产品不支持配置该参数。<!-- end id15 --> |
+| dtcMinCh1 | 输入 | 计算公式内的min值，channel1，数据类型为half，默认值为0。<!-- npu="310b" id16 --><br>Atlas 200I/500 A2推理产品不支持配置该参数。<!-- end id16 --> |
+| dtcMinCh2 | 输入 | 计算公式内的min值，channel2，数据类型为half，默认值为0。<!-- npu="310b" id17 --><br>Atlas 200I/500 A2推理产品不支持配置该参数。<!-- end id17 --> |
 | dtcVarCh0 | 输入 | 计算公式内的var值，channel0，数据类型为half，默认值为1.0。 |
 | dtcVarCh1 | 输入 | 计算公式内的var值，channel1，数据类型为half，默认值为1.0。 |
 | dtcVarCh2 | 输入 | 计算公式内的var值，channel2，数据类型为half，默认值为1.0。 |
 | dtcRoundMode | 输入 | 控制dtc做数据类型转换的模式，数据类型为uint32_t，默认值为0。<br>0：四舍五入到最接近的整数值（C语言round）。<br>1：四舍五入到最接近的偶数（C语言rint）。 |
 
+<!-- npu="950,A3,910b,310b,310p" id9 -->
 > [!NOTE]说明
-> 参数dtcRoundMode，仅在Atlas 200I/500 A2推理产品支持配置。
+> 参数dtcRoundMode的配置支持情况如下：
+> <!-- npu="950" id10 -->
+> - Ascend 950PR&950DT系列产品：不支持
+> <!-- end id10 -->
+> <!-- npu="A3" id11 -->
+> - Atlas A3系列产品：不支持
+> <!-- end id11 -->
+> <!-- npu="910b" id12 -->
+> - Atlas A2系列产品：不支持
+> <!-- end id12 -->
+> <!-- npu="310b" id13 -->
+> - Atlas 200I/500 A2推理产品：支持
+> <!-- end id13 -->
+> <!-- npu="310p" id14 -->
+> - Atlas推理系列产品AI Core：不支持
+> <!-- end id14 -->
+<!-- end id9 -->
 
 **表7** AippChannelPaddingParams结构体内参数说明<a name="table163681812917"></a>
 

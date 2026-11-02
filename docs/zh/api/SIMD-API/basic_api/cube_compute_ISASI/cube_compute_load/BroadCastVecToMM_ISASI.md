@@ -60,9 +60,11 @@ __aicore__ inline void BroadCastVecToMM(const LocalTensor<T> &dst, const LocalTe
 | srcGap | 输入 | 源操作数，相邻连续数据块的间隔（前面一个数据块的尾与后面数据块的头的间隔），单位为datablock（32字节）。 |
 | dstGap | 输入 | 目的操作数，相邻连续数据块间的间隔（前面一个数据块的尾与后面数据块的头的间隔），单位为256个元素。 |
 
+<!-- npu="310p" id8 -->
 ## 数据类型
 
 Atlas推理系列产品AI Core，支持的数据类型为：half、int32_t、float。
+<!-- end id8 -->
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

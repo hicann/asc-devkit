@@ -69,7 +69,7 @@ __aicore__ inline void SetFixPipeClipRelu(uint64_t config)
 uint64_t clipReluMaxVal = 0x3c00;
 SetFixPipeClipRelu(clipReluMaxVal); // 开启ReLU的情况下，先进行ReLU操作，再进行ClipReLU，clipReluMaxVal为通过该接口设置的最大值
 ```
-
+<!-- npu="310b" id10 -->
 - 针对Atlas 200I/500 A2推理产品，完整示例如下。随路格式转换数据搬运，通路：L0C Buffer-\>GM。
 
     示例：Mmad含有矩阵乘偏置，左矩阵和右矩阵的数据类型为int8\_t，结果矩阵的数据类型为int32\_t。量化模式DEQF16，scalar量化参数为0.5，将Mmad计算出的结果由int32\_t量化成half并搬出。
@@ -291,4 +291,4 @@ SetFixPipeClipRelu(clipReluMaxVal); // 开启ReLU的情况下，先进行ReLU操
         }
     KERNEL_CUBE_DATACOPY(half, int8_t, int8_t, int32_t, 128, 1, 1, QuantMode_t::DEQF16);
     ```
-    
+<!-- end id10 -->    

@@ -67,7 +67,7 @@ __aicore__ inline void LoadUnzipIndex(const GlobalTensor<T>& src, uint32_t numOf
 
 ## 调用示例<a name="section6461234123118"></a>
 
-该调用示例支持的运行平台为Atlas推理系列产品AI Core。详细用例请参考[LoadDataUnzip](LoadDataUnzip.md)。
+详细用例请参考[LoadDataUnzip](LoadDataUnzip.md)。
 
 ```cpp
 indexGlobal.SetGlobalBuffer((__gm__ int8_t*)indexGm);

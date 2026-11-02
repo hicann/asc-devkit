@@ -154,6 +154,7 @@ MmadMx的计算公式为：C=(scaleA⊗A)*(scaleB⊗B)+Bias，“⊗”表示广
 | bias | 输入 | 源操作数，Bias矩阵，类型为LocalTensor，支持的物理存储位置为BT Buffer（TPosition:C2）。<br>LocalTensor的起始地址需要按照64字节对齐。 |
 | mmadParams | 输入 | 矩阵乘相关参数。<br>该参数类型的具体定义请参考`${INSTALL_DIR}/asc/include/basic_api/kernel_struct_mm.h`，`${INSTALL_DIR}`请替换为CANN软件安装后文件存储路径。<br>MmadParams参数说明请参考[MmadParams结构体内参数说明](Mmad.md#zh_cn_topic_mmad_section4_table4)。 |
 
+<!-- npu="950" id19 -->
 ## 数据类型<a id="zh_cn_topic_mmadmx_section_datatype"></a>
 
 **表3** MmadMx接口左矩阵、右矩阵、Scale矩阵、Bias矩阵、结果矩阵支持的精度类型组合（Ascend 950PR&950DT系列产品）
@@ -168,6 +169,7 @@ MmadMx的计算公式为：C=(scaleA⊗A)*(scaleB⊗B)+Bias，“⊗”表示广
 | fp8_e4m3fn_t | fp8_e5m2_t | fp8_e8m0_t | float | float |
 | fp8_e5m2_t | fp8_e4m3fn_t | fp8_e8m0_t | float | float |
 | fp8_e5m2_t | fp8_e5m2_t | fp8_e8m0_t | float | float |
+<!-- end id19 -->
 
 ## 返回值说明
 

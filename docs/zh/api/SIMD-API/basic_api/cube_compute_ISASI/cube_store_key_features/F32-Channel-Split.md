@@ -8,6 +8,7 @@
 
 对于Fixpipe接口，可以通过配置[Fixpipe搬运参数结构体说明](../cube_compute_store/Fixpipe_L0CToGM.md)中channelSplit为true开启。
 
+<!-- npu="950,A3,910b" id5 -->
 ## 特性约束
 
 <!-- npu="A3,910b" id1 -->
@@ -27,6 +28,7 @@
 <!-- npu="950" id4 -->
 - 针对Ascend 950PR&950DT系列产品，当Fixpipe指令的输入和输出数据类型都为float,NZ输出到GM，并且不开启NZ2ND、NZ2DN与unitFlag时，才能够开启Channel Split功能。当前搬出到L1 Buffer和Unified Buffer（UB）不支持该功能。
 <!-- end id4 -->
+<!-- end id5 -->
 
 ## 使用示例
 
