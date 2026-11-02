@@ -160,7 +160,7 @@ for (i = 0; i < repeat_times; ++i) {
 | --- | --- | --- |
 | 矢量数据寄存器 | `vector_*`，例如vector_float | VL = 256B |
 | 掩码寄存器 | `vector_bool` | VL/8 = 32B |
-| 地址寄存器 | `addr_reg` | 32bits = 8B |
+| 地址寄存器 | `addr_reg` | 32bit = 4B |
 | 搬入非对齐寄存器 | `vector_load_unalign` | DataBlock = 32B |
 | 搬出非对齐寄存器 | `vector_store_unalign` | DataBlock = 32B |
 
