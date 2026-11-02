@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------------------------------------
 
 # 后续如果更新asc-comm代码需要同步更新至devkit run包需要更新change id
-set(ASC_COMM_TAG_ID e6910865c219886ba962748119bc1fd2d2f710f6)
+set(ASC_COMM_TAG_ID 0f24e5a53e028906a398865827c6f6e35b1848fe)
 
 # asc-comm 与 asc-devkit 按同级目录放置。路径以本文件所在目录(<devkit>/cmake/third_party)为锚，
 # 对于CI环境已经存在asc-comm代码, 不去拉取代码否则使用submodule方式拉取asc-comm仓代码
@@ -117,6 +117,11 @@ endif()
 # CCU 源码归属 asc-comm，跨 SO 依赖通过已安装 CANN pkg_inc 和 POD ABI 解决。
 set(ASC_COMM_CCU_CMAKE_DIR ${ASC_COMM_SOURCE_PATH}/src/ccu)
 if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
+    # The CANN package delivers the compiler-facing runtime together with the
+    # asc-comm CCU library.  Enable the real HComm backend for packaged builds;
+    # the default backend is only a compile-time unavailable stub.
+    set(ASCCOMM_BUILD_CCU_RUNTIME ON)
+    set(ASCCOMM_BUILD_CCU_RUNTIME_HCOMM_BACKEND ON)
     if(NOT TARGET asccomm_ccu)
         add_subdirectory(${ASC_COMM_CCU_CMAKE_DIR} ${CMAKE_BINARY_DIR}/asccomm_ccu)
     endif()
@@ -132,6 +137,17 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
             DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api/ccu/hcomm
             COMPONENT asc-devkit
             FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+    endif()
+
+    # ccu_runtime 是 asc-comm 的编译器侧 CCU runtime；作为 asc-devkit 子目录构建时，
+    # asc-comm/experimental 下的独立 install 规则不会生效，因此由 asc-devkit 统一接管交付。
+    if(TARGET ccu_runtime)
+        if(NOT TARGET ccu_runtime_build)
+            add_custom_target(ccu_runtime_build ALL DEPENDS ccu_runtime)
+        endif()
+        install(TARGETS ccu_runtime
+            LIBRARY DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64
+            COMPONENT asc-devkit)
     endif()
 else()
     message(STATUS "[ThirdPartyLib][asc-comm] Missing CCU cmake dir: ${ASC_COMM_CCU_CMAKE_DIR}, skip CCU so build")

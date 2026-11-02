@@ -185,6 +185,9 @@
     <file_info value="asccomm_ccu" copy_type="delivery" src_path="lib/host" dst_path="$(TARGET_ENV)/lib64" install_path="$(TARGET_ENV)/lib64" install_type="all" install_mod="440">
         <file value="libasccomm_ccu.so" file_type="shared"/>
     </file_info>
+    <file_info value="ccu_runtime" copy_type="delivery" src_path="lib/host" dst_path="$(TARGET_ENV)/lib64" install_path="$(TARGET_ENV)/lib64" install_type="all" install_mod="440">
+        <file value="libccu_runtime.so" file_type="shared"/>
+    </file_info>
     <file_info value="asccomm_ccu_headers" copy_type="delivery" src_path="lib/host/asc/include/comm_api/ccu" dst_path="$(TARGET_ENV)/asc/include/comm_api/ccu" install_path="$(TARGET_ENV)/asc/include/comm_api/ccu" install_type="all" install_mod="440">
         <file value="hcomm"/>
     </file_info>
