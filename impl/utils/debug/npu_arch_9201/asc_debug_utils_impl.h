@@ -172,19 +172,12 @@ __aicore__ inline void ringbuf_wait_rts_sync_impl()
     }
 }
 
-__aicore__ inline uint32_t asc_debug_get_core_idx_impl()
-{
-    constexpr uint32_t dumpCoreNums = 140;
-    return get_coreid() % dumpCoreNums;
-}
+__aicore__ inline uint32_t asc_debug_get_core_idx_impl() { return get_coreid(); }
 
 __aicore__ inline uint64_t asc_debug_get_block_idx_impl()
 {
-#if defined(__DAV_VEC__)
-    return get_block_idx() * get_subblockdim() + get_subblockid();
-#else
+    // 9201 only support mix 1:1
     return get_block_idx();
-#endif
 }
 
 __aicore__ inline int64_t get_task_ration()
