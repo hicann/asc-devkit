@@ -24,11 +24,12 @@
 #define ASCENDC_MODULE_REG_COMPUTE_DATATYPE_IMPL_H
 
 #include "../../../basic_api/utils/kernel_utils_macros.h"
+#include "../../dav_l311/kernel_vector_type_map_impl.h"
 
 namespace AscendC {
 namespace Reg {
 template <typename T>
-struct TypeGet;
+struct TypeGet : ::AscendC::Internal::VectorTypeMap<T> {};
 
 template <>
 struct TypeGet<uint64_t> {
@@ -37,49 +38,6 @@ struct TypeGet<uint64_t> {
 template <>
 struct TypeGet<int64_t> {
     using T = vector_s64;
-};
-
-template <>
-struct TypeGet<uint32_t> {
-    using T = vector_u32;
-};
-template <>
-struct TypeGet<int32_t> {
-    using T = vector_s32;
-};
-template <>
-struct TypeGet<float> {
-    using T = vector_f32;
-};
-template <>
-struct TypeGet<uint16_t> {
-    using T = vector_u16;
-};
-template <>
-struct TypeGet<half> {
-    using T = vector_f16;
-};
-template <>
-struct TypeGet<int16_t> {
-    using T = vector_s16;
-};
-template <>
-struct TypeGet<uint8_t> {
-    using T = vector_u8;
-};
-template <>
-struct TypeGet<int8_t> {
-    using T = vector_s8;
-};
-
-template <>
-struct TypeGet<bool> {
-    using T = vector_s8;
-};
-
-template <>
-struct TypeGet<int4x2_t> {
-    using T = vector_s4x2;
 };
 } // namespace Reg
 } // namespace AscendC

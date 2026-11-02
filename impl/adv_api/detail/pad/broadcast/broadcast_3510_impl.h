@@ -1254,13 +1254,12 @@ __aicore__ inline void BrcNlastWrapperForMoreDim(
     }
 }
 
-template <typename T>
-__aicore__ inline void BrcNlastWrapperForMoreDimDynamicShape(
+template <typename T, bool isNlast>
+__aicore__ inline void BrcWrapperForMoreDimDynamicShapeImpl(
     __ubuf__ T* dstUb, __ubuf__ T* srcUb, const uint32_t dim, const uint32_t* dstShape, const uint32_t* dstStride,
     const uint32_t* srcStride)
 {
     constexpr uint16_t VF_LEN = GetVecLen() / sizeof(T);
-    constexpr uint16_t VF_LEN_HALF = GetVecLen() / 2 / sizeof(T);
     constexpr uint32_t oneBlockElementNum = GetDataBlockSizeInBytes() / sizeof(T);
     uint16_t sizeI[4] = {1, 1, 1, 1};
     if (dim > 4) {
@@ -1306,25 +1305,38 @@ __aicore__ inline void BrcNlastWrapperForMoreDimDynamicShape(
                                 k * srcStride[(dim - 7 + totalDim) % totalDim] +
                                 j * srcStride[(dim - 8 + totalDim) % totalDim] +
                                 i * srcStride[(dim - 9 + totalDim) % totalDim];
-                        if (sizeI[3] < VF_LEN_HALF && sizeof(T) != sizeof(uint8_t)) {
-                            GatherWrapperForFourDim(dstUb, srcUb, dstShape + dim - 4, srcStride + dim - 4);
-                        } else if (sizeI[3] <= VF_LEN) {
-                            if (sizeI[3] % oneBlockElementNum == 0) {
-                                BrcNlastLessThanVLAligned<T>(
-                                    dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
-                                    stride[2]);
+                        if constexpr (isNlast) {
+                            constexpr uint16_t VF_LEN_HALF = GetVecLen() / 2 / sizeof(T);
+                            if (sizeI[3] < VF_LEN_HALF && sizeof(T) != sizeof(uint8_t)) {
+                                GatherWrapperForFourDim(dstUb, srcUb, dstShape + dim - 4, srcStride + dim - 4);
+                            } else if (sizeI[3] <= VF_LEN) {
+                                if (sizeI[3] % oneBlockElementNum == 0) {
+                                    BrcNlastLessThanVLAligned<T>(
+                                        dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
+                                        stride[2]);
+                                } else {
+                                    BrcNlastLessThanVLUnaligned<T>(
+                                        dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
+                                        stride[2]);
+                                }
                             } else {
-                                BrcNlastLessThanVLUnaligned<T>(
-                                    dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
-                                    stride[2]);
+                                if (sizeI[3] % oneBlockElementNum == 0) {
+                                    BrcNlastLargerThanVLAlignedWithBlock<T>(
+                                        dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
+                                        stride[2]);
+                                } else {
+                                    BrcNlastLargerThanVLUnaligned<T>(
+                                        dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
+                                        stride[2]);
+                                }
                             }
                         } else {
-                            if (sizeI[3] % oneBlockElementNum == 0) {
-                                BrcNlastLargerThanVLAlignedWithBlock<T>(
+                            if (sizeI[3] <= VF_LEN) {
+                                BrcLastLessThanVLUnaligned<T>(
                                     dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
                                     stride[2]);
                             } else {
-                                BrcNlastLargerThanVLUnaligned<T>(
+                                BrcLastLargerThanVLUnaligned<T>(
                                     dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1],
                                     stride[2]);
                             }
@@ -1337,68 +1349,19 @@ __aicore__ inline void BrcNlastWrapperForMoreDimDynamicShape(
 }
 
 template <typename T>
+__aicore__ inline void BrcNlastWrapperForMoreDimDynamicShape(
+    __ubuf__ T* dstUb, __ubuf__ T* srcUb, const uint32_t dim, const uint32_t* dstShape, const uint32_t* dstStride,
+    const uint32_t* srcStride)
+{
+    BrcWrapperForMoreDimDynamicShapeImpl<T, true>(dstUb, srcUb, dim, dstShape, dstStride, srcStride);
+}
+
+template <typename T>
 __aicore__ inline void BrcLastWrapperForMoreDimDynamicShape(
     __ubuf__ T* dstUb, __ubuf__ T* srcUb, const uint32_t dim, const uint32_t* dstShape, const uint32_t* dstStride,
     const uint32_t* srcStride)
 {
-    constexpr uint16_t VF_LEN = GetVecLen() / sizeof(T);
-    constexpr uint32_t oneBlockElementNum = GetDataBlockSizeInBytes() / sizeof(T);
-    uint16_t sizeI[4] = {1, 1, 1, 1};
-    if (dim > 4) {
-        sizeI[0] = dstShape[dim - 4];
-        sizeI[1] = dstShape[dim - 3];
-        sizeI[2] = dstShape[dim - 2];
-        sizeI[3] = dstShape[dim - 1];
-    } else {
-        for (uint16_t i = 0; i < dim; ++i) {
-            sizeI[4 - dim + i] = dstShape[i];
-        }
-    }
-    uint32_t totalDim = 9;
-    uint16_t loops[5] = {1, 1, 1, 1, 1};
-    for (int16_t i = dim - 5, j = 4; i >= 0; --i, --j) {
-        loops[j] = static_cast<uint16_t>(dstShape[i]);
-    }
-    uint16_t stride[4] = {0, 0, 0, 0};
-    if (dim > 4) {
-        stride[0] = srcStride[dim - 4];
-        stride[1] = srcStride[dim - 3];
-        stride[2] = srcStride[dim - 2];
-        stride[3] = srcStride[dim - 1];
-    } else {
-        for (uint16_t i = 0; i < dim; ++i) {
-            stride[4 - dim + i] = srcStride[i];
-        }
-    }
-    __ubuf__ T* srcUbTmp = srcUb;
-    __ubuf__ T* dstUbTmp = dstUb;
-    for (uint16_t i = 0; i < loops[0]; ++i) {
-        for (uint16_t j = 0; j < loops[1]; ++j) {
-            for (uint16_t k = 0; k < loops[2]; ++k) {
-                for (uint16_t t = 0; t < loops[3]; ++t) {
-                    for (uint16_t p = 0; p < loops[4]; ++p) {
-                        dstUb = dstUbTmp + p * dstStride[(dim - 5 + totalDim) % totalDim] +
-                                t * dstStride[(dim - 6 + totalDim) % totalDim] +
-                                k * dstStride[(dim - 7 + totalDim) % totalDim] +
-                                j * dstStride[(dim - 8 + totalDim) % totalDim] +
-                                i * dstStride[(dim - 9 + totalDim) % totalDim];
-                        srcUb = srcUbTmp + p * srcStride[(dim - 5 + totalDim) % totalDim] +
-                                t * srcStride[(dim - 6 + totalDim) % totalDim] +
-                                k * srcStride[(dim - 7 + totalDim) % totalDim] +
-                                j * srcStride[(dim - 8 + totalDim) % totalDim] +
-                                i * srcStride[(dim - 9 + totalDim) % totalDim];
-                        if (sizeI[3] <= VF_LEN) {
-                            BrcLastLessThanVLUnaligned<T>(
-                                dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1], stride[2]);
-                        } else {
-                            BrcLastLargerThanVLUnaligned<T>(
-                                dstUb, srcUb, sizeI[0], sizeI[1], sizeI[2], sizeI[3], stride[0], stride[1], stride[2]);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    BrcWrapperForMoreDimDynamicShapeImpl<T, false>(dstUb, srcUb, dim, dstShape, dstStride, srcStride);
 }
 } // namespace BroadcastInternal
 } // namespace AscendC

@@ -3902,39 +3902,7 @@ __aicore__ inline void asc_transto5hd_b16_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
     if ASC_IS_AIV {
-        if (dst == ub_addr8_t::VA0) {
-            if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b16(VA0, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b16(VA0, VA4, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b16(VA0, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA2) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b16(VA2, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b16(VA2, VA4, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b16(VA2, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA4) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b16(VA4, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b16(VA4, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b16(VA4, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA6) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b16(VA6, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b16(VA6, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b16(VA6, VA4, repeat, dst_stride, src_stride);
-            }
-        }
+        asc_transto5hd_b16(dst, src, repeat, dst_stride, src_stride);
 
         asc_sync_post_process();
     }
@@ -3945,39 +3913,7 @@ __aicore__ inline void asc_transto5hd_b32_sync(
     ub_addr8_t dst, ub_addr8_t src, uint8_t repeat, uint16_t dst_stride, uint16_t src_stride)
 {
     if ASC_IS_AIV {
-        if (dst == ub_addr8_t::VA0) {
-            if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b32(VA0, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b32(VA0, VA4, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b32(VA0, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA2) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b32(VA2, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b32(VA2, VA4, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b32(VA2, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA4) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b32(VA4, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b32(VA4, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA6) {
-                scatter_vnchwconv_b32(VA4, VA6, repeat, dst_stride, src_stride);
-            }
-        } else if (dst == ub_addr8_t::VA6) {
-            if (src == ub_addr8_t::VA0) {
-                scatter_vnchwconv_b32(VA6, VA0, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA2) {
-                scatter_vnchwconv_b32(VA6, VA2, repeat, dst_stride, src_stride);
-            } else if (src == ub_addr8_t::VA4) {
-                scatter_vnchwconv_b32(VA6, VA4, repeat, dst_stride, src_stride);
-            }
-        }
+        asc_transto5hd_b32(dst, src, repeat, dst_stride, src_stride);
 
         asc_sync_post_process();
     }

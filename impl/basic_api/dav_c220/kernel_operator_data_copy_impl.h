@@ -449,21 +449,10 @@ __aicore__ inline void DataCopySliceGm2UBImpl(__ubuf__ T* dst, __gm__ T* src, co
     DataCopyPadGm2UBImpl(dst, src, intriParams, padParams);
 }
 
-template <typename T>
-__aicore__ inline void DataCopyPadGm2UBImpl(
-    __ubuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
+template <typename T, typename CopyParams, typename PadParams>
+__aicore__ inline void DataCopyPadGm2UBTransferImpl(
+    __ubuf__ T* dst, __gm__ T* src, const CopyParams& intriParams, const PadParams& padParams)
 {
-    if ASCEND_IS_AIC {
-        return;
-    }
-    ASCENDC_DEBUG_ASSERT(
-        (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
-        KERNEL_LOG_INTERNAL(
-            KERNEL_ERROR, "Failed to check dst tensor address alignment in DataCopyPad from GM to UB(VECIN/VECOUT), it "
-                          "should be 32B aligned.\n"));
-    if (padParams.isPad) {
-        set_mov_pad_val(padParams.paddingValue);
-    }
     if constexpr (
         g_gm_overflow_check && (sizeof(T) == B8_BYTE_SIZE || sizeof(T) == B16_BYTE_SIZE || sizeof(T) == B32_BYTE_SIZE ||
                                 sizeof(T) == B64_BYTE_SIZE)) {
@@ -500,6 +489,24 @@ __aicore__ inline void DataCopyPadGm2UBImpl(
 
 template <typename T>
 __aicore__ inline void DataCopyPadGm2UBImpl(
+    __ubuf__ T* dst, __gm__ T* src, const DataCopyParams& intriParams, const DataCopyPadParams& padParams)
+{
+    if ASCEND_IS_AIC {
+        return;
+    }
+    ASCENDC_DEBUG_ASSERT(
+        (TransUBAddr<TPosition::VECIN>(reinterpret_cast<uint64_t>(dst)) % ONE_BLK_SIZE == 0),
+        KERNEL_LOG_INTERNAL(
+            KERNEL_ERROR, "Failed to check dst tensor address alignment in DataCopyPad from GM to UB(VECIN/VECOUT), it "
+                          "should be 32B aligned.\n"));
+    if (padParams.isPad) {
+        set_mov_pad_val(padParams.paddingValue);
+    }
+    DataCopyPadGm2UBTransferImpl(dst, src, intriParams, padParams);
+}
+
+template <typename T>
+__aicore__ inline void DataCopyPadGm2UBImpl(
     __ubuf__ T* dst, __gm__ T* src, const DataCopyExtParams& intriParams, const DataCopyPadExtParams<T>& padParams)
 {
     if ASCEND_IS_AIC {
@@ -514,38 +521,7 @@ __aicore__ inline void DataCopyPadGm2UBImpl(
     if (padParams.isPad) {
         set_mov_pad_val(GetScalarBitcodeValue(static_cast<T>(padParams.paddingValue)));
     }
-    if constexpr (
-        g_gm_overflow_check && (sizeof(T) == B8_BYTE_SIZE || sizeof(T) == B16_BYTE_SIZE || sizeof(T) == B32_BYTE_SIZE ||
-                                sizeof(T) == B64_BYTE_SIZE)) {
-        __gm__ uint8_t* workSpace = GetSysWorkSpacePtr();
-        AscendCUtils::CheckGmMemOverflowNormal(src, workSpace, true, true, intriParams);
-    }
-    if constexpr (sizeof(T) == B8_BYTE_SIZE) {
-        copy_gm_to_ubuf_align_b8(
-            dst, src, 0, intriParams.blockCount, intriParams.blockLen, padParams.leftPadding, padParams.rightPadding,
-            intriParams.srcStride, intriParams.dstStride);
-    } else if constexpr (sizeof(T) == B16_BYTE_SIZE) {
-        copy_gm_to_ubuf_align_b16(
-            dst, src, 0, intriParams.blockCount, intriParams.blockLen, padParams.leftPadding, padParams.rightPadding,
-            intriParams.srcStride, intriParams.dstStride);
-    } else if constexpr (sizeof(T) == B32_BYTE_SIZE) {
-        copy_gm_to_ubuf_align_b32(
-            dst, src, 0, intriParams.blockCount, intriParams.blockLen, padParams.leftPadding, padParams.rightPadding,
-            intriParams.srcStride, intriParams.dstStride);
-    } else if constexpr (sizeof(T) == B64_BYTE_SIZE) {
-        copy_gm_to_ubuf_align_b32(
-            dst, src, 0, intriParams.blockCount, intriParams.blockLen, (padParams.leftPadding << 1),
-            (padParams.rightPadding << 1), intriParams.srcStride, intriParams.dstStride);
-    } else {
-        ASCENDC_ASSERT((false), {
-            KERNEL_LOG(
-                KERNEL_ERROR,
-                "Failed to check dtype in DataCopyPad from GM to UB(VECIN) / "
-                "UB(VECOUT), current api support dtype combination is src and dst both: int8_t / uint8_t / "
-                "half / bfloat16_t / "
-                "int16_t / uint16_t / float / int32_t / uint32_t / double / int64_t / uint64_t.");
-        });
-    }
+    DataCopyPadGm2UBTransferImpl(dst, src, intriParams, padParams);
 }
 
 template <typename T>

@@ -341,6 +341,39 @@ struct LoadData3dv1ApiParams {
     uint8_t srcPos = 0;
 };
 
+template <typename Params>
+inline void InitLoadData3dv2Common(
+    Params& params, uint16_t channelSizeIn, uint16_t kExtensionIn, uint16_t mExtensionIn, uint16_t kStartPtIn,
+    uint16_t mStartPtIn, uint8_t strideWIn, uint8_t strideHIn, uint8_t filterWIn, uint8_t filterHIn,
+    uint8_t dilationFilterWIn, uint8_t dilationFilterHIn, bool enTransposeIn, bool enSmallKIn, uint32_t dstDtypeBytesIn,
+    uint32_t srcDtypeBytesIn, uint64_t dstSizeIn, uint64_t srcSizeIn, uint8_t dstPosIn, uint8_t srcPosIn)
+{
+    params.channelSize = channelSizeIn;
+    params.kExtension = kExtensionIn;
+    params.mExtension = mExtensionIn;
+    params.kStartPt = kStartPtIn;
+    params.mStartPt = mStartPtIn;
+    params.strideW = strideWIn;
+    params.strideH = strideHIn;
+    params.filterW = filterWIn;
+    params.filterH = filterHIn;
+    params.dilationFilterW = dilationFilterWIn;
+    params.dilationFilterH = dilationFilterHIn;
+    params.enTranspose = enTransposeIn;
+    params.enSmallK = enSmallKIn;
+    params.filterSizeW = false;
+    params.filterSizeH = false;
+    params.fMatrixCtrl = false;
+    params.dstDtypeBytes = dstDtypeBytesIn;
+    params.srcDtypeBytes = srcDtypeBytesIn;
+    params.dstSize = dstSizeIn;
+    params.srcSize = srcSizeIn;
+    params.dstLogicPos = dstPosIn;
+    params.srcLogicPos = srcPosIn;
+    params.dstPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(dstPosIn)));
+    params.srcPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(srcPosIn)));
+}
+
 struct LoadData3dv2ApiParams {
     LoadData3dv2ApiParams() {}
     LoadData3dv2ApiParams(
@@ -357,30 +390,10 @@ struct LoadData3dv2ApiParams {
         }
         l1H = l1HIn;
         l1W = l1WIn;
-        channelSize = channelSizeIn;
-        kExtension = kExtensionIn;
-        mExtension = mExtensionIn;
-        kStartPt = kStartPtIn;
-        mStartPt = mStartPtIn;
-        strideW = strideWIn;
-        strideH = strideHIn;
-        filterW = filterWIn;
-        filterH = filterHIn;
-        dilationFilterW = dilationFilterWIn;
-        dilationFilterH = dilationFilterHIn;
-        enTranspose = enTransposeIn;
-        enSmallK = enSmallKIn;
-        filterSizeW = false;
-        filterSizeH = false;
-        fMatrixCtrl = false;
-        dstDtypeBytes = dstDtypeBytesIn;
-        srcDtypeBytes = srcDtypeBytesIn;
-        dstSize = dstSizeIn;
-        srcSize = srcSizeIn;
-        dstLogicPos = dstPosIn;
-        srcLogicPos = srcPosIn;
-        dstPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(dstPosIn)));
-        srcPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(srcPosIn)));
+        InitLoadData3dv2Common(
+            *this, channelSizeIn, kExtensionIn, mExtensionIn, kStartPtIn, mStartPtIn, strideWIn, strideHIn, filterWIn,
+            filterHIn, dilationFilterWIn, dilationFilterHIn, enTransposeIn, enSmallKIn, dstDtypeBytesIn,
+            srcDtypeBytesIn, dstSizeIn, srcSizeIn, dstPosIn, srcPosIn);
     }
     uint64_t dstAddr = 0;
     uint64_t srcAddr = 0;
@@ -424,30 +437,10 @@ struct LoadData3dv2ProApiParams {
     {
         dstAddr = dstAddrIn;
         srcAddr = srcAddrIn;
-        channelSize = channelSizeIn;
-        kExtension = kExtensionIn;
-        mExtension = mExtensionIn;
-        kStartPt = kStartPtIn;
-        mStartPt = mStartPtIn;
-        strideW = strideWIn;
-        strideH = strideHIn;
-        filterW = filterWIn;
-        filterH = filterHIn;
-        dilationFilterW = dilationFilterWIn;
-        dilationFilterH = dilationFilterHIn;
-        enTranspose = enTransposeIn;
-        enSmallK = enSmallKIn;
-        filterSizeW = false;
-        filterSizeH = false;
-        fMatrixCtrl = false;
-        dstDtypeBytes = dstDtypeBytesIn;
-        srcDtypeBytes = srcDtypeBytesIn;
-        dstSize = dstSizeIn;
-        srcSize = srcSizeIn;
-        dstLogicPos = dstPosIn;
-        srcLogicPos = srcPosIn;
-        dstPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(dstPosIn)));
-        srcPos = static_cast<uint8_t>(GetPhyType(static_cast<TPosition>(srcPosIn)));
+        InitLoadData3dv2Common(
+            *this, channelSizeIn, kExtensionIn, mExtensionIn, kStartPtIn, mStartPtIn, strideWIn, strideHIn, filterWIn,
+            filterHIn, dilationFilterWIn, dilationFilterHIn, enTransposeIn, enSmallKIn, dstDtypeBytesIn,
+            srcDtypeBytesIn, dstSizeIn, srcSizeIn, dstPosIn, srcPosIn);
     }
     uint64_t dstAddr = 0;
     uint64_t srcAddr = 0;

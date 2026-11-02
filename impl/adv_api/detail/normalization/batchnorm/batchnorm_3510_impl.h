@@ -147,60 +147,9 @@ __simd_callee__ inline void ComputeFloatMean(
     }
 }
 
-template <typename T>
-__simd_callee__ inline void ComputeOutputVariance(
-    __ubuf__ T* dstLocal, __ubuf__ T* srcLocal, __ubuf__ float* meanLocal, uint32_t oriBLength, uint32_t featureLength,
-    float firstDimValueBack)
-{
-    Reg::RegTensor<float> srcReg;
-    Reg::RegTensor<float> dstReg;
-    Reg::RegTensor<float> meanReg;
-    Reg::RegTensor<float> diffReg;
-    Reg::RegTensor<float> sqrReg;
-    Reg::RegTensor<float> dstTailReg;
-    uint16_t mainRepeatTime = static_cast<uint16_t>(featureLength / oneRepSize);
-    uint32_t tailCount = featureLength % oneRepSize;
-    uint16_t tailRepeatTime = static_cast<uint16_t>(CeilDivision(tailCount, oneRepSize));
-    Reg::MaskReg maskFull = Reg::CreateMask<float, Reg::MaskPattern::ALL>();
-    Reg::MaskReg maskOne = Reg::CreateMask<float, Reg::MaskPattern::VL1>();
-    Reg::MaskReg maskReg = Reg::UpdateMask<float>(tailCount);
-    for (uint16_t i = 0; i < mainRepeatTime; i++) {
-        Reg::Duplicate(dstReg, static_cast<float>(0), maskFull);
-        Reg::LoadAlign(meanReg, meanLocal + i * oneRepSize);
-        for (uint16_t bIdx = 0; bIdx < oriBLength; bIdx++) {
-            LoadDataWithT(srcLocal, srcReg, maskFull, bIdx * featureLength + i * oneRepSize);
-            // step 1: x - u
-            Reg::Sub(diffReg, srcReg, meanReg, maskFull);
-            // step 2: (x - u)²
-            Reg::Mul(sqrReg, diffReg, diffReg, maskFull);
-            // step 3: �?x - u)²
-            Reg::Add(dstReg, dstReg, sqrReg, maskFull);
-        }
-        // step 4: �?x - u)² / N
-        Reg::Muls(dstReg, dstReg, firstDimValueBack, maskFull);
-        SaveDataWithT(dstLocal, dstReg, maskFull, i * oneRepSize);
-    }
-    for (uint16_t i = 0; i < tailRepeatTime; i++) {
-        Reg::Duplicate(dstReg, static_cast<float>(0), maskFull);
-        Reg::LoadAlign(meanReg, meanLocal + mainRepeatTime * oneRepSize);
-        for (uint16_t bIdx = 0; bIdx < oriBLength; bIdx++) {
-            LoadDataWithT(srcLocal, srcReg, maskReg, bIdx * featureLength + mainRepeatTime * oneRepSize);
-            // step 1: x - u
-            Reg::Sub(diffReg, srcReg, meanReg, maskReg);
-            // step 2: (x - u)²
-            Reg::Mul(sqrReg, diffReg, diffReg, maskReg);
-            // step 3: �?x - u)²
-            Reg::Add(dstReg, dstReg, sqrReg, maskReg);
-        }
-        // step 4: �?x - u)² / N
-        Reg::Muls(dstReg, dstReg, firstDimValueBack, maskReg);
-        SaveDataWithT(dstLocal, dstReg, maskReg, mainRepeatTime * oneRepSize);
-    }
-}
-
-template <typename T>
-__simd_callee__ inline void ComputeFloatVariance(
-    __ubuf__ float* dstLocal, __ubuf__ T* srcLocal, __ubuf__ float* meanLocal, uint32_t oriBLength,
+template <typename T, typename DstT, bool floatOutput>
+__simd_callee__ inline void ComputeVarianceImpl(
+    __ubuf__ DstT* dstLocal, __ubuf__ T* srcLocal, __ubuf__ float* meanLocal, uint32_t oriBLength,
     uint32_t featureLength, float firstDimValueBack)
 {
     Reg::RegTensor<float> srcReg;
@@ -229,7 +178,11 @@ __simd_callee__ inline void ComputeFloatVariance(
         }
         // step 4: �?x - u)² / N
         Reg::Muls(dstReg, dstReg, firstDimValueBack, maskFull);
-        Reg::StoreAlign(dstLocal + i * oneRepSize, dstReg, maskFull);
+        if constexpr (floatOutput) {
+            Reg::StoreAlign(dstLocal + i * oneRepSize, dstReg, maskFull);
+        } else {
+            SaveDataWithT(dstLocal, dstReg, maskFull, i * oneRepSize);
+        }
     }
     for (uint16_t i = 0; i < tailRepeatTime; i++) {
         Reg::Duplicate(dstReg, static_cast<float>(0), maskFull);
@@ -245,8 +198,28 @@ __simd_callee__ inline void ComputeFloatVariance(
         }
         // step 4: �?x - u)² / N
         Reg::Muls(dstReg, dstReg, firstDimValueBack, maskReg);
-        Reg::StoreAlign(dstLocal + mainRepeatTime * oneRepSize, dstReg, maskReg);
+        if constexpr (floatOutput) {
+            Reg::StoreAlign(dstLocal + mainRepeatTime * oneRepSize, dstReg, maskReg);
+        } else {
+            SaveDataWithT(dstLocal, dstReg, maskReg, mainRepeatTime * oneRepSize);
+        }
     }
+}
+
+template <typename T>
+__simd_callee__ inline void ComputeOutputVariance(
+    __ubuf__ T* dstLocal, __ubuf__ T* srcLocal, __ubuf__ float* meanLocal, uint32_t oriBLength, uint32_t featureLength,
+    float firstDimValueBack)
+{
+    ComputeVarianceImpl<T, T, false>(dstLocal, srcLocal, meanLocal, oriBLength, featureLength, firstDimValueBack);
+}
+
+template <typename T>
+__simd_callee__ inline void ComputeFloatVariance(
+    __ubuf__ float* dstLocal, __ubuf__ T* srcLocal, __ubuf__ float* meanLocal, uint32_t oriBLength,
+    uint32_t featureLength, float firstDimValueBack)
+{
+    ComputeVarianceImpl<T, float, true>(dstLocal, srcLocal, meanLocal, oriBLength, featureLength, firstDimValueBack);
 }
 
 template <typename T>

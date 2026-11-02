@@ -65,41 +65,41 @@ constexpr int32_t UB_SIZE = 192 * 1024 - 256;
         TILING_LOG_DEBUG("The input %s size should be greater than 0, currently, it is %d.", #val, val); \
     }
 
+static inline void InitMatmulApiTilingBaseCommon(MatmulApiTilingBase& tiling)
+{
+    tiling.aType_.isDB = true;
+    tiling.bType_.isDB = true;
+    tiling.cType_.isDB = true;
+    tiling.biasType_.isDB = true;
+    tiling.aType_.isTrans = false;
+    tiling.bType_.isTrans = false;
+    tiling.isBias = false;
+    tiling.madType_ = MatrixMadType::NORMAL;
+    tiling.singleM = -1;
+    tiling.singleN = -1;
+    tiling.singleK = -1;
+    tiling.singleCoreM = -1;
+    tiling.singleCoreN = -1;
+    tiling.singleCoreK = -1;
+    tiling.orgM = -1;
+    tiling.orgN = -1;
+    tiling.orgKa = -1;
+    tiling.orgKb = -1;
+    tiling.baseM = -1;
+    tiling.baseN = -1;
+    tiling.baseK = -1;
+    tiling.adjust_.maxBaseM = 0x7FFFFFFF;
+    tiling.adjust_.maxBaseN = 0x7FFFFFFF;
+    tiling.adjust_.maxBaseK = 0x7FFFFFFF;
+    tiling.adjust_.minBaseM = MIN_MNK_SIZE;
+    tiling.adjust_.minBaseN = MIN_MNK_SIZE;
+    tiling.adjust_.minBaseK = MIN_MNK_SIZE;
+    tiling.traverse_ = MatrixTraverse::NOSET;
+}
+
 MatmulApiTilingBase::MatmulApiTilingBase()
 {
-    this->aType_.isDB = true;
-    this->bType_.isDB = true;
-    this->cType_.isDB = true;
-    this->biasType_.isDB = true;
-
-    this->aType_.isTrans = false;
-    this->bType_.isTrans = false;
-
-    this->isBias = false;
-    this->madType_ = MatrixMadType::NORMAL;
-
-    this->singleM = -1;
-    this->singleN = -1;
-    this->singleK = -1;
-    this->singleCoreM = -1;
-    this->singleCoreN = -1;
-    this->singleCoreK = -1;
-    this->orgM = -1;
-    this->orgN = -1;
-    this->orgKa = -1;
-    this->orgKb = -1;
-    this->baseM = -1;
-    this->baseN = -1;
-    this->baseK = -1;
-
-    this->adjust_.maxBaseM = 0x7FFFFFFF;
-    this->adjust_.maxBaseN = 0x7FFFFFFF;
-    this->adjust_.maxBaseK = 0x7FFFFFFF;
-    this->adjust_.minBaseM = MIN_MNK_SIZE;
-    this->adjust_.minBaseN = MIN_MNK_SIZE;
-    this->adjust_.minBaseK = MIN_MNK_SIZE;
-
-    this->traverse_ = MatrixTraverse::NOSET;
+    InitMatmulApiTilingBaseCommon(*this);
 
     // based on hardware initial size, this part would be reset
     this->oriBufferPool_.l1Size = L1_SIZE;
@@ -132,39 +132,7 @@ MatmulApiTilingBase::MatmulApiTilingBase()
 
 MatmulApiTilingBase::MatmulApiTilingBase(const platform_ascendc::PlatformAscendC& ascendcPlatform)
 {
-    this->aType_.isDB = true;
-    this->bType_.isDB = true;
-    this->cType_.isDB = true;
-    this->biasType_.isDB = true;
-
-    this->aType_.isTrans = false;
-    this->bType_.isTrans = false;
-
-    this->isBias = false;
-    this->madType_ = MatrixMadType::NORMAL;
-
-    this->singleM = -1;
-    this->singleN = -1;
-    this->singleK = -1;
-    this->singleCoreM = -1;
-    this->singleCoreN = -1;
-    this->singleCoreK = -1;
-    this->orgM = -1;
-    this->orgN = -1;
-    this->orgKa = -1;
-    this->orgKb = -1;
-    this->baseM = -1;
-    this->baseN = -1;
-    this->baseK = -1;
-
-    this->adjust_.maxBaseM = 0x7FFFFFFF;
-    this->adjust_.maxBaseN = 0x7FFFFFFF;
-    this->adjust_.maxBaseK = 0x7FFFFFFF;
-    this->adjust_.minBaseM = MIN_MNK_SIZE;
-    this->adjust_.minBaseN = MIN_MNK_SIZE;
-    this->adjust_.minBaseK = MIN_MNK_SIZE;
-
-    this->traverse_ = MatrixTraverse::NOSET;
+    InitMatmulApiTilingBaseCommon(*this);
 
     // based on platformInfo initial size
     uint64_t l1Size = 0;
@@ -211,39 +179,7 @@ MatmulApiTilingBase::MatmulApiTilingBase(const platform_ascendc::PlatformAscendC
 
 MatmulApiTilingBase::MatmulApiTilingBase(const PlatformInfo& platform)
 {
-    this->aType_.isDB = true;
-    this->bType_.isDB = true;
-    this->cType_.isDB = true;
-    this->biasType_.isDB = true;
-
-    this->aType_.isTrans = false;
-    this->bType_.isTrans = false;
-
-    this->isBias = false;
-    this->madType_ = MatrixMadType::NORMAL;
-
-    this->singleM = -1;
-    this->singleN = -1;
-    this->singleK = -1;
-    this->singleCoreM = -1;
-    this->singleCoreN = -1;
-    this->singleCoreK = -1;
-    this->orgM = -1;
-    this->orgN = -1;
-    this->orgKa = -1;
-    this->orgKb = -1;
-    this->baseM = -1;
-    this->baseN = -1;
-    this->baseK = -1;
-
-    this->adjust_.maxBaseM = 0x7FFFFFFF;
-    this->adjust_.maxBaseN = 0x7FFFFFFF;
-    this->adjust_.maxBaseK = 0x7FFFFFFF;
-    this->adjust_.minBaseM = MIN_MNK_SIZE;
-    this->adjust_.minBaseN = MIN_MNK_SIZE;
-    this->adjust_.minBaseK = MIN_MNK_SIZE;
-
-    this->traverse_ = MatrixTraverse::NOSET;
+    InitMatmulApiTilingBaseCommon(*this);
 
     // based on platformInfo initial size
     socVersion = platform.socVersion;

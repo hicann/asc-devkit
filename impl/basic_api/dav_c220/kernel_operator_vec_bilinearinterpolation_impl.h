@@ -38,11 +38,11 @@
 namespace AscendC {
 constexpr uint32_t brcbEleNum = 8;
 
-template <typename T>
-__aicore__ inline void BilinearInterpolationCalc(
+template <typename T, typename MaskT>
+__aicore__ inline void BilinearInterpolationCalcImpl(
     const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<uint32_t>& src0Offset,
-    const LocalTensor<T>& src1, uint64_t mask, uint8_t hRepeat, bool repeatMode, uint16_t dstBlkStride,
-    uint16_t vROffset, uint8_t vRepeat, const LocalTensor<uint8_t>& sharedTmpBuffer)
+    const LocalTensor<T>& src1, MaskT& mask, uint8_t hRepeat, bool repeatMode, uint16_t dstBlkStride, uint16_t vROffset,
+    uint8_t vRepeat, const LocalTensor<uint8_t>& sharedTmpBuffer)
 {
     using PrimType = PrimT<T>;
     auto sharedTmpBufferT = sharedTmpBuffer.ReinterpretCast<T>();
@@ -93,53 +93,21 @@ __aicore__ inline void BilinearInterpolationCalc(
 template <typename T>
 __aicore__ inline void BilinearInterpolationCalc(
     const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<uint32_t>& src0Offset,
+    const LocalTensor<T>& src1, uint64_t mask, uint8_t hRepeat, bool repeatMode, uint16_t dstBlkStride,
+    uint16_t vROffset, uint8_t vRepeat, const LocalTensor<uint8_t>& sharedTmpBuffer)
+{
+    BilinearInterpolationCalcImpl(
+        dst, src0, src0Offset, src1, mask, hRepeat, repeatMode, dstBlkStride, vROffset, vRepeat, sharedTmpBuffer);
+}
+
+template <typename T>
+__aicore__ inline void BilinearInterpolationCalc(
+    const LocalTensor<T>& dst, const LocalTensor<T>& src0, const LocalTensor<uint32_t>& src0Offset,
     const LocalTensor<T>& src1, uint64_t mask[], uint8_t hRepeat, bool repeatMode, uint16_t dstBlkStride,
     uint16_t vROffset, uint8_t vRepeat, const LocalTensor<uint8_t>& sharedTmpBuffer)
 {
-    using PrimType = PrimT<T>;
-    auto sharedTmpBufferT = sharedTmpBuffer.ReinterpretCast<T>();
-    GatherRepeatParams gatherbRepeatParams;
-    uint8_t innerRepeatTimes = hRepeat * vRepeat;
-    constexpr uint32_t eleCntOfOneRep = DEFAULT_REPEAT_STRIDE * ONE_BLK_SIZE / sizeof(PrimType);
-    // gatherb
-    GatherbImpl(
-        (__ubuf__ uint16_t*)sharedTmpBufferT.GetPhyAddr(), (__ubuf__ uint16_t*)src0.GetPhyAddr(),
-        (__ubuf__ uint32_t*)src0Offset.GetPhyAddr(), src0.GetSize(), innerRepeatTimes, gatherbRepeatParams);
-    uint32_t posSrc1Brcb = hRepeat * vRepeat * DEFAULT_REPEAT_STRIDE * ONE_BLK_SIZE / sizeof(PrimType);
-    BrcbRepeatParams brcbRepeatParams;
-    Brcb(sharedTmpBufferT[posSrc1Brcb], src1, src1.GetSize() / brcbEleNum, brcbRepeatParams);
-    PipeBarrier<PIPE_V>();
-    // mul
-    BinaryRepeatParams mulRepeatParams;
-    if (repeatMode == false) {
-        mulRepeatParams.src0RepStride = 1;
-        mulRepeatParams.src0BlkStride = 0;
-    }
-
-    SetMaskCount();
-    SetVectorMask<PrimType, MaskMode::COUNTER>(0, innerRepeatTimes * eleCntOfOneRep);
-    Mul<T, false>(
-        sharedTmpBufferT, sharedTmpBufferT[posSrc1Brcb], sharedTmpBufferT, mask, innerRepeatTimes, mulRepeatParams);
-    SetMaskNorm();
-    ResetMask();
-    PipeBarrier<PIPE_V>();
-
-    BinaryRepeatParams addRepeatParams;
-    addRepeatParams.dstRepStride = 0;
-    addRepeatParams.src1RepStride = 0;
-    for (int i = 0; i < vRepeat; i++) {
-        if (hRepeat > 1) {
-            Add(sharedTmpBufferT[i * hRepeat * eleCntOfOneRep], sharedTmpBufferT[(i * hRepeat + 1) * eleCntOfOneRep],
-                sharedTmpBufferT[i * hRepeat * eleCntOfOneRep], mask, hRepeat - 1, addRepeatParams);
-        }
-    }
-    PipeBarrier<PIPE_V>();
-    // copy out
-    UnaryRepeatParams addsRepeatParams;
-    addsRepeatParams.srcRepStride = hRepeat * DEFAULT_REPEAT_STRIDE;
-    addsRepeatParams.dstBlkStride = dstBlkStride;
-    addsRepeatParams.dstRepStride = vROffset * sizeof(PrimType) / ONE_BLK_SIZE;
-    Adds(dst, sharedTmpBufferT, (PrimType)0, mask, vRepeat, addsRepeatParams);
+    BilinearInterpolationCalcImpl(
+        dst, src0, src0Offset, src1, mask, hRepeat, repeatMode, dstBlkStride, vROffset, vRepeat, sharedTmpBuffer);
 }
 } // namespace AscendC
 #pragma end_pipe

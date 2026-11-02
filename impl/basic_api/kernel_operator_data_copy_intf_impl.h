@@ -711,6 +711,26 @@ __aicore__ inline __inout_pipe__(V) void Copy(
 }
 #endif
 
+template <typename DstTensor, typename SrcTensor>
+__aicore__ inline void DataCopyPrepareSliceGeometry(
+    const DstTensor& dst, const SrcTensor& src, const SliceInfo dstSliceInfo[], const SliceInfo srcSliceInfo[],
+    const uint32_t dimValue, uint32_t& srcStartIndex, uint32_t& dstStartIndex, uint32_t& srcOffsetListSize,
+    uint32_t& dstOffsetListSize, uint32_t srcOffsetList[MAX_SLICE_SIZE], uint32_t dstOffsetList[MAX_SLICE_SIZE])
+{
+    uint32_t srcShapeInfo[K_MAX_SHAPE_DIM];
+    uint32_t dstShapeInfo[K_MAX_SHAPE_DIM];
+    bool useShapeValue = !(srcSliceInfo[0].shapeValue == 0);
+    for (int i = 0; i < dimValue; i++) {
+        srcShapeInfo[i] = useShapeValue ? srcSliceInfo[i].shapeValue : src.GetShapeInfo().shape[i];
+        dstShapeInfo[i] = useShapeValue ? dstSliceInfo[i].shapeValue : dst.GetShapeInfo().shape[i];
+    }
+
+    srcStartIndex = DataCopyGetPhyStartIndex(srcSliceInfo, srcShapeInfo, dimValue);
+    dstStartIndex = DataCopyGetPhyStartIndex(dstSliceInfo, dstShapeInfo, dimValue);
+    DataCopyGetOffsetList(srcSliceInfo, srcShapeInfo, dimValue, &srcOffsetListSize, srcOffsetList);
+    DataCopyGetOffsetList(dstSliceInfo, dstShapeInfo, dimValue, &dstOffsetListSize, dstOffsetList);
+}
+
 /*
  * @ingroup DataCopy Level 1
  * @brief datacopy from src to dst, applicable to vector data
@@ -738,20 +758,11 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
     uint32_t dstStartIndex = 0;
     uint32_t srcOffsetListSize = 0;
     uint32_t dstOffsetListSize = 0;
-    uint32_t srcShapeInfo[K_MAX_SHAPE_DIM];
-    uint32_t dstShapeInfo[K_MAX_SHAPE_DIM];
-    bool useShapeValue = !(srcSliceInfo[0].shapeValue == 0);
-    for (int i = 0; i < dimValue; i++) {
-        srcShapeInfo[i] = useShapeValue ? srcSliceInfo[i].shapeValue : src.GetShapeInfo().shape[i];
-        dstShapeInfo[i] = useShapeValue ? dstSliceInfo[i].shapeValue : dst.GetShapeInfo().shape[i];
-    }
-
-    srcStartIndex = DataCopyGetPhyStartIndex(srcSliceInfo, srcShapeInfo, dimValue);
-    dstStartIndex = DataCopyGetPhyStartIndex(dstSliceInfo, dstShapeInfo, dimValue);
     uint32_t srcOffsetList[MAX_SLICE_SIZE];
     uint32_t dstOffsetList[MAX_SLICE_SIZE];
-    DataCopyGetOffsetList(srcSliceInfo, srcShapeInfo, dimValue, &srcOffsetListSize, srcOffsetList);
-    DataCopyGetOffsetList(dstSliceInfo, dstShapeInfo, dimValue, &dstOffsetListSize, dstOffsetList);
+    DataCopyPrepareSliceGeometry(
+        dst, src, dstSliceInfo, srcSliceInfo, dimValue, srcStartIndex, dstStartIndex, srcOffsetListSize,
+        dstOffsetListSize, srcOffsetList, dstOffsetList);
     struct DataCopyParams repeatParams;
     repeatParams.blockLen = srcSliceInfo[0].burstLen;
     uint32_t oneSliceLen = srcSliceInfo[0].burstLen * AscendCUtils::GetC0Count(sizeof(T)) + srcSliceInfo[0].stride;
@@ -810,20 +821,11 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
     uint32_t dstStartIndex = 0;
     uint32_t srcOffsetListSize = 0;
     uint32_t dstOffsetListSize = 0;
-    uint32_t srcShapeInfo[K_MAX_SHAPE_DIM];
-    uint32_t dstShapeInfo[K_MAX_SHAPE_DIM];
-    bool useShapeValue = !(srcSliceInfo[0].shapeValue == 0);
-    for (int i = 0; i < dimValue; i++) {
-        srcShapeInfo[i] = useShapeValue ? srcSliceInfo[i].shapeValue : src.GetShapeInfo().shape[i];
-        dstShapeInfo[i] = useShapeValue ? dstSliceInfo[i].shapeValue : dst.GetShapeInfo().shape[i];
-    }
-
-    srcStartIndex = DataCopyGetPhyStartIndex(srcSliceInfo, srcShapeInfo, dimValue);
-    dstStartIndex = DataCopyGetPhyStartIndex(dstSliceInfo, dstShapeInfo, dimValue);
     uint32_t srcOffsetList[MAX_SLICE_SIZE];
     uint32_t dstOffsetList[MAX_SLICE_SIZE];
-    DataCopyGetOffsetList(srcSliceInfo, srcShapeInfo, dimValue, &srcOffsetListSize, srcOffsetList);
-    DataCopyGetOffsetList(dstSliceInfo, dstShapeInfo, dimValue, &dstOffsetListSize, dstOffsetList);
+    DataCopyPrepareSliceGeometry(
+        dst, src, dstSliceInfo, srcSliceInfo, dimValue, srcStartIndex, dstStartIndex, srcOffsetListSize,
+        dstOffsetListSize, srcOffsetList, dstOffsetList);
     const uint32_t offsetListSize = (srcOffsetListSize < dstOffsetListSize) ? srcOffsetListSize : dstOffsetListSize;
     struct DataCopyParams repeatParams;
     repeatParams.blockLen = srcSliceInfo[0].burstLen;

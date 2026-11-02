@@ -22,61 +22,16 @@
 #ifndef IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_ORS_LOGICAL_ORS_CHECK_COMMON_H
 #define IMPL_API_CHECK_KERNEL_CHECK_MATH_LOGICAL_ORS_LOGICAL_ORS_CHECK_COMMON_H
 
-#include "../../basic_check/datatype_check.h"
-#include "../../basic_check/calcount_check.h"
-#include "../../basic_check/reuse_source_check.h"
-#include "../../basic_check/single_tensor_check.h"
-#include "../../basic_check/multiple_tensor_check.h"
+#include "../logical_binary_check_common.h"
 
 namespace AscendC {
 namespace HighLevelApiCheck {
 template <typename T, typename U, typename S, bool isReuseSource>
-class CheckFuncClassLogicalOrs : public DataTypeCheckFuncBasicClass,
-                                 public CalCountCheckFuncBasicClass,
-                                 public ReuseSourceCheckFuncBasicClass,
-                                 public SingleTensorCheckFuncBasicClass,
-                                 public MultipleTensorCheckFuncBasicClass {
+class CheckFuncClassLogicalOrs : public LogicalBinaryCheckBase<T, U, S, isReuseSource> {
 public:
     __aicore__ inline CheckFuncClassLogicalOrs(){};
     __aicore__ inline CheckFuncClassLogicalOrs(__gm__ const char* name)
-        : DataTypeCheckFuncBasicClass(name),
-          CalCountCheckFuncBasicClass(name),
-          ReuseSourceCheckFuncBasicClass(name),
-          SingleTensorCheckFuncBasicClass(name),
-          MultipleTensorCheckFuncBasicClass(name){};
-
-public:
-    __aicore__ inline void VerifyingParameters(
-        const LocalTensor<T>& dst, const U& src0, const S& src1, const uint32_t count)
-    {
-        ReuseSourceCheckFuncBasicClass::IsReuseSourceVerifyingParameters<false>(ARG_AND_STRING(isReuseSource));
-        if constexpr (Std::is_same_v<S, U>) {
-            CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
-                ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src0, src1));
-            SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
-                VA_ARGS_TO_MAKE_TUPLE(dst, src0, src1),
-                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
-                "UB(VECIN/VECOUT/VECCALC)");
-            MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src0));
-            MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src1));
-        } else if constexpr (TypeUtils::IsLocalTensorType<U>() && TypeUtils::IsInnerDefaultType<S>()) {
-            CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
-                ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src0));
-            SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
-                VA_ARGS_TO_MAKE_TUPLE(dst, src0),
-                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
-                "UB(VECIN/VECOUT/VECCALC)");
-            MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src0));
-        } else if constexpr (TypeUtils::IsLocalTensorType<S>() && TypeUtils::IsInnerDefaultType<U>()) {
-            CalCountCheckFuncBasicClass::CalCountVerifyingParameters(
-                ARG_AND_STRING(count), VA_ARGS_TO_MAKE_TUPLE(dst, src1));
-            SingleTensorCheckFuncBasicClass::TensorVerifyingParameters(
-                VA_ARGS_TO_MAKE_TUPLE(dst, src1),
-                MakeParameters2Tuple(TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC),
-                "UB(VECIN/VECOUT/VECCALC)");
-            MultipleTensorCheckFuncBasicClass::TensorReuseVerifyingParameters(VA_ARGS_TO_MAKE_TUPLE(dst, src1));
-        }
-    };
+        : LogicalBinaryCheckBase<T, U, S, isReuseSource>(name){};
 };
 } // namespace HighLevelApiCheck
 } // namespace AscendC

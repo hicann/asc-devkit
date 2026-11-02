@@ -307,16 +307,7 @@ __aicore__ inline void SetMatrixMxParaCal(const MatrixMxParaParams& params)
     set_mx_buf_addr(mxPara);
 }
 
-template <typename DstT, typename Src0T, typename Src1T>
-__aicore__ inline void ConvFixCal(
-    __cbuf__ DstT* dst, __cbuf__ Src0T* fm, __cb__ Src1T* filter, const ConvFixBitModeParams& convFixParams)
-{
-    convolution(dst, fm, filter, (__cbuf__ int32_t*)get_imm(0), (uint64_t)0, convFixParams.GetConfig0());
-}
-
-template <typename DstT, typename Src0T, typename Src1T>
-__aicore__ inline void ConvFixCal(
-    __cbuf__ DstT* dst, __cbuf__ Src0T* fm, __cb__ Src1T* filter, const ConvFixParams& convFixParams)
+__aicore__ inline uint64_t EncodeConvFixConfig0Dav5161(const ConvFixParams& convFixParams)
 {
     constexpr uint8_t POS_BIAS_MATRIX_INIT = 0;
     constexpr uint8_t POS_BIAS_MATRIX_BRC = 1;
@@ -356,6 +347,21 @@ __aicore__ inline void ConvFixCal(
     config0 |= (uint64_t)(convFixParams.postProcHalfEnable ? 1 : 0) << POS_POST_PROC_HALF;
     config0 |= (uint64_t)(convFixParams.nbrcBiasCtrl ? 1 : 0) << POS_NBRC_BIAS_CTRL;
     config0 |= (uint64_t)(convFixParams.cin) << POS_CIN;
+    return config0;
+}
+
+template <typename DstT, typename Src0T, typename Src1T>
+__aicore__ inline void ConvFixCal(
+    __cbuf__ DstT* dst, __cbuf__ Src0T* fm, __cb__ Src1T* filter, const ConvFixBitModeParams& convFixParams)
+{
+    convolution(dst, fm, filter, (__cbuf__ int32_t*)get_imm(0), (uint64_t)0, convFixParams.GetConfig0());
+}
+
+template <typename DstT, typename Src0T, typename Src1T>
+__aicore__ inline void ConvFixCal(
+    __cbuf__ DstT* dst, __cbuf__ Src0T* fm, __cb__ Src1T* filter, const ConvFixParams& convFixParams)
+{
+    uint64_t config0 = EncodeConvFixConfig0Dav5161(convFixParams);
 
     convolution(dst, fm, filter, (__cbuf__ int32_t*)get_imm(0), (uint64_t)0, config0);
 }
@@ -376,44 +382,7 @@ template <typename DstT, typename Src0T, typename Src1T, typename BiasT>
 __aicore__ inline void ConvFixCal(
     __cbuf__ DstT* dst, __cbuf__ Src0T* fm, __cb__ Src1T* filter, uint64_t bias, const ConvFixParams& convFixParams)
 {
-    constexpr uint8_t POS_BIAS_MATRIX_INIT = 0;
-    constexpr uint8_t POS_BIAS_MATRIX_BRC = 1;
-    constexpr uint8_t POS_PRE_QUANT_MODE = 2;
-    constexpr uint8_t POS_PRE_RELU_MODE = 7;
-    constexpr uint8_t POS_POST_QUANT_MODE = 10;
-    constexpr uint8_t POS_POST_RELU_MODE = 15;
-    constexpr uint8_t POS_PRE_CLIP_RELU_MODE = 18;
-    constexpr uint8_t POS_ELTWISE_OP = 20;
-    constexpr uint8_t POS_ELTWISE_ANTIQ_EN = 23;
-    constexpr uint8_t POS_ELTWISE_M_BRC = 24;
-    constexpr uint8_t POS_MASK_CTRL = 28;
-    constexpr uint8_t POS_DUAL_SRC_EN = 34;
-    constexpr uint8_t POS_COMPACT_EN = 35;
-    constexpr uint8_t POS_DEPEND_EN = 36;
-    constexpr uint8_t POS_INSTR_ID = 37;
-    constexpr uint8_t POS_POST_PROC_HALF = 39;
-    constexpr uint8_t POS_NBRC_BIAS_CTRL = 40;
-    constexpr uint8_t POS_CIN = 48;
-
-    uint64_t config0 = 0;
-    config0 |= (uint64_t)(convFixParams.biasMatrixInitVal ? 1 : 0) << POS_BIAS_MATRIX_INIT;
-    config0 |= (uint64_t)(convFixParams.biasMatrixBroadcast ? 1 : 0) << POS_BIAS_MATRIX_BRC;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.preQuantMode)) << POS_PRE_QUANT_MODE;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.preReluMode)) << POS_PRE_RELU_MODE;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.postQuantMode)) << POS_POST_QUANT_MODE;
-    config0 |= (uint64_t)(convFixParams.actPostMode) << POS_POST_RELU_MODE;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.preClipReluMode)) << POS_PRE_CLIP_RELU_MODE;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.eltwiseOp)) << POS_ELTWISE_OP;
-    config0 |= (uint64_t)(convFixParams.eltwiseAntiqEnable ? 1 : 0) << POS_ELTWISE_ANTIQ_EN;
-    config0 |= (uint64_t)(convFixParams.eltwiseBroadcastEnable ? 1 : 0) << POS_ELTWISE_M_BRC;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.lsbMask)) << POS_MASK_CTRL;
-    config0 |= (uint64_t)(convFixParams.dualSrcEnable ? 1 : 0) << POS_DUAL_SRC_EN;
-    config0 |= (uint64_t)(convFixParams.compactEnable ? 1 : 0) << POS_COMPACT_EN;
-    config0 |= (uint64_t)(convFixParams.dependEnable ? 1 : 0) << POS_DEPEND_EN;
-    config0 |= (uint64_t)(static_cast<uint8_t>(convFixParams.instrId)) << POS_INSTR_ID;
-    config0 |= (uint64_t)(convFixParams.postProcHalfEnable ? 1 : 0) << POS_POST_PROC_HALF;
-    config0 |= (uint64_t)(convFixParams.nbrcBiasCtrl ? 1 : 0) << POS_NBRC_BIAS_CTRL;
-    config0 |= (uint64_t)(convFixParams.cin) << POS_CIN;
+    uint64_t config0 = EncodeConvFixConfig0Dav5161(convFixParams);
 
     if (convFixParams.biasMatrixBroadcast) {
         convolution(dst, fm, filter, (__cbuf__ int32_t*)get_imm(0), bias, config0);

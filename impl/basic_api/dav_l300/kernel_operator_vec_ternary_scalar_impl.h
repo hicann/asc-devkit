@@ -78,27 +78,15 @@ __simd_vf__ inline void VecAxpyVFImpl(
     Reg::MaskReg maskRegDst;
     Reg::MaskReg maskRegSrc;
     if constexpr (isNormalMode) {
-        maskReg = VecMicroGetMaskReg<TT, isSetMask, isNormalMode, isMaskBitMode>(maskBuf, count);
-        maskRegSrc = maskReg;
-        maskRegDst = maskReg;
-        if constexpr (sizeof(U) == 2 * sizeof(T)) {
-            Reg::MaskPack(maskRegDst, maskReg);
-        } else if constexpr (sizeof(T) == 2 * sizeof(U)) {
-            Reg::MaskPack(maskRegSrc, maskReg);
-        }
+        VecMicroPrepareMaskRegs<T, U, isSetMask, isNormalMode, isMaskBitMode>(
+            maskBuf, count, maskReg, maskRegSrc, maskRegDst);
     }
     constexpr uint8_t ElePerBlkT = GetDataBlockSizeInBytes() / sizeof(T);
     constexpr uint8_t ElePerBlkU = GetDataBlockSizeInBytes() / sizeof(U);
     for (uint16_t index = 0; index < newRepeatTimes; ++index) {
         if constexpr (!isNormalMode) {
-            maskReg = VecMicroGetMaskReg<TT, isSetMask, isNormalMode, isMaskBitMode>(maskBuf, count);
-            maskRegSrc = maskReg;
-            maskRegDst = maskReg;
-            if constexpr (sizeof(U) == 2 * sizeof(T)) {
-                Reg::MaskPack(maskRegDst, maskReg);
-            } else if constexpr (sizeof(T) == 2 * sizeof(U)) {
-                Reg::MaskPack(maskRegSrc, maskReg);
-            }
+            VecMicroPrepareMaskRegs<T, U, isSetMask, isNormalMode, isMaskBitMode>(
+                maskBuf, count, maskReg, maskRegSrc, maskRegDst);
         }
         Reg::RegTensor<T> dstVreg;
         Reg::RegTensor<U> srcVreg;

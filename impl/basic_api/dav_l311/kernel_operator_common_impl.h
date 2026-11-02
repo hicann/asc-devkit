@@ -24,6 +24,7 @@
 #include "../utils/kernel_utils_mode.h"
 #include "../../../include/basic_api/kernel_common.h"
 #include "../kernel_utils.h"
+#include "kernel_vector_type_map_impl.h"
 #if defined(__DAV_VEC__) && (__NPU_ARCH__ == 3113)
 using namespace __cce_simd;
 #endif
@@ -34,49 +35,7 @@ using namespace __cce_simd;
 namespace AscendC {
 
 template <typename T>
-struct TypeGet;
-template <>
-struct TypeGet<uint32_t> {
-    using T = vector_u32;
-};
-template <>
-struct TypeGet<int32_t> {
-    using T = vector_s32;
-};
-template <>
-struct TypeGet<float> {
-    using T = vector_f32;
-};
-template <>
-struct TypeGet<uint16_t> {
-    using T = vector_u16;
-};
-template <>
-struct TypeGet<half> {
-    using T = vector_f16;
-};
-template <>
-struct TypeGet<int16_t> {
-    using T = vector_s16;
-};
-template <>
-struct TypeGet<uint8_t> {
-    using T = vector_u8;
-};
-template <>
-struct TypeGet<int8_t> {
-    using T = vector_s8;
-};
-
-template <>
-struct TypeGet<bool> {
-    using T = vector_s8;
-};
-
-template <>
-struct TypeGet<int4x2_t> {
-    using T = vector_s4x2;
-};
+struct TypeGet : Internal::VectorTypeMap<T> {};
 
 using MaskReg = vector_bool;
 using UnalignReg = vector_align;

@@ -112,7 +112,8 @@ public:
     }
 };
 
-class copy_gm_to_l1_multi_nd2nz_instr {
+template <typename Derived>
+class copy_gm_to_l1_multi_nz_offset_instr {
 public:
     template <typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset, typename... Params>
     __aicore__ inline static void data_copy_with_offset(
@@ -123,20 +124,23 @@ public:
         auto dst_data = dst.data() + dst_offset;
         auto src_data = src.data() + src_offset;
         if constexpr (sizeof(src_type) == sizeof(int8_t)) {
-            data_copy(
+            Derived::data_copy(
                 reinterpret_cast<__cbuf__ uint8_t*>(dst_data.get()), reinterpret_cast<__gm__ uint8_t*>(src_data.get()),
                 params...);
         } else if constexpr (sizeof(src_type) == sizeof(half)) {
-            data_copy(
+            Derived::data_copy(
                 reinterpret_cast<__cbuf__ half*>(dst_data.get()), reinterpret_cast<__gm__ half*>(src_data.get()),
                 params...);
         } else if constexpr (sizeof(src_type) == sizeof(float)) {
-            data_copy(
+            Derived::data_copy(
                 reinterpret_cast<__cbuf__ float*>(dst_data.get()), reinterpret_cast<__gm__ float*>(src_data.get()),
                 params...);
         }
     }
+};
 
+class copy_gm_to_l1_multi_nd2nz_instr : public copy_gm_to_l1_multi_nz_offset_instr<copy_gm_to_l1_multi_nd2nz_instr> {
+public:
     template <typename DataType>
     __aicore__ inline static void data_copy(
         __cbuf__ DataType* dst, __gm__ DataType* src, uint16_t nd_num, uint16_t loop2_dst_stride,
@@ -181,31 +185,8 @@ public:
     }
 };
 
-class copy_gm_to_l1_multi_dn2nz_instr {
+class copy_gm_to_l1_multi_dn2nz_instr : public copy_gm_to_l1_multi_nz_offset_instr<copy_gm_to_l1_multi_dn2nz_instr> {
 public:
-    template <typename DstTensor, typename SrcTensor, typename DstOffset, typename SrcOffset, typename... Params>
-    __aicore__ inline static void data_copy_with_offset(
-        const DstTensor& dst, const SrcTensor& src, const DstOffset& dst_offset, const SrcOffset& src_offset,
-        const Params&... params)
-    {
-        using src_type = typename SrcTensor::element_type;
-        auto dst_data = dst.data() + dst_offset;
-        auto src_data = src.data() + src_offset;
-        if constexpr (sizeof(src_type) == sizeof(int8_t)) {
-            data_copy(
-                reinterpret_cast<__cbuf__ uint8_t*>(dst_data.get()), reinterpret_cast<__gm__ uint8_t*>(src_data.get()),
-                params...);
-        } else if constexpr (sizeof(src_type) == sizeof(half)) {
-            data_copy(
-                reinterpret_cast<__cbuf__ half*>(dst_data.get()), reinterpret_cast<__gm__ half*>(src_data.get()),
-                params...);
-        } else if constexpr (sizeof(src_type) == sizeof(float)) {
-            data_copy(
-                reinterpret_cast<__cbuf__ float*>(dst_data.get()), reinterpret_cast<__gm__ float*>(src_data.get()),
-                params...);
-        }
-    }
-
     template <typename DataType>
     __aicore__ inline static void data_copy(
         __cbuf__ DataType* dst, __gm__ DataType* src, uint16_t dn_num, uint16_t loop2_dst_stride,
