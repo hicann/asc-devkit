@@ -19,6 +19,8 @@ import ApiDownload from './ApiDownload.vue'
 import EditOnGitcode from './EditOnGitcode.vue'
 import PageBreadcrumb from './PageBreadcrumb.vue'
 import DocumentBuildInfo from './DocumentBuildInfo.vue'
+import HomeApiGuide from './HomeApiGuide.vue'
+import HomeLearningHeader from './HomeLearningHeader.vue'
 import { renderMermaidDiagrams } from './mermaid.mjs'
 
 let sidebarScrollRequest = 0
@@ -69,6 +71,10 @@ onBeforeUnmount(() => { sidebarScrollRequest += 1 })
   <DefaultTheme.Layout>
     <template #nav-bar-content-after>
       <FilterToggle />
+    </template>
+    <template #home-features-before>
+      <HomeApiGuide />
+      <HomeLearningHeader />
     </template>
     <template #aside-outline-before>
       <CustomOutline />
