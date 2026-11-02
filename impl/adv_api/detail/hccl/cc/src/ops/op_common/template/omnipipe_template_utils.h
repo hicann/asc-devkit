@@ -37,12 +37,9 @@ inline HcclResult PrepareOmniPipeDataSplitForMultiChannel(
     const TemplateResource& templateResource, std::vector<std::vector<std::vector<u64>>>& dataSplitVec,
     std::vector<std::vector<std::vector<u64>>>& dataOffsetVec)
 {
-    (void)algTemplate;
-
     dataSplitVec.clear();
     dataOffsetVec.clear();
     u32 dataTypeSize = SIZE_TABLE[dataType];
-    u32 channelsPerRank = CalcChannelsPerRank(templateResource.channels);
     for (uint32_t idx = 0; idx < tempAlgParams.stepSliceInfo.stepSliceSize.size(); idx++) {
         std::vector<std::vector<u64>> dataSplitVecByRepeat;
         std::vector<std::vector<u64>> dataOffsetVecByRepeat;
@@ -51,9 +48,9 @@ inline HcclResult PrepareOmniPipeDataSplitForMultiChannel(
             std::vector<u64> dataSplit;
             std::vector<u64> dataOffset;
             std::vector<u64> curElemCountOut;
-            CalcDataSplitByPortGroupCommon(
+            CHK_RET(algTemplate->CalcDataSplitByPortGroup(
                 totalDataCount, dataTypeSize, templateResource.channels.begin()->second, curElemCountOut, dataSplit,
-                dataOffset, channelsPerRank);
+                dataOffset));
             dataSplitVecByRepeat.push_back(dataSplit);
             dataOffsetVecByRepeat.push_back(dataOffset);
         }

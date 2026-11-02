@@ -11,6 +11,7 @@
 #include "alg_data_trans_wrapper.h"
 #include "channel.h"
 #include "template_utils.h"
+#include <string>
 
 namespace mc2_ops_hccl {
 namespace {
@@ -34,8 +35,17 @@ HcclResult InsTempAllGatherNHR::CalcRes(
     const u64 perDataSize = DATATYPE_SIZE_TABLE[param.DataDes.dataType];
     const u64 dataSize = param.DataDes.count * perDataSize;
     if (topoInfo->level0Topo == Level0Shape::MESH_1D_CLOS && !topoInfo->level0PcieMix) {
-        const bool isIsolation =
-            !(IsAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH) || dataSize <= SMALL_SIZE_512KB);
+        const bool fullMesh = IsAllConnetedWithTopo(topoInfo, 0, CommTopo::COMM_TOPO_1DMESH);
+        // MC2 prepares resources before the message supplies the count/buffers.
+        // Reserve the large-message channel plan for the UBX pipeline instead
+        // of interpreting its unknown count as a small message. Real counts and
+        // other algorithms retain HCCL's 512 KiB isolation threshold.
+        const bool reservePipelineChannels =
+            param.opType == HcclCMDType::HCCL_CMD_ALLGATHER &&
+            std::string(param.algName) == "AicpuAllGatherPipeLineMeshNHR" && param.opMode == OpMode::OPBASE &&
+            param.engine == CommEngine::COMM_ENGINE_AICPU_TS && param.DataDes.count == 0 && param.inputPtr == nullptr &&
+            param.outputPtr == nullptr;
+        const bool isIsolation = !fullMesh && (reservePipelineChannels || dataSize > SMALL_SIZE_512KB);
         CHK_RET(CalcChannelRequestNhrMultiJetty(comm, param, topoInfo, subCommRanks_, myChannelDescs, isIsolation));
         for (const auto& channel : myChannelDescs) {
             if (channel.channelProtocol == COMM_PROTOCOL_UBC_CTP) {
