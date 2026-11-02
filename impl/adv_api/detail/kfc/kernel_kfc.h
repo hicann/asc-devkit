@@ -200,8 +200,8 @@ public:
                     switchPoll = true;
 
 #ifdef __ASCENDC_ENABLE_SUPER_KERNEL__
-                    // only executed in a 1:2 mode
-                    if (quitSize == 2) {
+                    // only executed in a 1:2 mode, add external mode: 1:1 ops compile, 1:2 execute
+                    if (quitSize == 2 || (MIX_NUM == 1 && msg->ubAddr == 2)) {
                         // after receiving two exit message, AIC sends a message to AIV and performs a counter reset.
                         auto secondMsgStartPos = ptr->GetSecondBuffStart();
                         // scalar write the GM, dcci write back to GM

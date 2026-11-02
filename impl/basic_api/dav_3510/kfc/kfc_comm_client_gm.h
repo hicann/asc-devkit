@@ -99,6 +99,12 @@ public:
             if constexpr (MIX_NUM == 1) {
                 // aic-aiv 1:1,aiv subblkidx==0,spkernelaic-aiv1:1--1:2,aiv1 no
                 if (GetSubBlockIdxImpl() == 1) {
+#ifdef __ASCENDC_ENABLE_SUPER_KERNEL__
+                    if (GetTaskRationImpl() == 2) {
+                        // in sk mode, ops compile in 1:1, execute in 1:2 cv mode
+                        WaitForQuitNotification();
+                    }
+#endif
                     return;
                 }
             }
@@ -124,27 +130,35 @@ public:
 #ifdef __ASCENDC_ENABLE_SUPER_KERNEL__
             // only executed in 1:2 mode
             if (GetTaskRationImpl() == 2) {
-                CrossCoreWaitFlag(KFC_SYNC_ID);
-                dcci(
-                    reinterpret_cast<__gm__ int64_t*>(this->msgRcvStart), cache_line_t::SINGLE_CACHE_LINE,
-                    dcci_dst_t::CACHELINE_OUT);
-                // Traverse all matmul objects to compensate for waiting events
-                for (int i = 0; i < MAX_MATMUL_OBJ_CNT; i++) {
-                    uint32_t eventId = reinterpret_cast<__gm__ SuperKernelWaitEventCnt*>(this->msgRcvStart)->eventId[i];
-                    int32_t eventCnt =
-                        reinterpret_cast<__gm__ SuperKernelWaitEventCnt*>(this->msgRcvStart)->eventCnt[i];
-                    if (eventCnt > 0) {
-                        // After dividing the count value by 16 and taking the modulus, compensate for the waiting event
-                        int32_t waitCnt = eventCnt % 16;
-                        for (int i = 0; i < waitCnt; i++) {
-                            CrossCoreWaitFlag(eventId);
-                        }
-                    }
-                }
+                WaitForQuitNotification();
             }
 #endif
         }
     }
+
+#ifdef __ASCENDC_ENABLE_SUPER_KERNEL__
+    __aicore__ inline void WaitForQuitNotification()
+    {
+        CrossCoreWaitFlag(KFC_SYNC_ID);
+        dcci(
+            reinterpret_cast<__gm__ int64_t*>(this->msgRcvStart), cache_line_t::SINGLE_CACHE_LINE,
+            dcci_dst_t::CACHELINE_OUT);
+        // Traverse all matmul objects to compensate for waiting events
+        for (int i = 0; i < MAX_MATMUL_OBJ_CNT; i++) {
+            uint32_t eventId = reinterpret_cast<__gm__ SuperKernelWaitEventCnt*>(this->msgRcvStart)->eventId[i];
+            int32_t eventCnt = reinterpret_cast<__gm__ SuperKernelWaitEventCnt*>(this->msgRcvStart)->eventCnt[i];
+            // Get the block id of the corresponding mapped object
+            uint32_t mappedBlockId = GetSubBlockIdxImpl() ? 0 : 1;
+            if (i * 2 + mappedBlockId == eventId && eventCnt > 0) {
+                // After dividing the count value by 16 and taking the modulus, compensate for the waiting event
+                int32_t waitCnt = eventCnt % 16;
+                for (int i = 0; i < waitCnt; i++) {
+                    CrossCoreWaitFlag(eventId);
+                }
+            }
+        }
+    }
+#endif
 
     template <bool isAck>
     __disable_kernel_type_autoinfer__ __aicore__ inline void PostMessage(__gm__ KfcMsg* msg)
