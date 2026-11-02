@@ -1340,8 +1340,9 @@ def get_tiling_data_func_head():
 def get_tiling_data_func():
     class_body = "{\n"
     class_body += "    constexpr uint64_t all_bytes = sizeof(T);\n"
-    class_body += "#if defined(ASCENDC_CPU_DEBUG) || (defined(__DAV_CUBE__) && (__NPU_ARCH__ == 2201 || \
-        __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202)) || defined(__GET_CODE_CHANNEL__)\n"
+    class_body += "#if defined(ASCENDC_CPU_DEBUG) || (defined(__DAV_CUBE__) && __NPU_ARCH__ == 2201) || (defined \
+        (__DAV_CUBE__) && __NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || \
+        (__NPU_ARCH__ == 9202) || defined(__GET_CODE_CHANNEL__)\n"
     class_body += "#if defined(__DAV_C100__) || defined(ASCENDC_CPU_DEBUG)\n"
     class_body += get_dynamic_assign_tiling_data_by_size(
         "all_bytes",
