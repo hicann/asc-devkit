@@ -38,6 +38,7 @@ enum class AlgoType : uint8_t {
     MESH_MULTIJETTY,
     GROUP_MESH,
     UNKNOWN,
+    PAIRWISE,
 };
 
 // Mesh 类算法集合

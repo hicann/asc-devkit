@@ -21,6 +21,7 @@
 #include "executor_v2_base.h"
 #include "gtest/gtest.h"
 #include "ins_temp_all_to_all_v_mesh_1D.h"
+#include "ins_temp_all_to_all_v_pairwise.h"
 
 using namespace mc2_ops_hccl;
 
@@ -142,6 +143,111 @@ TEST_F(ST_ALL_TO_ALL_MESH1D_AICPU_TEST, local_concurrent_selectors_obey_topology
     topo.level0PcieMix = true;
     EXPECT_EQ(alltoallvSelector.Select(param, &topo, algName), SelectorStatus::MATCH);
     EXPECT_EQ(algName, "AicpuAllToAllVSoleMesh");
+}
+
+// pairwise 命中拓扑（对齐 hccl IsPairwiseCapable + REGISTER_ALG_ATTRS 约束）：
+// 跨框多级 MESH_1D、每框 8 卡、rankSize 为 16 的倍数、level0Symmetric、<=128P
+TopoInfoWithNetLayerDetails MakePairwiseTopo(u32 rankSize = 32U)
+{
+    TopoInfoWithNetLayerDetails topo{};
+    topo.userRank = 0U;
+    topo.userRankSize = rankSize;
+    topo.serverNum = 1U;
+    topo.level0Topo = Level0Shape::MESH_1D;
+    topo.topoLevelNums = 2U;
+    topo.level0PcieMix = false;
+    topo.level0Symmetric = true;
+    topo.deviceNumPerModule = 8U;
+    return topo;
+}
+
+TEST_F(ST_ALL_TO_ALL_MESH1D_AICPU_TEST, alltoallv_pairwise_selector_hits_and_guards)
+{
+    AlltoAllVAutoSelector selector;
+    OpParam param = MakeAicpuParam(HcclCMDType::HCCL_CMD_ALLTOALLV);
+    std::string algName;
+
+    // 命中：pairwise-capable 拓扑优先于 SoleMesh（对齐 hccl selector 顺序）
+    TopoInfoWithNetLayerDetails topo = MakePairwiseTopo(32U);
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllToAllVSolePairwise");
+
+    // 注册闭环：选中的 algName 有本地可执行注册
+    EXPECT_NE(
+        CollAlgExecRegistryV2::Instance().GetAlgExec(HcclCMDType::HCCL_CMD_ALLTOALLV, "AicpuAllToAllVSolePairwise"),
+        nullptr);
+
+    // 128P 上限（hccl REGISTER_ALG_ATTRS 限制）：超出回落 SoleMesh
+    topo = MakePairwiseTopo(256U);
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllToAllVSoleMesh");
+
+    // level0 非对称：回落 SoleMesh
+    topo = MakePairwiseTopo(32U);
+    topo.level0Symmetric = false;
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllToAllVSoleMesh");
+
+    // 单级拓扑不走 pairwise
+    topo = MakePairwiseTopo(32U);
+    topo.topoLevelNums = 1U;
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllToAllVSoleMesh");
+
+    // 每框非 8 卡：逻辑板与物理框错位，回落 SoleMesh
+    topo = MakePairwiseTopo(32U);
+    topo.deviceNumPerModule = 4U;
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "AicpuAllToAllVSoleMesh");
+}
+
+TEST_F(ST_ALL_TO_ALL_MESH1D_AICPU_TEST, alltoallv_pairwise_supported_topology_boundaries)
+{
+    AlltoAllVAutoSelector selector;
+    OpParam param = MakeAicpuParam(HcclCMDType::HCCL_CMD_ALLTOALLV);
+    EXPECT_FALSE(InsTempAllToAllVPairwise::IsSupportedTopology(nullptr));
+    for (u32 rankSize : {16U, 32U, 48U, 64U, 128U}) {
+        TopoInfoWithNetLayerDetails topo = MakePairwiseTopo(rankSize);
+        EXPECT_TRUE(InsTempAllToAllVPairwise::IsSupportedTopology(&topo));
+        std::string algName;
+        EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+        EXPECT_EQ(algName, "AicpuAllToAllVSolePairwise");
+    }
+}
+
+TEST_F(ST_ALL_TO_ALL_MESH1D_AICPU_TEST, alltoallv_pairwise_resource_precheck_rejects_unsupported_topology)
+{
+    OpParam param = MakeAicpuParam(HcclCMDType::HCCL_CMD_ALLTOALLV);
+    std::vector<TopoInfoWithNetLayerDetails> unsupportedTopos;
+    for (u32 rankSize : {0U, 8U, 24U, 144U, 256U}) {
+        unsupportedTopos.push_back(MakePairwiseTopo(rankSize));
+    }
+    TopoInfoWithNetLayerDetails topo = MakePairwiseTopo();
+    topo.deviceNumPerModule = 4U;
+    unsupportedTopos.push_back(topo);
+    topo = MakePairwiseTopo();
+    topo.level0Symmetric = false;
+    unsupportedTopos.push_back(topo);
+    topo = MakePairwiseTopo();
+    topo.topoLevelNums = 1U;
+    unsupportedTopos.push_back(topo);
+    topo = MakePairwiseTopo();
+    topo.level0Topo = Level0Shape::CLOS;
+    unsupportedTopos.push_back(topo);
+
+    // Exercise CalcRes directly, as forced-alg preflight does, without the auto selector guard.
+    for (const auto& unsupported : unsupportedTopos) {
+        EXPECT_FALSE(InsTempAllToAllVPairwise::IsSupportedTopology(&unsupported));
+        std::vector<u32> ranks;
+        for (u32 rank = 0; rank < unsupported.userRankSize; ++rank) {
+            ranks.push_back(rank);
+        }
+        InsTempAllToAllVPairwise algTemplate(param, 0U, {ranks});
+        AlgResourceRequest request;
+        EXPECT_EQ(algTemplate.CalcRes(nullptr, param, &unsupported, request), HCCL_E_NOT_SUPPORT);
+        EXPECT_TRUE(request.channels.empty());
+        EXPECT_TRUE(request.notifyNumPerThread.empty());
+    }
 }
 
 TEST_F(ST_ALL_TO_ALL_MESH1D_AICPU_TEST, concurrent_template_uses_all_channels_per_rank)

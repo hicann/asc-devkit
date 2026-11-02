@@ -31,6 +31,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/selector/alltoall_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/selector/alltoallv_auto_selector.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/executor/ins_v2_all_to_all_v_sole_executor.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/aicpu/ins_temp_all_to_all_v_pairwise.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/aicpu/ins_temp_ubx_all_to_all_v_mesh_1D.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/ccu_temp_all_to_all_mesh_1D.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/ccu_temp_all_to_all_v_mesh_1D.cc
@@ -98,6 +99,8 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_ubx_1d.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_pcie_mix.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_concurrent_v2.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_base_v2.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_one_level.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_build.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_normalize.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_alloc_ctx_res.cc

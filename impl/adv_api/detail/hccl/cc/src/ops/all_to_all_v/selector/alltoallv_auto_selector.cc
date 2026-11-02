@@ -10,6 +10,7 @@
 #include "alltoallv_auto_selector.h"
 
 #include "selector_registry.h"
+#include "ins_temp_all_to_all_v_pairwise.h"
 
 namespace mc2_ops_hccl {
 namespace {
@@ -36,6 +37,15 @@ SelectorStatus AlltoAllVAutoSelector::SelectAicpuAlgo(
         HCCL_WARNING(
             "[AlltoAllVAutoSelector] rankSize[%u] is not supported by local AICPU AllToAllV.", topoInfo->userRankSize);
         return SelectorStatus::NOT_MATCH;
+    }
+    // 对齐 hccl alltoallv_auto_selector.cc:110-118：跨框多级 MESH_1D 时 Pairwise 优先于 SoleMesh；
+    // hccl 侧由 REGISTER_ALG_ATTRS topoCustomCheck 承担的 level0Symmetric + <=128P 约束
+    // （hccl ins_v2_all_to_all_v_sole_executor.cc:613-620），devkit 无注册框架 attrs 注入链，
+    // 与模板 CalcRes 共用完整约束，确保自动选择和 forced-alg 资源预检一致。
+    if (InsTempAllToAllVPairwise::IsSupportedTopology(topoInfo)) {
+        selectAlgName = "AicpuAllToAllVSolePairwise";
+        HCCL_INFO("[AlltoAllVAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
+        return SelectorStatus::MATCH;
     }
     if (topoInfo->level0Topo == Level0Shape::MESH_1D || topoInfo->level0Topo == Level0Shape::CLOS) {
         selectAlgName = "AicpuAllToAllVSoleMesh";

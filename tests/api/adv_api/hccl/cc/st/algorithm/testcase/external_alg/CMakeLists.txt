@@ -158,6 +158,7 @@ set(EXT_ALG_FIXED_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_pcie_mix.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_base_v2.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_two_level.cc
+    ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_one_level.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/topo_match_concurrent_v2.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_build.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/topo/physical_level_normalize.cc

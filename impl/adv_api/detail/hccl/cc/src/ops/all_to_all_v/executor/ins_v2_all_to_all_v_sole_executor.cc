@@ -13,8 +13,10 @@
 #include <limits>
 
 #include "ins_temp_all_to_all_v_mesh_1D.h"
+#include "ins_temp_all_to_all_v_pairwise.h"
 #include "ins_temp_ubx_all_to_all_v_mesh_1D.h"
 #include "topo_match_1d.h"
+#include "topo_match_one_level.h"
 #include "topo_match_ubx_1d.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 #include "ccu_temp_all_to_all_v_mesh_1D.h"
@@ -324,6 +326,17 @@ REGISTER_EXEC_V2(
     InsTempAlltoAllVMesh1D);
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSoleMesh, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
+// 对齐 hccl ins_v2_all_to_all_v_sole_executor.cc:611-620：AicpuAllToAllVSolePairwise（跨框 MESH_1D
+// pairwise 配对模板，TopoMatchOneLevel 单层扁平化 hierarchy）；topo 约束
+// （MESH_1D 多级 + 每框 8 卡 + rankSize%16==0 + level0Symmetric + <=128P）由
+// selector 与模板 CalcRes 共用 IsSupportedTopology 守卫，包括 forced-alg 资源预检
+// （devkit 无 hccl 注册框架的 REGISTER_ALG_ATTRS topoCustomCheck 注入链）。
+REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSolePairwise, InsV2AlltoAllVSoleExecutor, TopoMatchOneLevel,
+    InsTempAllToAllVPairwise);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, AicpuAllToAllVSolePairwise, AlgEngine::AICPU, "sole[mesh.pairwise]", COND_NONE,
+    FLAG_NONE, 0);
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, AicpuAllToAllSoleMeshSingleChannel, InsV2AlltoAllVSoleExecutor, TopoMatch1D,
     InsTempAlltoAllVMesh1D);

@@ -181,11 +181,13 @@ inline bool ParseExternalAlg(const std::string& algConfig, ExternalAlgSpec& spec
                 layer.atom = seg;
                 atomSeen = true;
             } else {
-                static const char* const ATTRS[] = {"chunk", "one_shot", "two_shot", "multi_channel", "single_channel"};
+                static const char* const ATTRS[] = {"chunk",         "one_shot",       "two_shot",
+                                                    "multi_channel", "single_channel", "pairwise"};
                 if (!external_alg_internal::WordInTable(seg, ATTRS, sizeof(ATTRS) / sizeof(ATTRS[0]))) {
-                    errMsg = "unknown attribute \"" + seg + "\" in layer " + std::to_string(layerNo) +
-                             " (expected one of: chunk, one_shot, two_shot, multi_channel, single_channel) in \"" +
-                             algConfig + "\"";
+                    errMsg =
+                        "unknown attribute \"" + seg + "\" in layer " + std::to_string(layerNo) +
+                        " (expected one of: chunk, one_shot, two_shot, multi_channel, single_channel, pairwise) in \"" +
+                        algConfig + "\"";
                     return false;
                 }
                 layer.attrs.push_back(seg);
