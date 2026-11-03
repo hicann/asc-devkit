@@ -74,6 +74,7 @@ __aicore__ inline void WaitPreTaskEnd()
 - 在算子运行过程中，需要保证此接口在每个核上都被调用，且每个核上仅被调用一次。
 - 若子核函数（Kernel）某个TilingKey分支调用了此接口，则开发者需要保证当前算子可能会运行的所有TilingKey均调用了此接口，否则会出现因同步指令数量不匹配而卡住的现象。
 - 本接口内部实现会占用核间同步flagId，若与CrossCoreSetFlag/CrossCoreWaitFlag同时使用需注意避免flagId冲突，详见[核间同步flagId占用说明](../inter_core_sync/key_features.md#inter_core_sync_flagid_usage)。
+- 手写SK子函数适配Early-Start特性时，调用本接口前需通过`sk::SkSystemArgs`显式初始化系统变量，详见[SkSystemArgs](../../../../Utils-API/SuperKernel/SkSystemArgs.md)。
 
 ## 调用示例<a name="section837496171220"></a>
 

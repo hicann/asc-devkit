@@ -17,7 +17,7 @@
 
 - 函数签名：`__sk__ __vector__ void func(const ArgsStruct *args, sk::SkSystemArgs *sysArgs)`
 - 参数通过结构体指针传递，需要用户定义参数结构体并封装入参。
-- 可选添加`sk::SkSystemArgs *sysArgs`参数，用于获取系统信息（如block num）。
+- 可选添加`sk::SkSystemArgs *sysArgs`参数，用于获取系统信息（如block num）或初始化系统变量。
 - 需要与普通核函数（Kernel）通过SK_BIND宏绑定。
 
 ## SuperKernel适配规则
@@ -110,13 +110,12 @@ __sk__ __vector__ void func_sk(const ArgsStruct *args, sk::SkSystemArgs *sysArgs
 {
     // 从系统参数获取block num（替代AscendC::GetBlockNum()）
     uint32_t blockNum = sysArgs->skNumBlocks;
-    // 或者使用接口获取
-    uint32_t blockNum = sysArgs->SkGetNumBlocks();
+    // 也可以使用sysArgs->SkGetNumBlocks()获取
     // 后续使用blockNum的代码
     ...
 }
 
-// 场景二：算子未使用AscendC::GetBlockNum()，无需添加sysArgs参数
+// 场景二：算子不需要系统信息或初始化系统变量，无需添加sysArgs参数
 template<uint32_t splitNum>
 __sk__ __vector__ void func_sk(const ArgsStruct *args)
 {
@@ -129,11 +128,11 @@ __sk__ __vector__ void func_sk(const ArgsStruct *args)
 ```
 
 > **注意**：
-> - `sk::SkSystemArgs *sysArgs`参数是可选的，如果算子未使用block num信息，或者`sk::SkSystemArgs`提供的功能（当前仅支持获取block num），则无需在函数入口传入`sysArgs`参数，这样可以避免不必要的代码修改。
+> - `sk::SkSystemArgs *sysArgs`参数是可选的，如果算子不需要使用该结构体提供的系统信息或初始化系统变量，则无需在函数入口传入`sysArgs`参数。结构体成员和接口请参见[SkSystemArgs](../../../../api/Utils-API/SuperKernel/SkSystemArgs.md)。
 > - 用户需要根据实际情况修改原代码中的`AscendC::GetBlockNum()`调用：
 >   - 直接使用`sysArgs->skNumBlocks`访问成员变量。
 >   - 或者使用`sysArgs->SkGetNumBlocks()`接口获取。
-> - 与`AscendC::GetBlockNum()`的逻辑差异是，MIX 1:2场景中，vector核中的`skBlockNum`为`blockNum * 2`。
+> - 与`AscendC::GetBlockNum()`的逻辑差异是，MIX 1:2场景中，vector核中的`skNumBlocks`为原block num的2倍。适配时需结合原算子的核数计算逻辑调整，避免重复乘2。
 
 #### 规则5：使用TPipe场景下，需要手动调用DestroyWithoutPipeAll接口
 
@@ -253,7 +252,7 @@ SK_BIND(add_custom, 0, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 1. 复制原global函数的代码
 2. 根据原global函数的实际参数定义参数结构体（对于小于4字节的类型使用`alignas(4)`）
 3. 修改函数签名为`__sk__ __vector__ void func_sk(const ArgsStruct *args, sk::SkSystemArgs *sysArgs)`（根据原函数的核函数（Kernel）类型添加对应标识）
-4. 如果算子未使用`AscendC::GetBlockNum()`，可以省略`sk::SkSystemArgs *sysArgs`参数
+4. 如果算子不需要使用`sk::SkSystemArgs`提供的系统信息或初始化系统变量，可以省略`sk::SkSystemArgs *sysArgs`参数
 5. 使用模板参数实例化出多个符号（模板参数仅用于实例化出不同的符号，不影响函数逻辑）
 6. 从结构体中获取参数
 7. 如果使用了`AscendC::GetBlockNum()`，修改为使用`sysArgs->skNumBlocks`或`sysArgs->SkGetNumBlocks()`
@@ -283,13 +282,13 @@ SK_BIND(add_custom, 0, add_custom_sk<0>, add_custom_sk<1>, add_custom_sk<2>, add
 
 ### 系统参数使用注意事项
 
-- `sk::SkSystemArgs *sysArgs`是可选参数，只有在原算子使用了`AscendC::GetBlockNum()`接口时才需要添加。
-- 如果原算子未使用`AscendC::GetBlockNum()`接口，无需在函数入口传入`sysArgs`参数，这样可以避免不必要的代码修改。
+- `sk::SkSystemArgs *sysArgs`是可选参数，需要使用该结构体提供的系统信息或初始化系统变量时添加。
+- 手写SK子函数适配Early-Start特性时，需要在调用任务间同步接口前通过`sysArgs->SkInit()`初始化系统变量，详见[SkSystemArgs](../../../../api/Utils-API/SuperKernel/SkSystemArgs.md)。
 - 如果原算子使用了`AscendC::GetBlockNum()`接口，可以通过添加`sk::SkSystemArgs *sysArgs`参数在SK场景下获取期望的block num：
   - 直接使用`sysArgs->skNumBlocks`访问成员变量。
   - 或者使用`sysArgs->SkGetNumBlocks()`接口获取。
 - 用户需要根据实际情况修改原代码，将`AscendC::GetBlockNum()`的调用替换为上述两种方式之一。
-- 与`AscendC::GetBlockNum()`的逻辑差异是，MIX 1:2场景中，vector核中的`skBlockNum`为`blockNum * 2`。
+- 与`AscendC::GetBlockNum()`的逻辑差异是，MIX 1:2场景中，vector核中的`skNumBlocks`为原block num的2倍。适配时需结合原算子的核数计算逻辑调整，避免重复乘2。
 
 ### 绑定限制
 
@@ -334,7 +333,7 @@ SK_BIND(add_custom, 0, add_custom_sk<0>, add_custom_sk<1>);
 
 **Q5：sk::SkSystemArgs参数是必须的吗？**
 
-A：不是必须的。`sk::SkSystemArgs *sysArgs`参数是可选的，只有算子需要使用该功能时添加，当前仅支持获取block num。
+A：不是必须的。`sk::SkSystemArgs *sysArgs`参数是可选的，算子需要获取系统信息或初始化系统变量时才需要添加。
 
 **Q6：原global函数还需要保留吗？**
 

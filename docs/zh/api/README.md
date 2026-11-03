@@ -3593,6 +3593,7 @@
 
     -   [SuperKernel](Utils-API/SuperKernel/SuperKernel.md)
         -   [SK\_BIND](Utils-API/SuperKernel/SK_BIND.md)
+        -   [SkSystemArgs](Utils-API/SuperKernel/SkSystemArgs.md)
 
 -   [AI CPU API<a npu_parse_enabled="true"></a>](AI-CPU-API/AI-CPU-API.md)
     -   [AI CPU API列表](AI-CPU-API/ai_cpu_api_list.md)
