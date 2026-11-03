@@ -10,61 +10,6 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # ----------------------------------------------------------------------------------------------------------
 
-# Release 9.1.0 incorrectly claimed HCCL's header in the installed filelist.
-# Run in a subshell so cleanup traps cannot affect the installer calling us.
-# Keep cleanup state in subshell variables: some shells unwind locals before EXIT.
-protect_hccl_header_from_legacy_filelist() (
-    info_dir="$1"
-    filelist="$info_dir/script/filelist.csv"
-    script_dir="$info_dir/script"
-    tmp_file=""
-    dir_mode=""
-    file_mode=""
-    removed=""
-    header_record='($2 == "copy" || $2 == "copy_entity" || $2 == "move") && $4 ~ /(^|\/)include\/hccl\/hccl\.h$/'
-
-    [ -d "$info_dir/../hccl" ] && [ -f "$filelist" ] || return 0
-    removed=$(awk -F, "$header_record { n++ } END { print n+0 }" "$filelist") || {
-        log "ERROR" "Failed to read legacy filelist: $filelist"
-        return 1
-    }
-    [ "$removed" -ne 0 ] || return 0
-
-    # Restore the directory mode and discard incomplete output on every exit.
-    trap '
-        ret=$?
-        if [ -n "$tmp_file" ]; then
-            rm -f "$tmp_file" || ret=1
-        fi
-        if [ -n "$dir_mode" ]; then
-            chmod "$dir_mode" "$script_dir" || ret=1
-        fi
-        if [ "$ret" -ne 0 ]; then
-            log "ERROR" "Failed to protect HCCL header in legacy filelist: $filelist"
-        fi
-        exit "$ret"
-    ' 0
-    trap 'exit 1' 1 2 15
-
-    dir_mode=$(stat -c %a "$script_dir") || exit 1
-    file_mode=$(stat -c %a "$filelist") || exit 1
-    chmod u+w "$script_dir" || exit 1
-    tmp_file=$(mktemp "$script_dir/.filelist.csv.XXXXXX") || exit 1
-    # cp -p preserves the installed manifest's ownership as well as its mode.
-    cp -p "$filelist" "$tmp_file" || exit 1
-    chmod u+w "$tmp_file" || exit 1
-    awk -F, -v expected="$removed" "$header_record { n++; next }
-        { print }
-        END { if (n != expected) exit 1 }" "$filelist" > "$tmp_file" || exit 1
-    chmod "$file_mode" "$tmp_file" || exit 1
-    mv -f "$tmp_file" "$filelist" || exit 1
-    tmp_file=""
-    chmod "$dir_mode" "$script_dir" || exit 1
-    dir_mode=""
-    log "INFO" "Protected HCCL header: removed $removed record(s) from $filelist"
-    exit 0
-)
-
 get_pkg_arch_name() {
     local scene_info="$curpath/../scene.info"
     if [ ! -f "$scene_info" ]; then
