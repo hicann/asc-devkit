@@ -1414,7 +1414,7 @@ def get_tiling_copy_func_and_micro(class_name):
     class_body += get_tiling_data_func()
 
     short_soc_version = global_var_storage.get_variable("ascendc_short_soc_version")
-    if short_soc_version in ["Ascend950", "Ascend960DT", "Ascend960PR", "MC62"]:
+    if short_soc_version in ["Ascend950", "Ascend960DT", "Ascend960PR", "MC62", "Ascend5162"]:
         # use __AUX__ to create a new struct to reduce running time. __AUX__ name does not matter
         # original: initialize, then write value    use __AUX__: write value, then interpret_cast to needed struct
         class_body += _get_tiling_data_without_time_stamp(class_name)

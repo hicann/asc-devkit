@@ -68,7 +68,7 @@ static const std::map<std::string, SocVersion> convertMap{
     {"MC61AM21A", SocVersion::MC61AM21A},
     {"MC62", SocVersion::MC62},
     {"SD3403", SocVersion::SD3403},
-    {"Ascend5162A", SocVersion::ASCEND5162A},
+    {"Ascend5162", SocVersion::ASCEND5162},
     {"KirinX90", SocVersion::KIRINX90},
     {"Kirin9030", SocVersion::KIRIN9030},
     {"Kirin9050", SocVersion::KIRIN9050},
@@ -419,7 +419,7 @@ const static std::map<std::string, std::string> convertMapInAicpu = {
     {"KirinDev0001", "KirinDev0001"},
     {"KirinDev0002", "KirinDev0002"},
     {"KirinDev0003", "KirinDev0003"},
-    {"Ascend5162A", "Ascend5162A"},
+    {"Ascend5162A", "Ascend5162"},
     {"MC32DM11AA", "MC62"},
     {"MC32DM11AB", "MC62"},
     {"MC32DM11AC", "MC62"},
@@ -430,7 +430,7 @@ const static std::map<std::string, std::string> AICPUshortVersionToNpuArchMap = 
     {"Ascend910", "1001"},    {"Ascend310P", "2002"},   {"Ascend310B", "3002"},  {"Ascend950", "3510"},
     {"Ascend350", "3510"},    {"Ascend960DT", "9201"},  {"Ascend960PR", "9202"}, {"MC62", "5102"},
     {"KirinX90", "3003"},     {"Kirin9030", "3113"},    {"Kirin9050", "5101"},   {"KirinDev0001", "5161"},
-    {"KirinDev0002", "5165"}, {"KirinDev0003", "5163"}, {"Ascend5162A", "5162"}};
+    {"KirinDev0002", "5165"}, {"KirinDev0003", "5163"}, {"Ascend5162", "5162"}};
 
 bool SwitchIntoShortSocVersion(const char* socVersionStr, std::string& shortSocVersion)
 {

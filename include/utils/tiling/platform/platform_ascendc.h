@@ -72,7 +72,7 @@ enum class SocVersion {
     SD3403,
     KIRINX90,
     KIRIN9030,
-    ASCEND5162A,
+    ASCEND5162,
     KIRIN9050,
     KIRINDEV0001,
     KIRINDEV0002,
