@@ -2458,7 +2458,7 @@ class TestCompileOp(unittest.TestCase):
             output_shape_depend_on_compute=[0],
         )
         tiling_info = TilingInfo()
-        kernel_func_desc, idx, called_func_params, called_func_params_type = _gen_kernel_func_declare_head(
+        kernel_func_desc, idx, called_func_params, called_func_params_type, _ = _gen_kernel_func_declare_head(
             True, True, op_info, tiling_info
         )
         print(kernel_func_desc)

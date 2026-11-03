@@ -200,6 +200,28 @@ def gen_global_isolation_macro(compile_info: CompileInfo, tiling_info: TilingInf
     return macro_branch_statment
 
 
+# When TPL struct is not registered through macro REGISTER_TILING, need to insert section code
+def _gen_tpl_tiling_struct_section(compile_info: CompileInfo, tiling_info: TilingInfo):
+    source = gen_global_isolation_macro(compile_info, tiling_info)
+    tiling_struct_set = set()
+    counter = 0
+    for tiling_key in compile_info.tiling_key_list:
+        original_tiling_struct = compile_info.tiling_key_struct_map[tiling_key]
+        if (
+            original_tiling_struct in compile_info.tpl_tiling_struct
+            and original_tiling_struct not in compile_info.register_tiling_struct
+            and original_tiling_struct not in tiling_struct_set
+        ):
+            source += f"static const uint64_t __ascendc_TPL_tiling_struct_{counter} __attribute__"
+            source += (
+                f'((used, section(".ascendc_tiling.{original_tiling_struct}"))) = sizeof({original_tiling_struct});\n'
+            )
+            counter += 1
+        tiling_struct_set.add(original_tiling_struct)
+    source += "#endif\n\n"
+    return source
+
+
 def get_code_for_l2_cache(compile_info: CompileInfo, source, tiling_info: TilingInfo):
     source += "#if (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201) && "
     source += "defined(__ASCENDC_DEFINE_OP_SYSTEM_RUN_CFG__)\n"

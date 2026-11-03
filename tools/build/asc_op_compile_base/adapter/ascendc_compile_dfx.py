@@ -79,6 +79,8 @@ class FuncMetaType(enum.Enum):
     F_TYPE_L0_EXCEPTION_DFX = 4  # DFX tlv for header
     F_TYPE_L0_EXCEPTION_DFX_ARGSINFO = 5  # DFX tlv for args info
     F_TYPE_L0_EXCEPTION_DFX_IS_TIK = 6  # DFX tlv mark for TIK
+    F_TYPE_PARAM_SUMMARY = 16  # Runtime parameter summary
+    F_TYPE_PARAM_INFO = 17  # Runtime parameter layout
     F_TYPE_MAX = -1
 
 
