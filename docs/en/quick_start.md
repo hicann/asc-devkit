@@ -208,6 +208,7 @@ The following are basic dependencies for compiling the source code and compiling
 - gcc >= 7.3.0 / g++ >= 7.3.0 (Note: gcc and g++ versions must be consistent)
 - cmake >= 3.16.0
 - pkg-config >= 0.29.0
+- patch
 
 ### ⚡ Compile and Install<a name="compile&install"></a>
 

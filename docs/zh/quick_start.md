@@ -209,6 +209,7 @@ git clone https://gitcode.com/cann/asc-devkit.git
 - gcc >= 7.3.0 / g++ >= 7.3.0 (注意：要求gcc与g++版本一致)
 - cmake >= 3.16.0
 - pkg-config >= 0.29.0
+- patch
 
 ### ⚡ 编译安装<a name="compile&install"></a>
 
