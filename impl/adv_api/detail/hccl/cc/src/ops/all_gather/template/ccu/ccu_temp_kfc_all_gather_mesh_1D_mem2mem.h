@@ -35,6 +35,10 @@ public:
         const OpParam& param, const TemplateDataParams& templateDataParams,
         TemplateResource& templateResource) override;
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
+
+private:
+    // 跨 die 通道集归一到单 die（对齐 hccl ProcessFlattenLink），保证单 kernel 全 channel 同 die
+    HcclResult FlattenChannelsToSingleDie(HcclComm comm, std::vector<HcclChannelDesc>& channels);
 };
 
 } // namespace mc2_ops_hccl
