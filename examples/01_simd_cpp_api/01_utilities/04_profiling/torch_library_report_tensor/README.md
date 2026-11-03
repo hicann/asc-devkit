@@ -60,7 +60,7 @@
 
      `ascendc_add`函数在下发Kernel前构造Profiling元信息，并通过`aclprofRangePushEx`传递给`msprof`。Kernel下发完成后调用`aclprofRangePop`结束本次Profiling范围。
 
-     这样做的目的是让`msprof`在生成`PipeUtilization.csv`时，能够在当前自定义算子记录中展示输入输出Tensor信息，例如：
+     这样做的目的是让`msprof`在生成`op_summary_*.csv`时，能够在当前自定义算子记录中展示输入输出Tensor信息，例如：
 
      ```text
      Input Shapes: "8,2048;8,2048"

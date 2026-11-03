@@ -60,7 +60,7 @@ This example demonstrates how to display operator input/output Shape, data type,
 
      The `ascendc_add` function constructs Profiling metadata before dispatching the Kernel and passes it to `msprof` through `aclprofRangePushEx`. After the Kernel dispatch completes, `aclprofRangePop` is called to end the current Profiling range.
 
-     The purpose is to enable `msprof` to display input/output Tensor information in the current custom operator record when generating `PipeUtilization.csv`, for example:
+     The purpose is to enable `msprof` to display input/output Tensor information in the current custom operator record when generating `op_summary_*.csv`, for example:
 
      ```text
      Input Shapes: "8,2048;8,2048"
