@@ -564,7 +564,7 @@ __simd_callee__ inline vector_float asc_max_scalar(vector_float src, float value
 
 __simd_callee__ inline vector_bfloat16_t asc_max_scalar(vector_bfloat16_t src, bfloat16_t value, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_max_merge(
     vector_uint8_t& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask);
 

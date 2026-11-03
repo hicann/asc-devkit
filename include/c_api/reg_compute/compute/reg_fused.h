@@ -137,7 +137,7 @@ __simd_callee__ inline vector_bfloat16_t asc_fma(
 
 __simd_callee__ inline vector_float asc_fma(vector_float src0, vector_float src1, vector_float src2, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 //=================asc_fms==================
 __simd_callee__ inline vector_half asc_fms(vector_half src0, vector_half src1, vector_half src2, vector_bool mask);
 

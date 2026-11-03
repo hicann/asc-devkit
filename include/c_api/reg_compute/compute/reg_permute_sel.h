@@ -301,7 +301,7 @@ __simd_callee__ inline void asc_pack_to_low(vector_uint16_t& dst, vector_uint32_
 
 __simd_callee__ inline void asc_pack_to_low(vector_uint16_t& dst, vector_int32_t src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_pack_to_low(vector_uint32_t& dst, vector_uint64_t src);
 
 __simd_callee__ inline void asc_pack_to_low(vector_uint32_t& dst, vector_int64_t src);
@@ -317,7 +317,7 @@ __simd_callee__ inline void asc_pack_to_high(vector_uint16_t& dst, vector_uint32
 
 __simd_callee__ inline void asc_pack_to_high(vector_uint16_t& dst, vector_int32_t src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_pack_to_high(vector_uint32_t& dst, vector_uint64_t src);
 
 __simd_callee__ inline void asc_pack_to_high(vector_uint32_t& dst, vector_int64_t src);
@@ -325,7 +325,7 @@ __simd_callee__ inline void asc_pack_to_high(vector_uint32_t& dst, vector_int64_
 
 __simd_callee__ inline void asc_pack_to_high(vector_bool& dst, vector_bool src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_pack_datablock(vector_uint16_t& dst, vector_uint16_t src);
 
 __simd_callee__ inline void asc_pack_datablock(vector_int16_t& dst, vector_int16_t src);
@@ -351,7 +351,7 @@ __simd_callee__ inline vector_uint16_t asc_pack_to_low(vector_uint32_t src);
 
 __simd_callee__ inline vector_uint16_t asc_pack_to_low(vector_int32_t src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_uint32_t asc_pack_to_low(vector_uint64_t src);
 
 __simd_callee__ inline vector_uint32_t asc_pack_to_low(vector_int64_t src);
@@ -367,7 +367,7 @@ __simd_callee__ inline vector_uint16_t asc_pack_to_high(vector_uint32_t src);
 
 __simd_callee__ inline vector_uint16_t asc_pack_to_high(vector_int32_t src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_uint32_t asc_pack_to_high(vector_uint64_t src);
 
 __simd_callee__ inline vector_uint32_t asc_pack_to_high(vector_int64_t src);
@@ -375,7 +375,7 @@ __simd_callee__ inline vector_uint32_t asc_pack_to_high(vector_int64_t src);
 
 __simd_callee__ inline vector_bool asc_pack_to_high(vector_bool src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_uint16_t asc_pack_datablock(vector_uint16_t src);
 
 __simd_callee__ inline vector_int16_t asc_pack_datablock(vector_int16_t src);
@@ -476,7 +476,7 @@ __simd_callee__ inline vector_bool asc_unpack_upper(vector_bool src);
 
 __simd_callee__ inline vector_bool asc_unpack_lower(vector_bool src);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 //=================asc_intlv_half (for 9201)==================
 __simd_callee__ inline void asc_intlv_half_low_b8(vector_bool& dst, vector_bool src0, vector_bool src1);
 

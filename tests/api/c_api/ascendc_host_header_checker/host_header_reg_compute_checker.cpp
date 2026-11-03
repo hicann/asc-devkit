@@ -684,7 +684,7 @@ static void test_host_c_api_reg_compute_19()
     using ::asc_xor;
 }
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_20()
 {
     using ::asc_bfloat162e4m3_rn;
@@ -725,7 +725,7 @@ static void test_host_c_api_reg_compute_20()
 }
 #endif
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_21()
 {
     using ::asc_datablock_reduce_max_stride;
@@ -757,7 +757,7 @@ static void test_host_c_api_reg_compute_21()
 }
 #endif
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_22()
 {
     using ::asc_bfloat162e1m2x2_rd_merge;
@@ -791,7 +791,7 @@ static void test_host_c_api_reg_compute_22()
 }
 #endif
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_23()
 {
     using ::asc_float2half_rd_merge;
@@ -810,7 +810,7 @@ static void test_host_c_api_reg_compute_23()
 }
 #endif
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_24()
 {
     using ::asc_add_merge;
@@ -819,7 +819,7 @@ static void test_host_c_api_reg_compute_24()
 }
 #endif
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_reg_compute_25()
 {
     using ::asc_e6m22bfloat16;

@@ -108,8 +108,8 @@ foreach(product_type ${ASCENDC_UT_PRODUCT_TYPE_LIST})
         $<$<STREQUAL:${product_type},ascend910B1_AIV>:__NPU_ARCH__=2201;__DAV_C220__;__DAV_C220_VEC__;__DAV_VEC__>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIC>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_CUBE__;__DAV_CUBE__>
         $<$<STREQUAL:${product_type},ascend950pr_9599_AIV>:__NPU_ARCH__=3510;__DAV_C310__;__DAV_C310_VEC__;__DAV_VEC__>
-        $<$<STREQUAL:${product_type},ascend960dt_AIC>:__NPU_ARCH__=9201;__DAV_CUBE__;ASC_DEVKIT_VERSION_NUM=90200000>
-        $<$<STREQUAL:${product_type},ascend960dt_AIV>:__NPU_ARCH__=9201;__DAV_VEC__;ASC_DEVKIT_VERSION_NUM=90200000>
+        $<$<STREQUAL:${product_type},ascend960dt_AIC>:__NPU_ARCH__=9201;__DAV_CUBE__;ASC_DEVKIT_VERSION_NUM=90300000>
+        $<$<STREQUAL:${product_type},ascend960dt_AIV>:__NPU_ARCH__=9201;__DAV_VEC__;ASC_DEVKIT_VERSION_NUM=90300000>
         __disable_kernel_type_autoinfer__=
         __callee__=
     )

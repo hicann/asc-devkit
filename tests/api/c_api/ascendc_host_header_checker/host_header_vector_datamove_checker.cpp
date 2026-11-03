@@ -44,7 +44,7 @@ static void test_host_c_api_vector_datamove_0()
     using ::asc_set_ub2gm_loop_size;
 }
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 static void test_host_c_api_vector_datamove_1()
 {
     using ::asc_gather_gm2ub;

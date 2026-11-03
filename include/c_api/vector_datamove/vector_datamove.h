@@ -606,7 +606,7 @@ __aicore__ inline void asc_ndim_copy_gm2ub(
 ASC_DEPRECATED(9.1.0, "2027/09/07", asc_set_copy_pad_val)
 __aicore__ inline void asc_set_gm2ub_pad(uint32_t pad_val);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 // ==========asc_scatter_ub2gm===========
 __aicore__ inline void asc_scatter_ub2gm(
     __gm__ uint8_t* dst, __ubuf__ uint8_t* src, uint8_t offset_type, __ubuf__ void* offset_addr,

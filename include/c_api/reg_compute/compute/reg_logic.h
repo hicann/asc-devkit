@@ -270,7 +270,7 @@ __simd_callee__ inline vector_uint32_t asc_shiftright_scalar(vector_uint32_t src
 __simd_callee__ inline vector_int32_t asc_shiftright_scalar(vector_int32_t src, int16_t shift, vector_bool mask);
 
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 //=================asc_shiftleft (unsigned shift overloads, 9201)==================
 __simd_callee__ inline void asc_shiftleft(
     vector_uint8_t& dst, vector_uint8_t src0, vector_uint8_t src1, vector_bool mask);

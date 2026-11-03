@@ -200,7 +200,7 @@ __aicore__ inline void asc_mmad_mx(
     __cc__ float* c_matrix, __ca__ fp8_e5m2_t* a_matrix, __cb__ fp8_e5m2_t* b_matrix, uint64_t bias, uint16_t m,
     uint16_t k, uint16_t n, asc_unit_flag_mode unit_flag_mode, bool disable_gemv);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __aicore__ inline void asc_mmad(
     __cc__ float* c_matrix, __ca__ half* a_matrix, __cb__ fp8_e4m3fn_t* b_matrix, uint16_t m, uint16_t k, uint16_t n,
     asc_unit_flag_mode unit_flag_mode, bool disable_gemv, bool c_matrix_source, bool c_matrix_init_val);

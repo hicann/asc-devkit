@@ -52,7 +52,7 @@ __simd_callee__ inline vector_fp8_e5m2_t asc_gather(__ubuf__ fp8_e5m2_t* src, ve
 
 __simd_callee__ inline vector_fp8_e8m0_t asc_gather(__ubuf__ fp8_e8m0_t* src, vector_uint16_t index, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_fp8_e6m2_t asc_gather(__ubuf__ fp8_e6m2_t* src, vector_uint16_t index, vector_bool mask);
 #endif
 
@@ -107,7 +107,7 @@ __simd_callee__ inline void asc_gather(
 __simd_callee__ inline void asc_gather(
     vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src, vector_uint16_t index, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_gather(
     vector_fp8_e6m2_t& dst, __ubuf__ fp8_e6m2_t* src, vector_uint16_t index, vector_bool mask);
 #endif
@@ -169,7 +169,7 @@ __simd_callee__ inline vector_int4x2_t asc_gather_datablock(
 __simd_callee__ inline vector_fp8_e8m0_t asc_gather_datablock(
     __ubuf__ fp8_e8m0_t* src, vector_uint32_t index, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_fp8_e6m2_t asc_gather_datablock(
     __ubuf__ fp8_e6m2_t* src, vector_uint32_t index, vector_bool mask);
 #endif
@@ -206,7 +206,7 @@ __simd_callee__ inline vector_int4x2_t asc_gather_datablock(__ubuf__ int4b_t* sr
 
 __simd_callee__ inline vector_fp8_e8m0_t asc_gather_datablock(__ubuf__ fp8_e8m0_t* src, vector_uint32_t index);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline vector_fp8_e6m2_t asc_gather_datablock(__ubuf__ fp8_e6m2_t* src, vector_uint32_t index);
 #endif
 
@@ -264,7 +264,7 @@ __simd_callee__ inline void asc_gather_datablock(
 __simd_callee__ inline void asc_gather_datablock(
     vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src, vector_uint32_t index, vector_bool mask);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_gather_datablock(
     vector_fp8_e6m2_t& dst, __ubuf__ fp8_e6m2_t* src, vector_uint32_t index, vector_bool mask);
 #endif
@@ -312,7 +312,7 @@ __simd_callee__ inline void asc_gather_datablock(vector_int4x2_t& dst, __ubuf__ 
 __simd_callee__ inline void asc_gather_datablock(
     vector_fp8_e8m0_t& dst, __ubuf__ fp8_e8m0_t* src, vector_uint32_t index);
 
-#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
 __simd_callee__ inline void asc_gather_datablock(
     vector_fp8_e6m2_t& dst, __ubuf__ fp8_e6m2_t* src, vector_uint32_t index);
 #endif
