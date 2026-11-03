@@ -12,7 +12,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_ASC_RUN_MODE "npu" CACHE STRING "Run mode: npu, cpu, sim")
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-2201, dav-3510")
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-2201, dav-3510, dav-9201")
 set(SCENARIO_NUM 1 CACHE STRING "Scenario: 1=CV融合(GM中转), 2=CV融合(UB直通,仅Ascend 950PR)")
 
 find_package(ASC REQUIRED)
@@ -26,8 +26,10 @@ if(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-2201")
     set(NPU_ARCH_ID 2201)
 elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
     set(NPU_ARCH_ID 3510)
+elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-9201")
+    set(NPU_ARCH_ID 9201)
 else()
-    message(FATAL_ERROR "Unsupported CMAKE_ASC_ARCHITECTURES=${CMAKE_ASC_ARCHITECTURES}, only dav-2201 and dav-3510 are supported")
+    message(FATAL_ERROR "Unsupported CMAKE_ASC_ARCHITECTURES=${CMAKE_ASC_ARCHITECTURES}, only dav-2201, dav-3510 and dav-9201 are supported")
 endif()
 message(STATUS "[INFO] SCENARIO_NUM is ${SCENARIO_NUM}")
 

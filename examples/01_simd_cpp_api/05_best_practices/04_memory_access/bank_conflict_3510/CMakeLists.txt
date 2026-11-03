@@ -10,7 +10,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510 (A5)")
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510 (A5), dav-9201 (A6)")
 
 find_package(ASC REQUIRED)
 

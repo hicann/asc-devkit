@@ -15,7 +15,7 @@ if (NOT SCENARIO_NUM MATCHES "^[0-1]$")
     message(FATAL_ERROR "SCENARIO_NUM must be 0 or 1")
 endif()
 
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510, dav-9201")
 
 find_package(ASC REQUIRED)
 project(hash_table_mte_queue LANGUAGES ASC CXX)

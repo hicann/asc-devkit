@@ -11,10 +11,10 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510")
+set(CMAKE_ASC_ARCHITECTURES "dav-3510" CACHE STRING "NPU architecture: dav-3510, dav-9201")
 
-if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
-    message(FATAL_ERROR "matmul_mxfp4_high_performance only supports CMAKE_ASC_ARCHITECTURES=dav-3510")
+if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510" AND NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-9201")
+    message(FATAL_ERROR "matmul_mxfp4_high_performance only supports CMAKE_ASC_ARCHITECTURES=dav-3510 or dav-9201")
 endif()
 
 find_package(ASC REQUIRED)
@@ -27,10 +27,11 @@ add_executable(demo
     matmul_mx.asc
 )
 
-target_compile_definitions(demo PRIVATE
-    SCENARIO_NUM=${SCENARIO_NUM}
-    NPU_ARCH_DAV_3510
-)
+if(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
+    target_compile_definitions(demo PRIVATE NPU_ARCH_DAV_3510)
+elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-9201")
+    target_compile_definitions(demo PRIVATE NPU_ARCH_DAV_9201)
+endif()
 
 target_link_libraries(demo PRIVATE
     tiling_api

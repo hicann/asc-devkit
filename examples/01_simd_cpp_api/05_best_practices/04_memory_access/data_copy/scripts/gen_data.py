@@ -17,7 +17,7 @@ import os
 import numpy as np
 
 
-ARCH_ADDR_CONFLICT_SHAPE = {"dav-2201": (6144, 512), "dav-3510": (8192, 512)}
+ARCH_ADDR_CONFLICT_SHAPE = {"dav-2201": (6144, 512), "dav-3510": (8192, 512), "dav-9201": (6144, 512)}
 
 SCENARIO_CONFIG = {
     "UB": {

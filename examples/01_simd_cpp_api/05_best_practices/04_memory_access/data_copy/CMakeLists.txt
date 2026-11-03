@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_ASC_ARCHITECTURES "dav-2201" CACHE STRING "NPU architecture: dav-2201, dav-3510")
+set(CMAKE_ASC_ARCHITECTURES "dav-2201" CACHE STRING "NPU architecture: dav-2201, dav-3510, dav-9201")
 set(SCENARIO_NUM "1" CACHE STRING "Scenario number: UB supports 1-8, L1 supports 1-7")
 set(COPY_DST "UB" CACHE STRING "Copy destination: UB, L1")
 
@@ -54,6 +54,8 @@ if(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
     target_compile_definitions(demo PRIVATE ARCH_3510=1)
 elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-2201")
     target_compile_definitions(demo PRIVATE ARCH_2201=1)
+elseif(CMAKE_ASC_ARCHITECTURES STREQUAL "dav-9201")
+    target_compile_definitions(demo PRIVATE ARCH_9201=1)
 else()
     message(FATAL_ERROR "Unsupported CMAKE_ASC_ARCHITECTURES: ${CMAKE_ASC_ARCHITECTURES}")
 endif()
