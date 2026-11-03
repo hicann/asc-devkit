@@ -1,8 +1,3 @@
-#if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
-#define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
-#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ARCH_CUBE_MMAD_TRAIT_H
-#endif
-
 /**
  * Copyright (c) 2026 Huawei Technologies Co., Ltd.
  * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
@@ -12,6 +7,11 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
+
+#if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ARCH_CUBE_MMAD_TRAIT_H
+#endif
 
 /*!
  * \file mmad_trait.h
