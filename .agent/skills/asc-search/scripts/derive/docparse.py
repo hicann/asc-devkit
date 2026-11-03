@@ -13,7 +13,6 @@
 from __future__ import annotations
 
 import re
-from typing import Any
 
 NPU_MARKER_RE = re.compile(r"<!--\s*npu=\"(?P<marker>[^\"]+)\"\s+(?P<sid>id\d+)\s*-->")
 NPU_END_RE = re.compile(r"<!--\s*end\s+(?P<sid>id\d+)\s*-->")

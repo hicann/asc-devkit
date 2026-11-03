@@ -23,7 +23,34 @@ from typing import Any
 
 import yaml
 
-VERSION_RANGE_RE = re.compile(r"^>=(?P<floor>\d+\.\d+(?:\.\d+)?)(?:,<=(?P<ceil>\d+\.\d+(?:\.\d+)?))?$")
+VERSION_POINT_RE = re.compile(r"^(\d+(?:\.\d+)*)(?:-([0-9A-Za-z.-]+))?$")
+VERSION_RANGE_RE = re.compile(r"^>=(?P<floor>\d+(?:\.\d+){0,2}(?:-[0-9A-Za-z.-]+)?)$")
+LEGACY_RANGE_RE = re.compile(r"^(>=[0-9.]+),<=[0-9.]+$")
+
+
+def version_key(value: str) -> tuple:
+    """版本号归一化：接受 1 段以上的数字段（如 9.2 / 9.2.0 / 9.2.0.1）与可选预发布后缀。"""
+    match = VERSION_POINT_RE.fullmatch(value)
+    if not match:
+        raise ValueError(f"invalid CANN version: {value!r}")
+    numbers, pre = match.groups()
+    parts = [int(part) for part in numbers.split(".")]
+    major, minor, patch = (parts + [0, 0])[:3]
+    extra = tuple(parts[3:])
+    pre_parts = tuple((0, int(p)) if p.isdigit() else (1, p) for p in (pre or "").split("."))
+    return major, minor, patch, extra, pre is None, pre_parts
+
+
+def first_support(value: str, *, allow_legacy: bool = False) -> str:
+    if not isinstance(value, str):
+        raise ValueError("version must be >=first_support_version")
+    if allow_legacy:
+        legacy = LEGACY_RANGE_RE.fullmatch(value)
+        if legacy:
+            value = legacy[1]
+    if not VERSION_RANGE_RE.fullmatch(value):
+        raise ValueError(f"version must contain only >=first_support_version: {value!r}")
+    return value
 
 
 def load_product_map(path: Path) -> dict[str, Any]:
@@ -51,36 +78,29 @@ def npu_to_arch(marker: str, product_map: dict[str, Any]) -> str | None:
 
 def detect_cann_version(explicit: str | None, repo_root: Path) -> str:
     if explicit:
+        version_key(explicit)
         return explicit
     home = os.environ.get("ASCEND_HOME_PATH", "")
     if home:
-        match = re.search(r"cann-(\d+\.\d+(?:\.\d+)?)", home)
+        match = re.search(r"cann-(\d+\.\d+(?:\.\d+)*(?:-[0-9A-Za-z.-]+)?)(?=/|$)", home)
         if match:
             return match.group(1)
     cmake = repo_root / "version.cmake"
     if cmake.is_file():
-        match = re.search(r"VERSION\s+\"(\d+\.\d+(?:\.\d+)?)\"", cmake.read_text(encoding="utf-8"))
+        match = re.search(r'VERSION\s+"([^"\n]+)"', cmake.read_text(encoding="utf-8"))
         if match:
+            version_key(match.group(1))
             return match.group(1)
     raise ValueError("cannot detect local CANN version; pass --cann-version explicitly")
 
 
 def version_covers(version: str, cann_version: str) -> bool:
-    """version 形如 >=9.0.0 或 >=9.0.0,<=9.2.0；判定是否覆盖给定 CANN 版本。"""
-    match = VERSION_RANGE_RE.fullmatch(version)
-    if not match:
+    """First support only. Deprecation never imposes an availability upper bound."""
+    try:
+        return version_key(cann_version) >= version_key(first_support(version)[2:])
+    except ValueError:
         return False
-    floor, ceil = match.group("floor"), match.group("ceil")
-    target = tuple(int(x) for x in cann_version.split("."))
-    low = tuple(int(x) for x in floor.split("."))
-    if target < low:
-        return False
-    if ceil:
-        high = tuple(int(x) for x in ceil.split("."))
-        return target <= high
-    return True
 
 
-def version_sort_key(version: str) -> tuple[int, ...]:
-    floor = version.split(",", 1)[0].removeprefix(">=")
-    return tuple(int(x) for x in floor.split("."))
+def version_sort_key(version: str) -> tuple:
+    return version_key(first_support(version)[2:])

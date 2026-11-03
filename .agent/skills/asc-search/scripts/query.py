@@ -26,6 +26,8 @@ from typing import Any
 SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS))
 from build_index import EMPTY_GAPS, INDEX_DIR, SCOPES, normalize_dtype  # noqa: E402
+from derive.gate import version_covers, version_key  # noqa: E402
+from derive.versioning import page_available, signature_available  # noqa: E402
 
 FILTER_KEYS = ("stage", "operation", "category", "api_class", "dtype", "kw", "convert", "feature", "version", "product")
 
@@ -39,6 +41,48 @@ def load(index_dir: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 
 def csv(value: str | None) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()] if value else []
+
+
+def strip_version_prefix(value: str) -> str:
+    """去掉旧 CLI 拼写的前缀 '>='，只保留目标版本号。"""
+    text = value.strip()
+    return text[2:].strip() if text.startswith(">=") else text
+
+
+def canonical_change_version(index: dict[str, Any], value: str) -> str:
+    """把 --changed-in 归一化到索引内实际的事件版本键（兼容 '>=9.2.0' 与 '9.2'）。"""
+    target = version_key(strip_version_prefix(value))
+    for since in index["views"].get("by_change_version", {}):
+        if version_key(since) == target:
+            return since
+    return strip_version_prefix(value)
+
+
+def version_target(index: dict[str, Any], value: str) -> str:
+    """Resolve a target version; an index for another version cannot answer availability."""
+    target = strip_version_prefix(value)
+    target_key = version_key(target)
+    indexed = index["meta"]["cann_version"]
+    if target_key != version_key(indexed):
+        raise ValueError(
+            f"--version {target} 与索引 CANN {indexed} 不一致；请先运行 "
+            f"ensure_index.py --cann-version {target}（保留目标架构），"
+            "或用 build_index.py 构建对应版本的 --index-dir"
+        )
+    return target
+
+
+def available_at(index: dict[str, Any], path: str, target: str) -> bool:
+    """Match first support and lifecycle events, retaining deprecated APIs."""
+    doc = index["documents"][path]
+    if not doc.get("version") or not version_covers(doc["version"], target):
+        return False
+    events = doc.get("version_changes") or []
+    if not page_available(events, target):
+        return False
+    signatures = doc.get("signatures") or []
+    arch = index["meta"]["arch"]
+    return not signatures or any(signature_available(s, events, target, arch) for s in signatures)
 
 
 def resolve_api(index: dict[str, Any], name: str) -> str | None:
@@ -83,8 +127,11 @@ def why_tags(index: dict[str, Any], path: str, dims: dict[str, list[str]]) -> li
         if path in index["views"]["by_feature"].get(feature, []):
             reasons.append(f"feature:{feature}")
     for version in dims.get("version", []):
-        if path in index["views"]["by_version"].get(version, []):
+        if available_at(index, path, version):
             reasons.append(f"version:{version}")
+    for since in dims.get("change_version", []):
+        if path in index["views"]["by_change_version"].get(since, []):
+            reasons.append(f"changed_in:{since}")
     for product in dims.get("product", []):
         if path in index["views"]["by_product"].get(product, []):
             reasons.append(f"product:{product}")
@@ -106,7 +153,10 @@ def filter_query(index: dict[str, Any], args: argparse.Namespace) -> list[dict[s
         "kw": csv(args.kw),
         "pair": [],
         "feature": csv(args.feature),
-        "version": [args.version.strip()] if args.version and args.version.strip() else [],
+        "version": [version_target(index, args.version)] if args.version else [],
+        "change_version": [canonical_change_version(index, args.changed_in)]
+        if getattr(args, "changed_in", None)
+        else [],
         "product": csv(args.product),
     }
     if args.convert:
@@ -114,7 +164,8 @@ def filter_query(index: dict[str, Any], args: argparse.Namespace) -> list[dict[s
         dims["pair"] = [f"{src}->{normalize_dtype(dst)}" for dst in csv(args.convert[1])]
     if not any(dims[key] for key in dims):
         raise ValueError(
-            "no filter given; use --stage/--operation/--category/--api-class/--dtype/--kw/--convert/--feature/--version/--product"
+            "no filter given; use --stage/--operation/--category/--api-class/--dtype/--kw/--convert"
+            "/--feature/--version/--changed-in/--product"
         )
     # 维度值不合法时不报错：视作空结果，交由 Agent 走降级链并用同义词重试
     candidates: set[str] | None = None
@@ -126,7 +177,7 @@ def filter_query(index: dict[str, Any], args: argparse.Namespace) -> list[dict[s
         ("dtype", "by_dtype"),
         ("pair", "by_dtype_pair"),
         ("feature", "by_feature"),
-        ("version", "by_version"),
+        ("change_version", "by_change_version"),
         ("product", "by_product"),
     ):
         values = dims[key]
@@ -136,6 +187,12 @@ def filter_query(index: dict[str, Any], args: argparse.Namespace) -> list[dict[s
         for value in values:
             matched.update(index["views"][view_name].get(value, []))
         candidates = matched if candidates is None else candidates & matched
+    if dims["version"]:
+        candidates = {
+            path
+            for path in (candidates if candidates is not None else index["documents"])
+            if available_at(index, path, dims["version"][0])
+        }
     if dims["kw"]:
         matched = {
             path
@@ -297,18 +354,102 @@ def gap_query(gaps: dict[str, Any], keyword: str) -> list[dict[str, Any]]:
     return results
 
 
+def change_summary(event: dict[str, Any]) -> str:
+    """单条版本变更事件的一行人读摘要（kind/scope 原样，不做词表校验）。"""
+    parts = [f"{event.get('since', '')} {event.get('kind', '')} {event.get('scope', '')}".strip()]
+    note = event.get("note")
+    if note:
+        parts.append(f"（{note}）")
+    return "".join(parts)
+
+
+def attach_change_events(index: dict[str, Any], results: list[dict[str, Any]], version: str) -> list[dict[str, Any]]:
+    """--changed-in：给候选附上**该版本**的变更事件摘要（since/kind/scope/note）。
+
+    只在显式使用 --changed-in 时附加，其他查询的输出结构不变。
+    """
+    target = version_key(strip_version_prefix(version))
+    for row in results:
+        doc = index["documents"].get(row["path"])
+        if doc is None:
+            continue
+        events = [
+            event
+            for event in doc.get("version_changes") or []
+            if event.get("since") and version_key(event["since"]) == target
+        ]
+        if events:
+            row["version_changes"] = events
+    return results
+
+
 def run_query(args: argparse.Namespace, index: dict[str, Any], gaps: dict[str, Any]) -> list[dict[str, Any]]:
     if args.gap is not None:
+        # 缺口登记描述的是"范围外"，没有文档维度可与过滤条件求交：
+        # 与其静默忽略，不如明确拒绝（SKILL.md 承诺维度间 AND）。
+        dims = _active_filter_dims(args)
+        if dims:
+            raise ValueError(
+                "--gap 不能与过滤维度组合（"
+                + "/".join("--" + name.replace("_", "-") for name in dims)
+                + "）：缺口是范围外登记，无法与文档维度求交"
+            )
         return gap_query(gaps, args.gap)
+    independent = bool(args.api or args.deps_of or args.param or args.enum)
+    if not independent:
+        return _attach_changes(index, filter_query(index, args), args)
     if args.api:
-        return api_card(index, args.api)
-    if args.deps_of:
-        return deps_query(index, args.deps_of, args.kind, args.reverse)
-    if args.param:
-        return param_query(index, args.param)
-    if args.enum:
-        return enum_query(index, args.enum)
-    return filter_query(index, args)
+        results = api_card(index, args.api)
+    elif args.deps_of:
+        results = deps_query(index, args.deps_of, args.kind, args.reverse)
+    elif args.param:
+        results = param_query(index, args.param)
+    else:
+        results = enum_query(index, args.enum)
+    # 独立查询是"展开"而非"过滤"：只传它时输出不变；一旦同时给了过滤维度，
+    # 必须与 filter_query 求交，否则就是静默吞掉用户条件（曾经的 A11 缺陷）。
+    dims = _active_filter_dims(args)
+    if dims:
+        allowed = {row["path"] for row in filter_query(index, args) if "path" in row}
+        results = [row for row in results if row.get("path") in allowed]
+    return _attach_changes(index, results, args)
+
+
+def _attach_changes(
+    index: dict[str, Any], results: list[dict[str, Any]], args: argparse.Namespace
+) -> list[dict[str, Any]]:
+    """--changed-in：给候选附上该版本的变更事件摘要（过滤本身由 filter_query 完成）。"""
+    for row in results:
+        doc = index["documents"].get(row.get("path"))
+        if doc and doc.get("version_changes"):
+            row["version_context"] = {"cann_version": index["meta"]["cann_version"], "changes": doc["version_changes"]}
+    changed_in = getattr(args, "changed_in", None)
+    if changed_in:
+        results = attach_change_events(index, results, changed_in.strip())
+    return results
+
+
+# 过滤维度（filter_query 消费的那些）；独立查询必须与它们求交，不能静默忽略。
+FILTER_DIM_ATTRS = (
+    "stage",
+    "operation",
+    "category",
+    "api_class",
+    "dtype",
+    "kw",
+    "convert",
+    "feature",
+    "version",
+    "product",
+)
+
+
+def _active_filter_dims(args: argparse.Namespace) -> list[str]:
+    """本次调用实际给出的过滤维度名（含 --changed-in）。"""
+    active = [name for name in FILTER_DIM_ATTRS if getattr(args, name, None)]
+    if getattr(args, "changed_in", None):
+        active.append("changed_in")
+    return active
 
 
 def render(index: dict[str, Any], results: list[dict[str, Any]]) -> str:
@@ -332,6 +473,15 @@ def render(index: dict[str, Any], results: list[dict[str, Any]]) -> str:
         flags = " [范围外]" if row.get("out_of_scope") else ""
         condition = f"（{row['condition']}）" if row.get("condition") else ""
         lines.append(f"{row['path']}{flags} | {name} | {','.join(row['why'])}{condition}\n  {desc}")
+        context = row.get("version_context")
+        if context and not row.get("version_changes"):
+            lines.append(
+                f"  目标 CANN {context['cann_version']}，需核对重载/行为变更: "
+                + "；".join(change_summary(e) for e in context["changes"])
+            )
+        changes = row.get("version_changes") or []
+        if changes:
+            lines.append("  版本变更: " + "；".join(change_summary(event) for event in changes))
     return "\n".join(lines)
 
 
@@ -353,7 +503,17 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--kw", help="title+description 子串")
     p.add_argument("--convert", nargs=2, metavar=("SRC", "DST"), help="类型转换对，DST 可为逗号列表")
     p.add_argument("--feature", help="特性（如 low_precision,low_precision_matrix,int4）")
-    p.add_argument("--version", help="按 version 区间精确匹配（如 '>=9.1.0'；含 >= 按 shell 规则加引号）")
+    p.add_argument(
+        "--version",
+        help="目标 CANN 版本（如 9.2.0）：按首次支持范围及生命周期匹配，>=9.0.0 的接口可命中 9.2.0；"
+        "需使用对应版本的索引。兼容旧写法 '>=9.2.0'，同样表示目标 9.2.0。查版本变更用 --changed-in",
+    )
+    p.add_argument(
+        "--changed-in",
+        dest="changed_in",
+        help="版本变更事件维度（如 9.2.0）：命中 version_changes[].since 等于该版本的文档，"
+        "并输出事件摘要（since/kind/scope/note）；空事件文档不入该视图",
+    )
     p.add_argument("--product", help="产品 npu 标记（如 950,A3,910b）")
     p.add_argument("--api", help="家族卡：主页+同族成员+分类页")
     p.add_argument("--deps-of", dest="deps_of", help="依赖图遍历（API 名或路径）")
@@ -372,6 +532,15 @@ def main() -> int:
         results = run_query(args, index, gaps)
         if args.gap is not None and not results and not gaps.get("scope_out_gaps"):
             print("[]" if args.json else "无登记缺口：原范围外缺口已全部纳入索引范围")
+            return 0
+        if args.changed_in and not results:
+            known = ", ".join(sorted(index["views"].get("by_change_version", {}))) or "（无）"
+            target = canonical_change_version(index, args.changed_in)
+            print(
+                "[]"
+                if args.json
+                else f"无命中：索引中没有 since = {target} 的版本变更事件（索引内已有事件版本：{known}）"
+            )
             return 0
         print(json.dumps(results, ensure_ascii=False, indent=1) if args.json else render(index, results))
         return 0

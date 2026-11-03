@@ -1,76 +1,62 @@
 ---
 name: asc-search
-description: OKF 用户侧入口：把 Ascend C API 文档的三类头建立为按适用条件筛选的持久索引，并按算子需求检索候选接口文档。用户需要建索引/检查索引新鲜度、询问“用哪个接口/怎么找 API/某接口配什么用/哪个版本可用”时使用；写头、改词表、标注文档请用 asc-knowledge-create。
+description: Ascend C API 的 Agent 底层检索。接受短关键词和 API、operation、dtype、版本、产品等结构化条件，返回带文档、声明和样例定位的 JSON 中间结果。
 ---
 
-# OKF 索引与检索（asc-search）
+# Ascend C API Agent 检索
 
-本 Skill 覆盖「建立索引 → 使用索引」全流程：索引是三类头（文档 slim 头、include Doxygen、
-examples marker）的纯派生数据，查询统一走本 skill 的 `scripts/query.py`。推导规则唯一事实源是
-[references/index_derivation_contract.md](references/index_derivation_contract.md)；
-建索引细节见 [references/index.md](references/index.md)，检索流程细节见
-[references/retrieve.md](references/retrieve.md)。命令均从仓库根目录执行。
+输入由调用 Agent 整理，输出是中间 JSON，不向人澄清、不组织最终答复。当前只覆盖 C API。
+共享索引引擎位于本 skill，不能另造检索实现或复制知识事实。
 
-通过用户 skill 目录的软链加载时，先将当前 `SKILL.md` 路径解析为真实路径，向上三级取得
-对应的 asc-devkit 仓库根目录，并从该目录执行以下命令和读取候选文档。用户当前目录
-可以位于其他项目；检索始终使用安装入口指向的 devkit 仓库。
+## 上下文和准备
 
-目标架构统一使用 NPU 架构号表述，默认使用 `3510`。
+调用方显式平台/版本优先；缺失时运行 `scripts/detect_context.py` 懒探测，读取设备信息和包元数据。
+无法确认产品或版本时返回 `needs_context`，不能默认 3510，也不能以 2201 猜 A2/A3。
+本机探测每轮上下文复用；不覆盖远端任务目标。
 
-## 建立索引
+调用方负责准备数据和索引；`--root`、`--out`、`--index-dir` 省略时分别默认取 skill 所在仓库根
+与 skill 内 `index/<surface>`。构建入口为：
 
 ```bash
-python3 .agent/skills/asc-search/scripts/build_index.py --scope c_api [--arch 3510] [--cann-version 9.2.0] [--check]
+python3 <skill>/scripts/build_index.py --arch <arch> --cann-version <version>
 ```
 
-构建按 CANN 版本、架构和 API 层级筛选，只索引同时满足 version 覆盖、archs 命中、层级命中的 API；
-校验不过不出索引，同输入两次构建字节一致。`--check` 做文档漂移检测。
+非 Git 数据快照传 `--source-commit <commit>`。未提供时标记 `unversioned`，不会继承外层仓库提交。索引按来源提交、目标版本、架构分别存储。
+查询只检查新鲜度，不联网、不写索引。原 `ensure_index.py` 仅供显式准备/维护使用，可指定
+`--root`、`--index-root`、`--source-commit`。
 
-## 使用索引
-
-### 步骤 0：索引前置保障
-
-任何检索开始前先运行（用户显式指定架构/版本时透传参数，否则默认使用 3510 架构并自动检测本地 CANN 版本）：
+## 查询
 
 ```bash
-python3 .agent/skills/asc-search/scripts/ensure_index.py --json [--arch A3] [--cann-version 9.2.0]
+python3 <skill>/scripts/search.py --platform 950 --version 9.2.0 --operation copy --keywords 非对齐
 ```
 
-筛选条件匹配且指纹新鲜 → 零动作；缺失、筛选条件不符或漂移 → 原地重建（本地 diff，不主动提交）。
-成功后以输出 JSON（`cann_version/arch_label/categories`）作为本次检索的**文档范围**；
-`actions` 含 `rebuilt` 时向用户说明一句。失败时如实报告并停止，不得绕过索引猜测文档。
+短关键词以空格分隔，各词 AND，匹配 title/description/family/tags；结构化维度间 AND，
+逗号值内 OR。维度包括 `--stage`、`--operation`、`--category`、`--api-class`、`--dtype`、
+`--convert`、`--feature`、`--kw`、`--api`、`--deps-of`、`--param`、`--enum`、`--changed-in`、`--gap`。
+`--gap` 使用自身查询词，不与 `--keywords` 或文档过滤维度组合。
+CLI 细节见 [index.md](references/index.md)，三类头推导见 [契约](references/index_derivation_contract.md)。
 
-### 检索循环
+`--version 9.2.0` 匹配首次支持 ≤ 目标版本及生命周期允许的接口，`>=9.0.0` 可命中。
+`--changed-in` 与 `--version` 同样归一化，`9.2`、`>=9.2.0` 与 `9.2.0` 等价。
+查询版本必须与索引一致。废弃仍可返回，移除事件排除；页面命中不代表全部重载已支持。
+平台同时保留产品与架构条件，A2/A3 不能仅凭共享架构混为一谈。
 
-1. **意图分析**：抽取阶段/操作/分类/dtype/行为约束/版本产品/具名 API/参数枚举/配套依赖等信号，
-   映射到查询维度；至少 1 个可映射信号且无影响候选集的歧义才检索。不明确时先反问，
-   同一检索需求累计最多 3 轮，每轮最多 3 个问题并给出选项；澄清期间不执行任何查询。
-   达到上限仍不明确时停止反问，说明信息不足，列出已确认条件与待确认项，不猜测条件或推荐接口。
-2. **初查与收窄**：主信号查询，结果过宽时加维度（维度间 AND、逗号值内 OR）。
-3. **空结果降级链**：精确 `--operation` → `--kw` 同义词 → `--api-class` + `--kw` →
-   `--gap` 确认范围外；仍无则如实说明。
-4. **配套展开**：`--deps-of`（含 `--reverse`）、`--enum`/`--param` 反查，保留家族变体。
-5. **收敛与把关**：意图要素全部有候选或确认范围外、依赖闭合后按固定格式作答；
-   脚本只给候选，输出前由你复核相关性与适用条件（筛选条件/condition/deprecated），
-   不相关的不展示；按需只读候选文档支撑推荐所需的章节，禁止全量精读。
+## 返回
 
-完整维度映射表、降级链与策略要点见 [references/retrieve.md](references/retrieve.md)；
-查询 CLI 全部参数见 [references/index.md](references/index.md)。
+`search.py` 总是返回 JSON 对象：`schema/source/source_commit/repository/root/cann_version/arch/platform/count/results`。
+每条候选包含原路径、绝对路径、命中原因，以及可用的摘要、版本、声明、include 和 examples 定位。
+成功含零命中退出 0；缺参、索引缺失或 stale 等错误退出 2。旧 `query.py` 保留内部过滤接口和兼容 CLI。
 
-### 输出格式（不落盘）
+结果仅为候选。消费 Agent 按需阅读实际文档/声明/样例，保留版本和条件，不能将空结果解释为能力不存在。
+不写文档、注释或样例；查询失败的回退策略由调用方负责。
 
-```text
-## 候选
-- 路径: docs/zh/api/SIMD-API/c_api/xxx/yyy.md 或 include/... | API: asc_yyy | 用途: 一句话
-```
+## noLLM 输出模式
 
-未检索到候选时直接说明结果；适用条件和待确认事项随候选说明，不单设未覆盖章节。
-返回多个候选且无法确认已覆盖当前需求的全部适用接口时，必须在候选列表后原样注明：
-“候选仅供参考，不代表全量接口。”索引查询成功或候选均已核对，不等于候选集完整。
+调用方传入 `noLLM`（CLI 等价开关 `--no-llm`，也可设 `ASC_SEARCH_NO_LLM=1`）时跳过整理环节，
+直接输出检索用例期望片段：单候选输出 `expected`（只有一项），多候选输出 `expected_any`
+（同一组，任一项命中即可），路径相对数据根，不含 JSON、摘要、声明和样例。
+调用方必须原样作为最终输出，不得改写、翻译或补充。未开启时仍返回 `asc-search-results/1` 中间结果，
+由调用方组织答复。两种模式都只给候选，不构成能力结论。
 
-## 边界
-
-- 只帮找文档，不生成算子代码、不替用户写 kernel。
-- 当前覆盖范围为 `docs/zh/api/SIMD-API/c_api`；范围外层级（adv_api/tensor_api/basic_api/SIMT/
-  AI-CPU 等）如实标注为未覆盖并给出线索。
-- 不改写 `docs/` 正文、include、样例或索引构建产物。
+维护参考：[目录导航](references/README.md)、[索引结构](references/index-structure.md)、[Agent 查询组合](references/retrieve.md)。

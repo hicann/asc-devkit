@@ -37,7 +37,7 @@ def build_examples_db(examples_root: Path) -> dict[str, list[dict[str, str | int
                 active = (group, line)
             elif group == active[0]:
                 entry = {
-                    "path": f"/{path.parent.as_posix()}",
+                    "path": "/" + path.parent.relative_to(examples_root.parent).as_posix(),
                     "file": path.name,
                     "start_line": active[1] + 1,
                     "end_line": line - 1,

@@ -8,7 +8,7 @@
 # See LICENSE in the root of the software repository for the full text of the License.
 # -----------------------------------------------------------------------------------------------------------
 
-"""slim 头（5 字段）解析与冻结词表加载（asc-search 自含工具）。
+"""slim 头（6 字段）解析与冻结词表加载（asc-search 自含工具）。
 
 不依赖其他 skill：词表为本 skill 配置 `config/tag-taxonomy.json`（随包分发的冻结词表）；
 推导契约见 references/index_derivation_contract.md。

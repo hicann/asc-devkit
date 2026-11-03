@@ -85,6 +85,8 @@ def light_fresh(instance: Path, root: Path, scope: build_index.Scope) -> tuple[b
             reasons.append(f"build-meta missing {key}")
         elif expected != sha256(path):
             reasons.append(f"{key} drift: {path.name} changed since build")
+    if fingerprint.get("input_sha256") != build_index.input_fingerprints(root):
+        reasons.append("include/examples/scripts/overrides inputs changed since build")
     docs = fingerprint.get("document_sha256")
     if not docs:
         reasons.append("build-meta has no document_sha256")
@@ -109,11 +111,16 @@ def light_fresh(instance: Path, root: Path, scope: build_index.Scope) -> tuple[b
 
 
 def strict_fresh(
-    instance: Path, root: Path, scope: build_index.Scope, cann_version: str, arch_label: str
+    instance: Path,
+    root: Path,
+    scope: build_index.Scope,
+    cann_version: str,
+    arch_label: str,
+    source_commit: str | None = None,
 ) -> tuple[bool, list[str]]:
     """全量重建比对（与 build_index --check 同语义，按目标筛选条件参数化）。"""
     with tempfile.TemporaryDirectory() as tmp:
-        for target in build_index.build(root, scope, Path(tmp), cann_version, arch_label):
+        for target in build_index.build(root, scope, Path(tmp), cann_version, arch_label, source_commit=source_commit):
             if target.name.endswith(".json"):
                 committed = build_index.strip_informational(
                     json.loads((instance / target.name).read_text(encoding="utf-8"))
@@ -136,6 +143,7 @@ def ensure(
     skip_drift: bool = False,
     strict: bool = False,
     index_root: Path | None = None,
+    source_commit: str | None = None,
 ) -> dict[str, Any]:
     actions: list[str] = []
     scope = build_index.SCOPES[surface]
@@ -146,17 +154,19 @@ def ensure(
     if index_path.is_file():
         meta = json.loads(index_path.read_text(encoding="utf-8"))["meta"]
         reasons = gate_reasons(meta, surface, cann_version, arch_label)
+        if source_commit is not None and meta.get("source_commit") != source_commit:
+            reasons.append("source commit differs from requested snapshot")
     else:
         reasons = ["index.json missing"]
     if not reasons and not skip_drift:
         if strict:
-            ok, drift = strict_fresh(instance, root, scope, cann_version, arch_label)
+            ok, drift = strict_fresh(instance, root, scope, cann_version, arch_label, source_commit)
         else:
             ok, drift = light_fresh(instance, root, scope)
         if not ok:
             reasons = drift
     if reasons:
-        build_index.build(root, scope, instance, cann_version, arch_label)
+        build_index.build(root, scope, instance, cann_version, arch_label, source_commit=source_commit)
         actions.append("rebuilt: " + "; ".join(reasons))
     index = json.loads(index_path.read_text(encoding="utf-8"))
     return {
@@ -181,12 +191,21 @@ def main() -> int:
     parser.add_argument("--arch", default="3510", help="架构号或检索标签（默认 3510，经 product-map 校验）")
     parser.add_argument("--skip-drift", action="store_true", help="只校验筛选条件匹配，跳过指纹漂移校验")
     parser.add_argument("--strict", action="store_true", help="全量重建比对（比轻量指纹精确，更慢）")
+    parser.add_argument("--index-root", type=Path, default=None, help="索引实例根目录（默认 skill/index）")
+    parser.add_argument("--source-commit", default=None, help="外部快照的固定提交")
     parser.add_argument("--json", action="store_true", help="机器可读输出")
     args = parser.parse_args()
     try:
         cann_version = gate.detect_cann_version(args.cann_version, args.root)
         result = ensure(
-            args.root, args.surface, cann_version, args.arch, skip_drift=args.skip_drift, strict=args.strict
+            args.root,
+            args.surface,
+            cann_version,
+            args.arch,
+            skip_drift=args.skip_drift,
+            strict=args.strict,
+            index_root=args.index_root,
+            source_commit=args.source_commit,
         )
     except (build_index.BuildError, ValueError, OSError, KeyError, subprocess.CalledProcessError) as exc:
         print(f"error: {exc}", file=sys.stderr)

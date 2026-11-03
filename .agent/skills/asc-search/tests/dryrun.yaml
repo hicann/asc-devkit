@@ -56,10 +56,10 @@ cases:
     args: {dtype: half, stage: in}
     min: 1
 
-  - name: 3510 版本视图
-    args: {version: ">=9.1.0"}
+  - name: 3510 版本范围匹配（包含早于目标版本支持的接口）
+    args: {version: "9.2.0"}
     min: 2
-    contains: [asc_set_copy_pad_val]
+    contains: [asc_set_copy_pad_val, asc_get_ctrl]
 
   - name: 3510 产品视图
     args: {product: "950", stage: in}

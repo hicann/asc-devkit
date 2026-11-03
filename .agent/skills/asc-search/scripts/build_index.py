@@ -36,6 +36,7 @@ REPO_ROOT = SKILL_ROOT.parents[2]
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from derive import docparse, gate, overrides as overrides_mod  # noqa: E402
+from derive.versioning import page_available, signature_available, deprecation  # noqa: E402
 from derive.examples_db import build_examples_db  # noqa: E402
 from derive.include_db import Declaration, build_include_db, declarations_for  # noqa: E402
 from derive.slim_header import (  # noqa: E402
@@ -165,6 +166,51 @@ def family_of(stem: str) -> str:
 # ---------------------------------------------------------------- 文档加载
 
 
+VERSION_CHANGE_REQUIRED_KEYS = ("since", "kind", "scope")
+VERSION_CHANGE_OPTIONAL_KEYS = ("note", "scope_basis")
+# 索引内是**降维副本**：事实源在文档头；索引只保留倒排与展示字段。
+VERSION_CHANGE_INDEX_KEYS = VERSION_CHANGE_REQUIRED_KEYS + VERSION_CHANGE_OPTIONAL_KEYS
+VERSION_CHANGE_KEYS = VERSION_CHANGE_INDEX_KEYS
+
+
+def normalize_version_changes(rel: str, value: Any, errors: list[str]) -> list[dict[str, Any]]:
+    """front matter 第 6 字段 version_changes 的结构校验 + 透传（宽进严出）。
+
+    只校验**结构**：必须是 list、每项必须是 mapping、必填键存在且类型为 str
+    （可选键给 null 视为缺省）。**不校验 kind 取值**（冻结词表只做展示/一致性副本，
+    未知 kind 透传）——否则建设侧新增 kind 会让检索侧整次构建 BuildError。
+    结构不合法计入 errors，由 build() 统一拒绝出索引。
+    """
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        errors.append(f"{rel}: version_changes must be a list, got {type(value).__name__}")
+        return []
+    events: list[dict[str, Any]] = []
+    for index, item in enumerate(value):
+        where = f"{rel}: version_changes[{index}]"
+        if not isinstance(item, dict):
+            errors.append(f"{where} must be a mapping, got {type(item).__name__}")
+            continue
+        missing = sorted(key for key in VERSION_CHANGE_REQUIRED_KEYS if item.get(key) is None)
+        if missing:
+            errors.append(f"{where} required key(s) missing or null: {missing}")
+            continue
+        bad_types = sorted(
+            key for key in VERSION_CHANGE_INDEX_KEYS if item.get(key) is not None and not isinstance(item.get(key), str)
+        )
+        if bad_types:
+            errors.append(f"{where} value(s) must be a string: {bad_types}")
+            continue
+        try:
+            gate.version_key(item["since"])
+        except ValueError as exc:
+            errors.append(f"{where}: {exc}")
+            continue
+        events.append({key: item[key] for key in VERSION_CHANGE_INDEX_KEYS if item.get(key) is not None})
+    return events
+
+
 def load_documents(root: Path, scope: Scope, errors: list[str]) -> tuple[dict[str, dict[str, Any]], list[str]]:
     namespaces, tax_values = taxonomy(TAXONOMY_PATH)
     documents: dict[str, dict[str, Any]] = {}
@@ -179,7 +225,7 @@ def load_documents(root: Path, scope: Scope, errors: list[str]) -> tuple[dict[st
         if not fm:
             pending.append(rel)
             continue
-        allowed = {"okftype", "description", "tag", "dependencies", "version"}
+        allowed = {"okftype", "description", "tag", "dependencies", "version", "version_changes"}
         extra = sorted(set(fm) - allowed)
         if extra:
             errors.append(
@@ -207,13 +253,22 @@ def load_documents(root: Path, scope: Scope, errors: list[str]) -> tuple[dict[st
                 errors.append(f"{rel}: invalid dependency kind {dep.get('kind')!r}")
                 continue
             deps.append({"path": dep["path"], "kind": dep["kind"], "condition": dep.get("condition", "")})
+        version = fm.get("version", "")
+        normalized_version = version
+        if version:
+            try:
+                normalized_version = gate.first_support(version, allow_legacy=True)
+            except ValueError as exc:
+                errors.append(f"{rel}: {exc}")
         stem = PurePosixPath(rel).stem
         documents[rel] = {
             "okftype": fm["okftype"],
             "description": fm.get("description", ""),
             "tags": tags,
             "dependencies": deps,
-            "version": fm.get("version", ""),
+            "version": normalized_version,
+            "legacy_version": version if version != normalized_version else "",
+            "version_changes": normalize_version_changes(rel, fm.get("version_changes"), errors),
             "title": docparse.doc_title(body, stem),
             "navigation": docparse.doc_navigation(body),
             "product_support": docparse.doc_product_support(body),
@@ -458,7 +513,7 @@ def features_of(doc: dict[str, Any]) -> list[str]:
     return sorted(features)
 
 
-def check_graph(documents: dict[str, dict[str, Any]], errors: list[str]) -> list[dict[str, Any]]:
+def check_graph(documents: dict[str, dict[str, Any]], errors: list[str], root: Path) -> list[dict[str, Any]]:
     edges: dict[tuple[str, str], dict[str, Any]] = {}
     for rel, doc in documents.items():
         for dep in doc["dependencies"]:
@@ -471,7 +526,7 @@ def check_graph(documents: dict[str, dict[str, Any]], errors: list[str]) -> list
     for rel, doc in documents.items():
         for dep in doc["dependencies"]:
             target = dep["path"]
-            if target not in documents and not (REPO_ROOT / target).is_file():
+            if target not in documents and not (root / target).is_file():
                 errors.append(f"{rel}: dependency target not found: {target}")
     return [edges[key] for key in sorted(edges)]
 
@@ -492,6 +547,7 @@ def build_views(documents: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "by_enum": {},
         "by_feature": {},
         "by_version": {},
+        "by_change_version": {},
         "by_product": {},
     }
     for rel, doc in documents.items():
@@ -523,6 +579,12 @@ def build_views(documents: dict[str, dict[str, Any]]) -> dict[str, Any]:
             views["by_feature"].setdefault(feature, []).append(rel)
         if doc.get("version"):
             views["by_version"].setdefault(doc["version"], []).append(rel)
+        # 版本变更事件视图：{since: [文档]}。只收非空事件（version_changes: [] 不入任何键）；
+        # 与 by_version（version 区间原串）语义不同，不参与门控。
+        for event in doc.get("version_changes", []):
+            since = event.get("since", "")
+            if since:
+                views["by_change_version"].setdefault(since, []).append(rel)
         for marker, info in doc.get("product_support", {}).items():
             if info["support"] == "支持":
                 views["by_product"].setdefault(marker, []).append(rel)
@@ -536,8 +598,19 @@ def build_views(documents: dict[str, dict[str, Any]]) -> dict[str, Any]:
 # ---------------------------------------------------------------- 构建主流程
 
 
-def git_output(args: list[str]) -> str:
-    return subprocess.run(["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=True).stdout.strip()
+def git_output(args: list[str], root: Path = REPO_ROOT) -> str:
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+
+
+def source_identity(root: Path, source_commit: str | None) -> tuple[str, str]:
+    if source_commit:
+        return source_commit, ""
+    try:
+        if Path(git_output(["rev-parse", "--show-toplevel"], root)).resolve() != root.resolve():
+            return "unversioned", ""
+        return git_output(["rev-parse", "HEAD"], root), git_output(["log", "-1", "--format=%cI"], root)
+    except (subprocess.CalledProcessError, OSError):
+        return "unversioned", ""
 
 
 def overview(index: dict[str, Any], enums: dict[str, Any]) -> str:
@@ -569,16 +642,52 @@ def overview(index: dict[str, Any], enums: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label: str) -> list[Path]:
+def input_fingerprints(root: Path) -> dict[str, str]:
+    sources = list((root / "include/c_api").rglob("*.h"))
+    sources += [
+        p
+        for p in (root / "examples").rglob("*")
+        if p.is_file() and p.suffix.lower() in {".asc", ".c", ".cc", ".cpp", ".cxx", ".h", ".hpp"}
+    ]
+    scripts = list((SKILL_ROOT / "scripts").rglob("*.py"))
+    scripts += list((SKILL_ROOT / "derive-overrides").glob("*.json"))
+    result = {
+        "repo/" + p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(sources)
+    }
+    result.update(
+        {
+            "skill/" + p.relative_to(SKILL_ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(scripts)
+        }
+    )
+    return result
+
+
+def build(
+    root: Path,
+    scope: Scope,
+    out_dir: Path,
+    cann_version: str,
+    arch_label: str,
+    *,
+    product_map_path: Path | None = None,
+    gaps_path: Path | None = None,
+    source_commit: str | None = None,
+) -> list[Path]:
+    gate.version_key(cann_version)
     errors: list[str] = []
     unresolved: list[dict[str, Any]] = []
-    product_map = gate.load_product_map(PRODUCT_MAP_PATH)
+    product_map = gate.load_product_map(product_map_path or PRODUCT_MAP_PATH)
     arch = gate.arch_label_to_number(arch_label, product_map)
 
     documents, pending = load_documents(root, scope, errors)
     classify_documents(documents, scope)
     include_db = build_include_db(root / "include" / "c_api")
-    examples_db = build_examples_db(root / "examples" / "02_simd_c_api" / "03_c_api")
+    # examples DB 覆盖整棵 examples/：marker 由建设侧按 canonical `override_id` 写入，
+    # 而查表是「文档侧 include DB 的 override_id → examples DB」，没有 marker 的样例
+    # 不可能被查到 —— 因此放宽根目录不会把别的 API 家族（如 SIMT 同名接口）关联进来。
+    # 实测：全仓仅 2 个样例带 marker，SIMT 样例（03_simt_api/05_simd_simt_hybrid）0 个。
+    examples_db = build_examples_db(root / "examples")
     override_map = overrides_mod.load_overrides(SKILL_ROOT / "derive-overrides" / f"{scope.name}.json")
 
     gated: dict[str, dict[str, Any]] = {}
@@ -602,6 +711,40 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
             }
         )
         applied = overrides_mod.apply_overrides(rel, derived, override_map)
+        if doc["legacy_version"]:
+            unresolved.append(
+                {
+                    "document": rel,
+                    "field": "version",
+                    "issue": f"legacy upper bound ignored: {doc['legacy_version']}; review first support and lifecycle events",
+                }
+            )
+        is_entity = doc["okftype"] != "reference.index"
+        if is_entity:
+            if (doc["version"] and not gate.version_covers(doc["version"], cann_version)) or not page_available(
+                doc["version_changes"], cann_version
+            ):
+                filtered_by_version += 1
+                continue
+            if derived["archs"] and arch not in derived["archs"]:
+                filtered_by_arch += 1
+                continue
+            if derived["signatures"]:
+                eligible = [s for s in derived["signatures"] if not s["archs"] or arch in s["archs"]]
+                derived["signatures"] = [
+                    s for s in eligible if signature_available(s, doc["version_changes"], cann_version, arch)
+                ]
+                if eligible and not derived["signatures"]:
+                    filtered_by_version += 1
+                    continue
+                for signature in derived["signatures"]:
+                    signature["deprecated"] = deprecation(signature, doc["version_changes"], cann_version, arch)
+            ids = {s["override_id"] for s in derived["signatures"]}
+            derived["examples"] = [e for e in derived["examples"] if e["override_id"] in ids]
+            derived["params"] = [p for s in derived["signatures"] for p in s["params"]]
+            derived["enum_types"] = sorted({p["type"] for p in derived["params"] if p["type"] in include_db["enums"]})
+            derived["headers"] = sorted({s["header"] for s in derived["signatures"]})
+            derived["deprecated"] = next((s["deprecated"] for s in derived["signatures"] if s["deprecated"]), None)
         doc["derived"] = derived
         doc["derived_applied_overrides"] = applied
         doc["derived_api_class"] = derived["api_class"] or (area if area else ("defs" if "/defs/" in rel else ""))
@@ -616,21 +759,11 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
         doc["derived_params"] = derived["params"]
         doc["derived_enum_types"] = derived["enum_types"]
 
-        is_entity = doc["okftype"] != "reference.index"
-        if is_entity:
-            if doc["version"] and not gate.version_covers(doc["version"], cann_version):
-                filtered_by_version += 1
-                continue
-            if derived["archs"] and arch not in derived["archs"]:
-                filtered_by_arch += 1
-                continue
-            if derived["signatures"]:
-                derived["signatures"] = [s for s in derived["signatures"] if not s["archs"] or arch in s["archs"]]
         gated[rel] = doc
 
-    edges = check_graph(gated, errors)
-    gaps, gaps_raw = load_gaps(scope)
-    validate_gaps(gaps, errors)
+    edges = check_graph(gated, errors, root)
+    gaps, gaps_raw = load_gaps(scope, gaps_path=gaps_path)
+    validate_gaps(gaps, errors, root)
     if errors:
         raise BuildError(f"{len(errors)} validation error(s):\n" + "\n".join(f"  - {e}" for e in errors[:30]))
 
@@ -642,12 +775,13 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
         if edge["to"] in gated:
             reverse[edge["kind"]].setdefault(edge["to"], []).append(edge["from"])
 
+    resolved_source_commit, commit_date = source_identity(root, source_commit)
     index = {
-        "schema": "okf-index/4",
+        "schema": "okf-index/5",
         "meta": {
             "surface": scope.name,
-            "source_commit": git_output(["rev-parse", "HEAD"]),
-            "commit_date": git_output(["log", "-1", "--format=%cI"]),
+            "source_commit": resolved_source_commit,
+            "commit_date": commit_date,
             "cann_version": cann_version,
             "arch_label": arch_label,
             "arch": arch,
@@ -668,6 +802,7 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
                 "tags": doc["tags"],
                 "dependencies": doc["dependencies"],
                 "version": doc["version"],
+                "version_changes": doc["version_changes"],
                 "navigation": doc["navigation"],
                 "product_support": {m: i["support"] for m, i in doc["product_support"].items()},
                 "api_class": doc["derived_api_class"],
@@ -706,7 +841,10 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
         "taxonomy_sha256": hashlib.sha256(TAXONOMY_PATH.read_bytes()).hexdigest(),
         "product_map_sha256": hashlib.sha256(PRODUCT_MAP_PATH.read_bytes()).hexdigest(),
         "gaps_sha256": hashlib.sha256(gaps_raw).hexdigest(),
-        "document_sha256": {rel: hashlib.sha256((root / rel).read_bytes()).hexdigest() for rel in sorted(gated)},
+        "input_sha256": input_fingerprints(root),
+        "document_sha256": {
+            rel: hashlib.sha256((root / rel).read_bytes()).hexdigest() for rel in sorted(set(documents) | set(pending))
+        },
     }
     out_dir.mkdir(parents=True, exist_ok=True)
     # gaps.json 可选（人工维护）：缺失时落盘空台账快照，保证 --out 构建的实例目录
@@ -729,9 +867,9 @@ def build(root: Path, scope: Scope, out_dir: Path, cann_version: str, arch_label
 EMPTY_GAPS: dict[str, Any] = {"scope_out_gaps": [], "relation_gaps": []}
 
 
-def load_gaps(scope: Scope) -> tuple[dict[str, Any], bytes]:
+def load_gaps(scope: Scope, *, gaps_path: Path | None = None) -> tuple[dict[str, Any], bytes]:
     """gaps.json 可选：缺失视为空台账；返回值同时用于指纹与快照落盘。"""
-    path = INDEX_DIR / scope.name / "gaps.json"
+    path = gaps_path or (INDEX_DIR / scope.name / "gaps.json")
     raw = (
         path.read_text(encoding="utf-8")
         if path.is_file()
@@ -740,7 +878,7 @@ def load_gaps(scope: Scope) -> tuple[dict[str, Any], bytes]:
     return json.loads(raw), raw.encode("utf-8")
 
 
-def validate_gaps(gaps: dict[str, Any], errors: list[str]) -> None:
+def validate_gaps(gaps: dict[str, Any], errors: list[str], root: Path = REPO_ROOT) -> None:
     for section in ("scope_out_gaps", "relation_gaps"):
         if section not in gaps:
             errors.append(f"gaps.json: missing section {section}")
@@ -749,13 +887,13 @@ def validate_gaps(gaps: dict[str, Any], errors: list[str]) -> None:
             if not gap.get(key):
                 errors.append(f"gaps.json: gap {gap.get('id')} missing {key}")
         for hint in gap.get("hints", []):
-            if not (REPO_ROOT / hint["path"]).exists():
+            if not (root / hint["path"]).exists():
                 errors.append(f"gaps.json: hint path not found: {hint['path']}")
         for ev in gap.get("evidence", []):
-            if not (REPO_ROOT / ev["path"]).exists():
+            if not (root / ev["path"]).exists():
                 errors.append(f"gaps.json: evidence path not found: {ev['path']}")
     for gap in gaps.get("relation_gaps", []):
-        if not (REPO_ROOT / gap["from"]).is_file():
+        if not (root / gap["from"]).is_file():
             errors.append(f"gaps.json: relation gap source not found: {gap['from']}")
 
 
@@ -777,6 +915,7 @@ def main() -> int:
     parser.add_argument("--out", type=Path, default=None)
     parser.add_argument("--cann-version", default=None, help="默认自动检测（$ASCEND_HOME_PATH > version.cmake）")
     parser.add_argument("--arch", default="3510", help="架构号或检索标签（默认 3510，经 product-map 校验）")
+    parser.add_argument("--source-commit", default=None, help="外部快照的固定提交；非 git 快照必须提供")
     parser.add_argument("--check", action="store_true", help="校验已提交索引与重建结果一致")
     args = parser.parse_args()
     scope = SCOPES[args.scope]
@@ -785,7 +924,7 @@ def main() -> int:
         cann_version = gate.detect_cann_version(args.cann_version, args.root)
         if args.check:
             with tempfile.TemporaryDirectory() as tmp:
-                fresh = build(args.root, scope, Path(tmp), cann_version, args.arch)
+                fresh = build(args.root, scope, Path(tmp), cann_version, args.arch, source_commit=args.source_commit)
                 for target in fresh:
                     if target.name.endswith(".json"):
                         committed = strip_informational(json.loads((out_dir / target.name).read_text(encoding="utf-8")))
@@ -798,7 +937,7 @@ def main() -> int:
                         return 1
             print("index is up to date")
             return 0
-        for target in build(args.root, scope, out_dir, cann_version, args.arch):
+        for target in build(args.root, scope, out_dir, cann_version, args.arch, source_commit=args.source_commit):
             print(f"written: {target}")
         return 0
     except (BuildError, ValidationError, ValueError, subprocess.CalledProcessError, OSError, KeyError) as exc:

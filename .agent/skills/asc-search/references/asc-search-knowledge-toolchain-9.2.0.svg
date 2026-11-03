@@ -129,10 +129,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 <rect x="54" y="284" width="552" height="38" rx="6" fill="#ecf5f0" stroke="none" stroke-width="2"/>
 <text class="label" xml:space="preserve" x="66" y="310" font-size="22" fill="#16824b" font-weight="700" text-anchor="start">标准格式</text>
 <text class="label" xml:space="preserve" x="66" y="352" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 文件开头用 --- 包住 YAML front matter。</text>
-<text class="label" xml:space="preserve" x="66" y="381" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 五字段：okftype、description、tag、</text>
-<text class="label" xml:space="preserve" x="66" y="410" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">  dependencies、version，按此顺序排列。</text>
+<text class="label" xml:space="preserve" x="66" y="381" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 六字段：okftype、description、tag、</text>
+<text class="label" xml:space="preserve" x="66" y="410" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">  dependencies、version、version_changes。</text>
 <text class="label" xml:space="preserve" x="66" y="439" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• tag 使用 roles、operations、traits。</text>
-<text class="label" xml:space="preserve" x="66" y="468" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• dependencies 记录关系；version 记录版本。</text>
+<text class="label" xml:space="preserve" x="66" y="468" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• version 记录首次支持；changes 记录变更。</text>
 <rect x="54" y="496" width="552" height="38" rx="6" fill="#ecf5f0" stroke="none" stroke-width="2"/>
 <text class="label" xml:space="preserve" x="66" y="522" font-size="22" fill="#16824b" font-weight="700" text-anchor="start">真实案例：asc_abs.md</text>
 <rect x="54" y="548" width="552" height="282" rx="8" fill="#ffffff" stroke="#a7d0bb" stroke-width="1"/>
@@ -175,7 +175,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 <rect x="1314" y="284" width="552" height="38" rx="6" fill="#fcf3ec" stroke="none" stroke-width="2"/>
 <text class="label" xml:space="preserve" x="1326" y="310" font-size="22" fill="#d66916" font-weight="700" text-anchor="start">标准格式</text>
 <text class="label" xml:space="preserve" x="1326" y="352" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 成对 //! [id1, id2, ...] 标注展示范围。</text>
-<text class="label" xml:space="preserve" x="1326" y="381" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 每源文件一对，覆盖全部重点 API 调用。</text>
+<text class="label" xml:space="preserve" x="1326" y="381" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• Agent 选范围并写一对，覆盖重点调用。</text>
 <text class="label" xml:space="preserve" x="1326" y="410" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 范围可跨函数；首尾列表一致、ID 去重。</text>
 <text class="label" xml:space="preserve" x="1326" y="439" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• ID 与 include 的 @override_id 精确对应。</text>
 <text class="label" xml:space="preserve" x="1326" y="468" font-size="21" fill="#162a46" font-weight="400" text-anchor="start">• 只在已有样例上加注释，保持代码逻辑。</text>

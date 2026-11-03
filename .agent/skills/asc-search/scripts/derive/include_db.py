@@ -258,6 +258,27 @@ def _strip_comments(text: str) -> str:
     return text
 
 
+def _bind_deprecated_macros(raw: str, parsed: list[tuple[int, "Declaration"]]) -> None:
+    """代码级 ASC_DEPRECATED(v, date, replacement) 位于被废弃声明之前，按位置绑定到后续声明。
+
+    标注数据把宏写在 Doxygen 块之外（`ASC_DEPRECATED(9.2.0, "...", asc_x)` 后接文档块与声明），
+    `_parse_doxygen` 只能看到注释体内部，因此在这里补一次位置绑定，保留替代目标。
+    """
+    comment_spans = [(m.start(), m.end()) for m in re.finditer(r"/\*.*?\*/", raw, re.DOTALL)]
+    ordered = sorted(parsed, key=lambda item: item[0])
+    for macro in DEPRECATED_RE.finditer(raw):
+        if any(start <= macro.start() < end for start, end in comment_spans):
+            continue
+        for offset, declaration in ordered:
+            if offset >= macro.end():
+                if declaration.deprecated is None:
+                    declaration.deprecated = {
+                        "version": macro.group("version"),
+                        "replacement": macro.group("replacement").strip(),
+                    }
+                break
+
+
 def parse_header(path: Path, rel_root: Path) -> dict[str, Any]:
     """解析单个头文件：函数声明 + defs 目录（枚举/常量/宏/别名/记录）。
 
@@ -268,6 +289,7 @@ def parse_header(path: Path, rel_root: Path) -> dict[str, Any]:
     doxygen = _parse_doxygen(raw)
 
     functions: dict[str, list[Declaration]] = {}
+    parsed: list[tuple[int, Declaration]] = []
     unresolved: list[dict[str, str]] = []
     guard_stack: list[str] = []
     lines = raw.splitlines()
@@ -304,6 +326,7 @@ def parse_header(path: Path, rel_root: Path) -> dict[str, Any]:
                     alias_match.group(1), alias_match.group(2), header_rel, offset, doxygen, guard_stack, prev_decl_end
                 )
                 functions.setdefault(declaration.name, []).append(declaration)
+                parsed.append((offset, declaration))
                 prev_decl_end = offset + len(stripped)
             elif DECL_START_RE.match(stripped) or (
                 stripped.startswith(("__aicore__", "__simd_callee__"))
@@ -322,6 +345,7 @@ def parse_header(path: Path, rel_root: Path) -> dict[str, Any]:
                     )
                     prev_decl_end = offset + len(decl_text)
                     functions.setdefault(declaration.name, []).append(declaration)
+                    parsed.append((offset, declaration))
                     for note in declaration.unresolved:
                         unresolved.append({"header": header_rel, "function": declaration.name, "issue": note})
         if in_comment:
@@ -330,6 +354,8 @@ def parse_header(path: Path, rel_root: Path) -> dict[str, Any]:
         elif opens > 0 and closes == 0:
             in_comment = True
         index += 1
+
+    _bind_deprecated_macros(raw, parsed)
 
     code = _strip_comments(raw)
     enums: dict[str, dict[str, Any]] = {}

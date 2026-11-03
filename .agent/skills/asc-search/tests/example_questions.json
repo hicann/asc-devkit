@@ -1,0 +1,64 @@
+{
+  "cases": [
+    {
+      "id": "EX01",
+      "prompt": "CANN 9.2.0、3510 架构，用 C API 实现同步场景的 Add 算子（RegBase）：GM 数据搬入 UB、读入矢量寄存器、按掩码逐元素相加后写回并搬回 GM，需要查哪些搬运、掩码、计算与同步接口？"
+    },
+    {
+      "id": "EX02",
+      "prompt": "CANN 9.2.0、3510 架构，用 C API 实现 C = A×B + Bias 的 Mmad 样例涉及哪些接口？int8_t、bfloat16、float 三种数据类型场景的流水线为何拆分到 mmad_s1/s2/s3.h？"
+    },
+    {
+      "id": "EX03",
+      "prompt": "CANN 9.2.0、3510 架构，A/B 为 FP4/FP8、Scale 为 fp8_e8m0_t 数据类型的 MX 量化矩阵乘如何用 C API 实现？需要哪些 Mmad 与搬运接口？"
+    },
+    {
+      "id": "EX04",
+      "prompt": "CANN 9.2.0、3510 架构，data_copy_gm2l1 样例支持哪些输入格式（Nz/ND/DN）与向量量化参数搬入？从 GM 搬运到 Fixpipe 结果写回的完整链路用了哪些接口？"
+    },
+    {
+      "id": "EX05",
+      "prompt": "CANN 9.2.0、3510 架构，如何将 L0C 中的矩阵乘结果搬运到 UB，并在搬运过程中完成标量/Vector 量化、ReLU 激活与 NZ2ND 格式转换？"
+    },
+    {
+      "id": "EX06",
+      "prompt": "CANN 9.2.0、3510 架构，Reg 矢量计算中 UB 与矢量寄存器之间的对齐 load/store 有哪些寻址与数据分布场景？各场景应组合哪些接口？"
+    },
+    {
+      "id": "EX07",
+      "prompt": "CANN 9.2.0、3510 架构，asc_mmad 的 M/N/K 分块参数与 unit_flag 如何配置？样例如何准备 L0A/L0B 数据并在 L0C 取得结果？"
+    },
+    {
+      "id": "EX08",
+      "prompt": "CANN 9.2.0、3510 架构，asc_copy_l0c2gm 的随路量化、随路 ReLU 与 NZ2ND 格式转换如何配置？与 asc_set_l0c_copy_config 等接口是什么依赖关系？"
+    },
+    {
+      "id": "EX09",
+      "prompt": "CANN 9.2.0、3510 架构，asc_select 的掩码从哪里来（比较结果或 asc_set_cmp_mask）？如何按掩码在两个源操作数之间选择元素？"
+    },
+    {
+      "id": "EX10",
+      "prompt": "CANN 9.2.0、3510 架构，直方图统计如何使用 asc_frequency_histogram 的 bin0/bin1 形式？统计结果如何搬运回 GM 并校验？"
+    },
+    {
+      "id": "EX11",
+      "prompt": "CANN 9.2.0、3510 架构，开启数据搬运原子操作的 asc_set_atomic_add / asc_set_atomic_max / asc_set_atomic_min 从 9.0.0 基线到 9.1.0、9.2.0 各发生了什么版本变更（新增了哪些数据类型、接口命名如何演进）？asc_get_store_atomic_config 是哪个版本废弃的、由谁替代？"
+    },
+    {
+      "id": "EX12",
+      "prompt": "CANN 9.2.0、3510 架构，Reg 矢量计算相关的接口在 9.2.0 相比 9.1.0 有哪些版本变更？其中「补充函数返回值形式重载」这一类改动覆盖了哪些接口类别，另外还有哪些是新增重载、哪些是行为修复或参数变化？"
+    },
+    {
+      "id": "EX13",
+      "prompt": "CANN 9.2.0、3510 架构，asc_loadalign 系列的版本变更时间线是怎样的？post update（地址自动更新）相关重载在哪个版本被修复、修复内容是什么？vector_bool 重载与返回值形式重载分别在哪个版本加入？"
+    },
+    {
+      "id": "EX14",
+      "prompt": "CANN 9.2.0、3510 架构，有哪些接口在 CANN 9.2.0 被标记废弃？各自的替代接口是什么，文档里靠什么字段能查到替代关系？"
+    },
+    {
+      "id": "EX15",
+      "prompt": "CANN 9.2.0、3510 架构，asc_set_vector_mask 的架构支持是在哪个版本扩展到哪些产品的？在 Vector Function 场景下使用它还需要哪些配套接口（掩码模式设置、掩码计数、掩码寄存器读取）？"
+    }
+  ]
+}
