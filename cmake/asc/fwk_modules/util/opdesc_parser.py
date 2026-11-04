@@ -395,7 +395,7 @@ def _trans_short_soc_to_soc_version(short_soc_ver: str):
 
 def get_impl_mode(options_list: list):
     tmp_impl_mode = ""
-    for opt in options_list:
+    for opt in list(options_list):
         if "--impl-mode" in opt:
             tmp_impl_mode = opt.split("=")[-1].strip()
             options_list.remove(opt)
