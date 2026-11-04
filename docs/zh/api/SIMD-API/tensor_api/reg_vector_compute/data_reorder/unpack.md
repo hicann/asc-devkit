@@ -70,25 +70,22 @@ __simd_callee__ inline decltype(auto) unpack(reg_tensor<T> src);
 
 ## 返回值说明
 
-返回类型由T推导，具体映射见数据类型表。`reg`保存扩展后的数据，`mask`直接复制`src.mask`。
+返回类型由T推导，具体映射见数据类型表。`reg`保存扩展后的数据，`mask`为`all_mask<结果元素类型>().reg`，即按结果元素类型设置的全有效掩码。
 
 ## 约束说明
 
 - `part`仅支持`high_low_part::low`和`high_low_part::high`。
 - 扩展计算不使用`src.mask`屏蔽元素，须保证源寄存器所选半部分的数据已初始化。
-- 返回值的`mask`不会根据源数据选取位置及目的元素位宽进行转换。在后续操作使用掩码前，须重新绑定适合结果类型和有效位置的掩码，参见[with_mask](../reg_tensor/reg_tensor.md#with_mask)。
+- 返回值自动携带按结果元素类型设置的全有效掩码，无需为源寄存器绑定掩码。仅需使用部分结果时，应通过[with_mask](../reg_tensor/reg_tensor.md#with_mask)重新绑定适合有效位置的掩码。
 
 ## 调用示例
 
-以下代码片段在VF中调用。`src.reg`的低半部分已初始化，将其符号扩展为int16_t，并为结果绑定int16_t类型的全有效掩码。示例使用的掩码接口请参见[all_mask](../mask_reg_compute/all_mask.md)。
+以下代码片段在VF中调用。`src.reg`的低半部分已初始化，将其符号扩展为int16_t，返回结果自动携带int16_t类型的全有效掩码，无需额外绑定掩码。
 
 ```cpp
 __simd_callee__ inline asc::te::experimental::reg_tensor<int16_t> unpack_example(
     asc::te::experimental::reg_tensor<int8_t> src)
 {
-    src.with_mask(asc::te::experimental::all_mask<int8_t>());
-    auto result = asc::te::experimental::unpack<asc::te::experimental::high_low_part::low>(src);
-    result.with_mask(asc::te::experimental::all_mask<int16_t>());
-    return result;
+    return asc::te::experimental::unpack<asc::te::experimental::high_low_part::low>(src);
 }
 ```

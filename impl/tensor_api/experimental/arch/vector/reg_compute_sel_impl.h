@@ -162,7 +162,7 @@ __simd_callee__ inline decltype(auto) pack(reg_tensor<T> src)
     } else if constexpr (part == high_low_part::high) {
         asc_pack_to_high(dst.reg, src.reg);
     }
-    dst.mask = src.mask;
+    dst.with_mask(all_mask<dst_type>());
     return dst;
 }
 
@@ -183,7 +183,7 @@ __simd_callee__ inline decltype(auto) unpack(reg_tensor<T> src)
     } else if constexpr (part == high_low_part::high) {
         asc_unpack_upper(dst.reg, src.reg);
     }
-    dst.mask = src.mask;
+    dst.with_mask(all_mask<dst_type>());
     return dst;
 }
 
@@ -211,7 +211,7 @@ __simd_callee__ inline reg_tensor<T> expand(reg_tensor<bool> mask)
 
     reg_tensor<T> dst;
     asc_unsqueeze(dst.reg, mask.reg);
-    dst.mask = mask.reg;
+    dst.with_mask(all_mask<T>());
     return dst;
 }
 } // namespace experimental

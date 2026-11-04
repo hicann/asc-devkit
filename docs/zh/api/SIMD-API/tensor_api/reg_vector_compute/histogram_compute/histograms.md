@@ -28,7 +28,7 @@
 
 头文件路径：`"tensor_api/experimental/arch/vector/histogram_compute.h"`。
 
-该接口根据`src.mask`统计`uint8_t`输入值的频率分布或累计分布，并在`dst`原值上累加统计结果。计算公式如下：
+该接口根据`src.mask`统计`uint8_t`输入值的频率分布或累计分布，将统计结果原地累加到`dst.reg`，保留`dst.mask`不变，并按值返回更新后的`dst`。计算公式如下：
 
 对于返回值中的第$i$个元素（$i\in[0,127]$），两种统计模式分别为：
 
@@ -71,7 +71,7 @@ $$
 
 ```cpp
 template <const histogram_options& options = default_histogram_options, typename T, typename U>
-__simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const reg_tensor<U>& src)
+__simd_callee__ inline reg_tensor<T> histograms(reg_tensor<T>& dst, const reg_tensor<U>& src)
 ```
 
 ## 参数说明
@@ -88,12 +88,12 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输入 | 统计初值，类型为`reg_tensor<T>`。接口不修改`dst`，返回值的`mask`与`dst.mask`相同。 |
+| dst | 输入/输出 | 统计初值和累加结果，类型为`reg_tensor<T>`。接口更新`dst.reg`，保留`dst.mask`不变。 |
 | src | 输入 | 待统计数据，类型为`reg_tensor<U>`。`src.mask`用于标记参与统计的元素，对应位置为`1`时参与统计，为`0`时不参与统计。 |
 
 ## 返回值说明
 
-返回新的`reg_tensor<T>`。频率模式在`dst`原值上累加每个输入值的出现次数，累计模式在`dst`原值上累加不大于对应值的输入数量。返回值的`mask`与`dst.mask`相同。
+按值返回更新后的`dst`，类型为`reg_tensor<T>`。频率模式在`dst`原值上累加每个输入值的出现次数，累计模式在`dst`原值上累加不大于对应值的输入数量。返回值的`mask`与调用前的`dst.mask`相同。
 
 ## 数据类型
 
@@ -106,8 +106,7 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
 ## 约束说明
 
 - `src.mask`需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与统计的元素位置错误。
-- `src.mask`只用于筛选参与统计的输入元素，不用于筛选返回值中的统计位置。返回值中的所有位置都会在`dst`原值的基础上更新。
-- 统计结果在`dst`原有数据的基础上累加。调用前必须初始化`dst.reg`；多次调用时，需要将前一次返回值作为后一次调用的`dst`输入。返回值的`mask`继承`dst.mask`，将返回值用于`store`前需要通过`with_mask`设置`dst.mask`。
+- 统计结果在`dst`原有数据的基础上累加。调用前必须初始化`dst.reg`和`dst.mask`；多次调用时，可直接传入同一个`dst`持续累加，无需将返回值重新赋给`dst`。接口不修改`dst.mask`，写回前应确保其与所需的输出范围一致。
 - `dst`的元素类型为`uint16_t`，单个统计结果的最大值为65535。用户需要保证累加结果不超过该范围，否则会发生溢出。
 - 使用非默认配置时，需要在命名空间作用域定义具名的`constexpr histogram_options`对象，并将该对象作为模板实参传入。
 
@@ -138,7 +137,7 @@ __simd_vf__ inline void histograms_vf(
         const auto coord = asc::te::make_coord(offset);
         auto mask = asc::te::experimental::update_mask<uint8_t>(remain);
         auto src_reg = asc::te::experimental::load(src, coord).with_mask(mask);
-        dst_reg = asc::te::experimental::histograms<histogram_config>(dst_reg, src_reg);
+        asc::te::experimental::histograms<histogram_config>(dst_reg, src_reg);
     }
     asc::te::experimental::store(dst, asc::te::make_coord(0), dst_reg);
 }

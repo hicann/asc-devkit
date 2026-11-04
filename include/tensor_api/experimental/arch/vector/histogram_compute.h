@@ -32,15 +32,16 @@ inline constexpr histogram_options default_histogram_options{};
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.histogram_compute
- * @brief Returns histogram or cumulative histogram counts accumulated onto dst for the masked source values.
+ * @brief Accumulates histogram or cumulative histogram counts into dst and returns the updated tensor.
  *
- * @override_id te_experimental_histograms__const_reg_tensor_T_R_const_reg_tensor_U_R__template_options_T_U
+ * @override_id te_experimental_histograms__reg_tensor_T_R_const_reg_tensor_U_R__template_options_T_U
  * @archs 3510
- * @param [in] dst Destination tensor.
+ * @return The updated destination tensor with its original mask unchanged.
+ * @param [in,out] dst Destination tensor containing the initial and accumulated counts.
  * @param [in] src Source operand.
  */
 template <const histogram_options& options = default_histogram_options, typename T, typename U>
-__simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const reg_tensor<U>& src);
+__simd_callee__ inline reg_tensor<T> histograms(reg_tensor<T>& dst, const reg_tensor<U>& src);
 
 } // namespace experimental
 } // namespace te

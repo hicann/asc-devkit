@@ -23,6 +23,9 @@ __aicore__ inline void compile_iota_from_scalar()
     auto dec = asc::te::experimental::iota<asc::te::experimental::iota_order::decrease>(T{});
     static_assert(AscendC::Std::is_same_v<decltype(inc), asc::te::experimental::reg_tensor<T>>);
     static_assert(AscendC::Std::is_same_v<decltype(dec), asc::te::experimental::reg_tensor<T>>);
+    auto full_mask = asc::te::experimental::all_mask<T>();
+    EXPECT_EQ(inc.mask, full_mask.reg);
+    EXPECT_EQ(dec.mask, full_mask.reg);
 }
 
 #define TENSOR_API_IOTA_TEST(DataType) \

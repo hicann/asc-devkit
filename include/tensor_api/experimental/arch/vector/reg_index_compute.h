@@ -36,7 +36,7 @@ namespace experimental {
  * @archs 3510
  * @tparam order Sequence order. increase generates ascending lane values; decrease generates descending lane values.
  * @tparam T Type of the scalar start value and generated lane values.
- * @return A register tensor containing the generated lane-index sequence.
+ * @return A register tensor containing the generated lane-index sequence with an all-active result mask.
  * @param [in] start Scalar start value.
  */
 template <iota_order order = iota_order::increase, typename T>

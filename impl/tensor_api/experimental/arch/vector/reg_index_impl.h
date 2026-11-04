@@ -41,6 +41,7 @@ __simd_callee__ inline reg_tensor<Std::remove_cvref_t<T>> iota(const T& start)
     } else if constexpr (order == iota_order::decrease) {
         asc_arange_descend(dst.reg, start);
     }
+    dst.with_mask(all_mask<data_type>());
     return dst;
 }
 

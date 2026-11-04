@@ -67,17 +67,16 @@ __simd_callee__ inline reg_tensor<DataType> gather(const reg_tensor<DataType>& s
 
 ## 返回值说明
 
-返回`reg_tensor<DataType>`，其`reg`保存收集后的数据，`mask`与`src.mask`相同。
+返回`reg_tensor<DataType>`，其`reg`保存收集后的数据，`mask`为`all_mask<DataType>().reg`，即按结果元素类型设置的全有效掩码。
 
 ## 约束说明
 
-- 收集计算不使用`src.mask`或`index.mask`屏蔽元素。须保证被索引的源元素及参与计算的索引值已初始化；返回对象的`mask`直接继承`src.mask`。
 - 索引超出源寄存器可容纳的元素范围时，按`index.reg[i] % VL_T`取模后访问。
-- 在后续操作使用返回对象的`mask`前，须保证`src.mask`已初始化。
+- 仅需使用部分结果时，应在后续计算或写回前通过[with_mask](../reg_tensor/reg_tensor.md#with_mask)重新绑定有效掩码。
 
 ## 调用示例
 
-以下代码片段在VF中调用。假设`src_tensor`的前四个元素为`{10, 20, 30, 40}`，`index_tensor`的前四个元素为`{3, 1, 0, 2}`。示例先将数据从UB搬入寄存器，再为源寄存器绑定有效掩码，最后将收集结果搬出到UB，结果的`mask`继承自`src.mask`。
+以下代码片段在VF中调用。源数据和索引各占满一个寄存器，所有索引值及被索引的源元素均已初始化，目的Tensor具有容纳一个寄存器结果的空间。示例先将数据从UB搬入寄存器，再收集并写回全部结果；无需为输入绑定掩码，返回结果携带全有效掩码。
 
 ```cpp
 template <typename SrcTensor, typename IndexTensor, typename DstTensor>
@@ -87,8 +86,6 @@ __simd_vf__ inline void gather_vf(SrcTensor src_tensor, IndexTensor index_tensor
     auto src_reg = asc::te::experimental::load(src_tensor, coord);
     auto index_reg = asc::te::experimental::load(index_tensor, coord);
 
-    // src_reg.mask决定结果中哪些位置有效；index_reg.mask不参与gather计算。
-    src_reg.with_mask(asc::te::experimental::all_mask<uint16_t>());
     auto result = asc::te::experimental::gather(src_reg, index_reg);
     asc::te::experimental::store(dst_tensor, coord, result);
 }

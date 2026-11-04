@@ -28,7 +28,7 @@
 
 头文件路径：`"tensor_api/experimental/arch/vector/composite_compute.h"`。
 
-该接口根据`dst.mask`将`src`与标量`scalar`按元素相乘，再与`dst`原值相加，返回计算结果。计算公式如下：
+该接口根据`src.mask`将`src`与标量`scalar`按元素相乘，再与`dst`原值相加，原地更新`dst.reg`，保留`dst.mask`不变，并按值返回更新后的`dst`。计算公式如下：
 
 $$
 dst_i = scalar \times src_i + dst_i
@@ -53,13 +53,13 @@ __simd_callee__ inline reg_tensor<T> axpy(reg_tensor<T>& dst, const reg_tensor<T
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dst | 输入/输出 | 加法操作数和结果，类型为`reg_tensor<T>`。接口直接更新`dst.reg`，`dst.mask`用于标记参与计算的元素。 |
-| src | 输入 | 与标量相乘的源操作数，类型为`reg_tensor<T>`。`src.mask`不用于本次计算。 |
+| dst | 输入/输出 | 加法操作数和结果，类型为`reg_tensor<T>`。 |
+| src | 输入 | 与标量相乘的源操作数，类型为`reg_tensor<T>`，`src.mask`用于标记参与计算的元素。 |
 | scalar | 输入 | 标量乘数，类型必须与`T`完全一致。 |
 
 ## 返回值说明
 
-返回`reg_tensor<T>`，返回值的`mask`与`dst.mask`相同。
+按值返回更新后的`dst`，类型为`reg_tensor<T>`。返回值的`mask`与调用前的`dst.mask`相同。
 
 ## 数据类型
 
@@ -72,8 +72,8 @@ __simd_callee__ inline reg_tensor<T> axpy(reg_tensor<T>& dst, const reg_tensor<T
 
 ## 约束说明
 
-- `dst.mask`需通过`with_mask`接口预先设置。未设置时，mask的内容不确定，会导致参与计算的元素位置错误。
-- `dst.mask`对应位置为`0`时，返回值`reg`的对应位置置零。
+- `src.mask`需通过[with_mask](../reg_tensor/reg_tensor.md#with_mask)接口预先设置，用于确定参与计算的元素。调用前须保证这些位置上的`src.reg`和`dst.reg`均已初始化。
+- `dst.mask`不参与筛选计算元素。后续操作使用结果的有效性掩码前，须保证`dst.mask`已初始化，并与所需的输出范围一致。
 
 ## 调用示例
 
@@ -93,7 +93,7 @@ __simd_vf__ inline void axpy_vf(
         auto mask = asc::te::experimental::update_mask<data_type>(remain);
         auto dst_reg = asc::te::experimental::load(dst, coord).with_mask(mask);
         auto src_reg = asc::te::experimental::load(src, coord).with_mask(mask);
-        dst_reg = asc::te::experimental::axpy(dst_reg, src_reg, scalar);
+        asc::te::experimental::axpy(dst_reg, src_reg, scalar);
         asc::te::experimental::store(dst, coord, dst_reg);
     }
 }

@@ -53,7 +53,7 @@ __simd_callee__ inline reg_tensor<T> expand(reg_tensor<bool> mask);
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| mask | 输入 | 源掩码，类型为[reg_tensor&lt;bool&gt;](../reg_tensor/reg_tensor.md)。`mask.reg`参与前缀计数，并作为返回对象的掩码。 |
+| mask | 输入 | 源掩码，类型为[reg_tensor&lt;bool&gt;](../reg_tensor/reg_tensor.md)。`mask.reg`参与前缀计数，不作为返回对象的有效性掩码。 |
 
 ## 数据类型
 
@@ -61,17 +61,17 @@ T支持：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
 
 ## 返回值说明
 
-返回`reg_tensor<T>`，`reg`保存前缀计数索引，`mask`等于输入对象的`mask.reg`，不是输入对象的`mask.mask`。
+返回`reg_tensor<T>`，`reg`保存前缀计数索引，`mask`为`all_mask<T>().reg`，即按结果元素类型设置的全有效掩码。
 
 ## 约束说明
 
 - `mask.reg`须已初始化，且须按T的元素位宽构造。`mask.mask`不参与计算。
-- 结果数据寄存器包含逐元素前缀计数，但返回对象的掩码只选中输入掩码为1的位置。如果需要在后续操作中使用全部前缀计数，须重新绑定全有效掩码。
+- 返回对象的掩码为全有效掩码，可直接在后续操作中使用全部前缀计数。若仅需使用输入掩码为1的位置，应通过[with_mask](../reg_tensor/reg_tensor.md#with_mask)为结果重新绑定输入掩码。
 - 有符号结果类型仍受对应类型可表示范围限制。例如，int8_t不能表示大于127的非负计数，需要保留该范围以上计数时应选用适合的数据类型。
 
 ## 调用示例
 
-以下代码片段在VF中调用。`selection.reg`已初始化，按uint16_t的元素位宽构造。默认返回对象的掩码等于`selection.reg`。
+以下代码片段在VF中调用。`selection.reg`已初始化，按uint16_t的元素位宽构造。返回对象的掩码为uint16_t类型的全有效掩码，可使用全部前缀计数。
 
 ```cpp
 __simd_callee__ inline asc::te::experimental::reg_tensor<uint16_t> expand_example(

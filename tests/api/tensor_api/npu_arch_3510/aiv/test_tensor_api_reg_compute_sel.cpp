@@ -28,19 +28,24 @@ __simd_vf__ inline void compile_reg_data_pack_unpack(vector_bool mask)
     static_assert(AscendC::Std::is_same_v<decltype(packed_default), asc::te::experimental::reg_tensor<PackedType>>);
     static_assert(AscendC::Std::is_same_v<decltype(packed_low), asc::te::experimental::reg_tensor<PackedType>>);
     static_assert(AscendC::Std::is_same_v<decltype(packed_high), asc::te::experimental::reg_tensor<PackedType>>);
-    EXPECT_EQ(packed_default.mask, mask);
-    EXPECT_EQ(packed_low.mask, mask);
-    EXPECT_EQ(packed_high.mask, mask);
+    auto packed_mask = asc::te::experimental::all_mask<PackedType>();
+    EXPECT_EQ(packed_default.mask, packed_mask.reg);
+    EXPECT_EQ(packed_low.mask, packed_mask.reg);
+    EXPECT_EQ(packed_high.mask, packed_mask.reg);
 
+    packed_default.mask = mask;
+    packed_low.mask = mask;
+    packed_high.mask = mask;
     auto unpacked_default = asc::te::experimental::unpack(packed_default);
     auto unpacked_low = asc::te::experimental::unpack<asc::te::experimental::high_low_part::low>(packed_low);
     auto unpacked_high = asc::te::experimental::unpack<asc::te::experimental::high_low_part::high>(packed_high);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_default), asc::te::experimental::reg_tensor<UnpackedType>>);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_low), asc::te::experimental::reg_tensor<UnpackedType>>);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_high), asc::te::experimental::reg_tensor<UnpackedType>>);
-    EXPECT_EQ(unpacked_default.mask, mask);
-    EXPECT_EQ(unpacked_low.mask, mask);
-    EXPECT_EQ(unpacked_high.mask, mask);
+    auto unpacked_mask = asc::te::experimental::all_mask<UnpackedType>();
+    EXPECT_EQ(unpacked_default.mask, unpacked_mask.reg);
+    EXPECT_EQ(unpacked_low.mask, unpacked_mask.reg);
+    EXPECT_EQ(unpacked_high.mask, unpacked_mask.reg);
 }
 
 template <typename SrcType, typename UnpackedType>
@@ -52,8 +57,9 @@ __simd_vf__ inline void compile_reg_data_unpack(vector_bool mask)
     auto unpacked_high = asc::te::experimental::unpack<asc::te::experimental::high_low_part::high>(src);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_low), asc::te::experimental::reg_tensor<UnpackedType>>);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_high), asc::te::experimental::reg_tensor<UnpackedType>>);
-    EXPECT_EQ(unpacked_low.mask, mask);
-    EXPECT_EQ(unpacked_high.mask, mask);
+    auto full_mask = asc::te::experimental::all_mask<UnpackedType>();
+    EXPECT_EQ(unpacked_low.mask, full_mask.reg);
+    EXPECT_EQ(unpacked_high.mask, full_mask.reg);
 }
 
 __simd_vf__ inline void compile_reg_mask_pack_unpack(vector_bool mask)
@@ -73,12 +79,13 @@ __simd_vf__ inline void compile_reg_mask_pack_unpack(vector_bool mask)
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_default), asc::te::experimental::reg_tensor<bool>>);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_low), asc::te::experimental::reg_tensor<bool>>);
     static_assert(AscendC::Std::is_same_v<decltype(unpacked_high), asc::te::experimental::reg_tensor<bool>>);
-    EXPECT_EQ(packed_default.mask, mask);
-    EXPECT_EQ(packed_low.mask, mask);
-    EXPECT_EQ(packed_high.mask, mask);
-    EXPECT_EQ(unpacked_default.mask, mask);
-    EXPECT_EQ(unpacked_low.mask, mask);
-    EXPECT_EQ(unpacked_high.mask, mask);
+    auto full_mask = asc::te::experimental::all_mask<uint8_t>();
+    EXPECT_EQ(packed_default.mask, full_mask.reg);
+    EXPECT_EQ(packed_low.mask, full_mask.reg);
+    EXPECT_EQ(packed_high.mask, full_mask.reg);
+    EXPECT_EQ(unpacked_default.mask, full_mask.reg);
+    EXPECT_EQ(unpacked_low.mask, full_mask.reg);
+    EXPECT_EQ(unpacked_high.mask, full_mask.reg);
 }
 
 template <typename T>
@@ -130,7 +137,8 @@ __simd_vf__ inline void compile_reg_expand(vector_bool mask)
     select_mask.reg = mask;
     auto expanded = asc::te::experimental::expand<T>(select_mask);
     static_assert(AscendC::Std::is_same_v<decltype(expanded), asc::te::experimental::reg_tensor<T>>);
-    EXPECT_EQ(expanded.mask, select_mask.reg);
+    auto full_mask = asc::te::experimental::all_mask<T>();
+    EXPECT_EQ(expanded.mask, full_mask.reg);
 }
 
 TEST(tensor_api_reg_compute_sel_3510, pack_unpack_data)
@@ -142,12 +150,19 @@ TEST(tensor_api_reg_compute_sel_3510, pack_unpack_data)
     compile_reg_data_pack_unpack<int32_t, uint16_t, uint32_t>(mask.reg);
     compile_reg_data_unpack<int8_t, int16_t>(mask.reg);
     compile_reg_data_unpack<int16_t, int32_t>(mask.reg);
+    compile_reg_data_pack_unpack<uint16_t, uint8_t>(static_cast<vector_bool>(0x5A5A));
+    compile_reg_data_pack_unpack<uint32_t, uint16_t>(static_cast<vector_bool>(0x5A5A));
+    compile_reg_data_pack_unpack<int16_t, uint8_t, uint16_t>(static_cast<vector_bool>(0x5A5A));
+    compile_reg_data_pack_unpack<int32_t, uint16_t, uint32_t>(static_cast<vector_bool>(0x5A5A));
+    compile_reg_data_unpack<int8_t, int16_t>(static_cast<vector_bool>(0x5A5A));
+    compile_reg_data_unpack<int16_t, int32_t>(static_cast<vector_bool>(0x5A5A));
 }
 
 TEST(tensor_api_reg_compute_sel_3510, pack_unpack_mask)
 {
     auto mask = asc::te::experimental::all_mask<uint8_t>();
     compile_reg_mask_pack_unpack(mask.reg);
+    compile_reg_mask_pack_unpack(static_cast<vector_bool>(0x5A5A));
 }
 
 #define TENSOR_API_COMPRESS_TEST(DataType)                                \
@@ -174,11 +189,12 @@ TENSOR_API_COMPRESS_TEST(float)
 
 #undef TENSOR_API_COMPRESS_TEST
 
-#define TENSOR_API_EXPAND_TEST(DataType)                         \
-    TEST(tensor_api_reg_compute_sel_3510, expand_##DataType)     \
-    {                                                            \
-        auto mask = asc::te::experimental::all_mask<DataType>(); \
-        compile_reg_expand<DataType>(mask.reg);                  \
+#define TENSOR_API_EXPAND_TEST(DataType)                                \
+    TEST(tensor_api_reg_compute_sel_3510, expand_##DataType)            \
+    {                                                                   \
+        auto mask = asc::te::experimental::all_mask<DataType>();        \
+        compile_reg_expand<DataType>(mask.reg);                         \
+        compile_reg_expand<DataType>(static_cast<vector_bool>(0x5A5A)); \
     }
 
 TENSOR_API_EXPAND_TEST(int8_t)

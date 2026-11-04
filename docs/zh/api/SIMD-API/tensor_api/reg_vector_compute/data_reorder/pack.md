@@ -72,22 +72,21 @@ __simd_callee__ inline decltype(auto) pack(reg_tensor<T> src);
 
 ## 返回值说明
 
-返回类型由T推导，具体映射见数据类型表。`reg`的指定半部分保存压缩结果，`mask`直接复制`src.mask`。
+返回类型由T推导，具体映射见数据类型表。`reg`的指定半部分保存压缩结果，`mask`为`all_mask<结果元素类型>().reg`。全有效掩码不代表未写入的另一半具有可用的结果数据。
 
 ## 约束说明
 
 - 压缩计算不使用`src.mask`屏蔽元素，须保证参与压缩的源数据已初始化。
-- 返回值直接继承`src.mask`，不会因元素位宽变化或结果存放位置而调整掩码。在后续操作使用掩码前，须根据结果元素位宽及有效位置重新绑定合适的掩码，参见[with_mask](../reg_tensor/reg_tensor.md#with_mask)。
+- 返回值的`mask`按结果元素类型设置为全有效掩码，不会根据`part`限制为指定半部分。后续计算或写回前，须根据结果所在的半部分重新绑定合适的掩码，避免使用未写入的另一半数据，参见[with_mask](../reg_tensor/reg_tensor.md#with_mask)。
 
 ## 调用示例
 
-以下代码片段在VF中调用。`src.reg`已初始化，先为源寄存器绑定全有效掩码，再提取低8位并写入结果低半部分。通过[make_mask](../mask_reg_compute/make_mask.md)为结果构造uint8_t类型的低半部分掩码，避免使用另一半的数据。示例同时使用[all_mask](../mask_reg_compute/all_mask.md)。
+以下代码片段在VF中调用。`src.reg`已初始化，提取低8位并写入结果低半部分，无需为源寄存器绑定掩码。返回对象默认携带全有效掩码，因此通过[make_mask](../mask_reg_compute/make_mask.md)为结果重新绑定uint8_t类型的低半部分掩码，避免使用另一半的数据。
 
 ```cpp
 __simd_callee__ inline asc::te::experimental::reg_tensor<uint8_t> pack_example(
     asc::te::experimental::reg_tensor<uint16_t> src)
 {
-    src.with_mask(asc::te::experimental::all_mask<uint16_t>());
     auto result = asc::te::experimental::pack<asc::te::experimental::high_low_part::low>(src);
     const auto low_mask = asc::te::experimental::make_mask<asc::te::experimental::mask_pattern::half, uint8_t>();
     result.with_mask(low_mask);

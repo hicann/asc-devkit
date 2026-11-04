@@ -123,10 +123,12 @@ __simd_vf__ inline void compile_reg_register_gather(vector_bool mask)
 {
     asc::te::experimental::reg_tensor<DataType> src{};
     asc::te::experimental::reg_tensor<IndexDataType> index{};
+    src.mask = static_cast<vector_bool>(0x5A5A);
     index.mask = mask;
     auto value = asc::te::experimental::gather(src, index);
     static_assert(AscendC::Std::is_same_v<decltype(value), asc::te::experimental::reg_tensor<DataType>>);
-    EXPECT_EQ(value.mask, index.mask);
+    auto full_mask = asc::te::experimental::all_mask<DataType>();
+    EXPECT_EQ(value.mask, full_mask.reg);
 }
 
 template <asc::te::experimental::store_sideband_mode sideband_mode>
