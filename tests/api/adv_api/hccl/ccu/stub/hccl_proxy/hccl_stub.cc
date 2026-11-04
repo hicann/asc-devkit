@@ -383,13 +383,19 @@ HcclResult HcclEngineCtxCopy(
 {
     // HOST场景下srcCtx就是创建的EngineCtx内存地址，无需拷贝
     if (engine == CommEngine::COMM_ENGINE_AICPU_TS || engine == CommEngine::COMM_ENGINE_AICPU) {
-        uint64_t size = 0;
+        uint64_t dstSize = 0;
         void* ctx = nullptr;
         auto simComm = static_cast<HcclSim::SimCommunicator*>(comm);
         CHK_PTR_NULL(simComm);
-        simComm->contextManager_->GetCommEngineCtx(std::string(ctxTag), engine, &ctx, &size);
-        if (ctx != nullptr && size > 0) {
-            memcpy(ctx, srcCtx, size);
+        const HcclResult ret = simComm->contextManager_->GetCommEngineCtx(std::string(ctxTag), engine, &ctx, &dstSize);
+        if (ret != HCCL_SUCCESS) {
+            return ret;
+        }
+        if (ctx == nullptr || srcCtx == nullptr || dstCtxOffset > dstSize || size > dstSize - dstCtxOffset) {
+            return HCCL_E_PARA;
+        }
+        if (size > 0) {
+            memcpy(static_cast<uint8_t*>(ctx) + dstCtxOffset, srcCtx, size);
         }
     }
     return HCCL_SUCCESS;

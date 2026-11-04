@@ -302,20 +302,48 @@ HcclResult AllocOpParamMemory(
 
 HcclResult AllocWorkspaceMemory(HcclComm comm, const std::string& ctxTag, CommEngine commEngine, OpResCtx& resCtx)
 {
-    uint64_t memSize = 20 * 1024 * 1024;
-    resCtx.workSpaceSize = memSize;
-    std::string tagWorkSpace = ctxTag + "_workSpace";
+    constexpr uint64_t workspaceSize = 20ULL * 1024ULL * 1024ULL;
+    constexpr uint64_t msgAreaSize = sizeof(HcclApi::HcclMsgArea);
+    static_assert(msgAreaSize <= workspaceSize, "HcclMsgArea exceeds workspace capacity");
+
+    uint64_t memSize = workspaceSize;
+    const std::string tagWorkSpace = ctxTag + "_workSpace";
     void* workSpacePtr = nullptr;
+
     if (HcclEngineCtxGet(comm, tagWorkSpace.c_str(), commEngine, &workSpacePtr, &memSize) == HCCL_SUCCESS) {
+        // 已有 workspace 由 client/server 协议维护，不能在获取时清零。
         HCCL_INFO(
-            "HcclEngineCtxGet success, tagWorkSpace[%s], workSpaceAddr[%p], workSpaceSize[%u]", tagWorkSpace.c_str(),
-            workSpacePtr, memSize);
-        resCtx.workSpace = reinterpret_cast<uint64_t>(workSpacePtr);
+            "Reuse MC2 workspace, tag[%s], addr[%p], size[%llu]", tagWorkSpace.c_str(), workSpacePtr,
+            static_cast<unsigned long long>(memSize));
     } else {
-        CHK_RET(HcclEngineCtxCreate(comm, tagWorkSpace.c_str(), commEngine, memSize, &workSpacePtr));
-        resCtx.workSpace = reinterpret_cast<uint64_t>(workSpacePtr);
+        // 在创建前准备好 Host 零缓冲，避免将大消息结构放在栈上。
+        const std::vector<uint8_t> zeroMsgArea(msgAreaSize, 0U);
+
+        CHK_RET(HcclEngineCtxCreate(comm, tagWorkSpace.c_str(), commEngine, workspaceSize, &workSpacePtr));
+
+        // 首次使用前初始化消息槽、controlMsg 和同步计数器。
+        // 使用已有的 Context Copy 接口，复用其 capture 适配逻辑。
+        const HcclResult ret =
+            HcclEngineCtxCopy(comm, commEngine, tagWorkSpace.c_str(), zeroMsgArea.data(), msgAreaSize, 0U);
+        if (ret != HCCL_SUCCESS) {
+            // 防止下次 Get 命中一个创建成功但初始化失败的 context。
+            const HcclResult destroyRet = HcclEngineCtxDestroy(comm, tagWorkSpace.c_str(), commEngine);
+            if (destroyRet != HCCL_SUCCESS) {
+                HCCL_ERROR(
+                    "Destroy uninitialized MC2 workspace failed, tag[%s], ret[%d]", tagWorkSpace.c_str(), destroyRet);
+            }
+            HCCL_ERROR("Initialize MC2 message area failed, tag[%s], ret[%d]", tagWorkSpace.c_str(), ret);
+            return ret;
+        }
+
+        HCCL_INFO(
+            "Initialized MC2 message area, tag[%s], addr[%p], workspaceSize[%llu], msgAreaSize[%llu]",
+            tagWorkSpace.c_str(), workSpacePtr, static_cast<unsigned long long>(workspaceSize),
+            static_cast<unsigned long long>(msgAreaSize));
     }
-    HCCL_INFO("HcclAllocOpResCtx the workSpace: workSpaceAddr[%u], workSpaceSize[%u]", resCtx.workSpace, memSize);
+
+    resCtx.workSpace = reinterpret_cast<uint64_t>(workSpacePtr);
+    resCtx.workSpaceSize = memSize;
     return HCCL_SUCCESS;
 }
 

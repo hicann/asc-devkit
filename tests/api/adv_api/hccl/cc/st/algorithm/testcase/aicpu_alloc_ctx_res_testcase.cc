@@ -135,7 +135,7 @@ TEST_F(AicpuAllocCtxResTest, CaptureSafeCopyCoversOpParamAndOpResCtx)
         HCCL_SUCCESS);
 
     EXPECT_EQ(g_aclrtMemcpyCallCount, 0U);
-    EXPECT_EQ(g_hcclEngineCtxCopyCallCount, 2U);
+    EXPECT_EQ(g_hcclEngineCtxCopyCallCount, 3U);
     ASSERT_NE(opResCtxPtr, nullptr);
 
     const auto* opResCtx = static_cast<const OpResCtx*>(opResCtxPtr);

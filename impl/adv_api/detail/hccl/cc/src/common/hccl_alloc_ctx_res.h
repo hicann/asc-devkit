@@ -16,6 +16,7 @@
 #include "op_common.h"
 #include "alg_env_config.h"
 #include "hccl_res_expt.h"
+#include "hccl_msg.h"
 #include "load_kernel.h"
 #include "coll_alg_v2_exec_registry.h"
 #include "cann_host_bridge.h"

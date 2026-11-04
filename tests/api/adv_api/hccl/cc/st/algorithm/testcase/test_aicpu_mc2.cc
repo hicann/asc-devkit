@@ -552,7 +552,7 @@ TEST_F(AicpuMc2Test, AllocOpResCtxSingleParamFillsContextWithoutTiling)
     ASSERT_NE(opResCtxPtr, nullptr);
     // OpParam and OpResCtx must both travel through the engine context copy, never through aclrtMemcpy.
     EXPECT_EQ(g_aclrtMemcpyCallCount, 0U);
-    EXPECT_EQ(g_hcclEngineCtxCopyCallCount, 2U);
+    EXPECT_EQ(g_hcclEngineCtxCopyCallCount, 3U);
 
     const auto* opResCtx = static_cast<const OpResCtx*>(opResCtxPtr);
     EXPECT_EQ(opResCtx->rankId, RANK_ID);
