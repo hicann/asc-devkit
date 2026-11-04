@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -57,7 +57,7 @@ __aicore__ static inline void SetCtrlSpr(int64_t value)
 
 <!-- npu="950" id10 -->
 
-**Table 3** Commonly used CTRL register bit description for Ascend 950PR&950DT product series<a id="tab-950"></a>
+**Table 3** Commonly used CTRL register bit description for Ascend 950PR&950DT products<a id="tab-950"></a>
 
 | CTRL register bit | Function | Default value | API used in conjunction |
 | --- | --- | --- | --- |
@@ -68,37 +68,37 @@ __aicore__ static inline void SetCtrlSpr(int64_t value)
 | CTRL[50] | Used to control the NaN saturation mode during floating-point precision conversion, which takes effect when CTRL[48] is set to saturation mode.<br>&bull; 1'b0: NaN output will be converted to 0.0.<br>&bull; 1'b1: NaN output will remain NaN.<br><br>This control bit only supports the following data types:<br>fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t. | 1'b0 | Precision conversion instruction (the data type restriction must be satisfied). |
 | CTRL[53] | Used to control the saturation mode of integer calculation instructions.<br>&bull; 1'b0: Truncation mode, in which the overflow value is truncated according to the bit width of the target data type, keeping the low bits and discarding the high bits.<br>&bull; 1'b1: Saturation mode, in which the overflow value is saturated to ±MAX. | 1'b0 | Vector calculation API (input and output data types are integers). |
 | CTRL[59] | Used to control the precision conversion saturation mode during floating-point to integer or integer to integer conversion, which takes effect only when CTRL[60] is enabled.<br>&bull; 1'b0: Saturation mode, in which the overflow value is saturated to ±MAX.<br>&bull; 1'b1: Truncation mode, in which the overflow value is truncated according to the bit width of the target data type, keeping the low bits and discarding the high bits. | 1'b0 | Precision conversion instruction. |
-| CTRL[60] | Used to control the global effective mode of the saturation mode.<br>&bull; 1'b0: Single-instruction saturation setting.<br>&bull; 1'b1: Global saturation setting. | 1'b1 | This control bit can be used in conjunction with the Reg vector calculation API [Cast](../reg_vector_compute/type_conversion/Cast.md), or with CTRL[48] and CTRL[59]. For specific configuration information, see [Saturation mode global or single-instruction effective configuration table for Ascend 950PR&950DT product series](#table231122118201). |
+| CTRL[60] | Used to control the global effective mode of the saturation mode.<br>&bull; 1'b0: Single-instruction saturation setting.<br>&bull; 1'b1: Global saturation setting. | 1'b1 | This control bit can be used in conjunction with the Reg vector calculation API [Cast](../reg_vector_compute/type_conversion/Cast.md), or with CTRL[48] and CTRL[59]. For specific configuration information, see [Saturation mode global or single-instruction effective configuration table for Ascend 950PR&950DT products](#table231122118201). |
 
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
 
-**Table 4** Commonly used CTRL register bit description for Atlas A3 product series
+**Table 4** Commonly used CTRL register bit description for Atlas A3 products
 
 | CTRL register bit | Function | Default value | API used in conjunction |
 | --- | --- | --- | --- |
 | CTRL[48] | Used to control the saturation mode during floating-point calculation and floating-point precision conversion.<br>&bull; 1'b0: Saturation mode, in which inf output will be saturated to ±MAX and NaN output will be saturated to 0.<br>&bull; 1'b1: Non-saturation mode, in which inf/NaN keep their original output.<br><br>This control bit only supports the following data types:<br>&bull; The half and bfloat16_t data types are supported during floating-point calculation.<br>&bull; The following data types are supported during floating-point precision conversion: half, bfloat16_t. | 1'b0 | Not applicable |
 
-**Note: For Atlas A3 product series, it is recommended to use [SetSaturationFlag](./SetSaturationFlag_ISASI.md) and [GetSaturationFlag](./GetSaturationFlag_ISASI.md) to set and get CTRL[48] to control the saturation mode.**
+**Note: For Atlas A3 products, it is recommended to use [SetSaturationFlag](./SetSaturationFlag_ISASI.md) and [GetSaturationFlag](./GetSaturationFlag_ISASI.md) to set and get CTRL[48] to control the saturation mode.**
 
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
 
-**Table 5** Description of commonly used CTRL register bits for Atlas A2 product series
+**Table 5** Description of commonly used CTRL register bits for Atlas A2 products
 
 | CTRL register bit | Function | Default value | API used in conjunction |
 | --- | --- | --- | --- |
 | CTRL[48] | Used to control the saturation mode during floating-point calculation and floating-point precision conversion.<br>&bull; 1'b0: Saturation mode. The inf output will be saturated to ±MAX, and the NaN output will be saturated to 0.<br>&bull; 1'b1: Non-saturation mode. inf/NaN keep the original output.<br><br>This control bit only supports the following data types:<br>&bull; **half** and **bfloat16_t** data types are supported during floating-point calculation.<br>&bull; The following data types are supported during floating-point precision conversion: **half** and **bfloat16_t**. | 1'b0 | Not involved |
 
-**Note: For Atlas A2 product series, it is recommended to use [SetSaturationFlag](./SetSaturationFlag_ISASI.md) and [GetSaturationFlag](./GetSaturationFlag_ISASI.md) to set and get CTRL[48] to control the saturation mode.**
+**Note: For Atlas A2 products, it is recommended to use [SetSaturationFlag](./SetSaturationFlag_ISASI.md) and [GetSaturationFlag](./GetSaturationFlag_ISASI.md) to set and get CTRL[48] to control the saturation mode.**
 
 <!-- end id12 -->
 
 <!-- npu="950" id13 -->
 
-**Table 6** Global or single-instruction saturation mode configuration table for Ascend 950PR&950DT product series<a id="table231122118201"></a>
+**Table 6** Global or single-instruction saturation mode configuration table for Ascend 950PR&950DT products<a id="table231122118201"></a>
 
 | Global enable bit | Control bit | Function description |
 | --- | --- | --- |
@@ -122,16 +122,16 @@ None
 ## Constraints
 
 <!-- npu="950" id14 -->
-- Ascend 950PR&950DT product series only supports the CTRL[8:6], CTRL[10:9], CTRL[45], CTRL[48], CTRL[50], CTRL[53], CTRL[59], and CTRL[60] bits.
+- Ascend 950PR&950DT products only supports the CTRL[8:6], CTRL[10:9], CTRL[45], CTRL[48], CTRL[50], CTRL[53], CTRL[59], and CTRL[60] bits.
 <!-- end id14 -->
 <!-- npu="A3" id15 -->
-- Atlas A3 product series only supports the CTRL[48] bit.
+- Atlas A3 products only supports the CTRL[48] bit.
 <!-- end id15 -->
 <!-- npu="910b" id16 -->
-- Atlas A2 product series only supports the CTRL[48] bit.
+- Atlas A2 products only supports the CTRL[48] bit.
 <!-- end id16 -->
 <!-- npu="950" id17 -->
-- For the Ascend 950PR&950DT product series, the settings of CTRL[8:6] and CTRL[10:9] have been encapsulated into atomic operation APIs. It is recommended to configure them through these atomic operation APIs.
+- For the Ascend 950PR&950DT products, the settings of CTRL[8:6] and CTRL[10:9] have been encapsulated into atomic operation APIs. It is recommended to configure them through these atomic operation APIs.
   - [SetAtomicType](../atomic_operations/SetAtomicType.md)
   - [DisableDmaAtomic](../atomic_operations/DisableDmaAtomic.md)
   - [SetAtomicAdd](../atomic_operations/SetAtomicAdd.md)

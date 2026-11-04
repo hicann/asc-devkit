@@ -5,25 +5,25 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series products Vector Core: supported
+- Atlas inference products Vector Core: supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA_res.md#id1 -->
 

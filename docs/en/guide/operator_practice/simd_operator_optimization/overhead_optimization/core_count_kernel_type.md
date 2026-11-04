@@ -1,6 +1,6 @@
 # Setting an Appropriate Core Count and Operator Kernel Type<a name="ZH-CN_TOPIC_0000002369641145"></a>
 
-<!-- md-trans-meta sourceCommit=2daa1daa17f1ebe2799e2709e073446994e14981 translatedAt=2026-10-23T12:49:15.672Z pushedAt=2026-10-27T10:33:03.426Z nl=2 -->
+<!-- md-trans-meta sourceCommit=2daa1daa17f1ebe2799e2709e073446994e14981 translatedAt=2026-10-23T12:49:15.672Z pushedAt=2026-11-03T07:05:13.345Z nl=2 -->
 
 During operator execution, additional startup overhead or header overhead may be incurred for the following reasons:
 

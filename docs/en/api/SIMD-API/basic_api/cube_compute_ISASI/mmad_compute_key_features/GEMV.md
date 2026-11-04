@@ -7,7 +7,7 @@
 The core function of GEMV is as follows: when the dimension M of matrix A is 1, the API automatically enables the GEMV function, and the operation degenerates into a multiplication between a 1×K row vector and a K×N matrix.
 
 <!-- npu="950" id1 -->
-For Ascend 950PR&950DT series products, you can disable this function by setting the **disableGemv** parameter of **MmadParams** to **true**.
+For Ascend 950PR&950DT products, you can disable this function by setting the **disableGemv** parameter of **MmadParams** to **true**.
 <!-- end id1 -->
 
 **Constraints:**
@@ -50,7 +50,7 @@ When M=1, the GEMV mode is automatically enabled, and the matrix multiplication 
 | B | 4096 * 256 | half |
 | C | 1 * 256 | float |
 
-Matrix A is a vector of 1\* 4096, which can be regarded from the software side as 64\*64 data (NZ fractal for Ascend 950PR&950DT series products), and is moved to the L0A Buffer through LoadData;
+Matrix A is a vector of 1\* 4096, which can be regarded from the software side as 64\*64 data (NZ fractal for Ascend 950PR&950DT products), and is moved to the L0A Buffer through LoadData;
 
 Matrix C is a 1 * 256 vector, which can be divided into 16 sub-vectors of size 1 * 16, occupying 16 * 1024B = 16384B (f162f32), where the valid data is only 16 * 64B = 1024B.
 
@@ -70,7 +70,7 @@ AscendC::Mmad(c, a, b, mmadParams);
 ```
 
 <!-- npu="950" id2 -->
-For Ascend 950PR&950DT series products, you can disable this function by setting the **disableGemv** parameter of **MmadParams** to **true**, as shown in the following example:
+For Ascend 950PR&950DT products, you can disable this function by setting the **disableGemv** parameter of **MmadParams** to **true**, as shown in the following example:
 
 ```cpp
 AscendC::MmadParams mmadParams;

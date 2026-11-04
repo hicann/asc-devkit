@@ -1,6 +1,6 @@
 # Glossary<a name="ZH-CN_TOPIC_0000002191896252"></a>
 
-<!-- md-trans-meta sourceCommit=f8152a45af4875ee9f5b51f1344a2833f34f84ad translatedAt=2026-10-28T09:30:40.864Z pushedAt=2026-10-28T11:42:21.769Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f8152a45af4875ee9f5b51f1344a2833f34f84ad translatedAt=2026-10-28T09:30:40.864Z pushedAt=2026-11-03T07:08:03.576Z nl=2 -->
 
 **Table 1**  Glossary
 

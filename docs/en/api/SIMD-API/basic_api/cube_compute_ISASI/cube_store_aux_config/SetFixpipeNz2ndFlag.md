@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002516209232_section18204144912492"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT Product Series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 Product Series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 Product Series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -39,7 +39,7 @@ __aicore__ inline void SetFixpipeNz2ndFlag(uint16_t ndNum, uint16_t srcNdStride,
 
 <!-- npu="950" id10 -->
 ```cpp
-// The following prototype is supported only by the Ascend 950PR&950DT Product Series.
+// The following prototype is supported only by the Ascend 950PR&950DT products.
 __aicore__ inline void SetFixpipeNz2ndFlag(uint16_t ndNum, uint16_t srcNdStride, uint32_t dstNdStride)
 ```
 <!-- end id10 -->
@@ -49,10 +49,10 @@ __aicore__ inline void SetFixpipeNz2ndFlag(uint16_t ndNum, uint16_t srcNdStride,
 <!-- npu="A3,910b,310b" id11 -->
 For the following product models, see the following table for parameter descriptions:
 <!-- npu="A3" id12 -->
-Atlas A3 product series
+Atlas A3 products
 <!-- end id12 -->
 <!-- npu="910b" id13 -->
-Atlas A2 product series
+Atlas A2 products
 <!-- end id13 -->
 <!-- npu="310b" id14 -->
 Atlas 200I/500 A2 inference products
@@ -68,7 +68,7 @@ Atlas 200I/500 A2 inference products
 <!-- end id11 -->
 
 <!-- npu="950" id15 -->
-For Ascend 950PR&950DT product series:
+For Ascend 950PR&950DT products:
 
 **Table 2** Parameter Description
 

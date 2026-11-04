@@ -1,6 +1,6 @@
 # Reg Vector Computation Programming<a name="ZH-CN_TOPIC_0000002509863892"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:03:02.268Z pushedAt=2026-10-28T11:42:21.742Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:03:02.268Z pushedAt=2026-11-03T07:08:03.561Z nl=2 -->
 
 This document describes how to use the basic APIs (C++ template interfaces) to write Reg vector computation code. The basic APIs and [Reg Vector Computation Programming (Language Extension C API)](../c_pointer_programming/reg_vector_computation.md) describe the same set of Reg vector hardware capabilities with identical functional semantics. The main differences lie in API naming, type expressions, and the way configurable parameters are expressed.
 

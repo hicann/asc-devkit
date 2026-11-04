@@ -21,9 +21,9 @@
 
     This API will be deprecated in subsequent versions. Please use the [asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md) API.
 
-- [asc_get_store_atomic_config](../SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md) API (only for Ascend 950PR&950DT series products)
+- [asc_get_store_atomic_config](../SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md) API (only for Ascend 950PR&950DT products)
 
-    This API is deprecated on Ascend 950PR&950DT series products. Please use the [asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md) API.
+    This API is deprecated on Ascend 950PR&950DT products. Please use the [asc_atomic_add](../SIMD-API/c_api/atomic/scalar_atomic/asc_atomic_add.md) API.
 <!-- end id1 -->
 
 - [asc_set_atomic_none](../SIMD-API/c_api/deprecated_interface/asc_set_atomic_none_deprecated.md) API
@@ -661,15 +661,15 @@
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-- [asc_copy_gm2ub_align](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_arch_3510_deprecated.md) API (only the original high-dimensional split-and-move function prototype on Ascend 950PR&950DT series products)
+- [asc_copy_gm2ub_align](../SIMD-API/c_api/deprecated_interface/asc_copy_gm2ub_align_arch_3510_deprecated.md) API (only the original high-dimensional split-and-move function prototype on Ascend 950PR&950DT products)
 
-    On Ascend 950PR&950DT series products, the original high-dimensional split-and-move function prototype of this API has been deprecated. Please use the [asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md) type enumeration value to configure the L2 cache management policy.
+    On Ascend 950PR&950DT products, the original high-dimensional split-and-move function prototype of this API has been deprecated. Please use the [asc_load_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md) type enumeration value to configure the L2 cache management policy.
 <!-- end id8 -->
 
 <!-- npu="950" id9 -->
-- [asc_copy_ub2gm_align](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_align_arch_3510_deprecated.md) API (only the original high-dimensional split-and-move function prototype on Ascend 950PR&950DT series products)
+- [asc_copy_ub2gm_align](../SIMD-API/c_api/deprecated_interface/asc_copy_ub2gm_align_arch_3510_deprecated.md) API (only the original high-dimensional split-and-move function prototype on Ascend 950PR&950DT products)
 
-    On Ascend 950PR&950DT series products, the original high-dimensional split-and-move function prototype of this API has been deprecated. Please use the [asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md) type enumeration value to configure the L2 cache management policy.
+    On Ascend 950PR&950DT products, the original high-dimensional split-and-move function prototype of this API has been deprecated. Please use the [asc_store_l2_cache_mode](../SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md) type enumeration value to configure the L2 cache management policy.
 <!-- end id9 -->
 
 <!-- npu="950" id10 -->

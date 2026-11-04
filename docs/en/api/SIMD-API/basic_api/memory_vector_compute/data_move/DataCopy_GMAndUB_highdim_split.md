@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -126,19 +126,19 @@ The source operand and destination operand support the same data types. The Glob
 
 <!-- npu="950" id11 -->
 
-- Ascend 950PR&950DT series products support the following data types: b8, b16, b32, b64.
+- Ascend 950PR&950DT products support the following data types: b8, b16, b32, b64.
 
 <!-- end id11 -->
 
 <!-- npu="A3" id12 -->
 
-- For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 
 <!-- end id12 -->
 
 <!-- npu="910b" id13 -->
 
-- For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 
 <!-- end id13 -->
 
@@ -176,13 +176,13 @@ None
 <!-- npu="A3,910b,950" id23 -->
 - When either blockCount or blockLen in the DataCopyParams structure is 0, this API is treated as a NOP (no operation). This applies to the following products:
   <!-- npu="A3" id20 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id20 -->
   <!-- npu="910b" id21 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id21 -->
   <!-- npu="950" id22 -->
-  - Ascend 950PR&950DT product series
+  - Ascend 950PR&950DT products
   <!-- end id22 -->
 <!-- end id23 -->
 - The values of the **DataCopyParams** structure parameters must be within the value range:
@@ -203,8 +203,8 @@ None
 <!-- npu="910b,A3" id24 -->
 
 - For the following product models:
-    - Atlas A2 product series
-    - Atlas A3 product series
+    - Atlas A2 products
+    - Atlas A3 products
 
     In the cross-card communication operator development scenario, the **DataCopy** class APIs support cross-card data copy only over the HCCS physical link, and do not support other paths. During development, pay attention to the physical path involved in inter-card communication. You can run the `npu-smi info -t topo` command to query the HCCS physical link.
 

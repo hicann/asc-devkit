@@ -1,6 +1,6 @@
 # Operator Self-Verification Description
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:44:15.632Z pushedAt=2026-10-28T06:11:12.952Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:44:15.632Z pushedAt=2026-11-03T07:05:13.438Z nl=2 -->
 
 This document is intended for Ascend C operator developers and provides verification examples for fusing a single operator into SuperKernel. After operator development is complete, you can use the examples in this document to verify whether the operator supports fusion into SuperKernel, including functional correctness and precision alignment.
 

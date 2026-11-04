@@ -34,7 +34,7 @@ The header file path is `"basic_api/kernel_operator_fixpipe_intf.h"`.
 The matrix computation results are stored in the L0C Buffer. The Fixpipe API is used to move the results to the Unified Buffer (UB), and it supports operations such as inline format conversion during the movement.
 
 <!-- npu="950" id10 -->
-Taking the Ascend 950PR&950DT product series as an example, the following figure shows the valid combinations of inline quantization, inline ReLU, and inline channel merging, as well as the intermediate data types and data paths. In the figure, F32-\>F16 and F32-\>BF16 are non-quantization modes that only perform Cast, while the rest are inline scalar/tensor quantization modes.
+Taking the Ascend 950PR&950DT products as an example, the following figure shows the valid combinations of inline quantization, inline ReLU, and inline channel merging, as well as the intermediate data types and data paths. In the figure, F32-\>F16 and F32-\>BF16 are non-quantization modes that only perform Cast, while the rest are inline scalar/tensor quantization modes.
 
 **Figure 2** L0C2UB flowchart<a id="zh-cn_topic_0000002542828493_fig1828513492547"></a>  
 
@@ -201,7 +201,7 @@ None
 <!-- npu="950" id20 -->
 ## Key Features
 
-The following figures and descriptions apply only to the Ascend 950PR&950DT product series:
+The following figures and descriptions apply only to the Ascend 950PR&950DT products:
 
 ### Without NZ2ND Inline Format Conversion
 

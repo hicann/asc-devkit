@@ -1,6 +1,6 @@
 # CMake Function Reference
 
-<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T13:33:30.590Z pushedAt=2026-10-28T02:05:02.540Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T13:33:30.590Z pushedAt=2026-11-03T07:05:13.394Z nl=2 -->
 
 This document is a reference that organizes the CMake function interfaces involved in the compilation of operator projects, for advanced developers who need to understand the compilation mechanism in depth.
 

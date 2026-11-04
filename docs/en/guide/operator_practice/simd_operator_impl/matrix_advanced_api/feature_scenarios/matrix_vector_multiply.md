@@ -1,6 +1,6 @@
 # Matrix-Vector Multiplication<a name="ZH-CN_TOPIC_0000002500548098"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:09:55.358Z pushedAt=2026-10-27T08:00:48.879Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:09:55.358Z pushedAt=2026-11-03T07:05:13.304Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002264077892_section310824820358"></a>
 

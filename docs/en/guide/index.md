@@ -1,6 +1,6 @@
 # Ascend C Operator Development Guide
 
-<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T10:53:34.916Z pushedAt=2026-10-28T08:22:03.474Z nl=2 -->
+<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T10:53:34.916Z pushedAt=2026-11-03T07:05:13.254Z nl=2 -->
 
 -   [Getting Started](getting_started/ascend_c_overview_and_learning_path.md)
     -   [Ascend C Overview and Learning Path](getting_started/ascend_c_overview_and_learning_path.md)

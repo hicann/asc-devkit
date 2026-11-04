@@ -1,6 +1,6 @@
 # N-Direction Alignment of Cube Multiplication Output<a name="ZH-CN_TOPIC_0000002532228169"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:08:41.499Z pushedAt=2026-10-27T07:43:56.937Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:08:41.499Z pushedAt=2026-11-03T07:05:13.303Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002265055666_section310824820358"></a>
 

@@ -1,6 +1,6 @@
 # Thread Block Count Configuration Optimization
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-23T13:03:14.489Z pushedAt=2026-10-27T11:17:24.123Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-23T13:03:14.489Z pushedAt=2026-11-03T07:05:13.363Z nl=2 -->
 
 > [!NOTE] Note
 > This performance optimization suggestion applies to the following models:

@@ -7,10 +7,10 @@ To improve data access efficiency and throughput, the L0C Buffer adopts an equal
 <!-- npu="A3,910b" id2 -->
 Take the following product models as an example:
 <!-- npu="A3" id3 -->
-Atlas A3 series products
+Atlas A3 products
 <!-- end id3 -->
 <!-- npu="910b" id4 -->
-Atlas A2 series products
+Atlas A2 products
 <!-- end id4 -->
 The total capacity of the L0C Buffer is 128 KB, consisting of 16 Banks. Each Bank has a capacity of 8 KB, consisting of 128 rows, with each row being 64 bytes wide. These 16 Banks are further organized into 16 Bank Groups. Each Bank Group contains 1 Bank.
 
@@ -29,7 +29,7 @@ L0C_ADDR[16:0] = { BANK_DEPTH[6:0], BANK[3:0], BANK_WIDTH[5:0] }    // The bit o
 <!-- end id2 -->
 
 <!-- npu="950" id1 -->
-Taking the Ascend 950PR&950DT series products as an example, the total capacity of the L0C Buffer is 256K bytes, consisting of 16 Banks. Each Bank has a capacity of 16K bytes and consists of 256 rows, with each row being 64 bytes wide. These 16 Banks are further organized into 16 Bank Groups. Each Bank Group contains 1 Bank.
+Taking the Ascend 950PR&950DT products as an example, the total capacity of the L0C Buffer is 256K bytes, consisting of 16 Banks. Each Bank has a capacity of 16K bytes and consists of 256 rows, with each row being 64 bytes wide. These 16 Banks are further organized into 16 Bank Groups. Each Bank Group contains 1 Bank.
 
 The memory structure of the L0C Buffer is shown in [Figure 2](#fig179810301543). The address encoding format of the L0C Buffer and the meaning of each bit are described as follows:
 

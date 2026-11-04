@@ -1,5 +1,5 @@
 # Thread Architecture<a name="ZH-CN_TOPIC_0000002554358977"></a>
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:26:59.062Z pushedAt=2026-10-28T11:42:21.764Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:26:59.062Z pushedAt=2026-11-03T07:08:03.570Z nl=2 -->
 
 The SIMT programming model uses a hierarchical abstract thread organization structure, which, from top to bottom, consists of the Grid, Thread Block, and Thread. This hierarchical design allows developers to conveniently map parallel computing problems onto hardware resources. In addition, the dimensions at each level can be customized by developers based on the algorithm and data scale. As shown in the following figure, the thread blocks are organized in a one-dimensional layout, with each thread block indexed from 0 to 4. The threads within a thread block are organized in a two-dimensional layout, and each thread is uniquely identified by the coordinates (threadIdx.x, threadIdx.y).
 

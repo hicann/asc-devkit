@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000002563469514"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:07:45.309Z pushedAt=2026-10-28T03:16:13.481Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:07:45.309Z pushedAt=2026-11-03T07:05:13.414Z nl=2 -->
 
 To improve the programming flexibility of vector computation in scenarios such as complex control flow and scattered memory access, in the mixed programming architecture that deeply integrates SIMD and SIMT, the cube computation unit retains the SIMD design, while the vector computation unit introduces SIMT capabilities on top of SIMD. This design establishes a mixed programming model with SIMD as the primary approach and SIMT as the auxiliary approach.
 

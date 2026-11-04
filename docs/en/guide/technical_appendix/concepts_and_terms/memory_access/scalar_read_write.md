@@ -1,6 +1,6 @@
 # Scalar Read/Write Data<a name="ZH-CN_TOPIC_0000002375401226"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:29:32.213Z pushedAt=2026-10-28T11:42:21.765Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:29:32.213Z pushedAt=2026-11-03T07:08:03.571Z nl=2 -->
 
 In the AI Core, the Scalar computation unit is responsible for scalar data operations of various types and program flow control. According to the [hardware architecture](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md) design, Scalar supports only read/write operations on Global Memory and Unified Buffer (UB), and does not support access to other types of storage such as L1 Buffer, L0A Buffer, L0B Buffer, and L0C Buffer. The following describes how Scalar reads/writes Global Memory and UB, as well as the synchronization mechanism when Scalar reads/writes data.
 

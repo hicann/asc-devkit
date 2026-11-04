@@ -1,6 +1,6 @@
 # Enabling DoubleBuffer<a name="ZH-CN_TOPIC_0000001893038945"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:51:28.961Z pushedAt=2026-10-27T10:39:50.610Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:51:28.961Z pushedAt=2026-11-03T07:05:13.349Z nl=2 -->
 
 [Priority] Medium
 

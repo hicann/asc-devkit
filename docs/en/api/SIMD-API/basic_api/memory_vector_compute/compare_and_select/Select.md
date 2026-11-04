@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -54,15 +54,15 @@ This API supports three modes:
     ![](../../../../figures/select_mode2.png)
 
 <!-- npu="950" id17 -->
-Ascend 950PR&950DT Series Products support modes 0, 1, and 2.
+Ascend 950PR&950DT products support modes 0, 1, and 2.
 <!-- end id17 -->
 
 <!-- npu="A3" id18 -->
-Atlas A3 Series Products support modes 0, 1, and 2.
+Atlas A3 products support modes 0, 1, and 2.
 <!-- end id18 -->
 
 <!-- npu="910b" id19 -->
-Atlas A2 Series Products support modes 0, 1, and 2.
+Atlas A2 products support modes 0, 1, and 2.
 <!-- end id19 -->
 
 <!-- npu="310b" id20 -->
@@ -70,11 +70,11 @@ Atlas 200I/500 A2 inference product supports modes 0, 1, and 2.
 <!-- end id20 -->
 
 <!-- npu="310p" id21 -->
-Atlas inference series product AI Core supports modes 0, 1, and 2.
+Atlas inference products AI Core supports modes 0, 1, and 2.
 <!-- end id21 -->
 
 <!-- npu="910" id22 -->
-Atlas training series product supports only mode 0.
+Atlas training products supports only mode 0.
 <!-- end id22 -->
 
 ## Prototype<a name="section620mcpsimp"></a>
@@ -168,15 +168,15 @@ Atlas training series product supports only mode 0.
 
 - The supported data types of T are:
   <!-- npu="950" id25 -->
-  - Ascend 950PR&950DT series products: the supported data types are int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64. Among them, the int8\_t/uint8\_t/complex32/int64\_t/uint64\_t/complex64 data type is supported only by the computation API for the first n data of the tensor.
+  - Ascend 950PR&950DT products: the supported data types are int8_t/uint8_t/int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float/complex32/int64_t/uint64_t/complex64. Among them, the int8\_t/uint8\_t/complex32/int64\_t/uint64\_t/complex64 data type is supported only by the computation API for the first n data of the tensor.
   <!-- end id25 -->
     
   <!-- npu="A3" id26 -->
-  - Atlas A3 series products: the supported data types are half/float.
+  - Atlas A3 products: the supported data types are half/float.
   <!-- end id26 -->
     
   <!-- npu="910b" id27 -->
-  - Atlas A2 series products: the supported data types are half/float.
+  - Atlas A2 products: the supported data types are half/float.
   <!-- end id27 -->
     
   <!-- npu="310b" id28 -->
@@ -184,11 +184,11 @@ Atlas training series product supports only mode 0.
   <!-- end id28 -->
     
   <!-- npu="310p" id29 -->
-  - Atlas inference series products AI Core: the supported data types are half/float.
+  - Atlas inference products AI Core: the supported data types are half/float.
   <!-- end id29 -->
     
   <!-- npu="910" id30 -->
-  - Atlas training series products: the supported data types are half/float.
+  - Atlas training products: the supported data types are half/float.
   <!-- end id30 -->
     
 - The supported data types of U are: uint8_t, uint16_t, uint32_t, and uint64_t.
@@ -211,17 +211,17 @@ None
   <!-- npu="A3,910b,310p" id12 -->
   - For the following models, in mode 1 and mode 2, 8 KB of UB space must be reserved as the temporary data storage area for the API:
     <!-- npu="A3" id13 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id13 -->
     <!-- npu="910b" id14 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id14 -->
     <!-- npu="310p" id15 -->
     - Atlas inference products AI Core
     <!-- end id15 -->
   <!-- end id12 -->
     <!-- npu="950" id16 -->
-  - For Ascend 950PR&950DT series products:
+  - For Ascend 950PR&950DT products:
     - The tensor high-dimensional split computation API without the mask parameter occupies 8 KB of UB temporary space.
     - The tensor first-n-data computation API and the tensor high-dimensional split computation API with the mask parameter do not involve the occupation of the 8 KB UB temporary space.
     <!-- end id16 -->

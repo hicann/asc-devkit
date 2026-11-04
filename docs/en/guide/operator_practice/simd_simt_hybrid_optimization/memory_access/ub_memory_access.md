@@ -1,6 +1,6 @@
 # Using Unified Buffer to Improve Memory Access Efficiency<a name="ZH-CN_TOPIC_0000002511242528"></a>
 
-<!-- md-trans-meta sourceCommit=155d12bd3f10bfd637ddd47c9f145f13f914b4c3 translatedAt=2026-10-23T13:05:11.501Z pushedAt=2026-10-27T11:24:50.260Z nl=2 -->
+<!-- md-trans-meta sourceCommit=155d12bd3f10bfd637ddd47c9f145f13f914b4c3 translatedAt=2026-10-23T13:05:11.501Z pushedAt=2026-11-03T07:05:13.366Z nl=2 -->
 
 > [!NOTE] Note 
 > This performance optimization suggestion applies to the following models:

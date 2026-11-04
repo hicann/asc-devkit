@@ -1,6 +1,6 @@
 # Basic Architecture<a name="ZH-CN_TOPIC_0000002380477945"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:14:46.613Z pushedAt=2026-10-28T03:53:17.600Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:14:46.613Z pushedAt=2026-11-03T07:05:13.425Z nl=2 -->
 
 As shown in the following figure, operators developed based on Ascend C run on the AI Core. The Ascend C programming model is introduced based on the abstraction of the AI Core hardware architecture. Understanding the hardware architecture helps developers better understand the programming model. For advanced developers who need to achieve high-performance programming, knowledge of the hardware architecture is even more essential, and much of the content in the operator practice reference is introduced based on this chapter.
 

@@ -1,6 +1,6 @@
 # How to Enable Vector Core in Vector Programming<a name="ZH-CN_TOPIC_0000001883181813"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:53:56.407Z pushedAt=2026-10-28T06:23:55.536Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:53:56.407Z pushedAt=2026-11-03T07:05:13.444Z nl=2 -->
 
 For Atlas inference products, in addition to AI Core, the hardware architecture also provides a separate Vector Core as a supplement to the vector computing unit in AI Core, thereby alleviating the vector computing bottleneck. Vector Core contains only two types of basic computing resources: the Vector Unit and the Scalar Unit, which are used to perform vector and scalar data computation respectively. When developing vector operators, if you enable Vector Core, both AI Core and Vector Core are started simultaneously during operator execution, and these cores execute the same kernel code in parallel.
 

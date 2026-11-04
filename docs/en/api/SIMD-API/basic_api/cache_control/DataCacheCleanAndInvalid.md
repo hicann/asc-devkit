@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -53,7 +53,7 @@ Typical usage scenarios of this API are as follows:
 - When a user writes data to GM through the Scalar unit and wants the data to be written out immediately, the DataCacheCleanAndInvalid API is also required.
 
 <!-- npu="950" id15 -->
-- For Ascend 950PR & 950DT series products, during an atomic operation, if you want to change the saturation mode of subsequent data, you must first use the DataCacheCleanAndInvalid API to immediately write out the existing data in the Cache Line, and then call [SetCtrlSpr](../special_register_access/SetCtrlSpr_ISASI.md) to set the saturation mode of subsequent data.
+- For Ascend 950PR & 950DT products, during an atomic operation, if you want to change the saturation mode of subsequent data, you must first use the DataCacheCleanAndInvalid API to immediately write out the existing data in the Cache Line, and then call [SetCtrlSpr](../special_register_access/SetCtrlSpr_ISASI.md) to set the saturation mode of subsequent data.
 <!-- end id15 -->
 
 ## Prototype<a name="section620mcpsimp"></a>
@@ -90,7 +90,7 @@ Typical usage scenarios of this API are as follows:
 |--------|------|
 | **T** | Data type of **dst**. |
 | **entireType** | Operation mode of the instruction:<br>**SINGLE_CACHE_LINE**: Only flushes the Cache Line where the passed address resides. **Note that if the address is not 64B-aligned, only the portion from the passed address to the 64B alignment boundary is operated on.**<br>**ENTIRE_DATA_CACHE**: In this case, the passed address is invalid, and the entire DCache is flushed within the core, which is time-consuming. **Use with caution in performance-sensitive scenarios.** |
-| **dcciDst** | Indicates the type of storage with which this API ensures DCache consistency. The type is the **DcciDst** enumeration.<br>&bull; **CACHELINE_ALL**: Same effect as **CACHELINE_OUT**.<br>&bull; **CACHELINE_UB**: Indicates that this API is used to ensure consistency between DCache and UB.<br>&bull; **CACHELINE_OUT**: Indicates that this API is used to ensure consistency between DCache and GM.<br>&bull; **CACHELINE_ATOMIC**: Ensures consistency between DCache and GM during atomic operations.<br><!-- npu="950" id16 -->&ensp;&ensp;- Ascend 950PR & 950DT series products: supported.<br><!-- end id16 --><!-- npu="A3" id10 -->&ensp;&ensp;- Atlas A3 series products: Not yet supported.<br><!-- end id10 --><!-- npu="910b" id11 -->&ensp;&ensp;- Atlas A2 series products: Not yet supported.<br><!-- end id11 --><!-- npu="310b" id12 -->&ensp;&ensp;- Atlas 200I/500 A2 inference products: Not yet supported.<br><!-- end id12 --><!-- npu="310p" id13 -->&ensp;&ensp;- Atlas inference series products AI Core: Not yet supported.<!-- end id13 --> |
+| **dcciDst** | Indicates the type of storage with which this API ensures DCache consistency. The type is the **DcciDst** enumeration.<br>&bull; **CACHELINE_ALL**: Same effect as **CACHELINE_OUT**.<br>&bull; **CACHELINE_UB**: Indicates that this API is used to ensure consistency between DCache and UB.<br>&bull; **CACHELINE_OUT**: Indicates that this API is used to ensure consistency between DCache and GM.<br>&bull; **CACHELINE_ATOMIC**: Ensures consistency between DCache and GM during atomic operations.<br><!-- npu="950" id16 -->&ensp;&ensp;- Ascend 950PR & 950DT products: supported.<br><!-- end id16 --><!-- npu="A3" id10 -->&ensp;&ensp;- Atlas A3 products: Not yet supported.<br><!-- end id10 --><!-- npu="910b" id11 -->&ensp;&ensp;- Atlas A2 products: Not yet supported.<br><!-- end id11 --><!-- npu="310b" id12 -->&ensp;&ensp;- Atlas 200I/500 A2 inference products: Not yet supported.<br><!-- end id12 --><!-- npu="310p" id13 -->&ensp;&ensp;- Atlas inference products AI Core: Not yet supported.<!-- end id13 --> |
 
 **Table 2** Parameter description
 

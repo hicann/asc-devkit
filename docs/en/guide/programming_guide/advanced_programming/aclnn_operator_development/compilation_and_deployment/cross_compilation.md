@@ -1,6 +1,6 @@
 # Cross Compilation
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:39:22.423Z pushedAt=2026-10-28T02:31:13.131Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:39:22.423Z pushedAt=2026-11-03T07:05:13.399Z nl=2 -->
 
 This document is extended content that describes how to perform cross compilation on an operator project when the compilation platform architecture differs from the runtime platform architecture (for example, compiling on an x86_64 development machine and then deploying to an aarch64 edge device).
 

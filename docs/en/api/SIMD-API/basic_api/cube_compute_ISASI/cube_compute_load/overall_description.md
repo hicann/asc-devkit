@@ -25,7 +25,7 @@ The data load APIs for matrix computation support multiple data paths, each corr
 
 <!-- npu="950" id1 -->
 > [!NOTE] Note
-> Due to hardware changes, the Ascend 950PR&950DT product series removes the data paths from GM to L0A Buffer and L0B Buffer. As a result, the original data movement from GM to L0A Buffer and L0B Buffer must be split into two steps: data movement from GM to L1 Buffer, and data movement from L1 Buffer to L0A Buffer and L0B Buffer.
+> Due to hardware changes, the Ascend 950PR&950DT products removes the data paths from GM to L0A Buffer and L0B Buffer. As a result, the original data movement from GM to L0A Buffer and L0B Buffer must be split into two steps: data movement from GM to L1 Buffer, and data movement from L1 Buffer to L0A Buffer and L0B Buffer.
 <!-- end id1 -->
 
 ## API Classification and Usage Scenarios of GM->L1 Buffer<a name="zh-cn_topic_0000002543771563_section_gm2l1"></a>
@@ -42,7 +42,7 @@ The data load APIs for matrix computation support multiple data paths, each corr
 | [LoadData (GMToL1-2D Matrix Movement)](LoadData_GMToL1_2D.md) | Moves 2D-format matrix data from GM to the L1 Buffer in units of 512B data fractals. | GM->L1 Buffer | Moves the 2D fractal data required for ordinary matrix computation into the L1 Buffer. |
 
 <!-- npu="950" id2 -->
-For the Ascend 950PR&950DT product series, the following GM->L1 Buffer APIs are added. Developers should refer to Table 3.
+For the Ascend 950PR&950DT products, the following GM->L1 Buffer APIs are added. Developers should refer to Table 3.
 
 **Table 3** **GM->L1 Buffer APIs**
 
@@ -79,7 +79,7 @@ For the Ascend 950PR&950DT product series, the following GM->L1 Buffer APIs are 
 
 <!-- npu="950" id_l12l0_950note -->
 > [!NOTE] Note
-> For the Ascend 950PR&950DT product series, LoadDataWithTranspose supports only the L1 Buffer->L0B Buffer path and does not support the L1 Buffer->L0A Buffer path.
+> For the Ascend 950PR&950DT products, LoadDataWithTranspose supports only the L1 Buffer->L0B Buffer path and does not support the L1 Buffer->L0A Buffer path.
 <!-- end id_l12l0_950note -->
 
 <!-- npu="910b,A3" id3 -->
@@ -94,7 +94,7 @@ For Atlas A2 training products/Atlas A2 inference products and Atlas A3 training
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
-For the Ascend 950PR&950DT product series, the following L1 Buffer->L0A/B Buffer APIs are newly added. Developers should refer to Table 7.
+For the Ascend 950PR&950DT products, the following L1 Buffer->L0A/B Buffer APIs are newly added. Developers should refer to Table 7.
 
 **Table 7** **L1 Buffer->L0A/B Buffer APIs**
 

@@ -1,6 +1,6 @@
 # Tiling Implementation for Advanced APIs
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:59:02.153Z pushedAt=2026-10-28T02:56:57.129Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:59:02.153Z pushedAt=2026-11-03T07:05:13.409Z nl=2 -->
 
 This document is extended content that describes the Host-side Tiling implementation for advanced APIs. Advanced APIs such as Matmul and Conv usually provide matching Host-side Tiling classes for computing split parameters based on shape and dtype. Developers need to pass the computation results of the matching Tiling classes to the kernel function side and use the same data to initialize the advanced API objects.
 

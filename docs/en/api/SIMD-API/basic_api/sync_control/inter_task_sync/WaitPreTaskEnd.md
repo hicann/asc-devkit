@@ -8,13 +8,13 @@
 ## Applicable Products<a name="section17196114513104"></a>
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT product series: supported, and this API takes effect.
+- Ascend 950PR&950DT products: supported, and this API takes effect.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 product series: supported, and this API takes effect.
+- Atlas A3 products: supported, and this API takes effect.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 product series: supported, but only compilation compatibility is guaranteed, and the actual functionality does not take effect.
+- Atlas A2 products: supported, but only compilation compatibility is guaranteed, and the actual functionality does not take effect.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: supported, but only compilation compatibility is guaranteed, and the actual functionality does not take effect.

@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -113,15 +113,15 @@ Supports multiple comparison modes:
 ### mask/mask[] Parameter Description
 
 <!-- npu="950" id11 -->
-- For Ascend 950PR&950DT series products, this parameter takes effect.
+- For Ascend 950PR&950DT products, this parameter takes effect.
 <!-- end id11 -->
 
 <!-- npu="A3" id12 -->
-- For Atlas A3 series products, this parameter is reserved and the setting is invalid.
+- For Atlas A3 products, this parameter is reserved and the setting is invalid.
 <!-- end id12 -->
 
 <!-- npu="910b" id13 -->
-- For Atlas A2 series products, this parameter is reserved and the setting is invalid.
+- For Atlas A2 products, this parameter is reserved and the setting is invalid.
 <!-- end id13 -->
 
 <!-- npu="310b" id14 -->
@@ -129,29 +129,29 @@ Supports multiple comparison modes:
 <!-- end id14 -->
 
 <!-- npu="310p" id15 -->
-- For Atlas inference series products AI Core, this parameter is reserved and the setting is invalid.
+- For Atlas inference products AI Core, this parameter is reserved and the setting is invalid.
 <!-- end id15 -->
 
 <!-- npu="910" id16 -->
-- For Atlas training series products, this parameter is reserved and the setting is invalid.
+- For Atlas training products, this parameter is reserved and the setting is invalid.
 <!-- end id16 -->
 
 ## Data Type
 
 <!-- npu="950" id19 -->
-- For Ascend 950PR&950DT series products
+- For Ascend 950PR&950DT products
     - Supported data types for T: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double. Among them, int8\_t/uint8\_t/int64\_t/uint64\_t/double data types support only the API for computing the first n data of a tensor and the operator overloading where the entire tensor participates in calculation.
     - Supported data types for U: int8_t, uint8_t.
 <!-- end id19 -->
 
 <!-- npu="A3" id20 -->
-- For Atlas A3 series products
+- For Atlas A3 products
     - Supported data types for T: half (supported by all CMPMODE values), float (supported by all CMPMODE values), int32_t (supported only by CMPMODE::EQ).
     - Supported data types for U: int8_t, uint8_t.
 <!-- end id20 -->
 
 <!-- npu="910b" id21 -->
-- For Atlas A2 series products
+- For Atlas A2 products
     - Supported data types for T: half (supported by all CMPMODE values), float (supported by all CMPMODE values), int32_t (supported only by CMPMODE::EQ).
     - Supported data types for U: int8_t, uint8_t.
 <!-- end id21 -->
@@ -189,14 +189,14 @@ None
   <!-- npu="A3,910b" id28 -->
   - For the following models, this API does not perform the computation operation, does not write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id29 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id29 -->
     <!-- npu="910b" id30 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id30 -->
   <!-- end id28 -->
   <!-- npu="950" id31 -->
-  - For Ascend 950PR&950DT series products, this API implements compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, this API implements compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
   <!-- end id31 -->
 <!-- end id27 -->
 
@@ -204,10 +204,10 @@ None
 <!-- npu="A3,910b" id32 -->
 - For the following models, when using the API that uses the first n data of the tensor for computation and setting count, ensure that the space occupied by count elements meets 256-byte alignment. The unaligned elements do not participate in the computation, and only the complete aligned blocks are valid.
   <!-- npu="A3" id33 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id33 -->
   <!-- npu="910b" id34 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id34 -->
 <!-- end id32 -->
 

@@ -44,7 +44,7 @@ REQ8,                  // ReQuant_int8: Requantizes int32_t to int8_t/uint8_t, s
 VREQ8,                 // Vector_ReQuant_int8: Requantizes int32_t to int8_t/uint8_t, tensor quantization.
 ```
 <!-- npu="950" id3 -->
-In addition to the quantization modes above, the Ascend 950PR&950DT product series also supports the following quantization modes:
+In addition to the quantization modes above, the Ascend 950PR&950DT products also supports the following quantization modes:
 
 ```text
 QF322FP8_PRE,          // Quant_Float32_2_FP8: Quantizes float to fp8_e4m3fn_t, scalar quantization.

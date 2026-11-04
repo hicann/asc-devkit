@@ -1,6 +1,6 @@
 # Kernel Function<a name="ZH-CN_TOPIC_0000001564710756"></a>
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:37:53.108Z pushedAt=2026-10-28T11:42:21.733Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:37:53.108Z pushedAt=2026-11-03T07:08:03.552Z nl=2 -->
 
 A kernel function (Kernel) is a C/C++ function that executes in parallel on the device side. It is called by host-side code. When called, it is instantiated into multiple parallel copies, which are scheduled to run on multiple AI Cores (each AI Core is abstracted as a Block). These Blocks leverage the computing power of AI Cores to collaboratively complete the computation of an operator.
 
@@ -61,9 +61,9 @@ The host side calls a kernel function using the kernel call operator <<<...>>> s
 kernel_name<<<numBlocks, dynUBufSize, stream>>>(argument list);
 ```
 
-The parameters in `<<<...>>>` are the execution configuration of the kernel function, which is determined by three parameters. For details, see [Kernel Function Configuration](../../language_extension/simd_builtin_keywords.md#kernel-function-configuration):
+The parameters in `<<<...>>>` are the execution configuration of the kernel function, which is determined by three parameters. For details, see [Kernel Function Configuration](../../language_extension/simd_builtin_keywords.md#kernel-configuration):
 
--   numBlocks: specifies the number of cores on which the kernel function will execute. For different hardware architectures and operator types, the setting rules of numBlocks differ. For details, see [Kernel Function Configuration](../../language_extension/simd_builtin_keywords.md#kernel-function-configuration). Each core that executes the kernel function is assigned a logical ID, that is, block\_idx, which can be obtained using the built-in variable [block_idx](../../language_extension/simd_builtin_keywords.md#built-in-variables) in the kernel function implementation. Note that when the `__mix__` function execution space qualifier is used, the block_idx values of the Vector Cores on the same core are the same. For details and examples, see [Built-in Variables](../../language_extension/simd_builtin_keywords.md#built-in-variables);
+-   numBlocks: specifies the number of cores on which the kernel function will execute. For different hardware architectures and operator types, the setting rules of numBlocks differ. For details, see [Kernel Function Configuration](../../language_extension/simd_builtin_keywords.md#kernel-configuration). Each core that executes the kernel function is assigned a logical ID, that is, block\_idx, which can be obtained using the built-in variable [block_idx](../../language_extension/simd_builtin_keywords.md#built-in-variables) in the kernel function implementation. Note that when the `__mix__` function execution space qualifier is used, the block_idx values of the Vector Cores on the same core are the same. For details and examples, see [Built-in Variables](../../language_extension/simd_builtin_keywords.md#built-in-variables);
 -   dynUBufSize: Dynamic Unified Buffer (UB) Size, which configures the size of the space for UB dynamic memory allocation (UB only, excluding L1 Buffer and others), in bytes. The default value is 0;
 -   stream: of the aclrtStream type. stream is used to maintain the execution order of some asynchronous operations, ensuring that they are executed on the device in the order in which they are called in the application code. The default value is nullptr. For stream creation and other management APIs, see [Runtime API](https://gitcode.com/cann/runtime/blob/9.2.0/docs/en/api_ref/README.md).
 

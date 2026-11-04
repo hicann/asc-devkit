@@ -1,6 +1,6 @@
 # Utils API<a name="ZH-CN_TOPIC_0000002509865667"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:21:38.102Z pushedAt=2026-10-28T08:02:58.415Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:21:38.102Z pushedAt=2026-11-03T07:05:13.471Z nl=2 -->
 
 Ascend C provides a rich set of general-purpose utility classes for development, covering the standard library, platform information acquisition, context construction, runtime compilation, and log output, helping developers efficiently implement operator development and performance optimization.
 

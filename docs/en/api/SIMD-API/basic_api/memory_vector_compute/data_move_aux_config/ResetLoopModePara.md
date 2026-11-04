@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id8 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference products: not supported

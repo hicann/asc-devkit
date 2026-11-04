@@ -1,6 +1,6 @@
 # AOT Compilation Optimization
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:28:28.981Z pushedAt=2026-10-28T06:18:29.378Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:28:28.981Z pushedAt=2026-11-03T07:05:13.389Z nl=2 -->
 
 ## Overview
 

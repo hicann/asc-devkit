@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -62,15 +62,15 @@ __aicore__ inline void SetLoadDataRepeat(const LoadDataRepeatParam& repeatParams
 ### dstStride Parameter Support Description
 
 <!-- npu="950" id8 -->
-- For Ascend 950PR&950DT series products, the **dstStride** parameter is added. You must configure the **dstStride** parameter when calling this API.
+- For Ascend 950PR&950DT products, the **dstStride** parameter is added. You must configure the **dstStride** parameter when calling this API.
 <!-- end id8 -->
 
 <!-- npu="910b" id9 -->
-- For Atlas A2 series products, this parameter is not supported.
+- For Atlas A2 products, this parameter is not supported.
 <!-- end id9 -->
 
 <!-- npu="A3" id10 -->
-- For Atlas A3 series products, this parameter is not supported.
+- For Atlas A3 products, this parameter is not supported.
 <!-- end id10 -->
 
 <!-- npu="310b" id11 -->
@@ -87,21 +87,21 @@ None
 - When **repeatTime** is 0, **LoadData** (convolution data movement) does not perform any transfer, and the **LoadData** (convolution data movement) API is treated as a NOP (no operation).
 
 <!-- npu="950" id12 -->
-- For Ascend 950PR&950DT series products, the **dstStride** parameter in this API must be configured when calling the **LoadData** (convolution data movement) instruction.
+- For Ascend 950PR&950DT products, the **dstStride** parameter in this API must be configured when calling the **LoadData** (convolution data movement) instruction.
 <!-- end id12 -->
 
 - The unit of **repeatStride** varies by chip model. For details, see the following:
 
     <!-- npu="950" id13 -->
-    - For Ascend 950PR&950DT series products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
+    - For Ascend 950PR&950DT products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
     <!-- end id13 -->
 
     <!-- npu="910b" id14 -->
-    - For Atlas A2 series products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
+    - For Atlas A2 products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
     <!-- end id14 -->
 
     <!-- npu="A3" id15 -->
-    - For Atlas A3 series products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
+    - For Atlas A3 products, the unit of **repeatStride** is 32/sizeof(data_type) elements.
     <!-- end id15 -->
 
     <!-- npu="310b" id16 -->

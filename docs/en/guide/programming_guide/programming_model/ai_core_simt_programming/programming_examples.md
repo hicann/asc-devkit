@@ -1,6 +1,6 @@
 # Programming Example<a name="ZH-CN_TOPIC_0000002523571814"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:22:42.012Z pushedAt=2026-10-28T11:42:21.762Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:22:42.012Z pushedAt=2026-11-03T07:08:03.568Z nl=2 -->
 
 For the built-in keywords and APIs required for operator development based on SIMT, see [SIMT BuiltIn Keywords](../../language_extension/simt_builtin_keywords.md) and [SIMT Language Extension C APIs](../../language_extension/simt_language_extension_c_api.md). Currently, SIMT programming does not support some syntax structures. For related restrictions, see [Syntax Restrictions](../../../technical_appendix/cpp_standard_support/syntax_restrictions/syntax_restrictions.md).
 

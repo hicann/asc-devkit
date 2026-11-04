@@ -29,7 +29,7 @@ L0C_ADDR[16:0] = { BANK_DEPTH[6:0], BANK[3:0], BANK_WIDTH[5:0] }    // Bit order
 <!-- end id1 -->
 
 <!-- npu="950" id4 -->
-Taking the Ascend 950PR&950DT product series as an example, the L0C Buffer has a total capacity of 256K bytes and consists of 16 banks. Each bank has a capacity of 16K bytes and consists of 256 rows, with each row being 64 bytes wide. These 16 banks are further organized into 16 bank groups. Each bank group contains one bank.
+Taking the Ascend 950PR&950DT products as an example, the L0C Buffer has a total capacity of 256K bytes and consists of 16 banks. Each bank has a capacity of 16K bytes and consists of 256 rows, with each row being 64 bytes wide. These 16 banks are further organized into 16 bank groups. Each bank group contains one bank.
 
 The memory structure of the L0C Buffer is shown in Figure 2 below. The address encoding format of the L0C Buffer and the meaning of each bit are described as follows:
 

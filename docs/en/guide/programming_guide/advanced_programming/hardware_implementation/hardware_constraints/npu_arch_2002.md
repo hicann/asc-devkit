@@ -1,6 +1,6 @@
 # NPU Architecture Version 2002<a name="ZH-CN_TOPIC_0000002507560474"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:21:14.419Z pushedAt=2026-10-28T03:40:00.078Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:21:14.419Z pushedAt=2026-11-03T07:05:13.426Z nl=2 -->
 
 This section describes the hardware constraints and recommended solutions. The corresponding product model is Atlas inference products.
 

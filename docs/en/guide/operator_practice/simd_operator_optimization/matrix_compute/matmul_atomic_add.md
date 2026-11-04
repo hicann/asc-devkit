@@ -1,6 +1,6 @@
 # Enabling the AtomicAdd Option for Matmul<a name="ZH-CN_TOPIC_0000001925216954"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:35:45.064Z pushedAt=2026-10-27T09:27:13.085Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:35:45.064Z pushedAt=2026-11-03T07:05:13.325Z nl=2 -->
 
 [Priority] Medium
 

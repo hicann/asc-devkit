@@ -7,7 +7,7 @@
 The core function of GEMV is as follows: when the dimension M of cube A is 1, the API can manually enable the GEMV function, and this operation degenerates into a multiplication between a 1×K row vector and a K×N cube.
 
 <!-- npu="950" id1 -->
-For Ascend 950PR&950DT series products, the GEMV mode is disabled by default. To enable the GEMV mode, set the `mmad_trait::disable_gemv` parameter to `false`.
+For Ascend 950PR&950DT products, the GEMV mode is disabled by default. To enable the GEMV mode, set the `mmad_trait::disable_gemv` parameter to `false`.
 <!-- end id1 -->
 
 ## Constraints

@@ -1,6 +1,6 @@
 # Runtime Selection Process Based on the Simplified Key
 
-<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T14:02:26.607Z pushedAt=2026-10-28T03:00:48.761Z nl=2 -->
+<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T14:02:26.607Z pushedAt=2026-11-03T07:05:13.411Z nl=2 -->
 
 This document describes the runtime process after `GenSimplifiedKey` is configured. This mechanism is used to select, from multiple precompiled kernel function binaries of the same operator, the one that matches the conditions of this call. The operator developer is responsible for providing the Callback and the compilation configuration JSON; the runtime framework is responsible for invoking the Callback, assembling the complete simplified key, and searching for and selecting the binary.
 

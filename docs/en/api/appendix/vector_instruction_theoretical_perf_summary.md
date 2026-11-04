@@ -5,7 +5,7 @@
 This section summarizes the theoretical performance of some major Vector instructions. The following content applies to the following models:
 
 <!-- npu="950" id2 -->
-- Ascend 950PR & 950DT series products
+- Ascend 950PR & 950DT products
 <!-- end id2 -->
 <!-- npu="A3" id3 -->
 - Atlas A3 products
@@ -19,7 +19,7 @@ Note:
 - For vector computation APIs, if the value of the `count` or `repeatTime` parameter passed to the API is 0, no computation is performed and the destination operand is not written. The API is treated as a NOP (no operation), but it incurs additional performance overhead compared with not calling it.
 
 <!-- npu="950" id5 -->
-For the Ascend 950PR&950DT product series:
+For the Ascend 950PR&950DT products:
 - Memory vector computation APIs are mainly implemented by Reg vector computation APIs, and these Memory vector computation APIs do not involve theoretical performance. For the theoretical performance summary of some data layout conversion, sorting combination, data movement, scalar computation, and tool interface instructions, see Table 1 to Table 5.
 - For the theoretical performance of SIMT-related APIs, see [SIMT Instruction Theoretical Performance Summary](./SIMT_instruction_theoretical_perf_summary.md).
 

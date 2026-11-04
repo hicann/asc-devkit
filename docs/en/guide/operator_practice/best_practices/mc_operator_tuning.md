@@ -1,6 +1,6 @@
 # MC² Operator Performance Tuning Case<a name="ZH-CN_TOPIC_0000002076345610"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:22:42.153Z pushedAt=2026-10-27T07:55:15.872Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:22:42.153Z pushedAt=2026-11-03T07:05:13.271Z nl=2 -->
 
 ## Case Introduction<a name="section144912211504"></a>
 

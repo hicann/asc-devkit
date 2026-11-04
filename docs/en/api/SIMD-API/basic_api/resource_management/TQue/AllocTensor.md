@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -83,25 +83,25 @@ Allocates a Tensor from the Que. The Tensor size is the memory block length set 
 
 -   For all queues on the same **TPosition**, the number of tensors applied for by consecutively calling the **AllocTensor** API is subject to quantity constraints that vary with the AI processor model. This constraint must be satisfied when applying for buffers.
     <!-- npu="950" id10 -->
-    - Ascend 950PR&950DT product series: no more than 8.
+    - Ascend 950PR&950DT products: no more than 8.
     <!-- end id10 -->
     <!-- npu="A3" id11 -->
-    - Atlas A3 product series: no more than 8.
+    - Atlas A3 products: no more than 8.
     <!-- end id11 -->
     <!-- npu="910b" id12 -->
-    - Atlas A2 product series: no more than 8.
+    - Atlas A2 products: no more than 8.
     <!-- end id12 -->
     <!-- npu="310b" id13 -->
     - Atlas 200I/500 A2 inference product: no more than 8.
     <!-- end id13 -->
     <!-- npu="310p" id14 -->
-    - Atlas inference series product AI Core: no more than 8.
+    - Atlas inference products AI Core: no more than 8.
     <!-- end id14 -->
     <!-- npu="310p" id15 -->
-    - Atlas inference series product Vector Core: no more than 8.
+    - Atlas inference products Vector Core: no more than 8.
     <!-- end id15 -->
     <!-- npu="910" id16 -->
-    - Atlas training product series: no more than 4.
+    - Atlas training products: no more than 4.
     <!-- end id16 -->
 -   The tensor content allocated by the **non-inplace** API may contain random values.
 -   For the non-inplace API, set the **depth** template parameter of **TQueBind** to a non-zero value; for the inplace API, set the **depth** template parameter of **TQueBind** to 0.

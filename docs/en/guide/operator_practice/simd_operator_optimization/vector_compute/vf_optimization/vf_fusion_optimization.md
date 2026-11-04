@@ -1,6 +1,6 @@
 # VF Fusion Optimization<a name="ZH-CN_TOPIC_0000002530248741"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:56:40.630Z pushedAt=2026-10-27T10:51:11.190Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:56:40.630Z pushedAt=2026-11-03T07:05:13.357Z nl=2 -->
 
 [Priority] High
 

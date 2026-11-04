@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -82,22 +82,22 @@ $dst_i = \sim src_i$
 ## Data Types
 
 <!-- npu="950" id10 -->
-- For Ascend 950PR&950DT product series, T supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the API that computes the first n data elements of a tensor.
+- For Ascend 950PR&950DT products, T supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the API that computes the first n data elements of a tensor.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 product series, T supports the following data types: int16_t and uint16_t.
+- For Atlas A3 products, T supports the following data types: int16_t and uint16_t.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 product series, T supports the following data types: int16_t and uint16_t.
+- For Atlas A2 products, T supports the following data types: int16_t and uint16_t.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, T supports the following data types: int16_t and uint16_t.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, T supports the following data types: int16_t and uint16_t.
+- For Atlas inference products AI Core, T supports the following data types: int16_t and uint16_t.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training series products, T supports the following data types: int16_t and uint16_t.
+- For Atlas training products, T supports the following data types: int16_t and uint16_t.
 <!-- end id15 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -113,14 +113,14 @@ None
   <!-- npu="A3,910b" id19 -->
   - For the following models, this API does not perform any computation or write to the destination operand, and is treated as a NOP (No Operation).
     <!-- npu="A3" id20 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id19 -->
   <!-- npu="950" id22 -->
-  - For Ascend 950PR&950DT product series, this API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is 0, it is not guaranteed that this API is treated as a NOP (No Operation).
+  - For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is 0, it is not guaranteed that this API is treated as a NOP (No Operation).
   <!-- end id22 -->
 <!-- end id18 -->
 

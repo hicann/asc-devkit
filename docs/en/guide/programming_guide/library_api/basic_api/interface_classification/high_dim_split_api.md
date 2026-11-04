@@ -1,6 +1,6 @@
 # High-Dimensional Sharding API<a name="ZH-CN_TOPIC_0000002271261208"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:25:37.826Z pushedAt=2026-10-28T07:48:32.700Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:25:37.826Z pushedAt=2026-11-03T07:05:13.477Z nl=2 -->
 
 >[!NOTE] Note 
 >- This section explains the **tensor high-dimensional sharding computation** APIs in **basic vector computation APIs**. If you do not need to use these APIs, you can skip this section.

@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -93,15 +93,15 @@ For a complete example, see [Gather truth value computation](../../../../../../.
 
 ## Data Types
 <!-- npu="950" id8 -->
-Ascend 950PR&950DT product series supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t. The data types int8\_t and uint8\_t support only the API for computing the first n data of a tensor.
+Ascend 950PR&950DT products supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t. The data types int8\_t and uint8\_t support only the API for computing the first n data of a tensor.
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
-Atlas A3 product series supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+Atlas A3 products supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id9 -->
 
 <!-- npu="910b" id10 -->
-Atlas A2 product series supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+Atlas A2 products supports the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id10 -->
 
 <!-- npu="310b" id11 -->
@@ -109,7 +109,7 @@ Atlas 200I/500 A2 inference products support the following data types: int8_t, u
 <!-- end id11 -->
 
 <!-- npu="310p" id12 -->
-For the Atlas Inference Series AI Core, the supported data types are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
+For the Atlas inference products AI Core, the supported data types are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id12 -->
 
 ## Constraints<a name="section633mcpsimp"></a>
@@ -122,7 +122,7 @@ For the Atlas Inference Series AI Core, the supported data types are: int16_t, u
   <!-- npu="950,310b" id13 -->
   - For the following models, the value range of the address offset is as follows: when the operand is 8-bit, the value range is [0, 2^16-1]; when the operand is 16-bit, the value range is [0, 2^17-1]; when the operand is 32-bit or 64-bit, it must not exceed the range of uint32_t.
     <!-- npu="950" id14 -->
-    - Ascend 950PR&950DT product series
+    - Ascend 950PR&950DT products
     <!-- end id14 -->
     <!-- npu="310b" id15 -->
     - Atlas 200I/500 A2 inference products
@@ -132,10 +132,10 @@ For the Atlas Inference Series AI Core, the supported data types are: int16_t, u
   <!-- npu="A3,910b,310p" id16 -->
   - For the following models, the value range of the address offset must not exceed the range of uint32_t.
     <!-- npu="A3" id17 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id17 -->
     <!-- npu="910b" id18 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id18 -->
     <!-- npu="310p" id19 -->
     - Atlas inference products AI Core
@@ -149,10 +149,10 @@ For the Atlas Inference Series AI Core, the supported data types are: int16_t, u
   <!-- npu="A3,910b" id21 -->
   - For the following models, when the count or repeatTime parameter is set to 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id22 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id22 -->
     <!-- npu="910b" id23 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id23 -->
   <!-- end id21 -->
 
@@ -164,7 +164,7 @@ For the Atlas Inference Series AI Core, the supported data types are: int16_t, u
 <!-- npu="950,310b" id25 -->
 - For the following models, when the operand is **8-bit**, each iteration collects data of **4 DataBlocks**; in other cases, each iteration collects data of 8 DataBlocks.
   <!-- npu="950" id26 -->
-  - Ascend 950PR&950DT product series
+  - Ascend 950PR&950DT products
   <!-- end id26 -->
   <!-- npu="310b" id27 -->
   - Atlas 200I/500 A2 inference products
@@ -174,10 +174,10 @@ For the Atlas Inference Series AI Core, the supported data types are: int16_t, u
 <!-- npu="A3,910b,310p" id28 -->
 - For the following models, each iteration collects data of 8 DataBlocks.
   <!-- npu="A3" id29 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id29 -->
   <!-- npu="910b" id30 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id30 -->
   <!-- npu="310p" id31 -->
   - Atlas inference products AI Core

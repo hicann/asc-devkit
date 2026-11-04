@@ -1,6 +1,6 @@
 # Reducing Invalid Data Transfer in Non-Aligned Scenarios<a name="ZH-CN_TOPIC_0000002497818522"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:40:47.425Z pushedAt=2026-10-27T10:11:25.941Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:40:47.425Z pushedAt=2026-11-03T07:05:13.332Z nl=2 -->
 
 [Priority] Medium
 

@@ -1,6 +1,6 @@
 # Matmul Operator Optimization Tiling Strategy<a name="ZH-CN_TOPIC_0000001893038953"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:40:49.622Z pushedAt=2026-10-27T02:48:11.852Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:40:49.622Z pushedAt=2026-11-03T07:05:13.280Z nl=2 -->
 
 ## Case Introduction<a name="section1532131415369"></a>
 

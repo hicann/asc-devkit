@@ -1,6 +1,6 @@
 # Operator Implementation<a name="ZH-CN_TOPIC_0000002532228177"></a>
 
-<!-- md-trans-meta sourceCommit=e9b8d806ef6750fb7efadf6b84273ccb8d4e1d63 translatedAt=2026-10-23T11:52:08.697Z pushedAt=2026-10-27T07:55:08.223Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e9b8d806ef6750fb7efadf6b84273ccb8d4e1d63 translatedAt=2026-10-23T11:52:08.697Z pushedAt=2026-11-03T07:05:13.292Z nl=2 -->
 
 The following uses the implementation of the Matmul+LeakyRelu fused operator as an example to describe the design and implementation process of the Mix fused operator.
 

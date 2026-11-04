@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -40,11 +40,11 @@ This API obtains the maximum/minimum value and its index across all repeats when
 - Obtains the maximum/minimum value and its index across all repeats when [ReduceRepeat<MAX/MIN>](../reduction_compute/ReduceRepeat.md) is called, or obtains the maximum/minimum value produced by [ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md) (in this case, the obtained index is inaccurate). This function prototype is supported only on the following models:
 
     <!-- npu="A3" id9 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id9 -->
 
     <!-- npu="910b" id10 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id10 -->
 
     ```cpp
@@ -56,7 +56,7 @@ This API obtains the maximum/minimum value and its index across all repeats when
 
 <!-- npu="310p" id11 -->
 
-- Obtains the maximum/minimum value across all repeats when [ReduceRepeat<MAX/MIN>](../reduction_compute/ReduceRepeat.md) is called, or obtains the maximum/minimum value produced by [ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md). This function prototype is supported only on the AI Core of Atlas inference series products.
+- Obtains the maximum/minimum value across all repeats when [ReduceRepeat<MAX/MIN>](../reduction_compute/ReduceRepeat.md) is called, or obtains the maximum/minimum value produced by [ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md). This function prototype is supported only on the AI Core of Atlas inference products.
 
     ```cpp
     template <typename T>
@@ -106,10 +106,10 @@ For details, see [ReduceRepeat series reduction instruction examples](../../../.
 
     - For the following models:
       <!-- npu="A3" id13 -->
-      - Atlas A3 product series
+      - Atlas A3 products
       <!-- end id13 -->
       <!-- npu="910b" id14 -->
-      - Atlas A2 product series
+      - Atlas A2 products
       <!-- end id14 -->
 
       ```cpp
@@ -145,10 +145,10 @@ For details, see [ReduceRepeat series reduction instruction examples](../../../.
 
     - For the following models, `GetReduceRepeatMaxMinSpr` is used only to obtain the maximum value and cannot be used to obtain the accurate index corresponding to `ReduceMax`.
       <!-- npu="A3" id17 -->
-      - Atlas A3 product series
+      - Atlas A3 products
       <!-- end id17 -->
       <!-- npu="910b" id18 -->
-      - Atlas A2 product series
+      - Atlas A2 products
       <!-- end id18 -->
 
       ```cpp

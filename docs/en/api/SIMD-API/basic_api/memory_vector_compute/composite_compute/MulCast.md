@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -86,7 +86,7 @@ $$
 
 <!-- npu="950" id8 -->
 
-**Table**  Data type combination cases for Ascend 950PR&950DT product series
+**Table**  Data type combination cases for Ascend 950PR&950DT products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -95,13 +95,13 @@ $$
 | int64_t            | float       |
 | int64_t            | int32_t     |
 
-For Ascend 950PR&950DT product series, the data type combination where the data types of src0 and src1 are int64_t is supported only by the compute API for the first n data of the tensor.
+For Ascend 950PR&950DT products, the data type combination where the data types of src0 and src1 are int64_t is supported only by the compute API for the first n data of the tensor.
 
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
 
-**Table**  Data type combination cases for Atlas A3 product series
+**Table**  Data type combination cases for Atlas A3 products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -112,7 +112,7 @@ For Ascend 950PR&950DT product series, the data type combination where the data 
 
 <!-- npu="910b" id10 -->
 
-**Table**  Data type combination cases for Atlas A2 product series
+**Table**  Data type combination cases for Atlas A2 products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -123,7 +123,7 @@ For Ascend 950PR&950DT product series, the data type combination where the data 
 
 <!-- npu="310b" id11 -->
 
-**Table**  Data type combination cases for Atlas 200I/500 A2 inference product series
+**Table**  Data type combination cases for Atlas 200I/500 A2 inference products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -134,7 +134,7 @@ For Ascend 950PR&950DT product series, the data type combination where the data 
 
 <!-- npu="310p" id12 -->
 
-**Table**  Data type combination cases of the AI Core on Atlas inference series products
+**Table**  Data type combination cases of the AI Core on Atlas inference products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -157,19 +157,19 @@ None
   <!-- npu="A3,910b" id14 -->
   - For the following models, this API does not perform computation or write to the target operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id15 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id15 -->
     <!-- npu="910b" id16 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id16 -->
   <!-- end id14 -->
   <!-- npu="950" id17 -->
-  - For Ascend 950PR&950DT product series, this API achieves compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, this API achieves compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
   <!-- end id17 -->
 <!-- end id13 -->
 - This instruction involves precision conversion. For conversion rules, see [Precision Conversion Rules](../../data_structures/precision_conversion.md).
 <!-- npu="950" id18 -->
-- Description of Unified Buffer (UB) space usage. For Ascend 950PR&950DT product series:
+- Description of Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
   - The tensor high-dimensional split computation API occupies 8 KB of UB temporary space.
   - The API for continuous computation of the first n data of a tensor does not occupy the 8 KB UB temporary space.
 <!-- end id18 -->

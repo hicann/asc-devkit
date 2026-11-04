@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -91,16 +91,16 @@ __aicore__ inline void Brcb(const LocalTensor<T>& dst, const LocalTensor<T>& src
 ## Data Types
 
 <!-- npu="950" id10 -->
-- For the Ascend 950PR&950DT product series, the supported data types for T are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t.
+- For the Ascend 950PR&950DT products, the supported data types for T are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For the Atlas A3 product series, the supported data types for T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- For the Atlas A3 products, the supported data types for T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For the Atlas A2 product series, the supported data types for T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- For the Atlas A2 products, the supported data types for T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id12 -->
 <!-- npu="310p" id13 -->
-- For the Atlas Inference Series AI Core, the supported data types for T are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
+- For the Atlas inference products AI Core, the supported data types for T are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id13 -->
 
 ## Return Value<a name="section459672612511"></a>
@@ -120,10 +120,10 @@ None
   <!-- npu="A3,910b" id18 -->
   - For the following models, the API does not perform computation or write to the target operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id19 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id19 -->
     <!-- npu="910b" id20 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id20 -->
   <!-- end id18 -->
   <!-- npu="950" id21 -->

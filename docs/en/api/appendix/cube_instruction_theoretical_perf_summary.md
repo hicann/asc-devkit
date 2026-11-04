@@ -140,7 +140,7 @@ The theoretical performance of the [LoadData (convolution data copy)](../SIMD-AP
 | [DataCopy (L1 Buffer->BiasTable Buffer)](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable.md) | 32 |
 | [DataCopy (L1 Buffer->Fixpipe Buffer)](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToFixpipe.md) | 32 |
 
-For the Ascend 950PR&950DT product series, the LoadData (2D matrix copy) API is provided only for compatibility. Internally, it uses the LoadData (2D matrix copy V2) API. For its theoretical performance, refer to the LoadData (2D matrix copy V2) API. Note, however, that this compatibility implementation incurs a performance loss.
+For the Ascend 950PR&950DT products, the LoadData (2D matrix copy) API is provided only for compatibility. Internally, it uses the LoadData (2D matrix copy V2) API. For its theoretical performance, refer to the LoadData (2D matrix copy V2) API. Note, however, that this compatibility implementation incurs a performance loss.
 
 Because the internal implementation of the LoadData (MX matrix copy) API involves data movement over two data paths, the formula for calculating the number of cycles it occupies differs. The specific formula is as follows:
 
@@ -156,7 +156,7 @@ Key variable and constant description:
 - $bandwidth\_mx$: Bandwidth for copying the scale matrix, in Byte/cycle.
 - $\Delta T$: External overhead such as bandwidth latency during the copy process.
 
-For the Ascend 950PR&950DT product series, the theoretical performance of the [LoadData (convolution data copy)](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md) and [LoadDataWithStride](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md) instructions depends on their parameters. For parameter descriptions, see [LoadData3DParamsV2 structure parameter description](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419). In addition, compared with the LoadData (convolution data copy) API, the LoadDataWithStride API does not internally include compatibility implementations for other chip versions, which reduces the external overhead caused by compatibility and improves performance. The theoretical performance of the two APIs is described in the following table:
+For the Ascend 950PR&950DT products, the theoretical performance of the [LoadData (convolution data copy)](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md) and [LoadDataWithStride](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md) instructions depends on their parameters. For parameter descriptions, see [LoadData3DParamsV2 structure parameter description](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D.md#zh-cn_topic_0000002512171652_table193501032193419). In addition, compared with the LoadData (convolution data copy) API, the LoadDataWithStride API does not internally include compatibility implementations for other chip versions, which reduces the external overhead caused by compatibility and improves performance. The theoretical performance of the two APIs is described in the following table:
 
 **Table 6** Theoretical performance of LoadData (convolution data copy) and LoadDataWithStride ([NPU architecture version 3510](../../guide/programming_guide/language_extension/simd_builtin_keywords.md))<a id="table1877123821313"></a>  
 

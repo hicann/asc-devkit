@@ -1,6 +1,6 @@
 # Avoiding Bank Conflicts (NPU Architecture Version 3510)<a name="ZH-CN_TOPIC_0000002531242067"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:45:41.755Z pushedAt=2026-10-27T09:54:50.772Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:45:41.755Z pushedAt=2026-11-03T07:05:13.340Z nl=2 -->
 
 [Priority] Medium
 

@@ -1,6 +1,6 @@
 # SIMD&SIMT Built-In Keywords<a name="ZH-CN_TOPIC_0000002593949295"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:14:47.874Z pushedAt=2026-10-28T07:21:59.616Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:14:47.874Z pushedAt=2026-11-03T07:05:13.467Z nl=2 -->
 
 ## Function Execution Space Qualifiers<a name="section1074418132518"></a>
 

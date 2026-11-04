@@ -5,13 +5,13 @@
 ## Applicable Products<a id="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -80,15 +80,15 @@ The template parameters `modeId` and `pipe` of **CrossCoreSetFlag** **have no de
 
 The support for synchronization modes varies by product as follows:
 <!-- npu="950" id8 -->
-- For Ascend 950PR&950DT series products, the supported synchronization modes are: mode 0, mode 1, mode 2, and mode 4.
+- For Ascend 950PR&950DT products, the supported synchronization modes are: mode 0, mode 1, mode 2, and mode 4.
 <!-- end id8 -->
 <!-- npu="A3,910b" id9 -->
 - For the following products, the supported synchronization modes are: mode 0, mode 1, and mode 2.
     <!-- npu="A3" id10 -->
-    - Atlas A3 series products
+    - Atlas A3 products
     <!-- end id10 -->
     <!-- npu="910b" id11 -->
-    - Atlas A2 series products
+    - Atlas A2 products
     <!-- end id11 -->
 <!-- end id9 -->
 
@@ -98,7 +98,7 @@ The support for synchronization modes varies by product as follows:
     - The supported pipeline types are **PIPE_V**, **PIPE_M**, **PIPE_MTE1**, **PIPE_MTE2**, **PIPE_MTE3**, and **PIPE_FIX**.
     - The unsupported pipeline types are **PIPE_ALL** and **PIPE_S**.
 <!-- npu="950" id12 -->
-- For Ascend 950PR&950DT series products, when the inter-core synchronization mode is mode 4,
+- For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4,
     - The supported pipeline types are **PIPE_V**, **PIPE_M**, **PIPE_MTE1**, **PIPE_MTE2**, **PIPE_MTE3**, **PIPE_FIX**, and **PIPE_S**.
     - The unsupported pipeline type is **PIPE_ALL**.
 <!-- end id12 -->
@@ -107,7 +107,7 @@ The support for synchronization modes varies by product as follows:
 
 - When the inter-core synchronization mode is mode 0, 1, or 2, the supported value range is 0-15.
 <!-- npu="950" id13 -->
-- For Ascend 950PR&950DT series products, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
+- For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by AIV0 corresponds to the operation with **flagId** 0-15 in AIC **CrossCoreWaitFlag**.
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by AIV1 corresponds to the operation with **flagId** 16-31 in AIC **CrossCoreWaitFlag**.
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by AIC corresponds to the operation with **flagId** 0-15 in AIV0 **CrossCoreWaitFlag**.
@@ -140,13 +140,13 @@ None
 - Users must ensure that CrossCoreSetFlag and CrossCoreWaitFlag are used together; otherwise, undefined behavior may occur.
 - When the inter-core synchronization mode is mode 0, 1, or 2, the template parameter pipe does not support being set to PIPE\_ALL or PIPE\_S.
 <!-- npu="950" id14 -->
-- For Ascend 950PR&950DT series products, when the inter-core synchronization mode is mode 4, the template parameter pipe does not support being configured as PIPE\_ALL.
+- For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, the template parameter pipe does not support being configured as PIPE\_ALL.
 <!-- end id14 -->
 - For multiple **CrossCoreSetFlag** calls issued consecutively by a core, the hardware does not guarantee the execution order. For example, if an AIV issues **CrossCoreSetFlag**<0, PIPE\_V\>\(0\) and **CrossCoreSetFlag**<0, PIPE\_V\>\(1\) in sequence, the actual execution order may be that flagId=1 is executed first.
 - Constraints related to flagId:
     - For modes 0, 1, and 2, each AIC and each AIV has 16 flagIds, and the supported value range is 0-15. If the value of flagId exceeds this range, then truncate the low 4 bits (for example, when flagId=17, the value after truncation is 1).
     <!-- npu="950" id15 -->
-    - For Ascend 950PR&950DT series products, when the inter-core synchronization mode is mode 4, an AIC has 32 flagIds, and the supported value range is 0-31. If the value of flagId exceeds this range, then truncate the low 5 bits (for example, when flagId=35, the value after truncation is 3). An AIV has 16 flagIds, and the supported value range is 0-15. If the value of flagId exceeds this range, then truncate the low 4 bits (for example, when flagId=17, the value after truncation is 1).
+    - For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, an AIC has 32 flagIds, and the supported value range is 0-31. If the value of flagId exceeds this range, then truncate the low 5 bits (for example, when flagId=35, the value after truncation is 3). An AIV has 16 flagIds, and the supported value range is 0-15. If the value of flagId exceeds this range, then truncate the low 4 bits (for example, when flagId=17, the value after truncation is 1).
     <!-- end id15 -->
     - Each flagId corresponds to a counter. When [CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md) is called, if the counter value is 0, the issuance of subsequent instructions is blocked, while already-issued instructions can execute normally. When the scheduling module detects that all cores participating in the synchronization (which cores are included depends on the configured inter-core synchronization mode) have completed the synchronization (by calling **CrossCoreSetFlag**), it increments the counter corresponding to the configured flagId by 1. At this point, the counter value is non-zero, the blocking is released, and the corresponding counter value is decremented by 1 to restore it. For the specific execution logic and details, refer to [Key Feature Description](key_features.md). The counting range of each counter is 0-15. If **CrossCoreSetFlag** is called more than 15 times and the counter value exceeds this range, an error is reported and the process is interrupted.
 - When the inter-core synchronization mode is mode 0, 1, or 2, the constraints for using the same flagId in different inter-core synchronization modes are as follows:

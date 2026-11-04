@@ -1,6 +1,6 @@
 # Enabling Full Constantization of Tiling for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002374865629"></a>
 
-<!-- md-trans-meta sourceCommit=ff6c1d58b9bc23a9e30ed2106f1ce517a833d062 translatedAt=2026-10-23T11:39:16.175Z pushedAt=2026-10-27T02:26:53.396Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ff6c1d58b9bc23a9e30ed2106f1ce517a833d062 translatedAt=2026-10-23T11:39:16.175Z pushedAt=2026-11-03T07:05:13.279Z nl=2 -->
 
 ## Case Introduction<a name="section12231144316533"></a>
 

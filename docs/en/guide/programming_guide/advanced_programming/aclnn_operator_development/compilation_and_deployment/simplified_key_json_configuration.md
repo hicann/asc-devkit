@@ -1,6 +1,6 @@
 # Simplified Key Binary Configuration JSON
 
-<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T13:46:38.470Z pushedAt=2026-10-28T02:37:31.740Z nl=2 -->
+<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T13:46:38.470Z pushedAt=2026-11-03T07:05:13.402Z nl=2 -->
 
 This document describes how to provide the kernel (Kernel) binary configuration JSON in a custom operator project, and how this JSON drives the compilation of multiple binaries based on a custom simplified key. This mechanism applies to scenarios where one OpType needs to precompile multiple binaries by dtype, format, shape binning, or attribute combination, and the runtime selects among them based on the `GenSimplifiedKey` callback.
 

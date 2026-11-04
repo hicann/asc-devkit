@@ -58,7 +58,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 src and dst are the source operand and destination operand, respectively; loadDataParams specifies the movement parameters.
 
-- Supported only on Ascend 950PR&950DT series products
+- Supported only on Ascend 950PR&950DT products
 
     ```cpp
     template <typename T>
@@ -150,7 +150,7 @@ src and dst are the source operand and destination operand, respectively; loadDa
     ```
 
 <!-- npu="950" id3 -->
-- LoadData (convolution data movement) v2Pro API (supported only by Ascend 950PR&950DT series products)
+- LoadData (convolution data movement) v2Pro API (supported only by Ascend 950PR&950DT products)
 
     ```cpp
     template <typename T>
@@ -172,7 +172,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 **src** and **dst** are the source operand and destination operand, respectively; **loadDataParams** is the movement parameter.
 
-- Supported only on Ascend 950PR&950DT series products
+- Supported only on Ascend 950PR&950DT products
 
     ```cpp
     template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
@@ -212,7 +212,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 **src** and **dst** are the source operand and destination operand, respectively; **loadDataParams** is the movement parameter.
 
-- Supported only on Ascend 950PR&950DT series products
+- Supported only on Ascend 950PR&950DT products
 
     ```cpp
     template <typename T>
@@ -234,14 +234,14 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 src and srcMx are the source operands, and dst is the destination operand; loadDataParams and loadMxDataParams are the movement parameters.
 
-- LoadData (MX matrix movement) API (supported only by Ascend 950PR&950DT series products)
+- LoadData (MX matrix movement) API (supported only by Ascend 950PR&950DT products)
 
     ```cpp
     template <typename T, typename U = T>
     __aicore__ inline void LoadData(const LocalTensor<U>& dst, const LocalTensor<T>& src, const LocalTensor<fp8_e8m0_t>& srcMx, const LoadData2DParamsV2& loadDataParams, const LoadData2DMxParams& loadMxDataParams)
     ```
 
-- LoadData (MX matrix movement) API, which supports inconsistent data types between the source operand and the destination operand (supported only by Ascend 950PR&950DT series products)
+- LoadData (MX matrix movement) API, which supports inconsistent data types between the source operand and the destination operand (supported only by Ascend 950PR&950DT products)
 
     ```cpp
     template <typename T, typename U>
@@ -304,7 +304,7 @@ src and dst are the source operand and destination operand, respectively; loadDa
     ```
 
 <!-- npu="950" id6 -->
-- LoadData (convolution data movement) v2Pro API (supported only by Ascend 950PR&950DT series products)
+- LoadData (convolution data movement) v2Pro API (supported only by Ascend 950PR&950DT products)
 
     ```cpp
     template <typename T>
@@ -349,11 +349,11 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 - Only the following product models are supported:
 
     <!-- npu="A3" id7 -->
-    Atlas A3 series products;
+    Atlas A3 products;
     <!-- end id7 -->
 
     <!-- npu="910b" id8 -->
-    Atlas A2 series products;
+    Atlas A2 products;
     <!-- end id8 -->
 
     ```cpp
@@ -389,7 +389,7 @@ The specific supported data paths are as follows (represented by [logical locati
 - L0C Buffer -> L1 Buffer
     - CO1 -> C1
 
-The moved data is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT series products as an example, the API example is as follows:
+The moved data is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT products as an example, the API example is as follows:
 
 Note that the API prototypes may differ across product models. For details, see [Fixpipe (L0C to L1 Data Movement)](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md).
 

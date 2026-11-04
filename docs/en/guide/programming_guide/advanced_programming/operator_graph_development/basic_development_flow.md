@@ -1,6 +1,6 @@
 # Basic Development Process<a name="ZH-CN_TOPIC_0000001985333472"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:32:55.238Z pushedAt=2026-10-28T05:56:32.386Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:32:55.238Z pushedAt=2026-11-03T07:05:13.432Z nl=2 -->
 
 This development process is based on [engineering operator development](../aclnn_operator_development/overview.md). In addition to the operator implementation files required in engineering operator development, you also need to deliver the code files for operator graph compilation. This section only provides development guidance for the operator graph compilation code files.
 

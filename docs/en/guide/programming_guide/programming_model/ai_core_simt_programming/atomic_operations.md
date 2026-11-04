@@ -1,6 +1,6 @@
 # Atomic Operations
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:19:44.691Z pushedAt=2026-10-28T11:42:21.759Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:19:44.691Z pushedAt=2026-11-03T07:08:03.565Z nl=2 -->
 
 In the SIMT programming model, a grid consists of multiple thread blocks, and each thread block contains multiple threads. Different threads can concurrently access the same segment of Global Memory or Unified Buffer (UB). When multiple threads perform read-modify-write operations on the same address simultaneously, a data race may occur without synchronization protection, causing the final result to be inconsistent with expectations.
 

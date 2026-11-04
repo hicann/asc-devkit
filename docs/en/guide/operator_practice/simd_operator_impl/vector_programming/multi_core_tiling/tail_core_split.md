@@ -1,6 +1,6 @@
 # Tail Core Split
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:30:07.543Z pushedAt=2026-10-27T08:55:14.903Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:30:07.543Z pushedAt=2026-11-03T07:05:13.320Z nl=2 -->
 
 In actual operator development, constrained by the total amount of input data and the tiling unit, not all scenarios can distribute computation completely evenly to every core. In this scenario, after the main block is evenly divided, there is remaining data `mainTileRemainder`, but the remaining data cannot be evenly distributed to every core with DataBlock as the minimum unit (`tailBlockNumEachCore` is 0 and `remainingTailLength` is not 0), so it can only be assigned to some cores. The cores that obtain an extra DataBlock are whole cores, and the rest are tail cores. In this case, the load is unbalanced across cores, so whole cores and tail cores must be processed separately. Since `tailBlockNumEachCore` is 0, no core is assigned a base tail block; therefore, a tail core contains only the main block, and a whole core processes one more DataBlock tail block than a tail core. After data tiling, the first `formerNum` cores are whole cores, each processing `formerLength` elements (including the main block and the tail block); the remaining cores are tail cores, each processing `tailLength` elements (including only the main block).
 

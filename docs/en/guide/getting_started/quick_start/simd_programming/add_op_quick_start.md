@@ -1,6 +1,6 @@
 # Add Operator Quick Start<a name="ZH-CN_TOPIC_0000002500781060"></a>
 
-<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T11:14:17.546Z pushedAt=2026-10-27T06:35:33.709Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T11:14:17.546Z pushedAt=2026-11-03T07:05:13.261Z nl=2 -->
 
 This example is an introductory practice that implements the Add operator based on Ascend C SIMD to help you get started quickly. It presents the complete process of Device-side kernel function implementation, Host-side invocation, and compilation and running, helping you build an overall understanding. Before you begin, install the required CANN software package by referring to [Environment Setup](../../environment_setup.md).
 

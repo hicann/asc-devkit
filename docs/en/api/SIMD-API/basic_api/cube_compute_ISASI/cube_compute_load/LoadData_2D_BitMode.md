@@ -5,13 +5,13 @@
 ## Applicable Products<a id="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -144,7 +144,7 @@ None
 
 - For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md).
 <!-- npu="950" id10 -->
-- For Ascend 950PR & 950DT series products, only the L1 Buffer -> L0A Buffer and L1 Buffer -> L0B Buffer data paths are supported.
+- For Ascend 950PR & 950DT products, only the L1 Buffer -> L0A Buffer and L1 Buffer -> L0B Buffer data paths are supported.
 <!-- end id10 -->
 
 ## Example<a id="section6461234123118"></a>

@@ -1,6 +1,6 @@
 # Entry-Level Feature Implementation<a name="ZH-CN_TOPIC_000000_ADD_ENTRY"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:26:13.450Z pushedAt=2026-10-28T01:34:29.299Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:26:13.450Z pushedAt=2026-11-03T07:05:13.385Z nl=2 -->
 
 This section provides programming guidance for cube multiplication using basic APIs. It introduces the basic method of implementing a cube operator based on the Ascend C programming model and the Cube computing unit. In the operator, the data transfer and compute pipelines are coordinated through event synchronization, which reduces programming complexity.
 

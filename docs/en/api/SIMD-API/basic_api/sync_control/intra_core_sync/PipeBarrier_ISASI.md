@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -74,7 +74,7 @@ Note: This is only an example for reference. In the following cases, PIPE\_V syn
 - When the [cce-auto-sync compilation option](key_features.md#cce-compiler-auto-sync) is enabled, the BiSheng Compiler automatically inserts synchronization between PIPE\_V.
 <!-- end id10 -->
 <!-- npu="950" id11 -->
-- For Ascend 950PR & 950DT series products, synchronization between PIPE\_V is guaranteed by hardware.
+- For Ascend 950PR & 950DT products, synchronization between PIPE\_V is guaranteed by hardware.
 <!-- end id11 -->
 
 **Figure 2** The **Mul** instruction and the **Add** instruction are in a serial relationship. The **Mul** instruction can be executed only after the **Add** instruction is completed.<a name="fig1359216580459"></a>  

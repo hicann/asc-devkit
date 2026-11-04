@@ -5,13 +5,13 @@
 ## Applicable Products<a id="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -92,15 +92,15 @@ The ND2NZ conversion diagram is as follows. The parameter values set in the exam
 The source matrix and the destination matrix support the same data types.
 
 <!-- npu="950" id10 -->
-For the Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, fp8_e8m0_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32.
+For the Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, fp8_e8m0_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, half, bfloat16_t, float.
+For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, half, bfloat16_t, float.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, half, bfloat16_t, float.
+For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, half, bfloat16_t, float.
 <!-- end id12 -->
 
 ## Return Value
@@ -122,7 +122,7 @@ $$
 - Data copied to the L1 Buffer must not overlap. If overlapping writes occur, the hardware does not generate any warning or error, and the write order of the overlapping data is not guaranteed.
 
 <!-- npu="950" id13 -->
-- For the Ascend 950PR&950DT product series, the 1:2 hard channel mode from UB to L1 Buffer is supported. A 1:1 compatibility mode is also provided to resolve code migration compatibility issues for A2/A3. This mode relays data through Global Memory and is slightly less efficient.
+- For the Ascend 950PR&950DT products, the 1:2 hard channel mode from UB to L1 Buffer is supported. A 1:1 compatibility mode is also provided to resolve code migration compatibility issues for A2/A3. This mode relays data through Global Memory and is slightly less efficient.
 <!-- end id13 -->
 
 - The values of the **Nd2NzParams** structure parameters must be within their value ranges, as shown in [Table 4](#table_ub_nd2nz_range).

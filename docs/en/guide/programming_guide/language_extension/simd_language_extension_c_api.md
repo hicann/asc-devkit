@@ -1,6 +1,6 @@
 # SIMD Language Extension Layer C API<a name="ZH-CN_TOPIC_0000002477823928"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:13:53.093Z pushedAt=2026-10-28T07:19:55.306Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:13:53.093Z pushedAt=2026-11-03T07:05:13.465Z nl=2 -->
 
 The C API exposes the complete programming capabilities of the chip, supports memory allocation in the form of arrays, and is generally pointer-based, delivering a C programming experience consistent with industry standards.
 

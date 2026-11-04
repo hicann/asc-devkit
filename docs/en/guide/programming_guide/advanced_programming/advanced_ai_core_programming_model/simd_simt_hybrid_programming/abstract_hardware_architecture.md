@@ -1,6 +1,6 @@
 # Abstract Hardware Architecture<a name="ZH-CN_TOPIC_0000002593949261"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:05:37.385Z pushedAt=2026-10-28T03:10:37.786Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:05:37.385Z pushedAt=2026-11-03T07:05:13.412Z nl=2 -->
 
 Ascend C supports SIMD and SIMT hybrid programming to achieve efficient coordination between vector-level parallelism and thread-level parallelism. The AI Core consists of AIC and AIV. The AIV core supports both SIMT and SIMD working modes, enabling hybrid SIMD and SIMT programming within the AIV, as well as fused programming between the SIMT of the AIV and the SIMD of the AIC. The overall hardware architecture is shown in the following figure:
 

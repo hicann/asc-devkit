@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -120,10 +120,10 @@ None
   <!-- npu="A3,910b" id19 -->
   - For the following models, when the value of the mask or repeatTime parameter is 0, no computation is performed and no value is written to the destination operand. The API is treated as a NOP (no operation).
     <!-- npu="A3" id20 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id19 -->
 
@@ -141,10 +141,10 @@ None
 <!-- npu="A3,910b" id24 -->
 - For the following models, if the `mask[]/mask` parameter is configured and no element in a DataBlock participates in the computation, no value is written to the corresponding destination operand, and the original data in the destination operand is retained.
   <!-- npu="A3" id25 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id25 -->
   <!-- npu="910b" id26 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id26 -->
 <!-- end id24 -->
 

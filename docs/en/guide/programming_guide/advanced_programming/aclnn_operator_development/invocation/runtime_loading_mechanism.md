@@ -1,6 +1,6 @@
 # Runtime Loading Mechanism
 
-<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:59:58.094Z pushedAt=2026-10-28T02:59:27.779Z nl=2 -->
+<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:59:58.094Z pushedAt=2026-11-03T07:05:13.410Z nl=2 -->
 
 This document is supplementary content that describes how the compilation artifacts are loaded and executed after kernel function development is complete, and how design decisions made during the development phase affect runtime behavior. From the perspective of a kernel function developer, this document outlines the basic model of runtime calls and the impact of code writing style on runtime behavior.
 

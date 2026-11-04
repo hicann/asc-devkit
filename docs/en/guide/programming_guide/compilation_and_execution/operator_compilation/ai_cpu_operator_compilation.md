@@ -1,6 +1,6 @@
 # AI CPU Operator Compilation<a name="ZH-CN_TOPIC_0000002522571023"></a>
 
-<!-- md-trans-meta sourceCommit=dbcf9f562a966444610132d75953443793dc5cc5 translatedAt=2026-10-23T15:04:09.105Z pushedAt=2026-10-28T07:03:36.169Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dbcf9f562a966444610132d75953443793dc5cc5 translatedAt=2026-10-23T15:04:09.105Z pushedAt=2026-11-03T07:05:13.456Z nl=2 -->
 
 Unlike AI Core operators, which require only a single `.asc` file to compile and generate an executable file, AI CPU operators require both an `.aicpu` file (kernel function definition) and an `.asc` file (which calls the kernel function through the kernel call operator) to compile and generate an executable file.
 

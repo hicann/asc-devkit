@@ -5,25 +5,25 @@
 ## Applicable Products
 
 <!-- npu="950" id13 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id13 -->
 <!-- npu="A3" id14 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id14 -->
 <!-- npu="910b" id15 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
 - Atlas 200I/500 A2 inference products: supported
 <!-- end id16 -->
 <!-- npu="310p" id17 -->
-- Atlas inference series products AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id17 -->
 <!-- npu="310p" id18 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id18 -->
 <!-- npu="910" id19 -->
-- Atlas training series products: supported
+- Atlas training products: supported
 <!-- end id19 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/atomic_operations/SetAtomicAdd_res.md#id1 -->
 
@@ -51,15 +51,15 @@ __aicore__ inline void SetAtomicAdd()
 ## Data Type
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
+- Ascend 950PR&950DT products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- Atlas A3 series products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
+- Atlas A3 products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- Atlas A2 series products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
+- Atlas A2 products support the following data types: int8_t, int16_t, half, bfloat16_t, int32_t, and float.
 <!-- end id3 -->
 
 <!-- npu="310b" id4 -->
@@ -67,11 +67,11 @@ __aicore__ inline void SetAtomicAdd()
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core support the following data types: int16_t, half, and float.
+- Atlas inference products AI Core support the following data types: int16_t, half, and float.
 <!-- end id5 -->
 
 <!-- npu="910" id6 -->
-- Atlas training series products support the following data type: float.
+- Atlas training products support the following data type: float.
 <!-- end id6 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -81,15 +81,15 @@ None
 ## Constraints<a name="section633mcpsimp"></a>
 
 <!-- npu="950" id7 -->
-- For Ascend 950PR&950DT series products, the supported data paths are UB/L0C Buffer-\>GM.
+- For Ascend 950PR&950DT products, the supported data paths are UB/L0C Buffer-\>GM.
 <!-- end id7 -->
 
 <!-- npu="A3" id8 -->
-- For Atlas A3 series products, the supported data paths are UB/L0C Buffer/L1 Buffer-\>GM.
+- For Atlas A3 products, the supported data paths are UB/L0C Buffer/L1 Buffer-\>GM.
 <!-- end id8 -->
 
 <!-- npu="910b" id9 -->
-- For Atlas A2 series products, the supported data paths are UB/L0C Buffer/L1 Buffer-\>GM.
+- For Atlas A2 products, the supported data paths are UB/L0C Buffer/L1 Buffer-\>GM.
 <!-- end id9 -->
 
 <!-- npu="310b" id10 -->
@@ -97,11 +97,11 @@ None
 <!-- end id10 -->
 
 <!-- npu="310p" id11 -->
-- For the AI Core of Atlas inference series products, the supported data path is UB->GM.
+- For the AI Core of Atlas inference products, the supported data path is UB->GM.
 <!-- end id11 -->
 
 <!-- npu="910" id12 -->
-- For Atlas training series products, the supported data paths are UB-\>GM.
+- For Atlas training products, the supported data paths are UB-\>GM.
 <!-- end id12 -->
 
 - After the accumulation operation is complete, it is recommended to disable atomic accumulation by calling [DisableDmaAtomic](DisableDmaAtomic.md) to avoid affecting the functionality of subsequent related instructions.

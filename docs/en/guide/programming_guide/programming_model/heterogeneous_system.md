@@ -1,6 +1,6 @@
 # Heterogeneous System<a name="ZH-CN_TOPIC_0000002394061301"></a>
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:32:09.353Z pushedAt=2026-10-28T11:42:21.729Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:32:09.353Z pushedAt=2026-11-03T07:08:03.547Z nl=2 -->
 
 A heterogeneous system based on Ascend processors typically consists of a CPU and an Ascend NPU. The CPU and its memory are referred to as the host and host memory, while the NPU and its memory are referred to as the device and device memory.
 

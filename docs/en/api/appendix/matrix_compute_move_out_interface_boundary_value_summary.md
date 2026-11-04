@@ -15,7 +15,7 @@ This section summarizes the output results of the L0C Buffer->GM/L0C Buffer->L1 
 The following content applies to the following models:
 
 <!-- npu="950" id1 -->
-- Ascend 950PR & 950DT series products
+- Ascend 950PR & 950DT products
 <!-- end id1 -->
 
 ## Overview

@@ -19,13 +19,13 @@ using asc_quant_mode = QuantMode_t;
 Different product models support different quantization modes, and the range of enum values supported by a specific API may also differ. When using an API, refer to the description of the `quant_pre_mode` parameter in that API. The current product support is as follows:
 
 <!-- npu="910b" id1 -->
-- For Atlas A2 product series, the supported enum values are `NoQuant`, `F322F16`, `F322BF16`, `DEQF16`, `VDEQF16`, `QF322B8_PRE`, `VQF322B8_PRE`, `REQ8`, and `VREQ8`. Some matrix move-out APIs also support `REQ4`, `VREQ4`, `QF322S4_PRE`, and `VQF322S4_PRE`.
+- For Atlas A2 products, the supported enum values are `NoQuant`, `F322F16`, `F322BF16`, `DEQF16`, `VDEQF16`, `QF322B8_PRE`, `VQF322B8_PRE`, `REQ8`, and `VREQ8`. Some matrix move-out APIs also support `REQ4`, `VREQ4`, `QF322S4_PRE`, and `VQF322S4_PRE`.
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- For Atlas A3 product series, the supported enum values are `NoQuant`, `F322F16`, `F322BF16`, `DEQF16`, `VDEQF16`, `QF322B8_PRE`, `VQF322B8_PRE`, `REQ8`, and `VREQ8`. Some matrix move-out APIs also support `REQ4`, `VREQ4`, `QF322S4_PRE`, and `VQF322S4_PRE`.
+- For Atlas A3 products, the supported enum values are `NoQuant`, `F322F16`, `F322BF16`, `DEQF16`, `VDEQF16`, `QF322B8_PRE`, `VQF322B8_PRE`, `REQ8`, and `VREQ8`. Some matrix move-out APIs also support `REQ4`, `VREQ4`, `QF322S4_PRE`, and `VQF322S4_PRE`.
 <!-- end id2 -->
 <!-- npu="950" id3 -->
-- For Ascend 950PR&950DT product series, all enum values listed in the following table are supported.
+- For Ascend 950PR&950DT products, all enum values listed in the following table are supported.
 
     **Table 1** Enum value description
 

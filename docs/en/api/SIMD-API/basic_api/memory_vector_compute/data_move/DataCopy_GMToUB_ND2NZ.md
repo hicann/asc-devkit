@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id16 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id16 -->
 <!-- npu="A3" id17 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id17 -->
 <!-- npu="910b" id18 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id18 -->
 <!-- npu="310b" id19 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -48,7 +48,7 @@ The specific supported data paths are (represented by [logical position TPositio
     ```
 
 <!-- npu="950" id1 -->
-- The enableSmallC0 mode is supported (only supported by Ascend 950PR&950DT series products).
+- The enableSmallC0 mode is supported (only supported by Ascend 950PR&950DT products).
 
     ```cpp
     // This function prototype is supported only on Ascend 950PR&950DT products.
@@ -109,19 +109,19 @@ The ND2NZ conversion diagram in enableSmallC0 enabled mode is as follows:
 ## Data Type<a name="section4219135304818"></a>
 
 <!-- npu="950" id2 -->
-- For the Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, and complex32.
+- For the Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, and complex32.
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- For the Atlas inference series products AI Core, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
+- For the Atlas inference products AI Core, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id5 -->
 
 ## Return Value<a name="section446456163012"></a>

@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -124,10 +124,10 @@ None
   <!-- npu="A3,910b" id19 -->
   - For the following models, when the count or repeatTime parameter is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id20 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id19 -->
 
@@ -148,10 +148,10 @@ None
 <!-- npu="A3,910b,910,310p,310b" id24 -->
 - For the following models, `sharedTmpBuffer` is required.
   <!-- npu="A3" id25 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id25 -->
   <!-- npu="910b" id26 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id26 -->
   <!-- npu="310b" id27 -->
   - Atlas 200I/500 A2 inference products

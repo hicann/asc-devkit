@@ -1,6 +1,6 @@
 # Naming Conversion Rule Reference Table
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:35:35.181Z pushedAt=2026-10-28T02:11:34.440Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:35:35.181Z pushedAt=2026-11-03T07:05:13.395Z nl=2 -->
 
 This document covers basic content and introduces the naming conversion rules in custom operator projects. The operator type (OpType) usually uses UpperCamelCase naming, while the implementation file name and kernel function entry name in the configuration usually use lowercase underscore naming. By default, the framework generates these names based on the OpType.
 

@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id9 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id9 -->
 <!-- npu="A3" id10 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id10 -->
 <!-- npu="910b" id11 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id11 -->
 <!-- npu="310b" id12 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -117,7 +117,7 @@ The following uses 2D examples to introduce several typical usage scenarios.
 The supported data types of the source operand and the destination operand must be consistent.
 
 <!-- npu="950" id1 -->
-For the Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+For the Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 <!-- end id1 -->
 
 ## Return Value<a name="section7607175220218"></a>

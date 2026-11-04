@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id11 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id11 -->
 <!-- npu="A3" id12 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id12 -->
 <!-- npu="910b" id13 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id13 -->
 <!-- npu="310b" id14 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -59,15 +59,15 @@ None
 ## Constraints<a name="section633mcpsimp"></a>
 
 <!-- npu="950" id1 -->
-- For Ascend 950PR&950DT product series, the supported data path is UB/L0C Buffer->GM.
+- For Ascend 950PR&950DT products, the supported data path is UB/L0C Buffer->GM.
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- For Atlas A3 product series, the supported data path is UB/L0C Buffer/L1 Buffer->GM.
+- For Atlas A3 products, the supported data path is UB/L0C Buffer/L1 Buffer->GM.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- For Atlas A2 product series, the supported data path is UB/L0C Buffer/L1 Buffer->GM.
+- For Atlas A2 products, the supported data path is UB/L0C Buffer/L1 Buffer->GM.
 <!-- end id3 -->
 
 - After use, it is recommended to disable the atomic maximum operation through [DisableDmaAtomic](DisableDmaAtomic.md) to avoid affecting subsequent related functions.

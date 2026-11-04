@@ -5,25 +5,25 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference product series AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference product series Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training product series: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/scalar_compute/Cast_multi_type_to_float_res.md#id1 -->
 
@@ -41,11 +41,11 @@ Before using this API, you need to understand [built-in data types](../data_stru
 The following prototypes are supported only by:
 
 <!-- npu="910b" id8 -->
-- Atlas A2 product series
+- Atlas A2 products
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
-- Atlas A3 product series
+- Atlas A3 products
 <!-- end id9 -->
 
 Converts the bfloat16_t type to float:
@@ -56,7 +56,7 @@ __aicore__ inline float Cast(const bfloat16_t& bVal)
 <!-- end id16 -->
 
 <!-- npu="950" id10 -->
-The following prototypes are supported only by the Ascend 950PR&950DT product series:
+The following prototypes are supported only by the Ascend 950PR&950DT products:
 
 Supports conversion of multiple data types to float:
 
@@ -94,13 +94,13 @@ __aicore__ constexpr inline U Cast(T bVal)
 - The supported operand data types are as follows:
 
   <!-- npu="950" id12 -->
-  - Ascend 950PR&950DT product series supports fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, and bfloat16_t.
+  - Ascend 950PR&950DT products supports fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, and bfloat16_t.
   <!-- end id12 -->
   <!-- npu="A3" id13 -->
-  - Atlas A3 product series supports bfloat16_t.
+  - Atlas A3 products supports bfloat16_t.
   <!-- end id13 -->
   <!-- npu="910b" id14 -->
-  - Atlas A2 product series supports bfloat16_t.
+  - Atlas A2 products supports bfloat16_t.
   <!-- end id14 -->
 
 <!-- npu="950" id15 -->

@@ -1,6 +1,6 @@
 # Operator Prototype Definition
 
-<!-- md-trans-meta sourceCommit=693fbd4c936677f1c45b391eccc6b9b290f0c189 translatedAt=2026-10-23T13:55:50.096Z pushedAt=2026-10-28T02:54:51.602Z nl=2 -->
+<!-- md-trans-meta sourceCommit=693fbd4c936677f1c45b391eccc6b9b290f0c189 translatedAt=2026-10-23T13:55:50.096Z pushedAt=2026-11-03T07:05:13.408Z nl=2 -->
 
 This document covers basic content and describes how to use the operator prototype definition to describe the interfaces exposed by an operator and the supported scope. Building on the conclusions of [Operator Function Design](./operator_function_design.md), this document explains how to implement the input/output, attributes, dtype/format, and Tiling function associations from the function design as `OpDef` code, and introduces the output shape and dtype inference configuration in graph mode.
 

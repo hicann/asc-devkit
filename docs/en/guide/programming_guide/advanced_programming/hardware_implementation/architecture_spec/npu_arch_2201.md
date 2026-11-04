@@ -1,6 +1,6 @@
 # NPU Architecture Version 2201<a name="ZH-CN_TOPIC_0000002380477949"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:18:34.048Z pushedAt=2026-10-28T08:22:51.720Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:18:34.048Z pushedAt=2026-11-03T07:05:13.427Z nl=2 -->
 
 This section describes the hardware architecture and functions of \_\_NPU\_ARCH\_\_ version 2201. The corresponding product models are:
 

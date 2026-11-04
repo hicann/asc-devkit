@@ -1,6 +1,6 @@
 # AI Core SIMD Programming Model Overview
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T08:38:33.860Z pushedAt=2026-10-28T11:42:21.734Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T08:38:33.860Z pushedAt=2026-11-03T07:08:03.553Z nl=2 -->
 
 ## Introduction
 The SIMD parallel mechanism is the core computing power support of the AI Core, accounting for more than 90% of the total computing throughput of the entire system. Therefore, this chapter takes the **SIMD programming model** as the main thread, following the progressive logic of "macro architecture - hardware scheduling - code implementation" to fully cover the entire SIMD operator development chain: it explains the parallel task distribution mechanism of multi-AI Core clusters, breaks down the task scheduling logic of heterogeneous compute units within a single AI Core, and explains layer by layer how to develop the computing logic of the [operator kernel function (Kernel)](./kernel_function.md) based on differentiated C/C++ programming interfaces.

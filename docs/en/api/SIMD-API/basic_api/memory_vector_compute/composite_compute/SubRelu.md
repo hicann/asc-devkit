@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -90,15 +90,15 @@ $$
 ## Data Types
 
 <!-- npu="950" id8 -->
-Ascend 950PR&950DT product series supports the following data types: int16_t, half, float, int64_t, and uint64_t. Among them, the uint64\_t/int64\_t data type supports only the API for computing the first n data of a tensor.
+Ascend 950PR&950DT products supports the following data types: int16_t, half, float, int64_t, and uint64_t. Among them, the uint64\_t/int64\_t data type supports only the API for computing the first n data of a tensor.
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
-Atlas A3 product series supports the following data types: int16_t, half, and float.
+Atlas A3 products supports the following data types: int16_t, half, and float.
 <!-- end id9 -->
 
 <!-- npu="910b" id10 -->
-Atlas A2 product series supports the following data types: int16_t, half, and float.
+Atlas A2 products supports the following data types: int16_t, half, and float.
 <!-- end id10 -->
 
 <!-- npu="310b" id11 -->
@@ -106,7 +106,7 @@ Atlas 200I/500 A2 inference products support the following data types: half and 
 <!-- end id11 -->
 
 <!-- npu="310p" id12 -->
-Atlas inference series AI Core supports the following data types: int16_t, half, and float.
+Atlas inference products AI Core supports the following data types: int16_t, half, and float.
 <!-- end id12 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -122,18 +122,18 @@ None
   <!-- npu="A3,910b" id14 -->
   - For the following models, this API does not perform any computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id15 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id15 -->
     <!-- npu="910b" id16 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id16 -->
   <!-- end id14 -->
   <!-- npu="950" id17 -->
-  - For Ascend 950PR&950DT product series, this API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
   <!-- end id17 -->
 <!-- end id13 -->
 <!-- npu="950" id18 -->
-- Description of Unified Buffer (UB) space usage. For Ascend 950PR&950DT product series:
+- Description of Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
   - The tensor high-dimensional splitting compute API occupies 8 KB of UB temporary space.
   - The tensor first-n-data continuous compute API does not involve the 8 KB UB temporary space.
 <!-- end id18 -->

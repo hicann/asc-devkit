@@ -1,6 +1,6 @@
 # Basic Process
 
-<!-- md-trans-meta sourceCommit=ea8897b388b9bae7364d26841da4bdbbcadcfb65 translatedAt=2026-10-23T13:49:59.893Z pushedAt=2026-10-28T02:41:51.450Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ea8897b388b9bae7364d26841da4bdbbcadcfb65 translatedAt=2026-10-23T13:49:59.893Z pushedAt=2026-11-03T07:05:13.403Z nl=2 -->
 
 This document covers the basics and describes the basic process of writing Host-side Tiling in the aclnn engineering-based operator development approach. Host-side Tiling takes the Tiling design conclusions from [Operator Function Design](./operator_function_design.md), and converts the input shape, attributes, and running scenarios into the parameters required before the kernel function is launched.
 

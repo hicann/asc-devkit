@@ -66,7 +66,7 @@ Returns the ceiling of the quotient of two integers. In general, the return valu
 - When b is 0, the result is 0.
 - For signed input, the caller must ensure that a >= 0 and b > 0.
 <!-- npu="950" id8 -->
-- For the Ascend 950PR&950DT product series, when used on the vector side, the input parameter of this API supports only the `uint32_t` type. In the VF scenario, the return value must be converted to the `uint16_t` type using `static_cast`, and the caller must ensure that the ceiling result is within the representable range of `uint16_t`. This constraint originates from the VF Hardware Loop coding specifications. For more specifications, see [Hardware Loop Coding Specifications](../../../../guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_loop_optimization.md#section11326136133217).
+- For the Ascend 950PR&950DT products, when used on the vector side, the input parameter of this API supports only the `uint32_t` type. In the VF scenario, the return value must be converted to the `uint16_t` type using `static_cast`, and the caller must ensure that the ceiling result is within the representable range of `uint16_t`. This constraint originates from the VF Hardware Loop coding specifications. For more specifications, see [Hardware Loop Coding Specifications](../../../../guide/operator_practice/simd_operator_optimization/vector_compute/vf_optimization/vf_loop_optimization.md#section11326136133217).
 <!-- end id8 -->
 
 ## Examples

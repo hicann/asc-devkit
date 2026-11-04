@@ -1,6 +1,6 @@
 # Contiguous Computation API<a name="ZH-CN_TOPIC_0000002491670826"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:24:50.917Z pushedAt=2026-10-28T07:47:16.003Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:24:50.917Z pushedAt=2026-11-03T07:05:13.475Z nl=2 -->
 
 The contiguous computation API supports computation on the first *n* data items of a tensor. It computes the consecutive n data items of the source operand and writes the results consecutively to the destination operand, addressing the contiguous computation of one-dimensional tensors.
 

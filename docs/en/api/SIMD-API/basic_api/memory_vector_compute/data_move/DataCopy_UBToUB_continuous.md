@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id16 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id16 -->
 <!-- npu="A3" id17 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id17 -->
 <!-- npu="910b" id18 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id18 -->
 <!-- npu="310b" id19 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -72,15 +72,15 @@ Taking the half data type as an example, the shape of the source operand is 1 \*
 The source operand and destination operand support the same data types, as follows:
 
 <!-- npu="950" id1 -->
-- For Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+- For Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 <!-- end id1 -->
 
 <!-- npu="A3" id2 -->
-- For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id2 -->
 
 <!-- npu="910b" id3 -->
-- For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id3 -->
 
 <!-- npu="310p" id4 -->
@@ -101,8 +101,8 @@ None
 - When calling the continuous copy API, **count** \* sizeof\(T\) must be 32-byte aligned. If it is not aligned, the copy amount is rounded down to 32-byte alignment.
 <!-- npu="910b,A3" id6 -->
 - For the following product models:
-    - Atlas A2 product series
-    - Atlas A3 product series
+    - Atlas A2 products
+    - Atlas A3 products
 
     In the cross-card communication operator development scenario, the DataCopy class APIs support cross-card data copy only over the HCCS physical link, and do not support other paths. During development, pay attention to the physical path involved in inter-card communication. You can run the `npu-smi info -t topo` command to query the HCCS physical link.
 <!-- end id6 -->

@@ -1,6 +1,6 @@
 # Call Example<a name="ZH-CN_TOPIC_0000001741451164"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:13:12.964Z pushedAt=2026-10-28T03:18:19.040Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:13:12.964Z pushedAt=2026-11-03T07:05:13.421Z nl=2 -->
 
 After completing the development of the ONNX framework adaptation plugin, you can call Ascend C custom operators from the ONNX framework. The following uses an ONNX framework network that contains only a LeakyRelu operator as an example (the LeakyRelu operator in this network is mapped to a custom LeakyRelu operator through the adaptation plugin) to demonstrate the inference process using an inference tool. The purpose is to help you quickly experience the process of calling custom operators in a network during inference.
 

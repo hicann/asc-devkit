@@ -1,6 +1,6 @@
 # Programming Example<a name="ZH-CN_TOPIC_0000002563469531"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:09:11.511Z pushedAt=2026-10-28T03:16:47.038Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:09:11.511Z pushedAt=2026-11-03T07:05:13.418Z nl=2 -->
 
 This section uses the [gather & adds hybrid programming sample](../../../../../../../examples/05_simd_simt_hybrid/00_introduction/simd_simt_gather_and_adds) as an example to demonstrate the key syntax of SIMD and SIMT hybrid programming.
 

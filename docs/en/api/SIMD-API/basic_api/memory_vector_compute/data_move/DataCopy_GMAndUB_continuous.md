@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id21 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id21 -->
 <!-- npu="A3" id22 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id22 -->
 <!-- npu="910b" id23 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id23 -->
 <!-- npu="310b" id24 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -85,15 +85,15 @@ Taking the half data type as an example, the shape of the source operand is 1 \*
 The source operand and destination operand support the same data types. The Global Memory -> UB and UB -> Global Memory data paths support the same data types for the same product, as follows:
 
 <!-- npu="950" id2 -->
-- For Ascend 950PR&950DT series products, the supported data types are: b8, b16, b32, b64.
+- For Ascend 950PR&950DT products, the supported data types are: b8, b16, b32, b64.
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id4 -->
 
 <!-- npu="310b" id5 -->
@@ -126,8 +126,8 @@ None
 
 <!-- npu="910b,A3" id11 -->
 - For the following product models:
-    - Atlas A2 product series
-    - Atlas A3 product series
+    - Atlas A2 products
+    - Atlas A3 products
 
     In the cross-card communication operator development scenario, the DataCopy class APIs support cross-card data copy only over the HCCS physical link, and do not support other paths. During development, pay attention to the physical path involved in inter-card communication. You can run the `npu-smi info -t topo` command to query the HCCS physical link.
 <!-- end id11 -->

@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Not supported
+- Atlas training products: Not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/assert_res.md#id1 -->
 
@@ -64,7 +64,7 @@ The support of each programming scenario on different products is shown in the f
     <!-- end id12 -->
     <!-- npu="310p" id13 -->
     <tr>
-        <td>Atlas inference product series AI Core</td>
+        <td>Atlas inference products AI Core</td>
         <td>Supported</td>
         <td>Not supported</td>
         <td>Not supported</td>
@@ -72,7 +72,7 @@ The support of each programming scenario on different products is shown in the f
     <!-- end id13 -->
     <!-- npu="310p" id14 -->
     <tr>
-        <td>Atlas inference product series Vector Core</td>
+        <td>Atlas inference products Vector Core</td>
         <td>Supported</td>
         <td>Not supported</td>
         <td>Not supported</td>

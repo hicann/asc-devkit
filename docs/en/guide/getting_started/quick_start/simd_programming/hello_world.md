@@ -1,6 +1,6 @@
 # Hello World <a name="ZH-CN_TOPIC_0000002523206878"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:14:48.023Z pushedAt=2026-10-26T10:24:53.887Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:14:48.023Z pushedAt=2026-11-03T07:05:13.260Z nl=2 -->
 
 This getting-started example implements a Hello World operator based on Ascend C SIMD to help you get started quickly. It covers the complete process of implementing the device-side kernel, calling it from the host side, and compiling and running the operator, helping developers build an overall understanding.
 

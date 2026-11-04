@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -88,7 +88,7 @@ $dst_i = \operatorname{Max}(scalar, src_i)$
 ## Data Type
 
 <!-- npu="950" id8 -->
-For the Ascend 950PR&950DT product series, the supported data types are int8_t, uint8_t, int16_t, half, bfloat16_t, int32_t, float, int64_t, and uint64_t. Among them, the int8_t, uint8_t, int64_t, and uint64_t data types are supported only by the API for computing the first n data elements of a tensor.
+For the Ascend 950PR&950DT products, the supported data types are int8_t, uint8_t, int16_t, half, bfloat16_t, int32_t, float, int64_t, and uint64_t. Among them, the int8_t, uint8_t, int64_t, and uint64_t data types are supported only by the API for computing the first n data elements of a tensor.
 <!-- end id8 -->
 
 ## Return Value<a name="section194321251175110"></a>

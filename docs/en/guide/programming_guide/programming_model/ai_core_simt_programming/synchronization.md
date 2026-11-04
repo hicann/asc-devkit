@@ -1,6 +1,6 @@
 # Synchronization Mechanism<a name="ZH-CN_TOPIC_0000002554691683"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:25:20.646Z pushedAt=2026-10-28T11:42:21.763Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:25:20.646Z pushedAt=2026-11-03T07:08:03.568Z nl=2 -->
 
 SIMT is a single-instruction, multiple-thread programming model designed to hide memory access latency and improve compute throughput through concurrent execution of multiple threads. In the SIMT programming model, multiple threads within a thread block execute in parallel, and different threads may have different execution progress and memory access arrival order. When data dependencies exist between threads, synchronization APIs or memory fence APIs are required to constrain the execution order and memory visibility, preventing the reading of data whose writes have not completed. Synchronization APIs are mainly classified into two types:
 

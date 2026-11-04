@@ -1,6 +1,6 @@
 # show\_kernel\_debug\_data Tool
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:50:06.586Z pushedAt=2026-10-28T06:49:36.617Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:50:06.586Z pushedAt=2026-11-03T07:05:13.442Z nl=2 -->
 
 In the Ascend C operator program code, you can use the AscendC::[DumpTensor](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/DumpTensor.md), AscendC::[printf](../../../api/Utils-API/tuning_interface/printf.md), AscendC::[PrintTimeStamp](../../../api/SIMD-API/basic_api/debug_interface/onboard_print/PrintTimeStamp.md), and [ascendc\_assert](../../../api/Utils-API/tuning_interface/assert.md) interfaces to print related debugging information, and enable the Dump configuration through the aclInit interface or by directly configuring the acl.json file to export the debugging information of the Ascend C operator kernel function. This tool provides offline parsing of the debugging information, helping you obtain and parse the debugging information, that is, parse the exported bin files into a readable format. For an example of using this tool, see the [show\_kernel\_debug\_data sample](https://gitcode.com/cann/asc-tools/tree/9.2.0/examples/01_show_kernel_debug_data).
 

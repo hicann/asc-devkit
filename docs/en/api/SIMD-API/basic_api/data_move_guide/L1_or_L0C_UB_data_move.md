@@ -133,7 +133,7 @@ The specific supported data paths are as follows (represented by [logical positi
 - L0C Buffer -> UB
     - CO1 -> UB
 
-The data to be moved is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT series products as an example, the API example is as follows:
+The data to be moved is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT products as an example, the API example is as follows:
 
 Note that the API prototypes may differ across product models. For details, see [Fixpipe (L0C to UB Data Movement)](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md).
 
@@ -165,7 +165,7 @@ The supported data paths are as follows (represented by [logical position TPosit
 
 The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). For details about the API, see [DataCopyL1ToUB (L1 to UB Data Movement)](../cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md).
 
-This API is supported only on Ascend 950PR&950DT series products.
+This API is supported only on Ascend 950PR&950DT products.
 
 **src** and **dst** are the source operand and destination operand, respectively; **count** is the number of elements to be moved continuously.
 
@@ -189,7 +189,7 @@ The specific supported data paths are as follows (represented by [logical positi
 
 The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). For details about the API, see [DataCopyL1ToUB (L1-to-UB data movement)](../cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md).
 
-This API is supported only by Ascend 950PR&950DT series products.
+This API is supported only by Ascend 950PR&950DT products.
 
 **src** and **dst** are the source operand and destination operand, respectively; **repeatParams** is the movement parameter.
 

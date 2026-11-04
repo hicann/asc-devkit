@@ -9,7 +9,7 @@ In convolution operations, the data stored in the L0C Buffer is in the NC1HWC0 f
 ![](../../../../figures/Fixpipe_NC1HWC0_NHWC.png)
 
 <!-- npu="950" id1 -->
-In particular, for the Ascend 950PR&950DT series products, the Fixpipe instruction also supports converting the data in the L0C Buffer to the NCHW format for output through the [NZ2DN](NZ2DN.md) capability. The conversion diagram is as follows:
+In particular, for the Ascend 950PR&950DT products, the Fixpipe instruction also supports converting the data in the L0C Buffer to the NCHW format for output through the [NZ2DN](NZ2DN.md) capability. The conversion diagram is as follows:
 
 **Figure 2**  NC1HWC0 converted to NCHW format<a name="fig188671630134414"></a>  
 

@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002511188540_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: Supports APIs that include the **FixpipeParamsV220**/**FixpipeParamsArch3510** parameter.
+- Ascend 950PR&950DT products: Supports APIs that include the **FixpipeParamsV220**/**FixpipeParamsArch3510** parameter.
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: Supports only APIs that include the **FixpipeParamsV220** parameter.
+- Atlas A3 products: Supports only APIs that include the **FixpipeParamsV220** parameter.
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: Supports only APIs that include the **FixpipeParamsV220** parameter.
+- Atlas A2 products: Supports only APIs that include the **FixpipeParamsV220** parameter.
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -93,17 +93,17 @@ To facilitate user usage and reduce learning and understanding costs, a combined
 | Parameter | Description |
 | ---------- | ---------- |
 | T/U | Data type of the destination operand/source operand. For supported data types, see [Data Types](#zh-cn_topic_0000002511188540_section4219135304818). |
-| config | Fixpipe-related configuration parameter, of the type FixpipeConfig. The values are as follows:<br>&nbsp;&nbsp;&bull; **CFG_ROW_MAJOR (default value)**: Enables NZ2ND, and the output data format is ND. <!-- npu="A3,910b" id17 -->For Atlas A3 product series and Atlas A2 product series, this does not take effect on the L0C Buffer -> L1 Buffer path. <!-- end id17 --><br>&nbsp;&nbsp;&bull; CFG_NZ: NZ2NZ, and the output data format is NZ.<br>&nbsp;&nbsp;&bull; CFG_COLUMN_MAJOR: Enables NZ2DN, and the output data format is DN. This is supported only by Ascend 950PR&950DT product series, and is not supported by Atlas A2 product series or Atlas A3 product series.<br><br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // Used to specify whether the destination address is in the Unified Buffer (UB). <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // The output data format remains NZ.<br>    ROW_MAJOR, // Enables NZ2ND, and the output data format is ND.<br>    COLUMN_MAJOR, // Enables NZ2DN, and the output data format is DN.<br>};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR}; |
+| config | Fixpipe-related configuration parameter, of the type FixpipeConfig. The values are as follows:<br>&nbsp;&nbsp;&bull; **CFG_ROW_MAJOR (default value)**: Enables NZ2ND, and the output data format is ND. <!-- npu="A3,910b" id17 -->For Atlas A3 products and Atlas A2 products, this does not take effect on the L0C Buffer -> L1 Buffer path. <!-- end id17 --><br>&nbsp;&nbsp;&bull; CFG_NZ: NZ2NZ, and the output data format is NZ.<br>&nbsp;&nbsp;&bull; CFG_COLUMN_MAJOR: Enables NZ2DN, and the output data format is DN. This is supported only by Ascend 950PR&950DT products, and is not supported by Atlas A2 products or Atlas A3 products.<br><br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // Used to specify whether the destination address is in the Unified Buffer (UB). <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // The output data format remains NZ.<br>    ROW_MAJOR, // Enables NZ2ND, and the output data format is ND.<br>    COLUMN_MAJOR, // Enables NZ2DN, and the output data format is DN.<br>};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR}; |
 | S | Data type of the parameter cbufWorkspace, that is, the data type of the on-the-fly quantization parameter.<br>&nbsp;&nbsp;&bull;When the destination operand, source operand, and cbufWorkspace use basic data types, the template parameter S must be of the uint64_t type; otherwise, compilation fails.<br>&nbsp;&nbsp;&bull;When the destination operand, source operand, and cbufWorkspace use the TensorTrait type, the LiteType of the template parameter S must be of the uint64_t type; otherwise, compilation fails.<br>The template parameter following the template parameter S is used only for the preceding data type check, and users do not need to pay attention to it. |
 
 **Table 2** Fixpipe parameter description
 
 | Parameter | Input/Output | Description |
 | ---------- | ---------- | ---------- |
-| dst | Output | Destination operand, of the type LocalTensor. The data format is NZ. The NZ address must meet 32-byte alignment. <!-- npu="950" id20 --><br>For Ascend 950PR&950DT product series, the ND and DN data formats are also supported, and the address must meet 32-byte alignment. <!-- end id20 --> |
+| dst | Output | Destination operand, of the type LocalTensor. The data format is NZ. The NZ address must meet 32-byte alignment. <!-- npu="950" id20 --><br>For Ascend 950PR&950DT products, the ND and DN data formats are also supported, and the address must meet 32-byte alignment. <!-- end id20 --> |
 | src | Input | Source operand, of the type LocalTensor. The supported physical address is L0C Buffer (TPosition is CO1), which is the result computed by the Mmad API. The data format is NZ, and the address must meet 64-byte alignment. |
 | intriParams | Input | Fixpipe copy parameter. For the specific definition, see "basic_api/kernel_struct_fixpipe.h".<br>For the parameter description, see the structure description of the Fixpipe copy parameters (FixpipeParamsArch3510 and FixpipeParamsV220). |
-| cbufWorkspace | Input | Quantization parameter, of the type `LocalTensor<uint64_t>`. The supported physical address is L1 Buffer (TPosition is C1), and the address must meet 32-byte alignment.<br>&nbsp;&nbsp;&bull;Supported when quantPre is VDEQF16, VQF322B8_PRE, or VREQ8.<br><!-- npu="950" id21 -->&nbsp;&nbsp;&bull;For Ascend 950PR&950DT product series, in addition to the preceding modes, VQF322FP8_PRE, VQF322HIF8_PRE, VQF322HIF8_PRE_HYBRID, VQS322BF16_PRE, VQF322F16_PRE, VQF322BF16_PRE, and VQF322F32_PRE are also supported.<br><!-- end id21 -->For the introduction to quantPre, see the quantPre part in the Fixpipe copy parameter structure. |
+| cbufWorkspace | Input | Quantization parameter, of the type `LocalTensor<uint64_t>`. The supported physical address is L1 Buffer (TPosition is C1), and the address must meet 32-byte alignment.<br>&nbsp;&nbsp;&bull;Supported when quantPre is VDEQF16, VQF322B8_PRE, or VREQ8.<br><!-- npu="950" id21 -->&nbsp;&nbsp;&bull;For Ascend 950PR&950DT products, in addition to the preceding modes, VQF322FP8_PRE, VQF322HIF8_PRE, VQF322HIF8_PRE_HYBRID, VQS322BF16_PRE, VQF322F16_PRE, VQF322BF16_PRE, and VQF322F32_PRE are also supported.<br><!-- end id21 -->For the introduction to quantPre, see the quantPre part in the Fixpipe copy parameter structure. |
 
 **Table 3** Structure description of the Fixpipe copy parameter (FixpipeParamsArch3510)
 
@@ -144,7 +144,7 @@ To facilitate user usage and reduce learning and understanding costs, a combined
 **Supported data type combinations for the source matrix and destination matrix**
 
 <!-- npu="950" id22 -->
-For the Ascend 950PR&950DT product series, the supported data type combinations are as follows:
+For the Ascend 950PR&950DT products, the supported data type combinations are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |
@@ -154,7 +154,7 @@ For the Ascend 950PR&950DT product series, the supported data type combinations 
 <!-- end id22 -->
 
 <!-- npu="A3" id23 -->
-For the Atlas A3 product series, the supported data type combinations are as follows:
+For the Atlas A3 products, the supported data type combinations are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |
@@ -164,7 +164,7 @@ For the Atlas A3 product series, the supported data type combinations are as fol
 <!-- end id23 -->
 
 <!-- npu="910b" id24 -->
-For the Atlas A2 product series, the supported data type combinations are as follows:
+For the Atlas A2 products, the supported data type combinations are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |
@@ -193,10 +193,10 @@ None
 <!-- npu="A3,910b" id28 -->
 - For the following product models, the special value/boundary value constraints are described as follows:
     <!-- npu="A3" id29 -->
-    Atlas A3 product series
+    Atlas A3 products
     <!-- end id29 -->
     <!-- npu="910b" id30 -->
-    Atlas A2 product series
+    Atlas A2 products
     <!-- end id30 -->
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the CTRL register (control register) can be set to control the saturation mode when floating-point values are quantized and moved out:
 
@@ -212,7 +212,7 @@ None
     For a summary of the boundary values of the L0C Buffer-to-L1 Buffer copy API, see [Summary of Boundary Values of Matrix Computation Move-Out APIs](../../../../appendix/matrix_compute_move_out_interface_boundary_value_summary.md).
 <!-- end id28 -->
 <!-- npu="950" id31 -->
-- Special value/boundary value constraints for the Ascend 950PR&950DT product series:
+- Special value/boundary value constraints for the Ascend 950PR&950DT products:
 
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the CTRL register (control register) can be set to control the saturation mode when floating-point values are quantized and moved out;
 

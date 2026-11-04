@@ -1,6 +1,6 @@
 # Graph Compilation and Graph Execution<a name="ZH-CN_TOPIC_0000001920158120"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:38:53.086Z pushedAt=2026-10-28T05:58:47.269Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:38:53.086Z pushedAt=2026-11-03T07:05:13.436Z nl=2 -->
 
 This section uses a single-operator model execution example to introduce the graph compilation and graph execution process in graph mode. Single-operator model execution refers to executing operators based on the graph IR. First compile the operators (for example, use the ATC tool to compile the single-operator description file defined by Ascend IR into an operator OM model file), then call ACL APIs to load the operator model, and finally call ACL APIs to execute the operators.
 

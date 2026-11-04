@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -62,7 +62,7 @@ __aicore__ inline void AbsSub(const LocalTensor<T> &dst, const LocalTensor<T> &s
 
 ## Data Types
 <!-- npu="950" id8 -->
-For Ascend 950PR&950DT product series, the data types supported by T are half and float.
+For Ascend 950PR&950DT products, the data types supported by T are half and float.
 <!-- end id8 -->
 
 ## Return Value<a name="section640mcpsimp"></a>

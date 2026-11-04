@@ -1,6 +1,6 @@
 # How to Use Temporary Space on the Kernel Side<a name="ZH-CN_TOPIC_0000002522740421"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:22:41.357Z pushedAt=2026-10-28T07:45:01.153Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:22:41.357Z pushedAt=2026-11-03T07:05:13.473Z nl=2 -->
 
 The internal implementation of kernel function-side APIs generally involves complex mathematical computation and requires additional temporary space to store intermediate variables during computation. Except for cube computation, HCCL communication, and convolution computation, for temporary space handling in most advanced APIs, developers can pass pre-allocated temporary space through the sharedTmpBuffer input parameter of the kernel function-side API, or allocate temporary space through the API framework.
 

@@ -7,13 +7,13 @@
 ### Prototype without config
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -32,13 +32,13 @@
 ### Prototype with config
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -175,10 +175,10 @@ None
   <!-- npu="A3,910b" id34 -->
   - For the following models, when the value of count or repeatTime is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id29 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id29 -->
     <!-- npu="910b" id30 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id30 -->
   <!-- end id34 -->
   <!-- npu="950" id33 -->
@@ -248,7 +248,7 @@ When --cce-ftz=true (the default value), in general scenarios it is recommended 
     ```
 
     <!-- npu="950" id31 -->
-    The following example is supported only by the Ascend 950PR&950DT product series.
+    The following example is supported only by the Ascend 950PR&950DT products.
 
     ```cpp
     // Div 0ulp.

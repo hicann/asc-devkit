@@ -9,10 +9,10 @@ During the move-out process of matrix computation, the core function of NZ2NZ is
 <!-- npu="A3,910b" id1 -->
 The following product models are used as examples:
 <!-- npu="A3" id2 -->
-Atlas A3 product series
+Atlas A3 products
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-Atlas A2 product series
+Atlas A2 products
 <!-- end id3 -->
 The NZ2NZ conversion process can be referenced by the following pseudocode:
 
@@ -43,7 +43,7 @@ The following parameters are user-configurable parameters of NZ2NZ. For their me
 <!-- end id1 -->
 
 <!-- npu="950" id4 -->
-Taking the Ascend 950PR&950DT series as an example, refer to the following pseudocode for the NZ2NZ conversion process:
+Taking the Ascend 950PR&950DT products as an example, refer to the following pseudocode for the NZ2NZ conversion process:
 
 ```cpp
 for (j = 0; j < mSize; j++) {

@@ -1,6 +1,6 @@
 # Programming API Overview<a name="ZH-CN_TOPIC_0000001976190182"></a>
 
-<!-- md-trans-meta sourceCommit=05e70f75a396a9000a410ffbd40bee3d156ac8b4 translatedAt=2026-10-23T15:20:56.807Z pushedAt=2026-10-28T08:02:17.771Z nl=2 -->
+<!-- md-trans-meta sourceCommit=05e70f75a396a9000a410ffbd40bee3d156ac8b4 translatedAt=2026-10-23T15:20:56.807Z pushedAt=2026-11-03T07:05:13.471Z nl=2 -->
 
 >[!NOTE] Note 
 >This chapter provides an overview of the programming APIs. For details about specific APIs, see [Ascend C API](../../../api/api_list.md).

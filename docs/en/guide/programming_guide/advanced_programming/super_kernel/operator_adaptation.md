@@ -1,6 +1,6 @@
 # Operator Adaptation Description
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:43:20.939Z pushedAt=2026-10-28T06:09:24.579Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:43:20.939Z pushedAt=2026-11-03T07:05:13.436Z nl=2 -->
 
 To support fusion into SuperKernel, a custom operator does not differ significantly from a regular operator in terms of the development process, but it must comply with the following series of **specific constraints**. These constraints are independent of the specific enabling method (the npugraph_ex backend or GE graph mode). Most of the constraints are related to the relationship between the number of startup cores (block num) of the operator and the number of startup cores of SuperKernel, and developers need to pay attention to them at the operator design stage.
 

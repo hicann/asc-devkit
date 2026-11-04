@@ -17,11 +17,11 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: Not supported
+- Atlas inference products AI Core: Not supported
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series products: Not supported
+- Atlas training products: Not supported
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/asc_dump_res.md#id1 -->
 
@@ -72,7 +72,7 @@ __aicore__ static __attribute__((noinline)) void asc_dump(__cc__ T* input, uint3
 ```
 
 <!-- npu="950" id13 -->
-The following APIs are supported only on Ascend 950PR&950DT series products.
+The following APIs are supported only on Ascend 950PR&950DT products.
 
 ```cpp
 // Print data in the BiasTable Buffer.
@@ -86,7 +86,7 @@ __aicore__ static __attribute__((noinline)) void asc_dump(__fbuf__ T* input, uin
 <!-- end id13 -->
 
 <!-- npu="950" id7 -->
-The following APIs are the asc\_dump APIs used in simd\_vf, and are supported only on Ascend 950PR&950DT series products.
+The following APIs are the asc\_dump APIs used in simd\_vf, and are supported only on Ascend 950PR&950DT products.
 
 ```cpp
 // Print data in registers.
@@ -121,13 +121,13 @@ __simd_callee__ inline void asc_dump(__ubuf__ T* input, uint32_t desc, uint32_t 
 
 ## Data Type
 <!-- npu="950" id10 -->
-- For Ascend 950PR&950DT series products: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
+- For Ascend 950PR&950DT products: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 series products: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
+- For Atlas A3 products: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 series products: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
+- For Atlas A2 products: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
 <!-- end id12 -->
 
 ## Return Value
@@ -137,10 +137,10 @@ None
 ## Constraints
 
 <!-- npu="950" id8 -->
-- For Ascend 950PR&950DT series products, when using this API to print L1 Buffer, BiasTable Buffer, or Fixpipe Buffer data, the HDK version must be upgraded to at least 25.7.RC1.6 or later.
+- For Ascend 950PR&950DT products, when using this API to print L1 Buffer, BiasTable Buffer, or Fixpipe Buffer data, the HDK version must be upgraded to at least 25.7.RC1.6 or later.
 <!-- end id8 -->
 <!-- npu="950" id15 -->
-- For Ascend 950PR&950DT series products, in the scenario of printing Tensor information in the Fixpipe Buffer:
+- For Ascend 950PR&950DT products, in the scenario of printing Tensor information in the Fixpipe Buffer:
     - The Fixpipe Buffer stores hardware parameter bit fields, so the printed result may not be bitwise identical to the original data in the L1 Buffer. For the preceding Quant parameters, every 8 bytes retain bit[7:0], bit[31:13], and bit[46:37], with the expected value `input & 0x00007fe0ffffe0ffULL`; for the preceding ReLU parameters, every 4 bytes retain bit[31:13], with the expected value `word & 0xffffe000U`.
 <!-- end id15 -->
 - When using this API, the total amount of data dumped on each core cannot exceed 30KB. You must control the amount of content to print; otherwise, the data will not be printed.

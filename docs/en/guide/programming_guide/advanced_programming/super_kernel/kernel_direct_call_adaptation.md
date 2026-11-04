@@ -1,6 +1,6 @@
 # Additional Adaptation Description for Kernel Direct-Call Operators
 
-<!-- md-trans-meta sourceCommit=ffba65a285b93c584314c43929ffaa58f62204b1 translatedAt=2026-10-23T14:42:48.765Z pushedAt=2026-10-28T06:24:28.321Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ffba65a285b93c584314c43929ffaa58f62204b1 translatedAt=2026-10-23T14:42:48.765Z pushedAt=2026-11-03T07:05:13.437Z nl=2 -->
 
 For Ascend C operators developed using the `<<<>>>` method, in addition to following the general constraints in [Operator Adaptation Description](operator_adaptation.md), you need to add a SuperKernel entrypoint function on the operator kernel function entry side. This document describes the specific adaptation method.
 

@@ -1,6 +1,6 @@
 # Basics<a name="ZH-CN_TOPIC_0000002532388143"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:51:47.569Z pushedAt=2026-10-27T09:57:03.977Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:51:47.569Z pushedAt=2026-11-03T07:05:13.291Z nl=2 -->
 
 > [!NOTE] Note
 > This section provides the theoretical background and development guidance for the merged computing and communication operator. Before learning this section, ensure that you have mastered the relevant knowledge in [Cube Programming](../../matrix_advanced_api/basics.md) and [HCCL Collective Communication Library](https://gitcode.com/cann/hccl/blob/9.2.0/docs/en/user_guide/README.md).

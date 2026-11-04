@@ -1,6 +1,6 @@
 # NPU On-Board Debugging<a name="ZH-CN_TOPIC_0000001663882793"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:11:04.012Z pushedAt=2026-10-28T07:09:53.143Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:11:04.012Z pushedAt=2026-11-03T07:05:13.466Z nl=2 -->
 
 NPU on-board debugging mainly includes on-board data printing, msSanitizer memory exception detection, and msDebug single-step debugging. Data printing provides two methods: printf and DumpTensor. DumpTensor is a feature exclusive to SIMD programming and is used to print the data of a specified tensor.
 

@@ -1,6 +1,6 @@
 # Performance Tuning<a name="ZH-CN_TOPIC_0000002529073929"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:10:28.343Z pushedAt=2026-10-28T07:13:49.576Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:10:28.343Z pushedAt=2026-11-03T07:05:13.464Z nl=2 -->
 
 ## Performance Collection and Analysis Tool<a name="section20894115120010"></a>
 

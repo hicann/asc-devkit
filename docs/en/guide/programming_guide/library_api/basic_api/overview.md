@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000002518297265"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:23:35.549Z pushedAt=2026-10-28T08:01:37.799Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:23:35.549Z pushedAt=2026-11-03T07:05:13.476Z nl=2 -->
 
 [Basic APIs](../../../../api/SIMD-API/basic_api/basic_api.md) abstract hardware capabilities, expose chip capabilities, and ensure completeness and compatibility. APIs marked as ISASI (Instruction Set Architecture Special Interface) cannot guarantee compatibility across hardware versions.
 

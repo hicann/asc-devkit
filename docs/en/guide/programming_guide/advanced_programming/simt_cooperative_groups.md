@@ -1,6 +1,6 @@
 # SIMT Cooperative Group Introduction
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:29:08.930Z pushedAt=2026-10-28T06:20:00.098Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:29:08.930Z pushedAt=2026-11-03T07:05:13.390Z nl=2 -->
 
 A cooperative group (cooperative_groups) is an extension of the Ascend C SIMT programming model, used to organize cooperative thread groups. It enables developers to control the granularity of thread collaboration, implementing more extensive and efficient parallel processing logic.
 

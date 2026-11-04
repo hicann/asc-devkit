@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -175,7 +175,7 @@ Used to allocate memory for queues such as **TQue** and for **TBuf**.
 -   The total number of Buffers used in a kernel cannot exceed 64.
 -   It is not recommended to mix the custom-address InitBuffer allocation method with the method that does not specify an address, as this may cause memory conflicts.
 <!-- npu="950" id10 -->
-- For the Ascend 950PR&950DT series, memory allocation for the Unified Buffer (UB) is performed on top of static memory, that is, the dynamic memory starts from the initial position. For details, see [Memory Hierarchy](../../../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md).
+- For the Ascend 950PR&950DT products, memory allocation for the Unified Buffer (UB) is performed on top of static memory, that is, the dynamic memory starts from the initial position. For details, see [Memory Hierarchy](../../../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md).
 <!-- end id10 -->
 - Mixing with static arrays of L1 Buffer, L0A Buffer, L0B Buffer, L0C Buffer, and BiasTable is not supported currently.
 

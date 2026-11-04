@@ -53,11 +53,11 @@ Creates a Matmul single-core Tiling object, a multi-core Tiling object, or a Bat
     The no-argument constructor supports only the following product models:
 
     <!-- npu="910b" id1 -->
-    Atlas A2 series products
+    Atlas A2 products
     <!-- end id1 -->
 
     <!-- npu="A3" id2 -->
-    Atlas A3 series products
+    Atlas A3 products
     <!-- end id2 -->
 <!-- end id3 -->
 

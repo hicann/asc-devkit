@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT Series Products: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 Series Products: Not supported
+- Atlas A3 products: Not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 Series Products: Not supported
+- Atlas A2 products: Not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 Inference Products: Not supported
@@ -21,7 +21,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas Training Series Products: Not supported
+- Atlas training products: Not supported
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMT-API/address_space_conversion_functions/__cvta_global_to_generic_res.md#id1 -->
 

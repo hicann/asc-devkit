@@ -5,13 +5,13 @@
 ## Applicable Products<a id="section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -31,7 +31,7 @@
 
 The header file path is `"basic_api/kernel_operator_mm_intf.h"`.
 
-This API essentially implements the same functionality as the [LoadData (convolution data movement)](./LoadData_3D.md) API. It is used to perform Image to Column expansion on a Feature Map in NC1HWC0 format, and then select a specified data block from the expanded two-dimensional matrix and transfer it to the corresponding memory location. The difference from the LoadData (convolution data movement) API is that this API supports only the Ascend 950PR&950DT product series, supports configuring the output matrix K-axis offset **dstStride** and requires this parameter to be configured. Before calling it, you must use the auxiliary configuration API [SetLoadDataRepeatWithStride](../cube_load_aux_config/SetLoadDataRepeatWithStride.md) to configure the **dstStride** parameter. In addition, compared with LoadData (convolution data movement), this API does not internally include compatibility implementations for other chip versions, which reduces the extra overhead caused by compatibility and optimizes performance.
+This API essentially implements the same functionality as the [LoadData (convolution data movement)](./LoadData_3D.md) API. It is used to perform Image to Column expansion on a Feature Map in NC1HWC0 format, and then select a specified data block from the expanded two-dimensional matrix and transfer it to the corresponding memory location. The difference from the LoadData (convolution data movement) API is that this API supports only the Ascend 950PR&950DT products, supports configuring the output matrix K-axis offset **dstStride** and requires this parameter to be configured. Before calling it, you must use the auxiliary configuration API [SetLoadDataRepeatWithStride](../cube_load_aux_config/SetLoadDataRepeatWithStride.md) to configure the **dstStride** parameter. In addition, compared with LoadData (convolution data movement), this API does not internally include compatibility implementations for other chip versions, which reduces the extra overhead caused by compatibility and optimizes performance.
 
 The data paths supported by LoadDataWithStride are: L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer.
 

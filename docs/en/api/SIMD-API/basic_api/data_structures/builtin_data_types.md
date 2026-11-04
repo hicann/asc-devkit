@@ -59,13 +59,13 @@ To facilitate the description of these data types, the following data type abbre
 The data types supported by each product are as follows:
 
 <!-- npu="950" id2 -->
-- Ascend 950PR & 950DT Series Products: bool, int4b_t, int4x2_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+- Ascend 950PR & 950DT products: bool, int4b_t, int4x2_t, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 <!-- end id2 -->
 <!-- npu="A3" id3 -->
-- Atlas A3 Series Products: bool, int4b_t, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A3 products: bool, int4b_t, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id3 -->
 <!-- npu="910b" id4 -->
-- Atlas A2 Series Products: bool, int4b_t, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- Atlas A2 products: bool, int4b_t, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id4 -->
 <!-- npu="310b" id5 -->
 - Atlas 200I/500 A2 inference products: bool, int4b_t, int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, uint64_t, double.
@@ -411,5 +411,5 @@ complex64 value2 = 4;
 // value2 represents a complex number with a real part of 4 and an imaginary part of 0, that is, 4+0j.
 ```
 
-Currently only the Ascend 950PR & 950DT product series is supported.
+Currently only the Ascend 950PR & 950DT products is supported.
 <!-- end id1 -->

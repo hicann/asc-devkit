@@ -1,6 +1,6 @@
 # L2 Cache Splitting<a name="ZH-CN_TOPIC_0000001893038949"></a>
 
-<!-- md-trans-meta sourceCommit=63bf0ce4379c8555ca9af9ecde65b638815937ab translatedAt=2026-10-23T12:40:22.868Z pushedAt=2026-10-27T10:09:40.195Z nl=2 -->
+<!-- md-trans-meta sourceCommit=63bf0ce4379c8555ca9af9ecde65b638815937ab translatedAt=2026-10-23T12:40:22.868Z pushedAt=2026-11-03T07:05:13.335Z nl=2 -->
 
 [Priority]: High
 

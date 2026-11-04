@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -92,7 +92,7 @@ $$
 
 <!-- npu="950" id8 -->
 
-**Table**  Data type combination cases for Ascend 950PR&950DT product series
+**Table**  Data type combination cases for Ascend 950PR&950DT products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -102,13 +102,13 @@ $$
 | int64_t            | float       |
 | int64_t            | int32_t     |
 
-For Ascend 950PR&950DT product series, the data type combination where the data types of src0 and src1 are int64_t and the data type of dst is int32_t is supported only by the API for computing the first n data of a tensor.
+For Ascend 950PR&950DT products, the data type combination where the data types of src0 and src1 are int64_t and the data type of dst is int32_t is supported only by the API for computing the first n data of a tensor.
 
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
 
-**Table**  Data type combination cases for Atlas A3 product series
+**Table**  Data type combination cases for Atlas A3 products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -120,7 +120,7 @@ For Ascend 950PR&950DT product series, the data type combination where the data 
 
 <!-- npu="910b" id10 -->
 
-**Table**  Data type combination cases for Atlas A2 product series
+**Table**  Data type combination cases for Atlas A2 products
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -143,7 +143,7 @@ For Ascend 950PR&950DT product series, the data type combination where the data 
 
 <!-- npu="310p" id12 -->
 
-**Table**  Atlas inference series AI Core data type combination cases
+**Table**  Atlas inference products AI Core data type combination cases
 
 | data types of src0 and src1 | dst data type |
 | :----------------- | :---------- |
@@ -167,10 +167,10 @@ None
   <!-- npu="A3,910b" id14 -->
   - For the following models, this API does not perform computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id15 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id15 -->
     <!-- npu="910b" id16 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id16 -->
   <!-- end id14 -->
   <!-- npu="950" id17 -->

@@ -1,6 +1,6 @@
 # AllocTensor/FreeTensor Failure During Running Verification<a name="ZH-CN_TOPIC_0000001737495336"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:56:56.365Z pushedAt=2026-10-28T06:30:36.620Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:56:56.365Z pushedAt=2026-11-03T07:05:13.446Z nl=2 -->
 
 ## Symptoms<a name="section151611254194612"></a>
 

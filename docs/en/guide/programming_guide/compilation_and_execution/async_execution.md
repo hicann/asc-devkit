@@ -1,5 +1,5 @@
 # Asynchronous Execution
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:02:18.871Z pushedAt=2026-10-28T07:06:59.256Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:02:18.871Z pushedAt=2026-11-03T07:05:13.454Z nl=2 -->
 
 After a developer finishes writing a kernel function, they need to submit it to a specified stream (compute stream) for execution using specific dispatch/start syntax. For example:
 ```c++

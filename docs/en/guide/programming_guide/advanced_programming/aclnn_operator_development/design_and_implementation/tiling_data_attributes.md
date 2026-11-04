@@ -1,6 +1,6 @@
 # Passing Attribute Information Through TilingData
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:56:34.523Z pushedAt=2026-10-28T02:56:03.873Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:56:34.523Z pushedAt=2026-11-03T07:05:13.407Z nl=2 -->
 
 This document is extended content that describes the data passing method required when operator attributes participate in kernel function computation. Operator attributes are stored on the Host side and cannot be directly read by the kernel function. When an attribute needs to participate in kernel function computation, the Host-side Tiling function first reads the attribute value, then writes the data actually required by the kernel function into TilingData, which is passed to the kernel function side by the framework.
 

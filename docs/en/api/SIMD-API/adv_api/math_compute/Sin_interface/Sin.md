@@ -85,7 +85,7 @@ When the API framework allocates the space, you need to reserve the temporary sp
 | --- | --- |
 | T | Data type of the operand. Supported data types: half and float. |
 | isReuseSource | Whether the source operand can be modified. The default value is false. This parameter takes effect only when the input data type is float.<br>true: You allow the source operand to be overwritten. You can set this parameter to true to enable it. After it is enabled, the API reuses the memory space of srcTensor during internal computation, saving some memory space. false: The API does not reuse the memory space of srcTensor during internal computation. |
-| config | <!-- npu="950" id10 -->This parameter is supported only on Ascend 950PR&950DT series products.<br><br><!-- end id10 -->Related configuration of the Sin algorithm. This parameter is optional and of the SinConfig type. Its specific definition is shown in the following code, where the parameters mean:<br>algo: Algorithm used by the internal implementation of Sin. It is of the SinAlgo type. Supported values are as follows: POLYNOMIAL_APPROXIMATION: default value. This algorithm implements the Sin API through simple polynomial approximation. The supported input value range is [-65504.0, 65504.0], and the supported data types are half and float. RADIAN_REDUCTION: This algorithm implements the Sin API through complete period reduction. It supports the full input value range, and the supported data types are half and float. |
+| config | <!-- npu="950" id10 -->This parameter is supported only on Ascend 950PR&950DT products.<br><br><!-- end id10 -->Related configuration of the Sin algorithm. This parameter is optional and of the SinConfig type. Its specific definition is shown in the following code, where the parameters mean:<br>algo: Algorithm used by the internal implementation of Sin. It is of the SinAlgo type. Supported values are as follows: POLYNOMIAL_APPROXIMATION: default value. This algorithm implements the Sin API through simple polynomial approximation. The supported input value range is [-65504.0, 65504.0], and the supported data types are half and float. RADIAN_REDUCTION: This algorithm implements the Sin API through complete period reduction. It supports the full input value range, and the supported data types are half and float. |
 
 ```
 struct SinConfig {
@@ -110,14 +110,14 @@ None
 ## Constraints
 
 <!-- npu="950" id11 -->
--   For Ascend 950PR&950DT series products, when the polynomial approximation algorithm POLYNOMIAL\_APPROXIMATION is used in the template parameter config, ensure that the value range of the input source data is within \[-65504.0, 65504.0\].
+-   For Ascend 950PR&950DT products, when the polynomial approximation algorithm POLYNOMIAL\_APPROXIMATION is used in the template parameter config, ensure that the value range of the input source data is within \[-65504.0, 65504.0\].
 <!-- end id11 -->
 -   For the following products, the input source data must keep its value range within \[-65504.0, 65504.0\].
         <!-- npu="A3" id12 -->
-    -   Atlas A3 series products
+    -   Atlas A3 products
         <!-- end id12 -->
         <!-- npu="910b" id13 -->
-    -   Atlas A2 series products
+    -   Atlas A2 products
         <!-- end id13 -->
         <!-- npu="310p" id14 -->
     -   AI Core of Atlas inference products

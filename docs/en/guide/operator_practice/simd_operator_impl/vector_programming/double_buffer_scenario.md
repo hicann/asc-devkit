@@ -1,6 +1,6 @@
 # DoubleBuffer Scenarios<a name="ZH-CN_TOPIC_0000002532228161"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:22:30.430Z pushedAt=2026-10-27T09:04:58.322Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:22:30.430Z pushedAt=2026-11-03T07:05:13.313Z nl=2 -->
 
 Because operators may move data in and out multiple times, the [DoubleBuffer](../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md) mechanism is introduced to make full use of hardware resources and implement multi-pipeline parallelism. [DoubleBuffer](../../../technical_appendix/concepts_and_terms/performance_optimization/double_buffer.md) divides the input data into two blocks of equal size and makes full use of the hardware resources of the AI Core to implement parallel execution of data copy-in, computation, and data copy-out. The following uses the "uneven split across cores, uneven split within a core" sample to describe how DoubleBuffer is implemented in an operator.
 

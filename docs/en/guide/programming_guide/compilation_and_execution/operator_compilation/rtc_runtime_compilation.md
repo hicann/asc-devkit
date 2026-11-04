@@ -1,6 +1,6 @@
 # RTC<a name="ZH-CN_TOPIC_0000002462620725"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:06:59.938Z pushedAt=2026-10-28T07:06:18.630Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:06:59.938Z pushedAt=2026-11-03T07:05:13.459Z nl=2 -->
 
 RTC is the Ascend C runtime compilation library. Through the [aclrtc](../../../../api/Utils-API/RTC/RTC.md) APIs, it dynamically compiles intermediate code into target machine code at program runtime, improving program execution performance.
 

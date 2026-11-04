@@ -1,6 +1,6 @@
 # SIMD and SIMT Hybrid Operator Performance Optimization Overview
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:02:32.837Z pushedAt=2026-10-27T11:30:36.146Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:02:32.837Z pushedAt=2026-11-03T07:05:13.361Z nl=2 -->
 
 SIMD and SIMT hybrid programming on the AI Core combines the multi-data parallel computing capability of SIMD with the discrete memory access and complex branch handling capability of SIMT. It allows SIMD and SIMT execution logic to be flexibly organized within the same operator, using the Vector Function (VF) as the basic scheduling unit. SIMD programming is suitable for processing continuous and regular vector or cube computations, while SIMT programming is suitable for processing irregular logic such as branch judgment, index mapping, and discrete memory access. By combining the two programming approaches in a program, both high hardware throughput and programming flexibility can be achieved.
 

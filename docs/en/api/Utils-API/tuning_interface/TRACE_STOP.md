@@ -54,7 +54,7 @@ It is used to mark the end position for tracing and is generally used together w
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
 | apid | Input | The value must be consistent with that of the [TRACE_START](TRACE_START.md) parameter; otherwise, the tracing result is affected. |
-| pipe | Input | The value must be consistent with that of the pipe parameter of [TRACE_START](TRACE_START.md). For the value of pipe, see [Hardware Pipeline Type](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459); otherwise, the tracing result is affected.<!-- npu="950" id7 --><br>This parameter takes effect only on Ascend 950PR&950DT series products and does not take effect on other products.<!-- end id7 --> |
+| pipe | Input | The value must be consistent with that of the pipe parameter of [TRACE_START](TRACE_START.md). For the value of pipe, see [Hardware Pipeline Type](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459); otherwise, the tracing result is affected.<!-- npu="950" id7 --><br>This parameter takes effect only on Ascend 950PR&950DT products and does not take effect on other products.<!-- end id7 --> |
 
 ## Return Value
 

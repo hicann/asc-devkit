@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -122,10 +122,10 @@ None
   <!-- npu="A3,910b" id14 -->
   - For the following models, the API does not perform computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id15 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id15 -->
     <!-- npu="910b" id16 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id16 -->
   <!-- end id14 -->
   <!-- npu="950" id17 -->
@@ -133,7 +133,7 @@ None
   <!-- end id17 -->
 <!-- end id13 -->
 <!-- npu="950" id18 -->
-- Description of Unified Buffer (UB) space usage. For the Ascend 950PR&950DT product series:
+- Description of Unified Buffer (UB) space usage. For the Ascend 950PR&950DT products:
   - The tensor high-dimensional splitting compute API occupies 8 KB of UB temporary space.
   - The API for continuous computation of the first n tensor data does not involve the occupation of the 8 KB UB temporary space.
 <!-- end id18 -->

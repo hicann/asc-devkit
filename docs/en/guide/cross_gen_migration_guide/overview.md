@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000002535192325"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T10:52:27.496Z pushedAt=2026-10-26T09:21:20.773Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T10:52:27.496Z pushedAt=2026-11-03T07:05:13.247Z nl=2 -->
 
 One of the core design goals of Ascend C is to achieve cross-generation compatibility. However, each generation of chips has unique hardware characteristics in its microarchitecture, so it cannot be guaranteed that all APIs can achieve full cross-generation compatibility through recompilation alone. Based on this premise, this manual aims to provide systematic guidance for Ascend C operator developers, helping them smoothly migrate operator kernel code from the current chip to run on the target-generation chip, achieving efficient and controllable migration.
 

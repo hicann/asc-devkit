@@ -5,13 +5,13 @@
 ## Applicable Products<a name="zh-cn_topic_0000002567699435_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -93,19 +93,19 @@ The data types of the source operand and the destination operand must be consist
 
 <!-- npu="950" id10 -->
 
-- Ascend 950PR&950DT product series, the supported data types are: int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
+- Ascend 950PR&950DT products, the supported data types are: int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.
 
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
 
-- Atlas A3 product series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
 
-- Atlas A2 product series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 
 <!-- end id12 -->
 
@@ -139,10 +139,10 @@ None
     <!-- npu="A3,910b" id18 -->
   - For the following models, when the repeatTime parameter is set to 0, no compute operation is performed and no data is written to the destination operand. The API is treated as a NOP (no operation).
      <!-- npu="A3" id16 -->
-    - Atlas A3 product series
+    - Atlas A3 products
      <!-- end id16 -->
      <!-- npu="910b" id17 -->
-    - Atlas A2 product series
+    - Atlas A2 products
      <!-- end id17 -->
     <!-- end id18 -->
     <!-- npu="950" id19 -->

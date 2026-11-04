@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -48,7 +48,7 @@ None
 Returns the size of the runtime UB space, in bytes.
 
 <!-- npu="950" id8 -->
-Under the Ascend 950PR&950DT product series architecture, in the [SIMD and SIMT hybrid scenario](../../../../SIMT-API/SIMD_SIMT_hybrid_programming_intro/SIMD_SIMT_hybrid_programming_intro.md), the maximum UB size that can be obtained is 216KB; in non-SIMD and SIMT hybrid scenarios, the return value is a fixed value of 248KB.
+Under the Ascend 950PR&950DT products architecture, in the [SIMD and SIMT hybrid scenario](../../../../SIMT-API/SIMD_SIMT_hybrid_programming_intro/SIMD_SIMT_hybrid_programming_intro.md), the maximum UB size that can be obtained is 216KB; in non-SIMD and SIMT hybrid scenarios, the return value is a fixed value of 248KB.
 <!-- end id8 -->
 
 ## Constraints

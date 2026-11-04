@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -50,7 +50,7 @@ This API initializes the global state of the AI Core, including the public state
 **The initialization items actually executed by each product are as follows:**
 
 <!-- npu="950" id8 -->
-**Table 1** Initialization items executed by this API for the Ascend 950PR&950DT product series
+**Table 1** Initialization items executed by this API for the Ascend 950PR&950DT products
 
 | state category | initialization scope |
 | ---- | ---- |
@@ -66,7 +66,7 @@ This API initializes the global state of the AI Core, including the public state
 <!-- end id8 -->
 
 <!-- npu="A3" id9 -->
-**Table 2** Initialization items executed by this API for the Atlas A3 product series
+**Table 2** Initialization items executed by this API for the Atlas A3 products
 
 | state category | initialization scope |
 | ---- | ---- |
@@ -79,7 +79,7 @@ This API initializes the global state of the AI Core, including the public state
 <!-- end id9 -->
 
 <!-- npu="910b" id10 -->
-**Table 3** Initialization items executed by this API for Atlas A2 product series
+**Table 3** Initialization items executed by this API for Atlas A2 products
 
 | state category | initialization scope |
 | ---- | ---- |

@@ -1,6 +1,6 @@
 # Incorrect Tiling Information Is Obtained on the Kernel Side<a name="ZH-CN_TOPIC_0000001750140252"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:00:25.985Z pushedAt=2026-10-28T06:33:02.186Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:00:25.985Z pushedAt=2026-11-03T07:05:13.451Z nl=2 -->
 
 ## Symptoms<a name="section151611254194612"></a>
 

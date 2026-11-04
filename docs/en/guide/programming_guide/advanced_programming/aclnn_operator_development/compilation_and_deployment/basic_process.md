@@ -1,6 +1,6 @@
 # Basic Compilation and Deployment Process
 
-<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:38:25.009Z pushedAt=2026-10-28T02:26:00.276Z nl=2 -->
+<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:38:25.009Z pushedAt=2026-11-03T07:05:13.398Z nl=2 -->
 
 This document covers the basics. It describes how to compile an operator project and generate a custom operator installation package \*.run after the kernel function side and Host side implementations are developed. The detailed compilation operations include:
 

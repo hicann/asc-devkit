@@ -143,7 +143,7 @@ The moved data is used for [vector computation](../memory_vector_compute/memory_
     ```
 
 <!-- npu="950" id4 -->
-- The enableSmallC0 mode is supported (only supported by Ascend 950PR&950DT series products).
+- The enableSmallC0 mode is supported (only supported by Ascend 950PR&950DT products).
 
     ```cpp
     template <typename T, bool enableSmallC0 = false>
@@ -227,7 +227,7 @@ The moved data is used for [vector computation](../memory_vector_compute/memory_
     ```
 
 <!-- npu="950" id8 -->
-- Configuring the data movement mode is supported (only supported by Ascend 950PR&950DT series products).
+- Configuring the data movement mode is supported (only supported by Ascend 950PR&950DT products).
 
     ```cpp
     template <typename T, PaddingMode mode = PaddingMode::Normal>

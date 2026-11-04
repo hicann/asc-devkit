@@ -1,6 +1,6 @@
 # Abstract Hardware Architecture<a name="ZH-CN_TOPIC_0000002556525479"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T09:16:23.521Z pushedAt=2026-10-28T11:42:21.745Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T09:16:23.521Z pushedAt=2026-11-03T07:08:03.563Z nl=2 -->
 
 SIMT (Single Instruction Multiple Thread) programming on the AI Core allows instructions to address data independently, thereby supporting thread-level parallel computation. This approach is particularly suitable for scenarios such as discrete access and complex control logic<!-- npu="950" id1 -->, and is currently supported only on Ascend 950PR&950DT products<!-- end id1 -->. SIMT programming can effectively simplify the development of complex operators and irregular control flow, mitigate divergent computation involving branches, and control program complexity, thereby improving hardware utilization and energy efficiency.
 

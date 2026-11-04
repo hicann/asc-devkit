@@ -114,7 +114,7 @@ None
     <!-- end id11 -->
 
     <!-- npu="310p" id12 -->
-    Atlas inference series product AI Core supports the following data types: half, float.
+    Atlas inference products AI Core supports the following data types: half, float.
     <!-- end id12 -->
 
 ## Examples

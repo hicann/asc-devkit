@@ -1,6 +1,6 @@
 # Feature Scenarios<a name="ZH-CN_TOPIC_0000002500548108"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:52:03.490Z pushedAt=2026-10-27T09:57:06.507Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:52:03.490Z pushedAt=2026-11-03T07:05:13.290Z nl=2 -->
 
 ## Retry<a name="zh-cn_topic_0000002400328453_section11795221469"></a>
 

@@ -1,6 +1,6 @@
 # Kernel Compilation Error "error: out of jump/jumpc imm range"<a name="ZH-CN_TOPIC_0000002033872222"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:59:27.052Z pushedAt=2026-10-28T06:31:43.551Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:59:27.052Z pushedAt=2026-11-03T07:05:13.449Z nl=2 -->
 
 ## Symptoms<a name="section151611254194612"></a>
 

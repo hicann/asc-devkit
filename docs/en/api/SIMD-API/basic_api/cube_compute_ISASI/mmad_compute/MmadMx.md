@@ -7,38 +7,38 @@
 ### Prototype without bias
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx_res.md#id1 -->
 
 ### Prototype with bias
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -146,7 +146,7 @@ The computation formula of MmadMx is C=(scaleA⊗A)*(scaleB⊗B)+Bias, where "�
 
 ## Data Types<a id="zh_cn_topic_mmadmx_section_datatype"></a>
 
-**Table 3** Supported precision type combinations for the left matrix, right matrix, Scale matrix, Bias matrix, and result matrix of the MmadMx API (Ascend 950PR&950DT series products)
+**Table 3** Supported precision type combinations for the left matrix, right matrix, Scale matrix, Bias matrix, and result matrix of the MmadMx API (Ascend 950PR&950DT products)
 
 | left matrix fm | right matrix filter | Scale matrix | Bias | result matrix dst |
 | ------------ | ------------ | ---------- | -------- | ----------- |

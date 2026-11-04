@@ -1,6 +1,6 @@
 # Matmul Feature Introduction<a name="ZH-CN_TOPIC_0000002500468238"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:06:16.796Z pushedAt=2026-10-27T07:54:58.472Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:06:16.796Z pushedAt=2026-11-03T07:05:13.301Z nl=2 -->
 
 In addition to the basic computation capabilities described in [Basics](../basics.md) and [Operator Implementation](../operator_impl.md), Matmul cube programming also provides processing capabilities and various features for different scenarios. The specific scenarios and features are listed in the following table. For details, see the subsequent sections.
 

@@ -1,6 +1,6 @@
 # Environment Setup<a name="ZH-CN_TOPIC_0000002532541127"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:08:02.338Z pushedAt=2026-10-26T11:29:42.130Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:08:02.338Z pushedAt=2026-11-03T07:05:13.256Z nl=2 -->
 
 -   Before developing Ascend C operators, you need to install the **driver and firmware** and the **CANN software package**. For details, see the [CANN quick installation guide](https://www.hiascend.com/cann/download).
 

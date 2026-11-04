@@ -1,6 +1,6 @@
 # Programming Model Overview<a name="ZH-CN_TOPIC_0000002554090609"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T08:32:10.471Z pushedAt=2026-10-28T11:42:21.730Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T08:32:10.471Z pushedAt=2026-11-03T07:08:03.549Z nl=2 -->
 
 As described in the [Heterogeneous System](./heterogeneous_system.md) section, an application based on Ascend processors is typically divided into two parts: **host code** and **device code**. The host code runs on the CPU and is responsible for device resource management, data movement between host memory and device memory, and task scheduling. The device code runs on the NPU (Neural-Network Processing Unit) and specifically executes the actual computation tasks. This programming guide focuses on how to write device code based on the **Ascend C programming language** and how to schedule and execute the device code through the host code.
 

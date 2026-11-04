@@ -1,6 +1,6 @@
 # optype_collector Tool<a name="ZH-CN_TOPIC_OPTYPE_COLLECTOR"></a>
 
-<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T14:49:59.367Z pushedAt=2026-10-28T06:48:27.665Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T14:49:59.367Z pushedAt=2026-11-03T07:05:13.442Z nl=2 -->
 
 The optype_collector tool is used to collect the OpType information of a specified AI processor from built-in/custom operator packages, and to detect OpType duplicate name issues between custom operator packages and built-in operator packages, as well as between custom operator packages, helping developers identify name conflicts before installing or delivering custom operators.
 

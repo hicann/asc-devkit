@@ -100,7 +100,7 @@ PIPE_MTE1
 After saving the code as `examples.asc`, you can compile and run it using the `bisheng` command. The `--npu-arch` parameter must be set to the NPU architecture corresponding to the actual product model. For the mapping between products and NPU architectures, see [`__NPU_ARCH__`](../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch).
 
 <!-- npu="950" id8 -->
-The NPU architecture corresponding to the Ascend 950PR&950DT series products is `dav-3510`. The compile and run command is as follows:
+The NPU architecture corresponding to the Ascend 950PR&950DT products is `dav-3510`. The compile and run command is as follows:
 
 ```bash
 bisheng examples.asc -o main --npu-arch=dav-3510 && ./main

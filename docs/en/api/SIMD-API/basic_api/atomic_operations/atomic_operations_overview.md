@@ -20,7 +20,7 @@ The inline atomic operation APIs for data movement are used to enable atomic ope
 | [GetStoreAtomicConfig(ISASI)](GetStoreAtomicConfig_ISASI.md) | Obtains the atomic operation configuration for data movement. |
 
 <!-- npu="950" id1 -->
-For the Ascend 950PR&950DT series products, Scalar atomic operation APIs are added, which can perform single-point atomic computation operations on a specified GM address. For the involved APIs, see [Table 2](#table2). Compared with the inline atomic operation APIs for data movement, the Scalar atomic operation APIs do not affect subsequent instructions that move data to GM.
+For the Ascend 950PR&950DT products, Scalar atomic operation APIs are added, which can perform single-point atomic computation operations on a specified GM address. For the involved APIs, see [Table 2](#table2). Compared with the inline atomic operation APIs for data movement, the Scalar atomic operation APIs do not affect subsequent instructions that move data to GM.
 
 As shown in the left sub-figure of Figure 2, when the **AtomicAdd** API is not used, multiple AI Cores performing accumulation operations on the same GM address simultaneously overwrite each other. The operations are not atomic, and the final result is unpredictable. As shown in the right sub-figure, after the **AtomicAdd** API is used, the accumulation operations of each AI Core are executed serially, ensuring the atomicity of each accumulation operation. The final result meets expectations.
 

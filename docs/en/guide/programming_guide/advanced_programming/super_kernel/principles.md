@@ -1,6 +1,6 @@
 # Principle Introduction
 
-<!-- md-trans-meta sourceCommit=ffba65a285b93c584314c43929ffaa58f62204b1 translatedAt=2026-10-23T14:44:28.222Z pushedAt=2026-10-28T06:13:03.890Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ffba65a285b93c584314c43929ffaa58f62204b1 translatedAt=2026-10-23T14:44:28.222Z pushedAt=2026-11-03T07:05:13.439Z nl=2 -->
 
 ## Overview
 

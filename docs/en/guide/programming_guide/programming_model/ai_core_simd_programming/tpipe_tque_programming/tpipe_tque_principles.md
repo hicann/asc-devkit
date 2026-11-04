@@ -1,6 +1,6 @@
 # TPipe-TQue Programming Principles
 
-<!-- md-trans-meta sourceCommit=e43b607e5664f5a0db72b8553678d1616239014a translatedAt=2026-10-28T09:12:55.288Z pushedAt=2026-10-28T11:42:21.756Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e43b607e5664f5a0db72b8553678d1616239014a translatedAt=2026-10-28T09:12:55.288Z pushedAt=2026-11-03T07:08:03.565Z nl=2 -->
 
 ## Design Philosophy Origin: From Classic Queue Pipeline to the Ascend C TPipe-TQue Programming Model
 
@@ -35,7 +35,7 @@ Instruction generation, dispatch, and execution follow a unified asynchronous pi
 2.  **Instruction dispatch**: The scalar unit dispatches the decoded instructions to the instruction queue of the corresponding execution unit.
 3.  **Parallel execution**: Each execution unit independently and concurrently fetches instructions from its own queue and executes them.
 
-Under this asynchronous parallel architecture, the concurrent execution of multiple units and multiple stages introduces complex data dependencies, which is precisely the core difficulty of heterogeneous programming. Ascend C addresses this problem by using two pairs of APIs to precisely insert `Set`/`Wait` hardware synchronization instructions at the underlying level, at an extremely low performance cost.[](#data-dependency-and-synchronization-how-the-two-apis-work-together)
+Under this asynchronous parallel architecture, the concurrent execution of multiple units and multiple stages introduces complex data dependencies, which is precisely the core difficulty of heterogeneous programming. Ascend C addresses this problem by using two pairs of APIs to precisely insert `Set`/`Wait` hardware synchronization instructions at the underlying level, at an extremely low performance cost.
 
 ## Data Dependency and Synchronization: How the Two APIs Work Together<a name="data-dependency-sync"></a>
 

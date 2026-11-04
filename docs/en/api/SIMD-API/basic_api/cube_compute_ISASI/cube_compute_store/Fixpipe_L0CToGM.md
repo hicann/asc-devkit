@@ -177,7 +177,7 @@ For user convenience and to reduce learning and understanding costs, a combined 
 **Supported Data Type Combinations for Source and Destination Matrices**
 
 <!-- npu="950" id19 -->
-For the Ascend 950PR&950DT product series, the Fixpipe API supports the following data type combinations:
+For the Ascend 950PR&950DT products, the Fixpipe API supports the following data type combinations:
 
 | Source Matrix (L0C Buffer) | Destination Matrix (GM) |
 | ---------- | ---------- |
@@ -187,7 +187,7 @@ For the Ascend 950PR&950DT product series, the Fixpipe API supports the followin
 <!-- end id19 -->
 
 <!-- npu="A3" id20 -->
-For the Atlas A3 product series, the Fixpipe API supports the following data type combinations:
+For the Atlas A3 products, the Fixpipe API supports the following data type combinations:
 
 | Source Matrix (L0C Buffer) | Destination Matrix (GM) |
 | ---------- | ---------- |
@@ -197,7 +197,7 @@ For the Atlas A3 product series, the Fixpipe API supports the following data typ
 <!-- end id20 -->
 
 <!-- npu="910b" id21 -->
-For the Atlas A2 product series, the Fixpipe API supports the following data type combinations:
+For the Atlas A2 products, the Fixpipe API supports the following data type combinations:
 
 | Source Matrix (L0C Buffer) | Destination Matrix (GM) |
 | ---------- | ---------- |
@@ -237,10 +237,10 @@ None
 <!-- npu="A3,910b" id27 -->
 - For the following product models, the special value/boundary value constraints are described as follows:
     <!-- npu="A3" id25 -->
-    Atlas A3 series products
+    Atlas A3 products
     <!-- end id25 -->
     <!-- npu="910b" id26 -->
-    Atlas A2 series products
+    Atlas A2 products
     <!-- end id26 -->
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the **CTRL** register (control register) can be set to control the saturation mode when floating-point values are quantized and copied out:
 
@@ -255,7 +255,7 @@ None
     For integer types, only the saturation mode is available.
 <!-- end id27 -->
 <!-- npu="950" id29 -->
-- For the Ascend 950PR&950DT series products, the special value/boundary value constraints are described as follows:
+- For the Ascend 950PR&950DT products, the special value/boundary value constraints are described as follows:
 
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the CTRL register (control register) can be set to control the saturation mode when quantized floating-point data is moved out;
 

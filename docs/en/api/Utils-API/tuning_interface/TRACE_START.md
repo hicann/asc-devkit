@@ -54,7 +54,7 @@ Used to mark the start position, generally used together with [TRACE\_STOP](TRAC
 | Parameter | Input/Output | Description |
 | --- | --- | --- |
 | apid | Input | Ten user-defined types are currently reserved:<br>0x0: USER_DEFINE_0<br>0x1: USER_DEFINE_1<br>0x2: USER_DEFINE_2<br>0x3: USER_DEFINE_3<br>0x4: USER_DEFINE_4<br>0x5: USER_DEFINE_5<br>0x6: USER_DEFINE_6<br>0x7: USER_DEFINE_7<br>0x8: USER_DEFINE_8<br>0x9: USER_DEFINE_9 |
-| pipe | Input | Specifies the pipeline type where the trace point is located. For values, see [Hardware Pipeline Type](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459).<!-- npu="950" id7 --><br>This takes effect only on Ascend 950PR&950DT product series and does not take effect on other products.<!-- end id7 --> |
+| pipe | Input | Specifies the pipeline type where the trace point is located. For values, see [Hardware Pipeline Type](../../SIMD-API/basic_api/sync_control/intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459).<!-- npu="950" id7 --><br>This takes effect only on Ascend 950PR&950DT products and does not take effect on other products.<!-- end id7 --> |
 
 ## Return Value
 

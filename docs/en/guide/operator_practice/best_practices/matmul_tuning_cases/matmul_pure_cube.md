@@ -1,6 +1,6 @@
 # Enabling Cube-Only Mode for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002326915590"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:39:10.109Z pushedAt=2026-10-27T02:00:05.525Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:39:10.109Z pushedAt=2026-11-03T07:05:13.279Z nl=2 -->
 
 ## Case Introduction<a name="section1698917333"></a>
 

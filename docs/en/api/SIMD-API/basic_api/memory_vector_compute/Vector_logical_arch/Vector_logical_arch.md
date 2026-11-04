@@ -7,7 +7,7 @@
 The Vector computation unit is dedicated to executing vector computations. As shown in the following figure, the highlighted part shows the Vector computation unit and its associated storage units.
 
 <!-- npu="A3,910b" id1 -->
-- For the Atlas A3 product series and Atlas A2 product series, the Vector logical architecture is shown in Figure 1.
+- For the Atlas A3 products and Atlas A2 products, the Vector logical architecture is shown in Figure 1.
 
   **Figure 1** Vector computation unit architecture diagram
 
@@ -22,7 +22,7 @@ The Vector computation unit is dedicated to executing vector computations. As sh
 <!-- end id1 -->
 
 <!-- npu="950" id2 -->
-- For the Ascend 950PR&950DT product series, the Vector logical architecture is shown in Figure 2.
+- For the Ascend 950PR&950DT products, the Vector logical architecture is shown in Figure 2.
 
   **Figure 2** Vector computation unit architecture diagram
 
@@ -49,7 +49,7 @@ The Vector computation unit is dedicated to executing vector computations. As sh
 To improve data access efficiency and throughput, the UB adopts a structure of equal-sized memory modules (banks). When multiple read/write instructions access the UB simultaneously, hardware resource limitations prevent these instructions from executing at the same time, causing bank conflicts. In this case, the instructions must wait in a queue for resources and cannot complete within a single instruction cycle.
 
 <!-- npu="A3,910b" id3 -->
-- For Atlas A3 product series and Atlas A2 product series
+- For Atlas A3 products and Atlas A2 products
   - UB memory structure
 
     **Figure 3** UB memory structure
@@ -67,7 +67,7 @@ To improve data access efficiency and throughput, the UB adopts a structure of e
 <!-- end id3 -->
 
 <!-- npu="950" id4 -->
-- For Ascend 950PR&950DT series products
+- For Ascend 950PR&950DT products
   - UB memory structure
 
     **Figure 4** UB memory structure

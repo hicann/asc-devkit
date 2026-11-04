@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -116,10 +116,10 @@ None
   <!-- npu="A3,910b" id18 -->
   - For the following models, this API does not perform computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id19 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id19 -->
     <!-- npu="910b" id20 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id20 -->
   <!-- end id18 -->
   <!-- npu="950" id21 -->
@@ -130,7 +130,7 @@ None
 
     In the non-overlapping address scenario, the data at three different addresses (dst, src0, and src1) cannot be read in one cycle, so only half of the theoretical parallelism can be achieved, and the theoretical parallelism is halved from the original value. In the overlapping address scenario, the original theoretical parallelism is maintained.
 <!-- npu="950" id22 -->
-- Notes on the occupation of Unified Buffer (UB) space. For the Ascend 950PR&950DT product series:
+- Notes on the occupation of Unified Buffer (UB) space. For the Ascend 950PR&950DT products:
   - The tensor high-dimensional split computation interface occupies 8 KB of temporary UB space.
   - The tensor first-n-data continuous computation interface does not involve occupying 8 KB of temporary UB space.
 <!-- end id22 -->

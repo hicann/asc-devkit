@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000002500468230"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:24:22.743Z pushedAt=2026-10-27T09:06:01.325Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:24:22.743Z pushedAt=2026-11-03T07:05:13.314Z nl=2 -->
 
 This section uses the Add operator as an example to guide you through quickly building an Ascend C vector operator program and learning the typical scenarios and handling methods of vector operator development. The scenarios covered include:
 

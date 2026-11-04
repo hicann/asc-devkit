@@ -1,6 +1,6 @@
 # Entry-Level Feature Implementation<a name="ZH-CN_TOPIC_000000_ADD_ENTRY"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:20:00.628Z pushedAt=2026-10-27T12:14:36.937Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:20:00.628Z pushedAt=2026-11-03T07:05:13.379Z nl=2 -->
 
 This section uses the Add (vector addition) operator as an example to introduce the basic method of implementing vector operators based on the Ascend C programming model, helping developers quickly get started with SIMD operator development.
 

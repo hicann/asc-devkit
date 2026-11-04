@@ -1,6 +1,6 @@
 # Basic Process
 
-<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T13:50:03.732Z pushedAt=2026-10-28T02:44:09.433Z nl=2 -->
+<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T13:50:03.732Z pushedAt=2026-11-03T07:05:13.404Z nl=2 -->
 
 This document covers basic content and describes the basic integration process on the Kernel side in the aclnn engineering operator development approach, focusing on the Kernel entrypoint function format, parameter order, Kernel type setting, TilingData processing, and how to obtain compile-time information.
 

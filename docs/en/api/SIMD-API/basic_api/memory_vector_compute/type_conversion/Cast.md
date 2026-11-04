@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -104,7 +104,7 @@ Different data type conversions support different rounding modes. For details, s
 
 <!-- npu="950" id10 -->
 
-**Table**  Data type combinations supported by Ascend 950PR&950DT product series
+**Table**  Data type combinations supported by Ascend 950PR&950DT products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -177,7 +177,7 @@ Different data type conversions support different rounding modes. For details, s
 
 <!-- npu="A3" id11 -->
 
-**Table**  Data type combinations supported by Atlas A3 product series
+**Table**  Data type combinations supported by Atlas A3 products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -211,7 +211,7 @@ Different data type conversions support different rounding modes. For details, s
 
 <!-- npu="910b" id12 -->
 
-**Table**  Data type combinations supported by Atlas A2 product series
+**Table**  Data type combinations supported by Atlas A2 products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -245,7 +245,7 @@ Different data type conversions support different rounding modes. For details, s
 
 <!-- npu="310b" id13 -->
 
-**Table**  Data type combinations supported by Atlas 200I/500 A2 inference series
+**Table**  Data type combinations supported by Atlas 200I/500 A2 inference products
 
 | src data type | dst data type | supported roundMode |
 | :---------- | :---------- | :-------------- |
@@ -338,14 +338,14 @@ None.
     <!-- npu="A3,910b" id21 -->
     - For the following models, when the count or repeatTime parameter is set to 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
        <!-- npu="A3" id19 -->
-       - Atlas A3 product series
+       - Atlas A3 products
        <!-- end id19 -->
        <!-- npu="910b" id20 -->
-       - Atlas A2 product series
+       - Atlas A2 products
        <!-- end id20 -->
     <!-- end id21 -->
     <!-- npu="950" id22 -->
-    - For Ascend 950PR&950DT product series, this API is implemented for compatibility by calling the [Reg vector computation](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
+    - For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector computation](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
     <!-- end id22 -->
 <!-- end id23 -->
 

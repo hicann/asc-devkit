@@ -1,6 +1,6 @@
 # TPipe and TQue Programming Paradigm<a name="ZH-CN_TOPIC_0000002465655445"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:11:06.040Z pushedAt=2026-10-28T11:42:21.744Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:11:06.040Z pushedAt=2026-11-03T07:08:03.562Z nl=2 -->
 
 The previous chapter described the underlying design principles of the TPipe-TQue programming model: based on the classic C/C++ queue pipeline concept, an operator task is split into multiple pipeline stages, TQue queues are used to resolve read-after-write (RAW) data dependencies, AllocTensor/FreeTensor are used to resolve write-after-read (WAR) memory reuse conflicts, and underlying synchronization instructions are used to ensure timing safety for asynchronous parallelism across multiple units.
 

@@ -7,75 +7,75 @@
 ### Soft Synchronization Prototype
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: supported
+- Atlas training products: supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id1 -->
 
 ### hard synchronization (specified pipeline not supported) Prototype
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: not supported
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas inference series products AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id15 -->
 <!-- npu="910" id16 -->
-- Atlas training series products: not supported
+- Atlas training products: not supported
 <!-- end id16 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id2 -->
 
 ### Hard Synchronization (Supports Config-Specified Pipeline) Prototype
 
 <!-- npu="950" id19 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id19 -->
 <!-- npu="A3" id20 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id20 -->
 <!-- npu="910b" id21 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id21 -->
 <!-- npu="310b" id22 -->
 - Atlas 200I/500 A2 inference products: not supported
 <!-- end id22 -->
 <!-- npu="310p" id23 -->
-- Atlas inference series products AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id23 -->
 <!-- npu="310p" id24 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id24 -->
 <!-- npu="910" id25 -->
-- Atlas training series products: not supported
+- Atlas training products: not supported
 <!-- end id25 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/inter_core_sync/SyncAll_res.md#id3 -->
 

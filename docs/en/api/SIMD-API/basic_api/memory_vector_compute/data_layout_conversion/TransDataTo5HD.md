@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -89,15 +89,15 @@ To help you understand the API, see [TransDataTo5HD Truth Value Calculation](../
 ## Data Type
 
 <!-- npu="950" id10 -->
-For the Ascend 950PR&950DT product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+For the Ascend 950PR&950DT products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 <!-- end id12 -->
 
 <!-- npu="310b" id13 -->
@@ -105,11 +105,11 @@ Atlas 200I/500 A2 inference products support the following data types: int8_t, u
 <!-- end id13 -->
 
 <!-- npu="310p" id14 -->
-Atlas inference series products AI Core support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
+Atlas inference products AI Core support the following data types: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id14 -->
 
 <!-- npu="910" id15 -->
-Atlas training series products support the following data types: int8_t, uint8_t, int16_t, uint16_t, and half.
+Atlas training products support the following data types: int8_t, uint8_t, int16_t, uint16_t, and half.
 <!-- end id15 -->
 
 ## Constraints<a name="zh-cn_topic_0000001521260417_section633mcpsimp"></a>

@@ -5,7 +5,7 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
 - Atlas A3 products: Not supported
@@ -21,7 +21,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series products: Not supported
+- Atlas training products: Not supported
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMT-API/math_functions/half_type/half2_math_functions/h2rint_res.md#id1 -->
 

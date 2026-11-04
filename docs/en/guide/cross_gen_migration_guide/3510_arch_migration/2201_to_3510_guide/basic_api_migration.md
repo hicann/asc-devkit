@@ -1,6 +1,6 @@
 # Basic API Migration Guide<a id="ZH-CN_TOPIC_0000002470508258"></a>
 
-<!-- md-trans-meta sourceCommit=7ed7279ea7c037482ecde991f38c4310e3431914 translatedAt=2026-10-23T10:54:48.823Z pushedAt=2026-10-28T08:23:31.426Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ed7279ea7c037482ecde991f38c4310e3431914 translatedAt=2026-10-23T10:54:48.823Z pushedAt=2026-11-03T07:05:13.252Z nl=2 -->
 
 This section describes the impact of chip changes in [NPU architecture version 3510](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch) on basic API compatibility, and provides a compatibility solution for adapting basic APIs from architecture 2201 to architecture 3510.
 

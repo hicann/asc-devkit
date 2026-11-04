@@ -28,7 +28,7 @@
 
 ## Vector Data Register
 
-The vector data register stores vector data, and its length is `VL` (Vector Length). In the Ascend 950PR&950DT product series, `VL` is 256 bytes and can store `VL / sizeof(dtype)` elements of the `dtype` type. For example, `vector_float` can store `256 / sizeof(float) = 64` elements of the `float` type.
+The vector data register stores vector data, and its length is `VL` (Vector Length). In the Ascend 950PR&950DT products, `VL` is 256 bytes and can store `VL / sizeof(dtype)` elements of the `dtype` type. For example, `vector_float` can store `256 / sizeof(float) = 64` elements of the `float` type.
 
 Vector data register types are classified by bit-width category as follows:
 

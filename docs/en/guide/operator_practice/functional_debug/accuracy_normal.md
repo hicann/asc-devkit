@@ -1,6 +1,6 @@
 # Normal Accuracy<a name="ZH-CN_TOPIC_0000001892919357"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:43:27.626Z pushedAt=2026-10-27T03:59:45.305Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:43:27.626Z pushedAt=2026-11-03T07:05:13.284Z nl=2 -->
 
 The basis of performance optimization is that the operator runs and produces correct computation results. Evaluating the correctness of computation results requires certain evaluation criteria, that is, comparing the actual results with known correct outputs. During optimization, after each iterative modification, you need to verify whether the new performance optimization results meet the accuracy evaluation criteria.
 

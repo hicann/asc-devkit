@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -55,14 +55,14 @@ Returns `true` if the global saturation mode specified by `mode` is enabled, and
 ## Constraint Description
 
 <!-- npu="950" id10 -->
-- The Ascend 950PR&950DT Product Series supports `SaturationMode::FLOAT`, `SaturationMode::FLOAT8`, `SaturationMode::INT`, and `SaturationMode::CAST`.
+- The Ascend 950PR&950DT products supports `SaturationMode::FLOAT`, `SaturationMode::FLOAT8`, `SaturationMode::INT`, and `SaturationMode::CAST`.
 - When querying `SaturationMode::FLOAT8`, the return value only indicates whether this mode is enabled. This mode takes effect only when the precision conversion API is in Saturation Mode, which can be entered through the global `SaturationMode::FLOAT` or the per-API `satMode`.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- The Atlas A3 Product Series supports `SaturationMode::FLOAT`, `SaturationMode::INT`, and `SaturationMode::CAST`, but does not support `SaturationMode::FLOAT8`.
+- The Atlas A3 products supports `SaturationMode::FLOAT`, `SaturationMode::INT`, and `SaturationMode::CAST`, but does not support `SaturationMode::FLOAT8`.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- The Atlas A2 Product Series supports `SaturationMode::FLOAT`, `SaturationMode::INT`, and `SaturationMode::CAST`, but does not support `SaturationMode::FLOAT8`.
+- The Atlas A2 products supports `SaturationMode::FLOAT`, `SaturationMode::INT`, and `SaturationMode::CAST`, but does not support `SaturationMode::FLOAT8`.
 <!-- end id12 -->
 
 ## Example

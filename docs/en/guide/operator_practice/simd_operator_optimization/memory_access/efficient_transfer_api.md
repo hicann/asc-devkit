@@ -1,6 +1,6 @@
 # Efficient Use of Data Movement APIs<a name="ZH-CN_TOPIC_0000001846719836"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:38:19.351Z pushedAt=2026-10-27T10:00:38.564Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:38:19.351Z pushedAt=2026-11-03T07:05:13.328Z nl=2 -->
 
 [Priority] High
 

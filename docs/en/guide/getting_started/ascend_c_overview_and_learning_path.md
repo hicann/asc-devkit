@@ -1,6 +1,6 @@
 # Ascend C Overview
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:09:18.290Z pushedAt=2026-10-27T09:56:54.910Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:09:18.290Z pushedAt=2026-11-03T07:05:13.256Z nl=2 -->
 
 ## CANN Overview
 Artificial Intelligence (AI) chips are specialized processors designed to accelerate AI computing tasks. With highly parallel hardware architectures, they efficiently handle large-scale tensor operations in deep learning scenarios. As a typical representative of AI chips, the Neural-Network Processing Unit (NPU) excels at efficiently executing neural network tasks. The Ascend AI Processor, as a dedicated NPU, integrates a large number of high-performance computing cores, further strengthening this hardware advantage and providing solid support for the efficient execution of AI tasks.

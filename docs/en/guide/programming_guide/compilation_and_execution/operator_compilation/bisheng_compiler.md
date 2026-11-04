@@ -1,6 +1,6 @@
 # BiSheng Compiler Overview<a name="ZH-CN_TOPIC_0000002457558450"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:04:53.940Z pushedAt=2026-10-28T07:04:44.327Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:04:53.940Z pushedAt=2026-11-03T07:05:13.457Z nl=2 -->
 
 BiSheng Compiler is a heterogeneous compiler designed specifically for Ascend AI processors. It natively supports the compilation of Ascend C operator code and can efficiently convert operator programs written by users into binary executable files or dynamic libraries. The compiler executable is named bisheng, supports multiple host platforms such as x86 and aarch64, and directly provides instruction set compilation support for the device-side AI Core architecture. With BiSheng Compiler, developers can complete operator development and optimization for Ascend platforms more efficiently and conveniently.
 

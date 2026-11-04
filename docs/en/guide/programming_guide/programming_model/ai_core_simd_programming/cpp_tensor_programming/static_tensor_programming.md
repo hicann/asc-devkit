@@ -1,6 +1,6 @@
 # Static Tensor Programming<a name="ZH-CN_TOPIC_0000002463954885"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T09:09:10.133Z pushedAt=2026-10-28T11:42:21.743Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-28T09:09:10.133Z pushedAt=2026-11-03T07:08:03.561Z nl=2 -->
 
 In the Pipe-based operator development paradigm, the Pipe (TPipe class) uniformly manages resources such as device-side memory. Developers do not need to be aware of memory management, DoubleBuffer pipelining, synchronization, and other processing; they only need to write the operator according to the compute flow. However, this also introduces some runtime overhead (such as TPipe creation and InitBuffer).
 
@@ -187,7 +187,7 @@ The static tensor programming paradigm must comply with the following constraint
 ## Supported APIs<a name="section2633193623711"></a>
 
 <!-- npu="310p" id1 -->
-**Table 1**  API scope supported for the Atlas Inference Series AI Core
+**Table 1**  API scope supported for the Atlas inference products AI Core
 
 <a name="table56285428438"></a>
 <table><thead align="left"><tr id="row46697425436"><th class="cellrowborder" valign="top" width="30.28%" id="mcps1.2.3.1.1"><p id="p866911429430"><a name="p866911429430"></a><a name="p866911429430"></a>API Classification</p></th>

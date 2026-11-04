@@ -16,18 +16,18 @@ For the **Fixpipe** API, you can enable this feature by setting **channelSplit**
 - For the following product models:
 
     <!-- npu="A3" id2 -->
-    Atlas A3 series products
+    Atlas A3 products
     <!-- end id2 -->
 
     <!-- npu="910b" id3 -->
-    Atlas A2 series products
+    Atlas A2 products
     <!-- end id3 -->
 
     When both the input and output data types of the **Fixpipe** instruction are float, NZ is output to GM, and **NZ2ND** and **unitFlag** are not enabled, the Channel Split feature can be enabled.
 <!-- end id1 -->
 
 <!-- npu="950" id4 -->
-- For Ascend 950PR&950DT series products, when both the input and output data types of the **Fixpipe** instruction are float, NZ is output to GM, and **NZ2ND**, **NZ2DN**, and **unitFlag** are not enabled, the Channel Split feature can be enabled. Currently, output to L1 Buffer and Unified Buffer (UB) does not support this feature.
+- For Ascend 950PR&950DT products, when both the input and output data types of the **Fixpipe** instruction are float, NZ is output to GM, and **NZ2ND**, **NZ2DN**, and **unitFlag** are not enabled, the Channel Split feature can be enabled. Currently, output to L1 Buffer and Unified Buffer (UB) does not support this feature.
 <!-- end id4 -->
 
 ## Example

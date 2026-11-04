@@ -1,6 +1,6 @@
 # Heterogeneous Computing<a name="ZH-CN_TOPIC_0000001846719820"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:20:03.755Z pushedAt=2026-10-28T01:48:04.186Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:20:03.755Z pushedAt=2026-11-03T07:05:13.265Z nl=2 -->
 
 When developing with Ascend C, you need to write code for two different platforms: Host and Device. This chapter briefly describes the differences between Host and Device to help you understand this heterogeneous system at a high level. It also presents the data flow related to operators. Combined with the characteristics of the heterogeneous architecture, this helps you further understand how to properly arrange the execution location of operator code for better performance.
 

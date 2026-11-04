@@ -5,25 +5,25 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series product AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series product Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series product: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/debug_interface/onboard_print/DumpAccChkPoint_res.md#id1 -->
 
@@ -71,11 +71,11 @@ __aicore__ inline void DumpAccChkPoint(const GlobalTensor<T> &tensor, uint32_t i
 ## Data Types
 
 <!-- npu="950" id101 -->
-- Ascend 950PR&950DT series, the supported data types for T are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id101 -->
+- Ascend 950PR&950DT products, the supported data types for T are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id101 -->
 <!-- npu="A3" id102 -->
-- Atlas A3 product series, T supports the following data types: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id102 -->
+- Atlas A3 products, T supports the following data types: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id102 -->
 <!-- npu="910b" id103 -->
-- Atlas A2 product series, T supports the following data types: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id103 -->
+- Atlas A2 products, T supports the following data types: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id103 -->
 <!-- npu="310p" id105 -->
 - Atlas inference products AI Core, the supported data types of T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id105 -->
 
@@ -87,7 +87,7 @@ None
 
 - Currently, only printing of Tensor information stored in Unified Buffer (UB)/L1 Buffer/L0C Buffer/Global Memory is supported.
 <!-- npu="950" id100 -->
-- For the Ascend 950PR&950DT series, when using this API to print L1 Tensor data, the HDK version is required to be upgraded to at least 25.7.RC1.6 or later.
+- For the Ascend 950PR&950DT products, when using this API to print L1 Tensor data, the HDK version is required to be upgraded to at least 25.7.RC1.6 or later.
 <!-- end id100 -->
 - For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
 - The total amount of data printed by a single DumpAccChkPoint call must not exceed 30KB (including a small amount of header and trailer information required by the framework, which can usually be ignored). Note that if this limit is exceeded, the data will not be printed.

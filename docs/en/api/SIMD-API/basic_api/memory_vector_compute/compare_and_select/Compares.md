@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -99,15 +99,15 @@ Supports multiple comparison modes:
 ### mask/mask[] Parameter Description
 
 <!-- npu="950" id10 -->
-- For Ascend 950PR&950DT series products, this parameter takes effect.
+- For Ascend 950PR&950DT products, this parameter takes effect.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-- For Atlas A3 series products, this is a reserved parameter and the setting is invalid.
+- For Atlas A3 products, this is a reserved parameter and the setting is invalid.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-- For Atlas A2 series products, this is a reserved parameter and the setting is invalid.
+- For Atlas A2 products, this is a reserved parameter and the setting is invalid.
 <!-- end id12 -->
 
 <!-- npu="310b" id13 -->
@@ -115,25 +115,25 @@ Supports multiple comparison modes:
 <!-- end id13 -->
 
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, this is a reserved parameter and the setting is invalid.
+- For Atlas inference products AI Core, this is a reserved parameter and the setting is invalid.
 <!-- end id14 -->
 
 ## Data Type
 
 <!-- npu="950" id17 -->
-- For Ascend 950PR&950DT series products
+- For Ascend 950PR&950DT products
     - T supports the following data types: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, and double (only supports CMPMODE::EQ). Among them, the int8\_t/uint8\_t/uint64\_t/int64\_t/double data type only supports the API that computes the first n data elements of a tensor.
     - U supports the following data type: uint8_t.
 <!-- end id17 -->
 
 <!-- npu="A3" id18 -->
-- For Atlas A3 series products
+- For Atlas A3 products
     - T supports the following data types: half (all CMPMODE modes are supported), float (all CMPMODE modes are supported), and int32_t (only supports CMPMODE::EQ).
     - U supports the following data type: uint8_t.
 <!-- end id18 -->
 
 <!-- npu="910b" id19 -->
-- For Atlas A2 series products
+- For Atlas A2 products
     - T supports the following data types: half (all CMPMODE modes are supported), float (all CMPMODE modes are supported), and int32_t (only supports CMPMODE::EQ).
     - U supports the following data type: uint8_t.
 <!-- end id19 -->

@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -85,14 +85,14 @@ __aicore__ inline void Sort32(const LocalTensor<T>& dst, const LocalTensor<T>& s
     <!-- npu="A3,910b" id10 -->
     - For the following models, when the repeatTime parameter is set to 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
        <!-- npu="A3" id8 -->
-       - Atlas A3 product series
+       - Atlas A3 products
        <!-- end id8 -->
        <!-- npu="910b" id9 -->
-       - Atlas A2 product series
+       - Atlas A2 products
        <!-- end id9 -->
     <!-- end id10 -->
     <!-- npu="950" id11 -->
-    - For Ascend 950PR&950DT product series, this API implements compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
+    - For Ascend 950PR&950DT products, this API implements compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
     <!-- end id11 -->
 <!-- end id12 -->
 

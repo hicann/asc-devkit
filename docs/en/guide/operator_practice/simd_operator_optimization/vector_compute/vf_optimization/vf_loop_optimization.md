@@ -1,6 +1,6 @@
 # VF Loop Optimization<a name="ZH-CN_TOPIC_0000002498328772"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:58:19.194Z pushedAt=2026-10-28T08:23:11.441Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:58:19.194Z pushedAt=2026-11-03T07:05:13.358Z nl=2 -->
 
 In the architecture of the Ascend 950PR&950DT products, the Vector Function (VF) is the core carrier for implementing high-performance vector computing. A VF function can contain up to four levels of nested loops, and each loop level can contain multiple serial loops. It also supports non-loop vector operations and scalar operations. VF has limited support for control structures: it supports only for loops and conditional statements, and does not support other control structures such as switch, do-while, and while-do. VF loops are optimized into hardware-level vector loops (Hardware Loops) as much as possible to achieve performance optimization.
 

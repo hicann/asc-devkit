@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -98,16 +98,16 @@ None
 - This API writes the result to a 128-bit CmpMask register. You can use the [GetCmpMask](GetCmpMask_ISASI.md) API to obtain the data stored in the register.
 
 <!-- npu="950" id8 -->
-- Unified Buffer (UB) space usage: For Ascend 950PR&950DT series products, this API occupies 8KB of temporary UB space.
+- Unified Buffer (UB) space usage: For Ascend 950PR&950DT products, this API occupies 8KB of temporary UB space.
 <!-- end id8 -->
 
 <!-- npu="A3,910b" id9 -->
 - For the following models, when the count or repeatTime parameter is set to 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
   <!-- npu="A3" id10 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id10 -->
   <!-- npu="910b" id11 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id11 -->
 <!-- end id9 -->
 

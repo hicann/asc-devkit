@@ -5,7 +5,7 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
 - Atlas A3 products: Not supported

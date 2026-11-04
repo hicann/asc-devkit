@@ -76,7 +76,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | **srcStride** | Taking an M×K matrix as an example, the interval between the start address of the previous fractal and the start address of the next fractal in the K direction of the source matrix, in units of 512 bytes. |
 | **dstStride** | Taking an M×K matrix as an example, the interval between the start address of the previous fractal and the start address of the next fractal in the K direction of the destination matrix, in units of 512 bytes. |
 | **ifTranspose** | Whether to enable the transpose function, which transposes each fractal matrix, defaults to **false**:<br>&nbsp;&nbsp;&bull; **true**: Enabled<br>&nbsp;&nbsp;&bull; **false**: Not enabled<br>Note: Only the L1 Buffer (TPosition: A1)->L0A Buffer (TPosition: A2) and L1 Buffer (TPosition: B1)->L0B Buffer (TPosition: B2) paths can enable transpose. When the transpose function is enabled, b4, b8, b16, and b32 data types are supported. |
-| **sid** | Reserved parameter. Set it to 0.<br>Note: For compatibility with the API of earlier products, the Ascend 950PR&950DT product series ignores this parameter. |
+| **sid** | Reserved parameter. Set it to 0.<br>Note: For compatibility with the API of earlier products, the Ascend 950PR&950DT products ignores this parameter. |
 
 When transpose is not enabled, the diagram of the **LoadData2DParamsV2** structure is as follows, along with the parameter setting values and explanations:
 

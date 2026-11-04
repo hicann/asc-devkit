@@ -1,6 +1,6 @@
 # Enabling MTE2 Preload for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002360914053"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:31:15.489Z pushedAt=2026-10-27T01:30:45.756Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:31:15.489Z pushedAt=2026-11-03T07:05:13.274Z nl=2 -->
 
 ## Case Introduction<a name="section17413194624510"></a>
 

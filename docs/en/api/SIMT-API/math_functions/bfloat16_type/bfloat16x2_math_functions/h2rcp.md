@@ -62,7 +62,7 @@ Returns the reciprocal of each element of the input data. This API is affected b
 ## Constraints
 
 <!-- npu="950" id7 -->
-For the Ascend 950PR&950DT product series, this API does not support the Subnormal scenario: the internal implementation of this API uses the division operator. Since the division operator does not support the Subnormal scenario, when the input x is Subnormal data, the final result of this API is ±inf.
+For the Ascend 950PR&950DT products, this API does not support the Subnormal scenario: the internal implementation of this API uses the division operator. Since the division operator does not support the Subnormal scenario, when the input x is Subnormal data, the final result of this API is ±inf.
 <!-- end id7 -->
 
 ## Examples

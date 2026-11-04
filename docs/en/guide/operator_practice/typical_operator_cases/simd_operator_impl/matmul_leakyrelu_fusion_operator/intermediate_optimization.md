@@ -1,6 +1,6 @@
 # Intermediate Performance Optimization<a name="ZH-CN_TOPIC_000000_MATMUL_LEAKYRELU_MID"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:24:59.436Z pushedAt=2026-10-28T01:16:58.620Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:24:59.436Z pushedAt=2026-11-03T07:05:13.384Z nl=2 -->
 
 This section describes the intermediate performance optimization techniques for the Matmul fused operator, building on the basic function implementation.
 

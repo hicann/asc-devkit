@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id13 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id13 -->
 <!-- npu="A3" id14 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id14 -->
 <!-- npu="910b" id15 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -105,19 +105,19 @@ Taking the float data type as an example, the NZ2ND conversion diagram is as fol
 ## Data Type<a name="section4219135304818"></a>
 
 <!-- npu="950" id2 -->
-- Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, and complex64.
+- Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, and complex64.
 <!-- end id2 -->
 
 <!-- npu="A3" id3 -->
-- Atlas A3 product series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- Atlas A3 products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id3 -->
 
 <!-- npu="910b" id4 -->
-- Atlas A2 product series, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
+- Atlas A2 products, the supported data types are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, and float.
 <!-- end id4 -->
 
 <!-- npu="310p" id5 -->
-- Atlas inference series AI Core, the supported data types are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
+- Atlas inference products AI Core, the supported data types are: int16_t, uint16_t, half, int32_t, uint32_t, and float.
 <!-- end id5 -->
 
 ## Return Value<a name="section129001927113216"></a>

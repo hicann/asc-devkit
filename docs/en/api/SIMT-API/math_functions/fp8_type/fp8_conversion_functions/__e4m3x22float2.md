@@ -5,7 +5,7 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series: Supported
+- Ascend 950PR&950DT products: Supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
 - Atlas A3 products: Not supported
@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series AI Core: Not supported
+- Atlas inference products AI Core: Not supported
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->

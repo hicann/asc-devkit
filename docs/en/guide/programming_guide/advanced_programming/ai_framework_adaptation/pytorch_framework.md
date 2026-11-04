@@ -1,6 +1,6 @@
 # PyTorch Framework<a name="ZH-CN_TOPIC_0000001918449130"></a>
 
-<!-- md-trans-meta sourceCommit=4d9fe40502b3423a344d570fd1a8be343cfca4a5 translatedAt=2026-10-23T14:11:54.025Z pushedAt=2026-10-28T03:21:08.007Z nl=2 -->
+<!-- md-trans-meta sourceCommit=4d9fe40502b3423a344d570fd1a8be343cfca4a5 translatedAt=2026-10-23T14:11:54.025Z pushedAt=2026-11-03T07:05:13.419Z nl=2 -->
 
 When training and inferring models through the PyTorch framework, many operators are invoked for computation. If developers need to integrate and deploy their custom operators into the PyTorch framework, the following methods are available:
 

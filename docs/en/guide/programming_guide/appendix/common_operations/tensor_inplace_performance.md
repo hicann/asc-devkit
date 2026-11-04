@@ -1,6 +1,6 @@
 # How to Use Tensor In-Place Operations to Improve Operator Performance<a name="ZH-CN_TOPIC_0000002306575778"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:55:53.721Z pushedAt=2026-10-28T06:27:21.497Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:55:53.721Z pushedAt=2026-11-03T07:05:13.445Z nl=2 -->
 
 Tensor in-place operation (in-place API) is an optimization technique that globally allocates and retains LocalTensor memory, avoiding frequent creation and destruction of LocalTensor objects. The AllocTensor, FreeTensor, EnQue, and DeQue APIs do not create new LocalTensor objects; instead, they repeatedly allocate, release, enqueue, and dequeue on the global LocalTensor. The implementation principle is shown in the following figure:
 

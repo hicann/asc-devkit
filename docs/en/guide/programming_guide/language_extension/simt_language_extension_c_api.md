@@ -1,6 +1,6 @@
 # SIMT Language Extension Layer C API<a name="ZH-CN_TOPIC_0000002509743873"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:16:14.932Z pushedAt=2026-10-28T07:43:59.286Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:16:14.932Z pushedAt=2026-11-03T07:05:13.469Z nl=2 -->
 
 SIMT programming is implemented based on the hardware capabilities of AI Core. Currently, the C API categories supported by the SIMT language extension layer are as follows:
 

@@ -5,13 +5,13 @@
 ## Applicable Products<a id="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -54,7 +54,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 ### Template Parameter Defaults and Effective Conditions<a id="template-parameter-defaults"></a>
 
 <!-- npu="950" id8 -->
-- For the Ascend 950PR&950DT product series, the two template parameters are described as follows:
+- For the Ascend 950PR&950DT products, the two template parameters are described as follows:
 
     - modeId
         - `modeId` is not directly used as the input of a hardware instruction. CrossCoreWaitFlag selects the corresponding hardware instruction based on this parameter.
@@ -69,10 +69,10 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 - For the following products, **the parameter values do not affect the hardware instruction function**. The usage of the two template parameters is described as follows:
 
     <!-- npu="A3" id10 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id10 -->
     <!-- npu="910b" id11 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id11 -->
 
     `modeId` and `pipe` are not used as inputs to the hardware instruction. Configure them as follows:
@@ -91,15 +91,15 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 The support for synchronization modes by different products is as follows:
 <!-- npu="950" id12 -->
-- For the Ascend 950PR&950DT product series, the supported synchronization modes are: mode 0, mode 1, mode 2, and mode 4.
+- For the Ascend 950PR&950DT products, the supported synchronization modes are: mode 0, mode 1, mode 2, and mode 4.
 <!-- end id12 -->
 <!-- npu="A3,910b" id13 -->
 - For the following products, the supported synchronization modes are: mode 0, mode 1, and mode 2.
     <!-- npu="A3" id14 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id14 -->
     <!-- npu="910b" id15 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id15 -->
 <!-- end id13 -->
 
@@ -107,7 +107,7 @@ The support for synchronization modes by different products is as follows:
 
 - When the inter-core synchronization mode is mode 0, 1, or 2, the supported value range is 0-15.
 <!-- npu="950" id16 -->
-- For Ascend 950PR&950DT product series, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
+- For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, the supported value range is as follows:
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by **AIV0** corresponds to the operation with **flagId** 0-15 in **AIC** **CrossCoreWaitFlag**.
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by **AIV1** corresponds to the operation with **flagId** 16-31 in **AIC** **CrossCoreWaitFlag**.
     - The **CrossCoreSetFlag** operation with **flagId** 0-15 initiated by **AIC** corresponds to the operation with **flagId** 0-15 in **AIV0** **CrossCoreWaitFlag**.
@@ -142,7 +142,7 @@ None
 - Constraints related to **flagId**:
     - For mode 0, 1, and 2, each AIC and each AIV has 16 **flagId** values, with a supported value range of 0-15. If the value of **flagId** exceeds this range, the low 4 bits are truncated (for example, when **flagId**=17, the value after truncation is 1).
     <!-- npu="950" id17 -->
-    - For Ascend 950PR&950DT product series, when the inter-core synchronization mode is mode 4, AIC has 32 flagIds with a supported value range of 0-31. If the value of **flagId** exceeds this range, the low 5 bits are truncated (for example, when **flagId**=35, the value after truncation is 3). AIV has 16 flagIds with a supported value range of 0-15. If the value of **flagId** exceeds this range, the low 4 bits are truncated (for example, when **flagId**=17, the value after truncation is 1).
+    - For Ascend 950PR&950DT products, when the inter-core synchronization mode is mode 4, AIC has 32 flagIds with a supported value range of 0-31. If the value of **flagId** exceeds this range, the low 5 bits are truncated (for example, when **flagId**=35, the value after truncation is 3). AIV has 16 flagIds with a supported value range of 0-15. If the value of **flagId** exceeds this range, the low 4 bits are truncated (for example, when **flagId**=17, the value after truncation is 1).
     <!-- end id17 -->
     - Each **flagId** corresponds to a counter. When [CrossCoreWaitFlag](CrossCoreWaitFlag_ISASI.md) is called, if the counter value is 0, the dispatch of subsequent instructions is blocked, while already-dispatched instructions can execute normally. When the scheduling module detects that all inter-core synchronization (CrossCoreSetFlag) operations are complete, it increments the counter corresponding to **CrossCoreWaitFlag** by 1. At this point, the counter value is non-zero, the blocking is released, and the corresponding counter value is decremented by 1 to restore it. For the specific execution logic and details, see [Key Features](key_features.md). The counter corresponding to **flagId** has a value range of 0-15. If the counter value exceeds this range, an error is reported and the process is interrupted.
 - Constraints on using the same **flagId** for different inter-core synchronization modes under modes 0, 1, and 2:

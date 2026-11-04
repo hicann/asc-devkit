@@ -34,7 +34,7 @@ In the B32 scenario, **LoadDataWithTranspose** merges two consecutive 16\*8 frac
 During matrix computation, the commonly supported fractals are summarized in the following table:
 
 <!-- npu="910b,A3" id2 -->
-### For Atlas A2 training series products/Atlas A2 inference series products and Atlas A3 training series products/Atlas A3 inference series products
+### For Atlas A2 training products/Atlas A2 inference products and Atlas A3 training products/Atlas A3 inference products
 
 The common fractal support status is as follows, for developers' reference:
 
@@ -121,7 +121,7 @@ For the support status of some uncommon fractal conversions, developers can refe
 <!-- end id2 -->
 
 <!-- npu="950" id3 -->
-### For Ascend 950PR&950DT Series Products
+### For Ascend 950PR&950DT products
 
 DataCopy (GM-\>L1 Buffer) supports enabling on-the-fly DN-to-NZ conversion, which always changes the fractal layout.
 
@@ -253,7 +253,7 @@ For Atlas A2 training products/Atlas A2 inference products and Atlas A3 training
 <!-- end id4 -->
 
 <!-- npu="950" id5 -->
-For Ascend 950PR&950DT series products, the data type constraints are shown in Table 4:
+For Ascend 950PR&950DT products, the data type constraints are shown in Table 4:
 
 **Table 4** Data type constraints
 
@@ -270,7 +270,7 @@ For Ascend 950PR&950DT series products, the data type constraints are shown in T
 <!-- end id5 -->
 
 <!-- npu="950" id6 -->
-- For Ascend 950PR&950DT series products, **LoadData** (2D matrix move V2) performs moves in units of 512-byte fractals. **LoadData** (MX matrix move) includes two types of matrix data moves: the left and right matrices are moved in units of 512-byte fractals, and the left and right quantization coefficient matrices are moved in units of 32-byte fractals.
+- For Ascend 950PR&950DT products, **LoadData** (2D matrix move V2) performs moves in units of 512-byte fractals. **LoadData** (MX matrix move) includes two types of matrix data moves: the left and right matrices are moved in units of 512-byte fractals, and the left and right quantization coefficient matrices are moved in units of 32-byte fractals.
 <!-- end id6 -->
 
 ## Move Instruction Summary
@@ -297,5 +297,5 @@ For Atlas A2 training products/Atlas A2 inference products and Atlas A3 training
 <!-- end id7 -->
 
 <!-- npu="950" id8 -->
-For Ascend 950PR&950DT series products, LoadData (2D matrix move V2) supports b4 (fp4)/b8/b16/b32 data types as well as transpose-scenario moves. By configuring mStep and kStep, it can complete data block moves in multiple directions. Compared with LoadData (convolution data move), the instruction has lower bandwidth latency. Therefore, in matrix multiplication without quantization coefficients, it is recommended to use the LoadData (2D matrix move V2) instruction to implement data moves on the L1 Buffer->L0A Buffer/L0B Buffer path. In matrix multiplication with quantization coefficients, the LoadData (MX matrix move) instruction is required to implement data moves, which can complete not only the L1 Buffer->L0A Buffer/L0B Buffer path move but also the L1 Buffer->L0A\_MX/L0B\_MX Buffer path data move.
+For Ascend 950PR&950DT products, LoadData (2D matrix move V2) supports b4 (fp4)/b8/b16/b32 data types as well as transpose-scenario moves. By configuring mStep and kStep, it can complete data block moves in multiple directions. Compared with LoadData (convolution data move), the instruction has lower bandwidth latency. Therefore, in matrix multiplication without quantization coefficients, it is recommended to use the LoadData (2D matrix move V2) instruction to implement data moves on the L1 Buffer->L0A Buffer/L0B Buffer path. In matrix multiplication with quantization coefficients, the LoadData (MX matrix move) instruction is required to implement data moves, which can complete not only the L1 Buffer->L0A Buffer/L0B Buffer path move but also the L1 Buffer->L0A\_MX/L0B\_MX Buffer path data move.
 <!-- end id8 -->

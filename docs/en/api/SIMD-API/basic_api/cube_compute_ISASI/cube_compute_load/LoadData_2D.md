@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -35,7 +35,7 @@ It moves the 2D-format data required for ordinary matrix computation, moving dat
 
 - Supports GM->L0A Buffer, GM->L0B Buffer, L1 Buffer->L0A Buffer, and L1 Buffer->L0B Buffer.
 <!-- npu="950" id10 -->
-- Specifically for the Ascend 950PR&950DT product series: only L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer are supported.
+- Specifically for the Ascend 950PR&950DT products: only L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer are supported.
 <!-- end id10 -->
 
 For different data types, the matrix corresponding to each data fractal is as follows:
@@ -57,7 +57,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id11 -->
-For the Ascend 950PR&950DT product series:
+For the Ascend 950PR&950DT products:
 
 ```cpp
 template <typename T>
@@ -90,15 +90,15 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 ## Data Type
 
 <!-- npu="950" id12 -->
-Ascend 950PR&950DT series products support the following data types: uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float.
+Ascend 950PR&950DT products support the following data types: uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float.
 <!-- end id12 -->
 
 <!-- npu="A3" id13 -->
-Atlas A3 series products support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
+Atlas A3 products support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
 <!-- end id13 -->
 
 <!-- npu="910b" id14 -->
-Atlas A2 series products support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
+Atlas A2 products support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
 <!-- end id14 -->
 
 <!-- npu="310b" id15 -->
@@ -106,11 +106,11 @@ Atlas 200I/500 A2 inference products support the following data types: uint8_t, 
 <!-- end id15 -->
 
 <!-- npu="910" id16 -->
-Atlas training series products support the following data types: uint8_t, int8_t, uint16_t, int16_t, and half.
+Atlas training products support the following data types: uint8_t, int8_t, uint16_t, int16_t, and half.
 <!-- end id16 -->
 
 <!-- npu="310p" id17 -->
-Atlas inference series products AI Core support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, and half. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
+Atlas inference products AI Core support the following data types: int4b_t, uint8_t, int8_t, uint16_t, int16_t, and half. **Note: int4b_t supports only the L1 Buffer->L0A Buffer and L1 Buffer->L0B Buffer paths.**
 <!-- end id17 -->
 
 ## Return Value Description
@@ -130,11 +130,11 @@ None
 - The physical storage locations vary by model. Developers can refer to the following:
     - The supported physical storage locations are Global Memory (TPosition: GM)/L1 Buffer (TPosition: A1/B1).
     <!-- npu="950" id21 -->
-    - Specifically for the Ascend 950PR&950DT product series, the supported physical storage location is the L1 Buffer (TPosition: A1/B1).
+    - Specifically for the Ascend 950PR&950DT products, the supported physical storage location is the L1 Buffer (TPosition: A1/B1).
     <!-- end id21 -->
 
 <!-- npu="950" id22 -->
-- Especially for the Ascend 950PR&950DT product series, this API is a compatibility implementation. Compared with the Atlas A3 product series and the Atlas A2 product series, because the fractal supported on the L0A Buffer has changed from Zz to Nz, the operator implementation code cannot be directly reused and must be re-adapted according to the fractal change. For the specific adaptation solution, see the matrix computation section in [Basic API Migration Guide](../../../../../guide/cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md#cube-computation).
+- Especially for the Ascend 950PR&950DT products, this API is a compatibility implementation. Compared with the Atlas A3 products and the Atlas A2 products, because the fractal supported on the L0A Buffer has changed from Zz to Nz, the operator implementation code cannot be directly reused and must be re-adapted according to the fractal change. For the specific adaptation solution, see the matrix computation section in [Basic API Migration Guide](../../../../../guide/cross_gen_migration_guide/3510_arch_migration/2201_to_3510_guide/basic_api_migration.md#cube-computation).
 <!-- end id22 -->
 
 ## Key Feature Description

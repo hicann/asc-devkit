@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002538001510_section18204144912492"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -86,7 +86,7 @@ None
 ## Constraints<a id="section_constraint"></a>
 
 <!-- npu="950" id11 -->
-- For the Ascend 950PR&950DT product series, the unit of the **blockLen** parameter is 64B.
+- For the Ascend 950PR&950DT products, the unit of the **blockLen** parameter is 64B.
 <!-- end id11 -->
 - The dst physical memory is the Fixpipe Buffer start address, which requires 128-byte alignment. The src physical memory is the L1 Buffer, whose start address requires 32-byte alignment.
 - Value range of **blockCount**: **blockCount** ∈ [1, 4095]. Setting it to 0 means no execution, and this instruction is treated as a NOP with a warning reported.

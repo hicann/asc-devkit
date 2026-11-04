@@ -1,6 +1,6 @@
 # Abstract Hardware Architecture<a name="ZH-CN_TOPIC_0000001861989988"></a>
 
-<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-28T08:34:36.376Z pushedAt=2026-10-28T11:42:21.732Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-28T08:34:36.376Z pushedAt=2026-11-03T07:08:03.550Z nl=2 -->
 
 AI Core is the compute core of an AI processor, and an AI processor contains multiple AI Cores. This section describes the parallel computation architecture abstraction of AI Core, which shields the differences between different hardware. When programming with Ascend C, the abstract hardware architecture simplifies hardware details and significantly lowers the development threshold. For more detailed hardware architecture information or principles, see [Hardware Implementation](../../advanced_programming/hardware_implementation/basic_architecture.md).
 

@@ -1,6 +1,6 @@
 # Operator Implementation<a name="ZH-CN_TOPIC_0000002532228181"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:07:57.645Z pushedAt=2026-10-27T11:34:01.962Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:07:57.645Z pushedAt=2026-11-03T07:05:13.368Z nl=2 -->
 
 This section uses the Gather operator as an example to describe the basic process of implementing a SIMT operator, as shown in the following figure:
 

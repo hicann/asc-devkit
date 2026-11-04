@@ -1,6 +1,6 @@
 # Reg Vector Computation Programming<a name="ZH-CN_TOPIC_0000002600000001"></a>
 
-<!-- md-trans-meta sourceCommit=37a5797adbd3b380f730ac6207e1217620a2d728 translatedAt=2026-10-28T08:47:36.633Z pushedAt=2026-10-28T11:42:21.737Z nl=2 -->
+<!-- md-trans-meta sourceCommit=37a5797adbd3b380f730ac6207e1217620a2d728 translatedAt=2026-10-28T08:47:36.633Z pushedAt=2026-11-03T07:08:03.556Z nl=2 -->
 
 > **Note:** Reg vector programming is supported only when performing SIMD vector computation programming on [NPU architecture version 3510](../../../language_extension/simd_builtin_keywords.md).
 

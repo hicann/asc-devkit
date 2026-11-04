@@ -1,6 +1,6 @@
 # Operator Precision Issues Involving the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002070127457"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:01:11.907Z pushedAt=2026-10-28T06:34:45.235Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:01:11.907Z pushedAt=2026-11-03T07:05:13.455Z nl=2 -->
 
 This section provides preliminary fault localization and isolation guidance for operators that use the Matmul advanced API, to troubleshoot whether an operator precision issue is caused by the way the Matmul advanced API is called in the operator. Unless otherwise specified, the following examples are based on Atlas A2 products.
 

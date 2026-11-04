@@ -1,6 +1,6 @@
 # How to Use the Header File Required by Tiling<a name="ZH-CN_TOPIC_0000002522860379"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:22:58.457Z pushedAt=2026-10-28T07:46:29.234Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:22:58.457Z pushedAt=2026-11-03T07:05:13.474Z nl=2 -->
 
 Because the Scalar computing unit of the AI processor has limited execution capability, to reduce Scalar computation on the operator kernel function side, some computation is performed on the Host side, which requires writing [host-side tiling code](../../../advanced_programming/aclnn_operator_development/design_and_implementation/host_tiling_implementation.md). Note that when calling the Tiling APIs of the advanced APIs or using the Tiling structure parameters of the advanced APIs in a program, you need to include the dependent header files. Specifically, under different Tiling implementation methods:
 

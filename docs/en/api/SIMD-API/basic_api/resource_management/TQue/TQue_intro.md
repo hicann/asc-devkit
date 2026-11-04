@@ -45,7 +45,7 @@ que.FreeTensor(a2);</pre>
 <tr id="row3501135910920"><td class="cellrowborder" valign="top" width="14.099999999999998%" headers="mcps1.2.3.1.1 "><p id="p6501175912914"><a name="p6501175912914"></a><a name="p6501175912914"></a>mask</p></td>
 <td class="cellrowborder" valign="top" width="85.9%" headers="mcps1.2.3.1.2 "><a name="ul4317543497"></a><a name="ul4317543497"></a><ul id="ul4317543497"><li>When mask is of the int type, bit positions are used to express information:<a name="ul196262325012"></a><a name="ul196262325012"></a><ul id="ul196262325012"><li>Bit 0 set to 1 indicates that the data format is converted from ND to NZ, and TPosition supports only A1 or B1;</li><li>Bit 1 set to 1 indicates that the data format is converted from NZ to ND, and TPosition supports only CO2.</li></ul>
 <p id="p17324473167"><a name="p17324473167"></a><a name="p17324473167"></a>The supported models are as follows:</p>
-<p id="p9732447121610"><a name="p9732447121610"></a><a name="p9732447121610"></a><span id="ph1429142166"><a name="ph1429142166"></a><a name="ph1429142166"></a><term id="zh-cn_topic_0000001312391781_term1964153212227"><a name="zh-cn_topic_0000001312391781_term1964153212227"></a><a name="zh-cn_topic_0000001312391781_term1964153212227"></a>Atlas Inference Series products</term>AI Core</span></p>
+<p id="p9732447121610"><a name="p9732447121610"></a><a name="p9732447121610"></a><span id="ph1429142166"><a name="ph1429142166"></a><a name="ph1429142166"></a><term id="zh-cn_topic_0000001312391781_term1964153212227"><a name="zh-cn_topic_0000001312391781_term1964153212227"></a><a name="zh-cn_topic_0000001312391781_term1964153212227"></a>Atlas inference products</term>AI Core</span></p>
 </li><li>When mask is of the const TQueConfig* type, the TQueConfig structure definition and parameter description are as follows. For an example, see <a href="#section45805354920">Example</a>:<a name="screen13896155731115"></a><a name="screen13896155731115"></a><pre class="screen" codetype="Cpp" id="screen13896155731115">struct TQueConfig {
     bool nd2nz = false;  // true indicates that the data format is converted from ND to NZ. Supports only TPosition A1 or B1. Default value: false.
     bool nz2nd = false;  // true indicates that the data format is converted from NZ to ND. Supports only TPosition CO2. Default value: false.
@@ -58,7 +58,7 @@ que.FreeTensor(a2);</pre>
     bool enableLoopQueue = false;   // Reserved parameter.
 };</pre>
 <p id="p8601939151319"><a name="p8601939151319"></a><a name="p8601939151319"></a>The models that support the ND and NZ format conversion parameters described above are as follows:</p>
-<p id="p11601163917138"><a name="p11601163917138"></a><a name="p11601163917138"></a><span id="ph760153981316"><a name="ph760153981316"></a><a name="ph760153981316"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas Inference Series products</term>AI Core</span></p>
+<p id="p11601163917138"><a name="p11601163917138"></a><a name="p11601163917138"></a><span id="ph760153981316"><a name="ph760153981316"></a><a name="ph760153981316"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas inference products</term>AI Core</span></p>
 </li></ul></td>
 </tr>
 </tbody>
@@ -68,15 +68,15 @@ que.FreeTensor(a2);</pre>
 
 Because the Buffers allocated by TQue store synchronization event IDs, the number of TQue Buffers on the same TPosition is related to the hardware synchronization event IDs.
 
-For Atlas training series products, the number of event IDs is 4.
+For Atlas training products, the number of event IDs is 4.
 
-For the AI Core of Atlas Inference Series products, the number of event IDs is 8.
+For the AI Core of Atlas inference products, the number of event IDs is 8.
 
-For the Vector Core of Atlas Inference Series products, the number of event IDs is 8.
+For the Vector Core of Atlas inference products, the number of event IDs is 8.
 
-For Atlas A2 series products, the number of event IDs is 8.
+For Atlas A2 products, the number of event IDs is 8.
 
-For Atlas A3 series products, the number of event IDs is 8.
+For Atlas A3 products, the number of event IDs is 8.
 
 For Atlas 200I/500 A2 inference products, the number of event IDs is 8.
 

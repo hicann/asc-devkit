@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002543851571_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -49,7 +49,7 @@ __aicore__ inline void LoadDataWithTranspose(const LocalTensor<T>& dst, const Lo
 ```
 
 <!-- npu="950" id11 -->
-For Ascend 950PR&950DT product series:
+For Ascend 950PR&950DT products:
 
 ```cpp
 template <typename T>
@@ -113,18 +113,18 @@ For Ascend 950PR&950DT products, the type is **LoadData2dTransposeParamsV2**. Re
 ## Data Types<a id="zh-cn_topic_0000002543851571_section4219135304818"></a>
 
 <!-- npu="950" id14 -->
-For Ascend 950PR&950DT product series, the supported data types are: int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, float.
+For Ascend 950PR&950DT products, the supported data types are: int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id14 -->
 
 <!-- npu="A3" id15 -->
-Atlas A3 product series:
+Atlas A3 products:
 
 - For loading into L0A Buffer, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, and float are supported.
 - For loading into L0B Buffer, int4b_t, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, and float are supported.
 <!-- end id15 -->
 
 <!-- npu="910b" id16 -->
-Atlas A2 product series:
+Atlas A2 products:
 
 - For loading into L0A Buffer, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, and float are supported.
 - For loading into L0B Buffer, int4b_t, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, and float are supported.
@@ -146,7 +146,7 @@ None
 - In the fp32 scenario, two consecutive 16\*8 fractals of the source operand are merged into one 16\*16 block matrix, and transposition is then performed based on that block matrix. Therefore, the two consecutive fractals must be merged into a block matrix, and the A matrix on the L1 Buffer must satisfy the ZZ or ZN layout.
 - The developer must ensure that the transposed fractals of the destination operand do not overlap.
 <!-- npu="950" id19 -->
-- For the Ascend 950PR&950DT product series, it is recommended to use **LoadData2dTransposeParamsV2** as the parameter, which provides a finer transfer granularity.
+- For the Ascend 950PR&950DT products, it is recommended to use **LoadData2dTransposeParamsV2** as the parameter, which provides a finer transfer granularity.
 <!-- end id19 -->
 ## Key Feature Description<a id="zh-cn_topic_0000002543851571_section1891111310132"></a>
 

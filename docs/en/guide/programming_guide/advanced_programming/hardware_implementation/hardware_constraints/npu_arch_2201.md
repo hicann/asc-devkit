@@ -1,6 +1,6 @@
 # NPU Architecture Version 2201<a name="ZH-CN_TOPIC_0000002477825678"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:25:31.829Z pushedAt=2026-10-28T03:41:09.203Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:25:31.829Z pushedAt=2026-11-03T07:05:13.428Z nl=2 -->
 
 This section describes the hardware constraints and recommended solutions. The corresponding product models are:
 

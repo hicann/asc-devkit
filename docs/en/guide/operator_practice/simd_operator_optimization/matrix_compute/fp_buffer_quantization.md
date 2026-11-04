@@ -1,6 +1,6 @@
 # Efficient On-the-Fly Quantization by Storing Quantization Parameters in the FP Buffer<a name="ZH-CN_TOPIC_0000001947984233"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:34:08.029Z pushedAt=2026-10-27T09:47:49.385Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:34:08.029Z pushedAt=2026-11-03T07:05:13.324Z nl=2 -->
 
 [Priority] High
 

@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002535739034_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -67,23 +67,23 @@ Taking the half data type as an example, the shape of the source operand is 1 * 
 The source matrix and the destination matrix support the same data types.
 
 <!-- npu="950" id10 -->
-For the Ascend 950PR&950DT product series, the supported data types are: b8, b16, b32, b64.
+For the Ascend 950PR&950DT products, the supported data types are: b8, b16, b32, b64.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-For the Atlas A3 product series, the supported data types are: b8, b16, b32, b64.
+For the Atlas A3 products, the supported data types are: b8, b16, b32, b64.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-For the Atlas A2 product series, the supported data types are: b8, b16, b32, b64.
+For the Atlas A2 products, the supported data types are: b8, b16, b32, b64.
 <!-- end id12 -->
 
 <!-- npu="310p" id13 -->
-For the AI Core of the Atlas inference series products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
+For the AI Core of the Atlas inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
 <!-- end id13 -->
 
 <!-- npu="910" id14 -->
-For the Atlas training series products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
+For the Atlas training products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
 <!-- end id14 -->
 
 ## Return Value
@@ -102,11 +102,11 @@ None
 - For the following product models:
 
     <!-- npu="A3" id18 -->
-    Atlas A3 product series;
+    Atlas A3 products;
     <!-- end id18 -->
 
     <!-- npu="910b" id19 -->
-    Atlas A2 product series;
+    Atlas A2 products;
     <!-- end id19 -->
 
     In cross-card communication operator development scenarios, DataCopy-class APIs support cross-card data copy over the HCCS physical link only, and do not support other paths. During development, you need to pay attention to the physical path involved in inter-card communication. You can query the HCCS physical link by running the npu-smi info -t topo command.

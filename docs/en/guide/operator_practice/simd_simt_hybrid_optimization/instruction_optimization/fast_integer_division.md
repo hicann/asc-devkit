@@ -1,6 +1,6 @@
 # Fast Algorithm for Integer Division<a name="ZH-CN_TOPIC_INTEGER_FAST_DIV"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:05:05.400Z pushedAt=2026-10-27T11:20:52.705Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:05:05.400Z pushedAt=2026-11-03T07:05:13.364Z nl=2 -->
 
 > [!NOTE] Note
 > This performance optimization suggestion applies to the following models:

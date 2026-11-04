@@ -1,6 +1,6 @@
 # Aligning GM Addresses to 512B Wherever Possible<a name="ZH-CN_TOPIC_0000001892919369"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:38:37.796Z pushedAt=2026-10-27T10:01:41.738Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:38:37.796Z pushedAt=2026-11-03T07:05:13.330Z nl=2 -->
 
 [Priority] High
 

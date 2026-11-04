@@ -1,6 +1,6 @@
 # Advanced API Migration Guide<a name="ZH-CN_TOPIC_0000002503588125"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T10:54:09.768Z pushedAt=2026-10-28T08:23:33.492Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T10:54:09.768Z pushedAt=2026-11-03T07:05:13.251Z nl=2 -->
 
 Ascend C advanced APIs are basically compatible with [NPU architecture version 3510](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch) and [NPU architecture version 2201](../../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch), and some APIs have been extended. The current 3510 architecture does not support advanced convolution APIs.
 

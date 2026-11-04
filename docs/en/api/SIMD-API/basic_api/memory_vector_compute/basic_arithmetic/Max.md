@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -82,22 +82,22 @@ $dst_i = max(src0_i, src1_i)$
 ## Data Types
 
 <!-- npu="950" id10 -->
-- For Ascend 950PR&950DT product series, the supported data types for T are int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t. The int8_t, uint8_t, int64_t, and uint64_t data types are supported only by the tensor first-n-data computation API.
+- For Ascend 950PR&950DT products, the supported data types for T are int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, and uint64_t. The int8_t, uint8_t, int64_t, and uint64_t data types are supported only by the tensor first-n-data computation API.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 product series, the supported data types for T are int16_t, half, int32_t, and float.
+- For Atlas A3 products, the supported data types for T are int16_t, half, int32_t, and float.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 product series, the supported data types for T are int16_t, half, int32_t, and float.
+- For Atlas A2 products, the supported data types for T are int16_t, half, int32_t, and float.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, the supported data types for T are int16_t, half, int32_t, and float.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series products AI Core, the supported data types for T are int16_t, half, int32_t, and float.
+- For Atlas inference products AI Core, the supported data types for T are int16_t, half, int32_t, and float.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training product series, the supported data types for T are half, int32_t, and float.
+- For Atlas training products, the supported data types for T are half, int32_t, and float.
 <!-- end id15 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -114,18 +114,18 @@ None
   <!-- npu="A3,910b" id23 -->
   - For the following models, when the count or repeatTime parameter is 0, no computation is performed and no write is made to the destination operand. The API is treated as a NOP (no operation).
     <!-- npu="A3" id24 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id24 -->
     <!-- npu="910b" id26 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id26 -->
   <!-- end id23 -->
   <!-- npu="950" id27 -->
-  - For Ascend 950PR&950DT product series: This API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the value of the count or repeatTime parameter is 0, the software simulation behavior does not guarantee that this API is treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products: This API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the value of the count or repeatTime parameter is 0, the software simulation behavior does not guarantee that this API is treated as a NOP (no operation).
   <!-- end id27 -->
 <!-- end id20 -->
 <!-- npu="950" id21 -->
-- Notes on Unified Buffer (UB) space usage. For Ascend 950PR&950DT product series:
+- Notes on Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
   - Tensor high-dimensional partitioning computation occupies 8 KB of UB.
   - Tensor computation on the first n data elements in contiguous mode does not involve the 8 KB UB usage.
 <!-- end id21 -->

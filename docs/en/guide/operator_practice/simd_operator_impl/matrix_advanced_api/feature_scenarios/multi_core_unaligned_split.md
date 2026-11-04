@@ -1,6 +1,6 @@
 # Multi-core Unaligned Splitting<a name="ZH-CN_TOPIC_0000002500548096"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:10:59.083Z pushedAt=2026-10-27T08:03:41.399Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:10:59.083Z pushedAt=2026-11-03T07:05:13.306Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002264134828_section310824820358"></a>
 

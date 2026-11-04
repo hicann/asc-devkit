@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -133,10 +133,10 @@ None
   <!-- npu="A3,910b" id17 -->
   - For the following models, when the value of count or repeatTime is 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id19 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id19 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id17 -->
   <!-- npu="950" id23 -->

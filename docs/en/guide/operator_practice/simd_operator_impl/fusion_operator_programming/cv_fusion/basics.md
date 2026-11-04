@@ -1,6 +1,6 @@
 # Basics<a name="ZH-CN_TOPIC_0000002500468250"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:51:16.634Z pushedAt=2026-10-27T06:06:28.996Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:51:16.634Z pushedAt=2026-11-03T07:05:13.289Z nl=2 -->
 
 >[!NOTE] Note
 >Before learning fused operator programming, ensure that you have mastered the knowledge of [Cube Programming](../../matrix_advanced_api/basics.md).

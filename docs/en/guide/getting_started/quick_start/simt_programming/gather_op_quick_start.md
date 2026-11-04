@@ -1,6 +1,6 @@
 # Gather Operator Quick Start
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:17:40.212Z pushedAt=2026-10-26T10:30:51.356Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:17:40.212Z pushedAt=2026-11-03T07:05:13.264Z nl=2 -->
 
 This quick start example implements a one-dimensional Gather operator based on Ascend C SIMT. It walks you through the complete process of implementing the device-side kernel function, calling it from the host side, and compiling and running the program, helping you build an overall understanding.
 

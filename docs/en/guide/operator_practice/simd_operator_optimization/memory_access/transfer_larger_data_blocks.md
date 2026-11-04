@@ -1,6 +1,6 @@
 # Transferring Large Data Blocks in a Single Operation<a name="ZH-CN_TOPIC_0000001893771813"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:43:59.722Z pushedAt=2026-10-27T10:26:16.890Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:43:59.722Z pushedAt=2026-11-03T07:05:13.338Z nl=2 -->
 
 [Priority] High
 

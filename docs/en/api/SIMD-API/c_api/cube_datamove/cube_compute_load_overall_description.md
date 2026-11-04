@@ -23,7 +23,7 @@ The cube computation data movement in APIs support multiple data paths, each cor
 
 <!-- npu="950" id1 -->
 > [!NOTE] Note
-> Due to hardware changes, the Ascend 950PR&950DT Product Series has removed the data paths from GM to L0A Buffer and L0B Buffer. As a result, the original data movement from GM to L0A Buffer and L0B Buffer must be split into two steps: data movement from GM to L1 Buffer and data movement from L1 Buffer to L0A Buffer and L0B Buffer.
+> Due to hardware changes, the Ascend 950PR&950DT products has removed the data paths from GM to L0A Buffer and L0B Buffer. As a result, the original data movement from GM to L0A Buffer and L0B Buffer must be split into two steps: data movement from GM to L1 Buffer and data movement from L1 Buffer to L0A Buffer and L0B Buffer.
 <!-- end id1 -->
 
 ## Interface Classification and Usage Scenarios for GM->L1 Buffer

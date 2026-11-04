@@ -1,6 +1,6 @@
 # Ascend C API Compatibility Policy<a name="ZH-CN_TOPIC_0000002470508256"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T10:52:24.828Z pushedAt=2026-10-26T09:11:13.283Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T10:52:24.828Z pushedAt=2026-11-03T07:05:13.248Z nl=2 -->
 
 This compatibility statement applies only to the compatibility migration guidance for Ascend C operator development. For the overall compatibility policy, see [table 1](#table18109729593). The compatibility scope does not include compiler built-in APIs, Ascend C internal implementation APIs, and the like. The compatibility described in this document falls into two categories: functional compatibility, which includes data type compatibility, API prototype compatibility, and constant compatibility; and performance compatibility, which means that for the same amount of data, the time consumed to execute an API on the new architecture is no longer than that on the old architecture.
 

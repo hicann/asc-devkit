@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -131,13 +131,13 @@ Used to customize the **kernel** type, so that only cores of the specified type 
 
 -   <a name="li693212153417"></a>kernel type value constraints
     <!-- npu="950" id100 -->
-    -   Ascend 950PR&950DT product series supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
+    -   Ascend 950PR&950DT products supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
     <!-- end id100 -->
     <!-- npu="A3" id101 -->
-    -   Atlas A3 product series supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
+    -   Atlas A3 products supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
     <!-- end id101 -->
     <!-- npu="910b" id102 -->
-    -   Atlas A2 product series supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
+    -   Atlas A2 products supports KERNEL\_TYPE\_AIV\_ONLY, KERNEL\_TYPE\_AIC\_ONLY, KERNEL\_TYPE\_MIX\_AIV\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_0, KERNEL\_TYPE\_MIX\_AIC\_1\_1, KERNEL\_TYPE\_MIX\_AIC\_1\_2.
     <!-- end id102 -->
     <!-- npu="310p" id103 -->
     -   Atlas inference products support KERNEL\_TYPE\_AICORE, KERNEL\_TYPE\_MIX\_VECTOR\_CORE.

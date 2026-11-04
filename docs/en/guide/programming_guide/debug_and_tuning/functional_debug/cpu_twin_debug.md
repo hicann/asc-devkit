@@ -1,6 +1,6 @@
 # CPU Domain Twin Debugging<a name="ZH-CN_TOPIC_0000001664002637"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:10:35.035Z pushedAt=2026-10-28T07:08:32.546Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:10:35.035Z pushedAt=2026-11-03T07:05:13.463Z nl=2 -->
 
 This section describes the methods for CPU domain debugging: verifying kernel functions on the CPU side, gdb debugging, and printing using the **printf** command. SIMT programming scenarios are not supported currently.
 

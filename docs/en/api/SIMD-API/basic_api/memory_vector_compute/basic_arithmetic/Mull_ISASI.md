@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -61,7 +61,7 @@ __aicore__ inline void Mull(const LocalTensor<T>& dst0, const LocalTensor<T>& ds
 ## Data Types
 
 <!-- npu="950" id8 -->
-For the Ascend 950PR&950DT product series, the supported data types are int32_t and uint32_t.
+For the Ascend 950PR&950DT products, the supported data types are int32_t and uint32_t.
 <!-- end id8 -->
 
 ## Return Value<a name="section640mcpsimp"></a>

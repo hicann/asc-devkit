@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -90,22 +90,22 @@ The `ReduceMax` computation process is as follows: first, the maximum value and 
 The supported data types are as follows:
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT product series supports int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t. The int64_t and uint64_t data types are supported only by the API for computing the first n data of a tensor.
+- Ascend 950PR&950DT products supports int16_t, uint16_t, half, int32_t, uint32_t, float, int64_t, and uint64_t. The int64_t and uint64_t data types are supported only by the API for computing the first n data of a tensor.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 product series supports half and float.
+- Atlas A3 products supports half and float.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 product series supports half and float.
+- Atlas A2 products supports half and float.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference product supports half and float.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- Atlas inference series AI Core supports half and float.
+- Atlas inference products AI Core supports half and float.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- Atlas training series supports half.
+- Atlas training products supports half.
 <!-- end id15 -->
 
 ## Return Value
@@ -123,10 +123,10 @@ None
   <!-- npu="A3,910b" id19 -->
   - For the following models, when the parameter count or repeatTime value is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id20 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id19 -->
 
@@ -148,10 +148,10 @@ None
 <!-- npu="A3,910b,910,310p,310b" id24 -->
 - For the following models, `sharedTmpBuffer` is required.
   <!-- npu="A3" id25 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id25 -->
   <!-- npu="910b" id26 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id26 -->
   <!-- npu="310b" id27 -->
   - Atlas 200I/500 A2 inference products

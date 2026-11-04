@@ -1,6 +1,6 @@
 # Memory Vector Computation Programming<a name="ZH-CN_TOPIC_0000002600000004"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T08:55:14.623Z pushedAt=2026-10-28T11:42:21.740Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T08:55:14.623Z pushedAt=2026-11-03T07:08:03.559Z nl=2 -->
 
 This document describes how to use the C++ Tensor programming API in Ascend C to write vector computation code based on the Unified Buffer (UB). This capability is the most basic and most general vector programming mode of Ascend C. This UB-memory-based programming mode is called Memory vector computation programming. Products with [NPU architecture version 2201](../../../language_extension/simd_builtin_keywords.md) support the complete Memory vector computation UB direct programming capability. Although [NPU architecture version 3510](../../../language_extension/simd_builtin_keywords.md) also supports UB operations, Reg vector computation programming is recommended for higher performance.
 

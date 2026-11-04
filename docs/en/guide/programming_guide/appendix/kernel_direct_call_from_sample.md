@@ -1,6 +1,6 @@
 # Completing Kernel Launch Based on a Sample Project<a name="ZH-CN_TOPIC_0000001731910633"></a>
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-23T14:48:29.372Z pushedAt=2026-10-28T06:44:14.937Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-23T14:48:29.372Z pushedAt=2026-11-03T07:05:13.441Z nl=2 -->
 
 >[!NOTE] Note
 >The method of completing kernel launch based on a sample project described in this section will no longer evolve. You are advised to directly use the command line or write a CMake file for compilation. For details, see [AI Core SIMD Compilation](../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md).

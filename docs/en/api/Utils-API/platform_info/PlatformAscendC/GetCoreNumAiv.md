@@ -19,19 +19,19 @@ None
 ## Return Value<a name="zh-cn_topic_0000001675101185_zh-cn_topic_0000001442758437_section25791320141317"></a>
 
 <!-- npu="910" id1 -->
-Atlas training series products, in Coupling Mode, return the number of AI Cores.
+Atlas training products, in Coupling Mode, return the number of AI Cores.
 <!-- end id1 -->
 <!-- npu="310p" id2 -->
-Atlas inference series products, in Coupling Mode, return the number of AI Cores.
+Atlas inference products, in Coupling Mode, return the number of AI Cores.
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-Atlas A2 series products, in Separation Mode, return the number of Vector Cores.
+Atlas A2 products, in Separation Mode, return the number of Vector Cores.
 <!-- end id3 -->
 <!-- npu="A3" id4 -->
-Atlas A3 series products, in Separation Mode, return the number of Vector Cores.
+Atlas A3 products, in Separation Mode, return the number of Vector Cores.
 <!-- end id4 -->
 <!-- npu="950" id5 -->
-Ascend 950PR&950DT series products, in Separation Mode, return the number of Vector Cores.
+Ascend 950PR&950DT products, in Separation Mode, return the number of Vector Cores.
 <!-- end id5 -->
 
 ## Constraints<a name="zh-cn_topic_0000001675101185_zh-cn_topic_0000001442758437_section19165124931511"></a>

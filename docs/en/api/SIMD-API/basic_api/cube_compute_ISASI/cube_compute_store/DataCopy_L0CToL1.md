@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002511188540_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: supported
@@ -87,7 +87,7 @@ For the Atlas 200I/500 A2 inference products, the following two APIs are also su
 
 | Parameter | Input/Output | Description |
 | ---------- | ---------- | ---------- |
-| **dst** | Output | Destination operand. The type is **LocalTensor**. The data format is NZ or ND (supported only on the Ascend 950PR&950DT product series)<!-- npu="950" id10 --><!-- end id10 -->. The address must be 32-byte aligned. |
+| **dst** | Output | Destination operand. The type is **LocalTensor**. The data format is NZ or ND (supported only on the Ascend 950PR&950DT products)<!-- npu="950" id10 --><!-- end id10 -->. The address must be 32-byte aligned. |
 | **src** | Input | Source operand. The type is **LocalTensor**. The supported physical address is L0C Buffer (**TPosition** is **CO1**), which is the result computed by the **Mmad** API. The data format is NZ. The address must be 64-byte aligned. |
 | **intriParams** | Input | Movement parameter. The type is [DataCopyCO12DstParams](#zh-cn_topic_0000002511188540_table35908519282).<br>For the specific definition, see `${INSTALL_DIR}/asc/include/basic_api/kernel_struct_data_copy.h`. Replace `${INSTALL_DIR}` with the file storage path after the CANN software is installed. |
 
@@ -97,23 +97,23 @@ For the Atlas 200I/500 A2 inference products, the following two APIs are also su
 | ---------- | ---------- |
 | **sid** | This parameter does not require user attention. Set it to 0. |
 | **nSize** | Size of the source NZ matrix in the N direction. Value range: nSize∈[0, 4095]. nSize must be a multiple of 16.<br>**Note: nSize=0 means no movement is performed, and the API is treated as a NOP (no operation).** |
-| **mSize** | Size of the source NZ matrix in the M direction.<br>&nbsp;&nbsp;&bull;When the in-line NZ2ND function is not enabled ([NZ2NZ movement](../cube_store_key_features/NZ2NZ.md)): Value range: mSize∈[0, 65535].<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;When the in-line [NZ2ND](../cube_store_key_features/NZ2ND.md) function is enabled (supported only on the Ascend 950PR&950DT product series): Value range: mSize∈[0, 8192].<br><!-- end id25 -->**Note: mSize=0 means no movement is performed, and the API is treated as a NOP (no operation).** |
-| **dstStride** | &bull;When the NZ2ND function is not enabled ([NZ2NZ movement](../cube_store_key_features/NZ2NZ.md)): Start address offset between adjacent Z layouts in the destination NZ matrix. The value must not be 0, in units of datablock (32 bytes).<br><!-- npu="950" id26 -->&bull;When the in-line [NZ2ND](../cube_store_key_features/NZ2ND.md) function is enabled (supported only on the Ascend 950PR&950DT product series): Number of elements in each row of the destination ND matrix. The value must not be 0, in units of element.<!-- end id26 --> |
+| **mSize** | Size of the source NZ matrix in the M direction.<br>&nbsp;&nbsp;&bull;When the in-line NZ2ND function is not enabled ([NZ2NZ movement](../cube_store_key_features/NZ2NZ.md)): Value range: mSize∈[0, 65535].<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;When the in-line [NZ2ND](../cube_store_key_features/NZ2ND.md) function is enabled (supported only on the Ascend 950PR&950DT products): Value range: mSize∈[0, 8192].<br><!-- end id25 -->**Note: mSize=0 means no movement is performed, and the API is treated as a NOP (no operation).** |
+| **dstStride** | &bull;When the NZ2ND function is not enabled ([NZ2NZ movement](../cube_store_key_features/NZ2NZ.md)): Start address offset between adjacent Z layouts in the destination NZ matrix. The value must not be 0, in units of datablock (32 bytes).<br><!-- npu="950" id26 -->&bull;When the in-line [NZ2ND](../cube_store_key_features/NZ2ND.md) function is enabled (supported only on the Ascend 950PR&950DT products): Number of elements in each row of the destination ND matrix. The value must not be 0, in units of element.<!-- end id26 --> |
 | **srcStride** | Start address offset between adjacent Z layouts in the source NZ matrix. Value range: srcStride∈[0, 65535], in units of C0_Size (16*sizeof(T)), where T is the data type of src. The value should be set to mSize rounded up to a multiple of 16. |
 | **unitFlag** | **unitFlag** enables fine-grained parallelism between **Mmad** and **Fixpipe** instructions. When this function is enabled, the hardware moves out the computation result each time it finishes computing one fractal. The values are described as follows:<br>&nbsp;&nbsp;&bull; **0** (2'b00): Disable unitFlag.<br>&nbsp;&nbsp;&bull; **2** (2'b10): Enable unitFlag. After the hardware finishes executing the instruction, it does not reset the unit flag bit.<br>&nbsp;&nbsp;&bull; **3** (2'b11): Enable unitFlag. After the hardware finishes executing the instruction, it resets the unit flag bit.<br>When enabling this function, set the unitFlag value of both the **Mmad** and **Fixpipe** instructions to 2 or 3.<br>For parameter configuration schemes and feature details, see the [UnitFlag](../mmad_compute_key_features/UnitFlag.md) section in the key feature description of Mmad computation. |
 | **clipReluPre** | <!-- npu="950,A3,910b" id13 -->This parameter is supported only on the Atlas 200I/500 A2 inference product.<br><!-- end id13 --><!-- npu="310b" id14 -->Configures whether to enable the ClipReLU operation. The parameter type is uint8_t. The values are as follows: **0**: Disable ClipReLU. **1**: Enable ClipReLU. In this case, call [SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md) to set the maximum value of ClipReLU.<br>&nbsp;&nbsp;&bull;This operation is performed after on-the-fly quantization and can be used only after **quantPre** is configured. The currently supported quantization modes are F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8.<br><!-- end id14 --> |
 | **eltWiseOp** | <!-- npu="950,A3,910b" id15 -->This parameter is supported only on the Atlas 200I/500 A2 inference product.<br><!-- end id15 --><!-- npu="310b" id16 -->Configures whether to enable the Elementwise operation and its operation mode. The Elementwise operation adds or subtracts a **LocalTensor** element by element after on-the-fly quantization. Its size is mSize * nSize. The parameters related to the **LocalTensor** address must be set by calling [SetFixPipeAddr](../cube_store_aux_config/SetFixPipeAddr.md).<br>The **eltWiseOp** parameter type is uint8_t. The values are as follows:<br>&nbsp;&nbsp;&bull; **0**: Disable Elementwise.<br>&nbsp;&nbsp;&bull; **1**: Elementwise Addition.<br>&nbsp;&nbsp;&bull; **2**: Elementwise Subtraction.<br><!-- end id16 --> |
 | **quantPre** | Controls the quantization mode. The type is **QuantMode_t**, defined as follows:<br>&nbsp;&nbsp;&bull; For half/bfloat16_t output, configure this parameter to **QuantMode_t::F322F16**/**QuantMode_t::F322BF16**.<br>&nbsp;&nbsp;&bull; When scalar quantization is configured, call the [SetFixpipePreQuantFlag](../cube_store_aux_config/SetFixpipePreQuantFlag.md) API to set the scalar quantization parameters.<br>&nbsp;&nbsp;&bull; When tensor quantization is configured, call [SetFixPipeConfig](../cube_store_aux_config/SetFixPipeConfig.md) to set the tensor quantization parameters. The tensor quantization parameters must be moved from L1 Buffer to Fixpipe Buffer through **DataCopy**.<br>Note: This parameter must be configured manually by the user. The corresponding quantization mode is not derived automatically. This path does not support the NoQuant mode.<br>enum QuantMode_t<br>{<br>    NoQuant,      // Disable quantization. This path does not support it.<br>    F322F16,      // Float32_2_Float16: Cast float to half, with cast mode CAST_RINT.<br>    F322BF16,     // Float32_2_BFloat16: Cast float to bfloat16_t, with cast mode CAST_RINT.<br>    DEQF16,       // DeQuant_Float16: Quantize int32_t to half, scalar quantization.<br>    VDEQF16,      // Vector_DeQuant_Float16: Quantize int32_t to half, tensor quantization.<br>    QF322B8_PRE,  // Quant_Float32_2_B8: Quantize float to int8_t/uint8_t, scalar quantization.<br>    VQF322B8_PRE, // Vector_Quant_Float32_2_B8: Quantize float to int8_t/uint8_t, tensor quantization.<br>    REQ8,         // ReQuant_int8: Quantize int32_t to int8_t/uint8_t, scalar quantization.<br>    VREQ8,        // Vector_ReQuant_int8: Quantize int32_t to int8_t/uint8_t, tensor quantization.<br>}; |
 | **reluPre** | Configures the ReLU operation mode. The type is uint8_t. The values are as follows:<br>&nbsp;&nbsp;&bull; **0**: Disable ReLU.<br>&nbsp;&nbsp;&bull; **1**: Normal ReLU. |
-| **channelSplit** | <!-- npu="950" id27 -->**This parameter takes effect only on the Ascend 950PR&950DT product series**, and only for float type output in NZ format. The type is bool. It configures whether to enable the channel split function.<br>&nbsp;&nbsp;&bull; **false**: Disable.<br>&nbsp;&nbsp;&bull; **true**: Enable.<br><!-- end id27 --><!-- npu="A3,910b,310b" id29 -->For the following product models, this parameter does not take effect on this path. Set it to false.<br><!-- npu="A3" id30 -->Atlas A3 product series<br><!-- end id30 --><!-- npu="910b" id31 -->Atlas A2 product series<br><!-- end id31 --><!-- npu="310b" id32 -->Atlas 200I/500 A2 inference product<!-- end id32 --><!-- end id29 --> |
-| **nz2ndEn** | <!-- npu="950" id28 -->**This parameter takes effect only on the Ascend 950PR&950DT product series**. The type is bool. It configures whether to enable NZ2ND format conversion.<br>To enable the NZ2ND function, call [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md) to set the related configuration information for format conversion.<br>&nbsp;&nbsp;&bull; **false**: Disable.<br>&nbsp;&nbsp;&bull; **true**: Enable.<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->For the following product models, this parameter does not take effect on this path. Set it to false.<br><!-- npu="A3" id34 -->Atlas A3 product series<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2 product series<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2 inference product<!-- end id36 --><!-- end id33 --> |
+| **channelSplit** | <!-- npu="950" id27 -->**This parameter takes effect only on the Ascend 950PR&950DT products**, and only for float type output in NZ format. The type is bool. It configures whether to enable the channel split function.<br>&nbsp;&nbsp;&bull; **false**: Disable.<br>&nbsp;&nbsp;&bull; **true**: Enable.<br><!-- end id27 --><!-- npu="A3,910b,310b" id29 -->For the following product models, this parameter does not take effect on this path. Set it to false.<br><!-- npu="A3" id30 -->Atlas A3 products<br><!-- end id30 --><!-- npu="910b" id31 -->Atlas A2 products<br><!-- end id31 --><!-- npu="310b" id32 -->Atlas 200I/500 A2 inference product<!-- end id32 --><!-- end id29 --> |
+| **nz2ndEn** | <!-- npu="950" id28 -->**This parameter takes effect only on the Ascend 950PR&950DT products**. The type is bool. It configures whether to enable NZ2ND format conversion.<br>To enable the NZ2ND function, call [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md) to set the related configuration information for format conversion.<br>&nbsp;&nbsp;&bull; **false**: Disable.<br>&nbsp;&nbsp;&bull; **true**: Enable.<br><!-- end id28 --><!-- npu="A3,910b,310b" id33 -->For the following product models, this parameter does not take effect on this path. Set it to false.<br><!-- npu="A3" id34 -->Atlas A3 products<br><!-- end id34 --><!-- npu="910b" id35 -->Atlas A2 products<br><!-- end id35 --><!-- npu="310b" id36 -->Atlas 200I/500 A2 inference product<!-- end id36 --><!-- end id33 --> |
 
 ## Data Type<a id="zh-cn_topic_0000002511188540_section4219135304818"></a>
 
 **Supported data type combinations for the source matrix and destination matrix**
 
 <!-- npu="950" id17 -->
-For the Ascend 950PR&950DT product series, the data type combinations supported by the DataCopy API are as follows:
+For the Ascend 950PR&950DT products, the data type combinations supported by the DataCopy API are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |
@@ -123,7 +123,7 @@ For the Ascend 950PR&950DT product series, the data type combinations supported 
 <!-- end id17 -->
 
 <!-- npu="A3" id18 -->
-For the Atlas A3 product series, the data type combinations supported by the DataCopy API are as follows:
+For the Atlas A3 products, the data type combinations supported by the DataCopy API are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |
@@ -133,7 +133,7 @@ For the Atlas A3 product series, the data type combinations supported by the Dat
 <!-- end id18 -->
 
 <!-- npu="910b" id19 -->
-For the Atlas A2 product series, the data type combinations supported by the DataCopy API are as follows:
+For the Atlas A2 products, the data type combinations supported by the DataCopy API are as follows:
 
 | source matrix (L0C Buffer) | destination matrix (L1 Buffer) |
 | ---------- | ---------- |

@@ -7,13 +7,13 @@
 ### Prototype Without config
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -32,13 +32,13 @@
 ### Prototype with config
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -120,7 +120,7 @@ $dst_i = \frac{1}{src_i}$
 |---|---|
 | T | Data type of the operand. |
 | isSetMask | Whether to set the mask within the API.<br>&bull; true: The mask is set within the API.<br>&bull; false: The mask is set outside the API. You need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode, the mask value in the API input parameter is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning. |
-| <!-- npu="950" id19 -->config | This parameter is supported only on Ascend 950PR&950DT product series.<br>Used to configure the precision computation mode. It is of the ReciprocalConfig type, defined as follows:<br>enum&nbsp;class&nbsp;ReciprocalAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ReciprocalConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ReciprocalAlgo&nbsp;algo&nbsp;=&nbsp;ReciprocalAlgo::INTRINSIC;<br>};<br>The algo parameter of the ReciprocalConfig struct selects the Reciprocal algorithm and configures the Subnormal mode. For details, see [Key Features](#reciprocal-key-features).<br>The values of algo are as follows:<br>&bull; ReciprocalAlgo::INTRINSIC: Default algorithm, with a maximum precision error of 1 ulp. For half and float types, Subnormal handling is controlled by the --cce-ftz compilation option (default value: true).<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE: Computed using a single instruction, with a maximum precision error of 1 ulp.<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE: Implemented through software emulation, supporting Subnormal data computation, with a maximum precision error of 1 ulp.<br><br>The default value DEFAULT_RECIPROCAL_CONFIG of this parameter is as follows:<br>constexpr&nbsp;ReciprocalConfig&nbsp;DEFAULT_RECIPROCAL_CONFIG&nbsp;=&nbsp;{&nbsp;ReciprocalAlgo::INTRINSIC&nbsp;};<br>If config is not explicitly passed when calling this prototype, DEFAULT_RECIPROCAL_CONFIG is used by default, and the behavior is equivalent to the prototype without the config parameter.<!-- end id19 --> |
+| <!-- npu="950" id19 -->config | This parameter is supported only on Ascend 950PR&950DT products.<br>Used to configure the precision computation mode. It is of the ReciprocalConfig type, defined as follows:<br>enum&nbsp;class&nbsp;ReciprocalAlgo&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;INTRINSIC&nbsp;=&nbsp;0,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_TRUE,<br>&nbsp;&nbsp;&nbsp;&nbsp;PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct&nbsp;ReciprocalConfig&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;ReciprocalAlgo&nbsp;algo&nbsp;=&nbsp;ReciprocalAlgo::INTRINSIC;<br>};<br>The algo parameter of the ReciprocalConfig struct selects the Reciprocal algorithm and configures the Subnormal mode. For details, see [Key Features](#reciprocal-key-features).<br>The values of algo are as follows:<br>&bull; ReciprocalAlgo::INTRINSIC: Default algorithm, with a maximum precision error of 1 ulp. For half and float types, Subnormal handling is controlled by the --cce-ftz compilation option (default value: true).<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_TRUE: Computed using a single instruction, with a maximum precision error of 1 ulp.<br>&bull; ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE: Implemented through software emulation, supporting Subnormal data computation, with a maximum precision error of 1 ulp.<br><br>The default value DEFAULT_RECIPROCAL_CONFIG of this parameter is as follows:<br>constexpr&nbsp;ReciprocalConfig&nbsp;DEFAULT_RECIPROCAL_CONFIG&nbsp;=&nbsp;{&nbsp;ReciprocalAlgo::INTRINSIC&nbsp;};<br>If config is not explicitly passed when calling this prototype, DEFAULT_RECIPROCAL_CONFIG is used by default, and the behavior is equivalent to the prototype without the config parameter.<!-- end id19 --> |
 
 **Table 2** Parameters
 
@@ -136,22 +136,22 @@ $dst_i = \frac{1}{src_i}$
 ## Data Types
 
 <!-- npu="950" id20 -->
-- For Ascend 950PR&950DT product series, T supports the following data types: half, float, int64_t, and uint64_t. The int64_t and uint64_t data types are supported only by the API that computes the first n data of a tensor.
+- For Ascend 950PR&950DT products, T supports the following data types: half, float, int64_t, and uint64_t. The int64_t and uint64_t data types are supported only by the API that computes the first n data of a tensor.
 <!-- end id20 -->
 <!-- npu="A3" id21 -->
-- For Atlas A3 product series, T supports the following data types: half and float.
+- For Atlas A3 products, T supports the following data types: half and float.
 <!-- end id21 -->
 <!-- npu="910b" id22 -->
-- For Atlas A2 product series, T supports the following data types: half and float.
+- For Atlas A2 products, T supports the following data types: half and float.
 <!-- end id22 -->
 <!-- npu="310b" id23 -->
 - For Atlas 200I/500 A2 inference product, T supports the following data types: half and float.
 <!-- end id23 -->
 <!-- npu="310p" id24 -->
-- For Atlas inference series products (AI Core), T supports the following data types: half and float.
+- For Atlas inference products (AI Core), T supports the following data types: half and float.
 <!-- end id24 -->
 <!-- npu="910" id25 -->
-- For Atlas training series products, T supports the following data types: half and float.
+- For Atlas training products, T supports the following data types: half and float.
 <!-- end id25 -->
 
 ## Return Value<a name="section15227195416231"></a>
@@ -168,10 +168,10 @@ None
   <!-- npu="A3,910b" id29 -->
   - For the following models, when the count or repeatTime parameter is set to 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id30 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id30 -->
     <!-- npu="910b" id31 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id31 -->
   <!-- end id29 -->
   <!-- npu="950" id33 -->
@@ -243,7 +243,7 @@ Because the computation behavior that preserves Subnormal is implemented through
     ```
 
     <!-- npu="950" id32 -->
-    The following examples are supported only by the Ascend 950PR&950DT product series
+    The following examples are supported only by the Ascend 950PR&950DT products
 
     ```cpp
     static constexpr ReciprocalConfig config = { ReciprocalAlgo::PRECISION_1ULP_FTZ_FALSE };

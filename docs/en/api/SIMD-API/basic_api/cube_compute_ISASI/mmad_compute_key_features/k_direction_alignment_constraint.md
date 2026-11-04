@@ -4,10 +4,10 @@
 
 **Description:**
 
-The Mmad API supports this feature on Atlas A2 product series/Atlas A3 product series.
+The Mmad API supports this feature on Atlas A2 products/Atlas A3 products.
 
 <!-- npu="950" id1 -->
-On the Ascend 950PR&950DT series products, the L0A Buffer uses NZ layout instead of ZZ layout. In the scenario where the A matrix is transposed and the float data type is non-aligned, the L0A Buffer is aligned to 8 in the K direction, so this feature does not need to be enabled to ensure computation correctness.
+On the Ascend 950PR&950DT products, the L0A Buffer uses NZ layout instead of ZZ layout. In the scenario where the A matrix is transposed and the float data type is non-aligned, the L0A Buffer is aligned to 8 in the K direction, so this feature does not need to be enabled to ensure computation correctness.
 <!-- end id1 -->
 
 The core function of K direction alignment is to control, through the **kDirectionAlign** parameter, the alignment of the L0A Buffer and L0B Buffer matrices in the K direction when the float data type is used (other data types do not require attention to this feature).

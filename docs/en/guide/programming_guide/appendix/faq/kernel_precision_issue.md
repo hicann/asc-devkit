@@ -1,6 +1,6 @@
 # Operator Precision Issue During Kernel Function Run Verification<a name="ZH-CN_TOPIC_0000001664188149"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:00:06.508Z pushedAt=2026-10-28T06:32:32.471Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:00:06.508Z pushedAt=2026-11-03T07:05:13.450Z nl=2 -->
 
 ## Symptoms<a name="section151611254194612"></a>
 

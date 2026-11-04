@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT Product Series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 Product Series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 Product Series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -65,7 +65,7 @@ __aicore__ inline void LoadImageToLocal(const LocalTensor<T>& dst, const LoadIma
 
 ## Data Type
 
-<!-- npu="950" id8 -->Ascend 950PR&950DT Product Series supports the following data types: int8_t, uint8_t, half.<!-- end id8 --><br>
+<!-- npu="950" id8 -->Ascend 950PR&950DT products supports the following data types: int8_t, uint8_t, half.<!-- end id8 --><br>
 <!-- npu="A3" id9 -->Atlas A3 training products/Atlas A3 inference products support the following data types: int8_t, half.<!-- end id9 --><br>
 <!-- npu="910b" id10 -->Atlas A2 training products/Atlas A2 inference products support the following data types: int8_t, half.<!-- end id10 --><br>
 <!-- npu="310b" id11 -->Atlas 200I/500 A2 inference products support the following data types: int8_t, uint8_t, half.<!-- end id11 --><br>
@@ -82,7 +82,7 @@ None
 - When the padding mode is configured as block padding mode or mirror block padding mode through [SetAippFunctions](SetAippFunctions.md), because the padding data comes from the cropped image, the left and right padding lengths (**leftPadSize** and **rightPadSize**) must be less than or equal to the horizontal length of the cropped image (**horizSize**), and the top and bottom padding lengths (**topPadSize** and **botPadSize**) must be less than or equal to the vertical length of the cropped image (**vertSize**).
 - The supported physical storage locations are: L1 Buffer (**TPosition**: A1/B1).
     <!-- npu="950" id13 -->
-    - Specifically for the Ascend 950PR&950DT product series, the supported physical storage locations are: **VECIN**, **VECCALC**, and **VECOUT**.
+    - Specifically for the Ascend 950PR&950DT products, the supported physical storage locations are: **VECIN**, **VECCALC**, and **VECOUT**.
     <!-- end id13 -->
 
 ## Example<a name="section22811728184217"></a>

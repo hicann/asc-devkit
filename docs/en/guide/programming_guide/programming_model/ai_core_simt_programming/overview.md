@@ -1,6 +1,6 @@
 # AI Core SIMT Programming Model Overview
 
-<!-- md-trans-meta sourceCommit=22b76e1a8a68229c866dd2009081b9642a4559bf translatedAt=2026-10-28T09:22:36.410Z pushedAt=2026-10-28T11:42:21.763Z nl=2 -->
+<!-- md-trans-meta sourceCommit=22b76e1a8a68229c866dd2009081b9642a4559bf translatedAt=2026-10-28T09:22:36.410Z pushedAt=2026-11-03T07:08:03.569Z nl=2 -->
 
 ## Introduction
 

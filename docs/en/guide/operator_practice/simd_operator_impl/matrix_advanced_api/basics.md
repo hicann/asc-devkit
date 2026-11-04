@@ -1,6 +1,6 @@
 # Basic Knowledge<a name="ZH-CN_TOPIC_0000002532228163"></a>
 
-<!-- md-trans-meta sourceCommit=78e6b675ef9cf0d5985838e3f2b6ce251fdd50b0 translatedAt=2026-10-23T11:54:42.087Z pushedAt=2026-10-27T08:15:40.065Z nl=2 -->
+<!-- md-trans-meta sourceCommit=78e6b675ef9cf0d5985838e3f2b6ce251fdd50b0 translatedAt=2026-10-23T11:54:42.087Z pushedAt=2026-11-03T07:05:13.293Z nl=2 -->
 
 >[!NOTE] Note 
 >This section provides programming guidance for cube multiplication using advanced APIs. When using advanced APIs for actual cube programming, you need to check the supported product models through the [API Reference](../../../../api/SIMD-API/adv_api/cube_compute/cube_compute.md).

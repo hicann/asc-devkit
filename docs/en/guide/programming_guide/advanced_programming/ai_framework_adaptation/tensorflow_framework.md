@@ -1,7 +1,7 @@
 # TensorFlow Framework<a name="ZH-CN_TOPIC_0000001615270505"></a>
 
 <!-- npu="950" id1 -->
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:12:13.756Z pushedAt=2026-10-28T03:25:16.906Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T14:12:13.756Z pushedAt=2026-11-03T07:05:13.422Z nl=2 -->
 
 > [!NOTE] Note
 > For Ascend 950PR & 950DT products, TensorFlow framework operator invocation is not supported.

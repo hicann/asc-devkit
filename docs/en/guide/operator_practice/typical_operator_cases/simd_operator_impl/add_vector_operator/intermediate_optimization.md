@@ -1,6 +1,6 @@
 # Intermediate Performance Optimization<a name="ZH-CN_TOPIC_000000_ADD_MID"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:20:21.465Z pushedAt=2026-10-28T01:12:21.437Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:20:21.465Z pushedAt=2026-11-03T07:05:13.380Z nl=2 -->
 
 Based on the implementation of the entry-level features, this section describes the intermediate performance optimization methods for the Add operator.
 

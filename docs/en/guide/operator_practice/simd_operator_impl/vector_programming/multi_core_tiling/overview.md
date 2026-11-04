@@ -1,6 +1,6 @@
 # Overview
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:29:25.039Z pushedAt=2026-10-27T08:51:52.135Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:29:25.039Z pushedAt=2026-11-03T07:05:13.318Z nl=2 -->
 
 The Ascend C kernel function is a parallel function executed on the Device side. To improve the execution efficiency of an operator, multi-core parallel computation is usually adopted, where input data is split and then distributed to different logical cores for processing. In addition, because the Local Memory capacity of a single core is limited and cannot hold the entire input and output data of an operator at once, data must be moved in batches for computation. This process of splitting input data and computing it in blocks is called **Tiling**.
 

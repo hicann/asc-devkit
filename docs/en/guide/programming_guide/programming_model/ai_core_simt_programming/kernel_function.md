@@ -1,6 +1,6 @@
 # Kernel Function<a name="ZH-CN_TOPIC_0000002554438935"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:21:25.509Z pushedAt=2026-10-28T11:42:21.760Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:21:25.509Z pushedAt=2026-11-03T07:08:03.566Z nl=2 -->
 
 As introduced in [Overview](./overview.md), a function that can be executed in parallel on the AI processor (NPU) and called by the host is called a kernel function. A kernel function is designed to be run concurrently by a large number of threads. Each thread has its own registers and stack, and they work together to complete massive data compute tasks.
 

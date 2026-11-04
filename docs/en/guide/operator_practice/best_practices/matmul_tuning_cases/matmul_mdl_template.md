@@ -1,6 +1,6 @@
 # Enabling the MDL Template for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002374905781"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:31:12.656Z pushedAt=2026-10-27T01:31:09.709Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:31:12.656Z pushedAt=2026-11-03T07:05:13.274Z nl=2 -->
 
 ## Case Introduction<a name="section5590915836"></a>
 

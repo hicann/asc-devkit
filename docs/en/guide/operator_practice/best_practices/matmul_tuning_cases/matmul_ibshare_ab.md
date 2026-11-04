@@ -1,6 +1,6 @@
 # Enabling the IBShare Template to Share Cube A and B Data for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002088668238"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:27:08.128Z pushedAt=2026-10-27T01:32:03.527Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T11:27:08.128Z pushedAt=2026-11-03T07:05:13.271Z nl=2 -->
 
 ## Case Introduction<a name="section144912211504"></a>
 

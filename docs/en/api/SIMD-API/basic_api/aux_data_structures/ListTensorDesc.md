@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -76,42 +76,42 @@ class ListTensorDesc {
 <th class="cellrowborder" valign="top" width="44.54%" id="mcps1.2.4.1.3"><p id="p736369161015"><a name="p736369161015"></a><a name="p736369161015"></a><strong id="b3770145112107"><a name="b3770145112107"></a><a name="b3770145112107"></a>Description</strong></p></th>
 </tr>
 </thead>
-<tbody><tr id="row8679452171114"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p048812536114"><a name="p048812536114"></a><a name="p048812536114"></a>**ListTensorDesc**</p></td>
+<tbody><tr id="row8679452171114"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p048812536114"><a name="p048812536114"></a><a name="p048812536114"></a>ListTensorDesc</p></td>
 <td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p20679185210116"><a name="p20679185210116"></a><a name="p20679185210116"></a>-</p></td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p66799524117"><a name="p66799524117"></a><a name="p66799524117"></a>Default constructor, which must be used together with the **Init** function.</p></td>
+<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p66799524117"><a name="p66799524117"></a><a name="p66799524117"></a>Default constructor, which must be used together with the Init function.</p></td>
 </tr>
-<tr id="row2036317913108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p836312981011"><a name="p836312981011"></a><a name="p836312981011"></a>**ListTensorDesc**</p></td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p412513492010"><a name="p412513492010"></a><a name="p412513492010"></a>**data**: Start address of the data to be parsed.</p>
-<p id="p13363493109"><a name="p13363493109"></a><a name="p13363493109"></a>**length**: Length of the memory to be parsed.</p>
-<p id="p133633981020"><a name="p133633981020"></a><a name="p133633981020"></a>**shapeSize**: Number of data pointers.</p>
-<p id="p5441241210"><a name="p5441241210"></a><a name="p5441241210"></a>**length** and **shapeSize** are used only for validation. If they are not specified, no validation is performed.</p></td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p736312951011"><a name="p736312951011"></a><a name="p736312951011"></a>Constructor of the **ListTensorDesc** class, used to parse the corresponding memory layout.</p></td>
+<tr id="row2036317913108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p836312981011"><a name="p836312981011"></a><a name="p836312981011"></a>ListTensorDesc</p></td>
+<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p412513492010"><a name="p412513492010"></a><a name="p412513492010"></a>data: Start address of the data to be parsed.</p>
+<p id="p13363493109"><a name="p13363493109"></a><a name="p13363493109"></a>length: Length of the memory to be parsed.</p>
+<p id="p133633981020"><a name="p133633981020"></a><a name="p133633981020"></a>shapeSize: Number of data pointers.</p>
+<p id="p5441241210"><a name="p5441241210"></a><a name="p5441241210"></a>length and shapeSize are used only for validation. If they are not specified, no validation is performed.</p></td>
+<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p736312951011"><a name="p736312951011"></a><a name="p736312951011"></a>Constructor of the ListTensorDesc class, used to parse the corresponding memory layout.</p></td>
 </tr>
-<tr id="row18487145155715"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p727005014572"><a name="p727005014572"></a><a name="p727005014572"></a>**Init**</p></td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p337451113583"><a name="p337451113583"></a><a name="p337451113583"></a>**data**: Start address of the data to be parsed.</p>
-<p id="p637411135819"><a name="p637411135819"></a><a name="p637411135819"></a>**length**: Length of the memory to be parsed.</p>
-<p id="p11374171114582"><a name="p11374171114582"></a><a name="p11374171114582"></a>**shapeSize**: Number of data pointers.</p>
-<p id="p10374131114583"><a name="p10374131114583"></a><a name="p10374131114583"></a>**length** and **shapeSize** are used only for validation. If they are not specified, no validation is performed.</p></td>
+<tr id="row18487145155715"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p727005014572"><a name="p727005014572"></a><a name="p727005014572"></a>Init</p></td>
+<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p337451113583"><a name="p337451113583"></a><a name="p337451113583"></a>data: Start address of the data to be parsed.</p>
+<p id="p637411135819"><a name="p637411135819"></a><a name="p637411135819"></a>length: Length of the memory to be parsed.</p>
+<p id="p11374171114582"><a name="p11374171114582"></a><a name="p11374171114582"></a>shapeSize: Number of data pointers.</p>
+<p id="p10374131114583"><a name="p10374131114583"></a><a name="p10374131114583"></a>length and shapeSize are used only for validation. If they are not specified, no validation is performed.</p></td>
 <td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p1848724515571"><a name="p1848724515571"></a><a name="p1848724515571"></a>Initialization function used to parse the corresponding memory layout.</p></td>
 </tr>
-<tr id="row6363594108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p203647981019"><a name="p203647981019"></a><a name="p203647981019"></a>**GetDesc**</p></td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p036429151011"><a name="p036429151011"></a><a name="p036429151011"></a>**desc**: Output parameter, the parsed tensor description information.</p>
-<p id="p1836410919102"><a name="p1836410919102"></a><a name="p1836410919102"></a>**index**: Index value.</p></td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p1364129101013"><a name="p1364129101013"></a><a name="p1364129101013"></a>Obtains the corresponding **TensorDesc** information shown in the description diagram based on **index**.</p>
-<p id="zh-cn_topic_0000001441184464_p4760716131514"><a name="zh-cn_topic_0000001441184464_p4760716131514"></a><a name="zh-cn_topic_0000001441184464_p4760716131514"></a>Before calling **GetDesc**, call **TensorDesc.SetShapeAddr** to specify the address for storing shape information for **desc**. After **GetDesc** is called, the shape information is written to this address.</p>
-<p id="p1163195320433"><a name="p1163195320433"></a><a name="p1163195320433"></a><span id="ph340755317588"><a name="ph340755317588"></a><a name="ph340755317588"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>AI Cores of Atlas inference products</term></span> support this feature.</p>
+<tr id="row6363594108"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p203647981019"><a name="p203647981019"></a><a name="p203647981019"></a>GetDesc</p></td>
+<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p036429151011"><a name="p036429151011"></a><a name="p036429151011"></a>desc: Output parameter, the parsed tensor description information.</p>
+<p id="p1836410919102"><a name="p1836410919102"></a><a name="p1836410919102"></a>index: Index value.</p></td>
+<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p1364129101013"><a name="p1364129101013"></a><a name="p1364129101013"></a>Obtains the corresponding TensorDesc information shown in the description diagram based on index.</p>
+<p id="zh-cn_topic_0000001441184464_p4760716131514"><a name="zh-cn_topic_0000001441184464_p4760716131514"></a><a name="zh-cn_topic_0000001441184464_p4760716131514"></a>Before calling GetDesc, call TensorDesc.SetShapeAddr to specify the address for storing shape information for desc. After GetDesc is called, the shape information is written to this address.</p>
+<p id="p1163195320433"><a name="p1163195320433"></a><a name="p1163195320433"></a><span id="ph340755317588"><a name="ph340755317588"></a><a name="ph340755317588"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas inference products</term></span> AI Core supports this feature.</p>
 <p id="p4601733194519"><a name="p4601733194519"></a><a name="p4601733194519"></a><span id="ph176033374518"><a name="ph176033374518"></a><a name="ph176033374518"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas training products</term></span> do not support this feature.</p>
-<p id="p173433415610"><a name="p173433415610"></a><a name="p173433415610"></a><span id="ph113414344611"><a name="ph113414344611"></a><a name="ph113414344611"></a><term id="zh-cn_topic_0000001312391781_term11962195213215_1"><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a>Atlas A2 training products</term>/<term id="zh-cn_topic_0000001312391781_term184716139811_1"><a name="zh-cn_topic_0000001312391781_term184716139811_1"></a><a name="zh-cn_topic_0000001312391781_term184716139811_1"></a>Atlas A2 inference products</term></span> support this feature.</p>
-<p id="p286194811518"><a name="p286194811518"></a><a name="p286194811518"></a><span id="ph14862134820150"><a name="ph14862134820150"></a><a name="ph14862134820150"></a><term id="zh-cn_topic_0000001312391781_term1253731311225_1"><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a>Atlas A3 training products</term>/<term id="zh-cn_topic_0000001312391781_term131434243115_1"><a name="zh-cn_topic_0000001312391781_term131434243115_1"></a><a name="zh-cn_topic_0000001312391781_term131434243115_1"></a>Atlas A3 inference products</term></span> support this feature.</p>
+<p id="p173433415610"><a name="p173433415610"></a><a name="p173433415610"></a><span id="ph113414344611"><a name="ph113414344611"></a><a name="ph113414344611"></a><term id="zh-cn_topic_0000001312391781_term11962195213215_1"><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a><a name="zh-cn_topic_0000001312391781_term11962195213215_1"></a>Atlas A2 products</term></span> support this feature.</p>
+<p id="p286194811518"><a name="p286194811518"></a><a name="p286194811518"></a><span id="ph14862134820150"><a name="ph14862134820150"></a><a name="ph14862134820150"></a><term id="zh-cn_topic_0000001312391781_term1253731311225_1"><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a><a name="zh-cn_topic_0000001312391781_term1253731311225_1"></a>Atlas A3 products</term></span> support this feature.</p>
 <p id="p830124417119"><a name="p830124417119"></a><a name="p830124417119"></a><span id="ph15301744513"><a name="ph15301744513"></a><a name="ph15301744513"></a><term id="zh-cn_topic_0000001312391781_term354143892110_1"><a name="zh-cn_topic_0000001312391781_term354143892110_1"></a><a name="zh-cn_topic_0000001312391781_term354143892110_1"></a>Atlas 200I/500 A2 inference products</term></span> do not support this feature.</p></td>
 </tr>
-<tr id="row936499191010"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p1636415981013"><a name="p1636415981013"></a><a name="p1636415981013"></a>**GetDataPtr**</p></td>
-<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p93647921018"><a name="p93647921018"></a><a name="p93647921018"></a>**index**: Index value.</p></td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p4364996106"><a name="p4364996106"></a><a name="p4364996106"></a>Obtains the address where the corresponding data is stored based on **index**.</p></td>
+<tr id="row936499191010"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p1636415981013"><a name="p1636415981013"></a><a name="p1636415981013"></a>GetDataPtr</p></td>
+<td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p93647921018"><a name="p93647921018"></a><a name="p93647921018"></a>index: Index value.</p></td>
+<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p4364996106"><a name="p4364996106"></a><a name="p4364996106"></a>Obtains the address where the corresponding data is stored based on index.</p></td>
 </tr>
-<tr id="row1936417910103"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p133641294106"><a name="p133641294106"></a><a name="p133641294106"></a>**GetSize**</p></td>
+<tr id="row1936417910103"><td class="cellrowborder" valign="top" width="22.58%" headers="mcps1.2.4.1.1 "><p id="p133641294106"><a name="p133641294106"></a><a name="p133641294106"></a>GetSize</p></td>
 <td class="cellrowborder" valign="top" width="32.879999999999995%" headers="mcps1.2.4.1.2 "><p id="p636449101018"><a name="p636449101018"></a><a name="p636449101018"></a>-</p></td>
-<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p2036420914106"><a name="p2036420914106"></a><a name="p2036420914106"></a>Obtains the number of data pointers contained in **ListTensor**.</p></td>
+<td class="cellrowborder" valign="top" width="44.54%" headers="mcps1.2.4.1.3 "><p id="p2036420914106"><a name="p2036420914106"></a><a name="p2036420914106"></a>Obtains the number of data pointers contained in ListTensor.</p></td>
 </tr>
 </tbody>
 </table>

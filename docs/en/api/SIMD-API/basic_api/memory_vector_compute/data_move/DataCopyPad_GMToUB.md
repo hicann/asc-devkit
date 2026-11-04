@@ -7,13 +7,13 @@
 ### Prototype Without the mode Template Parameter
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -32,13 +32,13 @@
 ### Function Prototype with the mode Template Parameter
 
 <!-- npu="950" id8 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -91,7 +91,7 @@ The padding data can be configured in two ways:
 
 <!-- npu="950" id17 -->
 
-- Configuring the data movement mode is supported (only supported by Ascend 950PR&950DT series products).
+- Configuring the data movement mode is supported (only supported by Ascend 950PR&950DT products).
 
     ```cpp
     // This function prototype is supported only on Ascend 950PR&950DT products.
@@ -142,10 +142,10 @@ For Ascend 950PR&950DT products, see [Table 3](#table_gm2ub_pad_3) for the DataC
 For the following models, see [Table 4](#table_gm2ub_pad_4) for the DataCopyExtParams structure parameter definitions:
 
 <!-- npu="A3" id33 -->
-- Atlas A3 product series
+- Atlas A3 products
 <!-- end id33 -->
 <!-- npu="910b" id34 -->
-- Atlas A2 product series
+- Atlas A2 products
 <!-- end id34 -->
 <!-- npu="310b" id35 -->
 - Atlas 200I/500 A2 inference products
@@ -174,7 +174,7 @@ For the following models, see [Table 4](#table_gm2ub_pad_4) for the DataCopyExtP
 
 - GM -> VECIN/VECOUT configuration examples<a name="li73127579197"></a>
 
-    The following three examples show different configuration scenarios of DataCopyPad on the GM -> VECIN/VECOUT path. Example 1 shows data copy in a 32-byte aligned scenario. Example 2 shows the dummy padding mechanism when the data is not 32-byte aligned. Example 3 (supported only by Ascend 950PR&950DT series products) shows the scenario of repeatedly copying the same data block using a negative stride.
+    The following three examples show different configuration scenarios of DataCopyPad on the GM -> VECIN/VECOUT path. Example 1 shows data copy in a 32-byte aligned scenario. Example 2 shows the dummy padding mechanism when the data is not 32-byte aligned. Example 3 (supported only by Ascend 950PR&950DT products) shows the scenario of repeatedly copying the same data block using a negative stride.
 
     - Parameter explanation
         - When blockLen+leftPadding+rightPadding meets 32-byte alignment, if isPad is false, the data values padded on the left and right sides default to random values; otherwise, they are paddingValue.
@@ -240,19 +240,19 @@ For the following models, see [Table 4](#table_gm2ub_pad_4) for the DataCopyExtP
 
 <!-- npu="950" id20 -->
 
-- For the Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+- For the Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 
 <!-- end id20 -->
 
 <!-- npu="A3" id21 -->
 
-- For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 
 <!-- end id21 -->
 
 <!-- npu="910b" id22 -->
 
-- For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+- For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 
 <!-- end id22 -->
 
@@ -272,13 +272,13 @@ None
 <!-- npu="A3,910b,950" id27 -->
 - When either blockCount or blockLen in the DataCopyExtParams structure is 0, this API is treated as a NOP (no operation). This applies to the following models:
   <!-- npu="A3" id24 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id24 -->
   <!-- npu="910b" id25 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id25 -->
   <!-- npu="950" id26 -->
-  - Ascend 950PR&950DT product series
+  - Ascend 950PR&950DT products
   <!-- end id26 -->
 <!-- end id27 -->
 <!-- npu="950" id28 -->
@@ -307,10 +307,10 @@ None
 <!-- npu="A3,910b,310b" id32 -->
 - For the following models, the data types and value ranges of DataCopyExtParams structure parameters are as follows:
   <!-- npu="A3" id36 -->
-  - Atlas A3 product series
+  - Atlas A3 products
   <!-- end id36 -->
   <!-- npu="910b" id37 -->
-  - Atlas A2 product series
+  - Atlas A2 products
   <!-- end id37 -->
   <!-- npu="310b" id38 -->
   - Atlas 200I/500 A2 inference products

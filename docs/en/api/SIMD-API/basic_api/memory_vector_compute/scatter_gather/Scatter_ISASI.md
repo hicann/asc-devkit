@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -112,7 +112,7 @@ Atlas inference products AI Core support the following data types: uint16_t, hal
   <!-- npu="950,310b" id12 -->
   -   For the following models, the value range of the address offset is as follows: when the operand is 8-bit, the value range is [0, 2^16-1]; when the operand is 16-bit, the value range is [0, 2^17-1]; when the operand is 32-bit or 64-bit, it must not exceed the range of uint32_t.
     <!-- npu="950" id13 -->
-    - Ascend 950PR&950DT product series
+    - Ascend 950PR&950DT products
     <!-- end id13 -->
     <!-- npu="310b" id14 -->
     - Atlas 200I/500 A2 inference products
@@ -128,13 +128,13 @@ Atlas inference products AI Core support the following data types: uint16_t, hal
 - The value of dstBaseAddr must ensure bit-width alignment of the dst element type. Otherwise, unexpected behavior occurs: the program does not crash or report an error, but the data is misaligned, causing the result tensor to be inconsistent with expectations.
 - Value range of repeatTime: repeatTime∈[0,255].
 <!-- npu="950" id17 -->
-- For Ascend 950PR&950DT series products, this API is implemented for compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the count or repeatTime parameter is 0, this API is not guaranteed to be treated as a NOP (no operation).
+- For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the count or repeatTime parameter is 0, this API is not guaranteed to be treated as a NOP (no operation).
 <!-- end id17 -->
 
 <!-- npu="950,310b" id18 -->
 - For the following models, when the operand is **8-bit**, each iteration completes data collection of **4 DataBlocks**; in other cases, each iteration completes data collection of 8 DataBlocks.
   <!-- npu="950" id19 -->
-  - Ascend 950PR&950DT product series
+  - Ascend 950PR&950DT products
   <!-- end id19 -->
   <!-- npu="310b" id20 -->
   - Atlas 200I/500 A2 inference products

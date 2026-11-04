@@ -1,6 +1,6 @@
 # Enabling the NBuffer33 Template for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002327075450"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:36:48.452Z pushedAt=2026-10-27T01:46:26.397Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:36:48.452Z pushedAt=2026-11-03T07:05:13.278Z nl=2 -->
 
 ## Case Introduction<a name="section17413194624510"></a>
 

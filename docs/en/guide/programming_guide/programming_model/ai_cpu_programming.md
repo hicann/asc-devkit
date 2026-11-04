@@ -1,6 +1,6 @@
 # AI CPU Programming<a name="ZH-CN_TOPIC_0000002509743871"></a>
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:32:07.288Z pushedAt=2026-10-28T11:42:21.727Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:32:07.288Z pushedAt=2026-11-03T07:08:03.546Z nl=2 -->
 
 The AI CPU is a processor based on the ARM64 architecture on the device side. It has the same memory access capability as the AI Core and can directly access memory resources on the device side. Like the CPU on the Host side, it can also perform similar data compute. As a supplement to the AI Core, it mainly handles non-cube and branch-intensive compute with complex logic. The AI CPU runs in a basic Linux environment and supports the libc library, C++ standard library, and STL template library during programming. The following figure shows its hardware architecture.
 

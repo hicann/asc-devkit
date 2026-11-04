@@ -1,5 +1,5 @@
 # AI Core Compilation Basics<a name="section229217121411"></a>
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:05:22.738Z pushedAt=2026-10-28T07:00:28.943Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T15:05:22.738Z pushedAt=2026-11-03T07:05:13.460Z nl=2 -->
 
 After a developer finishes writing a kernel function and launches it on the host side using the <<<\>\>\> syntax, the operator source code needs to be compiled and the operator needs to be run. This section describes the basic usage of compiling operators with the BiSheng Compiler.
 

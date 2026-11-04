@@ -1,6 +1,6 @@
 # Kernel Functions and VF Functions<a name="ZH-CN_TOPIC_0000002593909249"></a>
 
-<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T14:06:16.432Z pushedAt=2026-10-28T03:12:03.220Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T14:06:16.432Z pushedAt=2026-11-03T07:05:13.414Z nl=2 -->
 
 SIMD and SIMT mixed programming involves multiple types of functions, which follow strict call relationships and level constraints. This section introduces the overall function types and call relationships, and then describes the definition, call syntax, and constraints of each function type in detail.
 

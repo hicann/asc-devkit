@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -65,19 +65,19 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 The source matrix and the destination matrix support the same data types.
 
 <!-- npu="950" id10 -->
-For the Ascend 950PR&950DT product series, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, fp8_e8m0_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+For the Ascend 950PR&950DT products, the supported data types are: bool, int8_t, uint8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, fp8_e8m0_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-For the Atlas A3 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, bfloat16_t, float, double.
+For the Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, bfloat16_t, float, double.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-For the Atlas A2 product series, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, bfloat16_t, float, double.
+For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, bfloat16_t, float, double.
 <!-- end id12 -->
 
 <!-- npu="310p" id13 -->
-For the AI Core of the Atlas inference series products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
+For the AI Core of the Atlas inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
 <!-- end id13 -->
 
 ## Return Value Description
@@ -94,18 +94,18 @@ None
 - For the following product models:
 
     <!-- npu="A3" id15 -->
-    Atlas A3 product series;
+    Atlas A3 products;
     <!-- end id15 -->
 
     <!-- npu="910b" id16 -->
-    Atlas A2 product series;
+    Atlas A2 products;
     <!-- end id16 -->
 
     In cross-card communication operator development scenarios, the **DataCopy** APIs support cross-card data movement only over the HCCS physical link, and do not support other paths. During development, pay attention to the physical paths involved in inter-card communication. You can query the HCCS physical link by running the `npu-smi info -t topo` command.
 <!-- end id14 -->
 
 <!-- npu="950" id17 -->
-- For the Ascend 950PR&950DT product series, when moving data from UB to L1 Buffer, you can configure the compilation option [ENABLE_CV_COMM_VIA_SSBUF](../../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#built-in-compilation-macro-switches) to select between two movement paths. When **ENABLE_CV_COMM_VIA_SSBUF** is set to **true**, SSBuffer is used for communication, and data is moved through the hardware channel between UB and L1 Buffer (recommended). See the sample [hardware channel movement](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1). When **ENABLE_CV_COMM_VIA_SSBUF** is set to **false**, data is moved to the L1 Buffer via GM, in which case the Matmul high-order API is required for registration.
+- For the Ascend 950PR&950DT products, when moving data from UB to L1 Buffer, you can configure the compilation option [ENABLE_CV_COMM_VIA_SSBUF](../../../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#built-in-compilation-macro-switches) to select between two movement paths. When **ENABLE_CV_COMM_VIA_SSBUF** is set to **true**, SSBuffer is used for communication, and data is moved through the hardware channel between UB and L1 Buffer (recommended). See the sample [hardware channel movement](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1). When **ENABLE_CV_COMM_VIA_SSBUF** is set to **false**, data is moved to the L1 Buffer via GM, in which case the Matmul high-order API is required for registration.
 <!-- end id17 -->
 
 ## Example

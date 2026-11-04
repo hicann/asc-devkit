@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: Not supported
+- Atlas training products: Not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/AI-CPU-API/printf_res.md#id1 -->
 

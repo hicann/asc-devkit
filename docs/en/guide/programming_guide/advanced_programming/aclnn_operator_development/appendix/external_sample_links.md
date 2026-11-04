@@ -1,6 +1,6 @@
 # External Sample Link Summary
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:34:06.780Z pushedAt=2026-10-28T02:08:56.963Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:34:06.780Z pushedAt=2026-11-03T07:05:13.393Z nl=2 -->
 
 This document is for reference and summarizes the external code samples and API reference links cited in the guide, making it easier for developers to quickly find and reference them.
 

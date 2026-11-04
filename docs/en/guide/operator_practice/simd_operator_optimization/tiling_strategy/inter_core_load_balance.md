@@ -1,6 +1,6 @@
 # Inter-core Load Balancing<a name="ZH-CN_TOPIC_0000001892919393"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:52:36.182Z pushedAt=2026-10-27T10:43:03.402Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:52:36.182Z pushedAt=2026-11-03T07:05:13.351Z nl=2 -->
 
 [Priority]: Medium
 

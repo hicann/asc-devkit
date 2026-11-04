@@ -1,6 +1,6 @@
 # How to Use Workspace<a name="ZH-CN_TOPIC_0000001566726840"></a>
 
-<!-- md-trans-meta sourceCommit=a29a8747102f86a9f62284be955239a7f3568ca4 translatedAt=2026-10-23T14:55:31.089Z pushedAt=2026-10-28T06:25:53.868Z nl=2 -->
+<!-- md-trans-meta sourceCommit=a29a8747102f86a9f62284be955239a7f3568ca4 translatedAt=2026-10-23T14:55:31.089Z pushedAt=2026-11-03T07:05:13.445Z nl=2 -->
 
 Workspace is a block of memory in the Global Memory on the device side. Workspace memory consists of two parts: system workspace and user workspace.
 

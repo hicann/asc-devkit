@@ -1,6 +1,6 @@
 # Using TBuf<a name="ZH-CN_TOPIC_0000002500548088"></a>
 
-<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T12:25:49.841Z pushedAt=2026-10-27T09:09:16.885Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T12:25:49.841Z pushedAt=2026-11-03T07:05:13.315Z nl=2 -->
 
 In most operator development scenarios, the kernel function computation process requires temporary memory to store intermediate results of operations. These intermediate results are represented by temporary variables, and the memory occupied by temporary variables can be managed using the TBuf data structure. For details, see [TBuf](../../../../api/SIMD-API/basic_api/resource_management/TBuf/TBuf.md). The following uses the Add operator, whose input data type is bfloat16\_t and which runs on a single core, as an example to describe how to use TBuf. For the complete code of the operator described in this document, see [Add Operator Sample Using Temporary Memory](../../../../../../examples/01_simd_cpp_api/03_basic_api/04_memory_management/tmp_buffer).
 

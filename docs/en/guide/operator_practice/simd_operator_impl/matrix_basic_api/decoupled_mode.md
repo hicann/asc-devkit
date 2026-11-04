@@ -1,6 +1,6 @@
 # Decoupled Mode<a name="ZH-CN_TOPIC_0000002532228173"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:15:35.664Z pushedAt=2026-10-27T08:38:53.221Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:15:35.664Z pushedAt=2026-11-03T07:05:13.310Z nl=2 -->
 
 > [!NOTE] Note
 > This section provides programming guidance for cube multiplication using the basic APIs in decoupled mode.

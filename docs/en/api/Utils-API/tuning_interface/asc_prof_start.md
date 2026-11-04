@@ -17,11 +17,11 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: Not supported
+- Atlas inference products AI Core: Not supported
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training series products: Not supported
+- Atlas training products: Not supported
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/tuning_interface/asc_prof_start_res.md#id1 -->
 

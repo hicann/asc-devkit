@@ -7,13 +7,13 @@
 ### Whether Pipe Framework Is Supported
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: supported
@@ -32,25 +32,25 @@
 ### Whether C++ Tensor Programming Is Supported
 
 <!-- npu="950" id8 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
-- Atlas inference series product AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id12 -->
 <!-- npu="310p" id13 -->
-- Atlas inference series product Vector Core: supported
+- Atlas inference products Vector Core: supported
 <!-- end id13 -->
 <!-- npu="910" id14 -->
-- Atlas training series product: not supported
+- Atlas training products: not supported
 <!-- end id14 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/data_structures/LocalTensor/LocalTensor_constructor_res.md#id2 -->
 

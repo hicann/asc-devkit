@@ -1,6 +1,6 @@
 # Operator Basic Concepts<a name="ZH-CN_TOPIC_0000001704079692"></a>
 
-<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:32:15.677Z pushedAt=2026-10-28T11:42:21.767Z nl=2 -->
+<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:32:15.677Z pushedAt=2026-11-03T07:08:03.573Z nl=2 -->
 
 An operator (OP) is the basic unit that performs a specific mathematical operation in a deep learning algorithm, such as an activation function (for example, ReLU), convolution (Conv), pooling, and normalization (for example, Softmax). A neural network model can be built by combining these operators.
 

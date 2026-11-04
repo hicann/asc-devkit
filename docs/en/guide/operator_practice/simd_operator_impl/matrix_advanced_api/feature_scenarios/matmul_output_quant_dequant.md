@@ -1,6 +1,6 @@
 # Quantization/Dequantization of Matmul Output
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:09:17.036Z pushedAt=2026-10-27T09:56:40.508Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:09:17.036Z pushedAt=2026-11-03T07:05:13.305Z nl=2 -->
 
 ## Feature Overview
 

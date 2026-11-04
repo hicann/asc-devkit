@@ -1,6 +1,6 @@
 # Compilation Process Debugging
 
-<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:39:14.296Z pushedAt=2026-10-28T02:30:05.567Z nl=2 -->
+<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:39:14.296Z pushedAt=2026-11-03T07:05:13.397Z nl=2 -->
 
 This document is an extended topic that describes the debugging methods used during the compilation of an operator project. Compiling an operator project involves four stages: code generation, host-side compilation, kernel function side compilation, and packaging and deployment. The default output is usually insufficient for locating the root cause. The following sections describe the debugging methods for each stage and provide diagnostic methods for common errors.
 

@@ -1,6 +1,6 @@
 # Operator Implementation<a name="ZH-CN_TOPIC_0000002500468252"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:54:23.504Z pushedAt=2026-10-27T07:12:49.123Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T11:54:23.504Z pushedAt=2026-11-03T07:05:13.294Z nl=2 -->
 
 In the implementation of MC2 operators, communication operations use the [HCCL advanced API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md), and cube multiplication operations use the [Matmul advanced API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md). For more information about collective communication and related concepts, see [HCCL Collective Communication Library](https://gitcode.com/cann/hccl/blob/9.2.0/docs/en/user_guide/README.md). The development process of MC2 operators is the same as that of general operators. However, note that MC2 operators currently do not support [direct kernel function call](../../../../programming_guide/appendix/kernel_direct_call_from_sample.md) or [graph (GE graph) development](../../../../programming_guide/advanced_programming/operator_graph_development/overview.md). They support only [single-operator API call](../../../../programming_guide/advanced_programming/aclnn_operator_development/invocation/single_operator_api_call.md).
 

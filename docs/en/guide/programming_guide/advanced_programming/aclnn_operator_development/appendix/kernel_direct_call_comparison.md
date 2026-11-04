@@ -1,6 +1,6 @@
 # Comparison Between aclnn Engineered Operator Development and Kernel Function Direct Call
 
-<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T13:34:58.118Z pushedAt=2026-10-28T02:11:12.124Z nl=2 -->
+<!-- md-trans-meta sourceCommit=a5a43d2880e9cf66fe2a6174d806fb56c18d0cca translatedAt=2026-10-23T13:34:58.118Z pushedAt=2026-11-03T07:05:13.394Z nl=2 -->
 
 This document describes the differences between aclnn engineered operator development and kernel function direct invocation, helping developers choose a development method and migrate operators.
 

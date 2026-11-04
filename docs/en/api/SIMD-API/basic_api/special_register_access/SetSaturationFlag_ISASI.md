@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR & 950DT product series: supported
+- Ascend 950PR & 950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -40,7 +40,7 @@ Sets the enable state of the saturation mode for computation or precision conver
 This API sets the global saturation mode through the template parameter `SaturationMode`, and its enable state can be queried through [GetSaturationFlag](GetSaturationFlag_ISASI.md). This configuration is mainly used for computation and precision conversion APIs that support the saturation mode. In precision conversion scenarios, it can be used together with [Cast](../memory_vector_compute/type_conversion/Cast.md) and [Truncate](../memory_vector_compute/type_conversion/Truncate_ISASI.md) of Memory vector calculation, as well as [Cast](../reg_vector_compute/type_conversion/Cast.md) and [Truncate](../reg_vector_compute/type_conversion/Truncate.md) of Reg vector calculation.
 
 <!-- npu="950" id10 -->
-On Ascend 950PR & 950DT series products, some precision conversion APIs can use either their own saturation configuration or the global saturation configuration set by this API. You can use [SetSaturationStrategy](SetSaturationStrategy.md) to select whether to use the API's own saturation configuration or the global saturation configuration.
+On Ascend 950PR & 950DT products, some precision conversion APIs can use either their own saturation configuration or the global saturation configuration set by this API. You can use [SetSaturationStrategy](SetSaturationStrategy.md) to select whether to use the API's own saturation configuration or the global saturation configuration.
 
 For Reg vector calculation **Cast**, the per-API saturation mode can be set through `CastTrait::satMode`, while Memory vector calculation **Cast** does not provide this parameter, and its per-API configuration is fixed to the saturation mode. When the global configuration is selected, the two types of **Cast** are controlled by `SaturationMode::FLOAT` or `SaturationMode::CAST` of this API, and when FP8 types are involved, `SaturationMode::FLOAT8` must also be used to control NAN handling. Neither type of **Truncate** provides a per-API saturation mode parameter, and when the global configuration is selected, they are controlled by `SaturationMode::FLOAT`; the **float** data type supports only the non-saturation mode. For the specific supported data types and conversion combinations, refer to the documentation of each API.
 <!-- end id10 -->
@@ -73,29 +73,29 @@ The data types affected by each saturation mode are as follows:
 - `SaturationMode::FLOAT`:
 
   <!-- npu="950" id11 -->
-  - For Ascend 950PR & 950DT series products, the affected data types are: only half for floating-point calculation; hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, half, and bfloat16_t for floating-point precision conversion, where the NAN handling of `fp8_e8m0_t`, `fp8_e5m2_t`, and `fp8_e4m3fn_t` must be used together with `SaturationMode::FLOAT8`.
+  - For Ascend 950PR & 950DT products, the affected data types are: only half for floating-point calculation; hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, half, and bfloat16_t for floating-point precision conversion, where the NAN handling of `fp8_e8m0_t`, `fp8_e5m2_t`, and `fp8_e4m3fn_t` must be used together with `SaturationMode::FLOAT8`.
   <!-- end id11 -->
 
   <!-- npu="A3" id12 -->
-  - For Atlas A3 series products, the affected data types are: half and bfloat16_t.
+  - For Atlas A3 products, the affected data types are: half and bfloat16_t.
   <!-- end id12 -->
 
   <!-- npu="910b" id13 -->
-  - For Atlas A2 series products, the affected data types are: half and bfloat16_t.
+  - For Atlas A2 products, the affected data types are: half and bfloat16_t.
   <!-- end id13 -->
 
 - `SaturationMode::FLOAT8`:
 
   <!-- npu="950" id14 -->
-  - For Ascend 950PR & 950DT series products, the affected data types are: fp8_e8m0_t, fp8_e5m2_t, and fp8_e4m3fn_t.
+  - For Ascend 950PR & 950DT products, the affected data types are: fp8_e8m0_t, fp8_e5m2_t, and fp8_e4m3fn_t.
   <!-- end id14 -->
 
   <!-- npu="A3" id15 -->
-  - For Atlas A3 series products, this saturation mode is not supported.
+  - For Atlas A3 products, this saturation mode is not supported.
   <!-- end id15 -->
 
   <!-- npu="910b" id16 -->
-  - For Atlas A2 series products, this saturation mode is not supported.
+  - For Atlas A2 products, this saturation mode is not supported.
   <!-- end id16 -->
 
 - `SaturationMode::INT` affects the following data types: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t.
@@ -132,7 +132,7 @@ In the following examples, the input and output `LocalTensor` have been applied 
     ```
 
 <!-- npu="950" id18 -->
-- For Ascend 950PR & 950DT series products, use the Memory vector calculation [Cast](../memory_vector_compute/type_conversion/Cast.md) to demonstrate the configuration effect of `SaturationMode::FLOAT8`. Assume that each element in `srcLocal` of the `float` type is nan, and the data type of both output Tensors is `fp8_e5m2_t`.
+- For Ascend 950PR & 950DT products, use the Memory vector calculation [Cast](../memory_vector_compute/type_conversion/Cast.md) to demonstrate the configuration effect of `SaturationMode::FLOAT8`. Assume that each element in `srcLocal` of the `float` type is nan, and the data type of both output Tensors is `fp8_e5m2_t`.
 
     ```cpp
     // Select the global saturation configuration and enable the saturation mode for floating-point precision conversion.
@@ -168,7 +168,7 @@ In the following examples, the input and output `LocalTensor` have been applied 
     ```
 
 <!-- npu="950" id19 -->
-- For Ascend 950PR & 950DT series products, use the Memory vector calculation [Cast](../memory_vector_compute/type_conversion/Cast.md) to demonstrate the configuration effect of `SaturationMode::CAST`. Assume that each element in `srcLocal` of the `int16_t` type is 257, and the data type of both output tensors is `uint8_t`.
+- For Ascend 950PR & 950DT products, use the Memory vector calculation [Cast](../memory_vector_compute/type_conversion/Cast.md) to demonstrate the configuration effect of `SaturationMode::CAST`. Assume that each element in `srcLocal` of the `int16_t` type is 257, and the data type of both output tensors is `uint8_t`.
 
     ```cpp
     // Select the global saturation configuration.

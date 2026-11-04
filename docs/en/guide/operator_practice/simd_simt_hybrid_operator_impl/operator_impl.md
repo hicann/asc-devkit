@@ -1,6 +1,6 @@
 # Operator Implementation
 
-<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T13:00:50.101Z pushedAt=2026-10-27T11:11:24.676Z nl=2 -->
+<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T13:00:50.101Z pushedAt=2026-11-03T07:05:13.361Z nl=2 -->
 
 The following uses the gather & adds operator as an example to describe the implementation of an operator that uses SIMD and SIMT mixed programming. For the complete code, see [SIMD and SIMT Mixed Programming Implementation of the gather&adds Operator Sample](../../../../../examples/05_simd_simt_hybrid/00_introduction/simd_simt_gather_and_adds).
 

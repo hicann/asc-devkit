@@ -1,6 +1,6 @@
 # C Language Programming Overview
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:40:44.153Z pushedAt=2026-10-28T11:42:21.735Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:40:44.153Z pushedAt=2026-11-03T07:08:03.553Z nl=2 -->
 
 C language programming is the low-level core interface of the Ascend C SIMD programming path. It can be directly mapped to NPU hardware instructions and supports developers in finely controlling hardware resources such as vector processing units, cube computation units, and local storage. Developers can manually plan local memory layout, manage data flow, insert hardware pipeline synchronization instructions, and adjust the pipeline parallelism strategy between data movement and computation, organizing code implementation around compute units, storage hierarchy, and pipeline synchronization mechanisms. This programming approach is suitable for operator development scenarios that demand high performance and controllability, and it is also the core technical path for developers who are accustomed to C language programming and pursue ultimate performance to fully unleash the potential of NPU hardware. Based on the above positioning, the following sections explain the core rules and usage methods of Ascend C language programming one by one from four core modules: kernel function, memory architecture, synchronization mechanism, and operator development.
 

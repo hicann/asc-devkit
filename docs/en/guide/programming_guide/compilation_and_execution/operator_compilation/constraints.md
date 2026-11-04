@@ -1,6 +1,6 @@
 # Constraints<a name="ZH-CN_TOPIC_0000002507564342"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:06:10.331Z pushedAt=2026-10-28T07:04:59.111Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:06:10.331Z pushedAt=2026-11-03T07:05:13.458Z nl=2 -->
 
 - In the same compilation unit, if multiple kernels exist, automatic inference of the kernel type is not supported. You need to manually set the kernel type.
     - In particular, for the following models, automatic inference is not supported when the kernel type is not set by the developer, regardless of whether multiple kernels exist in the same compilation unit. You are advised to manually set the kernel type.

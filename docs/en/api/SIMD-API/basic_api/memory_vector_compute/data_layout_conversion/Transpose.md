@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -101,7 +101,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="950" id10 -->
 
-**Table**  Memory required by sharedTmpBuffer for Ascend 950PR&950DT series products<a id="table4"></a>
+**Table**  Memory required by sharedTmpBuffer for Ascend 950PR&950DT products<a id="table4"></a>
 
 | transposeType | Size required by sharedTmpBuffer |
 | :-- | :-- |
@@ -113,7 +113,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="A3" id11 -->
 
-**Table**  Memory required by sharedTmpBuffer for Atlas A3 series products<a id="table4"></a>
+**Table**  Memory required by sharedTmpBuffer for Atlas A3 products<a id="table4"></a>
 
 | transposeType | Size required by sharedTmpBuffer |
 | :-- | :-- |
@@ -125,7 +125,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="910b" id12 -->
 
-**Table**  Memory required by sharedTmpBuffer for Atlas A2 series products<a id="table4"></a>
+**Table**  Memory required by sharedTmpBuffer for Atlas A2 products<a id="table4"></a>
 
 | transposeType | Size required by sharedTmpBuffer |
 | :-- | :-- |
@@ -178,11 +178,11 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   <!-- end id20 -->
 
   <!-- npu="310p" id21 -->
-  Atlas inference product series AI Core supports the following operand data types: int16_t, uint16_t, half.
+  Atlas inference products AI Core supports the following operand data types: int16_t, uint16_t, half.
   <!-- end id21 -->
 
   <!-- npu="910" id22 -->
-  Atlas training product series supports the following operand data types: int16_t, uint16_t, half.
+  Atlas training products supports the following operand data types: int16_t, uint16_t, half.
   <!-- end id22 -->
 
 - Enhanced transpose:

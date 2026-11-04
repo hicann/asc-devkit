@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -85,22 +85,22 @@ For example, the sum of [a1, a2, a3, a4, a5, a6, ...] is [a1+a2, a3+a4, a5+a6, .
 The supported data types are as follows:
 
 <!-- npu="950" id8 -->
-- Ascend 950PR&950DT series products support half and float.
+- Ascend 950PR&950DT products support half and float.
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 series products support half and float.
+- Atlas A3 products support half and float.
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 series products support half and float.
+- Atlas A2 products support half and float.
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference products support half and float.
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
-- Atlas inference series products AI Core support half and float.
+- Atlas inference products AI Core support half and float.
 <!-- end id12 -->
 <!-- npu="910" id13 -->
-- Atlas training series products support half.
+- Atlas training products support half.
 <!-- end id13 -->
 
 The data types of the destination operand and the source operand must be consistent.
@@ -120,20 +120,20 @@ None
   <!-- npu="A3,910b" id15 -->
   - For the following models, when the value of mask or repeatTime is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id16 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id16 -->
     <!-- npu="910b" id17 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id17 -->
   <!-- end id15 -->
 
   <!-- npu="950" id18 -->
-  - For Ascend 950PR&950DT series products, this API implements compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the value of mask or repeatTime is 0, this API is not guaranteed to be treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, this API implements compatibility by calling the [Reg vector compute](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the value of mask or repeatTime is 0, this API is not guaranteed to be treated as a NOP (no operation).
   <!-- end id18 -->
 <!-- end id14 -->
 
 <!-- npu="950" id19 -->
-- UB space usage. For Ascend 950PR&950DT series products:
+- UB space usage. For Ascend 950PR&950DT products:
   - The tensor high-dimensional split computation occupies 8KB of UB.
   - The computation of the first n consecutive tensor data does not involve the 8KB UB usage.
 <!-- end id19 -->
@@ -143,10 +143,10 @@ None
   <!-- npu="A3,910b,310p" id21 -->
   - For the following models, the corresponding destination element is skipped for writing and remains unchanged.
     <!-- npu="A3" id22 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id22 -->
     <!-- npu="910b" id23 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id23 -->
     <!-- npu="310p" id24 -->
     - Atlas inference products AI Core
@@ -156,7 +156,7 @@ None
   <!-- npu="950,310b" id25 -->
   - For the following models, the value in the corresponding destination operand is set to 0.
     <!-- npu="950" id26 -->
-    - Ascend 950PR&950DT product series
+    - Ascend 950PR&950DT products
     <!-- end id26 -->
     <!-- npu="310b" id27 -->
     - Atlas 200I/500 A2 inference products

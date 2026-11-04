@@ -1,6 +1,6 @@
 # DoubleBuffer<a name="ZH-CN_TOPIC_0000001615270513"></a>
 
-<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:32:16.606Z pushedAt=2026-10-28T11:42:21.768Z nl=2 -->
+<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:32:16.606Z pushedAt=2026-11-03T07:08:03.574Z nl=2 -->
 
 The instruction queues executed on the AI Core mainly include the Vector instruction queue, Cube instruction queue, and MTE instruction queue. The mutual independence and parallel executability among different instruction queues are the cornerstone of the DoubleBuffer optimization mechanism.
 

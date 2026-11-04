@@ -1,6 +1,6 @@
 # SIMD Built-In Keywords<a name="ZH-CN_TOPIC_0000002509863893"></a>
 
-<!-- md-trans-meta sourceCommit=0b167b15c4f79241e5c530a8509210919591bb0a translatedAt=2026-10-23T15:14:12.408Z pushedAt=2026-10-28T07:19:24.305Z nl=2 -->
+<!-- md-trans-meta sourceCommit=0b167b15c4f79241e5c530a8509210919591bb0a translatedAt=2026-10-23T15:14:12.408Z pushedAt=2026-11-03T07:05:13.468Z nl=2 -->
 
 ## Predefined Macros<a name="section2035104120360"></a>
 
@@ -545,7 +545,7 @@ The following table uses $\text{block\_num} = 4$ as an example to describe the v
 
 For more details, see [Built-in Data Types](../../../api/SIMD-API/basic_api/data_structures/builtin_data_types.md).
 
-## Kernel Function Configuration<a name="kernel-configuration"></a><a name="section97005415463"></a>
+## Kernel Configuration<a name="kernel-configuration"></a><a name="section97005415463"></a>
 
 When calling a function modified by the __global__ qualifier, the execution configuration must be specified. The execution configuration is specified by inserting an expression in the following form between the function name and the parenthesized argument list:
 

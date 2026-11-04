@@ -1,6 +1,6 @@
 # Aclnn Operator Engineering Development Quick Start
 
-<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T13:29:55.858Z pushedAt=2026-10-28T03:07:28.088Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c891f0c5d5b2ac25c5683ff40810fa381d654ece translatedAt=2026-10-23T13:29:55.858Z pushedAt=2026-11-03T07:05:13.390Z nl=2 -->
 
 This document covers the basics. Using a complete AddCustom operator example, it walks you through the end-to-end process of creating a project, implementing the operator, compiling and deploying it, and verifying it through a single-operator API call, all within 5 minutes.
 

@@ -5,25 +5,25 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference product series AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference product series Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training product series: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadWithSparse_res.md#id1 -->
 
@@ -120,18 +120,18 @@ __aicore__ inline void MmadWithSparse(const LocalTensor<T>& dst, const LocalTens
 | n | Width of the right matrix. Value range: n∈[0, 4095]. The default value is 0. |
 | k | Width of the left matrix and height of the right matrix. Value range: k∈[0, 4095]. The default value is 0. |
 | cmatrixInitVal | Whether to enable the default zero-initialization of matrix C. The default value is true.<br>&nbsp;&nbsp;&bull; true: Matrix C is initialized to 0 by default.<br>&nbsp;&nbsp;&bull; false: No default operation is performed on matrix C, and it is initialized by setting the **cmatrixSource** parameter. |
-| cmatrixSource | Whether the initial value of matrix C comes from the BT Buffer. The default value is false.<br>&nbsp;&nbsp;&bull; false: The L0C Buffer is not initialized.<br>&nbsp;&nbsp;&bull; true: The L0C Buffer is initialized with the data in the BT Buffer (TPosition: C2).<br>Atlas A2 product series: supports configuration to true/false.<br>Atlas A3 product series: supports configuration to true/false.<br>Atlas 200I/500 A2 inference product: supports configuration to true/false.<br>Note: This parameter is invalid for APIs with Bias input. Whether the initial value of matrix C comes from the BT Buffer is determined by the position of the Bias input. |
+| cmatrixSource | Whether the initial value of matrix C comes from the BT Buffer. The default value is false.<br>&nbsp;&nbsp;&bull; false: The L0C Buffer is not initialized.<br>&nbsp;&nbsp;&bull; true: The L0C Buffer is initialized with the data in the BT Buffer (TPosition: C2).<br>Atlas A2 products: supports configuration to true/false.<br>Atlas A3 products: supports configuration to true/false.<br>Atlas 200I/500 A2 inference product: supports configuration to true/false.<br>Note: This parameter is invalid for APIs with Bias input. Whether the initial value of matrix C comes from the BT Buffer is determined by the position of the Bias input. |
 | isBias | This parameter is deprecated. Do not use it in new development. To accumulate the initial matrix, use the API with Bias, or configure the source of the initial value of matrix C through the **cmatrixInitVal** and **cmatrixSource** parameters. The API with Bias is recommended because it is simpler and more convenient than configuring the **cmatrixInitVal** and **cmatrixSource** parameters.<br>Whether to accumulate the initial matrix. The default value is false. The values are described as follows:<br>&nbsp;&nbsp;&bull; false: Matrix multiplication, without accumulating the initial matrix, C = A \* B.<br>&nbsp;&nbsp;&bull; true: Matrix multiplication and accumulation, with the initial matrix accumulated, C += A \* B. |
-| unitFlag | **unitFlag** enables fine-grained parallelism between Mmad instructions and Fixpipe instructions. When this function is enabled, the computation result is moved out after the hardware finishes computing each fractal. The values are described as follows:<br>&nbsp;&nbsp;&bull; 0 (2'b00): **unitFlag** is disabled.<br>&nbsp;&nbsp;&bull; 2 (2'b10): **unitFlag** is enabled, and the hardware does not reset the unit flag bit after executing the instruction.<br>&nbsp;&nbsp;&bull; 3 (2'b11): **unitFlag** is enabled, and the hardware resets the unit flag bit after executing the instruction.<br>When this function is enabled, set the **unitFlag** value of both the Mmad instruction and the Fixpipe instruction to 2 or 3.<br>This parameter is supported only on the following models:<br>Atlas A2 product series.<br>Atlas A3 product series.<br>For the parameter configuration scheme and feature details, see [UnitFlag](../../cube_compute_ISASI/mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788). |
+| unitFlag | **unitFlag** enables fine-grained parallelism between Mmad instructions and Fixpipe instructions. When this function is enabled, the computation result is moved out after the hardware finishes computing each fractal. The values are described as follows:<br>&nbsp;&nbsp;&bull; 0 (2'b00): **unitFlag** is disabled.<br>&nbsp;&nbsp;&bull; 2 (2'b10): **unitFlag** is enabled, and the hardware does not reset the unit flag bit after executing the instruction.<br>&nbsp;&nbsp;&bull; 3 (2'b11): **unitFlag** is enabled, and the hardware resets the unit flag bit after executing the instruction.<br>When this function is enabled, set the **unitFlag** value of both the Mmad instruction and the Fixpipe instruction to 2 or 3.<br>This parameter is supported only on the following models:<br>Atlas A2 products.<br>Atlas A3 products.<br>For the parameter configuration scheme and feature details, see [UnitFlag](../../cube_compute_ISASI/mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788). |
 | kDirectionAlign | In the Sparse scenario, this switch defaults to false and does not support configuration to true. The core function of K-direction alignment is to control, through the **kDirectionAlign** parameter, the alignment of the L0A Buffer and L0B Buffer matrices in the K direction when the float data type is used. |
-| fmOffset | Offset of the left matrix (one value for the entire left matrix). Supports Scalar (which should be consistent with src_fm.dtype) or an immediate value. The default value is 0.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 product series and later products do not process it. |
-| enSsparse | Enables the structured sparsity feature. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 product series and later products do not process it. |
-| enWinogradA | Indicates whether matrix a is generated by winograd_feature_map_transform() to support the winograd feature. The type is bool. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 product series and later products do not process it. |
-| enWinogradB | Indicates whether matrix b is generated by winograd_weight_transform() to support the winograd feature. The type is bool. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 product series and later products do not process it. |
+| fmOffset | Offset of the left matrix (one value for the entire left matrix). Supports Scalar (which should be consistent with src_fm.dtype) or an immediate value. The default value is 0.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 products and later products do not process it. |
+| enSsparse | Enables the structured sparsity feature. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 products and later products do not process it. |
+| enWinogradA | Indicates whether matrix a is generated by winograd_feature_map_transform() to support the winograd feature. The type is bool. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 products and later products do not process it. |
+| enWinogradB | Indicates whether matrix b is generated by winograd_weight_transform() to support the winograd feature. The type is bool. The default value is false.<br>Note: Not used. It is passed in for compatibility with older models. Atlas A2 products and later products do not process it. |
 
 ## Data Type<a id="zh_cn_topic_mmadsparse_section_datatype"></a>
 
-**Table 6** Supported precision type combinations of A, B, and C (Atlas 200I/500 A2 inference product) (Atlas A2 product series) (Atlas A3 product series)
+**Table 6** Supported precision type combinations of A, B, and C (Atlas 200I/500 A2 inference product) (Atlas A2 products) (Atlas A3 products)
 
 | Left matrix A | Right matrix B | Result matrix C |
 | ------- | ------- | --------- |

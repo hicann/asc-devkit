@@ -1,6 +1,6 @@
 # Cube Computation Programming<a name="ZH-CN_TOPIC_0000002600000003"></a>
 
-<!-- md-trans-meta sourceCommit=efbb24c9bdac3f8940cf150f90a686c06f5dd4f1 translatedAt=2026-10-28T08:54:13.448Z pushedAt=2026-10-28T11:42:21.741Z nl=2 -->
+<!-- md-trans-meta sourceCommit=efbb24c9bdac3f8940cf150f90a686c06f5dd4f1 translatedAt=2026-10-28T08:54:13.448Z pushedAt=2026-11-03T07:08:03.560Z nl=2 -->
 
 This document describes how to use the C++ Tensor programming API in Ascend C to write **cube computation code** based on on-chip storage such as the L1 Buffer and L0A Buffer.
 

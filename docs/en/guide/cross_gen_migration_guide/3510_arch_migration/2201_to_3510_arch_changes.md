@@ -1,6 +1,6 @@
 # Architecture Changes from 2201 to 3510<a name="ZH-CN_TOPIC_0000002503428217"></a>
 
-<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T10:52:46.949Z pushedAt=2026-10-27T07:55:32.231Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T10:52:46.949Z pushedAt=2026-11-03T07:05:13.249Z nl=2 -->
 
 The architecture diagram of [NPU architecture version 3510](../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch) is shown in [Figure 1](#fig1097417534526). Overall, the 3510 architecture adds the following features:
 

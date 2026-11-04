@@ -1,6 +1,6 @@
 # Heterogeneous System and Programming Model
 
-<!-- md-trans-meta sourceCommit=d53e1f2b44a41ea05bcf35b79cb06ef444c034d2 translatedAt=2026-10-23T11:12:44.590Z pushedAt=2026-10-27T09:56:52.731Z nl=2 -->
+<!-- md-trans-meta sourceCommit=d53e1f2b44a41ea05bcf35b79cb06ef444c034d2 translatedAt=2026-10-23T11:12:44.590Z pushedAt=2026-11-03T07:05:13.259Z nl=2 -->
 
 > As a quick-start section for operator programming, this document starts with the fundamentals of the Ascend heterogeneous system and gradually breaks down the core elements of the programming model, helping you quickly build an overall understanding of Ascend operator programming and lay a foundation for subsequent hands-on development.
 

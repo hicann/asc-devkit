@@ -5,13 +5,13 @@
 ## Applicable Products<a name="zh-cn_topic_0000002565968945_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -152,25 +152,25 @@ The source operand and destination operand support the same data types. The Glob
 
 <!-- npu="950" id9 -->
 
-- Ascend 950PR&950DT product series: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
+- Ascend 950PR&950DT products: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, double, complex64.
 
 <!-- end id9 -->
 
 <!-- npu="A3" id10 -->
 
-- Atlas A3 product series: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A3 products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 
 <!-- end id10 -->
 
 <!-- npu="910b" id11 -->
 
-- Atlas A2 product series: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
+- Atlas A2 products: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.
 
 <!-- end id11 -->
 
 <!-- npu="310p" id12 -->
 
-- Atlas inference series AI Core: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
+- Atlas inference products AI Core: int8_t, uint8_t, int16_t, uint16_t, half, int32_t, uint32_t, float.
 
 <!-- end id12 -->
 

@@ -1,6 +1,6 @@
 # Output Shape Dependency Calculation
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:51:10.487Z pushedAt=2026-10-28T02:45:05.987Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:51:10.487Z pushedAt=2026-11-03T07:05:13.405Z nl=2 -->
 
 This section is extended content that describes how to implement output shapes that depend on the kernel computation result. For operators such as NonZero, the actual output shape cannot be determined until the kernel computation is complete. Such outputs need to be marked by calling `OutputShapeDependOnCompute()` in the prototype definition, and the kernel writes the actual shape to the shape output address appended by the framework in a fixed format.
 

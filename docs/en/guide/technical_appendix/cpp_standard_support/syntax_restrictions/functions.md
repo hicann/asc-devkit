@@ -1,6 +1,6 @@
 # Function<a name="ZH-CN_TOPIC_0000002541491859"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-28T09:40:48.558Z pushedAt=2026-10-28T11:42:21.772Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-28T09:40:48.558Z pushedAt=2026-11-03T07:08:03.579Z nl=2 -->
 
 ## Kernel Argument List Constraints<a name="section_kernel_function_argument_list_constraint"></a>
 

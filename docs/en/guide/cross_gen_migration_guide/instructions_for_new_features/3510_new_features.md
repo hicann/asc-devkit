@@ -1,6 +1,6 @@
 # 3510 New Feature Usage Guide
 
-<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T11:00:19.090Z pushedAt=2026-10-26T09:08:17.590Z nl=2 -->
+<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T11:00:19.090Z pushedAt=2026-11-03T07:05:13.258Z nl=2 -->
 
 This document describes the new features of [NPU Architecture Version 3510](../../programming_guide/language_extension/simd_builtin_keywords.md#npu-arch), providing a reference for developers to migrate operator programs from other architectures to the 3510 architecture. For the overall changes of the 3510 architecture, see [2201 to 3510 Architecture Changes](../3510_arch_migration/2201_to_3510_arch_changes.md).
 

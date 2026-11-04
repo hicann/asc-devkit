@@ -1,6 +1,6 @@
 # Memory Consistency
 
-<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T14:28:11.853Z pushedAt=2026-10-28T05:54:19.996Z nl=2 -->
+<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T14:28:11.853Z pushedAt=2026-11-03T07:05:13.433Z nl=2 -->
 
 This document describes memory consistency issues in NPU programming and explains how to establish predictable read/write ordering between different execution units, different AI Cores, different streams, and between the host side and the device side. This document focuses on "operation ordering and visibility". For issues such as cache copy writeback and invalidation, see [Cache Coherence](cache_coherence.md).
 

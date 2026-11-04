@@ -113,7 +113,7 @@ Returns the division result of each component of the input data. This API is aff
 ## Constraints
 
 <!-- npu="950" id7 -->
-For the Ascend 950PR&950DT product series, this API does not support the Subnormal scenario: input and output values within the Subnormal range are flushed to zero with the sign preserved.
+For the Ascend 950PR&950DT products, this API does not support the Subnormal scenario: input and output values within the Subnormal range are flushed to zero with the sign preserved.
 <!-- end id7 -->
 
 ## Examples

@@ -2,7 +2,7 @@
 
 <!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-29T11:11:53.667Z pushedAt=2026-10-29T11:36:41.636Z nl=2 -->
 
-CANN 9.1.0 continues to improve the C API for the Ascend 950PR&950DT product series (3510 architecture), adds vector computation, data movement, scalar operation, matrix computation, synchronization control, system variable, and cache control APIs, and fixes the function naming, type declaration, and address self-update signature issues in 9.0.0.
+CANN 9.1.0 continues to improve the C API for the Ascend 950PR&950DT products (3510 architecture), adds vector computation, data movement, scalar operation, matrix computation, synchronization control, system variable, and cache control APIs, and fixes the function naming, type declaration, and address self-update signature issues in 9.0.0.
 
 ## New Features
 
@@ -139,7 +139,7 @@ This version marks the following APIs or specific overloads as `deprecated`:
 | deprecated interface or overload | Replacement API | Description |
 | :--- | :--- | :--- |
 | `asc_set_gm2ub_pad` | `asc_set_copy_pad_val` | Use the general movement padding value configuration API. |
-| `asc_get_store_atomic_config` (Ascend 950PR&950DT product series) | `asc_atomic_add` | Scalar atomic addition does not require pre-configuring and querying the data movement atomic state. |
+| `asc_get_store_atomic_config` (Ascend 950PR&950DT products) | `asc_atomic_add` | Scalar atomic addition does not require pre-configuring and querying the data movement atomic state. |
 | `asc_set_store_atomic_config_v2` | `asc_atomic_add` | Scalar atomic addition is changed to directly call the atomic API. |
 | The `asc_scatter` overload with the source vector register first and the destination UB address last | The `asc_scatter` overload with the destination UB address first and the source vector register last | The supported data types remain unchanged; only the parameter order is adjusted. |
 | `asc_exp_sub_v2(vector_float&, vector_float, vector_float, vector_bool)` | `asc_exp_sub` | The `asc_exp_sub_v2` overload for `half` input is retained for reading odd-index elements of the source operand; only the overload for `float` input is deprecated. |

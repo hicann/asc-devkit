@@ -103,7 +103,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
     ```
 
 <!-- npu="950" id1 -->
-- The enableSmallC0 mode is supported (supported only by Ascend 950PR&950DT series products).
+- The enableSmallC0 mode is supported (supported only by Ascend 950PR&950DT products).
 
     ```cpp
     template <typename T, bool enableSmallC0 = false>
@@ -125,7 +125,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 **src** and **dst** are the source operand and destination operand, respectively; **intriParams** is the DN2NZ move configuration parameter.
 
-- Supports the enableSmallC0 mode (supported only by Ascend 950PR&950DT series products)
+- Supports the enableSmallC0 mode (supported only by Ascend 950PR&950DT products)
 
     ```cpp
     template <typename T, bool enableSmallC0 = false>
@@ -187,7 +187,7 @@ The moved data is used for [matrix computation](../cube_compute_ISASI/cube_compu
 
 **src** and **dst** are the source operand and destination operand, respectively; **loadDataParams** is the move parameter.
 
-- Supported only on Ascend 950PR&950DT series products
+- Supported only on Ascend 950PR&950DT products
 
     ```cpp
     template <typename T>
@@ -258,7 +258,7 @@ The specific supported data paths are (indicated by [logical position TPosition]
 - L0C Buffer -> Global Memory
     - CO1 -> GM
 
-The moved data is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT series products as an example, the API example is as follows:
+The moved data is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). Taking the Ascend 950PR&950DT products as an example, the API example is as follows:
 
 Note that the API prototypes may differ across product models. For details, see [Fixpipe (L0C to GM Data Move)](../cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md).
 

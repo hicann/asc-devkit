@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000001644105018"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:08:24.732Z pushedAt=2026-10-28T07:10:56.744Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T15:08:24.732Z pushedAt=2026-11-03T07:05:13.461Z nl=2 -->
 
 The overall solution for debugging Ascend C operators is as follows: developers write the kernel-side source code of Ascend C operators by calling the Ascend C class library. The kernel-side source code is compiled by the BiSheng Compiler to generate a general-purpose CPU binary or an NPU binary. The CPU binary can be debugged using general debugging tools such as gdb. The NPU binary can be debugged by printing data through interfaces such as printf/assert, or by collecting on-board data through the simulation timing diagram or the Profiling tool.
 

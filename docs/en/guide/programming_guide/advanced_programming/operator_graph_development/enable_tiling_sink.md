@@ -1,6 +1,6 @@
 # Enabling Tiling Sinking<a name="ZH-CN_TOPIC_0000002130625528"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:38:33.472Z pushedAt=2026-10-28T05:57:40.418Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:38:33.472Z pushedAt=2026-11-03T07:05:13.434Z nl=2 -->
 
 In static graph mode, you can optimize scheduling performance through **whole-graph sinking**. The complete computation graph is delivered to the device side at one time, and subsequent execution does not require host participation. The device completes the computation autonomously, thereby reducing host-device interaction overhead and improving execution efficiency. Some operators' tiling computation depends on specific runtime input values (**tiling value dependency**), so tiling parameters must be computed dynamically at runtime. For this scenario, the **tiling sinking** optimization can be adopted: the tiling computation is sunk to the AI CPU on the device side for execution, so that the entire computation is efficiently completed on the device side.
 

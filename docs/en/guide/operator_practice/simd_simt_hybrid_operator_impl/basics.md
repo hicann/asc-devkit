@@ -1,6 +1,6 @@
 # Basic Knowledge<a name="ZH-CN_TOPIC_0000002532388147"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:00:20.365Z pushedAt=2026-10-27T11:04:15.525Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:00:20.365Z pushedAt=2026-11-03T07:05:13.357Z nl=2 -->
 
 This section guides you through SIMD and SIMT mixed programming using the [Reg vector computation API](../../../api/SIMD-API/basic_api/reg_vector_compute/reg_vector_compute.md) and the [SIMT API](../../../api/SIMT-API/SIMT-API.md).
 

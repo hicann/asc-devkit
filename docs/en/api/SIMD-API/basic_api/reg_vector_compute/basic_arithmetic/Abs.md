@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -109,7 +109,7 @@ None
 - When the data types of the destination operand and the source operand are inconsistent, the destination operand and the source operand must not overlap.
 - If the computation result of integer data exceeds the representable range of the data type, non-saturating truncation is applied. For example, for the **int8_t** type, if **srcReg** is -128, its absolute value 128 is truncated to -128.
 <!-- npu="950" id8 -->
-- For the Ascend 950PR&950DT product series, only the APIs of the **complex32** and **complex64** types involve Subnormal in internal computation, and the handling is controlled by the compilation option **--cce-ftz** (default value: **true**):
+- For the Ascend 950PR&950DT products, only the APIs of the **complex32** and **complex64** types involve Subnormal in internal computation, and the handling is controlled by the compilation option **--cce-ftz** (default value: **true**):
     - When **--cce-ftz=false**, Subnormal values are preserved during computation and participate in subsequent computation according to their actual values.
     - When **--cce-ftz=true**, the FTZ (Flush-To-Zero) mode is enabled. Subnormal values generated or involved in computation are treated as 0, which may cause precision differences in the computation result compared with preserving Subnormal values.
 <!-- end id8 -->

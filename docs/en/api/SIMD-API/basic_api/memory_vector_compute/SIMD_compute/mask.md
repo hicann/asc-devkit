@@ -28,14 +28,14 @@ The mask application mechanism based on the first-n-data computation and high-di
 > <!-- npu="A3,910b" id1 -->
 > - For the following models, Mask is a hardware-native capability. When the first-n-data computation API is called, the interface internal sets Mask to Counter mode and restores it to the system-default Normal mode after the computation is complete.
 >   <!-- npu="A3" id2 -->
->   - Atlas A3 product series
+>   - Atlas A3 products
 >   <!-- end id2 -->
 >   <!-- npu="910b" id3 -->
->   - Atlas A2 product series
+>   - Atlas A2 products
 >   <!-- end id3 -->
 > <!-- end id1 -->
 > <!-- npu="950" id4 -->
-> - On Ascend 950PR&950DT product series, Mask is implemented through software emulation to ensure compatibility, and the capabilities provided by its underlying hardware differ from those of Atlas A2 product series and Atlas A3 product series. It is recommended to use the first-n-data computation API, which achieves compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. The first-n-data computation API does not switch the Mask mode to Normal mode internally. If Mask has been set to Counter mode through [SetMaskCount](../mask_operations/SetMaskCount.md) before calling this API, it remains in Counter mode after the call. When subsequent computation requires Normal mode, call [SetMaskNorm](../mask_operations/SetMaskNorm.md) manually to set it.
+> - On Ascend 950PR&950DT products, Mask is implemented through software emulation to ensure compatibility, and the capabilities provided by its underlying hardware differ from those of Atlas A2 products and Atlas A3 products. It is recommended to use the first-n-data computation API, which achieves compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. The first-n-data computation API does not switch the Mask mode to Normal mode internally. If Mask has been set to Counter mode through [SetMaskCount](../mask_operations/SetMaskCount.md) before calling this API, it remains in Counter mode after the call. When subsequent computation requires Normal mode, call [SetMaskNorm](../mask_operations/SetMaskNorm.md) manually to set it.
 > <!-- end id4 -->
 
 ### Mask Configuration Method

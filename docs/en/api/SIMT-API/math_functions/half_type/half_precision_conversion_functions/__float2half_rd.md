@@ -21,7 +21,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
-- Atlas training product series: Not supported
+- Atlas training products: Not supported
 <!-- end id6 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMT-API/math_functions/half_type/half_precision_conversion_functions/__float2half_rd_res.md#id1 -->
 

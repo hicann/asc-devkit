@@ -5,7 +5,7 @@
 This section summarizes the output results of the MmadMx compute API under boundary value inputs. For data types, see [MmadMx](../SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md#data-types) under the basic API. The following content applies to the following products:
 
 <!-- npu="950" id1 -->
-- Ascend 950PR & 950DT series products
+- Ascend 950PR & 950DT products
 <!-- end id1 -->
 
 ## Boundary Value Description

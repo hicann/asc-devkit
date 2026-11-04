@@ -8,13 +8,13 @@
 ## Applicable Products<a name="section17196114513104"></a>
 
 <!-- npu="950" id21 -->
-- Ascend 950PR&950DT product series: supported, and the API takes effect.
+- Ascend 950PR&950DT products: supported, and the API takes effect.
 <!-- end id21 -->
 <!-- npu="A3" id22 -->
-- Atlas A3 product series: supported, and the API takes effect.
+- Atlas A3 products: supported, and the API takes effect.
 <!-- end id22 -->
 <!-- npu="910b" id23 -->
-- Atlas A2 product series: supported, with guaranteed compilation compatibility only; the actual functionality does not take effect.
+- Atlas A2 products: supported, with guaranteed compilation compatibility only; the actual functionality does not take effect.
 <!-- end id23 -->
 <!-- npu="310b" id24 -->
 - Atlas 200I/500 A2 inference products: supported, with guaranteed compilation compatibility only; the actual functionality does not take effect.
@@ -51,15 +51,15 @@ SuperKernel is a binary fusion technology for operators. Unlike source code fusi
 - This prototype supports the following product models:
 
     <!-- npu="950" id1 -->
-    Ascend 950PR&950DT product series 
+    Ascend 950PR&950DT products 
     <!-- end id1 -->
 
     <!-- npu="A3" id2 -->
-    Atlas A3 product series 
+    Atlas A3 products 
     <!-- end id2 -->
 
     <!-- npu="910b" id3 -->
-    Atlas A2 product series 
+    Atlas A2 products 
     <!-- end id3 -->
 
     <!-- npu="310b" id4 -->

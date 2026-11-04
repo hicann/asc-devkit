@@ -1,6 +1,6 @@
 # NPU Architecture Version 2002<a name="ZH-CN_TOPIC_0000002346677682"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:17:49.870Z pushedAt=2026-10-28T03:27:21.689Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:17:49.870Z pushedAt=2026-11-03T07:05:13.424Z nl=2 -->
 
 This section describes the hardware architecture and functions of \_\_NPU\_ARCH\_\_ version 2002. The corresponding product model is:
 

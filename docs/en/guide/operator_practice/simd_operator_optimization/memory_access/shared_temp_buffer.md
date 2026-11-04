@@ -1,6 +1,6 @@
 # Sharing Temporary Buffers Between Operators and Advanced APIs<a name="ZH-CN_TOPIC_0000001893038929"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:42:42.849Z pushedAt=2026-10-27T10:24:52.153Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:42:42.849Z pushedAt=2026-11-03T07:05:13.337Z nl=2 -->
 
 [Priority] High
 

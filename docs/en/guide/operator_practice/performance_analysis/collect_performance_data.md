@@ -1,6 +1,6 @@
 # Obtaining Performance Data<a name="ZH-CN_TOPIC_0000001896496393"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:47:35.641Z pushedAt=2026-10-27T06:00:22.042Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T11:47:35.641Z pushedAt=2026-11-03T07:05:13.288Z nl=2 -->
 
 Before performing performance optimization, you need to obtain accurate performance data to understand the current performance status and analyze the next optimization direction based on it. Ascend C provides multiple performance testing methods, including on-board Profiling and single-operator performance simulation pipeline diagrams.
 

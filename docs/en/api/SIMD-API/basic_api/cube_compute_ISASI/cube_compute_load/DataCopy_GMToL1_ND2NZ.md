@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002566538879_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT Product Series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 Product Series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 Product Series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
@@ -47,7 +47,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 ```
 
 <!-- npu="950" id10 -->
-Specifically for the Ascend 950PR&950DT Product Series, the function prototype is as follows:
+Specifically for the Ascend 950PR&950DT products, the function prototype is as follows:
 
 ```cpp
 template <typename T, bool enableSmallC0 = false>
@@ -67,7 +67,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 ### enableSmallC0 Parameter Support
 
 <!-- npu="950" id11 -->
-- For the Ascend 950PR&950DT Product Series, the **enableSmallC0** parameter is newly added. When calling this API, you must configure the **enableSmallC0** parameter.
+- For the Ascend 950PR&950DT products, the **enableSmallC0** parameter is newly added. When calling this API, you must configure the **enableSmallC0** parameter.
 <!-- end id11 -->
 
 - Other models do not support this parameter.
@@ -98,19 +98,19 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>
 The data types supported by the source matrix and the destination matrix must be consistent.
 
 <!-- npu="950" id12 -->
-For the Ascend 950PR&950DT Product Series, the supported data types are: **bool**, **int8_t**, **uint8_t**, **fp4x2_e2m1_t**, **fp4x2_e1m2_t**, **hifloat8_t**, **fp8_e5m2_t**, **fp8_e4m3fn_t**, **fp8_e8m0_t**, **int16_t**, **uint16_t**, **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**, **complex32**.
+For the Ascend 950PR&950DT products, the supported data types are: **bool**, **int8_t**, **uint8_t**, **fp4x2_e2m1_t**, **fp4x2_e1m2_t**, **hifloat8_t**, **fp8_e5m2_t**, **fp8_e4m3fn_t**, **fp8_e8m0_t**, **int16_t**, **uint16_t**, **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**, **complex32**.
 <!-- end id12 -->
 
 <!-- npu="A3" id13 -->
-For the Atlas A3 Product Series, the supported data types are: **b4** (**int4b_t**), **int8_t**, **uint8_t**, **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **bfloat16_t**, **float**.
+For the Atlas A3 products, the supported data types are: **b4** (**int4b_t**), **int8_t**, **uint8_t**, **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **bfloat16_t**, **float**.
 <!-- end id13 -->
 
 <!-- npu="910b" id14 -->
-For the Atlas A2 Product Series, the supported data types are: **b4** (**int4b_t**), **int8_t**, **uint8_t**, **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **bfloat16_t**, **float**.
+For the Atlas A2 products, the supported data types are: **b4** (**int4b_t**), **int8_t**, **uint8_t**, **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **bfloat16_t**, **float**.
 <!-- end id14 -->
 
 <!-- npu="310p" id15 -->
-For the Atlas Inference Series AI Core, the supported data types are: **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **float**.
+For the Atlas inference products AI Core, the supported data types are: **int16_t**, **uint16_t**, **int32_t**, **uint32_t**, **half**, **float**.
 <!-- end id15 -->
 
 ## Return Value

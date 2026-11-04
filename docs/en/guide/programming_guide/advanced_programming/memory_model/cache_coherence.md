@@ -1,6 +1,6 @@
 # Cache Coherence
 
-<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T14:28:00.077Z pushedAt=2026-10-28T04:01:23.861Z nl=2 -->
+<!-- md-trans-meta sourceCommit=5e55c38a4e567465079c4ca7387d07ab9e6347c5 translatedAt=2026-10-23T14:28:00.077Z pushedAt=2026-11-03T07:05:13.430Z nl=2 -->
 
 This document describes common cache coherence issues in NPU programming and explains the data consistency among Data Cache (DCache), Instruction Cache (ICache), SIMT DCache, and Global Memory (GM). For the hardware architecture of the chip, see [NPU Architecture Version 2201](../hardware_implementation/architecture_spec/npu_arch_2201.md) and [NPU Architecture Version 3510](../hardware_implementation/architecture_spec/npu_arch_3510.md).
 

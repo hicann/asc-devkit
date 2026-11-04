@@ -1,6 +1,6 @@
 # Main Block Even Splitting
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:27:36.472Z pushedAt=2026-10-27T08:42:12.566Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:27:36.472Z pushedAt=2026-11-03T07:05:13.317Z nl=2 -->
 
 Input data of length `totalLength` can be evenly split based on the number of cores involved in the computation and the main block length `mainTileLength`. After the main block even split, no residual data remains. Each core processes the same amount of data, with each core processing `tileNum` main blocks, and the core contains only main blocks.
 

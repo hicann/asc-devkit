@@ -1,6 +1,6 @@
 # Advanced Performance Optimization<a name="ZH-CN_TOPIC_000000_ADD_ADV"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:19:12.090Z pushedAt=2026-10-28T08:23:00.378Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:19:12.090Z pushedAt=2026-11-03T07:05:13.378Z nl=2 -->
 
 This section describes the advanced extreme optimization methods for the Add operator, building on the intermediate performance optimization.
 

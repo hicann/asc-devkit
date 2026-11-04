@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000002509891888"></a>
 
-<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:37:51.245Z pushedAt=2026-10-28T11:42:21.769Z nl=2 -->
+<!-- md-trans-meta sourceCommit=451be46634ed6eadfc1e42e1c399359618f427aa translatedAt=2026-10-28T09:37:51.245Z pushedAt=2026-11-03T07:08:03.575Z nl=2 -->
 
 The host side is consistent with clang15 and supports the complete C/C++ standard.
 

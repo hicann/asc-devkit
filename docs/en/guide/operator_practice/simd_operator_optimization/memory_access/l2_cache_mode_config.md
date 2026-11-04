@@ -1,6 +1,6 @@
 # Setting a Reasonable L2 CacheMode<a name="ZH-CN_TOPIC_0000002356424662"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:39:09.303Z pushedAt=2026-10-27T10:03:36.620Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:39:09.303Z pushedAt=2026-11-03T07:05:13.331Z nl=2 -->
 
 [Priority] High
 

@@ -1,6 +1,6 @@
 # Unaligned Scenarios<a name="ZH-CN_TOPIC_0000002532388127"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:26:47.418Z pushedAt=2026-10-27T09:13:32.869Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:26:47.418Z pushedAt=2026-11-03T07:05:13.317Z nl=2 -->
 
 This section describes more ways to handle data that is not 32-byte aligned, including data move-in, calculation, and move-out. When developing operators, you can flexibly handle unaligned scenarios by referring to the following solution descriptions and operator samples.
 

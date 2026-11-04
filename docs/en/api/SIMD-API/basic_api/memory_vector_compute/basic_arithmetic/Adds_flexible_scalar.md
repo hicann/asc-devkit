@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -88,7 +88,7 @@ $dst_i = scalar + src_i$
 ## Data Types
 
 <!-- npu="950" id8 -->
-For Ascend 950PR&950DT product series, the supported data types are uint8_t, int8_t, half, bfloat16_t, int16_t, float, int32_t, uint64_t, int64_t, complex32, and complex64. Among them, int8_t, uint8_t, uint64_t, int64_t, complex32, and complex64 are supported only by the API for computing the first n data of a tensor.
+For Ascend 950PR&950DT products, the supported data types are uint8_t, int8_t, half, bfloat16_t, int16_t, float, int32_t, uint64_t, int64_t, complex32, and complex64. Among them, int8_t, uint8_t, uint64_t, int64_t, complex32, and complex64 are supported only by the API for computing the first n data of a tensor.
 <!-- end id8 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -104,11 +104,11 @@ None
 - When this API passes single-point LocalTensor data as a scalar, the idx parameter must be a compile-time constant. If a variable is passed, it must be declared as constexpr.
 
 <!-- npu="950" id9 -->
-- For Ascend 950PR&950DT product series: This API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is 0, the soft simulation behavior does not guarantee that this API is treated as a NOP (no operation).
-- Unified Buffer (UB) space usage. For Ascend 950PR&950DT product series:
+- For Ascend 950PR&950DT products: This API is implemented for compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is 0, the soft simulation behavior does not guarantee that this API is treated as a NOP (no operation).
+- Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
   - Tensor high-dimensional slicing computation occupies 8 KB of UB.
   - Continuous computation of the first n data of a tensor does not involve the 8 KB UB usage.
-- For Ascend 950PR&950DT product series, the isSetMask parameter in the API for computing the first n tensor data does not take effect. Keep its default value.
+- For Ascend 950PR&950DT products, the isSetMask parameter in the API for computing the first n tensor data does not take effect. Keep its default value.
 <!-- end id9 -->
 
 ## Example<a name="section642mcpsimp"></a>

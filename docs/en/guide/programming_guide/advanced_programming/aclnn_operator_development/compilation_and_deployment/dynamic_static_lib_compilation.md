@@ -1,6 +1,6 @@
 # Operator Dynamic Library and Static Library Compilation
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:43:11.018Z pushedAt=2026-10-28T02:35:44.157Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-23T13:43:11.018Z pushedAt=2026-11-03T07:05:13.400Z nl=2 -->
 
 This document is an extension that describes how to compile a custom operator project into a dynamic library or a static library, and how to use these libraries in applications or graph mode scenarios. For regular deployment scenarios, preferentially refer to [Basic Compilation and Deployment Process](./basic_process.md) to generate the `custom_opp_*.run` operator package. Consider compiling a dynamic library or a static library only when the application needs to directly link the operator library, or when you want to integrate the operator library into other projects. Unlike the `.run` operator package, which is pre-installed in the OPP directory, the dynamic library or static library approach works as follows: after process startup, the runtime creates a temporary directory, restores the operator package structure to that temporary directory, and loads operator-related files from it. The temporary directory is deleted before the process exits.
 

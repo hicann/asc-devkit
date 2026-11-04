@@ -1,6 +1,6 @@
 # Cube Computation Programming<a name="ZH-CN_TOPIC_0000002600000002"></a>
 
-<!-- md-trans-meta sourceCommit=155d12bd3f10bfd637ddd47c9f145f13f914b4c3 translatedAt=2026-10-28T08:41:07.699Z pushedAt=2026-10-28T11:42:21.736Z nl=2 -->
+<!-- md-trans-meta sourceCommit=155d12bd3f10bfd637ddd47c9f145f13f914b4c3 translatedAt=2026-10-28T08:41:07.699Z pushedAt=2026-11-03T07:08:03.554Z nl=2 -->
 
 This document describes how to implement cube computation based on the Ascend C language extension APIs, relying on the L1 Buffer and L0 series on-chip buffers. This approach is the most basic and general-purpose cube programming solution in Ascend C. The Cube unit in the AI Core is deployed on the AIC core and is responsible for cube computation. It has dedicated on-chip buffers: the L0A Buffer stores the left cube, the L0B Buffer stores the right cube, and the L0C Buffer stores the initial accumulation values and the cube computation results.
 

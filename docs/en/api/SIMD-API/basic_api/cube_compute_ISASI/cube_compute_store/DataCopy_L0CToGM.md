@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002542828493_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: supported
@@ -126,10 +126,10 @@ None
 <!-- npu="A3,910b" id17 -->
 - For the following product models, the special value/boundary value constraints are described as follows:
     <!-- npu="A3" id18 -->
-    Atlas A3 product series
+    Atlas A3 products
     <!-- end id18 -->
     <!-- npu="910b" id19 -->
-    Atlas A2 product series
+    Atlas A2 products
     <!-- end id19 -->
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the CTRL register (control register) can be set to control the saturation mode during floating-point quantization output:
 
@@ -144,7 +144,7 @@ None
     For integer types, only the saturation mode is available.
 <!-- end id17 -->
 <!-- npu="950" id20 -->
-- Special value/boundary value constraints for the Ascend 950PR&950DT product series:
+- Special value/boundary value constraints for the Ascend 950PR&950DT products:
 
     For floating-point inf/nan input and output, the CTRL\[48\] bit of the CTRL register (control register) can be set to control the saturation mode during floating-point quantization output;
 

@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id8 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id8 -->
 <!-- npu="A3" id9 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id9 -->
 <!-- npu="910b" id10 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id10 -->
 <!-- npu="310b" id11 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -100,7 +100,7 @@ None
 - SetLoopModePara enables loop mode, Compact mode
 
     ```cpp
-    // Scenario 4: Use SetLoopModePara to enable loop mode for data movement (supported only on Ascend 950PR&950DT product series).
+    // Scenario 4: Use SetLoopModePara to enable loop mode for data movement (supported only on Ascend 950PR&950DT products).
     // Compact mode: Each inner loop moves 80B and then pads 16B to achieve 96-byte alignment.
     // Set the padding value to -1.
     AscendC::DataCopyExtParams copyParams{BLOCK_COUNT, BLOCK_LEN, 0, 0, 0};
@@ -115,7 +115,7 @@ None
 - SetLoopModePara enables loop mode, Normal mode
 
     ```cpp
-    // Scenario 5: Use SetLoopModePara to enable loop mode for data movement (supported only on Ascend 950PR&950DT product series).
+    // Scenario 5: Use SetLoopModePara to enable loop mode for data movement (supported only on Ascend 950PR&950DT products).
     // Normal mode: Each block moves 40B and then pads 24B to achieve 64-byte alignment.
     // Set the padding value to -1.
     AscendC::DataCopyExtParams copyParams{BLOCK_COUNT, BLOCK_LEN, 0, 0, 0};

@@ -1,6 +1,6 @@
 # NPU Architecture Version 3002<a name="ZH-CN_TOPIC_0000002346837454"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:18:35.596Z pushedAt=2026-10-28T03:35:20.312Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:18:35.596Z pushedAt=2026-11-03T07:05:13.426Z nl=2 -->
 
 This section describes the hardware architecture and functions of \_\_NPU\_\_ARCH\_\_ version 3002. The corresponding product model is:
 

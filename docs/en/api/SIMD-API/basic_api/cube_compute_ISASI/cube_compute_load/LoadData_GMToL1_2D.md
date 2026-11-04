@@ -5,13 +5,13 @@
 ## Applicable Products<a id="zh-cn_topic_0000002567745223_section796754519912"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -65,15 +65,15 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const GlobalTensor<T>
 ## Data Types<a id="zh-cn_topic_0000002567745223_section4219135304818"></a>
 
 <!-- npu="950" id10 -->
-For Ascend 950PR&950DT series products, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float.
+For Ascend 950PR&950DT products, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, and float.
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
-For Atlas A3 series products, the supported data types are: b8, b16, and b32.
+For Atlas A3 products, the supported data types are: b8, b16, and b32.
 <!-- end id11 -->
 
 <!-- npu="910b" id12 -->
-For Atlas A2 series products, the supported data types are: b8, b16, and b32.
+For Atlas A2 products, the supported data types are: b8, b16, and b32.
 <!-- end id12 -->
 
 <!-- npu="310b" id13 -->
@@ -81,11 +81,11 @@ For Atlas 200I/500 A2 inference products, the supported data types are: uint8_t,
 <!-- end id13 -->
 
 <!-- npu="310p" id14 -->
-For Atlas inference series products AI Core, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, and half.
+For Atlas inference products AI Core, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, and half.
 <!-- end id14 -->
 
 <!-- npu="910" id15 -->
-For Atlas training series products, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, and half.
+For Atlas training products, the supported data types are: uint8_t, int8_t, uint16_t, int16_t, and half.
 <!-- end id15 -->
 
 ## Return Value

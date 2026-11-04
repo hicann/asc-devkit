@@ -1,6 +1,6 @@
 # Overview<a name="ZH-CN_TOPIC_0000001985173748"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:41:53.053Z pushedAt=2026-10-28T06:01:18.313Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:41:53.053Z pushedAt=2026-11-03T07:05:13.435Z nl=2 -->
 
 Graph mode is a running mode of neural network models. In graph mode, you first construct the model computation process into a graph, and then deliver the graph to Ascend hardware through GE for execution. Compared with delivering individual operators one by one, in graph mode, GE can accelerate model execution efficiency and reduce model memory usage through technical means such as computational graph optimization, multi-stream parallelism, memory reuse, and model sinking.
 

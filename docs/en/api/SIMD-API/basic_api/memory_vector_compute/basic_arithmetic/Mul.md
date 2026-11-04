@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -88,22 +88,22 @@ $dst_i = src0_i \times src1_i$
 ## Data Types
 
 <!-- npu="950" id10 -->
-- For Ascend 950PR&950DT product series, the supported data types of T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, and complex64. The data types complex32, int64_t, uint64_t, and complex64 support only the API for computing the first n data of a tensor and the operator overloads where the entire tensor participates in computation.
+- For Ascend 950PR&950DT products, the supported data types of T are: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, complex32, int64_t, uint64_t, and complex64. The data types complex32, int64_t, uint64_t, and complex64 support only the API for computing the first n data of a tensor and the operator overloads where the entire tensor participates in computation.
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- For Atlas A3 product series, the supported data types of T are: int16_t, half, int32_t, and float.
+- For Atlas A3 products, the supported data types of T are: int16_t, half, int32_t, and float.
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- For Atlas A2 product series, the supported data types of T are: int16_t, half, int32_t, and float.
+- For Atlas A2 products, the supported data types of T are: int16_t, half, int32_t, and float.
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - For Atlas 200I/500 A2 inference products, the supported data types of T are: int16_t, half, int32_t, and float.
 <!-- end id13 -->
 <!-- npu="310p" id14 -->
-- For Atlas inference series product AI Core, the supported data types of T are: int16_t, half, int32_t, and float.
+- For Atlas inference products AI Core, the supported data types of T are: int16_t, half, int32_t, and float.
 <!-- end id14 -->
 <!-- npu="910" id15 -->
-- For Atlas training product series, the supported data types of T are: half, int32_t, and float.
+- For Atlas training products, the supported data types of T are: half, int32_t, and float.
 <!-- end id15 -->
 
 ## Return Value<a name="section135861771190"></a>
@@ -121,10 +121,10 @@ None
   <!-- npu="A3,910b" id23 -->
   - For the following models, when the value of the count or repeatTime parameter is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id24 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id24 -->
     <!-- npu="910b" id26 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id26 -->
   <!-- end id23 -->
   <!-- npu="950" id27 -->

@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series product: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series product: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: supported
@@ -95,27 +95,27 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
 ## Data Types
 
 <!-- npu="950" id101 -->
-- Ascend 950PR&950DT series products, the supported data types of T are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id101 -->
+- Ascend 950PR&950DT products, the supported data types of T are: bool, int8_t, uint8_t, hifloat8_t, fp8_e8m0_t, fp8_e5m2_t, fp8_e4m3fn_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id101 -->
 <!-- npu="A3" id102 -->
-- Atlas A3 series products, the supported data types of T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id102 -->
+- Atlas A3 products, the supported data types of T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id102 -->
 <!-- npu="910b" id103 -->
-- For Atlas A2 series products, the data types supported by T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id103 -->
+- For Atlas A2 products, the data types supported by T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id103 -->
 <!-- npu="310b" id104 -->
 - Atlas 200I/500 A2 inference product, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id104 -->
 <!-- npu="310p" id105 -->
-- On the AI Core of Atlas inference series products, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id105 -->
+- On the AI Core of Atlas inference products, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id105 -->
 
 ## Constraints<a name="section794123819592"></a>
 
 - Currently, printing of Tensor information stored in Unified Buffer (UB)/L1 Buffer/L0C Buffer/Global Memory is supported.
 <!-- npu="950" id111 -->
-- On Ascend 950PR&950DT series products, printing of Tensor data in BiasTable Buffer and Fixpipe Buffer is added.
+- On Ascend 950PR&950DT products, printing of Tensor data in BiasTable Buffer and Fixpipe Buffer is added.
 <!-- end id111 -->
 <!-- npu="950" id112 -->
-- For Ascend 950PR&950DT series products, when using this API to print L1 Buffer, BiasTable Buffer, or Fixpipe Buffer data, the HDK version must be upgraded to at least 25.7.RC1.6 or later.
+- For Ascend 950PR&950DT products, when using this API to print L1 Buffer, BiasTable Buffer, or Fixpipe Buffer data, the HDK version must be upgraded to at least 25.7.RC1.6 or later.
 <!-- end id112 -->
 <!-- npu="950" id113 -->
-- For Ascend 950PR&950DT series products, the scenario of printing Tensor information in Fixpipe Buffer:
+- For Ascend 950PR&950DT products, the scenario of printing Tensor information in Fixpipe Buffer:
   - Fixpipe Buffer stores hardware parameter bit fields, so the print result may not be bitwise identical to the original data in L1 Buffer. For the preceding Quant parameters, every 8 bytes retain bit[7:0], bit[31:13], and bit[46:37], with the expected value of `input & 0x00007fe0ffffe0ffULL`; for the preceding ReLU parameters, every 4 bytes retain bit[31:13], with the expected value of `word & 0xffffe000U`.
 <!-- end id113 --> 
 - For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).

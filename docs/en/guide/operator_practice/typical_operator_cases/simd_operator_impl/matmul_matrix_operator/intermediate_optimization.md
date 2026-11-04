@@ -1,6 +1,6 @@
 # Intermediate Performance Optimization
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:26:45.872Z pushedAt=2026-10-28T01:41:20.341Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:26:45.872Z pushedAt=2026-11-03T07:05:13.388Z nl=2 -->
 
 This section describes the performance tuning method for the Matmul basic API operator based on the C++ Tensor programming paradigm. Through four progressive optimization steps (L1/L0 double buffering, fine-grained flow synchronization, multi-core parallel partitioning, and DataCopyIn priority transfer of cube B), it presents the complete tuning path from basic implementation to high-performance optimization.
 

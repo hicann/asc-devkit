@@ -1,6 +1,6 @@
 # Asynchronous Scenario Handling<a name="ZH-CN_TOPIC_0000002532388133"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:02:50.284Z pushedAt=2026-10-27T07:55:02.794Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:02:50.284Z pushedAt=2026-11-03T07:05:13.298Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002264077888_section310824820358"></a>
 

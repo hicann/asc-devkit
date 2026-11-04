@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -77,7 +77,7 @@ CACHE_MODE_NORMAL = 1,  // Enable L2 Cache.
 CACHE_MODE_PERSISTENT = 4,  // Enable L2 Cache persistent mode.
 };</pre>
 <p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>When enabling L2 Cache for a specific GlobalTensor actually degrades measured performance, you can consider manually disabling L2 Cache for that GlobalTensor. For example, if an operator performs only a single read operation on a specific GlobalTensor, caching its data to L2 Cache not only brings no performance benefit but may also introduce extra overhead due to frequent data movement to L2 Cache. In this case, it is recommended to disable L2 Cache for that GlobalTensor.</p>
-<p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>Normally, L2 Cache can run in CACHE_MODE_NORMAL mode. In this mode, when the L2 Cache capacity is exhausted, a data replacement mechanism is triggered, and data already stored in L2 Cache may be replaced. To ensure that the data of a specific GlobalTensor always remains in L2 Cache, you can use persistent mode. This persistent mode is still under development and is not supported yet. It is planned to be supported on the Ascend 950PR&950DT product series.</p>
+<p id="p595815581177"><a name="p595815581177"></a><a name="p595815581177"></a>Normally, L2 Cache can run in CACHE_MODE_NORMAL mode. In this mode, when the L2 Cache capacity is exhausted, a data replacement mechanism is triggered, and data already stored in L2 Cache may be replaced. To ensure that the data of a specific GlobalTensor always remains in L2 Cache, you can use persistent mode. This persistent mode is still under development and is not supported yet. It is planned to be supported on the Ascend 950PR&950DT products.</p>
 <p id="p165951277168"><a name="p165951277168"></a><a name="p165951277168"></a>If this API is not called, the default is CacheMode::CACHE_MODE_NORMAL, meaning that the GlobalTensor enables L2 Cache.</p></td>
 </tr>
 </tbody>

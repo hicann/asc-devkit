@@ -1,6 +1,6 @@
 # NPU Architecture Version 3510<a name="ZH-CN_TOPIC_0000002468380701"></a>
 
-<!-- md-trans-meta sourceCommit=c0c5cde6df534c03224f524ed2b2d081018dca09 translatedAt=2026-10-23T14:21:46.515Z pushedAt=2026-10-28T03:39:37.447Z nl=2 -->
+<!-- md-trans-meta sourceCommit=c0c5cde6df534c03224f524ed2b2d081018dca09 translatedAt=2026-10-23T14:21:46.515Z pushedAt=2026-11-03T07:05:13.429Z nl=2 -->
 
 This section describes the hardware architecture and its functional description for [version 3510](../../../language_extension/simd_builtin_keywords.md#npu-arch) of **\_\_NPU\_ARCH\_\_**.
 

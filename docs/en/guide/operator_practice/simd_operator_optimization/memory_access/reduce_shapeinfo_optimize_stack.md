@@ -1,6 +1,6 @@
 # Optimizing Stack Space by Reducing Tensor ShapeInfo Dimensions<a name="ZH-CN_TOPIC_0000001918624089"></a>
 
-<!-- md-trans-meta sourceCommit=69a6cac29cbde3698f408c141a0f6188e0b2b8a0 translatedAt=2026-10-23T12:41:43.680Z pushedAt=2026-10-27T10:24:03.610Z nl=2 -->
+<!-- md-trans-meta sourceCommit=69a6cac29cbde3698f408c141a0f6188e0b2b8a0 translatedAt=2026-10-23T12:41:43.680Z pushedAt=2026-11-03T07:05:13.336Z nl=2 -->
 
 [Priority] Medium
 

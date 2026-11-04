@@ -1,6 +1,6 @@
 # Multi-Branch Strategy
 
-<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:51:46.586Z pushedAt=2026-10-28T02:48:21.482Z nl=2 -->
+<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:51:46.586Z pushedAt=2026-11-03T07:05:13.406Z nl=2 -->
 
 This section is extended content. It describes how to use TilingKey or kernel function templates to organize multiple kernel function branches when the same operator needs to execute different computation flows based on dtype, shape, or attributes. TilingKey uses numeric identifiers to distinguish branches and is suitable for scenarios with a small number of branches and stable meanings. Kernel function templates use named parameters to describe branches and are suitable for scenarios where branches are determined by multiple dimensions together.
 

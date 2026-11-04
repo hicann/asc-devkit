@@ -1,6 +1,6 @@
 # Multi-Core Aligned Splitting<a name="ZH-CN_TOPIC_0000002532228165"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:10:27.663Z pushedAt=2026-10-27T08:03:04.825Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:10:27.663Z pushedAt=2026-11-03T07:05:13.306Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002298767889_section16205164243819"></a>
 

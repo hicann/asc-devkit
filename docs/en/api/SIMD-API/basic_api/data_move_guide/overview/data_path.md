@@ -31,7 +31,7 @@ Taking [NPU architecture version 3510](../../../../../guide/programming_guide/la
 
   > [!NOTE]Note
   > - The same physical memory may correspond to multiple different [TPosition](../../../basic_api/aux_data_structures/TPosition.md) values. For example, UB is simultaneously mapped to the three logical positions VECIN, VECCALC, and VECOUT, which represent the input, intermediate computation, and output stages of vector computation, respectively. L1 Buffer is simultaneously mapped to A1, B1, C1, and TSCM, whose specific meanings depend on the computation flow currently being served (left/right matrix staging for matrix multiplication or shared communication). This design allows the same physical memory to be assigned different logical semantics at different computation stages, and developers can select an appropriate TPosition based on the stage requirements of the programming model.
-  > - The same logical position may correspond to different physical memory in different product models. For example, the logical position CO2 is mapped to Global Memory in Atlas A2 series products, but to UB in Atlas training and inference products. For details, see [Mapping Between Logical Positions and Physical Storage](../../../general_description_and_constraints.md#section1359919519819).
+  > - The same logical position may correspond to different physical memory in different product models. For example, the logical position CO2 is mapped to Global Memory in Atlas A2 products, but to UB in Atlas training and inference products. For details, see [Mapping Between Logical Positions and Physical Storage](../../../general_description_and_constraints.md#section1359919519819).
 
 ## Data Path and Transfer Pipeline
 

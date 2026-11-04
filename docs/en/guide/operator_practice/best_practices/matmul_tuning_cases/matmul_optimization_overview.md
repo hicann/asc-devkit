@@ -1,6 +1,6 @@
 # Matmul Performance Optimization Strategy Overview<a name="ZH-CN_TOPIC_0000002360993885"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:37:03.577Z pushedAt=2026-10-27T01:49:14.042Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:37:03.577Z pushedAt=2026-11-03T07:05:13.277Z nl=2 -->
 
 This section provides a series of performance tuning cases for operators that involve Matmul computation. Based on the actual application scenarios, you can refer to the optimization methods and ideas in the related cases and apply them to your practice. The cases are classified into the following five categories. For a brief introduction to each category, see the following table. For details, see the subsequent sections.
 

@@ -1,6 +1,6 @@
 # SIMT Built-In Keywords<a name="ZH-CN_TOPIC_0000002477663934"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:15:28.842Z pushedAt=2026-10-28T07:41:09.731Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T15:15:28.842Z pushedAt=2026-11-03T07:05:13.474Z nl=2 -->
 
 ## Predefined Macros
 

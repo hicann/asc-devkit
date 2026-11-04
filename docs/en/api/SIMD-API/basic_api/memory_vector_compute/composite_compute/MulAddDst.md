@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -88,7 +88,7 @@ The PAR column indicates the number of elements that the vector computation unit
 
 <!-- npu="950" id10 -->
 
-**Table**  Data type constraints supported by Ascend 950PR&950DT product series
+**Table**  Data type constraints supported by Ascend 950PR&950DT products
 
 | src0 data type | src1 data type | dst data type | PAR  |
 | :----------- | :----------- | :---------- | :--- |
@@ -98,13 +98,13 @@ The PAR column indicates the number of elements that the vector computation unit
 | int64_t      | int64_t      | int64_t     | 32   |
 | uint64_t     | uint64_t     | uint64_t    | 32   |
 
-For Ascend 950PR&950DT product series, the int64_t and uint64_t data types are supported only by the computation interface for the first n data of a tensor.
+For Ascend 950PR&950DT products, the int64_t and uint64_t data types are supported only by the computation interface for the first n data of a tensor.
 
 <!-- end id10 -->
 
 <!-- npu="A3" id11 -->
 
-**Table**  Data type constraints supported by Atlas A3 product series
+**Table**  Data type constraints supported by Atlas A3 products
 
 | src0 data type | src1 data type | dst data type | PAR  |
 | :----------- | :----------- | :---------- | :--- |
@@ -116,7 +116,7 @@ For Ascend 950PR&950DT product series, the int64_t and uint64_t data types are s
 
 <!-- npu="910b" id12 -->
 
-**Table**  Data type constraints supported by Atlas A2 product series
+**Table**  Data type constraints supported by Atlas A2 products
 
 | src0 data type | src1 data type | dst data type | PAR  |
 | :----------- | :----------- | :---------- | :--- |
@@ -167,10 +167,10 @@ None
   <!-- npu="A3,910b" id18 -->
   - For the following models, this API does not perform computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id19 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id19 -->
     <!-- npu="910b" id20 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id20 -->
   <!-- end id18 -->
   <!-- npu="950" id21 -->
@@ -181,7 +181,7 @@ None
   In the non-overlapping address scenario, data from three different addresses (dst, src0, and src1) cannot be read in a single beat, so only half of the theoretical parallelism can be achieved, and the theoretical parallelism is halved from the original value. In the overlapping address scenario, the original theoretical parallelism is maintained.
 - When using the tensor high-dimensional split computation API, if the data type of src and scalar is half and the data type of dst is float, a maximum of 64 input data elements are processed in one iteration.
 <!-- npu="950" id22 -->
-- Notes on Unified Buffer (UB) space usage. For the Ascend 950PR&950DT product series:
+- Notes on Unified Buffer (UB) space usage. For the Ascend 950PR&950DT products:
   - The tensor high-dimensional split computation API occupies 8 KB of UB temporary space.
   - The tensor first-n-data continuous computation API does not involve the occupation of 8 KB UB temporary space.
 <!-- end id22 -->

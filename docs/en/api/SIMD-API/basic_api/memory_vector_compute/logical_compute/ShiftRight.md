@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -98,7 +98,7 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 |---|---|
 | T | Data type of the operand. |
 | U | Data type of scalarValue. |
-| isSetMask | Whether to set the mask inside the API.<br>&bull; true: sets the mask inside the API.<br>&bull; false: sets the mask outside the API. You need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data elements of a tensor, the count input parameter does not take effect. Set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional split of a tensor, set the mask input parameter to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br><!-- npu="950,310b" id8 -->For the following models, the isSetMask parameter in the API that computes the first n data elements of a tensor does not take effect. Keep the default value.<br><!-- end id8 --><!-- npu="950" id9 -->&bull; Ascend 950PR&950DT product series<br><!-- end id9 --><!-- npu="310b" id10 -->&bull; Atlas 200I/500 A2 inference products<!-- end id10 -->  |
+| isSetMask | Whether to set the mask inside the API.<br>&bull; true: sets the mask inside the API.<br>&bull; false: sets the mask outside the API. You need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode:<br>&nbsp;&nbsp;&bull; For the API that computes the first n data elements of a tensor, the count input parameter does not take effect. Set it to 1.<br>&nbsp;&nbsp;&bull; For the API that computes high-dimensional split of a tensor, set the mask input parameter to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning.<br><!-- npu="950,310b" id8 -->For the following models, the isSetMask parameter in the API that computes the first n data elements of a tensor does not take effect. Keep the default value.<br><!-- end id8 --><!-- npu="950" id9 -->&bull; Ascend 950PR&950DT products<br><!-- end id9 --><!-- npu="310b" id10 -->&bull; Atlas 200I/500 A2 inference products<!-- end id10 -->  |
 
 **Table 2**  Parameters
 
@@ -111,18 +111,18 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 | mask[]/mask | Input | mask controls the elements involved in the calculation in each iteration. For details, see [Mask](../SIMD_compute/mask.md). |
 | repeatTime | Input | Number of repeated iterations. The vector compute unit reads 256 consecutive bytes of data for calculation each time. To process all input data, multiple iterations (repeat) are required to read and compute all data. repeatTime indicates the number of iterations.<br>For details about this parameter, see [High-Dimensional Split](../SIMD_compute/high_dim_split.md). |
 | repeatParams | Input | Parameter that controls the address stride of the operand. Type: [UnaryRepeatParams](../../aux_data_structures/UnaryRepeatParams.md). It contains parameters such as the address stride of the same DataBlock between adjacent iterations of the operand and the address stride of different DataBlocks within the same iteration of the operand.<br>For details about the address stride between adjacent iterations, see [repeatStride](../SIMD_compute/high_dim_split.md). For details about the address stride of DataBlocks within the same iteration, see [dataBlockStride](../SIMD_compute/high_dim_split.md). |
-| roundEn | Input | Switch for enabling the rounding function. Supported data type: bool. true enables it, and false disables it. It takes effect only when src is of the int16\_t/int32\_t type.<br>Example: Enable the rounding function. The src data type is int16\_t. Shift src arithmetically right by 5 bits. If the fifth bit of the src\_ele binary number is 1, the dst\_ele value is the result of arithmetically shifting src\_ele right by 5 and then adding 1. <br>src\_ele = 17 = 0b00000000000**1**0001, the fifth bit is 1<br>dst\_ele = arithmetic\_right\_shift(src\_ele, 5) + 1 = 0b00000000000**00000** + 1 = 0b00000000000**00001**<br><!-- npu="310b" id11 -->For Atlas 200I/500 A2 inference products, enabling the rounding function is not supported. Only false can be passed.<!-- end id11 --><br><!-- npu="950" id12 -->For Ascend 950PR&950DT product series, enabling the rounding function is not supported. Only false can be passed.<!-- end id12 --> |
+| roundEn | Input | Switch for enabling the rounding function. Supported data type: bool. true enables it, and false disables it. It takes effect only when src is of the int16\_t/int32\_t type.<br>Example: Enable the rounding function. The src data type is int16\_t. Shift src arithmetically right by 5 bits. If the fifth bit of the src\_ele binary number is 1, the dst\_ele value is the result of arithmetically shifting src\_ele right by 5 and then adding 1. <br>src\_ele = 17 = 0b00000000000**1**0001, the fifth bit is 1<br>dst\_ele = arithmetic\_right\_shift(src\_ele, 5) + 1 = 0b00000000000**00000** + 1 = 0b00000000000**00001**<br><!-- npu="310b" id11 -->For Atlas 200I/500 A2 inference products, enabling the rounding function is not supported. Only false can be passed.<!-- end id11 --><br><!-- npu="950" id12 -->For Ascend 950PR&950DT products, enabling the rounding function is not supported. Only false can be passed.<!-- end id12 --> |
 
 ### Value Description of scalarValue
 
 <!-- npu="950" id13 -->
-- For Ascend 950PR&950DT product series, the value of scalarValue must be greater than or equal to 0. For a logical right shift, if the number of shifted bits is greater than the bit width of the src data type, all elements of dst are assigned 0. For an arithmetic right shift, if the number of shifted bits is greater than the bit width of the src data type, the corresponding destination operand element is assigned 0 when the source operand element is positive, and is assigned -1 when the source operand element is negative.
+- For Ascend 950PR&950DT products, the value of scalarValue must be greater than or equal to 0. For a logical right shift, if the number of shifted bits is greater than the bit width of the src data type, all elements of dst are assigned 0. For an arithmetic right shift, if the number of shifted bits is greater than the bit width of the src data type, the corresponding destination operand element is assigned 0 when the source operand element is positive, and is assigned -1 when the source operand element is negative.
 <!-- end id13 -->
 <!-- npu="A3" id14 -->
-- For Atlas A3 product series, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
+- For Atlas A3 products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id14 -->
 <!-- npu="910b" id15 -->
-- For Atlas A2 product series, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
+- For Atlas A2 products, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
 <!-- end id15 -->
 <!-- npu="310b" id16 -->
 - For Atlas 200I/500 A2 inference product, when src is of the uint16_t or int16_t type, the value range of scalarValue is [0, 16]; when src is of the uint32_t or int32_t type, the value range of scalarValue is [0, 32].
@@ -131,13 +131,13 @@ When dst and src use the [TensorTrait](../../aux_data_structures/TensorTrait/Ten
 ## Data Type
 
 <!-- npu="950" id17 -->
-- For Ascend 950PR&950DT product series, the data types supported by T and U are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the API for computing the first n data of a tensor.
+- For Ascend 950PR&950DT products, the data types supported by T and U are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t. The data types int8_t, uint8_t, int64_t, and uint64_t are supported only by the API for computing the first n data of a tensor.
 <!-- end id17 -->
 <!-- npu="A3" id18 -->
-- For Atlas A3 product series, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
+- For Atlas A3 products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id18 -->
 <!-- npu="910b" id19 -->
-- For Atlas A2 product series, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
+- For Atlas A2 products, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
 <!-- end id19 -->
 <!-- npu="310b" id20 -->
 - For Atlas 200I/500 A2 inference product, the data types supported by T and U are: int16_t, uint16_t, int32_t, uint32_t.
@@ -156,18 +156,18 @@ None
   <!-- npu="A3,910b" id22 -->
   - For the following models, the API does not perform any calculation and does not write to the destination operand. The API is treated as a NOP (no operation).
     <!-- npu="A3" id23 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id23 -->
     <!-- npu="910b" id24 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id24 -->
   <!-- end id22 -->
   <!-- npu="950" id25 -->
-  - For Ascend 950PR&950DT product series, the API implements compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that the API is treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, the API implements compatibility by calling the [Reg vector compute API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that the API is treated as a NOP (no operation).
   <!-- end id25 -->
 <!-- end id21 -->
 <!-- npu="950" id26 -->
-- For Ascend 950PR&950DT product series, the isSetMask parameter in the API for computing the first n tensor data does not take effect. Keep the default value.
+- For Ascend 950PR&950DT products, the isSetMask parameter in the API for computing the first n tensor data does not take effect. Keep the default value.
 <!-- end id26 -->
 
 ## Example<a name="section642mcpsimp"></a>

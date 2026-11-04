@@ -1,6 +1,6 @@
 # Organizing Multiple Operator Packages
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:46:19.071Z pushedAt=2026-10-28T02:36:41.841Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:46:19.071Z pushedAt=2026-11-03T07:05:13.401Z nl=2 -->
 
 This document is supplementary content that describes how to decide the release and deployment method for multiple custom operators—whether to place all of them in a single operator package or split them into multiple operator packages.
 

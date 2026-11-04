@@ -1,6 +1,6 @@
 # GenSimplifiedKey Callback Implementation
 
-<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T13:48:10.023Z pushedAt=2026-10-28T02:38:37.051Z nl=2 -->
+<!-- md-trans-meta sourceCommit=cd8a8acfc954f81d728ff781832dc0bf48b7e693 translatedAt=2026-10-23T13:48:10.023Z pushedAt=2026-11-03T07:05:13.402Z nl=2 -->
 
 This document describes how to write and register the `GenSimplifiedKey` callback. This callback is used in the scenario where multiple kernel binaries are precompiled: the operator developer generates a custom simplified key fragment based on the inputs, outputs, and attributes of the current invocation, and the runtime framework uses this fragment to look up the corresponding binary.
 

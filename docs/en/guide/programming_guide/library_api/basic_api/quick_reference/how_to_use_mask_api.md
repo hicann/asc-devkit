@@ -1,6 +1,6 @@
 # How to Use the Mask Operation API<a name="ZH-CN_TOPIC_0000002305974105"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-28T08:32:28.034Z pushedAt=2026-10-28T11:42:21.729Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-28T08:32:28.034Z pushedAt=2026-11-03T07:08:03.548Z nl=2 -->
 
 Mask is used to control the number of elements involved in vector computation. It supports the following working modes and configuration methods:
 

@@ -1,6 +1,6 @@
 # Broadcast Scenario<a name="ZH-CN_TOPIC_0000002500548092"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:21:31.553Z pushedAt=2026-10-27T09:02:32.500Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:21:31.553Z pushedAt=2026-11-03T07:05:13.312Z nl=2 -->
 
 In some scenarios, the two inputs may have different shapes. Since the [Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md) API supports computation only on inputs with the same shape, you need to transform the input shapes before performing the Add operation. This section describes how Broadcast is handled in operator implementation for inputs that meet the Broadcast conditions. For other scenarios, refer to the ideas provided in this chapter.
 

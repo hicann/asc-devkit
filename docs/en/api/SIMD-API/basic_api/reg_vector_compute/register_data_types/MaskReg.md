@@ -5,25 +5,25 @@
 ## Product Support<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference product series AI Core: not supported
+- Atlas inference products AI Core: not supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference product series Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training product series: not supported
+- Atlas training products: not supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/register_data_types/MaskReg_res.md#id1 -->
 
@@ -274,7 +274,7 @@ Use the CreateMask API to set the Mask with a fixed Pattern. For details about P
 This section compares the Mask mechanism in the per-bit calculation of [NPU architecture version 2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md) in Normal mode with the Mask mechanism in the Reg vector calculation of [NPU architecture version 3510](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md).
 
 <!-- npu="910b" id9 -->
-- For Atlas A2 series products
+- For Atlas A2 products
 
   - The Mask register length is 256 bits.
 
@@ -282,7 +282,7 @@ This section compares the Mask mechanism in the per-bit calculation of [NPU arch
 <!-- end id9 -->
 
 <!-- npu="A3" id10 -->
-- For Atlas A3 series products
+- For Atlas A3 products
 
   - The Mask register length is 256 bits.
 
@@ -290,7 +290,7 @@ This section compares the Mask mechanism in the per-bit calculation of [NPU arch
 <!-- end id10 -->
 
 <!-- npu="950" id11 -->
-- For Ascend 950PR&950DT series products
+- For Ascend 950PR&950DT products
 
   - The MaskReg register length is VL/8, that is, 256 bits.
 

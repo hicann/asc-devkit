@@ -1,6 +1,6 @@
 # Advanced Extreme Optimization
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:25:55.328Z pushedAt=2026-10-28T01:33:40.385Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:25:55.328Z pushedAt=2026-11-03T07:05:13.386Z nl=2 -->
 
 This section builds on the intermediate performance optimization described above and, based on the C++ Tensor programming paradigm, further introduces advanced optimization methods for the Matmul basic API operator. Through five advanced optimization steps (bulk data transfer, replacing LoadData2D with LoadData3D, constant Tiling, UnitFlag optimization, and L2Cache optimization), it deeply explores the hardware performance limits. 
 

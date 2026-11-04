@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -120,10 +120,10 @@ None
     <!-- npu="A3,910b" id19 -->
     - The **entire tensor participate in computation API** and the **first n data computation API** support passing `uint32_t` and `int32_t` types. For the **first n data computation API**, `count` is actually calculated based on the b16 data width, regardless of the data type passed in. To compute N b32 data elements, `count` must be set to 2N. The **tensor high-dimensional partitioning computation API** reports a compilation error directly, indicating that this data type is not supported. The above applies to:
       <!-- npu="A3" id20 -->
-      - Atlas A3 product series.
+      - Atlas A3 products.
       <!-- end id20 -->
       <!-- npu="910b" id21 -->
-      - Atlas A2 product series.
+      - Atlas A2 products.
       <!-- end id21 -->
     <!-- end id19 -->
     <!-- npu="310b" id22 -->
@@ -145,14 +145,14 @@ None
   <!-- npu="A3,910b" id27 -->
   - For the following models, this API does not perform any computation and does not write to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id28 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id28 -->
     <!-- npu="910b" id29 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id29 -->
   <!-- end id27 -->
   <!-- npu="950" id30 -->
-  - For the Ascend 950PR&950DT product series, this API is implemented for compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
+  - For the Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
   <!-- end id30 -->
 <!-- end id26 -->
 ## Example<a name="section642mcpsimp"></a>

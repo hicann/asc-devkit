@@ -31,7 +31,7 @@ To adapt to the physical read path of the matrix computation unit, different pro
 
 <!-- npu="950" id9 -->
 - Nz × Zn = Nz (A × B = C) combination  
-  For Ascend 950PR&950DT series products, the matrix multiplication C = A×B requires that the left matrix A use the Nz format, the right matrix B use the Zn format, and the result matrix C use the Nz format, as shown in Figure 2:
+  For Ascend 950PR&950DT products, the matrix multiplication C = A×B requires that the left matrix A use the Nz format, the right matrix B use the Zn format, and the result matrix C use the Nz format, as shown in Figure 2:
 
   **Figure 2** Data formats involved in the matrix multiplication scenario<a name="zh-cn_topic_0000002545089965_fig11172355102017"></a>  
   ![](../../../../figures/fractals_involved_in_matrix_calculation_950.png "Data formats involved in the matrix multiplication scenario-27")
@@ -68,7 +68,7 @@ In a specific matrix multiplication scenario, the detailed definitions and physi
 ![Column-major layout](../../../../figures/column_major_layout.png)
 - Scenario: It usually resides in Global Memory (GM). If this input is to be used as the input of matrix computation, it needs to be converted to the Nz format.
 <!-- npu="950" id20 -->
-- Conversion example: For Ascend 950PR&950DT series products, you can use the [matrix load-in DataCopy DN2NZ API](../cube_compute_load/DataCopy_GMToL1_DN2NZ.md) to convert it to the Nz format to adapt to the Cube unit.
+- Conversion example: For Ascend 950PR&950DT products, you can use the [matrix load-in DataCopy DN2NZ API](../cube_compute_load/DataCopy_GMToL1_DN2NZ.md) to convert it to the Nz format to adapt to the Cube unit.
 <!-- end id20 -->
 
 <!-- npu="910b,A3,310b,310p,910" id10 -->
@@ -138,7 +138,7 @@ In a specific matrix multiplication scenario, the detailed definitions and physi
     - **L0C Buffer:** Stores the result of matrix multiplication (the fractal is fixed at 16x16).
     - **L1 Buffer / GM:** A common intermediate format for data flow (the fractal is 16xK0, where the size of K0 depends on the data type bit width).
     <!-- npu="950" id11 -->
-    - **L0A Buffer:** Used only on Ascend 950PR&950DT series products to store the left matrix (the fractal is 16xK0, where the size of K0 depends on the data type bit width).
+    - **L0A Buffer:** Used only on Ascend 950PR&950DT products to store the left matrix (the fractal is 16xK0, where the size of K0 depends on the data type bit width).
     <!-- end id11 -->
 - **Design principle:**
     - Nz is the "intermediate standard format" within the Ascend chip architecture. It is a compromise between "linear data (ND)" and "computation-specific data (Zz/Zn)".
@@ -151,7 +151,7 @@ In a specific matrix multiplication scenario, the detailed definitions and physi
 >- In the L1 Buffer, the Nz format is adopted so that when data is moved to the L0A Buffer and L0B Buffer, it can be conveniently converted to the corresponding Zz and Zn formats. In this case, the fractal shape is 16 x \(32B / sizeof\(Datatype\)\), with a size of 512 bytes.
 >Therefore, when data is moved from the L0C Buffer to the L1 Buffer, its fractal size may change.
 <!-- npu="950" id12 -->
->- For the Ascend 950PR&950DT series products, the Nz format is used in the L0A Buffer to store the left matrix.
+>- For the Ascend 950PR&950DT products, the Nz format is used in the L0A Buffer to store the left matrix.
 <!-- end id12 -->
 
 ## Detailed Explanation and Examples of Nz Format Conversion<a name="zh-cn_topic_0000002545089965_section18217312102718"></a>

@@ -62,7 +62,7 @@ Returns the reciprocal of the input data. This API is affected by the global sat
 ## Constraints
 
 <!-- npu="950" id7 -->
-For the Ascend 950PR&950DT product series, this API does not support the Subnormal scenario: the internal implementation of this API uses the division operator. Because the division operator does not support the Subnormal scenario, when the input x is Subnormal data, the final result of this API is ±inf. When the computation result falls within the Subnormal range (for example, when x is a large normal number), the output is flushed to a signed zero.
+For the Ascend 950PR&950DT products, this API does not support the Subnormal scenario: the internal implementation of this API uses the division operator. Because the division operator does not support the Subnormal scenario, when the input x is Subnormal data, the final result of this API is ±inf. When the computation result falls within the Subnormal range (for example, when x is a large normal number), the output is flushed to a signed zero.
 <!-- end id7 -->
 
 ## Examples

@@ -1,6 +1,6 @@
 # Intermediate Performance Optimization<a name="ZH-CN_TOPIC_000000_GELU_MID"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:23:15.741Z pushedAt=2026-10-28T01:06:21.572Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:23:15.741Z pushedAt=2026-11-03T07:05:13.382Z nl=2 -->
 
 This section introduces the intermediate performance optimization methods for the GELU operator, building on the implementation of the entry-level functionality.
 

@@ -7,13 +7,13 @@
 ### Prototype Without Passing config
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -32,13 +32,13 @@
 ### Prototype with config
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 series products: not supported
+- Atlas A3 products: not supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 series products: not supported
+- Atlas A2 products: not supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -151,10 +151,10 @@ None
   <!-- npu="A3,910b" id26 -->
   - For the following models, when the value of the count or repeatTime parameter is 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id27 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id27 -->
     <!-- npu="910b" id29 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id29 -->
   <!-- end id26 -->
   <!-- npu="950" id30 -->
@@ -173,7 +173,7 @@ None
 <!-- npu="950" id35 -->
 ## Key Features<a id="rsqrt-key-features"></a>
 
-For the Ascend 950PR&950DT product series, the key features are as follows:
+For the Ascend 950PR&950DT products, the key features are as follows:
 
 ### Maximum Precision Error
 
@@ -229,7 +229,7 @@ When --cce-ftz=true (the default value), it is recommended to use the default Rs
     ```
 
     <!-- npu="950" id23 -->
-    The following examples are supported only by the Ascend 950PR&950DT product series.
+    The following examples are supported only by the Ascend 950PR&950DT products.
 
     ```cpp
     static constexpr RsqrtConfig config = { RsqrtAlgo::FAST_INVERSE };

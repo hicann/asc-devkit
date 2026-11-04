@@ -1,6 +1,6 @@
 # Instruction Dual-Issue Optimization<a name="ZH-CN_TOPIC_0000002498168810"></a>
 
-<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T12:56:38.060Z pushedAt=2026-10-27T10:49:18.585Z nl=2 -->
+<!-- md-trans-meta sourceCommit=ca3b72f6b4f376702407e982cf2cc174087341f5 translatedAt=2026-10-23T12:56:38.060Z pushedAt=2026-11-03T07:05:13.356Z nl=2 -->
 
 Instruction dual-issue means that the processor can issue two instructions to the execution units simultaneously within the same clock cycle. This capability requires the following two conditions to be met:
 

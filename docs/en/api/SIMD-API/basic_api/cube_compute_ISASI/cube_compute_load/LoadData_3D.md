@@ -7,38 +7,38 @@
 ### LoadData (convolution data movement) v1 API
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT product series: not supported
+- Ascend 950PR&950DT products: not supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: not supported
+- Atlas A3 products: not supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: not supported
+- Atlas A2 products: not supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference product: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series product AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series product Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series product: supported
+- Atlas training products: supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D_res.md#id1 -->
 
 ### LoadData (convolution data movement) v2 API and LoadData (convolution data movement) v2 Pro API
 
 <!-- npu="950" id10 -->
-- Ascend 950PR&950DT product series: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id10 -->
 <!-- npu="A3" id11 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id11 -->
 <!-- npu="910b" id12 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id12 -->
 <!-- npu="310b" id13 -->
 - Atlas 200I/500 A2 inference product: supported
@@ -181,11 +181,11 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 **LoadData (convolution data movement) v1 API:**
 
 <!-- npu="310p" id20 -->
-- Atlas inference product series AI Core supports the following data types: **int8_t**, **uint8_t**, **half**.
+- Atlas inference products AI Core supports the following data types: **int8_t**, **uint8_t**, **half**.
 <!-- end id20 -->
 
 <!-- npu="910" id21 -->
-- Atlas training product series supports the following data types: **int8_t**, **uint8_t**, **half**.
+- Atlas training products supports the following data types: **int8_t**, **uint8_t**, **half**.
 <!-- end id21 -->
 <!-- end id19 -->
 
@@ -193,17 +193,17 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 **LoadData (convolution data movement) v2 API and LoadData (convolution data movement) v2 Pro API:**
 
 <!-- npu="950" id23 -->
-- Ascend 950PR&950DT product series supports the following data types: **int8_t**, **uint8_t**, **hifloat8_t**, **fp8_e5m2_t**, **fp8_e4m3fn_t**, **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**.
+- Ascend 950PR&950DT products supports the following data types: **int8_t**, **uint8_t**, **hifloat8_t**, **fp8_e5m2_t**, **fp8_e4m3fn_t**, **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**.
 <!-- end id23 -->
 
 <!-- npu="A3" id24 -->
-- Atlas A3 product series:
+- Atlas A3 products:
     - When **TPosition** is A1/A2, the supported data types are: **int4b_t**, **int8_t**, **uint8_t**, **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**.
     - When **TPosition** is B1/B2, the supported data types are: **half**, **bfloat16_t**, **int32_t**, **uint32_t**, **float**.
 <!-- end id24 -->
 
 <!-- npu="910b" id25 -->
-- Atlas A2 product series:
+- Atlas A2 products:
     - When TPosition is A1/A2, the supported data types are: int4b_t, int8_t, uint8_t, half, bfloat16_t, int32_t, uint32_t, float.
     - When TPosition is B1/B2, the supported data types are: half, bfloat16_t, int32_t, uint32_t, float.
 <!-- end id25 -->
@@ -215,7 +215,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id26 -->
 
 <!-- npu="310p" id27 -->
-- Atlas inference series AI Core supports the following data types: int4b_t, int8_t, uint8_t, half.
+- Atlas inference products AI Core supports the following data types: int4b_t, int8_t, uint8_t, half.
 <!-- end id27 -->
 
 <!-- end id22 -->
@@ -229,17 +229,17 @@ None
 - In non-transpose scenarios, the L1 Buffer->L0B Buffer path is not supported. The L1 Buffer->L0B Buffer path automatically performs transposition, so **enTranspose** does not need to be configured and is invalid in this case.
 
 <!-- npu="950" id29 -->
-- For Ascend 950PR&950DT product series: The **dstStride** parameter must be configured using the auxiliary configuration API **SetLoadDataRepeat**. If repeat mode is not enabled, the repeat-related parameters in the API use their default constructed values.
+- For Ascend 950PR&950DT products: The **dstStride** parameter must be configured using the auxiliary configuration API **SetLoadDataRepeat**. If repeat mode is not enabled, the repeat-related parameters in the API use their default constructed values.
 <!-- end id29 -->
 
 <!-- npu="A3,910b" id30 -->
 - For the following product models:
 
     <!-- npu="A3" id31 -->
-    Atlas A3 product series;
+    Atlas A3 products;
     <!-- end id31 -->
     <!-- npu="910b" id32 -->
-    Atlas A2 product series;
+    Atlas A2 products;
     <!-- end id32 -->
 
     The L1 Buffer-\>L0B Buffer path does not support b4/b8 data types; in transpose scenarios, the L1 Buffer-\>L0A Buffer path does not support the b8 data type.
@@ -255,13 +255,13 @@ None
 - The contiguous data arrangement order is determined by the physical storage location of the destination operand. The specific constraints are as follows:<a id="zh-cn_topic_0000002512171652_dst_layout"></a>
 
     <!-- npu="A3,910b" id34 -->
-    - For Atlas A3 product series and Atlas A2 product series:
+    - For Atlas A3 products and Atlas A2 products:
         - L0A Buffer (TPosition: A2): ZZ format.
         - L0B Buffer (TPosition: B2): ZN format.
     <!-- end id34 -->
 
     <!-- npu="950" id35 -->
-    - For Ascend 950PR&950DT product series:
+    - For Ascend 950PR&950DT products:
         - L0A Buffer (TPosition: A2): NZ format.
         - L0B Buffer (TPosition: B2): ZN format.
     <!-- end id35 -->
@@ -269,21 +269,21 @@ None
 - The value range constraints of **channelSize** in the **LoadData3DParamsV2** structure are as follows:<a id="zh-cn_topic_0000002512171652_channelsize_constraint"></a>
 
     <!-- npu="310p" id36 -->
-    - For the AI Core of Atlas inference series products: for **half**, **channelSize** can be 4, 8, 16, N\*16+4, N\*16+8; for **int8_t**/**uint8_t**, **channelSize** can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for **int4b_t**, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
+    - For the AI Core of Atlas inference products: for **half**, **channelSize** can be 4, 8, 16, N\*16+4, N\*16+8; for **int8_t**/**uint8_t**, **channelSize** can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for **int4b_t**, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
     <!-- end id36 -->
 
     <!-- npu="950,A3,910b,310b" id37 -->
-    - For Ascend 950PR&950DT product series, Atlas A3 product series, Atlas A2 product series, and Atlas 200I/500 A2 inference products: for uint32_t/int32_t/float, **channelSize** can be 4, N\*8, N\*8+4; for half/bfloat16, **channelSize** can be 4, 8, N\*16, N\*16 + 4, N\*16+8; for int8_t/uint8_t, **channelSize** can be 4, 8, 16, 32\*N, N\*32+4, N\*32+8, N\*32+16; for int4b_t, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
+    - For Ascend 950PR&950DT products, Atlas A3 products, Atlas A2 products, and Atlas 200I/500 A2 inference products: for uint32_t/int32_t/float, **channelSize** can be 4, N\*8, N\*8+4; for half/bfloat16, **channelSize** can be 4, 8, N\*16, N\*16 + 4, N\*16+8; for int8_t/uint8_t, **channelSize** can be 4, 8, 16, 32\*N, N\*32+4, N\*32+8, N\*32+16; for int4b_t, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
     <!-- end id37 -->
 
 - The valid conditions for **enTranspose** in the **LoadData3DParamsV2** structure are as follows:<a id="zh-cn_topic_0000002512171652_entranspose_constraint"></a>
 
     <!-- npu="A3,910b" id38 -->
-    - For Atlas A3 product series and Atlas A2 product series: valid when the physical storage location of the destination operand is L0A Buffer (**TPosition**: A2) and the source operand is of b16/b32 type.
+    - For Atlas A3 products and Atlas A2 products: valid when the physical storage location of the destination operand is L0A Buffer (**TPosition**: A2) and the source operand is of b16/b32 type.
     <!-- end id38 -->
 
     <!-- npu="950" id39 -->
-    - For Ascend 950PR&950DT product series: valid when the physical storage location of the destination operand is L0A Buffer (**TPosition**: A2) and the source operand is of b8/b16/b32 type.
+    - For Ascend 950PR&950DT products: valid when the physical storage location of the destination operand is L0A Buffer (**TPosition**: A2) and the source operand is of b8/b16/b32 type.
     <!-- end id39 -->
 
 ## Key Features<a id="zh-cn_topic_0000002512171652_section102629572045"></a>
@@ -299,7 +299,7 @@ For data in the NC1HWC0 format, when N is 1, the convolution kernel width and he
 First, the L1 Buffer -> L0B Buffer path does not support the non-transpose scenario. For the L1 Buffer -> L0A Buffer path, different fractal layout conversions apply depending on the product form:
 
 <!-- npu="A3,910b" id40 -->
-- For Atlas A3 product series and Atlas A2 product series:
+- For Atlas A3 products and Atlas A2 products:
 
     **LoadData** (convolution data movement) automatically completes the fractal transformation, converting the NZ fractal layout on the L1 Buffer into the ZZ fractal layout required in the L0A Buffer, as shown in the following diagram of the b16 type scenario:
 
@@ -307,7 +307,7 @@ First, the L1 Buffer -> L0B Buffer path does not support the non-transpose scena
 <!-- end id40 -->
 
 <!-- npu="950" id41 -->
-- For Ascend 950PR&950DT product series:
+- For Ascend 950PR&950DT products:
 
     The fractal layout on the L1 Buffer is exactly the NZ fractal layout required in the L0A Buffer, and **LoadData** (convolution data movement) does not perform fractal layout conversion, as shown in the following diagram of the b16 type scenario:
 
@@ -317,7 +317,7 @@ First, the L1 Buffer -> L0B Buffer path does not support the non-transpose scena
 #### Transpose Scenario
 
 <!-- npu="A3,910b" id42 -->
-- For Atlas A3 product series and Atlas A2 product series:
+- For Atlas A3 products and Atlas A2 products:
 
     **LoadData** (convolution data movement) supports transpose (**enTranspose**=**True**) only for the b16/b32 data types. The details by type are as follows:
 
@@ -343,7 +343,7 @@ First, the L1 Buffer -> L0B Buffer path does not support the non-transpose scena
 <!-- end id42 -->
 
 <!-- npu="950" id43 -->
-- For the Ascend 950PR&950DT product series:
+- For the Ascend 950PR&950DT products:
 
     LoadData (convolution data movement) supports transpose for the b8/b16/b32 data types. On the L1 Buffer->L0A Buffer path, transpose is enabled by turning on the **enTranspose** parameter. On the L1 Buffer->L0B Buffer path, transpose is performed automatically, so the **enTranspose** parameter does not need to be configured and is invalid in this case. The details are described by type below.
 
@@ -386,11 +386,11 @@ The **LoadData** (convolution data movement) API can complete data block movemen
 For the following product models:
 
 <!-- npu="A3" id45 -->
-Atlas A3 product series;
+Atlas A3 products;
 <!-- end id45 -->
 
 <!-- npu="910b" id46 -->
-Atlas A2 product series;
+Atlas A2 products;
 <!-- end id46 -->
 
 Schematic diagram of repeat in the M direction:
@@ -411,7 +411,7 @@ When we call the LoadData (convolution data movement) API to perform repeat move
 <!-- end id44 -->
 
 <!-- npu="950" id47 -->
-For the Ascend 950PR&950DT product series:
+For the Ascend 950PR&950DT products:
 
 **M-direction repeat diagram:**
 

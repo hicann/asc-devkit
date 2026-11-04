@@ -1,6 +1,6 @@
 # Entry-Level Feature Implementation<a name="ZH-CN_TOPIC_000000_GELU_ENTRY"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:21:52.113Z pushedAt=2026-10-27T12:18:06.941Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T13:21:52.113Z pushedAt=2026-11-03T07:05:13.381Z nl=2 -->
 
 This section uses the GELU (Gaussian Error Linear Unit) activation function as an example to introduce the basic method of implementing a vector operator based on the Ascend C RegBase programming model, helping developers quickly get started with Reg vector operator development.
 

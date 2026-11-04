@@ -1,6 +1,6 @@
 # Data Layout Format<a name="ZH-CN_TOPIC_0000001700139572"></a>
 
-<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-28T09:31:34.884Z pushedAt=2026-10-28T11:42:21.766Z nl=2 -->
+<!-- md-trans-meta sourceCommit=f83e857605e3844db8b9de0442007cc115278a47 translatedAt=2026-10-28T09:31:34.884Z pushedAt=2026-11-03T07:08:03.572Z nl=2 -->
 
 A data layout format describes how a multidimensional tensor is stored in memory in deep learning.
 

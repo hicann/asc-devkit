@@ -102,7 +102,7 @@ None
 ## Constraints
 
 <!-- npu="310p" id7 -->
--   For the Atlas inference series product AI Core, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
+-   For the Atlas inference products AI Core, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
 <!-- end id7 -->
 -   Address overlap between the source operand and the destination operand is supported.
 -   Address overlap between sharedTmpBuffer and the source operand or the destination operand is not supported.

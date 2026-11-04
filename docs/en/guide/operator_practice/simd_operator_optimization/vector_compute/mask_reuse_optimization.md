@@ -1,6 +1,6 @@
 # Computational Performance Optimization Based on Global Mask Reuse
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:54:15.820Z pushedAt=2026-10-27T10:58:47.690Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T12:54:15.820Z pushedAt=2026-11-03T07:05:13.352Z nl=2 -->
 
 > [!NOTE] Note
 > This performance optimization suggestion applies to the following product models:

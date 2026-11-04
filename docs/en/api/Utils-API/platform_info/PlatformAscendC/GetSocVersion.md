@@ -26,7 +26,7 @@ Obtain the AI processor model as follows:
 -   For the following products: execute the `npu-smi info` command on the server where the AI processor is installed to query the **Name** information. The actual configuration value is AscendName. For example, if the **Name** value is xxxyy, the actual configuration value is Ascendxxxyy.
 
     <!-- npu="910b" id2 -->
-    Atlas A2 series
+    Atlas A2 products
     <!-- end id2 -->
 
     <!-- npu="310b" id3 -->
@@ -34,22 +34,22 @@ Obtain the AI processor model as follows:
     <!-- end id3 -->
 
     <!-- npu="310p" id4 -->
-    Atlas inference series products
+    Atlas inference products
     <!-- end id4 -->
 
     <!-- npu="910" id5 -->
-    Atlas training series products
+    Atlas training products
     <!-- end id5 -->
 <!-- end id1 -->
 
 <!-- npu="A3" id6 -->
--   For Atlas A3 series products, execute the `npu-smi info -t board -i <id> -c <chip_id>` command on the server where the AI processor is installed to query the **Chip Name** and **NPU Name** information. The actual configuration value is `Chip Name_NPU Name`. For example, if the **Chip Name** value is Ascendxxx and the **NPU Name** value is 1234, the actual configuration value is Ascendxxx_1234. Where:
+-   For Atlas A3 products, execute the `npu-smi info -t board -i <id> -c <chip_id>` command on the server where the AI processor is installed to query the **Chip Name** and **NPU Name** information. The actual configuration value is `Chip Name_NPU Name`. For example, if the **Chip Name** value is Ascendxxx and the **NPU Name** value is 1234, the actual configuration value is Ascendxxx_1234. Where:
     -   `id`: device ID. The NPU ID queried through the `npu-smi info -l` command is the device ID, which is represented as `<id>` in the command.
     -   `chip_id`: chip ID. The Chip ID queried through the `npu-smi info -m` command is the chip ID, which is represented as `<chip_id>` in the command.
 <!-- end id6 -->
 
 <!-- npu="950" id7 -->
--   For Ascend 950PR&950DT series products, execute the `npu-smi info -t board -i <id>` command on the server where the AI processor is installed to query the **Chip Name** and **NPU Name** information. The actual configuration value is `Chip Name_NPU Name`. For example, if the **Chip Name** value is Ascendxxx and the **NPU Name** value is 1234, the actual configuration value is Ascendxxx_1234.
+-   For Ascend 950PR&950DT products, execute the `npu-smi info -t board -i <id>` command on the server where the AI processor is installed to query the **Chip Name** and **NPU Name** information. The actual configuration value is `Chip Name_NPU Name`. For example, if the **Chip Name** value is Ascendxxx and the **NPU Name** value is 1234, the actual configuration value is Ascendxxx_1234.
 
     Here, `id` is the device ID. The NPU ID queried through the `npu-smi info -l` command is the device ID, which is represented as `<id>` in the command.
 <!-- end id7 -->

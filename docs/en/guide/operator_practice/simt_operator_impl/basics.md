@@ -1,6 +1,6 @@
 # Basic Knowledge<a name="ZH-CN_TOPIC_0000002500468254"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:06:14.430Z pushedAt=2026-10-27T11:31:16.585Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T13:06:14.430Z pushedAt=2026-11-03T07:05:13.365Z nl=2 -->
 
 This section guides you through SIMT programming using the SIMT APIs.
 

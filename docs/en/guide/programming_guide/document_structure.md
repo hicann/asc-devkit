@@ -1,6 +1,6 @@
 # Document Organization<a name="ZH-CN_TOPIC_0000002533052471"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:27:46.932Z pushedAt=2026-10-28T11:42:21.765Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-28T09:27:46.932Z pushedAt=2026-11-03T07:08:03.571Z nl=2 -->
 
 This guide is a comprehensive technical manual for **AscendC operator development**, systematically covering core technologies such as the SIMD/SIMT programming model, language extension features, C++ library APIs, compilation and execution mechanisms, debugging and tuning, and advanced programming. The document serves both introductory learning and in-depth practice, catering to developers at different levels. Beginner developers can build a complete technical foundation with this guide, while experienced operator engineers can deepen their technical capabilities, fully leverage the hardware computing power of Ascend AI processors, and complete the development and performance optimization of custom operators with high quality.
 

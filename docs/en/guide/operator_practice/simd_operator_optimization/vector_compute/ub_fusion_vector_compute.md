@@ -1,6 +1,6 @@
 # Implementing Continuous Vector Computation Through Unified Buffer Fusion<a name="ZH-CN_TOPIC_0000001918025250"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:54:25.829Z pushedAt=2026-10-27T10:59:09.242Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:54:25.829Z pushedAt=2026-11-03T07:05:13.352Z nl=2 -->
 
 [Priority] High
 

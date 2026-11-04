@@ -69,7 +69,7 @@ The result of dividing the input data. This API is affected by the global satura
 ## Constraints
 
 <!-- npu="950" id7 -->
-For the Ascend 950PR&950DT product series, this API does not support the Subnormal scenario: input and output values within the Subnormal range are flushed to zero with the sign preserved.
+For the Ascend 950PR&950DT products, this API does not support the Subnormal scenario: input and output values within the Subnormal range are flushed to zero with the sign preserved.
 <!-- end id7 -->
 
 ## Examples

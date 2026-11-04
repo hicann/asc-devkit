@@ -1,6 +1,6 @@
 # Compilation Acceleration
 
-<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:37:59.795Z pushedAt=2026-10-28T02:27:55.192Z nl=2 -->
+<!-- md-trans-meta sourceCommit=fbd15d5df1f452aabb0f40f2b83dd25017ebaa8f translatedAt=2026-10-23T13:37:59.795Z pushedAt=2026-11-03T07:05:13.396Z nl=2 -->
 
 This document is an extension that describes how to reduce the compilation time of an operator project. The compilation time of an operator project mainly comes from the per-chip and per-TilingKey compilation of the kernel function code. This document provides acceleration strategies from four dimensions: cache reuse, selective compilation, parallelism, and incremental build.
 

@@ -69,7 +69,7 @@ PIPE_S
 - The quantization parameter cannot be inf, nan, or a denormalized number.
 - This API takes effect only on the AIC. Calling it on the AIV returns immediately.
 <!-- npu="950" id8 -->
-- For the Ascend 950PR&950DT product series, the Fixpipe Buffer for storing tensor quantization parameters is 4KB, and the Fixpipe Buffer for storing tensor activation parameters is 2KB. The two storage spaces are independent of each other, and their addresses both start from 0. The start addresses and occupied space of the tensor quantization parameters and tensor activation parameters must not exceed the range of the corresponding Buffer.
+- For the Ascend 950PR&950DT products, the Fixpipe Buffer for storing tensor quantization parameters is 4KB, and the Fixpipe Buffer for storing tensor activation parameters is 2KB. The two storage spaces are independent of each other, and their addresses both start from 0. The start addresses and occupied space of the tensor quantization parameters and tensor activation parameters must not exceed the range of the corresponding Buffer.
 <!-- end id8 -->
 <!-- npu="A3,910b" id9 -->
 - For the following product models:

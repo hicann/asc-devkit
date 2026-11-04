@@ -1,6 +1,6 @@
 # How to Use Reduction Computation APIs<a name="ZH-CN_TOPIC_0000002271364328"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:26:44.637Z pushedAt=2026-10-28T08:00:52.935Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T15:26:44.637Z pushedAt=2026-11-03T07:05:13.478Z nl=2 -->
 
 A reduction instruction reduces a data set to a single value or a smaller set. Based on the data range of the reduction operation, reduction instructions are classified into the following types. For details, see the [reduction instruction schematic diagram](#zh-cn_topic_0000002267504648_fig16735034112710):
 

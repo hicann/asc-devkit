@@ -1,6 +1,6 @@
 # Tail Block Even Split
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:29:39.941Z pushedAt=2026-10-27T08:53:25.767Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:29:39.941Z pushedAt=2026-11-03T07:05:13.319Z nl=2 -->
 
 In this scenario, after the main block allocation is complete, there is still remaining data, but the remaining data cannot continue to be evenly distributed to each core by main block. To make balanced use of the multi-core computing capability, the remaining data `mainTileRemainder` after the main block even split is further evenly distributed to each core with DataBlock as the minimum unit. Each core is allocated `tailBlockNumEachCore` DataBlocks of data, and no remainder is left after the even split by DataBlock. As a result, each core processes the same amount of data, and in addition to the main block, each core also contains an equal-length tail block.
 

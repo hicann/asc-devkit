@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -142,7 +142,7 @@ For Ascend 950PR&950DT products, the int64_t and uint64_t data types are support
 
 <!-- npu="310p" id14 -->
 
-**Table** Data type combinations supported by the AI Core of Atlas inference series products
+**Table** Data type combinations supported by the AI Core of Atlas inference products
 
 | src data type | scalarValue data type | dst data type | PAR |
 | ----------- | -------------- | ----------- | --- |
@@ -154,7 +154,7 @@ For Ascend 950PR&950DT products, the int64_t and uint64_t data types are support
 
 <!-- npu="910" id15 -->
 
-**Table** Data type combinations supported by Atlas training series products
+**Table** Data type combinations supported by Atlas training products
 
 | src data type | scalarValue data type | dst data type | PAR |
 | ----------- | -------------- | ----------- | --- |
@@ -179,10 +179,10 @@ None
   <!-- npu="A3,910b" id19 -->
   - For the following models, this API does not perform computation and does not write to the destination operation. This API is treated as a NOP (no operation).
     <!-- npu="A3" id20 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id20 -->
     <!-- npu="910b" id21 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id21 -->
   <!-- end id19 -->
   <!-- npu="950" id22 -->

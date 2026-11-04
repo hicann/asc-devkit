@@ -1,6 +1,6 @@
 # Coupled Mode<a name="ZH-CN_TOPIC_0000002500468248"></a>
 
-<!-- md-trans-meta sourceCommit=6b1f368bac580a52b9ab482ae1d1a77577f57bb6 translatedAt=2026-10-23T12:15:12.566Z pushedAt=2026-10-27T08:28:38.660Z nl=2 -->
+<!-- md-trans-meta sourceCommit=6b1f368bac580a52b9ab482ae1d1a77577f57bb6 translatedAt=2026-10-23T12:15:12.566Z pushedAt=2026-11-03T07:05:13.311Z nl=2 -->
 
 >[!NOTE] Note 
 >This section provides programming guidance for implementing cube multiplication using basic APIs in [Coupled Mode](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md#section1574769433).

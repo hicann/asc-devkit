@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -83,7 +83,7 @@ __aicore__ inline void Fill(const LocalTensor<T>& dst, const InitConstValueParam
 <!-- npu="910b" id12 -->Atlas A2 training products/Atlas A2 inference products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.<!-- end id12 --><br>
 <!-- npu="A3" id13 -->Atlas A3 training products/Atlas A3 inference products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.<!-- end id13 --><br>
 <!-- npu="310b" id14 -->Atlas 200I/500 A2 inference products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.<!-- end id14 --><br>
-<!-- npu="950" id15 -->Ascend 950PR&950DT series products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.<!-- end id15 --><br>
+<!-- npu="950" id15 -->Ascend 950PR&950DT products support the following data types: int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float.<!-- end id15 --><br>
 
 ## Return Value
 
@@ -110,7 +110,7 @@ None
 
 - Supported physical storage locations: L1 Buffer (TPosition: A1/B1), L0A Buffer (TPosition: A2), and L0B Buffer (TPosition: B2).
     <!-- npu="950" id20 -->
-    - Specifically for the Ascend 950PR&950DT series products, the supported physical storage location is: L1 Buffer (TPosition: A1/B1).
+    - Specifically for the Ascend 950PR&950DT products, the supported physical storage location is: L1 Buffer (TPosition: A1/B1).
     <!-- end id20 -->
     - If the physical storage location is L1 Buffer (TPosition: A1/B1), the start address must be 32B-aligned.
     - If the physical storage location is L0A Buffer (TPosition: A2) or L0B Buffer (TPosition: B2), the start address must be 512B-aligned.

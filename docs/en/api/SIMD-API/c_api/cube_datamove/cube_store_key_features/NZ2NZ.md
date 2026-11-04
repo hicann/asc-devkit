@@ -43,7 +43,7 @@ The following parameters are user-configurable parameters of Nz2Nz (the destinat
 <!-- end id1 -->
 
 <!-- npu="950" id4 -->
-Taking the Ascend 950PR&950DT product series as an example, the Nz2Nz conversion process can be referenced from the following pseudo-code (src/dst and temporary addresses are all counted as byte addresses):
+Taking the Ascend 950PR&950DT products as an example, the Nz2Nz conversion process can be referenced from the following pseudo-code (src/dst and temporary addresses are all counted as byte addresses):
 
 ```cpp
 for (j = 0; j < m_size; j++) {

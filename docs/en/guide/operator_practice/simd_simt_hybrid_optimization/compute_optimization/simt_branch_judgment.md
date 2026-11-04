@@ -1,6 +1,6 @@
 # Implementing Branch Judgment Through SIMT<a name="ZH-CN_TOPIC_0000002552896537"></a>
 
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:02:55.753Z pushedAt=2026-10-27T11:13:22.749Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T13:02:55.753Z pushedAt=2026-11-03T07:05:13.362Z nl=2 -->
 
 > [!NOTE] 
 > This performance optimization suggestion applies to the following models:

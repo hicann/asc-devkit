@@ -5,25 +5,25 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 series products: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 series products: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- Atlas inference series products AI Core: supported
+- Atlas inference products AI Core: supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- Atlas inference series products Vector Core: not supported
+- Atlas inference products Vector Core: not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
-- Atlas training series products: supported
+- Atlas training products: supported
 <!-- end id7 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI_res.md#id1 -->
 
@@ -77,16 +77,16 @@ None
 - The value range of **eventID** is as follows:
 
     <!-- npu="950" id10 -->
-    - Ascend 950PR & 950DT series products, data range: 0-7.
+    - Ascend 950PR & 950DT products, data range: 0-7.
     <!-- end id10 -->
     <!-- npu="A3" id11 -->
-    - Atlas A3 series products, data range: 0-7.
+    - Atlas A3 products, data range: 0-7.
     <!-- end id11 -->
     <!-- npu="910b" id12 -->
-    - Atlas A2 series products, data range: 0-7.
+    - Atlas A2 products, data range: 0-7.
     <!-- end id12 -->
     <!-- npu="310p" id13 -->
-    - Atlas inference series products AI Core, data range: 0-7.
+    - Atlas inference products AI Core, data range: 0-7.
     <!-- end id13 -->
     <!-- npu="910" id14 -->
     - Atlas training products, data range: 0-3.

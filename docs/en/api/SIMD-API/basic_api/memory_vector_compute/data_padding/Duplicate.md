@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -135,10 +135,10 @@ None
   <!-- npu="A3,910b" id21 -->
   - For the following models, this API does not perform any computation and does not write to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id22 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id22 -->
     <!-- npu="910b" id23 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id23 -->
   <!-- end id21 -->
   <!-- npu="950" id24 -->

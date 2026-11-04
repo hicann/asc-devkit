@@ -1,6 +1,6 @@
 # Single-Operator API Call
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:02:48.166Z pushedAt=2026-10-28T03:03:53.162Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:02:48.166Z pushedAt=2026-11-03T07:05:13.413Z nl=2 -->
 
 This document covers the basics and describes single-operator API invocation, that is, the process of performing heterogeneous computing by calling aclnn APIs through C/C++. The aclnn APIs and their implementation are delivered with the custom operator package, so you must deploy the custom operator package before invoking them. A usable NPU environment is required at runtime. The caller is responsible for allocating and releasing the resources used during computation, such as input and output tensors, device memory, workspace, and streams.
 

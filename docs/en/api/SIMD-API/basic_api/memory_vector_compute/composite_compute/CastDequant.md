@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: not supported
@@ -168,18 +168,18 @@ None
   <!-- npu="A3,910b" id13 -->
   - For the following models, this API does not perform computation or write to the destination operand, and is treated as a NOP (no operation).
     <!-- npu="A3" id14 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id14 -->
     <!-- npu="910b" id15 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id15 -->
   <!-- end id13 -->
   <!-- npu="950" id16 -->
-  - For Ascend 950PR&950DT product series, this API is implemented for compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
+  - For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is set to 0, this API is not guaranteed to be treated as a NOP (no operation).
   <!-- end id16 -->
 <!-- end id12 -->
 <!-- npu="950" id17 -->
-- Notes on Unified Buffer (UB) space usage. For Ascend 950PR&950DT product series:
+- Notes on Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
   - The tensor high-dimensional splitting calculation API occupies 8 KB of temporary UB space.
   - The API for continuous calculation of the first n tensor data does not involve the use of 8 KB of temporary UB space.
 <!-- end id17 -->

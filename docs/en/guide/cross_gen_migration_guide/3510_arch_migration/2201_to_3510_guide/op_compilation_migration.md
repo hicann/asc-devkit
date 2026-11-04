@@ -1,6 +1,6 @@
 # Operator Compilation Migration Guide<a name="ZH-CN_TOPIC_0000002503428219"></a>
 
-<!-- md-trans-meta sourceCommit=6002f493cefe766494b31aed2c26800bc6ec5d60 translatedAt=2026-10-23T10:55:15.224Z pushedAt=2026-10-26T08:16:37.660Z nl=2 -->
+<!-- md-trans-meta sourceCommit=6002f493cefe766494b31aed2c26800bc6ec5d60 translatedAt=2026-10-23T10:55:15.224Z pushedAt=2026-11-03T07:05:13.253Z nl=2 -->
 
 When compiling operators, developers need to be aware of different architectures and different AI processor models.
 

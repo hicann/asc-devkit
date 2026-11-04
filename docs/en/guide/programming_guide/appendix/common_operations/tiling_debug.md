@@ -1,6 +1,6 @@
 # How to Debug Tiling<a name="ZH-CN_TOPIC_0000002305497828"></a>
 
-<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:56:49.087Z pushedAt=2026-10-28T06:28:21.916Z nl=2 -->
+<!-- md-trans-meta sourceCommit=e2a2709368f65375f9b4d904990c7884199bd22e translatedAt=2026-10-23T14:56:49.087Z pushedAt=2026-11-03T07:05:13.448Z nl=2 -->
 
 During [engineering-based operator development](../../advanced_programming/aclnn_operator_development/overview.md), developers need to implement the tiling function, whose prototype is fixed and accepts TilingContext as input. The framework constructs TilingContext and calls the tiling function. To debug tiling independently, developers can load the compiled tiling dynamic library through OpTilingRegistry, obtain the pointer to the tiling function, and call it. When calling the tiling function, the TilingContext input parameter is constructed using ContextBuilder.
 

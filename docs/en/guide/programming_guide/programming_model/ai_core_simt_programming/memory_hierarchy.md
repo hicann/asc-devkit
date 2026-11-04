@@ -1,6 +1,6 @@
 # Memory Hierarchy<a name="ZH-CN_TOPIC_0000002523359048"></a>
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T09:21:49.914Z pushedAt=2026-10-28T11:42:21.761Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T09:21:49.914Z pushedAt=2026-11-03T07:08:03.567Z nl=2 -->
 
 SIMT threads can access multiple memory spaces. The following table summarizes the scope and lifecycle of common memory types in SIMT programming.
 

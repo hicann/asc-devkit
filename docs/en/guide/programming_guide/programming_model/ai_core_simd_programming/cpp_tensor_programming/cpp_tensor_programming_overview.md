@@ -1,6 +1,6 @@
 # C++ Tensor Programming Overview
 
-<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:52:01.792Z pushedAt=2026-10-28T11:42:21.738Z nl=2 -->
+<!-- md-trans-meta sourceCommit=8d22eb82fd0b279bd5d784f696a54970c40f98ac translatedAt=2026-10-28T08:52:01.792Z pushedAt=2026-11-03T07:08:03.557Z nl=2 -->
 
 C++ Tensor programming is the foundational programming interface of the Ascend C SIMD programming path. It abstracts memory addresses through Tensor objects and provides high-level programming capabilities with type safety and compile-time checking. Developers manage memory through Tensor objects such as LocalTensor, GlobalTensor, and RegTensor without directly manipulating pointer addresses, and data movement and computation APIs operate directly on Tensor objects to complete data flow. This path is suitable for operator development scenarios that pursue development efficiency, type safety, and code maintainability, and it is a key technical path for developers accustomed to C++ object-oriented programming to quickly get started with NPU operator development. This chapter aims to help developers build a systematic understanding of C++ Tensor programming and understand its Tensor abstraction programming paradigm, core programming model, and development methodology.
 

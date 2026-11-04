@@ -1,7 +1,7 @@
 # Adaptation Plugin Development<a name="ZH-CN_TOPIC_0000001741610328"></a>
 
 <!-- npu="950,A3" id1 -->
-<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:12:22.815Z pushedAt=2026-10-28T03:18:01.600Z nl=2 -->
+<!-- md-trans-meta sourceCommit=754fb95859dead826727a591e674261c6a829a08 translatedAt=2026-10-23T14:12:22.815Z pushedAt=2026-11-03T07:05:13.420Z nl=2 -->
 
 > [!NOTE] Note
 ><!-- npu="A3" id2 -->

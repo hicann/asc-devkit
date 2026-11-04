@@ -1,6 +1,6 @@
 # Batch Matmul Reuse of Bias Matrix<a name="ZH-CN_TOPIC_0000002500548102"></a>
 
-<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:05:08.857Z pushedAt=2026-10-27T07:55:00.691Z nl=2 -->
+<!-- md-trans-meta sourceCommit=dd293a1c6b873d149bf289bb2b8098dadf9f5cbd translatedAt=2026-10-23T12:05:08.857Z pushedAt=2026-11-03T07:05:13.299Z nl=2 -->
 
 ## Feature Overview<a name="zh-cn_topic_0000002373911153_section1953745712231"></a>
 

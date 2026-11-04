@@ -1,6 +1,6 @@
 # Enabling Multi-Core Split-K for the Matmul Advanced API<a name="ZH-CN_TOPIC_0000002353756705"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:34:27.450Z pushedAt=2026-10-27T07:55:18.723Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T11:34:27.450Z pushedAt=2026-11-03T07:05:13.276Z nl=2 -->
 
 ## Case Introduction<a name="section17413194624510"></a>
 

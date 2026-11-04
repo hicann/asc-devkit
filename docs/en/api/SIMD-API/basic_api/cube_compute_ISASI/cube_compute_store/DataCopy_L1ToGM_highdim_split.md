@@ -80,11 +80,11 @@ The following figure shows how to use the **DataCopyParams** structure parameter
 The source matrix and destination matrix support the same data types.
 
 <!-- npu="A3" id10 -->
-For Atlas A3 series products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+For Atlas A3 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id10 -->
 
 <!-- npu="910b" id11 -->
-For Atlas A2 series products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
+For Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t, double.
 <!-- end id11 -->
 
 ## Return Value
@@ -101,7 +101,7 @@ None
     Atlas A3 training products
     <!-- end id15 -->
     <!-- npu="910b" id16 -->
-    Atlas A2 series products
+    Atlas A2 products
     <!-- end id16 -->
     In the cross-card communication operator development scenario, the **DataCopy** class APIs support cross-card data copy only over the HCCS physical link, and do not support other paths. During development, pay attention to the physical path involved in inter-card communication. You can run the npu-smi info -t topo command to query the HCCS physical link.
 <!-- end id14 -->

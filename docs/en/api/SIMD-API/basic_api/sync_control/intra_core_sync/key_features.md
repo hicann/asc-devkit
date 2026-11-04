@@ -31,17 +31,17 @@ The usage constraints and supported synchronization types of the two approaches 
 ## Hardware-Guaranteed Synchronization
 
 <!-- npu="950" id1 -->
-- For the Ascend 950PR&950DT product series, the single-pipeline synchronization between PIPE\_V and PIPE\_V is guaranteed by hardware.
+- For the Ascend 950PR&950DT products, the single-pipeline synchronization between PIPE\_V and PIPE\_V is guaranteed by hardware.
 <!-- end id1 -->
 
 <!-- npu="A3,910b" id2 -->
 - The following APIs all belong to PIPE_S. The multi-pipeline synchronization between these APIs and APIs of other pipelines is guaranteed by hardware:
 
     <!-- npu="A3" id3 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id3 -->
     <!-- npu="910b" id4 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id4 -->
 
     The specific APIs are as follows:
@@ -143,7 +143,7 @@ The automatic synchronization feature enabled by the cce-auto-sync compilation o
 
     For PIPE\_S APIs not in the above set, the BiSheng compiler cannot automatically insert synchronization:
     <!-- npu="950" id6 -->
-    For example, for the Ascend 950PR&950DT product series, none of the scalar atomic operation APIs are in the above API set (including [AtomicAdd](../../atomic_operations/AtomicAdd.md), [AtomicCas](../../atomic_operations/AtomicCas.md), [AtomicExch](../../atomic_operations/AtomicExch.md), [AtomicMax](../../atomic_operations/AtomicMax.md), and [AtomicMin](../../atomic_operations/AtomicMin.md)). Therefore, when these APIs have data dependencies with APIs belonging to PIPE\_MTE2 and PIPE\_MTE3 in reading/writing GM, the BiSheng compiler cannot automatically insert synchronization, and developers must manually insert synchronization based on the actual situation.
+    For example, for the Ascend 950PR&950DT products, none of the scalar atomic operation APIs are in the above API set (including [AtomicAdd](../../atomic_operations/AtomicAdd.md), [AtomicCas](../../atomic_operations/AtomicCas.md), [AtomicExch](../../atomic_operations/AtomicExch.md), [AtomicMax](../../atomic_operations/AtomicMax.md), and [AtomicMin](../../atomic_operations/AtomicMin.md)). Therefore, when these APIs have data dependencies with APIs belonging to PIPE\_MTE2 and PIPE\_MTE3 in reading/writing GM, the BiSheng compiler cannot automatically insert synchronization, and developers must manually insert synchronization based on the actual situation.
     <!-- end id6 -->
 
 ### Supported Synchronization Types

@@ -36,7 +36,7 @@ asc_copy_l12l0b_sparse is mainly used to move the compressed weight cube stored 
 During cube computation, the common fractal support status is summarized in the following table:
 
 <!-- npu="910b,A3" id7 -->
-### For Atlas A2 product series and Atlas A3 product series
+### For Atlas A2 products and Atlas A3 products
 
 The common fractal support status is as follows, for developers' reference:
 
@@ -208,7 +208,7 @@ For the support status of some uncommon fractal conversions, see the following t
 ## Data Type Constraints
 
 <!-- npu="910b,A3" id9 -->
-For Atlas A2 product series and Atlas A3 product series, the data type constraints are shown in Table 3:
+For Atlas A2 products and Atlas A3 products, the data type constraints are shown in Table 3:
 
 **Table 3** Data type constraints
 
@@ -224,7 +224,7 @@ For Atlas A2 product series and Atlas A3 product series, the data type constrain
 <!-- end id9 -->
 
 <!-- npu="950" id10 -->
-For Ascend 950PR&950DT product series, the data type constraints are shown in Table 4:
+For Ascend 950PR&950DT products, the data type constraints are shown in Table 4:
 
 **Table 4** Data type constraints
 
@@ -243,7 +243,7 @@ For Ascend 950PR&950DT product series, the data type constraints are shown in Ta
 <!-- npu="910b,A3" id11 -->
 Based on the preceding constraints such as data types and fractals, we have summarized the usage scenarios of the data move-in API and provide them below for developers' reference.
 
-For the Atlas A2 product series and Atlas A3 product series, **on the L1 Buffer -> L0A Buffer/L0B Buffer path, the commonly used move instructions include 2D fractal move, block transpose move, and asc_copy_l12l0a/asc_copy_l12l0b (3D). The instructions that can be called are summarized in Table 5 as follows:**
+For the Atlas A2 products and Atlas A3 products, **on the L1 Buffer -> L0A Buffer/L0B Buffer path, the commonly used move instructions include 2D fractal move, block transpose move, and asc_copy_l12l0a/asc_copy_l12l0b (3D). The instructions that can be called are summarized in Table 5 as follows:**
 
 **Table 5** Summary of instructions that can be called on the L1 Buffer -> L0A Buffer/L0B Buffer path
 
@@ -260,5 +260,5 @@ For the Atlas A2 product series and Atlas A3 product series, **on the L1 Buffer 
 <!-- end id11 -->
 
 <!-- npu="950" id12 -->
-For the Ascend 950PR&950DT product series, asc_copy_l12l0a/asc_copy_l12l0b (2D) supports b4 (fp4)/b8/b16/b32 data types and transpose move scenarios. It moves data blocks in multiple directions by configuring m_step and k_step, and compared with asc_copy_l12l0a/asc_copy_l12l0b (3D), the instruction has lower bandwidth latency. Therefore, for cube multiplication without quantization coefficients, it is recommended to use the asc_copy_l12l0a/asc_copy_l12l0b (2D) instruction to implement data movement on the L1 Buffer -> L0A Buffer/L0B Buffer path. For cube multiplication with quantization coefficients, the asc_copy_l12l0a_mx/asc_copy_l12l0b_mx (coefficient move) instruction is required to implement data movement, where A/B are still moved in through the 2D API. The MX API only performs coefficient move on the L1 Buffer -> L0A_MX Buffer/L0B_MX Buffer path. The two types of APIs must be called separately.
+For the Ascend 950PR&950DT products, asc_copy_l12l0a/asc_copy_l12l0b (2D) supports b4 (fp4)/b8/b16/b32 data types and transpose move scenarios. It moves data blocks in multiple directions by configuring m_step and k_step, and compared with asc_copy_l12l0a/asc_copy_l12l0b (3D), the instruction has lower bandwidth latency. Therefore, for cube multiplication without quantization coefficients, it is recommended to use the asc_copy_l12l0a/asc_copy_l12l0b (2D) instruction to implement data movement on the L1 Buffer -> L0A Buffer/L0B Buffer path. For cube multiplication with quantization coefficients, the asc_copy_l12l0a_mx/asc_copy_l12l0b_mx (coefficient move) instruction is required to implement data movement, where A/B are still moved in through the 2D API. The MX API only performs coefficient move on the L1 Buffer -> L0A_MX Buffer/L0B_MX Buffer path. The two types of APIs must be called separately.
 <!-- end id12 -->

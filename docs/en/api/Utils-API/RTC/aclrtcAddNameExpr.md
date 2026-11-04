@@ -11,7 +11,7 @@
 - Atlas A3 products: Supported
 <!-- end id4 -->
 <!-- npu="910b" id5 -->
-- Atlas A2 product series: Supported
+- Atlas A2 products: Supported
 <!-- end id5 -->
 <!-- npu="310b" id6 -->
 - Atlas 200I/500 A2 inference products: Not supported
@@ -23,7 +23,7 @@
 - Atlas inference products Vector Core: Not supported
 <!-- end id8 -->
 <!-- npu="910" id9 -->
-- Atlas training product series: Not supported
+- Atlas training products: Not supported
 <!-- end id9 -->
 
 ## Description<a name="section618mcpsimp"></a>

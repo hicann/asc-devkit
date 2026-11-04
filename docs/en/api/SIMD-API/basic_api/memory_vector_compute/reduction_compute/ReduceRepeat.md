@@ -5,13 +5,13 @@
 ## Applicable Products
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -123,10 +123,10 @@ When computing the maximum or minimum value, the corresponding index can be retu
 **For the following models, the data types of the destination operand and the source operand must be consistent.**
 
 <!-- npu="A3" id20 -->
-- Atlas A3 product series
+- Atlas A3 products
 <!-- end id20 -->
 <!-- npu="910b" id21 -->
-- Atlas A2 product series
+- Atlas A2 products
 <!-- end id21 -->
 <!-- npu="310b" id22 -->
 - Atlas 200I/500 A2 inference products
@@ -175,10 +175,10 @@ None
   <!-- npu="A3,910b" id28 -->
   - For the following models, when the mask or repeatTime parameter is set to 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no operation).
     <!-- npu="A3" id29 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id29 -->
     <!-- npu="910b" id30 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id30 -->
   <!-- end id28 -->
 
@@ -197,22 +197,22 @@ None
   - The index is stored in the data type of the operand. To read the index, convert the type to an integer. See [Key Features](#key-features).
   - The `ReduceOrder` supported by different chips is as follows:
     <!-- npu="950" id33 -->
-    - Ascend 950PR&950DT product series supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
+    - Ascend 950PR&950DT products supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id33 -->
     <!-- npu="A3" id34 -->
-    - Atlas A3 product series supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
+    - Atlas A3 products supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id34 -->
     <!-- npu="910b" id35 -->
-    - Atlas A2 product series supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
+    - Atlas A2 products supports `ORDER_VALUE_INDEX`, `ORDER_INDEX_VALUE`, `ORDER_ONLY_VALUE`, and `ORDER_ONLY_INDEX`.
     <!-- end id35 -->
     <!-- npu="310b" id36 -->
     - Atlas 200I/500 A2 inference product supports `ORDER_VALUE_INDEX` and `ORDER_ONLY_VALUE`.
     <!-- end id36 -->
     <!-- npu="310p" id37 -->
-    - Atlas inference series product AI Core supports `ORDER_VALUE_INDEX` and `ORDER_INDEX_VALUE`.
+    - Atlas inference products AI Core supports `ORDER_VALUE_INDEX` and `ORDER_INDEX_VALUE`.
     <!-- end id37 -->
     <!-- npu="910" id38 -->
-    - Atlas training series product supports `ORDER_VALUE_INDEX`.
+    - Atlas training products supports `ORDER_VALUE_INDEX`.
     <!-- end id38 -->
 
 ## Key Features
@@ -238,10 +238,10 @@ None
     <!-- npu="A3,910b" id43 -->
     - For the following models, in the `ORDER_ONLY_INDEX` (return only the extreme value index) case, use `reinterpret_cast<uint32_t*>` to read the index value.
       <!-- npu="A3" id44 -->
-      - Atlas A3 product series
+      - Atlas A3 products
       <!-- end id44 -->
       <!-- npu="910b" id45 -->
-      - Atlas A2 product series
+      - Atlas A2 products
       <!-- end id45 -->
     <!-- end id43 -->
 

@@ -1,6 +1,6 @@
 # Limiting the TilingData Structure Size<a name="ZH-CN_TOPIC_0000001846878548"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:50:37.937Z pushedAt=2026-10-27T10:34:52.866Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T12:50:37.937Z pushedAt=2026-11-03T07:05:13.347Z nl=2 -->
 
 [Priority] Medium
 

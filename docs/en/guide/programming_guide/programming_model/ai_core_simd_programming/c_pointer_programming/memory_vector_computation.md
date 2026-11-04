@@ -1,6 +1,6 @@
 # Memory Vector Computation Programming<a name="ZH-CN_TOPIC_0000002600000002"></a>
 
-<!-- md-trans-meta sourceCommit=462c9a712209ad24f2d57d4b5f5dd0d416050b06 translatedAt=2026-10-28T08:43:41.316Z pushedAt=2026-10-28T11:42:21.736Z nl=2 -->
+<!-- md-trans-meta sourceCommit=462c9a712209ad24f2d57d4b5f5dd0d416050b06 translatedAt=2026-10-28T08:43:41.316Z pushedAt=2026-11-03T07:08:03.555Z nl=2 -->
 
 This document describes the Ascend C vector computation development method based on Unified Buffer (UB). This computation capability, referred to as Memory vector computation programming, is the most fundamental and widely used vector programming approach in Ascend C. [NPU architecture version 2201](../../../language_extension/simd_builtin_keywords.md) natively supports the complete UB direct programming capability. [NPU architecture version 3510](../../../language_extension/simd_builtin_keywords.md) introduces register computation capability, and Reg vector computation programming is recommended for higher performance.
 

@@ -1,6 +1,6 @@
 # Features<a name="ZH-CN_TOPIC_0000002510059252"></a>
 
-<!-- md-trans-meta sourceCommit=2951a900b5d1975728ac7f0f437c6d752ed9447e translatedAt=2026-10-28T09:39:40.270Z pushedAt=2026-10-28T11:42:21.770Z nl=2 -->
+<!-- md-trans-meta sourceCommit=2951a900b5d1975728ac7f0f437c6d752ed9447e translatedAt=2026-10-28T09:39:40.270Z pushedAt=2026-11-03T07:08:03.577Z nl=2 -->
 
 -   Virtual functions are not supported.
 -   Virtual inheritance is not supported.

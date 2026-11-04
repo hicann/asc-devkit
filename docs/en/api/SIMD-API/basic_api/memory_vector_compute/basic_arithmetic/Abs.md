@@ -5,13 +5,13 @@
 ## Applicable Products<a name="section1550532418810"></a>
 
 <!-- npu="950" id1 -->
-- Ascend 950PR&950DT series products: supported
+- Ascend 950PR&950DT products: supported
 <!-- end id1 -->
 <!-- npu="A3" id2 -->
-- Atlas A3 product series: supported
+- Atlas A3 products: supported
 <!-- end id2 -->
 <!-- npu="910b" id3 -->
-- Atlas A2 product series: supported
+- Atlas A2 products: supported
 <!-- end id3 -->
 <!-- npu="310b" id4 -->
 - Atlas 200I/500 A2 inference products: supported
@@ -93,24 +93,24 @@ $dst_i = |src_i|$
 ## Data Types
 
 <!-- npu="950" id12 -->
-- For Ascend 950PR&950DT series products
+- For Ascend 950PR&950DT products
     - T supports the following data types: int8_t, int16_t, half, int32_t, float, and int64_t. The int8_t and int64_t data types are supported only by the API for computing the first n data elements of a tensor.
     - U supports the following data types: complex32 and complex64. When U is complex32, T must be half. When U is complex64, T must be float.
 <!-- end id12 -->
 <!-- npu="A3" id13 -->
-- For Atlas A3 series products, T supports the following data types: half and float.
+- For Atlas A3 products, T supports the following data types: half and float.
 <!-- end id13 -->
 <!-- npu="910b" id14 -->
-- For Atlas A2 series products, T supports the following data types: half and float.
+- For Atlas A2 products, T supports the following data types: half and float.
 <!-- end id14 -->
 <!-- npu="310b" id15 -->
 - For Atlas 200I/500 A2 inference products, T supports the following data types: int16_t, half, and float.
 <!-- end id15 -->
 <!-- npu="310p" id16 -->
-- For Atlas inference series products AI Core, T supports the following data types: half and float.
+- For Atlas inference products AI Core, T supports the following data types: half and float.
 <!-- end id16 -->
 <!-- npu="910" id17 -->
-- For Atlas training series products, T supports the following data types: half and float.
+- For Atlas training products, T supports the following data types: half and float.
 <!-- end id17 -->
 
 ## Return Value<a name="section640mcpsimp"></a>
@@ -126,10 +126,10 @@ None
   <!-- npu="A3,910b" id25 -->
   - For the following models, when the value of count or repeatTime is 0, no computation is performed and no write is made to the destination operand. This API is treated as a NOP (no-op).
     <!-- npu="A3" id26 -->
-    - Atlas A3 product series
+    - Atlas A3 products
     <!-- end id26 -->
     <!-- npu="910b" id28 -->
-    - Atlas A2 product series
+    - Atlas A2 products
     <!-- end id28 -->
   <!-- end id25 -->
   <!-- npu="950" id27 -->
@@ -142,7 +142,7 @@ None
   - Continuous computation of the first n data elements of a tensor does not involve the 8 KB UB usage.
 <!-- end id21 -->
 <!-- npu="950" id29 -->
-- For the Ascend 950PR&950DT product series, only the APIs of the **complex32** and **complex64** types involve Subnormal in internal computation, and the handling is controlled by the compilation option **--cce-ftz** (default value: **true**):
+- For the Ascend 950PR&950DT products, only the APIs of the **complex32** and **complex64** types involve Subnormal in internal computation, and the handling is controlled by the compilation option **--cce-ftz** (default value: **true**):
     - When **--cce-ftz=false**, Subnormal values are preserved during computation and participate in subsequent computation according to their actual values.
     - When **--cce-ftz=true**, the FTZ (Flush-To-Zero) mode is enabled. Subnormal values generated or involved in computation are treated as 0, which may cause precision differences in the computation result compared with preserving Subnormal values.
 <!-- end id29 -->
@@ -197,7 +197,7 @@ None
     ```
 
 <!-- npu="950" id24 -->
-For Ascend 950PR&950DT series products:
+For Ascend 950PR&950DT products:
 
 - Example of the API for computing the first n complex numbers of a tensor
 

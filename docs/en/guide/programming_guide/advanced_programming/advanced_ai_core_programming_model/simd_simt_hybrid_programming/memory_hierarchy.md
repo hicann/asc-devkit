@@ -1,6 +1,6 @@
 # Memory Hierarchy
 
-<!-- md-trans-meta sourceCommit=450a5a2c1d4d96b945b547add53f8f21354e8ba0 translatedAt=2026-10-23T14:06:40.478Z pushedAt=2026-10-28T03:14:56.696Z nl=2 -->
+<!-- md-trans-meta sourceCommit=450a5a2c1d4d96b945b547add53f8f21354e8ba0 translatedAt=2026-10-23T14:06:40.478Z pushedAt=2026-11-03T07:05:13.415Z nl=2 -->
 
 ## Overall Memory Resources<a name="zh-cn_topic_0000002571695539_section598391912124"></a>
 

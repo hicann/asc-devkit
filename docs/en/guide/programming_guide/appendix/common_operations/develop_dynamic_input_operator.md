@@ -1,6 +1,6 @@
 # How to Develop a Dynamic Input Operator<a name="ZH-CN_TOPIC_0000002098772922"></a>
 
-<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:53:36.166Z pushedAt=2026-10-28T06:22:06.010Z nl=2 -->
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-10-23T14:53:36.166Z pushedAt=2026-11-03T07:05:13.443Z nl=2 -->
 
 A dynamic input operator is an operator whose number of inputs is dynamic. For example, AddN accumulates N input tensors and outputs one tensor, where the number of input tensors is not fixed. The development of dynamic input operators differs in how input data is constructed and parsed: the input parameter of the kernel function uses the ListTensorDesc structure to store input data information, and correspondingly, a TensorList structure must be constructed to store parameter information when the kernel is called. The following describes the specific development process based on two development modes: kernel direct invocation and engineering-based operator development.
 

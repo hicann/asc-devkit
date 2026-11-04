@@ -95,13 +95,13 @@ For Ascend 950PR&950DT products, the total size of the BiasTable Buffer is 4 KB.
 The source operand and destination operand support different data types, as described below:
 
 <!-- npu="950" id19 -->
-For the Ascend 950PR&950DT Product Series, **src** supports the following data types: **half**, **bfloat16_t**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
+For the Ascend 950PR&950DT products, **src** supports the following data types: **half**, **bfloat16_t**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
 <!-- end id19 -->
 <!-- npu="A3" id20 -->
-For the Atlas A3 Product Series, **src** supports the following data types: **half**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
+For the Atlas A3 products, **src** supports the following data types: **half**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
 <!-- end id20 -->
 <!-- npu="910b" id12 -->
-For the Atlas A2 Product Series, **src** supports the following data types: **half**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
+For the Atlas A2 products, **src** supports the following data types: **half**, **int32_t**, and **float**; **dst** supports the following data types: **int32_t** and **float**.
 <!-- end id12 -->
 
 ## Return Value
@@ -116,23 +116,23 @@ None
 - If the destination **dst** address in the **BiasTable Buffer** overflows, an exception is raised.
 - The unit of **blockLen** varies by model. For details, see the following:
   <!-- npu="950" id13 -->
-  - For Ascend 950PR&950DT series products, the unit is 32 bytes, and **blockLen** must be an even number.
+  - For Ascend 950PR&950DT products, the unit is 32 bytes, and **blockLen** must be an even number.
   <!-- end id13 -->
   <!-- npu="A3" id14 -->
-  - For Atlas A3 series products, the unit is 64 bytes.
+  - For Atlas A3 products, the unit is 64 bytes.
   <!-- end id14 -->
   <!-- npu="910b" id15 -->
-  - For Atlas A2 series products, the unit is 64 bytes.
+  - For Atlas A2 products, the unit is 64 bytes.
   <!-- end id15 -->
 - The unit of **dstGap** varies by model. For details, see the following:
   <!-- npu="950" id16 -->
-  - For Ascend 950PR&950DT Product Series, the unit is 32 bytes.
+  - For Ascend 950PR&950DT products, the unit is 32 bytes.
   <!-- end id16 -->
   <!-- npu="A3" id17 -->
-  - For Atlas A3 Product Series, the unit is 64 bytes.
+  - For Atlas A3 products, the unit is 64 bytes.
   <!-- end id17 -->
   <!-- npu="910b" id18 -->
-  - For Atlas A2 Product Series, the unit is 64 bytes.
+  - For Atlas A2 products, the unit is 64 bytes.
   <!-- end id18 -->
 
 ## Example<a id="zh-cn_topic_0000002566886667_section088124295117"></a>
