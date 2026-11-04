@@ -28,7 +28,7 @@
 
 **`asc_copy_gm2l1`使用`uint8_t pad_func_mode`的旧常规重载及其`asc_copy_gm2l1_sync`接口已废弃。请使用带`asc_channel_pad_mode pad_mode`参数的[asc_copy_gm2l1](../cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md)接口。**
 
-头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`、`"c_api/composite/cube_datamove_composite.h"`。
 
 将数据从Global Memory搬运到L1 Buffer，数据搬运时格式和内容保持不变。高维切分是指能够通过配置数据块个数、单个数据块长度、地址偏移等搬运参数实现非连续搬运。并且此接口支持在搬运过程中按通道padding模式对32字节粒度的数据插入或移除padding。其中padding值需要通过[asc_set_gm2l1_pad](../cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md)设置。
 

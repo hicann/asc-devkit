@@ -39,7 +39,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-头文件路径：`"basic_api/reg_compute/kernel_reg_compute_vec_interleave_intf.h"`。
+头文件路径：`"basic_api/reg_compute/kernel_reg_compute_vec_data_reorder_intf.h"`。
 
 给定源操作数寄存器srcReg0和srcReg1，将srcReg0和srcReg1中的元素交织存入结果操作数dstReg0和dstReg1中。交织排列方式如下图所示，其中每个方格代表一个元素：
 
@@ -70,9 +70,9 @@ __simd_callee__ inline void Interleave(U& dstReg0, U& dstReg1, U& srcReg0, U& sr
 
 ## 数据类型
 
-<!-- npu="950" id8 -->
+<!-- npu="950" id12 -->
 Ascend 950PR&950DT系列产品，目的操作数与源操作数的数据类型需要保持一致。支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t。
-<!-- end id8 -->
+<!-- end id12 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/data_reorder/Interleave_res.md#id2 -->
 
 ## 返回值说明

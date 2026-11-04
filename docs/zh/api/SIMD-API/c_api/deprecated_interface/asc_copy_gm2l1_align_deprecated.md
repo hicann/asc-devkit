@@ -28,7 +28,7 @@
 
 **`asc_copy_gm2l1_align`的旧常规重载和`asc_copy_gm2l1_align_sync`接口已废弃。请使用带`asc_load_l2_cache_mode l2_cache_mode`参数的[asc_copy_gm2l1_align](../cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md)接口；同步场景请额外调用[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
 
-头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`、`"c_api/composite/cube_datamove_composite.h"`。
 
 将数据从Global Memory搬运到L1 Buffer，提供非32B对齐搬运能力，搬运过程中支持对数据进行padding。
 

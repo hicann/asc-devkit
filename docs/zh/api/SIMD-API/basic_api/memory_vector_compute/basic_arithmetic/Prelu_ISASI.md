@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-头文件路径为：`"basic_api/kernel_operator_vec_binary_scalar_intf.h"`。
+头文件路径为：`"basic_api/kernel_operator_vec_binary_intf.h"`。
 
 Prelu属于双目矢量类计算接口，源操作数src0大于等于0的情况下直接将src0写入目的操作数dst，否则将源操作数src0 * src1的结果写入dst。注：源操作数src0中数据为浮点数正零（+0）时按正数处理并直接输出；为浮点数负零（-0）时按负数处理并与src1相乘。计算公式如下：
 

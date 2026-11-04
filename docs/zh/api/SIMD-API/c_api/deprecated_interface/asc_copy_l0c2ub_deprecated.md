@@ -28,7 +28,7 @@
 
 **`asc_copy_l0c2ub`的旧参数形式及`asc_copy_l0c2ub_sync`接口已废弃。请使用[asc_copy_l0c2ub](../cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)接口和[asc_sync](../sync/intra_core_sync/asc_sync.md)接口替代。**
 
-头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`、`"c_api/composite/cube_datamove_composite.h"`。
 
 将矩阵计算结果从L0C Buffer搬运至Unified Buffer（UB），搬运过程中可同步支持随路量化、随路激活、随路格式转换（Nz2ND/Nz2DN）等能力组合。
 

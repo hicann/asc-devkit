@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-头文件路径为：`"basic_api/kernel_operator_vec_reduce_intf.h"`。
+头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_vec_reduce_intf.h"`。
 
 将传入的srcReg中相邻两个数值相加，并将产生的结果保存在dstReg中的低位位置。
 

@@ -28,7 +28,7 @@
 
 **`asc_copy_l0c2l1`的旧参数形式及`asc_copy_l0c2l1_sync`接口已废弃。请使用[asc_copy_l0c2l1](../cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md)接口和[asc_sync](../sync/intra_core_sync/asc_sync.md)接口替代。**
 
-头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
+头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`、`"c_api/composite/cube_datamove_composite.h"`。
 
 该接口用于将矩阵计算的结果从L0C Buffer搬运至L1 Buffer中，并且在搬运过程中支持与其它接口组合使用，配置多种随路能力。（目前针对量化模式的支持尚不完全，具体支持情况请以[函数原型](#函数原型)中包含的接口为准）
 

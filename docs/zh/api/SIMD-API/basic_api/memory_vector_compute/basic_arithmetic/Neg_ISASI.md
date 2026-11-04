@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-头文件路径为：`"basic_api/kernel_operator_vec_binary_scalar_intf.h"`。
+头文件路径为：`"basic_api/kernel_operator_vec_unary_intf.h"`。
 
 Neg属于单目矢量类计算接口，负责将输入的tensor按元素取相反数。计算公式如下：
 

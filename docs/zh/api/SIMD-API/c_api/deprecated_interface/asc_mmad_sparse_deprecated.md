@@ -26,7 +26,7 @@
 
 ## 功能说明
 
-头文件路径为：`"c_api/cube_compute/cube_compute.h"`。
+头文件路径为：`"c_api/cube_compute/cube_compute.h"`、`"c_api/composite/cube_compute_composite.h"`。
 
 **入参`unit_flag`类型为`uint8_t`的`asc_mmad_sparse`接口和`asc_mmad_sparse_sync`接口已废弃。请使用入参`unit_flag_mode`类型为`asc_unit_flag_mode`的[asc_mmad_sparse](../cube_compute/mmad_compute/asc_mmad_sparse.md)接口替代；原`asc_mmad_sparse_sync`接口的同步功能请通过新`asc_mmad_sparse`接口和`asc_sync()`实现，具体请参见[asc_sync](../sync/intra_core_sync/asc_sync.md)。**
 

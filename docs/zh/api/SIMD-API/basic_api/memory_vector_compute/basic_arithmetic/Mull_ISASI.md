@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="section1769835112451"></a>
 
-头文件路径为：`"basic_api/kernel_operator_vec_binary_scalar_intf.h"`。
+头文件路径为：`"basic_api/kernel_operator_vec_binary_intf.h"`。
 
 Mull属于双目矢量类计算接口，对前count个输入数据src0、src1按元素相乘操作，将结果写入dst0，溢出部分写入dst1。计算过程如下：
 
