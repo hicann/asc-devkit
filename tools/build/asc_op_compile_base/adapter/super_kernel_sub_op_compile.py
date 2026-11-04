@@ -14,7 +14,6 @@ super kernel sub op compile
 """
 
 import os
-import re
 import subprocess
 from tbe.common.context import get_context
 from tbe.tvm.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
@@ -36,7 +35,10 @@ from .super_kernel_constants import (
 def match_kernel_name_patern(op_type, op_list, use_regex=False):
     """Match op_type against op_list. If use_regex is True, treat list items as regex patterns."""
     if use_regex:
-        return any(re.fullmatch(pattern, op_type) for pattern in op_list)
+        # Import lazily because compile_op imports this module.
+        from .compile_op import _match_regex
+
+        return any(_match_regex(pattern, op_type) for pattern in op_list)
     return op_type in op_list
 
 
@@ -72,8 +74,6 @@ def gen_gm_get_set_value_dcci_compile_options(compile_option_tuple, compile_info
     if match_kernel_name_patern(match_key, dcci_after_kernel_end_op_list, use_regex=is_sub_combine):
         global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_after_kernel_end", True)
     disable_dcci_matched = match_kernel_name_patern(match_key, dcci_disable_on_kernel_op_list, use_regex=is_sub_combine)
-    if is_sub_combine and disable_dcci_matched:
-        compile_option_tuple.compile_options.append("-D__ASCENDC_SUPER_KERNEL_DISABLE_DCCI__")
     if disable_dcci_matched:
         global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_disable_on_kernel", True)
 

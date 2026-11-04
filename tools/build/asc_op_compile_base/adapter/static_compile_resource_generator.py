@@ -401,7 +401,7 @@ def gen_sk_bind_source(pairs, basic_attribute, sk_attribute):
     Capability bits are assembled by compile-time macros, cap_bitmap:
     * bit 0 (value 1): enable wait-pre-task-end capability.
     * bit 1 (value 2): enable set-next-task-start capability.
-    * bit 2 (value 4): disable DCCI when the DCCI disable macro is defined.
+    * bit 2 (value 4): disable SK DCCI when the GM Get/SetValue DCCI macro is defined.
     """
     lines = [
         '#include "kernel_operator.h"',
@@ -415,7 +415,7 @@ def gen_sk_bind_source(pairs, basic_attribute, sk_attribute):
         "#else",
         "#define __ASCENDC_SK_CAP_SET_FLAG__ 0b0ULL",
         "#endif",
-        "#ifdef __ASCENDC_SUPER_KERNEL_DISABLE_DCCI__",
+        "#ifdef __ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__",
         "#define __ASCENDC_SK_CAP_DISABLE_DCCI__ 0b100ULL",
         "#else",
         "#define __ASCENDC_SK_CAP_DISABLE_DCCI__ 0b0ULL",

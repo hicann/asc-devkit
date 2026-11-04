@@ -22,6 +22,7 @@ import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
+from unittest import mock
 
 
 class TestSkBindOptions(unittest.TestCase):
@@ -83,7 +84,7 @@ class TestSkBindOptions(unittest.TestCase):
                     self.assertEqual("assert(false" in result, eligible and macro)
 
     @unittest.skipUnless(shutil.which("g++"), "requires a host C++ compiler")
-    def test_dcci_option_only_adds_capability(self):
+    def test_dcci_capability_follows_gm_get_set_value_macro(self):
         root = Path(__file__).resolve().parents[3]
         for variant in ("asc_op_compiler", "adapter"):
             module_dir = root / "tools/build/asc_op_compile_base" / variant
@@ -117,10 +118,9 @@ class TestSkBindOptions(unittest.TestCase):
                             "#undef EXPECTED",
                         ]
                     )
-                    expected = 0
+                    expected = 4 if gm_dcci else 0
                     if override is not None:
                         cases.append(f"#define __ASCENDC_SUPER_KERNEL_DISABLE_DCCI__ {override}")
-                        expected = 4
                     if wait_flag:
                         cases.append("#define __ASCENDC_ENABLE_WAIT_PRE_TASK_END")
                         expected |= 1
@@ -142,6 +142,65 @@ class TestSkBindOptions(unittest.TestCase):
                     check=False,
                 )
                 self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_dcci_kernel_patterns_and_compile_options(self):
+        root = Path(__file__).resolve().parents[3]
+        for variant in ("asc_op_compiler", "adapter"):
+            module_dir = root / "tools/build/asc_op_compile_base" / variant
+            helper_path = module_dir / "compile_op.py"
+            helper_tree = ast.parse(helper_path.read_text())
+            helper = SimpleNamespace()
+            helper_function = next(
+                node for node in helper_tree.body if isinstance(node, ast.FunctionDef) and node.name == "_match_regex"
+            )
+            exec(
+                compile(ast.Module(body=[helper_function], type_ignores=[]), str(helper_path), "exec"), helper.__dict__
+            )
+            source_path = module_dir / "super_kernel_sub_op_compile.py"
+            tree = ast.parse(source_path.read_text())
+            functions = [
+                node
+                for node in tree.body
+                if isinstance(node, ast.FunctionDef)
+                and node.name in ("match_kernel_name_patern", "gen_gm_get_set_value_dcci_compile_options")
+            ]
+            flags = {}
+            env = {
+                "__package__": "_sk_bind_test",
+                "re": __import__("re"),
+                "get_context": lambda: SimpleNamespace(get_addition=lambda key: True),
+                "global_var_storage": SimpleNamespace(set_variable=flags.__setitem__),
+            }
+            exec(compile(ast.Module(body=functions, type_ignores=[]), str(source_path), "exec"), env)
+            with mock.patch.dict(sys.modules, {"_sk_bind_test.compile_op": helper}):
+                for pattern, name, expected in (
+                    ("kernel.*", "kernel_1", True),
+                    ("kernel", "kernel_1", False),
+                    ("kernel+", "kernel+", True),
+                    ("kernel+", "kernell", False),
+                    ("[ab]", "a", False),
+                    ("*", "kernel", False),
+                ):
+                    with self.subTest(variant=variant, pattern=pattern, name=name):
+                        self.assertEqual(env["match_kernel_name_patern"](name, [pattern], True), expected)
+                        self.assertEqual(env["match_kernel_name_patern"](name, [pattern]), name == pattern)
+                for option in ("dcci-disable-on-kernel", "dcci-before-kernel-start", "dcci-after-kernel-end"):
+                    with self.subTest(variant=variant, option=option):
+                        flags.clear()
+                        options = SimpleNamespace(compile_options=[])
+                        info = SimpleNamespace(
+                            kernel_name="kernel+",
+                            op_type="Example",
+                            super_kernel_info={"sp_options": {option: "kernel+"}},
+                        )
+                        env["gen_gm_get_set_value_dcci_compile_options"](options, info, True)
+                        self.assertTrue(flags.get("ascendc_sub_super_kernel_call_" + option.replace("-", "_")))
+                        expected = (
+                            ["-D__ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__"]
+                            if option == "dcci-disable-on-kernel"
+                            else []
+                        )
+                        self.assertEqual(options.compile_options, expected)
 
 
 if __name__ == "__main__":
