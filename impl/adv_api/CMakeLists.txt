@@ -32,7 +32,7 @@ endif()
 
 
 # copy include to asc impl
-if(NOT "${DPRODUCT_SIDE}" STREQUAL "device")
+if(NOT "${PRODUCT_SIDE}" STREQUAL "device")
   install(
     FILES ${KERNEL_TILING_HEAD}
     DESTINATION
