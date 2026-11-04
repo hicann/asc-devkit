@@ -337,3 +337,95 @@ TEST_F(SimtCastBf16Testsuite, CastBf16Test)
     EXPECT_EQ(bfloat16_t(0.5 + pow(2.0, -8)), dst1.x);
 }
 // ================================ Test cast end ===============================
+
+#ifdef __BISHENG_DISABLE_SOFT_IMPL
+TEST_F(BF16Testsuite, ExtendedMathApiTest)
+{
+    bfloat16_t x = 1.0;
+    bfloat16_t y = 2.0;
+    bfloat16_t nanValue = __ushort_as_bfloat16(0x7fc0U);
+    bfloat16x2_t x2 = {x, y};
+    bfloat16x2_t y2 = {y, x};
+    bfloat16x2_t z2 = {bfloat16_t(3.0), bfloat16_t(4.0)};
+
+    EXPECT_TRUE(__heq(x, x));
+    EXPECT_TRUE(__hne(x, y));
+    EXPECT_TRUE(__hle(x, y));
+    EXPECT_TRUE(__hge(y, x));
+    EXPECT_TRUE(__hlt(x, y));
+    EXPECT_TRUE(__hgt(y, x));
+    EXPECT_TRUE(__hequ(x, x));
+    EXPECT_TRUE(__hneu(x, y));
+    EXPECT_TRUE(__hleu(x, y));
+    EXPECT_TRUE(__hgeu(y, x));
+    EXPECT_TRUE(__hltu(x, y));
+    EXPECT_TRUE(__hgtu(y, x));
+    EXPECT_TRUE(__hbeqx2(x2, x2));
+    EXPECT_TRUE(__hbnex2(x2, y2));
+    EXPECT_TRUE(__hblex2(x2, x2));
+    EXPECT_TRUE(__hbgex2(x2, x2));
+    EXPECT_FALSE(__hbltx2(x2, x2));
+    EXPECT_FALSE(__hbgtx2(x2, x2));
+    EXPECT_TRUE(__hbequx2(x2, x2));
+    EXPECT_TRUE(__hbneux2(x2, y2));
+    EXPECT_TRUE(__hbleux2(x2, x2));
+    EXPECT_TRUE(__hbgeux2(x2, x2));
+    EXPECT_FALSE(__hbltux2(x2, x2));
+    EXPECT_FALSE(__hbgtux2(x2, x2));
+
+    EXPECT_TRUE(__heqx2(x2, x2).x);
+    EXPECT_TRUE(__hnex2(x2, y2).x);
+    EXPECT_TRUE(__hlex2(x2, y2).x);
+    EXPECT_TRUE(__hgex2(y2, x2).x);
+    EXPECT_TRUE(__hltx2(x2, y2).x);
+    EXPECT_TRUE(__hgtx2(y2, x2).x);
+    EXPECT_TRUE(__hequx2(x2, x2).x);
+    EXPECT_TRUE(__hneux2(x2, y2).x);
+    EXPECT_TRUE(__hleux2(x2, y2).x);
+    EXPECT_TRUE(__hgeux2(y2, x2).x);
+    EXPECT_TRUE(__hltux2(x2, y2).x);
+    EXPECT_TRUE(__hgtux2(y2, x2).x);
+    EXPECT_EQ(0xFFFFFFFFU, __heqx2_mask(x2, x2));
+    EXPECT_EQ(0xFFFFFFFFU, __hnex2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hlex2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hgex2_mask(y2, x2));
+    EXPECT_EQ(0x0000FFFFU, __hltx2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hgtx2_mask(y2, x2));
+    EXPECT_EQ(0xFFFFFFFFU, __hequx2_mask(x2, x2));
+    EXPECT_EQ(0xFFFFFFFFU, __hneux2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hleux2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hgeux2_mask(y2, x2));
+    EXPECT_EQ(0x0000FFFFU, __hltux2_mask(x2, y2));
+    EXPECT_EQ(0x0000FFFFU, __hgtux2_mask(y2, x2));
+    EXPECT_TRUE(__isnanx2(bfloat16x2_t{nanValue, x}).x);
+
+    bfloat16x2_t add = __haddx2(x2, y2);
+    bfloat16x2_t sub = __hsubx2(y2, x2);
+    bfloat16x2_t mul = __hmulx2(x2, y2);
+    bfloat16x2_t div = __hdivx2(y2, x2);
+    bfloat16x2_t abs = __habsx2(bfloat16x2_t{-x, -y});
+    bfloat16x2_t neg = __hnegx2(x2);
+    EXPECT_EQ(bfloat16_t(3.0), add.x);
+    EXPECT_EQ(bfloat16_t(1.0), sub.x);
+    EXPECT_EQ(bfloat16_t(2.0), mul.x);
+    EXPECT_EQ(bfloat16_t(2.0), div.x);
+    EXPECT_EQ(x, abs.x);
+    EXPECT_EQ(-x, neg.x);
+    EXPECT_TRUE(__hisnan(__hmax_nan(nanValue, x)));
+    EXPECT_TRUE(__hisnan(__hmin_nan(nanValue, x)));
+    EXPECT_EQ(__hmaxx2_nan(bfloat16x2_t{nanValue, y}, x2).y, y);
+    EXPECT_EQ(__hminx2_nan(bfloat16x2_t{nanValue, y}, x2).y, y);
+    EXPECT_EQ(bfloat16_t(3.0), __hfma_relu(x, y, x));
+    EXPECT_EQ(bfloat16_t(0.0), __hfma_relu(-x, y, x));
+    EXPECT_EQ(__hmaxx2(x2, y2).x, y);
+    EXPECT_EQ(__hminx2(x2, y2).x, x);
+    EXPECT_EQ(bfloat16_t(5.0), __hfmax2(x2, y2, z2).x);
+    EXPECT_EQ(bfloat16_t(1.0), __hfmax2_relu(-x2, y2, z2).x);
+    EXPECT_EQ(bfloat16_t(3.0), __hcmadd(x2, y2, z2).x);
+    EXPECT_EQ(__hadd(x, y), bfloat16_t(3.0));
+    EXPECT_EQ(__hsub(x, y), bfloat16_t(-1.0));
+    EXPECT_EQ(__hmul(x, y), bfloat16_t(2.0));
+    EXPECT_EQ(__hdiv(y, x), bfloat16_t(2.0));
+    EXPECT_EQ(__hneg(x), bfloat16_t(-1.0));
+}
+#endif

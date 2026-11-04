@@ -1456,6 +1456,336 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 h2exp10(half2 x)
 
 #endif // ASCENDC_USE_LEGACY_PRECISION
 
+#ifdef __BISHENG_DISABLE_SOFT_IMPL
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __heq(half x, half y) { return (x == y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hne(half x, half y) { return (x != y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hle(half x, half y) { return (x <= y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hge(half x, half y) { return (x >= y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hlt(half x, half y) { return (x < y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgt(half x, half y) { return (x > y) && !__hisnan(x) && !__hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hequ(half x, half y) { return (x == y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hneu(half x, half y) { return (x != y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hleu(half x, half y) { return (x <= y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgeu(half x, half y) { return (x >= y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hltu(half x, half y) { return (x < y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgtu(half x, half y) { return (x > y) || __hisnan(x) || __hisnan(y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbeqx2(half2 x, half2 y) { return __heq(x.x, y.x) && __heq(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbnex2(half2 x, half2 y) { return __hne(x.x, y.x) && __hne(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hblex2(half2 x, half2 y) { return __hle(x.x, y.x) && __hle(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgex2(half2 x, half2 y) { return __hge(x.x, y.x) && __hge(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltx2(half2 x, half2 y) { return __hlt(x.x, y.x) && __hlt(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtx2(half2 x, half2 y) { return __hgt(x.x, y.x) && __hgt(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbequx2(half2 x, half2 y) { return __hequ(x.x, y.x) && __hequ(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbneux2(half2 x, half2 y) { return __hneu(x.x, y.x) && __hneu(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbleux2(half2 x, half2 y) { return __hleu(x.x, y.x) && __hleu(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgeux2(half2 x, half2 y) { return __hgeu(x.x, y.x) && __hgeu(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltux2(half2 x, half2 y) { return __hltu(x.x, y.x) && __hltu(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtux2(half2 x, half2 y) { return __hgtu(x.x, y.x) && __hgtu(x.y, y.y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __heqx2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __heq(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __heq(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hnex2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hne(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hne(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hlex2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hle(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hle(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hgex2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hge(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hge(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hltx2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hlt(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hlt(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hgtx2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hgt(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hgt(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hequx2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hequ(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hequ(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hneux2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hneu(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hneu(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hleux2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hleu(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hleu(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hgeux2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hgeu(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hgeu(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hltux2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hltu(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hltu(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hgtux2(half2 x, half2 y)
+{
+    half2 h;
+    h.x = __hgtu(x.x, y.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hgtu(x.y, y.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __heqx2_mask(half2 x, half2 y)
+{
+    return (__heq(x.x, y.x) ? 0xFFFFu : 0x0u) | (__heq(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hnex2_mask(half2 x, half2 y)
+{
+    return (__hne(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hne(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hlex2_mask(half2 x, half2 y)
+{
+    return (__hle(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hle(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgex2_mask(half2 x, half2 y)
+{
+    return (__hge(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hge(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltx2_mask(half2 x, half2 y)
+{
+    return (__hlt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hlt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtx2_mask(half2 x, half2 y)
+{
+    return (__hgt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hequx2_mask(half2 x, half2 y)
+{
+    return (__hequ(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hequ(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hneux2_mask(half2 x, half2 y)
+{
+    return (__hneu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hneu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hleux2_mask(half2 x, half2 y)
+{
+    return (__hleu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hleu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgeux2_mask(half2 x, half2 y)
+{
+    return (__hgeu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgeu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltux2_mask(half2 x, half2 y)
+{
+    return (__hltu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hltu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtux2_mask(half2 x, half2 y)
+{
+    return (__hgtu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgtu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __isnanx2(half2 x)
+{
+    half2 h;
+    h.x = __hisnan(x.x) ? (half)1.0f : (half)0.0f;
+    h.y = __hisnan(x.y) ? (half)1.0f : (half)0.0f;
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hmaxx2(const half2 x, const half2 y)
+{
+    half2 h;
+    h.x = __hmax(x.x, y.x);
+    h.y = __hmax(x.y, y.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hminx2(const half2 x, const half2 y)
+{
+    half2 h;
+    h.x = __hmin(x.x, y.x);
+    h.y = __hmin(x.y, y.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __haddx2(const half2 x, const half2 y) { return x + y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hsubx2(const half2 x, const half2 y) { return x - y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hmulx2(const half2 x, const half2 y) { return x * y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hdivx2(const half2 x, const half2 y) { return x / y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __habsx2(const half2 x)
+{
+    half2 h;
+    h.x = __habs(x.x);
+    h.y = __habs(x.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hfmax2(const half2 x, const half2 y, const half2 z)
+{
+    half2 h;
+    h.x = __hfma(x.x, y.x, z.x);
+    h.y = __hfma(x.y, y.y, z.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hnegx2(const half2 x) { return -x; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hadd(const half x, const half y) { return x + y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hsub(const half x, const half y) { return x - y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hmul(const half x, const half y) { return x * y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hdiv(const half x, const half y) { return x / y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hneg(const half x) { return -x; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hmax_nan(const half x, const half y)
+{
+    if (__hisnan(x)) {
+        return x;
+    }
+    if (__hisnan(y)) {
+        return y;
+    }
+    return x >= y ? x : y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hmin_nan(const half x, const half y)
+{
+    if (__hisnan(x)) {
+        return x;
+    }
+    if (__hisnan(y)) {
+        return y;
+    }
+    return x <= y ? x : y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half __hfma_relu(const half x, const half y, const half z)
+{
+    return __hmax_nan(__hfma(x, y, z), (half)0.0f);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hmaxx2_nan(const half2 x, const half2 y)
+{
+    half2 h;
+    h.x = __hmax_nan(x.x, y.x);
+    h.y = __hmax_nan(x.y, y.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hminx2_nan(const half2 x, const half2 y)
+{
+    half2 h;
+    h.x = __hmin_nan(x.x, y.x);
+    h.y = __hmin_nan(x.y, y.y);
+    return h;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hfmax2_relu(const half2 x, const half2 y, const half2 z)
+{
+    half2 h;
+    h.x = (half)0.0f;
+    h.y = (half)0.0f;
+    return __hmaxx2_nan(__hfmax2(x, y, z), h);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline half2 __hcmadd(const half2 x, const half2 y, const half2 z)
+{
+    half real_tmp = __hfma(x.x, y.x, z.x);
+    half img_tmp = __hfma(x.x, y.y, z.y);
+    real_tmp = __hfma(__hneg(x.y), y.y, real_tmp);
+    img_tmp = __hfma(x.y, y.x, img_tmp);
+    half2 h;
+    h.x = real_tmp;
+    h.y = img_tmp;
+    return h;
+}
+#endif
+
 #endif
 #endif // IMPL_SIMT_API_ASC_FP16_IMPL_H
 

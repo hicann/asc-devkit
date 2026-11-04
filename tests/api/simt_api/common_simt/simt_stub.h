@@ -31,10 +31,11 @@ namespace {
 constexpr int16_t HALF_MAX_EXP = 31;
 const float HALF_SUBNORMAL_THRESHOLD = std::pow(2, -14);
 } // namespace
+#ifndef __BISHENG_DISABLE_SOFT_IMPL
+static half __hmax_nan(half x, half y) { return x >= y ? x : y; }
 
-static half __hmax_nan(half x, half y) { return half(0); }
-
-static half __hmin_nan(half x, half y) { return half(0); }
+static half __hmin_nan(half x, half y) { return x >= y ? y : x; }
+#endif
 
 template <typename T>
 T __shfl(T var, int32_t src_lane, int32_t width)
@@ -641,6 +642,52 @@ static float2 __half22float2(half2 const x)
     res.x = __cvt_float<ROUND::CAST_RINT, RoundingSaturation::RS_DISABLE_VALUE>(x.x);
     res.y = __cvt_float<ROUND::CAST_RINT, RoundingSaturation::RS_DISABLE_VALUE>(x.y);
     return res;
+}
+
+static inline int __ffs(int x)
+{
+    if (x == 0) {
+        return 0;
+    }
+    int lsb = x & (~x + 1);
+    return __builtin_ctz(lsb) + 1;
+}
+
+static inline int __clz(int x)
+{
+    int32_t count = 0;
+    for (int i = 0; i < 32; i++) {
+        int32_t tmp = 1 << (32 - 1 - i);
+        if (((tmp & x) >> (32 - 1 - i)) == 0) {
+            count += 1;
+        } else {
+            break;
+        }
+    }
+    return count;
+}
+
+static inline unsigned long long __umul64hi(unsigned long long x, unsigned long long y)
+{
+    uint32_t a0 = (uint32_t)x;
+    uint32_t a1 = x >> 32; // 32 : uint bit-length
+    uint32_t b0 = (uint32_t)y;
+    uint32_t b1 = y >> 32; // 32 : uint bit-length
+
+    uint64_t lo0 = (uint64_t)a0 * b0;
+    uint64_t m1 = (uint64_t)a0 * b1;
+    uint64_t m2 = (uint64_t)a1 * b0;
+    uint64_t hi1 = (uint64_t)a1 * b1;
+
+    uint64_t mid = m1 + m2;
+    uint64_t carry = mid < m1;
+
+    uint64_t mid_hi = mid >> 32; // 32 : uint bit-length
+    uint64_t mid_lo = (uint32_t)mid;
+
+    uint64_t t = mid_lo + (lo0 >> 32); // 32 : uint bit-length
+
+    return hi1 + mid_hi + (carry << 32) + (t >> 32); // 32 : uint bit-length
 }
 
 namespace cce {

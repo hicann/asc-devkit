@@ -234,6 +234,143 @@ static uint16_t Fp16Add(uint16_t v1, uint16_t v2)
     return Fp16AddCalVal(sRet, eRet, mRet, mTrunc, shiftOut);
 }
 
+/**
+ * @ingroup half math operator
+ * @param [in] v1 left operator value of half object
+ * @param [in] v2 right operator value of half object
+ * @brief   Performing half subtraction
+ * @return  Return half result of subtraction fp from this
+ */
+static uint16_t Fp16Sub(uint16_t v1, uint16_t v2)
+{
+    // Reverse
+    uint16_t tmp = ((~(v2)) & static_cast<uint16_t>(Fp16BasicParam::K_FP16_SIGN_MASK)) |
+                   (v2 & static_cast<uint16_t>(Fp16BasicParam::K_FP16_ABS_MAX));
+    return Fp16Add(v1, tmp);
+}
+/**
+ * @ingroup half math operator
+ * @param [in] v1 left operator value of half object
+ * @param [in] v2 right operator value of half object
+ * @brief   Performing half multiplication
+ * @return  Return half result of multiplying this and fp
+ */
+static uint16_t Fp16Mul(uint16_t v1, uint16_t v2)
+{
+    uint16_t sa;
+    uint16_t sb;
+    int16_t ea;
+    int16_t eb;
+    uint16_t mRet;
+    uint16_t maTmp;
+    uint16_t mbTmp;
+    // 1.Extract
+    ExtractFp16(v1, sa, ea, maTmp);
+    ExtractFp16(v2, sb, eb, mbTmp);
+    uint32_t ma = maTmp;
+    uint32_t mb = mbTmp;
+
+    int16_t eRet =
+        (ea + eb - static_cast<uint16_t>(Fp16BasicParam::K_FP16_EXP_BIAS)) - static_cast<uint16_t>(DimIndex::K_DIM10);
+    uint32_t mulM = ma * mb;
+    uint16_t sRet = sa ^ sb;
+
+    uint32_t mMin = static_cast<uint16_t>(Fp16BasicParam::K_FP16_MAN_HIDE_BIT);
+    uint32_t mMax = mMin << 1;
+    uint32_t mTrunc = 0;
+    // the value of mRet should not be smaller than 2^23
+    while ((mulM < mMin) && (eRet > 1)) {
+        mulM = mulM << 1;
+        eRet = eRet - 1;
+    }
+    while ((mulM >= mMax) || (eRet < 1)) {
+        mTrunc = mTrunc >> 1;
+        mTrunc = mTrunc | (static_cast<uint32_t>(Fp32BasicParam::K_FP32_SIGN_MASK) * (mulM & 1));
+        mulM = mulM >> 1;
+        eRet = eRet + 1;
+    }
+    bool bLastBit = ((mulM & 1) > 0);
+    bool bTruncHigh = (ROUND_MODE == TagFp16RoundMode::K_ROUND_TO_NEAREST) &&
+                      ((mTrunc & static_cast<uint32_t>(Fp32BasicParam::K_FP32_SIGN_MASK)) > 0);
+    bool bTruncLeft = (ROUND_MODE == TagFp16RoundMode::K_ROUND_TO_NEAREST) &&
+                      ((mTrunc & static_cast<uint32_t>(Fp32BasicParam::K_FP32_ABS_MAX)) > 0);
+    mulM = ManRoundToNearest(bLastBit, bTruncHigh, bTruncLeft, mulM);
+
+    while ((mulM >= mMax) || (eRet < 0)) {
+        mulM = mulM >> 1;
+        eRet = eRet + 1;
+    }
+
+    if ((eRet == 1) && (mulM < static_cast<uint16_t>(Fp16BasicParam::K_FP16_MAN_HIDE_BIT))) {
+        eRet = 0;
+    }
+    mRet = static_cast<uint16_t>(mulM);
+
+    Fp16Normalize(eRet, mRet);
+
+    uint16_t ret = FP16_CONSTRUCTOR(sRet, static_cast<uint16_t>(eRet), mRet);
+    return ret;
+}
+
+/**
+ * @ingroup half math operator divided
+ * @param [in] v1 left operator value of half object
+ * @param [in] v2 right operator value of half object
+ * @brief   Performing half division
+ * @return  Return half result of division this by fp
+ */
+static uint16_t Fp16Div(uint16_t v1, uint16_t v2)
+{
+    uint16_t ret;
+    if (FP16_IS_ZERO(v2)) { // result is inf
+        // throw "half division by zero.";
+        uint16_t sa;
+        uint16_t sb;
+        uint16_t sRet;
+        sa = FP16_EXTRAC_SIGN(v1);
+        sb = FP16_EXTRAC_SIGN(v2);
+        sRet = sa ^ sb;
+        ret = FP16_CONSTRUCTOR(sRet, static_cast<uint16_t>(Fp16BasicParam::K_FP16_MAX_EXP), 0u);
+    } else if (FP16_IS_ZERO(v1)) {
+        ret = 0u;
+    } else {
+        uint16_t sa;
+        uint16_t sb;
+        int16_t ea;
+        int16_t eb;
+        uint16_t maTmp;
+        uint16_t mbTmp;
+        // 1.Extract
+        ExtractFp16(v1, sa, ea, maTmp);
+        ExtractFp16(v2, sb, eb, mbTmp);
+        uint64_t ma = maTmp;
+        uint64_t mb = mbTmp;
+        uint64_t mTmp;
+        if (ea > eb) {
+            mTmp = ma;
+            int16_t tmp = ea - eb;
+            for (int16_t i = 0; i < tmp; i++) {
+                mTmp = mTmp << 1;
+            }
+            ma = mTmp;
+        } else if (ea < eb) {
+            mTmp = mb;
+            int16_t tmp = eb - ea;
+            for (int16_t i = 0; i < tmp; i++) {
+                mTmp = mTmp << 1;
+            }
+            mb = mTmp;
+        }
+        float mDiv = static_cast<float>(ma * 1.0f / mb);
+        half fpDiv(mDiv);
+        ret = fpDiv.val;
+        if (sa != sb) {
+            ret |= static_cast<uint16_t>(Fp16BasicParam::K_FP16_SIGN_MASK);
+        }
+    }
+    return ret;
+}
+
 // operate
 half half::operator-() const
 {
@@ -254,6 +391,29 @@ half half::operator+=(const half fp)
     val = Fp16Add(val, fp.val);
     return *this;
 }
+
+half half::operator-(const half fp) const
+{
+    uint16_t retVal = Fp16Sub(val, fp.val);
+    half ret;
+    ret.val = retVal;
+    return ret;
+}
+half half::operator*(const half fp) const
+{
+    uint16_t retVal = Fp16Mul(val, fp.val);
+    half ret;
+    ret.val = retVal;
+    return ret;
+}
+half half::operator/(const half fp) const
+{
+    uint16_t retVal = Fp16Div(val, fp.val);
+    half ret;
+    ret.val = retVal;
+    return ret;
+}
+
 // compare
 bool half::operator==(const half& fp) const
 {
@@ -445,7 +605,11 @@ uint16_t half::FloatToFp16(const float& fVal) const
     return FP16_CONSTRUCTOR(sRet, static_cast<uint16_t>(eRet), mRet);
 }
 
-uint16_t half::DoubleToFp16(const double& dVal) { return 0; }
+uint16_t half::DoubleToFp16(const double& dVal)
+{
+    float fVal = static_cast<float>(dVal);
+    return FloatToFp16(fVal);
+}
 
 uint16_t half::Int16ToFp16(const int16_t& iVal) const { return iVal; }
 

@@ -176,6 +176,10 @@ Bf16T Bf16T::operator-(const Bf16T fp) const
     return ret;
 }
 
+Bf16T operator*(const Bf16T fp1, const Bf16T fp2) { return Bf16T(Bf16ToFloat(fp1.val) * Bf16ToFloat(fp2.val)); }
+
+Bf16T operator/(const Bf16T fp1, const Bf16T fp2) { return Bf16T(Bf16ToFloat(fp1.val) / Bf16ToFloat(fp2.val)); }
+
 Bf16T Bf16T::operator+=(const Bf16T fp)
 {
     val = Bf16Add(val, fp.val);

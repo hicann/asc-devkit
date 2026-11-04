@@ -1924,6 +1924,135 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(float4* address, float4 val)
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_dcci_entire(void* dst) { dcci(dst, 1); }
 #endif
 
+#ifdef __BISHENG_DISABLE_SOFT_IMPL
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long __mul64hi(long long x, long long y)
+{
+    bool x_neg = x < 0;
+    bool y_neg = y < 0;
+    unsigned long long ures = __umul64hi((unsigned long long&)x, (unsigned long long&)y);
+    long long res = (long long&)ures;
+    if (x_neg)
+        res -= (long long&)y;
+    if (y_neg)
+        res -= (long long&)x;
+    return res;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __clz(long long x)
+{
+    int2 val = (int2&)x;
+    if (val.y == 0)
+        return __clz(val.x) + 32; // 32 : int byte-length
+    else
+        return __clz(val.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __clz(long x)
+{
+    int2 val = (int2&)x;
+    if (val.y == 0)
+        return __clz(val.x) + 32; // 32 : int byte-length
+    else
+        return __clz(val.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long long a)
+{
+    uint2 val = (uint2&)a;
+    return __popc(val.x) + __popc(val.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long a)
+{
+    uint2 val = (uint2&)a;
+    return __popc(val.x) + __popc(val.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __ffs(long long x)
+{
+    int2 val = (int2&)x;
+    if (val.x == 0 && val.y == 0) {
+        return 0;
+    }
+    if (val.x == 0) {
+        return __ffs(val.y) + 32; // 32 : int byte-length
+    } else {
+        return __ffs(val.x);
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __ffs(long x)
+{
+    int2 val = (int2&)x;
+    if (val.x == 0 && val.y == 0) {
+        return 0;
+    }
+    if (val.x == 0) {
+        return __ffs(val.y) + 32; // 32 : int byte-length
+    } else {
+        return __ffs(val.x);
+    }
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __saturatef(float x)
+{
+    if (__isnan(x)) {
+        return 0.0;
+    }
+    return __fmaxf(0.0, __fminf(1.0, x));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __sad(int x, int y, unsigned int z) { return z + abs(x - y); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __usad(unsigned int x, unsigned int y, unsigned int z)
+{
+    return z + (x > y ? x - y : y - x);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __mul24(int x, int y)
+{
+    int x24 = (x << 8) >> 8;
+    int y24 = (y << 8) >> 8;
+    return x24 * y24;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __umul24(unsigned int x, unsigned int y)
+{
+    unsigned int x24 = x & 0x00FFFFFF;
+    unsigned int y24 = y & 0x00FFFFFF;
+    return x24 * y24;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __hadd(int x, int y)
+{
+    int c = x & y;
+    int s = x ^ y;
+    return (s >> 1) + c;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __rhadd(int x, int y)
+{
+    int c = x & y;
+    int s = x ^ y;
+    int r = s & 1;
+    return (s >> 1) + c + r;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __uhadd(unsigned int x, unsigned int y)
+{
+    unsigned int c = x & y;
+    unsigned int s = x ^ y;
+    return (s >> 1) + c;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __urhadd(unsigned int x, unsigned int y)
+{
+    unsigned int c = x & y;
+    unsigned int s = x ^ y;
+    unsigned int r = s & 1;
+    return (s >> 1) + c + r;
+}
+#endif
 namespace __asc_simt_vf {
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_dcci_single(__gm__ void* dst) { dcci(dst, 0); }

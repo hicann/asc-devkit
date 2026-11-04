@@ -1323,6 +1323,408 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort_as_bfloat16(const unsi
     return data.f;
 }
 
+#ifdef __BISHENG_DISABLE_SOFT_IMPL
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __heq(bfloat16_t x, bfloat16_t y)
+{
+    return (x == y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hne(bfloat16_t x, bfloat16_t y)
+{
+    return (x != y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hle(bfloat16_t x, bfloat16_t y)
+{
+    return (x <= y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hge(bfloat16_t x, bfloat16_t y)
+{
+    return (x >= y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hlt(bfloat16_t x, bfloat16_t y)
+{
+    return (x < y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgt(bfloat16_t x, bfloat16_t y)
+{
+    return (x > y) && !__hisnan(x) && !__hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hequ(bfloat16_t x, bfloat16_t y)
+{
+    return (x == y) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hneu(bfloat16_t x, bfloat16_t y)
+{
+    return (x != y) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hleu(bfloat16_t x, bfloat16_t y)
+{
+    return (!(x > y)) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgeu(bfloat16_t x, bfloat16_t y)
+{
+    return (!(x < y)) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hltu(bfloat16_t x, bfloat16_t y)
+{
+    return (!(x >= y)) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgtu(bfloat16_t x, bfloat16_t y)
+{
+    return (!(x <= y)) || __hisnan(x) || __hisnan(y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbeqx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __heq(x.x, y.x) && __heq(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbnex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hne(x.x, y.x) && __hne(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hblex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hle(x.x, y.x) && __hle(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hge(x.x, y.x) && __hge(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hlt(x.x, y.x) && __hlt(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hgt(x.x, y.x) && __hgt(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbequx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hequ(x.x, y.x) && __hequ(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbneux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hneu(x.x, y.x) && __hneu(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbleux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hleu(x.x, y.x) && __hleu(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgeux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hgeu(x.x, y.x) && __hgeu(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hltu(x.x, y.x) && __hltu(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return __hgtu(x.x, y.x) && __hgtu(x.y, y.y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __heqx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __heq(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __heq(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hnex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hne(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hne(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hlex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hle(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hle(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgex2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hge(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hge(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hlt(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hlt(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hgt(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hgt(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hequx2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hequ(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hequ(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hneux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hneu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hneu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hleux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hleu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hleu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgeux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hgeu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hgeu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hltu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hltu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtux2(bfloat16x2_t x, bfloat16x2_t y)
+{
+    bfloat16x2_t bf;
+    bf.x = __hgtu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hgtu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __heqx2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__heq(x.x, y.x) ? 0xFFFFu : 0x0u) | (__heq(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hnex2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hne(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hne(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hlex2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hle(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hle(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgex2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hge(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hge(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltx2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hlt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hlt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtx2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hgt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hequx2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hequ(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hequ(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hneux2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hneu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hneu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hleux2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hleu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hleu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgeux2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hgeu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgeu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltux2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hltu(x.x, y.x) ? 0xFFFFu : 0u) | (__hltu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtux2_mask(bfloat16x2_t x, bfloat16x2_t y)
+{
+    return (__hgtu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgtu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __isnanx2(bfloat16x2_t x)
+{
+    bfloat16x2_t bf;
+    bf.x = __hisnan(x.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    bf.y = __hisnan(x.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
+    return bf;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __haddx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    return x + y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hsubx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    return x - y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmulx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    return x * y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hdivx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    return x / y;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __habsx2(const bfloat16x2_t x)
+{
+    bfloat16x2_t ret = {__habs(x.x), __habs(x.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2(
+    const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z)
+{
+    bfloat16x2_t ret = {__hfma(x.x, y.x, z.x), __hfma(x.y, y.y, z.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hnegx2(const bfloat16x2_t x) { return -x; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hadd(const bfloat16_t x, const bfloat16_t y) { return x + y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hsub(const bfloat16_t x, const bfloat16_t y) { return x - y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmul(const bfloat16_t x, const bfloat16_t y) { return x * y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hdiv(const bfloat16_t x, const bfloat16_t y) { return x / y; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hneg(const bfloat16_t x) { return -x; }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmax_nan(const bfloat16_t x, const bfloat16_t y)
+{
+    if (__hisnan(x)) {
+        return x;
+    } else if (__hisnan(y)) {
+        return y;
+    }
+    return __max(x, y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmin_nan(const bfloat16_t x, const bfloat16_t y)
+{
+    if (__hisnan(x)) {
+        return x;
+    } else if (__hisnan(y)) {
+        return y;
+    }
+    return __min(x, y);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hfma_relu(const bfloat16_t x, const bfloat16_t y, const bfloat16_t z)
+{
+    return __hmax_nan(__hfma(x, y, z), (bfloat16_t)0.0f);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    bfloat16x2_t ret = {__hmax(x.x, y.x), __hmax(x.y, y.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    bfloat16x2_t ret = {__hmin(x.x, y.x), __hmin(x.y, y.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2_nan(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    bfloat16x2_t ret = {__hmax_nan(x.x, y.x), __hmax_nan(x.y, y.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2_nan(const bfloat16x2_t x, const bfloat16x2_t y)
+{
+    bfloat16x2_t ret = {__hmin_nan(x.x, y.x), __hmin_nan(x.y, y.y)};
+    return ret;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2_relu(
+    const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z)
+{
+    bfloat16x2_t h;
+    h.x = (bfloat16_t)0.0f;
+    h.y = (bfloat16_t)0.0f;
+    return __hmaxx2_nan(__hfmax2(x, y, z), h);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hcmadd(
+    const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z)
+{
+    bfloat16_t real_tmp = __hfma(x.x, y.x, z.x);
+    bfloat16_t img_tmp = __hfma(x.x, y.y, z.y);
+    real_tmp = __hfma(__hneg(x.y), y.y, real_tmp);
+    img_tmp = __hfma(x.y, y.x, img_tmp);
+    bfloat16x2_t h;
+    h.x = real_tmp;
+    h.y = img_tmp;
+    return h;
+}
+#endif
+
 #endif
 #endif // IMPL_SIMT_API_ASC_BF16_IMPL_H
 

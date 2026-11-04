@@ -30,6 +30,29 @@ TEST_F(DeviceTestsuite, MathApiTest)
 {
     int result = __float_as_int(1);
     EXPECT_EQ(1065353216, result);
+#ifdef __BISHENG_DISABLE_SOFT_IMPL
+    EXPECT_EQ(64, __mul64hi(1LL << 40, 1LL << 30));
+    EXPECT_EQ(-1, __mul64hi(-1LL, 1LL));
+    EXPECT_EQ(23, __clz(1LL << 40));
+    EXPECT_EQ(31, __clz(1L << 32));
+    EXPECT_EQ(64, __clz(0LL));
+    EXPECT_EQ(64, __popc(0xFFFFFFFFFFFFFFFFULL));
+    EXPECT_EQ(64, __popc(0xFFFFFFFFFFFFFFFFUL));
+    EXPECT_EQ(41, __ffs(1LL << 40));
+    EXPECT_EQ(0, __ffs(0LL));
+    EXPECT_EQ(41, __ffs(1L << 40));
+    EXPECT_EQ(1.0f, __saturatef(2.0f));
+    EXPECT_EQ(0.0f, __saturatef(-1.0f));
+    EXPECT_EQ(0.0f, __saturatef(NAN));
+    EXPECT_EQ(12U, __sad(3, 1, 10));
+    EXPECT_EQ(12U, __usad(1, 3, 10));
+    EXPECT_EQ(16384, __mul24(0x80, 0x80));
+    EXPECT_EQ(33554430U, __umul24(0xFFFFFF, 2));
+    EXPECT_EQ(1, __hadd(1, 2));
+    EXPECT_EQ(2, __rhadd(1, 2));
+    EXPECT_EQ(1U, __uhadd(1, 2));
+    EXPECT_EQ(2U, __urhadd(1, 2));
+#endif
 }
 
 void VerifyLdStFloatNumber(float x, float xExpected, float epsilon = 1e-5)
