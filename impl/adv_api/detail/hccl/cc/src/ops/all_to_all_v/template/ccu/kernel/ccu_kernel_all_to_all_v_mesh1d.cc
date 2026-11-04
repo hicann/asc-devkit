@@ -309,6 +309,10 @@ static CcuResult LoadArgs(
     ccu::Variable srcOffset, ccu::Variable dstOffset, ccu::Variable extAddr, ccu::Variable goSize1,
     ccu::Variable goSize2, ccu::Variable goSize3, ccu::Variable goSize4)
 {
+    (void)goSize1;
+    (void)goSize2;
+    (void)goSize3;
+    (void)goSize4;
     HCCL_INFO("[CcuKernelAlltoAllVMesh1D] LoadArgs!");
     ctx.input[0] = inputAddr;
     ctx.output[ctx.rankId] = outputAddr;
