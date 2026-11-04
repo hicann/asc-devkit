@@ -1266,8 +1266,8 @@ template <typename T, RoundMode roundMode>
 __aicore__ inline void TruncateImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t count)
 {
     static_assert(
-        SupportType<T, half, float, bfloat16_t>(), "Failed to check dtype in Truncate, current api "
-                                                   "support dtype is src and dst both: half, float, bfloat16_t.");
+        SupportType<T, half, float>(), "Failed to check dtype in Truncate, current api "
+                                       "support dtype is src and dst both: half, float.");
     static_assert(
         SupportEnum<
             roundMode, RoundMode::CAST_RINT, RoundMode::CAST_FLOOR, RoundMode::CAST_CEIL, RoundMode::CAST_ROUND,

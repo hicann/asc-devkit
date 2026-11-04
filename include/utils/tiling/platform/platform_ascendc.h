@@ -78,6 +78,7 @@ enum class SocVersion {
     KIRINDEV0002,
     KIRINDEV0003,
     ASCEND350, // ASCEND350, __DAV_C310__
+    KIRIN9020,
     RESERVED_VERSION = 99999
 };
 

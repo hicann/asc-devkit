@@ -48,6 +48,8 @@
 #include "dav_5162/kernel_operator_vec_unary_impl.h"
 #elif __NPU_ARCH__ == 3003
 #include "dav_l300/kernel_operator_vec_unary_impl.h"
+#elif __NPU_ARCH__ == 3103
+#include "dav_l310/kernel_operator_vec_unary_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "dav_l311/kernel_operator_vec_unary_impl.h"
 #endif
@@ -1047,7 +1049,7 @@ __aicore__ inline void Not(const LocalTensor<T>& dst, const LocalTensor<T>& src,
 }
 
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
-    (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
+    (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
 /* **************************************** Neg ****************************************** */
 /*
  * @ingroup Neg Level 2

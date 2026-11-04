@@ -45,6 +45,8 @@
 #include "dav_5162/kernel_operator_vec_scatter_impl.h"
 #elif (__NPU_ARCH__ == 3003)
 #include "dav_l300/kernel_operator_vec_scatter_impl.h"
+#elif (__NPU_ARCH__ == 3103)
+#include "dav_l310/kernel_operator_vec_scatter_impl.h"
 #elif (__NPU_ARCH__ == 3113)
 #include "dav_l311/kernel_operator_vec_scatter_impl.h"
 #endif
@@ -177,16 +179,16 @@ __aicore__ inline void Scatter(
     } else {
         elementCountSingleRepeat = 64;
     }
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
     vectorRegWidth = VECTOR_REG_WIDTH;
 #endif
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
     elementCountSingleRepeat = vectorRegWidth / sizeof(T);
     uint32_t repeatStride = vectorRegWidth / ONE_BLK_SIZE;
 #endif
     const uint32_t elementCountTail = count % elementCountSingleRepeat;
     const uint8_t repeatTime = count / elementCountSingleRepeat;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
     if (repeatTime > 0) {
         Scatter(dst, src, dstOffset, dstBaseAddr, (uint64_t)elementCountSingleRepeat, repeatTime, repeatStride);
     }

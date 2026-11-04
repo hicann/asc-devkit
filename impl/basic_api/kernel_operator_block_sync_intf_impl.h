@@ -46,6 +46,8 @@
 #include "dav_m300/kernel_operator_common_impl.h"
 #elif __NPU_ARCH__ == 3003
 #include "dav_l300/kernel_operator_sync_impl.h"
+#elif __NPU_ARCH__ == 3103
+#include "dav_l310/kernel_operator_sync_impl.h"
 #elif __NPU_ARCH__ == 3102
 #include "dav_m310/kernel_operator_common_impl.h"
 #elif __NPU_ARCH__ == 3510

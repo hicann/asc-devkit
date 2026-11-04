@@ -265,7 +265,7 @@ struct LoadData3DParamsV2 {
         for (int32_t i = 0; i < PAD_SIZE; ++i) {
             padList[i] = 0;
         }
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
         enDualSrc = BM_DISABLE;
 #endif
     }
@@ -351,14 +351,14 @@ struct LoadData3DParamsV2 {
     bool filterSizeW = false;
     bool filterSizeH = false;
     bool fMatrixCtrl = false;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
     bm_t enDualSrc = BM_DISABLE;
 #endif
 };
 struct LoadData3DParamsV2Pro {
     __aicore__ LoadData3DParamsV2Pro()
     {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
         enDualSrc = BM_DISABLE;
 #endif
     }
@@ -384,7 +384,7 @@ struct LoadData3DParamsV2Pro {
     bool fMatrixCtrl = false;
     uint64_t extConfig = 0;
     uint64_t filterConfig = 0X10101010101;
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
     bm_t enDualSrc = BM_DISABLE;
 #endif
 };

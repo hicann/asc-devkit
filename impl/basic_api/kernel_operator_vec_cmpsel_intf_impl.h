@@ -52,6 +52,8 @@
 #include "dav_5162/kernel_operator_vec_cmpsel_impl.h"
 #elif __NPU_ARCH__ == 3003
 #include "dav_l300/kernel_operator_vec_cmpsel_impl.h"
+#elif __NPU_ARCH__ == 3103
+#include "dav_l310/kernel_operator_vec_cmpsel_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "dav_l311/kernel_operator_vec_cmpsel_impl.h"
 #endif
@@ -674,7 +676,7 @@ __aicore__ inline void Select(
 
 #if defined(__NPU_ARCH__) &&                                                                                 \
     ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
-     (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
+     (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
 /* **************************************************************************************************
  * Compares                                           *
  * ************************************************************************************************* */
@@ -803,7 +805,7 @@ __aicore__ inline void Compares(const T2& dst, const T3& src0, const T4& src1, C
     using ActualU = typename T2::PrimType;
 #if defined(__NPU_ARCH__) &&                                                                                 \
     ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 3003) || \
-     (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
+     (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     ASCENDC_ASSERT(((count * sizeof(T3)) % ONE_REPEAT_BYTE_SIZE == 0), {
         KERNEL_LOG(
             KERNEL_ERROR,

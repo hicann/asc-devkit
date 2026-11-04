@@ -67,9 +67,9 @@ __aicore__ inline U ScalarCast(T valueIn);
 
 #if defined(__NPU_ARCH__) &&                                                                                 \
     ((__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || \
-     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || \
-     (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162) || (__NPU_ARCH__ == 9201) || \
-     (__NPU_ARCH__ == 9202))
+     (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
+     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162) || \
+     (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
 // 所有架构共用的：float -> bfloat16_t
 __aicore__ inline bfloat16_t Cast(const float& fVal);
 #endif
@@ -86,8 +86,9 @@ __aicore__ constexpr inline U Cast(T bVal);
 __aicore__ inline float Cast(const bfloat16_t& bVal);
 #endif
 
-#elif defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
-                                (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#elif defined(__NPU_ARCH__) &&                                                                               \
+    ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
+     (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
 template <typename T>
 __aicore__ constexpr inline float Cast(const T& bVal);
 #endif

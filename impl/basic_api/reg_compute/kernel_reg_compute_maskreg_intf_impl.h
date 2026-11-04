@@ -25,6 +25,8 @@
 
 #if __NPU_ARCH__ == 3003
 #include "../../basic_api/reg_compute/dav_l300/kernel_reg_compute_maskreg_impl.h"
+#elif __NPU_ARCH__ == 3103
+#include "../../basic_api/reg_compute/dav_l310/kernel_reg_compute_maskreg_impl.h"
 #elif __NPU_ARCH__ == 3113
 #include "../../basic_api/reg_compute/dav_l311/kernel_reg_compute_maskreg_impl.h"
 #elif (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
@@ -138,9 +140,9 @@ __simd_callee__ inline MaskReg MoveMask()
     return MoveMaskImpl<T>();
 }
 
-#if !(                       \
-    defined(__NPU_ARCH__) && \
-    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163))
+#if !(                                                                                                \
+    defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || \
+                              __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 3103))
 // Kirin v516 平台不支持如下历史接口
 __simd_callee__ inline void MaskNot(MaskReg& dst, MaskReg& src, MaskReg& mask) { MaskNotImpl(dst, src, mask); }
 __simd_callee__ inline void MaskAnd(MaskReg& dst, MaskReg& src0, MaskReg& src1, MaskReg& mask)

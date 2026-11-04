@@ -60,6 +60,10 @@
 #include "dav_l300/kernel_operator_sync_impl.h"
 #include "dav_l300/kernel_operator_set_atomic_impl.h"
 #include "dav_3510/kernel_operator_common_impl.h"
+#elif __NPU_ARCH__ == 3103
+#include "dav_l310/kernel_operator_sync_impl.h"
+#include "dav_l310/kernel_operator_set_atomic_impl.h"
+#include "dav_3510/kernel_operator_common_impl.h"
 #elif __NPU_ARCH__ == 3102
 #include "dav_m310/kernel_operator_set_atomic_impl.h"
 #elif __NPU_ARCH__ == 3510
@@ -243,7 +247,8 @@ __aicore__ inline void HWaitFlag(int32_t eventID)
 #endif
 
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || \
-    (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
+    (__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 9201) || \
+    (__NPU_ARCH__ == 9202)
 template <int8_t startBit, int8_t endBit>
 __aicore__ static inline void SetCtrlSpr(int64_t value)
 {

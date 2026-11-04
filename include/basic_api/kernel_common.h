@@ -72,12 +72,12 @@ __BLOCK_LOCAL__ __inline__ AscendC::TPipe* g_tPipePtr;
 #endif // end ASCENDC_DEBUG
 
 #if __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || \
-    __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-    __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 9201 || \
-    __NPU_ARCH__ == 9202
-__BLOCK_LOCAL__ __inline__ uint64_t g_maskCount;
-#if __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+    __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3103 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
+    __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162 || \
     __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
+__BLOCK_LOCAL__ __inline__ uint64_t g_maskCount;
+#if __NPU_ARCH__ == 3002 || __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3103 || \
+    __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
 __BLOCK_LOCAL__ __inline__ half g_deqValue;
 #endif
 #endif

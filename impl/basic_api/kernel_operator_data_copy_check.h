@@ -336,8 +336,8 @@ __aicore__ inline void CheckDataCopyTensor(
 
     CheckNz2NdParamsCommon(intriParams, apiName);
 #if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-     __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
+    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3103 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
+     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
     const bool isValidSrc = (srcHwPos == Hardware::UB || srcHwPos == Hardware::L1);
     const __gm__ char* supportedPos = "UB(VECOUT)/L1 Buffer(A1/B1)";
 #else
@@ -534,8 +534,8 @@ __aicore__ inline void CheckDataCopyPadLocalToGlobalTensor(
 {
     const Hardware srcHwPos = GetPhyType(static_cast<TPosition>(src.GetPosition()));
 #if defined(__NPU_ARCH__) &&                                                                         \
-    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || \
-     __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
+    (__NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3103 || __NPU_ARCH__ == 3113 || __NPU_ARCH__ == 5101 || \
+     __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
     const bool isValidSrc = (srcHwPos == Hardware::UB || srcHwPos == Hardware::L1);
 #else
     const bool isValidSrc = (srcHwPos == Hardware::UB);

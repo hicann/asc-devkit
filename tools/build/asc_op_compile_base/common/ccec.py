@@ -126,6 +126,7 @@ def check_is_regbase_v2():
         ASCEND_960DT,
         ASCEND_960PR,
         KIRIN_X90,
+        KIRIN_9020,
         KIRIN_9030,
         KIRIN_9050,
         KIRIN_DEV_0001,

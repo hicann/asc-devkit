@@ -340,7 +340,7 @@ __aicore__ inline void LoadData(
     LoadDataImpl<T>(dst, src, loadDataParams);
 }
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3003) || (__NPU_ARCH__ == 3103))
 // cce compiler process load3d bfloat16_t using B8, so use the half dtype instead
 template <>
 __aicore__ inline void LoadData(
