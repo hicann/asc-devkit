@@ -26,6 +26,8 @@ namespace te {
 namespace experimental {
 namespace detail {
 
+constexpr uint32_t float_sign_bit = 0x80000000u;
+constexpr uint32_t float_exponent_mask = 0x7F800000u;
 constexpr int32_t float_exponent_shift = 23;
 constexpr int32_t float_exponent_bias = 127;
 constexpr int32_t float_min_normal_exponent = -126;
@@ -47,8 +49,8 @@ __simd_callee__ inline vector_float div_flush_subnormal(vector_float src, vector
     vector_uint32_t zero;
     vector_bool exponent_is_zero;
     vector_float dst;
-    asc_duplicate_scalar(exponent_mask, 0x7F800000u, mask);
-    asc_duplicate_scalar(sign, 0x80000000u, mask);
+    asc_duplicate_scalar(exponent_mask, float_exponent_mask, mask);
+    asc_duplicate_scalar(sign, float_sign_bit, mask);
     asc_duplicate_scalar(zero, 0u, mask);
     asc_and(exponent, (vector_uint32_t&)src, exponent_mask, mask);
     asc_eq(exponent_is_zero, exponent, zero, mask);
@@ -61,9 +63,6 @@ __simd_callee__ inline void div_precision(
     vector_float& dst, vector_float src0, vector_float src1, vector_bool mask, bool force_ftz)
 {
     constexpr uint32_t inf_nan_bound = 0xff800000u;
-    constexpr uint32_t sign_bit = 0x80000000u;
-    constexpr uint32_t exponent_mask = 0x7F800000u;
-    constexpr int32_t exponent_bias = 127;
     constexpr int32_t precision_threshold = -64;
 
     if (force_ftz) {
@@ -93,7 +92,7 @@ __simd_callee__ inline void div_precision(
     vector_bool zero_mask;
     vector_bool need_scale_mask;
 
-    asc_duplicate_scalar((vector_uint32_t&)sign_vector, sign_bit, mask);
+    asc_duplicate_scalar((vector_uint32_t&)sign_vector, float_sign_bit, mask);
     asc_div(z, src0, src1, mask);
     asc_or(inf_nan, (vector_uint32_t&)z, (vector_uint32_t&)sign_vector, mask);
     tmp_dst = z;
@@ -101,16 +100,16 @@ __simd_callee__ inline void div_precision(
     asc_ge_scalar(inf_nan_mask, (vector_uint32_t&)inf_nan, inf_nan_bound, mask);
     asc_or(inf_nan_mask, inf_nan_mask, zero_mask, mask);
 
-    asc_duplicate_scalar(src0_reg, exponent_mask, mask);
+    asc_duplicate_scalar(src0_reg, float_exponent_mask, mask);
     asc_and(src0_exp_bits, (vector_uint32_t&)src0, src0_reg, mask);
-    asc_shiftright_scalar(src0_exp_bits, src0_exp_bits, 23, mask);
-    asc_add_scalar(src0_exp, (vector_int32_t&)src0_exp_bits, -exponent_bias, mask);
+    asc_shiftright_scalar(src0_exp_bits, src0_exp_bits, float_exponent_shift, mask);
+    asc_add_scalar(src0_exp, (vector_int32_t&)src0_exp_bits, -float_exponent_bias, mask);
     asc_lt_scalar(need_scale_mask, src0_exp, precision_threshold, mask);
 
     asc_duplicate_scalar(threshold_vec, precision_threshold, mask);
     asc_sub(k, threshold_vec, src0_exp, need_scale_mask);
-    asc_add_scalar(new_exp, k, exponent_bias, mask);
-    asc_shiftleft_scalar(scale_bits, (vector_uint32_t&)new_exp, 23, mask);
+    asc_add_scalar(new_exp, k, float_exponent_bias, mask);
+    asc_shiftleft_scalar(scale_bits, (vector_uint32_t&)new_exp, float_exponent_shift, mask);
 
     asc_mul((vector_float&)src0_reg, src0, (vector_float&)scale_bits, mask);
     asc_mul((vector_float&)src0_exp_bits, src1, (vector_float&)scale_bits, mask);
@@ -159,7 +158,7 @@ __simd_callee__ inline void div_sticky(
     asc_gt_scalar(residual_gt_zero, residual, 0.0f, mask);
     asc_lt_scalar(residual_lt_zero, residual, 0.0f, mask);
     asc_eq_scalar(sticky_zero, residual, 0.0f, mask);
-    asc_duplicate_scalar(sign_mask, 0x80000000u, mask);
+    asc_duplicate_scalar(sign_mask, float_sign_bit, mask);
     asc_and(src0_sign, (vector_uint32_t&)src0, sign_mask, mask);
     asc_duplicate_scalar(zero_bits, 0u, mask);
     asc_eq(src0_positive, src0_sign, zero_bits, mask);
