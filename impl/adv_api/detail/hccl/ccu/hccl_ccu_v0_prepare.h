@@ -627,7 +627,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     xnData_[KFC_CONCURRENT_RS_MESH_OUTPUT] = outputBase;
     xnData_[KFC_CONCURRENT_RS_MESH_SCRATCH] = ccuParam_.scratchAddr;
     xnData_[KFC_CONCURRENT_RS_MESH_RANK_SLICE_OFFSET] = ccuParam_.rankId * sliceStride;
-    constexpr uint64_t scratchSize = 64 * 1024 * 1024; // 与 host 侧 alloc_ctx_res.cc 对齐（双端契约）
+    constexpr uint64_t scratchSize = 128 * 1024 * 1024; // 与 host 侧 alloc_ctx_res.cc 对齐（双端契约）
     const uint64_t chunkSize = scratchSize / ccuParam_.rankNum / splitAlignment * splitAlignment;
     const uint64_t fullChunkCount = meshSize == 0 ? 0 : (meshSize - 1) / chunkSize;
     const uint64_t chunkCount = meshSize == 0 ? 0 : fullChunkCount + 1;
