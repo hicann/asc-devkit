@@ -37,10 +37,10 @@ __simd_callee__ inline void LoadDataWithT(
 {
     if constexpr (IsSameType<T, half>::value || IsSameType<T, bfloat16_t>::value) {
         Reg::RegTensor<T> srcOrigin;
-        DataCopy<T, Reg::LoadDist::DIST_UNPACK_B16>(srcOrigin, src + srcOffset);
+        Reg::LoadAlign<T, Reg::LoadDist::DIST_UNPACK_B16>(srcOrigin, src + srcOffset);
         Cast<float, T, layoutZMrgZ>(dstReg, srcOrigin, dstPreg);
     } else { // this branch: only support float
-        DataCopy(dstReg, src + srcOffset);
+        Reg::LoadAlign(dstReg, src + srcOffset);
     }
 }
 } // namespace NormalizeInternal
@@ -98,10 +98,10 @@ __simd_callee__ inline void RsqrtUtil(RegT& dstReg, RegT& srcReg, Reg::MaskReg& 
 
     // move to the last
     // if x == float(inf): return 0.0f // if mask is 0, then default select srcReg Value
-    CompareScalar(cmpRegZero, srcReg, POS_INF, mask);
+    Compares(cmpRegZero, srcReg, POS_INF, mask);
     Select(dstReg, regZero, y, cmpRegZero);
     // if x == 0.0f: return float(inf)
-    CompareScalar(cmpRegInf, srcReg, (float)0, mask);
+    Compares(cmpRegInf, srcReg, (float)0, mask);
     Select(dstReg, regInf, dstReg, cmpRegInf);
 }
 
@@ -201,8 +201,8 @@ __simd_vf__ inline void NormalizeVFImpl(
             Mul<float, Reg::MaskMergeMode::ZEROING>(dstReg2, dstReg2, rstdReg2, preg);
             // FusedMulAdd: Vd = Vn * Vd + Vm, dst = gamma * dst + beta
             if constexpr (!config.isNoGamma && !config.isNoBeta) {
-                FusedMulDstAdd(dstReg1, gammaReg, betaReg, pregFull);
-                FusedMulDstAdd(dstReg2, gammaReg, betaReg, pregFull);
+                MulDstAdd(dstReg1, gammaReg, betaReg, pregFull);
+                MulDstAdd(dstReg2, gammaReg, betaReg, pregFull);
             } else {
                 if constexpr (!config.isNoGamma) {
                     Mul<float, Reg::MaskMergeMode::ZEROING>(dstReg1, dstReg1, gammaReg, preg);
@@ -269,7 +269,7 @@ __simd_vf__ inline void NormalizeVFImpl(
             Mul<float, Reg::MaskMergeMode::ZEROING>(dstReg, dstReg, rstdReg, preg);
             // FusedMulAdd: Vd = Vn * Vd + Vm, dst = gamma * dst + beta
             if constexpr (!config.isNoGamma && !config.isNoBeta) {
-                FusedMulDstAdd(dstReg, gammaReg, betaReg, pregFull);
+                MulDstAdd(dstReg, gammaReg, betaReg, pregFull);
             } else {
                 if constexpr (!config.isNoGamma) {
                     Mul<float, Reg::MaskMergeMode::ZEROING>(dstReg, dstReg, gammaReg, preg);

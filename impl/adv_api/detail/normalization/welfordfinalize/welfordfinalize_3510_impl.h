@@ -81,7 +81,7 @@ __simd_vf__ inline void ComputeMean64(
     for (uint16_t i = 0; i < static_cast<uint16_t>(aLength); i++) {
         LoadDataWithT<T>(srcUb, src0Reg, preg, i * rLengthWithPadding);
         Muls(src1Reg, src0Reg, k2Rec, preg);
-        ReduceSum(dstReg, src1Reg, preg);
+        Reg::Reduce<ReduceType::SUM>(dstReg, src1Reg, preg);
         if constexpr (isCorrection) {
             Muls(meanReg, dstReg, rRecWithCorrection, pregOne);
         } else {
@@ -132,7 +132,7 @@ __simd_vf__ inline void ComputeMeanVF(
             Muls(src0Reg, src0Reg, k2Rec, pregFull);
             Muls(src1Reg, src1Reg, k2Rec, preg);
             Add(dstReg, src0Reg, src1Reg, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((workUbOrigin + i), dstReg, pregOne);
         }
 
@@ -142,7 +142,7 @@ __simd_vf__ inline void ComputeMeanVF(
             preg = Reg::UpdateMask<float>(count);
             LoadDataWithT<T>(srcUb, src0Reg, pregFull, j * rLengthWithPadding + mVL + i * sregLower);
             Muls(dstReg, src0Reg, k2Rec, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>(
                 (workUbOrigin + repeatTimes1 + i), dstReg, pregOne);
         }
@@ -163,7 +163,7 @@ __simd_vf__ inline void ComputeMeanVF(
         count = lastCount;
         preg = Reg::UpdateMask<float>(count);
         Reg::LoadAlign(src0Reg, workUbOrigin);
-        ReduceSum(dstReg, src0Reg, preg);
+        Reg::Reduce<ReduceType::SUM>(dstReg, src0Reg, preg);
         // save mean
         if constexpr (isCorrection) {
             Muls(meanReg, dstReg, rRecWithCorrection, preg);

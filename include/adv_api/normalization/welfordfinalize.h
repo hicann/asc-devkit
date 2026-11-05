@@ -30,7 +30,8 @@
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 2002 || __NPU_ARCH__ == 2201)
 #include "../../../impl/adv_api/detail/normalization/welfordfinalize/welfordfinalize_common_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                                __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                                __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+                                __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
 #include "../../../impl/adv_api/detail/normalization/welfordfinalize/welfordfinalize_3510_impl.h"
 #endif
 namespace AscendC {
@@ -150,7 +151,8 @@ __aicore__ inline void WelfordFinalize(
         return;
     }
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
     WelfordFinalizeImpl<isReuseSource, config>(
         outputMean, outputVariance, inputMean, inputVariance, sharedTmpBuffer, para);
 #endif
@@ -178,7 +180,8 @@ __aicore__ inline void WelfordFinalize(
         return;
     }
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
     WelfordFinalizeImpl<isReuseSource, config>(
         outputMean, outputVariance, inputMean, inputVariance, counts, sharedTmpBuffer, para);
 #endif
@@ -204,7 +207,8 @@ __aicore__ inline void WelfordFinalize(
         return;
     }
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
     WelfordFinalizeImpl<isReuseSource, config>(outputMean, outputVariance, inputMean, inputVariance, para);
 #endif
 }
@@ -230,7 +234,8 @@ __aicore__ inline void WelfordFinalize(
         return;
     }
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 5102 || \
-                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113)
+                              __NPU_ARCH__ == 5162 || __NPU_ARCH__ == 3003 || __NPU_ARCH__ == 3113 || \
+                              __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5165)
     WelfordFinalizeImpl<isReuseSource, config>(outputMean, outputVariance, inputMean, inputVariance, counts, para);
 #endif
 }

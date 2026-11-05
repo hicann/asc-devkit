@@ -63,6 +63,19 @@ __simd_callee__ inline void FusedExpSubImpl(S& dstReg, V& srcReg0, V& srcReg1, M
     constexpr auto partModeValue = std::integral_constant<::Part, static_cast<::Part>(layout)>();
     vexpdif(dstReg, srcReg0, srcReg1, mask, partModeValue);
 }
+
+template <typename T, MaskMergeMode mode, typename U>
+__simd_callee__ inline void FusedMulDstAddImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(
+        SupportType<ActualT, half, float, bfloat16_t>(), "current data type is not supported on current device!");
+    static_assert(
+        SupportEnum<mode, MaskMergeMode::ZEROING>(), "current api only supported Mode ZEROING on current device!");
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    vmadd(dstReg, srcReg0, srcReg1, mask, modeValue);
+}
 } // namespace Reg
 } // namespace AscendC
 #endif // ASCENDC_MODULE_REG_COMPUTE_VEC_FUSED_IMPL_H

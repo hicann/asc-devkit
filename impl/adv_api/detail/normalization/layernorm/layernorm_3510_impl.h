@@ -51,7 +51,7 @@ __simd_vf__ inline void ComputeMeanVariance64VF(
     for (uint16_t i = 0; i < static_cast<uint16_t>(aLength); i++) {
         LoadDataWithT<T>(srcUb, src0Reg, preg, i * rLengthWithPadding);
         Muls(src1Reg, src0Reg, k2Rec, preg);
-        ReduceSum(dstReg, src1Reg, preg);
+        Reg::Reduce<ReduceType::SUM>(dstReg, src1Reg, preg);
         Muls(meanReg, dstReg, k2RRec, pregOne);
         Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((meanUb + i), meanReg, pregOne);
         if constexpr (isOutputVariance) {
@@ -59,7 +59,7 @@ __simd_vf__ inline void ComputeMeanVariance64VF(
             Sub(src0Reg, src0Reg, meanReg, pregFull);
             Mul(src0Reg, src0Reg, src0Reg, pregFull);
             Muls(src0Reg, src0Reg, k2Rec, pregFull);
-            ReduceSum(dstReg, src0Reg, preg);
+            Reg::Reduce<ReduceType::SUM>(dstReg, src0Reg, preg);
             if constexpr (isCorrection) {
                 Muls(varianceReg, dstReg, rRecWithCorrection, pregOne);
             } else {
@@ -106,7 +106,7 @@ __simd_vf__ inline void ComputeMeanVariance128VF(
         Muls(src0CalReg, src0Reg, k2Rec, pregFull);
         Muls(src1CalReg, src1Reg, k2Rec, preg);
         Add(dstReg, src0CalReg, src1CalReg, pregFull);
-        ReduceSum(dstReg, dstReg, pregFull);
+        Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
         Muls(meanReg, dstReg, k2RRec, pregOne);
         Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((meanUb + i), meanReg, pregOne);
         if constexpr (isOutputVariance) {
@@ -121,7 +121,7 @@ __simd_vf__ inline void ComputeMeanVariance128VF(
 
             Add(dstReg, src0CalReg, src1CalReg, pregFull);
 
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Muls(varianceReg, dstReg, k2RRec, pregOne);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((varianceUb + i), varianceReg, pregOne);
         }

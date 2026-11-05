@@ -104,7 +104,7 @@ __simd_callee__ inline void ComputeMeanLoop1(
             Muls(dstReg1, src1Reg1, k2Rec, preg);
             Axpy(dstReg1, src0Reg1, k2Rec, pregFull);
             Add(dstReg, dstReg0, dstReg1, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((workUbOrigin + i), dstReg, pregOne);
         }
     }
@@ -134,7 +134,7 @@ __simd_callee__ inline void ComputeMeanLoop2(
             Muls(dstReg1, src0Reg1, k2Rec, pregFull);
 
             Add(dstReg, dstReg0, dstReg1, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>(
                 (workUbOrigin + repeatTimes1 + i), dstReg, pregOne);
         }
@@ -159,7 +159,7 @@ __simd_callee__ inline void ComputeMeanLoop3(
             Muls(dstReg0, src0Reg0, k2Rec, pregFull);
             Muls(dstReg1, src0Reg1, k2Rec, pregFull);
             Add(dstReg, dstReg0, dstReg1, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>(
                 (workUbOrigin + repeatTimes1 + repeatTimes2 + i), dstReg, pregOne);
         }
@@ -235,7 +235,7 @@ __simd_callee__ inline void ComputeVarianceLoop1(
             Axpy(dstReg1, src0Reg1, k2Rec, pregFull);
 
             Add(dstReg, dstReg0, dstReg1, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>((workUbOrigin + i), dstReg, pregOne);
         }
     }
@@ -278,7 +278,7 @@ __simd_callee__ inline void ComputeVarianceLoop2(
             Muls(dstReg1, src0Reg1, k2Rec, pregFull);
 
             Add(dstReg, dstReg0, dstReg1, pregFull);
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>(
                 (workUbOrigin + repeatTimes1 + i), dstReg, pregOne);
         }
@@ -312,7 +312,7 @@ __simd_callee__ inline void ComputeVarianceLoop3(
 
             Add(dstReg, dstReg0, dstReg1, pregFull);
 
-            ReduceSum(dstReg, dstReg, pregFull);
+            Reg::Reduce<ReduceType::SUM>(dstReg, dstReg, pregFull);
             Reg::StoreAlign<float, Reg::StoreDist::DIST_FIRST_ELEMENT_B32>(
                 (workUbOrigin + repeatTimes1 + repeatTimes2 + i), dstReg, pregOne);
         }
@@ -364,12 +364,12 @@ __simd_callee__ inline void ReduceWorkBufferAndStore(
 
         if constexpr (HalfAddTimes == 1) {
             Reg::LoadAlign(v0, workUb);
-            ReduceSum(tmp, v0, pregLastCount);
+            Reg::Reduce<ReduceType::SUM>(tmp, v0, pregLastCount);
         } else if constexpr (HalfAddTimes == 2) {
             Reg::LoadAlign(v0, workUb);
             Reg::LoadAlign(v1, workUb + sregLower);
             Add(v0, v0, v1, pregFull);
-            ReduceSum(tmp, v0, pregLastCount);
+            Reg::Reduce<ReduceType::SUM>(tmp, v0, pregLastCount);
         } else if constexpr (HalfAddTimes == 4) {
             Reg::LoadAlign(v0, workUb);
             Reg::LoadAlign(v1, workUb + sregLower * 1);
@@ -378,7 +378,7 @@ __simd_callee__ inline void ReduceWorkBufferAndStore(
             Add(v0, v0, v2, pregFull);
             Add(v1, v1, v3, pregFull);
             Add(v0, v0, v1, pregFull);
-            ReduceSum(tmp, v0, pregLastCount);
+            Reg::Reduce<ReduceType::SUM>(tmp, v0, pregLastCount);
         } else { // general case
             uint16_t cur = dynamicHalfAddTimes;
             for (uint16_t k = 0; k < halfAddRepeatTimes; ++k) {
@@ -392,7 +392,7 @@ __simd_callee__ inline void ReduceWorkBufferAndStore(
                 Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
             }
             Reg::LoadAlign(s0, workUb);
-            ReduceSum(tmp, s0, pregLastCount);
+            Reg::Reduce<ReduceType::SUM>(tmp, s0, pregLastCount);
         }
 
         Muls(outReg, tmp, k2RRec, pregOne);

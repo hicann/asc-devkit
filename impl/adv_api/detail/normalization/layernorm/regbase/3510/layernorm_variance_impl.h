@@ -117,7 +117,7 @@ __simd_callee__ inline void CalcHMean(
         // Accumulate tail data onto sumResultH
         Reg::Add(sumResultH, sumResultH, inputMeanTempReg, hFloatAllMask);
     }
-    Reg::ReduceSum(outputMean, sumResultH, hFloatAllMask);
+    Reg::Reduce<ReduceType::SUM>(outputMean, sumResultH, hFloatAllMask);
 }
 
 template <typename T>
@@ -175,7 +175,7 @@ __simd_callee__ inline void CalcHVariance(
         // Accumulate new data onto sumVarianceResultH
         Reg::Add(sumVarianceResultH, sumVarianceResultH, inputVarianceReg, hFloatAllMask);
     }
-    Reg::ReduceSum(outputVariance, sumVarianceResultH, hFloatAllMask);
+    Reg::Reduce<ReduceType::SUM>(outputVariance, sumVarianceResultH, hFloatAllMask);
 }
 
 template <typename T>

@@ -817,6 +817,22 @@ __simd_callee__ inline void PreluImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
+__simd_callee__ inline void AndImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(SupportType<ActualT, uint16_t, int16_t>(), "current data type is not supported on current device!");
+    static_assert(
+        SupportEnum<mode, MaskMergeMode::ZEROING>(), "current And api only supported Mode ZEROING on current device!");
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    if constexpr (IsSameType<ActualT, bool>::value) {
+        vand((RegTensor<int8_t>&)dstReg, (RegTensor<int8_t>&)srcReg0, (RegTensor<int8_t>&)srcReg1, mask, modeValue);
+    } else {
+        vand(dstReg, srcReg0, srcReg1, mask, modeValue);
+    }
+}
+
+template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void MulAddDstImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     using ActualT = typename U::ActualT;
