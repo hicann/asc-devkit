@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------------------------------------
 
 # 后续如果更新asc-comm代码需要同步更新至devkit run包需要更新change id
-set(ASC_COMM_TAG_ID 0f24e5a53e028906a398865827c6f6e35b1848fe)
+set(ASC_COMM_TAG_ID 9a65345c719bfe73d0c4ae61c221a4d1defb93d4)
 
 # asc-comm 与 asc-devkit 按同级目录放置。路径以本文件所在目录(<devkit>/cmake/third_party)为锚，
 # 对于CI环境已经存在asc-comm代码, 不去拉取代码否则使用submodule方式拉取asc-comm仓代码
@@ -151,4 +151,28 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
     endif()
 else()
     message(STATUS "[ThirdPartyLib][asc-comm] Missing CCU cmake dir: ${ASC_COMM_CCU_CMAKE_DIR}, skip CCU so build")
+endif()
+
+# 构建 asc-comm CPU TS 同步库，并交付到 asc-devkit run 包。
+# 该库仅依赖运行时已导出的 notify API，不依赖 hcomm 源码或符号。
+set(ASC_COMM_CPU_TS_CMAKE_DIR ${ASC_COMM_SOURCE_PATH}/src/cpu)
+if(EXISTS "${ASC_COMM_CPU_TS_CMAKE_DIR}/CMakeLists.txt")
+    if(NOT TARGET asccomm_cpu_ts)
+        add_subdirectory(${ASC_COMM_CPU_TS_CMAKE_DIR} ${CMAKE_BINARY_DIR}/asccomm_cpu_ts)
+    endif()
+
+    if(TARGET asccomm_cpu_ts)
+        if(NOT TARGET asccomm_cpu_ts_build)
+            add_custom_target(asccomm_cpu_ts_build ALL DEPENDS asccomm_cpu_ts)
+        endif()
+        install(TARGETS asccomm_cpu_ts
+            LIBRARY DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64 ${INSTALL_OPTIONAL}
+            COMPONENT asc-devkit)
+        install(DIRECTORY ${ASC_COMM_SOURCE_PATH}/include/cpu/
+            DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api/cpu
+            COMPONENT asc-devkit
+            FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+    endif()
+else()
+    message(STATUS "[ThirdPartyLib][asc-comm] Missing CPU TS cmake dir: ${ASC_COMM_CPU_TS_CMAKE_DIR}, skip CPU TS so build")
 endif()
