@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id12 -->
 <!-- npu="310p" id13 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id13 -->
 <!-- npu="910" id14 -->
@@ -102,7 +102,7 @@ None
     <!-- end id7 -->
 
     <!-- npu="310p" id8 -->
-    The AI Core of Atlas inference products supports the following data types: half and float.
+    The Atlas inference products AI Core supports the following data types: half and float.
     <!-- end id8 -->
 
 ## Examples

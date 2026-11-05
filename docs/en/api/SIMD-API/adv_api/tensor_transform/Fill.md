@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -74,7 +74,7 @@ None
     For Atlas A2 products, the supported data types are: uint16\_t, int16\_t, half, uint32\_t, int32\_t, float.
     <!-- end id9 -->
     <!-- npu="310p" id10 -->
-    For the AI Core of Atlas inference products, the supported data types are: uint16\_t, int16\_t, half, uint32\_t, int32\_t, float.
+    For the Atlas inference products AI Core, the supported data types are: uint16\_t, int16\_t, half, uint32\_t, int32\_t, float.
     <!-- end id10 -->
 
 ## Examples

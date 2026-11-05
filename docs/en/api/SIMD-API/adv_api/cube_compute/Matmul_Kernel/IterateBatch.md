@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id7 -->
 <!-- npu="910" id8 -->
@@ -141,14 +141,14 @@ None
 -   On Ascend 950PR&950DT products, inputs whose A and B cube memory logical position is TPosition::VECOUT are not supported. The function prototype that outputs to VECIN currently only supports the BSNGD Layout format.
 <!-- end id9 -->
 <!-- npu="310p" id10 -->
--   On the AI Core of Atlas inference products, only the NORMAL Layout format is supported.
--   On the AI Core of Atlas inference products, inputs whose A and B cube memory logical position is TPosition::TSCM are not supported.
+-   On the Atlas inference products AI Core, only the NORMAL Layout format is supported.
+-   On the Atlas inference products AI Core, inputs whose A and B cube memory logical position is TPosition::TSCM are not supported.
 <!-- end id10 -->
 <!-- npu="950" id11 -->
 -   On Ascend 950PR&950DT products, when the A and B cube memory logical position is TPosition::TSCM, only the NORMAL Layout format is supported.
 <!-- end id11 -->
 <!-- npu="310p" id12 -->
--   On the AI Core of Atlas inference products, Bias does not support reuse, and the shape of Bias must be **Batch** \* **N**.
+-   On the Atlas inference products AI Core, Bias does not support reuse, and the shape of Bias must be **Batch** \* **N**.
 <!-- end id12 -->
 -   When using this API, cube A and cube B do not support int4b\_t type input, that is, **BatchMatmul** does not support int4b\_t type cube input.
 <!-- npu="950,A3,910b,310p" id17 -->
@@ -167,7 +167,7 @@ None
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
-    For the AI Core of Atlas inference products, the supported data types are: half, bfloat16_t, int32_t, and float.
+    For the Atlas inference products AI Core, the supported data types are: half, bfloat16_t, int32_t, and float.
     <!-- end id16 -->
 
 <!-- end id17 -->

@@ -35,7 +35,7 @@ The supported data paths are as follows (represented by [logical position TPosit
 - UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id1 -->
-    - CO2 -> GM (supported only on the AI Core of Atlas inference products)
+    - CO2 -> GM (supported only on the Atlas inference products AI Core)
     <!-- end id1 -->
 
 The moved data is used for [vector computation](../memory_vector_compute/memory_vector_compute.md). For the specific API, see [DataCopy (Contiguous Data Movement Between GM and UB)](../memory_vector_compute/data_move/DataCopy_GMAndUB_continuous.md).
@@ -69,7 +69,7 @@ The supported data paths are as follows (represented by [logical position TPosit
 - UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id2 -->
-    - CO2 -> GM (supported only on the AI Core of Atlas inference products)
+    - CO2 -> GM (supported only on the Atlas inference products AI Core)
     <!-- end id2 -->
 
 The moved data is used for [vector computation](../memory_vector_compute/memory_vector_compute.md). For the specific API, see [DataCopy (High-Dimensional Slicing Data Movement Between GM and UB)](../memory_vector_compute/data_move/DataCopy_GMAndUB_highdim_split.md).
@@ -101,7 +101,7 @@ The specific supported data paths are as follows (represented by [logical positi
 - UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id3 -->
-    - CO2 -> GM (supported only on the AI Core of Atlas inference products)
+    - CO2 -> GM (supported only on the Atlas inference products AI Core)
     <!-- end id3 -->
 
 The moved data is used for [vector computation](../memory_vector_compute/memory_vector_compute.md). For the specific API, see [DataCopy (Sliced Data Movement Between GM and UB)](../memory_vector_compute/data_move/DataCopy_GMAndUB_slice.md).
@@ -160,7 +160,7 @@ The specific supported data paths are as follows (expressed in [logical position
 - UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id5 -->
-    - CO2 -> GM (supported only on the AI Core of Atlas inference products)
+    - CO2 -> GM (supported only on the Atlas inference products AI Core)
     <!-- end id5 -->
 
 The moved data is used for [vector computation](../memory_vector_compute/memory_vector_compute.md). For the specific API, see [DataCopy (UB->GM inline conversion NZ2ND movement)](../memory_vector_compute/data_move/DataCopy_UBToGM_NZ2ND.md).

@@ -26,7 +26,7 @@
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
 
-- AI Core of Atlas inference products: Not supported
+- Atlas inference products AI Core: Not supported
 
 - Vector Core of Atlas inference products: Not supported
 

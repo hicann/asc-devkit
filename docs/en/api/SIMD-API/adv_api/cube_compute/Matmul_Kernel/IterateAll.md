@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id7 -->
 <!-- npu="910" id8 -->
@@ -53,7 +53,7 @@ template <bool sync = true> __aicore__ inline void IterateAll(const LocalTensor<
 | --- | --- | --- |
 | gm | Output | C cube. The type is [GlobalTensor](../../../basic_api/data_structures/GlobalTensor/GlobalTensor.md). For the data types supported by different models, see [Supported Data Types](#li12616155731720). |
 | ubCmatrix | Output | C cube. The type is [LocalTensor](../../../basic_api/data_structures/LocalTensor/LocalTensor.md). The supported TPosition values are TSCM and VECIN. When outputting to a VECIN Tensor, it is recommended to use the [Iterate](Iterate.md) API. For the data types supported by different models, see [Supported Data Types](#li12616155731720). |
-| enAtomic | Input | Whether to enable the Atomic operation. The default value is 0.<br><br>Parameter values:<br><br>0: Disable the Atomic operation.<br><br>1: Enable the AtomicAdd accumulation operation.<br><br>2: Enable the AtomicMax maximum operation.<br><br>3: Enable the AtomicMin minimum operation.<!-- npu="310p" id15 --><br><br>For the AI Core of Atlas inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id15 --><!-- npu="310b" id16 --><br><br>For Atlas 200I/500 A2 inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id16 --> |
+| enAtomic | Input | Whether to enable the Atomic operation. The default value is 0.<br><br>Parameter values:<br><br>0: Disable the Atomic operation.<br><br>1: Enable the AtomicAdd accumulation operation.<br><br>2: Enable the AtomicMax maximum operation.<br><br>3: Enable the AtomicMin minimum operation.<!-- npu="310p" id15 --><br><br>For the Atlas inference products AI Core, the Atomic operation can be enabled only when the output location is GM.<!-- end id15 --><!-- npu="310b" id16 --><br><br>For Atlas 200I/500 A2 inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id16 --> |
 | enSequentialWrite | Input | Whether to enable the sequential write mode ([sequential write](GetTensorC.md#fig580415103338), writing to [baseM, baseN]; [non-sequential write](GetTensorC.md#fig322951853119), writing to the corresponding position in [singleCoreM, singleCoreN]). The default value is false (non-sequential write mode).<!-- npu="310b" id17 --><br><br>Atlas 200I/500 A2 inference products<!-- end id17 --> do not support this parameter. |
 | waitIterateAll | Input | Used only in asynchronous scenarios. Whether to wait for IterateAll execution completion through the [WaitIterateAll](WaitIterateAll.md) API.<br><br>true: Wait for IterateAll execution completion through the WaitIterateAll API.<br><br>false: Do not wait for IterateAll execution completion through the WaitIterateAll API. The developer handles the process of waiting for IterateAll execution completion. |
 | fakeMsg | Input | Used only in the IBShare scenario (where the [doIBShareNorm](MatmulConfig.md#matmulconfig-params) switch is enabled in the template parameter) and the IntraBlockPartSum scenario (where the [intraBlockPartSum](MatmulConfig.md#matmulconfig-params) switch is enabled in the template parameter).<br>IBShare scenario:<br>In this scenario, the same A cube or B cube data on L1 is reused, and the number of IterateAll calls by AIV cores must match. In this case, call IterateAll and set fakeMsg to true, which does not perform the actual computation but only ensures that IterateAll calls appear in pairs. The default value is false, indicating that the actual computation is performed.<br><br>IntraBlockPartSum scenario:<br>Used to fuse Vector computation and Cube computation in split mode, so that the result of one Matmul computation by multiple AIV cores (a cube tile of baseM * baseN size) is accumulated on the L0C Buffer. The default value is false, indicating that the Matmul computation result of each AIV core is accumulated on the L0C Buffer. |
@@ -81,7 +81,7 @@ None
     <!-- end id11 -->
 
     <!-- npu="310p" id12 -->
-    The AI Core of Atlas inference products does not support the prototype containing the ubCmatrix parameter. For the prototype containing the gm parameter, the supported data types are: half, float, int8_t, int32_t.
+    The Atlas inference products AI Core does not support the prototype containing the ubCmatrix parameter. For the prototype containing the gm parameter, the supported data types are: half, float, int8_t, int32_t.
     <!-- end id12 -->
 
     <!-- npu="310b" id13 -->

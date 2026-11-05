@@ -78,7 +78,7 @@ Typical usage scenarios of this API are as follows:
 
 <!-- npu="310p" id14 -->
 > [!NOTE] Note 
-> For the AI Core of Atlas inference products, only the prototype without the **dcciDst** parameter is supported.
+> For the Atlas inference products AI Core, only the prototype without the **dcciDst** parameter is supported.
 <!-- end id14 -->
 
 

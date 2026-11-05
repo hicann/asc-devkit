@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -81,7 +81,7 @@ When the temporary space is allocated by the API framework, you need to reserve 
 | --- | --- |
 | T | Data type of the inputX operand. For the data types supported by different models, see [supported data types](#li1773114612461). |
 | U | Data type of the outputMean, outputVariance, inputMean, and inputVariance operands. The supported data type is float. |
-| isReuseSource | Whether to allow modification of the source operand. The default value is false. If you allow the source operand to be overwritten, set this parameter to true to enable it, which saves some memory space.<br><br>If set to true, this API reuses the memory space of inputX during internal computation, saving memory space. If set to false, this API does not reuse the memory space of inputX during internal computation.<!-- npu="310p" id7 --><br><br>On the AI Core of Atlas inference products, this parameter is reserved. Pass the default value false.<!-- end id7 --><br><br>For an example of using isReuseSource, see [More Examples](../math_compute/more_examples.md#section639165323915). |
+| isReuseSource | Whether to allow modification of the source operand. The default value is false. If you allow the source operand to be overwritten, set this parameter to true to enable it, which saves some memory space.<br><br>If set to true, this API reuses the memory space of inputX during internal computation, saving memory space. If set to false, this API does not reuse the memory space of inputX during internal computation.<!-- npu="310p" id7 --><br><br>On the Atlas inference products AI Core, this parameter is reserved. Pass the default value false.<!-- end id7 --><br><br>For an example of using isReuseSource, see [More Examples](../math_compute/more_examples.md#section639165323915). |
 | config | Configures the reuse relationship between the destination operand and the source operand for data outside the specified computation range. It is of the WelfordUpdateConfig type, defined in the following code, where the parameters are described as follows.<br>isInplace: The abComputeLength parameter in the API parameter para specifies the computation length of the inner axis of the input data. This parameter sets the value of the output data outside the specified computation length. It indicates whether the destination operand reuses the source operand outside the specified computation length. If reuse is enabled, for the output outside the specified computation length, the source operand at the corresponding position is directly used instead of the output destination operand. If reuse is disabled, this API does not output the destination operand outside the computation range.<br>false: Default value. Indicates that the destination operand does not reuse the source operand.<br>true: Indicates that the destination operand reuses the source operand. outputMean reuses inputMean, and outputVariance reuses inputVariance.<br><br>This parameter is generally used in conjunction with the API for kernel-side tiling computation. |
 
 ```
@@ -143,7 +143,7 @@ None
     <!-- end id10 -->
 
     <!-- npu="310p" id11 -->
-    AI Core of Atlas inference products: Supported data types are half and float.
+    Atlas inference products AI Core: Supported data types are half and float.
     <!-- end id11 -->
 
 ## Examples

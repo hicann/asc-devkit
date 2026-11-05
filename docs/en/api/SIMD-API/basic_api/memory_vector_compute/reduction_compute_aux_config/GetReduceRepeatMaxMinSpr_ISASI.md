@@ -56,7 +56,7 @@ This API obtains the maximum/minimum value and its index across all repeats when
 
 <!-- npu="310p" id11 -->
 
-- Obtains the maximum/minimum value across all repeats when [ReduceRepeat<MAX/MIN>](../reduction_compute/ReduceRepeat.md) is called, or obtains the maximum/minimum value produced by [ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md). This function prototype is supported only on the AI Core of Atlas inference products.
+- Obtains the maximum/minimum value across all repeats when [ReduceRepeat<MAX/MIN>](../reduction_compute/ReduceRepeat.md) is called, or obtains the maximum/minimum value produced by [ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md). This function prototype is supported only on the Atlas inference products AI Core.
 
     ```cpp
     template <typename T>

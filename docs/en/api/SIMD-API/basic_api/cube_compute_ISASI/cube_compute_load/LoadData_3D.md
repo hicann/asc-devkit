@@ -269,7 +269,7 @@ None
 - The value range constraints of **channelSize** in the **LoadData3DParamsV2** structure are as follows:<a id="zh-cn_topic_0000002512171652_channelsize_constraint"></a>
 
     <!-- npu="310p" id36 -->
-    - For the AI Core of Atlas inference products: for **half**, **channelSize** can be 4, 8, 16, N\*16+4, N\*16+8; for **int8_t**/**uint8_t**, **channelSize** can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for **int4b_t**, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
+    - For the Atlas inference products AI Core: for **half**, **channelSize** can be 4, 8, 16, N\*16+4, N\*16+8; for **int8_t**/**uint8_t**, **channelSize** can be 4, 8, 16, 32, N\*32+4, N\*32+8, N\*32+16; for **int4b_t**, **channelSize** can be 8, 16, 32, N\*64, N\*64+8, N\*64+16, N\*64+32. N is a positive integer.
     <!-- end id36 -->
 
     <!-- npu="950,A3,910b,310b" id37 -->

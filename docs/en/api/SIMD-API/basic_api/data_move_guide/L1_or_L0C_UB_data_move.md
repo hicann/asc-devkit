@@ -105,7 +105,7 @@ The specific supported data paths are as follows (represented by [logical positi
 
 The moved data is the result of [matrix computation](../cube_compute_ISASI/cube_compute_ISASI.md). For details about the API, see [DataCopy (L0C to UB data movement)](../cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB.md).
 
-This API is supported only on the AI Core of Atlas inference products.
+This API is supported only on the Atlas inference products AI Core.
 
 **src** and **dst** are the source operand and destination operand, respectively. **intriParams** and **enhancedParams** are movement parameters.
 

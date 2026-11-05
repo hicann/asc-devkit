@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id10 -->
 <!-- npu="310p" id11 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id11 -->
 <!-- npu="910" id12 -->
@@ -44,7 +44,7 @@ __aicore__ inline void SetTensorB(SrcBT bScalar)
 ```
 
 <!-- npu="310p" id13 -->
-The AI Core of Atlas inference products does not support the SetTensorB\(SrcBT bScalar\) prototype.
+The Atlas inference products AI Core does not support the SetTensorB\(SrcBT bScalar\) prototype.
 <!-- end id13 -->
 
 <!-- npu="310b" id14 -->
@@ -91,7 +91,7 @@ None
     <!-- end id17 -->
 
     <!-- npu="310p" id18 -->
-    The AI Core of Atlas inference products supports the following data types: half, int8_t, float.
+    The Atlas inference products AI Core supports the following data types: half, int8_t, float.
     <!-- end id18 -->
 
     <!-- npu="310b" id19 -->
@@ -113,7 +113,7 @@ None
     <!-- end id22 -->
 
     <!-- npu="310p" id23 -->
-    For the AI Core of Atlas inference products, this parameter is not supported.
+    For the Atlas inference products AI Core, this parameter is not supported.
     <!-- end id23 -->
 
     <!-- npu="310b" id24 -->

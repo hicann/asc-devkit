@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -42,7 +42,7 @@ Atlas A2 products adopt arrangement mode 1.
 <!-- end id9 -->
 
 <!-- npu="310p" id10 -->
-The AI Core of Atlas inference products adopts arrangement mode 2.
+The Atlas inference products AI Core adopts arrangement mode 2.
 <!-- end id10 -->
 
 -   Arrangement mode 1:
@@ -179,7 +179,7 @@ None
     This sample applies to:
 
     <!-- npu="310p" id14 -->
-    AI Core of Atlas inference products
+    Atlas inference products AI Core
     <!-- end id14 -->
 
     ```

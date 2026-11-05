@@ -61,7 +61,7 @@ None
 
 ## Example<a name="section6461234123118"></a>
 
-The example runs on the AI Core of Atlas inference products.
+The example runs on the Atlas inference products AI Core.
 
 ```cpp
 uint32_t srcLen = 896, dstLen = 1024, numOfIndexTabEntry = 1;

@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -87,7 +87,7 @@ None
 -   calCount must be less than or equal to the element range of src0Tensor and src1Tensor.
 -   When the final computation result exceeds the int16 range \[-32768, 32767\], -32768 or 32767 is output.
 <!-- npu="310p" id7 -->
--   For the AI Core of Atlas inference products, intermediate computation data is stored in the half type, and the error of the final computation result is larger than that on other processors.
+-   For the Atlas inference products AI Core, intermediate computation data is stored in the half type, and the error of the final computation result is larger than that on other processors.
 <!-- end id7 -->
 
 ## Examples

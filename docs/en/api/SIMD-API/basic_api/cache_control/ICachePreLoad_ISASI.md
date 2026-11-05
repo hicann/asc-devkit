@@ -68,7 +68,7 @@ $$
 The ICache sizes of AIC and AIV are 32KB and 16KB, respectively.
 <!-- end id8 -->
 <!-- npu="310p" id110 -->
-For the AI Core of Atlas inference products, this parameter is invalid, and the prefetch length is always 128 bytes.
+For the Atlas inference products AI Core, this parameter is invalid, and the prefetch length is always 128 bytes.
 <!-- end id110 --> 
 
 ## Return Value<a name="section640mcpsimp"></a>

@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id7 -->
 <!-- npu="910" id8 -->
@@ -49,7 +49,7 @@ The C cube result of a single **Iterate** cube multiplication is stored in the L
     ```
 
     <!-- npu="310p" id9 -->
-    -   The AI Core of Atlas inference products does not support user-managed L0C Buffer (CO1).
+    -   The Atlas inference products AI Core does not support user-managed L0C Buffer (CO1).
     <!-- end id9 -->
     <!-- npu="310b" id10 -->
     -   The Atlas 200I/500 A2 inference product does not support user-managed L0C Buffer (CO1).

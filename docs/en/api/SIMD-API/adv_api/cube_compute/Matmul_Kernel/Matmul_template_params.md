@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id8 -->
 <!-- npu="310p" id9 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id9 -->
 <!-- npu="910" id10 -->
@@ -64,7 +64,7 @@ When creating a Matmul object, the following must be passed in:
     Atlas 200I/500 A2 inference product
     <!-- end id18 -->
     <!-- npu="310p" id19 -->
-    AI Core of Atlas inference products
+    Atlas inference products AI Core
     <!-- end id19 -->
 <!-- end id20 -->
 

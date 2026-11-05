@@ -19,7 +19,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id8 -->
 <!-- npu="310p" id9 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: not supported
 <!-- end id9 -->
 <!-- npu="910" id10 -->
@@ -42,7 +42,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- AI Core of Atlas inference products: Not supported
+- Atlas inference products AI Core: Not supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id15 -->
 <!-- npu="910" id16 -->

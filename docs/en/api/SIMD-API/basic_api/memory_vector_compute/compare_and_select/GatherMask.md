@@ -257,7 +257,7 @@ None
 
 <!-- npu="310p" id25 -->
 <a id="src1RepeatStride-310p"></a>
-- For the AI Core of Atlas inference products, in user-defined mode, src1RepeatStride behaves differently in Normal mode and Counter mode:
+- For the Atlas inference products AI Core, in user-defined mode, src1RepeatStride behaves differently in Normal mode and Counter mode:
 <br>&bull; Normal mode: The value of src1RepeatStride only distinguishes between 0 and non-zero. When it is set to 0, the same segment of gather mask is reused in each iteration. When it is set to a non-zero value, the gather masks read in multiple iterations are stored contiguously, and the start addresses of the gather masks in adjacent iterations are spaced 32 / sizeof(T) bytes apart. For example, when T is a 16-bit data type, the spacing is 16 bytes; when T is a 32-bit data type, the spacing is 8 bytes.
 <br>&bull; Counter mode: src1RepeatStride does not take effect, and the gather masks read in multiple iterations are always stored contiguously.
 <!-- end id25 -->

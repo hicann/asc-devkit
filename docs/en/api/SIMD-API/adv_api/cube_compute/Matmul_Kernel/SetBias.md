@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
@@ -75,7 +75,7 @@ None
     <!-- end id10 -->
 
     <!-- npu="310p" id11 -->
-    For the AI Core of Atlas inference products, the supported data types are **half**, **float**, and **int32_t**. For the prototype that includes the **biasGlobal** parameter, the Bias data type can be set to **int32_t** only when the data types of A and B are **int8_t**.
+    For the Atlas inference products AI Core, the supported data types are **half**, **float**, and **int32_t**. For the prototype that includes the **biasGlobal** parameter, the Bias data type can be set to **int32_t** only when the data types of A and B are **int8_t**.
     <!-- end id11 -->
 
     <!-- npu="310b" id12 -->

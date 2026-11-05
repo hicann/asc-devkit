@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id7 -->
 <!-- npu="910" id8 -->
@@ -120,7 +120,7 @@ None
     -   Atlas A2 products
         <!-- end id11 -->
         <!-- npu="310p" id12 -->
-    -   AI Core of Atlas inference products
+    -   Atlas inference products AI Core
         <!-- end id12 -->
 
 -   **Overlapping of the source operand and destination operand addresses is not supported.**

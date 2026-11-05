@@ -42,7 +42,7 @@ The specific supported data paths are (represented by [logical position TPositio
 - UB -> Global Memory
     - VECOUT -> GM
     <!-- npu="310p" id10 -->
-    - CO2 -> GM (supported only on the AI Core of Atlas inference products)
+    - CO2 -> GM (supported only on the Atlas inference products AI Core)
     <!-- end id10 -->
 
 ## Prototype<a name="section1954364615315"></a>

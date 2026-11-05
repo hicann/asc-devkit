@@ -97,7 +97,7 @@ None
 <!-- end id10 -->
 
 <!-- npu="310p" id11 -->
-- For the AI Core of Atlas inference products, the supported data path is UB->GM.
+- For the Atlas inference products AI Core, the supported data path is UB->GM.
 <!-- end id11 -->
 
 <!-- npu="910" id12 -->

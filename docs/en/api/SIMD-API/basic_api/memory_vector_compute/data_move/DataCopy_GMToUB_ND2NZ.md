@@ -147,7 +147,7 @@ None
     | dstNzMatrixStride | [1, 65535] |
 
 <!-- npu="310p" id6 -->
-- For the AI Core of Atlas inference products, reserve 8 KB of UB space as the temporary data storage area for the API.
+- For the Atlas inference products AI Core, reserve 8 KB of UB space as the temporary data storage area for the API.
 <!-- end id6 -->
 
 ## Examples<a name="section10309141400"></a>

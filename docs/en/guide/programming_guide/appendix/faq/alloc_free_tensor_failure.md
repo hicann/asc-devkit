@@ -30,7 +30,7 @@ For Atlas training products, the number does not exceed 4.
 <!-- end id1 -->
 
 <!-- npu="310p" id2 -->
-For the AI Core of Atlas inference products, the number does not exceed 8.
+For the Atlas inference products AI Core, the number does not exceed 8.
 
 For the Vector Core of Atlas inference products, the number does not exceed 8.
 <!-- end id2 -->

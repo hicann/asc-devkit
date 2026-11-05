@@ -125,7 +125,7 @@ None
 - When the source address is in GM, the instruction is executed on the **PIPE_MTE2** pipeline. When the source address is in the L1 Buffer, the instruction is executed on the **PIPE_MTE1** pipeline.
 - When **srcStride** is 0, the same data fractal in the source operand is read across consecutive repeats.
 <!-- npu="310p" id20 -->
-- For the AI Core of Atlas inference products, when used with the **Mmad** API and the B matrix data type is **S4**, if transpose is enabled through the **ifTranspose** parameter, only the 64×64 fractal is supported.
+- For the Atlas inference products AI Core, when used with the **Mmad** API and the B matrix data type is **S4**, if transpose is enabled through the **ifTranspose** parameter, only the 64×64 fractal is supported.
 <!-- end id20 -->
 - The physical storage locations vary by model. Developers can refer to the following:
     - The supported physical storage locations are Global Memory (TPosition: GM)/L1 Buffer (TPosition: A1/B1).

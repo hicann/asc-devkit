@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
 - Vector Core of Atlas inference products: Not supported
@@ -104,7 +104,7 @@ None
 ## Constraints
 
 <!-- npu="310p" id8 -->
--   For the AI Core of Atlas inference products, the input data is limited to the \[-2147483647.0, 2147483647.0\] range.
+-   For the Atlas inference products AI Core, the input data is limited to the \[-2147483647.0, 2147483647.0\] range.
 <!-- end id8 -->
 -   **Overlapping between the source operand address and the destination operand address is not supported.**
 -   For the operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).

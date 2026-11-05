@@ -196,7 +196,7 @@ The `ReduceSum` API performs summation within each repeat using binary tree accu
 - For Atlas 200I/500 A2 Inference Products, Method Two is adopted.
 <!-- end id33 -->
 <!-- npu="310p" id34 -->
-- For the AI Core of Atlas inference products, Method Two is adopted.
+- For the Atlas inference products AI Core, Method Two is adopted.
 <!-- end id34 -->
 <!-- npu="910" id35 -->
 - Atlas training products use Method Two.

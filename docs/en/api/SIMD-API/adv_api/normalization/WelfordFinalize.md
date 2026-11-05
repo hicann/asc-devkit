@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -173,7 +173,7 @@ None
     - Atlas A2 products
     <!-- end id12 -->
     <!-- npu="310p" id13 -->
-    - AI Core of Atlas inference products
+    - Atlas inference products AI Core
     <!-- end id13 -->
 -   Address overlap between the source operands and the destination operand is not supported.
 -   sharedTmpBuffer must not overlap with the source operand or destination operand addresses.

@@ -103,7 +103,7 @@ DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32
 <!-- npu="310b" id104 -->
 - Atlas 200I/500 A2 inference product, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id104 -->
 <!-- npu="310p" id105 -->
-- On the AI Core of Atlas inference products, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id105 -->
+- On the Atlas inference products AI Core, the supported data types for T are: bool, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float, int64_t, uint64_t.<!-- end id105 -->
 
 ## Constraints<a name="section794123819592"></a>
 

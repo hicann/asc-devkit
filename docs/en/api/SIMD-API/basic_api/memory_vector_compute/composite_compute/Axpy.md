@@ -142,7 +142,7 @@ For Ascend 950PR&950DT products, the int64_t and uint64_t data types are support
 
 <!-- npu="310p" id14 -->
 
-**Table** Data type combinations supported by the AI Core of Atlas inference products
+**Table** Data type combinations supported by the Atlas inference products AI Core
 
 | src data type | scalarValue data type | dst data type | PAR |
 | ----------- | -------------- | ----------- | --- |

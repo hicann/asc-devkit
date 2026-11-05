@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id8 -->
 <!-- npu="310p" id9 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id9 -->
 <!-- npu="910" id10 -->
@@ -164,7 +164,7 @@ None
 -   Currently, only ND-format input is supported; other formats are not supported.
 -   **dim** currently supports only 1 or 2, and **axis** currently supports only 0 or 1.
 <!-- npu="310p" id13 -->
--   For the AI Core of Atlas inference products, when **dim**=2 and **axis**=1, srcShape\[0\] must be 32B aligned. That is, when the input/output Tensor has 2 dimensions and the broadcast dimension is 1, the data of dimension 0 of the input Tensor must be a multiple of 32 bytes.
+-   For the Atlas inference products AI Core, when **dim**=2 and **axis**=1, srcShape\[0\] must be 32B aligned. That is, when the input/output Tensor has 2 dimensions and the broadcast dimension is 1, the data of dimension 0 of the input Tensor must be a multiple of 32 bytes.
 <!-- end id13 -->
 -   When **dim**=2 and **axis**=0, srcShape\[1\] must be 32B aligned.
 <!-- npu="950" id14 -->
@@ -182,7 +182,7 @@ None
     For Atlas A2 products, the supported data types are int8\_t, uint8\_t, half, and float.
     <!-- end id17 -->
     <!-- npu="310p" id18 -->
-    For the AI Core of Atlas inference products, the supported data types are int8\_t, uint8\_t, half, and float.
+    For the Atlas inference products AI Core, the supported data types are int8\_t, uint8\_t, half, and float.
     <!-- end id18 -->
 
 ## Examples

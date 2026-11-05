@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id10 -->
 <!-- npu="310p" id11 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id11 -->
 <!-- npu="910" id12 -->
@@ -299,7 +299,7 @@ None
     <!-- end id24 -->
 
     <!-- npu="310p" id25 -->
-    - AI Core of Atlas inference products: Not supported.
+    - Atlas inference products AI Core: Not supported.
     <!-- end id25 -->
 
 -   In the PER\_TOKEN/PER\_GROUP scenario, the data volume in the continuous computation direction (that is, the n direction) must be 32B aligned.
@@ -318,7 +318,7 @@ None
     <!-- end id15 -->
 
     <!-- npu="310p" id16 -->
-    - AI Core of Atlas inference products: supported data types are half and float.
+    - Atlas inference products AI Core: supported data types are half and float.
     <!-- end id16 -->
 
 -   Data types supported by deqScale in the non-PER\_TOKEN/PER\_GROUP scenario<a id="li189021550175211"></a>
@@ -336,7 +336,7 @@ None
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->
-    - For the AI Core of Atlas inference products, when deqScale is a vector, the supported data types are: uint64\_t and float; when deqScale is a scalar, the supported data type is float.
+    - For the Atlas inference products AI Core, when deqScale is a vector, the supported data types are: uint64\_t and float; when deqScale is a scalar, the supported data type is float.
     <!-- end id20 -->
 
 ## Examples

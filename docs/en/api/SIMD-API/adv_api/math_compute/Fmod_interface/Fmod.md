@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id7 -->
@@ -117,7 +117,7 @@ None
 ## Constraints
 
 <!-- npu="310p" id8 -->
--   For the AI Core of Atlas inference products, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
+-   For the Atlas inference products AI Core, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
 <!-- end id8 -->
 -   The data lengths of the source operands src0Tensor and src1Tensor must be consistent.
 -   **Overlapping between the source operand and destination operand addresses is not supported.**

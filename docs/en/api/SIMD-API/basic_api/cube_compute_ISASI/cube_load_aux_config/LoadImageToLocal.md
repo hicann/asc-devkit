@@ -88,7 +88,7 @@ None
 ## Example<a name="section22811728184217"></a>
 
 <!-- npu="310p" id14 -->
-The running platform supported by this example is the AI Core of Atlas inference products, and the example image format is YUV420SP.
+The running platform supported by this example is the Atlas inference products AI Core, and the example image format is YUV420SP.
 
 ```cpp
 constexpr uint16_t imageWidth = 32;

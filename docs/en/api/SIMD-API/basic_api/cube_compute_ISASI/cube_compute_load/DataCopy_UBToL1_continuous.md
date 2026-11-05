@@ -77,7 +77,7 @@ For the Atlas A2 products, the supported data types are: int8_t, uint8_t, int16_
 <!-- end id12 -->
 
 <!-- npu="310p" id13 -->
-For the AI Core of the Atlas inference products, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
+For the Atlas inference products AI Core, the supported data types are: int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, half, float, double.
 <!-- end id13 -->
 
 ## Return Value Description

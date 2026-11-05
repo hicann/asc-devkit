@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id14 -->
 <!-- npu="310p" id15 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id15 -->
 <!-- npu="910" id16 -->
@@ -340,7 +340,7 @@ None
     <!-- end id39 -->
 
     <!-- npu="310p" id40 -->
-    - AI Core of Atlas inference products: Not supported.
+    - Atlas inference products AI Core: Not supported.
     <!-- end id40 -->
 
 -   In the PER\_TOKEN/PER\_GROUP b8/float4 scenario, the data volume in the continuous computation direction (that is, the n direction) must be 32B-aligned.
@@ -359,7 +359,7 @@ None
     <!-- end id19 -->
 
     <!-- npu="310p" id20 -->
-    - The AI Core of Atlas inference products supports the following data types: half.
+    - The Atlas inference products AI Core supports the following data types: half.
     <!-- end id20 -->
 
 -   Data types supported by src in non-PER\_TOKEN/PER\_GROUP b8/float4 scenarios<a id="li13336025165520"></a>
@@ -377,7 +377,7 @@ None
     <!-- end id23 -->
 
     <!-- npu="310p" id24 -->
-    - AI Core of Atlas inference products support the following data types: int8\_t.
+    - Atlas inference products AI Core support the following data types: int8\_t.
     <!-- end id24 -->
 
 -   Data types supported by offset in non-PER\_TOKEN/PER\_GROUP b8/float4 scenarios<a id="li5382122225718"></a>
@@ -395,7 +395,7 @@ None
     <!-- end id27 -->
 
     <!-- npu="310p" id28 -->
-    - AI Core of Atlas inference products support the following data type: half.
+    - Atlas inference products AI Core support the following data type: half.
     <!-- end id28 -->
 
 -   Data types supported by scale in non-PER\_TOKEN/PER\_GROUP b8/float4 scenarios<a id="li103341450906"></a>
@@ -413,7 +413,7 @@ None
     <!-- end id31 -->
 
     <!-- npu="310p" id32 -->
-    - The AI Core of Atlas inference products supports the following data type: half.
+    - The Atlas inference products AI Core supports the following data type: half.
     <!-- end id32 -->
 
 ## Examples

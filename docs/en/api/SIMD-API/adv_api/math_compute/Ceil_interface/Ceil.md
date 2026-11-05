@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -85,7 +85,7 @@ None
 ## Constraints
 
 <!-- npu="310p" id7 -->
--   For the AI Core of Atlas inference products, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
+-   For the Atlas inference products AI Core, the input data is limited to the range of \[-2147483647.0, 2147483647.0\].
 <!-- end id7 -->
 -   **Overlapping addresses between the source operand and the destination operand are not supported.**
 -   Overlapping addresses between sharedTmpBuffer and the source and destination operands are not supported.

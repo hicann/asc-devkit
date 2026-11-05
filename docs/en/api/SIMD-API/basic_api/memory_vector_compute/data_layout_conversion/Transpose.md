@@ -147,7 +147,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 <!-- npu="310p" id14 -->
 
-**Table**  Memory required for sharedTmpBuffer on the AI Core of Atlas inference products<a id="table4"></a>
+**Table**  Memory required for sharedTmpBuffer on the Atlas inference products AI Core<a id="table4"></a>
 
 | transposeType | Size required for sharedTmpBuffer |
 | :-- | :-- |

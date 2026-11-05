@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Not supported
 <!-- end id4 -->
 <!-- npu="310p" id5 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id5 -->
 <!-- npu="910" id6 -->
@@ -176,7 +176,7 @@ None
 
 - **Address overlap between source and destination operands is not supported.**
 <!-- npu="310p" id8 -->
--   For the AI Core of Atlas inference products, the exponent of the power operation must be less than 2<sup>31</sup>-1.
+-   For the Atlas inference products AI Core, the exponent of the power operation must be less than 2<sup>31</sup>-1.
 <!-- end id8 -->
 -   For the operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
 -   Supported data types<a id="li559613463410"></a>
@@ -191,7 +191,7 @@ None
     For Atlas A2 products, the supported data types are: half, float, int32\_t.
     <!-- end id11 -->
     <!-- npu="310p" id12 -->
-    For the AI Core of Atlas inference products, the supported data types are: half, float, int32\_t.
+    For the Atlas inference products AI Core, the supported data types are: half, float, int32\_t.
     <!-- end id12 -->
 
 <!-- npu="950" id13 -->

@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id6 -->
 <!-- npu="310p" id7 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id7 -->
 <!-- npu="910" id8 -->
@@ -99,7 +99,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
 | Parameter | Description |
 | --- | --- |
-| sync | Set synchronous or asynchronous mode: in synchronous mode, set to true; in asynchronous mode, set to false.<!-- npu="950" id9 --><br><br>Ascend 950PR&950DT products support asynchronous mode.<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3 products support asynchronous mode.<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2 products support asynchronous mode.<!-- end id11 --><!-- npu="310p" id12 --><br><br>The AI Core of Atlas inference products does not support asynchronous mode.<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2 inference products do not support asynchronous mode.<!-- end id13 --> |
+| sync | Set synchronous or asynchronous mode: in synchronous mode, set to true; in asynchronous mode, set to false.<!-- npu="950" id9 --><br><br>Ascend 950PR&950DT products support asynchronous mode.<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3 products support asynchronous mode.<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2 products support asynchronous mode.<!-- end id11 --><!-- npu="310p" id12 --><br><br>The Atlas inference products AI Core does not support asynchronous mode.<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2 inference products do not support asynchronous mode.<!-- end id13 --> |
 
 **Table 2** API parameters
 
@@ -107,7 +107,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 | --- | --- | --- |
 | c/co2Local | Output | Load the C cube to UB (VECIN). For supported data types of different models, see [Supported data types](#li12616155731720). For supported data formats of different models, see [Supported data formats](#li12616155731721). |
 | gm | Output | Load the C cube to GM. The data format can be ND or NZ. For supported data types of different models, see [Supported data types](#li12616155731720). |
-| enAtomic | Input | Whether to enable the Atomic operation. The default value is 0.<br><br>Parameter values:<br><br>0: Do not enable the Atomic operation.<br><br>1: Enable the AtomicAdd accumulation operation.<br><br>2: Enable the AtomicMax maximum operation.<br><br>3: Enable the AtomicMin minimum operation.<!-- npu="310p" id24 --><br><br>For the AI Core of Atlas inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id24 --><!-- npu="310b" id25 --><br><br>For Atlas 200I/500 A2 inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id25 --> |
+| enAtomic | Input | Whether to enable the Atomic operation. The default value is 0.<br><br>Parameter values:<br><br>0: Do not enable the Atomic operation.<br><br>1: Enable the AtomicAdd accumulation operation.<br><br>2: Enable the AtomicMax maximum operation.<br><br>3: Enable the AtomicMin minimum operation.<!-- npu="310p" id24 --><br><br>For the Atlas inference products AI Core, the Atomic operation can be enabled only when the output location is GM.<!-- end id24 --><!-- npu="310b" id25 --><br><br>For Atlas 200I/500 A2 inference products, the Atomic operation can be enabled only when the output location is GM.<!-- end id25 --> |
 | enSequentialWrite | Input | Whether to enable continuous write mode (continuous write, write to [baseM, baseN]; non-continuous write, write to the corresponding position in [singleCoreM, singleCoreN]). The default value is false (non-continuous write mode).<br><br>Note: In non-continuous write mode, the offset is calculated internally in iteration order, and developers do not need to pay attention to it. If developers need to determine the layout order, they can select continuous write mode and perform the data movement operation according to the set offset.<!-- npu="310b" id27 --><br><br>For Atlas 200I/500 A2 inference products, only the non-continuous write mode is supported.<!-- end id27 --> |
 
 <a name="fig322951853119"></a>
@@ -143,7 +143,7 @@ None
     <!-- end id16 -->
 
     <!-- npu="310p" id17 -->
-    For the AI Core of Atlas inference products, supported data types are: half, float, int8_t, int32_t.
+    For the Atlas inference products AI Core, supported data types are: half, float, int8_t, int32_t.
     <!-- end id17 -->
 
     <!-- npu="310b" id18 -->
@@ -165,7 +165,7 @@ None
     <!-- end id21 -->
 
     <!-- npu="310p" id22 -->
-    For the AI Core of Atlas inference products, supported data type is: NZ.
+    For the Atlas inference products AI Core, supported data type is: NZ.
     <!-- end id22 -->
 
     <!-- npu="310b" id23 -->

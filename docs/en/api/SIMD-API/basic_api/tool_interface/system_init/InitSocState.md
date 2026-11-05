@@ -92,7 +92,7 @@ This API initializes the global state of the AI Core, including the public state
 <!-- end id10 -->
 
 <!-- npu="310p" id11 -->
-**Table 4** Initialization items executed by this API for the AI Core of Atlas inference products and the Vector Core of Atlas inference products
+**Table 4** Initialization items executed by this API for the Atlas inference products AI Core and the Vector Core of Atlas inference products
 
 | state category | initialization scope |
 | ---- | ---- |

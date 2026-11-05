@@ -17,7 +17,7 @@
 - Atlas 200I/500 A2 inference products: Supported
 <!-- end id5 -->
 <!-- npu="310p" id6 -->
-- AI Core of Atlas inference products: Supported
+- Atlas inference products AI Core: Supported
 - Vector Core of Atlas inference products: Not supported
 <!-- end id6 -->
 <!-- npu="910" id7 -->
@@ -51,7 +51,7 @@ Matmul quantization scenario: During Matmul computation, the input of the left a
     -   Atlas 200I/500 A2 inference products do not support storing the quantization parameter in L1 Buffer.
     <!-- end id8 -->
     <!-- npu="310p" id9 -->
-    -   The AI Core of Atlas inference products does not support storing the quantization parameter in L1 Buffer.
+    -   The Atlas inference products AI Core does not support storing the quantization parameter in L1 Buffer.
     <!-- end id9 -->
 
 ## Parameters

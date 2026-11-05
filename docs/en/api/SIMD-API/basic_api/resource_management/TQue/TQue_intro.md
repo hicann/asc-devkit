@@ -70,7 +70,7 @@ Because the Buffers allocated by TQue store synchronization event IDs, the numbe
 
 For Atlas training products, the number of event IDs is 4.
 
-For the AI Core of Atlas inference products, the number of event IDs is 8.
+For the Atlas inference products AI Core, the number of event IDs is 8.
 
 For the Vector Core of Atlas inference products, the number of event IDs is 8.
 

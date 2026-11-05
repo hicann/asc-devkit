@@ -403,7 +403,7 @@ On the basis of improving performance and fully leveraging computing power, fuse
 ## Supported APIs<a name="section2633193623711"></a>
 
 <!-- npu="310p" id1 -->
-**Table 1** APIs supported for the AI Core of Atlas inference products
+**Table 1** APIs supported for the Atlas inference products AI Core
 
 <a name="table56285428438"></a>
 <table><thead align="left"><tr id="row46697425436"><th class="cellrowborder" valign="top" width="30.28%" id="mcps1.2.3.1.1"><p id="p866911429430"><a name="p866911429430"></a><a name="p866911429430"></a>API Category</p></th>
