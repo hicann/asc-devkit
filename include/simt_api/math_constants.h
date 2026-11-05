@@ -15,16 +15,17 @@
 #define __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #define __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_MATH_CONSTANTS_H__
 #endif
+#include "impl/simt_api/math_constants_impl.h"
 
 constexpr int ASCRT_NAN_F_VALUE = 0x7fffffffU;
 constexpr int ASCRT_MIN_DENORM_F_VALUE = 0x00000001U;
 constexpr int ASCRT_MAX_NORMAL_F_VALUE = 0x7f7fffffU;
 constexpr int ASCRT_NEG_ZERO_F_VALUE = 0x80000000U;
 #define ASCRT_INF_F __builtin_inff()
-#define ASCRT_NAN_F (*(reinterpret_cast<const float*>(&ASCRT_NAN_F_VALUE)))
-#define ASCRT_MIN_DENORM_F (*(reinterpret_cast<const float*>(&ASCRT_MIN_DENORM_F_VALUE)))
-#define ASCRT_MAX_NORMAL_F (*(reinterpret_cast<const float*>(&ASCRT_MAX_NORMAL_F_VALUE)))
-#define ASCRT_NEG_ZERO_F (*(reinterpret_cast<const float*>(&ASCRT_NEG_ZERO_F_VALUE)))
+#define ASCRT_NAN_F __internal_int_as_float(ASCRT_NAN_F_VALUE)
+#define ASCRT_MIN_DENORM_F __internal_int_as_float(ASCRT_MIN_DENORM_F_VALUE)
+#define ASCRT_MAX_NORMAL_F __internal_int_as_float(ASCRT_MAX_NORMAL_F_VALUE)
+#define ASCRT_NEG_ZERO_F __internal_int_as_float(ASCRT_NEG_ZERO_F_VALUE)
 #define ASCRT_ZERO_F 0.0F
 #define ASCRT_ONE_F 1.0F
 #define ASCRT_SQRT_HALF_F 0.707106781F
