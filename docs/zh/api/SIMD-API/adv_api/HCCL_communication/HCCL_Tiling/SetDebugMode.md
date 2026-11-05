@@ -32,7 +32,7 @@ uint32_t SetDebugMode(uint8_t debugMode)
 ```
 const char* groupName = "testGroup";
 uint32_t opType = HCCL_CMD_REDUCE_SCATTER;
-std::string algConfig = "ReduceScatter=level0:fullmesh";
+std::string algConfig = "ReduceScatter=level0:doublering";
 uint32_t reduceType = HCCL_REDUCE_SUM;
 AscendC::Mc2CcTilingConfig mc2CcTilingConfig(groupName, opType, algConfig, reduceType);
 mc2CcTilingConfig.SetDebugMode(3); // 设置调测模式

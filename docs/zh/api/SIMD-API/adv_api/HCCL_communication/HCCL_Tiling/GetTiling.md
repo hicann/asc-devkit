@@ -36,7 +36,7 @@ uint32_t GetTiling(::Mc2CcTiling& tiling)
 ```
 const char* groupName = "testGroup";
 uint32_t opType = HCCL_CMD_REDUCE_SCATTER;
-std::string algConfig = "ReduceScatter=level0:fullmesh";
+std::string algConfig = "ReduceScatter=level0:doublering";
 uint32_t reduceType = HCCL_REDUCE_SUM;
 AscendC::Mc2CcTilingConfig mc2CcTilingConfig(groupName, opType, algConfig, reduceType);
 mc2CcTilingConfig.GetTiling(tiling->mc2InitTiling); // tiling为算子组装的TilingData结构体，获取Mc2InitTiling

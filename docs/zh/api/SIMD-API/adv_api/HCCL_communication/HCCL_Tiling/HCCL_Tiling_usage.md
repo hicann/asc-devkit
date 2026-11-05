@@ -13,7 +13,7 @@ HCCL Tiling API获取Tiling参数的流程如下：
     ```
     const char* groupName = "testGroup";
     uint32_t opType = HCCL_CMD_REDUCE_SCATTER;
-    std::string algConfig = "ReduceScatter=level0:fullmesh";
+    std::string algConfig = "ReduceScatter=level0:doublering";
     uint32_t reduceType = HCCL_REDUCE_SUM;
     AscendC::Mc2CcTilingConfig mc2CcTilingConfig(groupName, opType, algConfig, reduceType);
     ```

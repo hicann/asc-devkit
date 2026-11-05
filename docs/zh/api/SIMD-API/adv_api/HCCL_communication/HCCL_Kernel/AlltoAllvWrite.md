@@ -87,7 +87,7 @@ extern "C" __global__ __aicore__ void alltoallvwrite_custom(
 
     KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2);
     Hccl<HcclServerType::HCCL_SERVER_TYPE_CCU> hccl;
-    GM_ADDR context = GetHcclContext<HCCL_GROUP_ID_0>();
+    GM_ADDR context = GetHcclContext<0>();
     hccl.InitV2(context, &tilingData);
     hccl.SetCcTilingV2(offsetof(AllToAllVCustomV3TilingData, mc2CcTiling));
     uint32_t rankDim = hccl.GetRankDim();

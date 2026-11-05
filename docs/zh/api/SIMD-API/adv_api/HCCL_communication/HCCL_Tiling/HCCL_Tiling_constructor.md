@@ -71,7 +71,7 @@ enum class HcclCMDType {
 ```
 const char* groupName = "testGroup";
 uint32_t opType = HCCL_CMD_REDUCE_SCATTER;
-std::string algConfig = "ReduceScatter=level0:fullmesh";
+std::string algConfig = "ReduceScatter=level0:doublering";
 uint32_t reduceType = HCCL_REDUCE_SUM;
 uint8_t dstDataType = HCCL_DATA_TYPE_FP16;
 uint8_t srcDataType = HCCL_DATA_TYPE_FP16;

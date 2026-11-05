@@ -484,7 +484,7 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
 
     ```
     Hccl hccl;
-    __gm__ uint8_t* contextGM = GetHcclContext<HCCL_GROUP_ID_0>();
+    __gm__ uint8_t* contextGM = GetHcclContext<0>();
     hccl.InitV2(contextGM, &tilingData);
     hccl.SetCcTilingV2(offsetof(AllGatherMatmulCustomTilingData, mc2CcTiling));
     auto handleId = hccl.AllGather<true>(aGM, gatherOutGM, aTileEleCnt, HcclDataType::HCCL_DATA_TYPE_FP16, aRankEleCnt, tileNum);
@@ -604,7 +604,7 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
     const auto cRankSize = localTiling.M * localTiling.N * sizeof(half);  // 单卡输出矩阵字节数
 
     Hccl hccl;
-    __gm__ uint8_t* contextGM = GetHcclContext<HCCL_GROUP_ID_0>();
+    __gm__ uint8_t* contextGM = GetHcclContext<0>();
     hccl.InitV2(contextGM, &tilingData);
     hccl.SetCcTilingV2(offsetof(AllGatherMatmulCustomTilingData, mc2CcTiling));
     auto handleId = hccl.AllGather<true>(aGM, gatherOutGM, aTileEleCnt, HcclDataType::HCCL_DATA_TYPE_FP16, aRankEleCnt, tileNum);
