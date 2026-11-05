@@ -37,7 +37,6 @@
 > - 环境默认安装了最新的商用版NPU驱动和固件、CANN包，源码下载时注意与软件配套。
 > - 如需下载特定版本的CANN包，请参考[下载安装CANN包](#cann-install)。
 > - 更多关于**CANNLab云开发环境**的介绍，请参考[CANNLab指导](https://gitcode.com/org/cann/discussions/54)。
-> - [Huawei Developer Space插件](https://marketplace.visualstudio.com/items?itemName=HuaweiCloud.developerspace)为VSCode IDE接入**云开发环境**提供技术支持。
 
 ### 2️⃣ CANN官方Docker镜像<a name="cann-docker-image"></a>
 

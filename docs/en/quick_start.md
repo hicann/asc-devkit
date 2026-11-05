@@ -37,7 +37,6 @@ For users without NPU devices, you can use the NPU computing resources provided 
 > - The environment has the latest commercial NPU driver and firmware, CANN package pre-installed. Pay attention to software compatibility when downloading source code.
 > - To download a specific version of CANN package, refer to [Download and Install CANN Package](#📥-download-and-install-cann-package).
 > - For more information about **WebIDE Development Platform**, refer to [Cloud Development Platform Introduction](https://gitcode.com/org/cann/discussions/54).
-> - [Huawei Developer Space plugin](https://marketplace.visualstudio.com/items?itemName=HuaweiCloud.developerspace) provides technical support for VSCode IDE to access **cloud development environment**.
 
 ### 2️⃣ CANN Official Docker Image
 

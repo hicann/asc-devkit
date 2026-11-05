@@ -28,11 +28,13 @@
 
 头文件路径为：`"c_api/atomic/scalar_atomic.h"`。
 
-对Global Memory中`address`指向的一个`uint32_t`或`uint64_t`元素执行原子递增操作。读取该元素的旧值`old_value`，按照以下公式计算并写回新值`new_value`：
+对Global Memory中`address`指向的一个`uint32_t`或`uint64_t`元素执行原子递增操作。读取该元素的旧值`old_value`后，如果`old_value`大于或等于`val`，则写入0；否则，写入`old_value + 1`。新值`new_value`的计算公式如下：
 
 $$
 new\_value = (old\_value >= val) ? 0 : (old\_value + 1)
 $$
+
+`val`指定计数范围的最大值。当计数器的初始值在`[0, val]`范围内时，计数器按照`0, 1, ..., val, 0, ...`循环，计数周期为`val + 1`。
 
 接口返回`old_value`。整个读取、判断和写回过程为原子操作。
 
@@ -62,11 +64,11 @@ __aicore__ inline uint32_t asc_atomic_inc(__gm__ uint32_t* address,
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | address | 输入/输出 | Global Memory的地址。 |
-| val | 输入 | 源操作数。 |
+| val | 输入 | 计数范围的最大值。计数器初始值在`[0, val]`范围内时，计数周期为`val + 1`。 |
 
 ## 返回值说明
 
-`address`地址中计算前的原始数据。
+返回`address`地址中更新前的数值。
 
 ## 流水类型
 
@@ -78,6 +80,8 @@ PIPE_S
 - Scalar原子操作会绕过DCache，需要调用[asc_dcci](../../cache_ctrl/asc_dcci.md)接口确保GM与DCache的一致性。
 
 ## 调用示例
+
+以下示例将`address`指向的计数器初始值和`val`均设置为3。调用接口后，计数器的值更新为0，接口返回更新前的值3。
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
@@ -115,7 +119,7 @@ __global__ __vector__ void asc_atomic_inc_kernel(__gm__ uint32_t* output)
     // 确保Atomic访问GM前，目标Cache Line中的数据已写回。
     asc_dcci_single(output);
     asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
-    const uint32_t old_value = asc_atomic_inc(output, 20U);
+    const uint32_t old_value = asc_atomic_inc(output, 3U);
     asc_sync_data_barrier(mem_dsb_t::DSB_ALL);
     // Atomic绕过DCache，普通Scalar写前需使目标Cache Line中的旧副本失效。
     asc_dcci_single(output);
@@ -129,8 +133,8 @@ __global__ __vector__ void asc_atomic_inc_kernel(__gm__ uint32_t* output)
 
 int main()
 {
-    std::vector<uint32_t> input = {10, 0};
-    std::vector<uint32_t> golden = {11, 10};
+    std::vector<uint32_t> input = {3, 0};
+    std::vector<uint32_t> golden = {0, 3};
     input.resize(ELEMENTS, 0);
     golden.resize(ELEMENTS, 0);
     std::vector<uint32_t> output(ELEMENTS, 0xffffffffU);
