@@ -21,8 +21,14 @@
 
 namespace __asc_aicore {
 
+template <AscendC::Hardware hardware>
+__aicore__ constexpr inline bool is_super_tensor_hardware_supported()
+{
+    return false;
+}
+
 template <typename T>
-__aicore__ inline uint32_t mem_copy_cbuf_to_gm_impl(__gm__ T* dst, __cc__ T* src, const uint32_t& dumpSize)
+__aicore__ inline uint32_t mem_copy_cbuf_to_gm_impl(__gm__ T* dst, __cc__ T* src, const uint32_t alignDumpBytes)
 {
     return 1;
 }
@@ -36,19 +42,18 @@ __aicore__ inline uint32_t mem_copy_l1buf_to_gm_impl(__gm__ T* dst, __cbuf__ T* 
 }
 
 template <typename T>
-__aicore__ inline uint32_t mem_copy_ub_to_gm_impl(__gm__ T* dst, __ubuf__ T* src, const uint32_t& len)
+__aicore__ inline uint32_t mem_copy_ub_to_gm_impl(__gm__ T* dst, __ubuf__ T* src, const uint32_t alignDumpBytes)
 {
     constexpr uint8_t byte_32_align = 32;
     constexpr uint32_t blockCount = 1;
-    uint32_t blockLen = len;
     constexpr uint32_t dstStride = 0;
     constexpr uint32_t srcStride = 0;
 
-    uint32_t unitOfBytes = byte_32_align;
-    uint32_t burstLen = blockLen * unitOfBytes;
+    // copy_ubuf_to_gm_align_v2 takes lenBurst in bytes.
+    const uint32_t burstLen = alignDumpBytes;
     uint32_t srcStride1 = srcStride * byte_32_align + burstLen;
     srcStride1 = div_ceil(srcStride1, byte_32_align) * byte_32_align;
-    uint64_t dstStride1 = dstStride * unitOfBytes + burstLen;
+    uint64_t dstStride1 = dstStride * byte_32_align + burstLen;
     copy_ubuf_to_gm_align_v2((__gm__ void*)dst, (__ubuf__ void*)src, 0, blockCount, burstLen, dstStride1, srcStride1);
     return 0;
 }

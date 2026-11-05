@@ -53,6 +53,12 @@ file(GLOB ASCENDC_TEST_COMMON_CASE_SRC_FILES
     ascendc_case_common/*.cpp
 )
 
+# Enable the device sender only in the payload reservation tests.
+set_source_files_properties(
+    ascendc_case_ascend950pr_9599/ascendc_case_ascend950pr_9599_aic/test_dump_tensor.cpp
+    PROPERTIES COMPILE_OPTIONS "-UASCENDC_DUMP;-DASCENDC_DUMP=1"
+)
+
 # ascend910 test cases
 file(GLOB ASCENDC_TEST_ascend910_CASE_SRC_FILES
     ascendc_case_ascend910/*.cpp

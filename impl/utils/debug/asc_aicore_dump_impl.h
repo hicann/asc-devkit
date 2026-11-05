@@ -38,7 +38,6 @@
 #endif
 
 namespace __asc_aicore {
-
 template <AscendC::Hardware hardware, typename T, typename U>
 __aicore__ inline void set_dump_tlv_info(
     U src, __gm__ DumpTensorTlv* dumpTlv, uint32_t alignDumpLen, uint32_t desc, uint32_t dump_size)
@@ -93,8 +92,9 @@ __aicore__ inline uint32_t set_dump_tlv_data(U src, __gm__ Tlv* dumpTlv, uint32_
         ret = mem_copy_gm_to_gm(
             reinterpret_cast<__gm__ uint8_t*>(dumpDstAddr), reinterpret_cast<__gm__ const uint8_t*>(src), dumpLen);
     } else if constexpr (hardware == AscendC::Hardware::UB) {
-        dumpLen = alignDumpLen / ASC_ONE_DATABLOCK_SIZE;
-        ret = mem_copy_ub_to_gm_impl(dumpDstAddr, src, static_cast<uint16_t>(dumpLen));
+        // Every local position is handed a byte count; each architecture converts
+        // it to whatever unit its own copy instruction expects.
+        ret = mem_copy_ub_to_gm_impl(dumpDstAddr, src, alignDumpLen);
     } else if constexpr (hardware == AscendC::Hardware::L1) {
         ret = mem_copy_l1buf_to_gm_impl(dumpDstAddr, src, alignDumpLen);
     } else if constexpr (hardware == AscendC::Hardware::L0A) {
@@ -112,27 +112,17 @@ __aicore__ inline uint32_t set_dump_tlv_data(U src, __gm__ Tlv* dumpTlv, uint32_
     return ret;
 }
 
-template <AscendC::Hardware hardware>
-__aicore__ constexpr inline bool is_super_tensor_hardware_supported()
+__aicore__ constexpr inline uint32_t get_dump_tensor_payload_alignment(AscendC::Hardware hardware)
 {
-    return hardware == AscendC::Hardware::GM || hardware == AscendC::Hardware::UB ||
-           hardware == AscendC::Hardware::L1 || hardware == AscendC::Hardware::L0C ||
-           hardware == AscendC::Hardware::BIAS || hardware == AscendC::Hardware::FIXBUF;
-}
-
-template <AscendC::Hardware hardware>
-__aicore__ constexpr inline uint32_t get_super_tensor_payload_alignment()
-{
-    if constexpr (hardware == AscendC::Hardware::L0C) {
-        return 16U * 16U * sizeof(uint32_t);
-    }
-    return ASC_ONE_DATABLOCK_SIZE;
+    // Match the 16x16 B32 fractal copied by the L0C dump implementation.
+    constexpr uint32_t l0cFractalBytes = 16U * 16U * sizeof(uint32_t);
+    return hardware == AscendC::Hardware::L0C ? l0cFractalBytes : ASC_ONE_DATABLOCK_SIZE;
 }
 
 template <AscendC::Hardware hardware>
 __aicore__ inline uint32_t get_super_tensor_payload_capacity(uint32_t ringBufLen, uint32_t headerLen)
 {
-    constexpr uint32_t payloadAlignment = get_super_tensor_payload_alignment<hardware>();
+    constexpr uint32_t payloadAlignment = get_dump_tensor_payload_alignment(hardware);
     if (ringBufLen <= headerLen) {
         return 0U;
     }
@@ -183,7 +173,7 @@ __aicore__ inline void asc_dump_super_tensor_impl(
     U src, uint32_t desc, uint64_t tensorLength, const uint32_t* shape, uint32_t shapeDim,
     __gm__ DebugBlockHeadInfo* blockInfo)
 {
-    constexpr uint32_t payloadAlignment = get_super_tensor_payload_alignment<hardware>();
+    constexpr uint32_t payloadAlignment = get_dump_tensor_payload_alignment(hardware);
     uint64_t tensorOffset = 0U;
     bool isFirst = true;
     while (tensorOffset < tensorLength) {
@@ -233,17 +223,14 @@ __aicore__ inline void asc_dump_impl(
     if (dump_size <= 0 || blockInfo == nullptr) {
         return;
     }
-    constexpr uint32_t dataBlockSize = 32U;
+    constexpr uint32_t dataBlockSize = get_dump_tensor_payload_alignment(hardware);
     const uint64_t tensorLength = static_cast<uint64_t>(dump_size) * sizeof(T);
     const uint64_t alignDumpLen64 = ((tensorLength + dataBlockSize - 1U) / dataBlockSize) * dataBlockSize;
     const uint64_t tlvLen64 = sizeof(DumpTensorTlv) + alignDumpLen64;
     if (tlvLen64 > blockInfo->ringBufLen) {
-#if __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 2201 || __NPU_ARCH__ == 2002 || __NPU_ARCH__ == 5102 || \
-    __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
         if constexpr (is_super_tensor_hardware_supported<hardware>()) {
             asc_dump_super_tensor_impl<hardware, T>(src, desc, tensorLength, shape, shapeDim, blockInfo);
         }
-#endif
         return;
     }
     const uint32_t alignDumpLen = static_cast<uint32_t>(alignDumpLen64);
