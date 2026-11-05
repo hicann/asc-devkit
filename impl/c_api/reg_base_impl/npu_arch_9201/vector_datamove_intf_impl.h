@@ -21,8 +21,8 @@
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
 __aicore__ inline void asc_copy_gm2ub(
-    __ubuf__ void* dst, __gm__ void* src, uint16_t burst_count, uint16_t burst_len, uint16_t src_stride,
-    uint16_t dst_stride)
+    __ubuf__ void* dst, __gm__ void* src, uint32_t burst_count, uint32_t burst_len, uint64_t src_stride,
+    uint32_t dst_stride)
 {
     if ASC_IS_AIV {
         copy_gm_to_ubuf_align_v2(
@@ -37,8 +37,8 @@ __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst, __gm__ void* src, uint
 }
 
 __aicore__ inline void asc_copy_ub2gm(
-    __gm__ void* dst, __ubuf__ void* src, uint16_t burst_count, uint16_t burst_len, uint16_t dst_stride,
-    uint16_t src_stride)
+    __gm__ void* dst, __ubuf__ void* src, uint32_t burst_count, uint32_t burst_len, uint64_t dst_stride,
+    uint32_t src_stride)
 {
     if ASC_IS_AIV {
         copy_ubuf_to_gm_align_v2(

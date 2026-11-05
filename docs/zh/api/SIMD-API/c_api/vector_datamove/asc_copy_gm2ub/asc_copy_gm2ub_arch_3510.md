@@ -59,10 +59,10 @@ __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst,
 ```c
 __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst,
                                       __gm__ void* src,
-                                      uint16_t burst_count,
-                                      uint16_t burst_len,
-                                      uint16_t src_stride,
-                                      uint16_t dst_stride)
+                                      uint32_t burst_count,
+                                      uint32_t burst_len,
+                                      uint64_t src_stride,
+                                      uint32_t dst_stride)
 ```
 
 ## 参数说明
@@ -85,10 +85,10 @@ __aicore__ inline void asc_copy_gm2ub(__ubuf__ void* dst,
 | :--- | :--- | :--- |
 | dst | 输出 | 目的UB的起始地址。需要32字节对齐。 |
 | src | 输入 | 源GM的起始地址。需要1字节对齐。 |
-| burst_count | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, $2^{16}−1$]。 |
-| burst_len | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{16}−1$]。 |
-| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{16}−1$]。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
-| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{16}−1$]。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
+| burst_count | 输入 | 待搬运的连续传输数据块个数。取值范围：[1, $2^{21}−1$]。 |
+| burst_len | 输入 | 待搬运的每个连续传输数据块的长度，单位为字节。取值范围：[1, $2^{21}−1$]。 |
+| src_stride | 输入 | 源操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{40}−1$]。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
+| dst_stride | 输入 | 目的操作数相邻连续数据块的距离（前面一个数据块的头与后面一个数据块的头的间隔），单位为字节。取值范围：[0, $2^{21}−1$]。<br>只搬运1个数据块，即`burst_count`设置为1时，可以将此参数设置为0。 |
 
 ## 返回值说明
 
