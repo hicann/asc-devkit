@@ -77,8 +77,14 @@ PIPE_S
 
 - 本接口在非AIV上调用直接返回。
 - 本接口仅设置填充值，须先调用本接口写入配置，再调用对应搬运接口。
-- 本接口设置的填充值仅在`asc_copy_gm2ub_align`接口的参数`enable_constant_pad`设置为`true`时被取用；若`enable_constant_pad`设置为`false`，填充值配置寄存器不被取用，本接口设置不生效。
 - 本接口设置后对后续所有`asc_copy_gm2ub_align`调用生效，直至再次调用本接口覆盖配置；不同搬运任务间若需不同填充值，应在调用搬运接口前重新调用本接口设置。
+
+<!-- npu="950" id10 -->
+对于Ascend 950PR&950DT系列产品，使用`asc_copy_gm2ub_align`的高维切分原型时：
+
+- 当`left_padding_num`和`right_padding_num`均为0时，`enable_constant_pad`为`true`才使用本接口配置的值填充补齐区域；为`false`时，由硬件自动填充dummy假数据，本接口设置不生效。
+- 当`left_padding_num`或`right_padding_num`非0时，`enable_constant_pad`不生效，必须在搬运前调用本接口配置填充值。左右Padding区域及右侧为32字节对齐继续补齐的区域均使用该值。
+<!-- end id10 -->
 
 ## 调用示例
 

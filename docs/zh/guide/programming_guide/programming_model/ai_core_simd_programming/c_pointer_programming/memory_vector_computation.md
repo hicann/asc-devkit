@@ -49,106 +49,111 @@ Memory矢量计算依托本地内存中的UB完成运算，开发者需先将输
 昇腾NPU提供多组专用接口，实现全局内存（GM）与UB之间的数据搬运，适配各类业务场景。为保障矢量计算效率，标准流程为：数据从GM搬运至UB完成计算，计算结果再从UB回写至GM，形成完整数据链路。
 开发者可灵活配置参数，精准控制数据块数量、长度、地址间隔等属性，实现连续数据搬运与非连续（高维切分）数据搬运，充分发挥硬件搬运与计算的协同能力，提升矢量算子整体执行效率。
 
+<!-- npu="950" id1 -->
+本节以[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)为例介绍数据搬运接口。
+
 <table>
 <thead>
 <tr><th>数据通路</th><th>搬运模式</th><th>接口</th><th>适用场景</th></tr>
 </thead>
 <tbody>
 <tr>
-<td rowspan="3">Global Memory -> UB</td>
+<td rowspan="2">Global Memory -> UB</td>
 <td>连续搬运</td>
-<td><code>asc_copy_gm2ub(dst, src, size)</code></td>
-<td>连续地址的一维数据搬运</td>
+<td><code>asc_copy_gm2ub(dst, src, size)</code><br><code>asc_copy_gm2ub_align(dst, src, size)</code></td>
+<td>单段连续数据搬运，长度可非32B对齐</td>
 </tr>
 <tr>
-<td>非连续搬运</td>
-<td><code>asc_copy_gm2ub(dst, src, burst_count, burst_len, src_gap, dst_gap)</code></td>
-<td>非连续多块数据搬运，可配置块数和间隔</td>
+<td>高维切分搬运</td>
+<td><code>asc_copy_gm2ub(dst, src, burst_count, burst_len, src_stride, dst_stride)</code><br><code>asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, enable_constant_pad, l2_cache_mode, src_stride, dst_stride)</code></td>
+<td>多块数据搬运，可配置块数、长度和首地址间隔；带<code>_align</code>的接口还可配置左右Padding、填充方式和L2 Cache策略</td>
 </tr>
 <tr>
-<td>非对齐</td>
-<td><code>asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, enable_constant_pad, l2_cache_mode, src_stride, dst_stride)</code></td>
-<td>地址非32B对齐，支持自定义填充</td>
-</tr>
-<tr>
-<td rowspan="3">UB -> Global Memory</td>
+<td rowspan="2">UB -> Global Memory</td>
 <td>连续搬运</td>
-<td><code>asc_copy_ub2gm(dst, src, size)</code></td>
-<td>连续地址的一维数据搬运</td>
+<td><code>asc_copy_ub2gm(dst, src, size)</code><br><code>asc_copy_ub2gm_align(dst, src, size)</code></td>
+<td>单段连续数据搬运，长度可非32B对齐</td>
 </tr>
 <tr>
-<td>非连续搬运</td>
-<td><code>asc_copy_ub2gm(dst, src, burst_count, burst_len, src_gap, dst_gap)</code></td>
-<td>非连续多块数据搬运，可配置块数和间隔</td>
-</tr>
-<tr>
-<td>非对齐</td>
-<td><code>asc_copy_ub2gm_align(dst, src, burst_count, burst_len, l2_cache_mode, dst_stride, src_stride)</code></td>
-<td>地址非32B对齐</td>
+<td>高维切分搬运</td>
+<td><code>asc_copy_ub2gm(dst, src, burst_count, burst_len, dst_stride, src_stride)</code><br><code>asc_copy_ub2gm_align(dst, src, burst_count, burst_len, l2_cache_mode, dst_stride, src_stride)</code></td>
+<td>多块数据搬运，可配置块数、长度和首地址间隔；带<code>_align</code>的接口还可配置L2 Cache策略</td>
 </tr>
 </tbody>
 </table>
 
-根据上述矢量搬运能力的描述，开发者可以根据不同的场景选择合适的接口进行处理。
+以上接口均要求UB起始地址32B对齐，搬运长度需满足数据类型的字节对齐要求。长度非32B整数倍时，GM向UB搬入会在目的UB中写入补齐数据，需为补齐后的写入范围预留空间；UB向GM搬出会按32B对齐范围读取源UB，需为读取范围预留合法空间，但仅将有效数据写入GM。
 
-**连续搬运**: 若需将GM中连续地址的数据搬运至UB，仅需指定搬运数据的字节长度即可。例如将形状为256、数据类型为half的src_gm数据搬入UB，可直接调用`asc_copy_gm2ub`接口：
+**连续搬运**：若需将GM中连续地址的数据搬运至UB，仅需指定搬运数据的字节长度即可。下图搬运256B连续数据，以half类型为例，共128个元素，可调用`asc_copy_gm2ub`或`asc_copy_gm2ub_align`接口，以下两种调用方式任选其一：
 
-<img src="../../../../figures/cont_copy.png" alt="连续数据搬运" width="800"/>
+<img src="../../../../../api/figures/asc_copy_gm2ub_continuous.png" alt="连续搬运示意图" width="800"/>
 
 ```c
-uint32_t size = 256 * sizeof(half);
+uint32_t size = 128 * sizeof(half);
+// Option 1
 asc_copy_gm2ub(dst_ub, src_gm, size);
+// Option 2
+asc_copy_gm2ub_align(dst_ub, src_gm, size);
 ```
 
-> 📌 该接口主要为了提升用户数据搬运的易用性，由软件层面提供，底层通过高维切分接口实现。
+>[!NOTE]说明
+>这些连续搬运接口主要为了提升用户数据搬运的易用性，由软件层面提供，底层通过高维切分接口实现。
 
-**非连续搬运**: 若需将GM中多段非连续数据搬入同一段UB空间，可通过高维切分模式，配置数据块数量、单块长度、块间间隔等参数。以形状为256、数据类型为half的src_gm为例，对应搬运逻辑与代码实现如下：
+**高维切分搬运**：若需将GM中多段非连续数据搬入UB，可通过高维切分模式，配置数据块数量、单块长度、块间间隔等参数。下图搬运两个数据块，每块96B，两个数据块在GM上间隔为32B，在UB上间隔为64B。共搬运192B有效数据，目的UB至少需预留256B空间。
 
+<img src="../../../../../api/figures/asc_copy_gm2ub_highdim_split.png" alt="高维切分搬运示意图" width="800"/>
 
-<img src="../../../../figures/discont_copy.png" alt="非连续搬运" width="800"/>
+`burst_len`、`src_stride`和`dst_stride`均以字节为单位，stride表示相邻数据块首地址的间隔。上图对应的参数如下：
 
 ```c
-// Number of consecutive data blocks: 16 rows of data, transfer every alternate row to UB, need to transfer 8 rows
 uint16_t burst_count = 2;
-// Length of single data block (in 32B units): value is 8
-uint16_t burst_len = 8;
-// Stride from previous block to next block in source data (in 32B units): interval of two rows between blocks, value is 1
-uint16_t src_stride = 1;
-// Stride from previous block to next block in destination data (in 32B units): data blocks are consecutive, value is 2
-uint16_t dst_stride = 2;
+uint16_t burst_len = 96;
+// Source burst starts are 96B + 32B apart.
+uint16_t src_stride = 96 + 32;
+// Destination burst starts are 96B + 64B apart.
+uint16_t dst_stride = 96 + 64;
 
 asc_copy_gm2ub(dst_ub, src_gm, burst_count, burst_len, src_stride, dst_stride);
 ```
 
-> 📌 stride（前一块数据头到后一块数据头的间隔）为该接口从[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入，[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)使用gap（前一个数据块结束地址与后一个数据块起始地址的差值）。
+**高维切分搬运的对齐补齐与填充值配置**：对齐补齐用于满足UB侧的32B对齐要求，填充值配置用于指定补齐区域写入的数值。普通接口按默认方式补齐非32B对齐的数据；需要显式配置左右Padding或填充方式时，可使用`asc_copy_gm2ub_align`的高维切分原型。UB起始地址需32B对齐，搬运长度需满足数据类型的字节对齐要求。
 
-**非对齐搬运**: 基础高维切分接口要求GM的数据长度与地址间隔均按32字节对齐，无法适配非对齐场景。例如将数据改为形状(16, 200)、类型为half的src_gm后，asc_copy_gm2ub无法实现隔行搬运。针对该场景，Ascend C提供`asc_copy_gm2ub_align`非对齐搬运接口，支持以字节为单位配置数据块长度与地址步长，突破32字节对齐限制。
+以搬运3个长度为48B的数据块为例，将`left_padding_num`和`right_padding_num`均设置为0，通过`dst_stride`选择补齐模式：
 
-<img src="../../../../figures/unaligned_in_cap.png" alt="非对齐搬入能力" width="800"/>
+Compact模式下，将`dst_stride`设置为`burst_len`，即48B。三个数据块在UB中的起始偏移依次为0B、48B、96B，仅在144B有效数据的末尾补齐16B，目的UB至少需预留160B空间。
 
-以上图为例，将两个数据块从GM搬运至UB，每个blockLen为54B，源操作数相邻数据块之间的间隔为1B，目的操作数相邻数据块之间的间隔为32B。
-在blockLen左侧和右侧分别填充2个和3个half类型元素，此时blockLen + leftPadding + rightPadding = 54B + 2 * 2B + 3 * 2B = 64B，满足32B对齐。
+<img src="../../../../../api/figures/asc_copy_gm2ub_align_compact_padding.png" alt="Compact模式32字节补齐示意图" width="800"/>
+
+Normal模式下，将`dst_stride`设置为不等于`burst_len`且满足32B对齐的值，此例为64B。三个数据块在UB中的起始偏移依次为0B、64B、128B，每个数据块分别补齐16B，目的UB至少需预留192B空间。
+
+<img src="../../../../../api/figures/asc_copy_gm2ub_align_normal_padding.png" alt="Normal模式32字节补齐示意图" width="800"/>
+
+以下示例中，`src_gm`、`dst_ub_compact`和`dst_ub_normal`均为half类型指针，两个目的UB分别预留上述空间。源数据连续排列，`src_stride`为48B；通过设置`enable_constant_pad`为`true`，将图中的补齐区域填充为half类型的0：
 
 ```c
-// Number of consecutive data blocks: transfer two consecutive data blocks
-uint16_t burst_count = 2;
-// Length of single data block (in bytes): value is 8
-uint16_t burst_len = 8;
-// Stride from previous block to next block in source data: source data stride unit is 1B
-uint16_t src_stride = 1;
-// Stride from previous block to next block in destination data: UB operation constraint address must be 32B aligned, value is 32 / 32
-uint16_t dst_stride = 32 / 32;
-// Left padding of transfer result (element count): value is 4 / sizeof(half) = 2
-uint8_t left_padding_num = 2;
-// Right padding of transfer result (element count): value is 6 / sizeof(half) = 3
-uint8_t right_padding_num = 3;
+uint32_t burst_count = 3;
+uint32_t burst_len = 48;
+uint64_t src_stride = 48;
+uint8_t left_padding_num = 0;
+uint8_t right_padding_num = 0;
 
-asc_copy_gm2ub_align(dst, src, burst_count, burst_len, left_padding_num, right_padding_num, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, src_stride, dst_stride);
+asc_set_copy_pad_val(static_cast<half>(0));
+// Compact: pad only the end of all three bursts, using at least 160B of UB.
+asc_copy_gm2ub_align(dst_ub_compact, src_gm, burst_count, burst_len,
+                    left_padding_num, right_padding_num, true,
+                    asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, src_stride, 48);
+// Normal: pad each burst separately, using at least 192B of UB.
+asc_copy_gm2ub_align(dst_ub_normal, src_gm, burst_count, burst_len,
+                    left_padding_num, right_padding_num, true,
+                    asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, src_stride, 64);
 ```
 
-> 📌 stride（前一块数据头到后一块数据头的间隔）为该接口从[NPU架构版本3510](../../../language_extension/simd_builtin_keywords.md)引入，[NPU架构版本2201](../../../language_extension/simd_builtin_keywords.md)使用gap（前一个数据块结束地址与后一个数据块起始地址的差值）。
+>[!NOTE]说明
+>Compact模式要求左右Padding均为0。Normal模式支持显式配置左右Padding。左右Padding均为0时，`enable_constant_pad`用于选择补齐区域的填充方式：为`true`时使用`asc_set_copy_pad_val`配置的值，为`false`时由硬件自动填充dummy假数据。左右Padding任一非0时，`enable_constant_pad`不生效，必须提前通过[asc_set_copy_pad_val](../../../../../api/SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md)配置填充值，左右Padding区域及右侧为32B对齐继续补齐的区域均使用该值。
 
 以上为GM向UB的数据搬入逻辑，UB向GM的数据搬出可使用同系列接口实现。更多搬运接口说明可参考[矢量数据搬运](../../../../../api/SIMD-API/c_api/vector_datamove/vector_datamove.md)。
+
+<!-- end id1 -->
 
 ## Memory数据计算
 
