@@ -59,9 +59,11 @@ struct reg_pair {
 接收`deinterleave`接口返回的两个寄存器Tensor：
 
 ```cpp
-auto result = asc::te::experimental::deinterleave<float>(mask0, mask1);
-asc::te::experimental::reg_tensor<bool> first = result.first;
-asc::te::experimental::reg_tensor<bool> second = result.second;
+auto src0 = asc::te::experimental::fill(1.0f);
+auto src1 = asc::te::experimental::fill(2.0f);
+auto result = asc::te::experimental::deinterleave(src0, src1);
+asc::te::experimental::reg_tensor<float> first = result.first;
+asc::te::experimental::reg_tensor<float> second = result.second;
 ```
 
 接收[add_carry](../basic_arithmetic/add_carry.md)接口返回的两种元素类型的寄存器Tensor，`first`保存`uint32_t`类型的加法结果低32位，`second`保存`bool`类型的进位。
