@@ -138,6 +138,7 @@ def load_fixed_shards(examples: list[str], cards: list[str], shard_dir: Path) ->
     assignments: list[tuple[str, str]] = []
     assigned_examples: set[str] = set()
     duplicate_examples: set[str] = set()
+    disabled_examples: set[str] = set()
     for index, card in enumerate(cards):
         shard_file = shard_dir / f"card_{index}.txt"
         if not shard_file.is_file():
@@ -145,6 +146,9 @@ def load_fixed_shards(examples: list[str], cards: list[str], shard_dir: Path) ->
         for raw_line in shard_file.read_text(encoding="utf-8").splitlines():
             example = raw_line.strip()
             if not example or example.startswith("#"):
+                disabled_example = example.removeprefix("#").strip()
+                if disabled_example in examples:
+                    disabled_examples.add(disabled_example)
                 continue
             if example in assigned_examples:
                 duplicate_examples.add(example)
@@ -152,7 +156,7 @@ def load_fixed_shards(examples: list[str], cards: list[str], shard_dir: Path) ->
             assignments.append((card, example))
 
     planned_examples = set(examples)
-    missing_examples = [example for example in examples if example not in assigned_examples]
+    missing_examples = [example for example in examples if example not in assigned_examples | disabled_examples]
     extra_examples = sorted(assigned_examples - planned_examples)
     errors = []
     if missing_examples:

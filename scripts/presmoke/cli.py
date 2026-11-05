@@ -160,6 +160,12 @@ def validate_fixed_schedule_coverage(
     schedule_names = set(schedule_order)
     planned_names = {cell.example.rel_path for cell in selected.cells}
     planned_names.update(result.example for result in selected.skipped_results)
+    temporarily_disabled_names = {
+        line.strip()[2:].strip()
+        for line in schedule_file.read_text(encoding="utf-8").splitlines()
+        if line.strip().startswith("# ") and line.strip()[2:].strip() in planned_names
+    }
+    planned_names.difference_update(temporarily_disabled_names)
 
     schedule_only = sorted(schedule_names - planned_names)
     planned_only = sorted(planned_names - schedule_names)

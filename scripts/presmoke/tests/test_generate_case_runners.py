@@ -22,6 +22,7 @@ from pathlib import Path
 
 from presmoke.generate_case_runners import (
     NO_CMAKE_ARCH_INJECTION_CASES,
+    MS_SANITIZER_SKIP_REASON,
     cell_for_spec,
     command_env_prefix,
     command_workdir,
@@ -95,6 +96,21 @@ class GenerateCaseRunnersTest(unittest.TestCase):
         ):
             archs.append("dav-2201")
         return archs
+
+    def test_ms_sanitizer_is_temporarily_skipped_by_presmoke(self) -> None:
+        project_root = Path(__file__).resolve().parents[3]
+        manifest = json.loads(
+            (project_root / "scripts/presmoke/reports/case_runner_manifest.json").read_text(encoding="utf-8")
+        )
+        item = next(
+            entry for entry in manifest if entry["case"] == "01_simd_cpp_api/01_utilities/05_sanitizer/ms_sanitizer"
+        )
+        runner = project_root / "scripts" / "presmoke" / "cases"
+
+        self.assertEqual(item["skip"], True)
+        self.assertEqual(item["skip_reason"], MS_SANITIZER_SKIP_REASON)
+        self.assertEqual(item["skip_modes"], ["npu"])
+        self.assertTrue((runner / "01_simd_cpp_api/01_utilities/05_sanitizer/ms_sanitizer/run.sh").exists())
 
     def test_manifest_archs_match_readme_supported_products(self) -> None:
         project_root = Path(__file__).resolve().parents[3]

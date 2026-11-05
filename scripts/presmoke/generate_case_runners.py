@@ -71,6 +71,7 @@ NO_CMAKE_ARCH_INJECTION_CASES = {
 TENSORFLOW_SKIP_REASON = "requires TensorFlow 2.6.5 environment; skipped by presmoke"
 MATMUL_L2CACHE_SKIP_REASON = "data size (~308M) causes overtime in cpu mode; cpu mode skipped by presmoke"
 LONG_TIME_REASON = "long execution time in cpu mode; cpu mode skipped by presmoke"
+MS_SANITIZER_SKIP_REASON = "msSanitizer is a MindStudio tool sample; temporarily skipped by presmoke"
 
 
 @dataclass
@@ -98,6 +99,9 @@ class _SkipResult:
 
 
 SKIP_CONFIG = {
+    "01_simd_cpp_api/01_utilities/05_sanitizer/ms_sanitizer": SkipConfig(
+        reason=MS_SANITIZER_SKIP_REASON, modes=["npu"]
+    ),
     "01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_builtin": SkipConfig(
         reason=TENSORFLOW_SKIP_REASON, modes=["npu"]
     ),

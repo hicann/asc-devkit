@@ -111,6 +111,19 @@ class OrchestrateShardingTest(unittest.TestCase):
 
         self.assertEqual(assignments, [("4", "case/b"), ("4", "case/a"), ("6", "case/c")])
 
+    def test_fixed_shards_allow_commented_planned_cases(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            report = write_plan_report(root, ["case/a", "case/b", "case/c"])
+            shards = root / "shards"
+            shards.mkdir()
+            (shards / "card_0.txt").write_text("case/a\n# case/b\n", encoding="utf-8")
+            (shards / "card_1.txt").write_text("# temporarily disabled\ncase/c\n", encoding="utf-8")
+
+            assignments = shard_examples(report, ["0", "1"], fixed_shards=shards)
+
+        self.assertEqual(assignments, [("0", "case/a"), ("1", "case/c")])
+
     def test_fixed_shards_reject_incomplete_case_coverage(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
