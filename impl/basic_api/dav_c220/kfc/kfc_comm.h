@@ -274,7 +274,7 @@ struct Conv3DForwardConfigParams {
     uint32_t diStartPos;
     uint32_t mStartPos;
     uint32_t ciStartPos;
-    uint32_t res[10]; // Reserved£¬for 120Byte ailgn
+    uint32_t res[10]; // Reserved, for 120Byte ailgn
 };
 
 struct MatmulUserDefInfo {
@@ -364,7 +364,7 @@ struct SysWorkspaceDesc {
 
 __aicore__ inline void ClearWorkspaceImpl(__gm__ uint8_t* workspace)
 {
-    if (GetBlockIdxImpl() >= MAX_AIV_NUM / MIX_NUM) {
+    if (unlikely(GetBlockIdxImpl() >= MAX_AIV_NUM / MIX_NUM)) {
         // the kfc does nothing with the block idx out of mix_aic_num.
         return;
     }

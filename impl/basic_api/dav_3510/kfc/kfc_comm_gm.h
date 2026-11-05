@@ -358,7 +358,7 @@ struct SysWorkspaceDesc {
 
 __aicore__ inline void ClearWorkspaceImpl(__gm__ uint8_t* workspace)
 {
-    if (GetBlockIdxImpl() >= MAX_AIV_NUM) {
+    if (unlikely(GetBlockIdxImpl() >= MAX_AIV_NUM)) {
         // the kfc does nothing with the block idx out of mix_aic_num.
         return;
     }
