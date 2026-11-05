@@ -293,6 +293,23 @@ TopoInfoWithNetLayerDetails MakeMultiLevelTopo(u32 rankSize = 16U)
     return topo;
 }
 
+// 单机纯 CLOS（大禹形态）：单层 level0 CLOS
+TopoInfoWithNetLayerDetails MakeSingleLevelClosTopo(u32 rankSize = 8U)
+{
+    TopoInfoWithNetLayerDetails topo{};
+    topo.userRank = 0U;
+    topo.userRankSize = rankSize;
+    topo.serverNum = 1U;
+    topo.topoLevelNums = 1U;
+    topo.level0Topo = Level0Shape::CLOS;
+    topo.netLayerDetails.netLayerNum = 1U;
+    topo.netLayerDetails.netLayers = {0U};
+    topo.netLayerDetails.localNetInsSizeOfLayer = {1U};
+    topo.topoInstDetailsOfLayer.resize(1U);
+    topo.topoInstDetailsOfLayer[0].rankNumForTopoType[COMM_TOPO_CLOS] = {rankSize};
+    return topo;
+}
+
 // 两层网最小夹具（IsTwoLevelNetLayer 判定: netLayerNum>1 / level1 有 COMM_TOPO_CLOS / localNetInsSizeOfLayer[0]>1）
 TopoInfoWithNetLayerDetails MakeTwoLevelNetLayerTopo(u32 rankSize = 16U)
 {
@@ -526,7 +543,7 @@ OpParam MakeResolveParam(HcclCMDType cmd, CommEngine engine)
 }
 } // namespace
 
-// golden：36 个 (引擎×op×外部名) 组合的定名全覆盖，期望值与注册现场 sidecar 表逐行核对
+// golden：(引擎×op×外部名) 组合的定名全覆盖，期望值与注册现场 sidecar 表逐行核对
 // （grep REGISTER_ALG_META 可复核）
 TEST(ExtAlgResolver, GoldenAllEngines)
 {
@@ -541,6 +558,7 @@ TEST(ExtAlgResolver, GoldenAllEngines)
     TopoInfoWithNetLayerDetails ubx = MakeUbxTopo();
     TopoInfoWithNetLayerDetails pcie = MakePcieMixTopo();
     TopoInfoWithNetLayerDetails multi = MakeMultiLevelTopo();
+    TopoInfoWithNetLayerDetails clos = MakeSingleLevelClosTopo();
     TopoInfoWithNetLayerDetails twoLevel = MakeTwoLevelNetLayerTopo();
 
     const Case cases[] = {
@@ -589,8 +607,14 @@ TEST(ExtAlgResolver, GoldenAllEngines)
          "CcuSchedAllGatherConcurMeshNHRMultiLink"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr.multi_channel]", &ubx, CommEngine::COMM_ENGINE_CCU,
          "CcuSchedReduceScatterSoleNHRMultiLink"},
-        // CCU·RS·sole[nhr]：唯一候选带 FLAG_MULTI_LEVEL，多层网命中
+        // CCU·RS·sole[nhr]：无机型约束，flat/单层 CLOS/UBX 均直接命中
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr]", &multi, CommEngine::COMM_ENGINE_CCU,
+         "CcuSchedReduceScatterSoleNHR"},
+        {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr]", &flat, CommEngine::COMM_ENGINE_CCU,
+         "CcuSchedReduceScatterSoleNHR"},
+        {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr]", &clos, CommEngine::COMM_ENGINE_CCU,
+         "CcuSchedReduceScatterSoleNHR"},
+        {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr]", &ubx, CommEngine::COMM_ENGINE_CCU,
          "CcuSchedReduceScatterSoleNHR"},
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[nhr.multi_channel]", &flat, CommEngine::COMM_ENGINE_AICPU_TS,
          "AicpuReduceScatterSoleNHRMultiLink"},
@@ -722,12 +746,12 @@ TEST(ExtAlgResolver, ErrorCasesCarryThreeElements)
     EXPECT_EQ(ResolveExternalAlg(op, &flat, spec, algName, errMsg), ResolveStatus::ERROR_INVALID);
     EXPECT_NE(errMsg.find("parallel[mesh,nhr]"), std::string::npos);
 
-    // 规则全灭（RS sole[nhr]·CCU：唯一 CCU 候选 CcuSchedReduceScatterSoleNHR 带
-    // FLAG_MULTI_LEVEL，单层 flat 拓扑不命中，无裸名兜底 -> 整键全灭回退）
+    // 规则全灭（RS sole[nhr.multi_channel]·CCU：唯一 CCU 候选 CcuSchedReduceScatterSoleNHRMultiLink 带
+    // FLAG_UBX，单层 flat 拓扑不命中，无裸名兜底 -> 整键全灭回退）
     OpParam opRsCcu = MakeResolveParam(HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CommEngine::COMM_ENGINE_CCU);
-    ASSERT_TRUE(ParseExternalAlg("sole[nhr]", spec, errMsg));
+    ASSERT_TRUE(ParseExternalAlg("sole[nhr.multi_channel]", spec, errMsg));
     EXPECT_EQ(ResolveExternalAlg(opRsCcu, &flat, spec, algName, errMsg), ResolveStatus::ERROR_INVALID);
-    EXPECT_NE(errMsg.find("sole[nhr]"), std::string::npos);
+    EXPECT_NE(errMsg.find("sole[nhr.multi_channel]"), std::string::npos);
 }
 
 TEST(ExtAlgResolver, CandidateTableIsDeterministic)

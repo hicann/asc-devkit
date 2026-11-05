@@ -318,7 +318,7 @@ REGISTER_EXEC_V2(
     CcuTempKfcReduceScatterNHR1D2DieMem2Mem);
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_REDUCE_SCATTER, CcuSchedReduceScatterSoleNHR, AlgEngine::CCU, "sole[nhr]", COND_NONE,
-    FLAG_MULTI_LEVEL, 0);
+    FLAG_NONE, 0);
 #endif
 
 } // namespace mc2_ops_hccl
