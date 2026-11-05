@@ -43,8 +43,9 @@ namespace AscendC {
  * \param [out] dstTensor, output LocalTensor
  * \param [in] srcTensor, input LocalTensor
  * \param [in] dataSize, amount of data to be calculated
+ * \param [in] highPrecision, whether to enable high-precision calculation on NPU architecture 9201
  */
-template <typename T, bool isReuseSource = false>
+template <typename T, bool isReuseSource = false, bool highPrecision = false>
 __aicore__ inline __inout_pipe__(V) void Silu(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, uint32_t dataSize)
 {
@@ -52,7 +53,7 @@ __aicore__ inline __inout_pipe__(V) void Silu(
     if ASCEND_IS_AIC {
         return;
     }
-    SiluCompute<T, isReuseSource>(dstLocal, srcLocal, dataSize);
+    SiluCompute<T, isReuseSource, highPrecision>(dstLocal, srcLocal, dataSize);
 }
 
 } // namespace AscendC

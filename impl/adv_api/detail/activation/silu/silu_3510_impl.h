@@ -34,7 +34,7 @@ constexpr Reg::CastTrait siluFloat2HalfCastTrait1 = {
     Reg::RegLayout::ONE, Reg::SatMode::SAT, Reg::MaskMergeMode::MERGING, RoundMode::CAST_RINT};
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
-template <typename T>
+template <typename T, bool highPrecision = false>
 __simd_vf__ inline void SiluComputeVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t count, const uint16_t repeatTimes)
 {
     constexpr uint32_t oneRepElm = static_cast<uint32_t>(GetVecLen() / sizeof(T));
@@ -45,7 +45,7 @@ __simd_vf__ inline void SiluComputeVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t
     Reg::RegTensor<float> tmpCastReg0;
     Reg::RegTensor<float> tmpCastReg1;
     Reg::MaskReg mask;
-    if constexpr (IsSameType<T, half>::value) {
+    if constexpr (highPrecision && IsSameType<T, half>::value) {
         mask = Reg::CreateMask<T>();
         Reg::Duplicate(tmpReg1, 0, mask);
     }
@@ -53,7 +53,7 @@ __simd_vf__ inline void SiluComputeVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t
         mask = Reg::UpdateMask<T>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
         Reg::Muls(tmpReg0, srcVreg, -1.0f, mask);
-        if constexpr (IsSameType<T, half>::value) {
+        if constexpr (highPrecision && IsSameType<T, half>::value) {
             Reg::ExpSub<float, T, Reg::RegLayout::ZERO>(tmpCastReg0, tmpReg0, tmpReg1, mask);
             Reg::ExpSub<float, T, Reg::RegLayout::ONE>(tmpCastReg1, tmpReg0, tmpReg1, mask);
             Reg::Cast<half, float, siluFloat2HalfCastTrait0>(tmpReg0, tmpCastReg0, mask);
@@ -88,7 +88,7 @@ __simd_vf__ inline void SiluComputeVF(__ubuf__ T* dst, __ubuf__ T* src, uint32_t
 #endif
 } // namespace Internal
 
-template <typename T, bool isReuseSource = false>
+template <typename T, bool isReuseSource = false, bool highPrecision = false>
 __aicore__ inline void SiluCompute(const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const uint32_t count)
 {
     // Only for AI Vector Core.
@@ -103,7 +103,11 @@ __aicore__ inline void SiluCompute(const LocalTensor<T>& dstLocal, const LocalTe
 
     constexpr uint32_t oneRepElm = static_cast<uint32_t>(GetVecLen() / sizeof(T));
     uint16_t repeatTimes = static_cast<uint16_t>(CeilDivision(count, oneRepElm));
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+    Internal::SiluComputeVF<T, highPrecision>(
+#else
     Internal::SiluComputeVF<T>(
+#endif
         (__ubuf__ T*)dstLocal.GetPhyAddr(), (__ubuf__ T*)srcLocal.GetPhyAddr(), count, repeatTimes);
 }
 } // namespace AscendC

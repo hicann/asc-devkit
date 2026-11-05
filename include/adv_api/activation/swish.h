@@ -44,8 +44,9 @@ namespace AscendC {
  * \param [in] srcTensor, input LocalTensor
  * \param [in] dataSize, amount of data to be calculated
  * \param [in] scalarValue, The β Parameter in the Activation Function
+ * \param [in] highPrecision, whether to enable high-precision calculation on NPU architecture 9201
  */
-template <typename T, bool isReuseSource = false>
+template <typename T, bool isReuseSource = false, bool highPrecision = false>
 __aicore__ inline __inout_pipe__(V) void Swish(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, uint32_t dataSize, const T scalarValue)
 {
@@ -53,7 +54,7 @@ __aicore__ inline __inout_pipe__(V) void Swish(
     if ASCEND_IS_AIC {
         return;
     }
-    SwishCompute<T, isReuseSource>(dstLocal, srcLocal, dataSize, scalarValue);
+    SwishCompute<T, isReuseSource, highPrecision>(dstLocal, srcLocal, dataSize, scalarValue);
 }
 } // namespace AscendC
 #endif // LIB_SWISH_SWISH_H

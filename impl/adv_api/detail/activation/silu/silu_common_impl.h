@@ -53,7 +53,7 @@ __aicore__ inline void SiluCalcSimplified(
     PipeBarrier<PIPE_V>();
 }
 
-template <typename T, bool isReuseSource = false>
+template <typename T, bool isReuseSource = false, bool highPrecision = false>
 __aicore__ inline __inout_pipe__(V) void SiluCompute(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, uint32_t dataSize)
 {

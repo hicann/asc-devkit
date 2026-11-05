@@ -33,11 +33,18 @@ enum class ExpAlgo {
     PRECISION_1ULP_FTZ_TRUE,
     PRECISION_1ULP_FTZ_FALSE,
 };
-struct ExpConfig {
-    ExpAlgo algo = ExpAlgo::INTRINSIC;
+
+enum class ExpPrecision {
+    NORMAL = 0,
+    HIGH,
 };
 
-constexpr ExpConfig DEFAULT_EXP_CONFIG = {ExpAlgo::INTRINSIC};
+struct ExpConfig {
+    ExpAlgo algo = ExpAlgo::INTRINSIC;
+    ExpPrecision precision = ExpPrecision::NORMAL;
+};
+
+constexpr ExpConfig DEFAULT_EXP_CONFIG = {ExpAlgo::INTRINSIC, ExpPrecision::NORMAL};
 
 enum class LnAlgo {
     INTRINSIC = 0,
@@ -222,6 +229,7 @@ enum class DataCopyMode {
 struct ExpSpecificMode {
     MaskMergeMode mrgMode = MaskMergeMode::ZEROING;
     ExpAlgo algo = ExpAlgo::INTRINSIC;
+    ExpPrecision precision = ExpPrecision::NORMAL;
 };
 
 struct LnSpecificMode {

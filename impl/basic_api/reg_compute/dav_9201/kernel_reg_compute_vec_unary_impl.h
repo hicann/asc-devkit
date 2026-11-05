@@ -25,12 +25,20 @@
 
 #include "../../../../include/basic_api/reg_compute/kernel_reg_compute_struct_intf.h"
 #include "../../../../include/basic_api/reg_compute/kernel_reg_compute_vec_binary_intf.h"
+#include "../../../../include/basic_api/reg_compute/kernel_reg_compute_vec_cmpsel_intf.h"
+#include "../../../../include/basic_api/reg_compute/kernel_reg_compute_vec_vconv_intf.h"
+#include "../../../../include/basic_api/reg_compute/kernel_reg_compute_pack_intf.h"
 #include "kernel_reg_compute_common_impl.h"
 #include "../../../../include/utils/std/type_traits.h"
 
 namespace AscendC {
 namespace Reg {
 namespace Internal {
+constexpr CastTrait expHalf2FloatCastTrait = {
+    RegLayout::ZERO, SatMode::UNKNOWN, MaskMergeMode::ZEROING, RoundMode::CAST_NONE};
+constexpr CastTrait expFloat2HalfCastTrait = {
+    RegLayout::ZERO, SatMode::SAT, MaskMergeMode::ZEROING, RoundMode::CAST_RINT};
+
 __aicore__ inline constexpr SqrtSpecificMode GetSqrtSpecificMode(MaskMergeMode mrgMode)
 {
     return {.mrgMode = mrgMode, .precisionMode = false, .algo = SqrtAlgo::INTRINSIC};
@@ -43,12 +51,12 @@ __aicore__ inline constexpr SqrtSpecificMode GetSqrtSpecificMode(const SqrtSpeci
 
 __aicore__ inline constexpr ExpSpecificMode GetExpSpecificMode(MaskMergeMode mrgMode)
 {
-    return {.mrgMode = mrgMode, .algo = ExpAlgo::INTRINSIC};
+    return {.mrgMode = mrgMode, .algo = ExpAlgo::INTRINSIC, .precision = ExpPrecision::NORMAL};
 }
 
 __aicore__ inline constexpr ExpSpecificMode GetExpSpecificMode(const ExpSpecificMode* sprMode)
 {
-    return {.mrgMode = sprMode->mrgMode, .algo = sprMode->algo};
+    return {.mrgMode = sprMode->mrgMode, .algo = sprMode->algo, .precision = sprMode->precision};
 }
 
 __aicore__ inline constexpr LnSpecificMode GetLnSpecificMode(MaskMergeMode mrgMode)
@@ -259,7 +267,30 @@ __simd_callee__ inline void ExpImpl(U& dstReg, U& srcReg, MaskReg& mask)
         SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
         "current Exp api only supported Mode ZEROING on current device!");
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
-    if constexpr (sprMode.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
+    if constexpr (sprMode.precision == ExpPrecision::HIGH && SupportType<ActualT, half>()) {
+        static constexpr ExpSpecificMode normalMode = {sprMode.mrgMode, sprMode.algo, ExpPrecision::NORMAL};
+        RegTensor<float> f32Src;
+        RegTensor<float> f32Dst;
+        RegTensor<half> f16Tmp;
+        RegTensor<half> f16High;
+        MaskReg f32Mask;
+        MaskReg selectMask = CreateMask<half, MaskPattern::H>();
+
+        UnPack<HighLowPart::LOWEST>(f32Mask, mask);
+        UnPack<uint32_t, uint16_t, HighLowPart::LOWEST>((RegTensor<uint32_t>&)f16Tmp, (RegTensor<uint16_t>&)srcReg);
+        Cast<float, half, Internal::expHalf2FloatCastTrait>(f32Src, f16Tmp, f32Mask);
+        ExpImpl<DefaultType, &normalMode, RegTensor<float>>(f32Dst, f32Src, f32Mask);
+        Cast<half, float, Internal::expFloat2HalfCastTrait>(f16Tmp, f32Dst, f32Mask);
+        Pack<uint16_t, uint32_t, HighLowPart::LOWEST>((RegTensor<uint16_t>&)dstReg, (RegTensor<uint32_t>&)f16Tmp);
+
+        UnPack<HighLowPart::HIGHEST>(f32Mask, mask);
+        UnPack<uint32_t, uint16_t, HighLowPart::HIGHEST>((RegTensor<uint32_t>&)f16Tmp, (RegTensor<uint16_t>&)srcReg);
+        Cast<float, half, Internal::expHalf2FloatCastTrait>(f32Src, f16Tmp, f32Mask);
+        ExpImpl<DefaultType, &normalMode, RegTensor<float>>(f32Dst, f32Src, f32Mask);
+        Cast<half, float, Internal::expFloat2HalfCastTrait>(f16Tmp, f32Dst, f32Mask);
+        Pack<uint16_t, uint32_t, HighLowPart::HIGHEST>((RegTensor<uint16_t>&)f16High, (RegTensor<uint32_t>&)f16Tmp);
+        Select(dstReg, dstReg, f16High, selectMask);
+    } else if constexpr (sprMode.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
         MaskReg maskInf;
         MaskReg maskNegInf;
         MaskReg maskSubnormal;

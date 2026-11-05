@@ -278,10 +278,17 @@ __aicore__ inline void ExpImpl(
 {
     static_assert((SupportType<T, half, float>()), "current data type is not supported on current device!");
     if constexpr (config.algo == ExpAlgo::INTRINSIC || config.algo == ExpAlgo::PRECISION_1ULP_FTZ_TRUE) {
-        constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
-        Internal::VecUnaryLevel0Template<func, isSetMask, true>(dst, src, mask, 0, repeatTime, repeatParams);
+        if constexpr (config.precision == ExpPrecision::HIGH) {
+            static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, config.algo, config.precision};
+            constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel0Template<func, isSetMask, true>(dst, src, mask, 0, repeatTime, repeatParams);
+        } else {
+            constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel0Template<func, isSetMask, true>(dst, src, mask, 0, repeatTime, repeatParams);
+        }
     } else if constexpr (config.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
-        static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE};
+        static constexpr Reg::ExpSpecificMode mode = {
+            Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE, config.precision};
         constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
         Internal::VecUnaryLevel0Template<func, isSetMask, true>(dst, src, mask, 0, repeatTime, repeatParams);
     }
@@ -294,10 +301,17 @@ __aicore__ inline void ExpImpl(
 {
     static_assert((SupportType<T, half, float>()), "current data type is not supported on current device!");
     if constexpr (config.algo == ExpAlgo::INTRINSIC || config.algo == ExpAlgo::PRECISION_1ULP_FTZ_TRUE) {
-        constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
-        Internal::VecUnaryLevel0Template<func, isSetMask, false>(dst, src, nullptr, mask, repeatTime, repeatParams);
+        if constexpr (config.precision == ExpPrecision::HIGH) {
+            static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, config.algo, config.precision};
+            constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel0Template<func, isSetMask, false>(dst, src, nullptr, mask, repeatTime, repeatParams);
+        } else {
+            constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel0Template<func, isSetMask, false>(dst, src, nullptr, mask, repeatTime, repeatParams);
+        }
     } else if constexpr (config.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
-        static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE};
+        static constexpr Reg::ExpSpecificMode mode = {
+            Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE, config.precision};
         constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
         Internal::VecUnaryLevel0Template<func, isSetMask, false>(dst, src, nullptr, mask, repeatTime, repeatParams);
     }
@@ -567,10 +581,17 @@ __aicore__ inline void ExpImpl(__ubuf__ T* dst, __ubuf__ T* src, const uint32_t 
 {
     static_assert((SupportType<T, half, float>()), "current data type is not supported on current device!");
     if constexpr (config.algo == ExpAlgo::INTRINSIC || config.algo == ExpAlgo::PRECISION_1ULP_FTZ_TRUE) {
-        constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
-        Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+        if constexpr (config.precision == ExpPrecision::HIGH) {
+            static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, config.algo, config.precision};
+            constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+        } else {
+            constexpr auto func = Reg::Exp<T, Reg::MaskMergeMode::ZEROING, Reg::RegTensor<T>>;
+            Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
+        }
     } else if constexpr (config.algo == ExpAlgo::PRECISION_1ULP_FTZ_FALSE) {
-        static constexpr Reg::ExpSpecificMode mode = {Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE};
+        static constexpr Reg::ExpSpecificMode mode = {
+            Reg::MaskMergeMode::ZEROING, ExpAlgo::PRECISION_1ULP_FTZ_FALSE, config.precision};
         constexpr auto func = Reg::Exp<T, &mode, Reg::RegTensor<T>>;
         Internal::VecUnaryLevel2ImplTemplate<func, T>(dst, src, count);
     }

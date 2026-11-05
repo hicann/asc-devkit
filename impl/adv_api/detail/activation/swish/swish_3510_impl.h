@@ -32,7 +32,7 @@ constexpr Reg::CastTrait swishFloat2HalfCastTrait1 = {
     Reg::RegLayout::ONE, Reg::SatMode::SAT, Reg::MaskMergeMode::MERGING, RoundMode::CAST_RINT};
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
-template <typename T>
+template <typename T, bool highPrecision = false>
 __simd_vf__ inline void SwishComputeVF(
     __ubuf__ T* dst, __ubuf__ T* src, uint32_t count, const T scalarValue, const uint16_t repeatTimes)
 {
@@ -44,7 +44,7 @@ __simd_vf__ inline void SwishComputeVF(
     Reg::RegTensor<float> tmpVreg0;
     Reg::RegTensor<float> tmpVreg1;
     Reg::MaskReg mask;
-    if constexpr (IsSameType<T, half>::value) {
+    if constexpr (highPrecision && IsSameType<T, half>::value) {
         mask = Reg::CreateMask<T>();
         Reg::Duplicate(vreg1, 0, mask);
     }
@@ -52,7 +52,7 @@ __simd_vf__ inline void SwishComputeVF(
         mask = Reg::UpdateMask<T>(count);
         Reg::LoadAlign(srcVreg, src + i * oneRepElm);
         Reg::Muls(vreg0, srcVreg, scalarValue, mask);
-        if constexpr (IsSameType<T, half>::value) {
+        if constexpr (highPrecision && IsSameType<T, half>::value) {
             Reg::ExpSub<float, T, Reg::RegLayout::ZERO>(tmpVreg0, vreg0, vreg1, mask);
             Reg::ExpSub<float, T, Reg::RegLayout::ONE>(tmpVreg1, vreg0, vreg1, mask);
             Reg::Cast<half, float, swishFloat2HalfCastTrait0>(vreg0, tmpVreg0, mask);
@@ -88,7 +88,7 @@ __simd_vf__ inline void SwishComputeVF(
 #endif
 } // namespace Internal
 
-template <typename T, bool isReuseSource = false>
+template <typename T, bool isReuseSource = false, bool highPrecision = false>
 __aicore__ inline void SwishCompute(
     const LocalTensor<T>& dstLocal, const LocalTensor<T>& srcLocal, const uint32_t count, const T scalarValue)
 {
@@ -105,7 +105,11 @@ __aicore__ inline void SwishCompute(
     constexpr uint32_t oneRepElm = static_cast<uint32_t>(GetVecLen() / sizeof(T));
     uint16_t repeatTimes = static_cast<uint16_t>(CeilDivision(count, oneRepElm));
     const T scalar = static_cast<T>(negOne * static_cast<float>(scalarValue));
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+    Internal::SwishComputeVF<T, highPrecision>(
+#else
     Internal::SwishComputeVF<T>(
+#endif
         (__ubuf__ T*)dstLocal.GetPhyAddr(), (__ubuf__ T*)srcLocal.GetPhyAddr(), count, scalar, repeatTimes);
 }
 
