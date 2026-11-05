@@ -3,7 +3,6 @@
 ## Overview
 This sample implements gather and adds computation based on SIMD and SIMT hybrid programming mode. It uses SIMT programming to implement discrete memory access operation gather, and SIMD programming to implement continuous memory access operation adds.
 
-
 ## Supported Products and CANN Software Versions
 
 | Product | CANN Software Version |
@@ -42,19 +41,21 @@ This sample implements gather and adds computation based on SIMD and SIMT hybrid
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">gather_and_adds_kernel</td></tr>
   </table>
 
-- Sample Implementation:  
-  The SIMT unit and SIMD unit in the Vector Core share on-chip storage, which can be used to complete SIMT and SIMD hybrid programming. In this sample, the shape of the sample input index is [8192], the number of cores can be set to 8, each core processes 1024 data elements, the number of threads THREAD_COUNT is set to 1024, each thread processes 1 data element, and a single core only needs to call the simt_gather function once to complete the gather operation.
+## Sample Implementation
 
-  > ⚠️ **Note** When the amount of data processed by a single core is greater than the set number of threads, the data needs to be split into multiple thread blocks. You can use asc_vf_call to call the simt_gather function multiple times to start multiple thread blocks to complete the operation of obtaining specified index data.
+The SIMT unit and SIMD unit in the Vector Core share on-chip storage, which can be used to complete SIMT and SIMD hybrid programming. In this sample, the shape of the sample input index is [8192], the number of cores can be set to 8, each core processes 1024 data elements, the number of threads THREAD_COUNT is set to 1024, each thread processes 1 data element, and a single core only needs to call the simt_gather function once to complete the gather operation.
 
-  Based on the above data partitioning, in the simd_adds function, the operation of adding 1 to 1024 data elements is performed.
+> ⚠️ **Note** When the amount of data processed by a single core is greater than the set number of threads, the data needs to be split into multiple thread blocks. You can use asc_vf_call to call the simt_gather function multiple times to start multiple thread blocks to complete the operation of obtaining specified index data.
 
-  > ⚠️ **Note** The addition operation in simd_adds can actually be implemented directly in the simt_gather function quickly. The purpose of this sample is only to demonstrate the hybrid programming approach of SIMT and SIMD programming modes through a simple use case, which is not the best practice for this sample.
+Based on the above data partitioning, in the simd_adds function, the operation of adding 1 to 1024 data elements is performed.
 
-  The implementation flow of the gather & adds sample is mainly divided into 3 steps: simt_gather, simd_adds, and copying data from UB to GM.
+> ⚠️ **Note** The addition operation in simd_adds can actually be implemented directly in the simt_gather function quickly. The purpose of this sample is only to demonstrate the hybrid programming approach of SIMT and SIMD programming modes through a simple use case, which is not the best practice for this sample.
 
-  (1) simt_gather obtains data with specified indexes from GM (Global Memory) input.
-  ```
+The implementation flow of the gather & adds sample is mainly divided into 3 steps: simt_gather, simd_adds, and copying data from UB to GM.
+
+- simt_gather obtains data with specified indexes from GM (Global Memory) input.
+
+  ```cpp
   uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
   ...
   uint32_t gather_idx = index[idx];
@@ -62,8 +63,9 @@ This sample implements gather and adds computation based on SIMD and SIMT hybrid
   local_output[threadIdx.x] = input[gather_idx];
   ```
 
-  (2) simd_adds performs the add 1 operation on the data in UB (Unified Buffer). Call asc_loadalign to move data from UB (Unified Buffer) to the register, call asc_add_scalar to complete the add 1 operation and output to the destination register, and finally call asc_storealign to move data from the register to UB. Repeat the above operation to complete the add 1 operation on 1024 data elements.
-  ```
+- simd_adds performs the add 1 operation on the data in UB (Unified Buffer). Call asc_loadalign to move data from UB (Unified Buffer) to the register, call asc_add_scalar to complete the add 1 operation and output to the destination register, and finally call asc_storealign to move data from the register to UB. Repeat the above operation to complete the add 1 operation on 1024 data elements.
+
+  ```cpp
   for (uint16_t i = 0; i < repeat_times; i++) {
       mask_reg = asc_update_mask_b32(count);
       asc_loadalign(src_reg0, input + i * one_repeat_size);
@@ -72,10 +74,9 @@ This sample implements gather and adds computation based on SIMD and SIMT hybrid
   }
   ```
 
-  (3) Copy the output data from UB (Unified Buffer) to GM (Global Memory).
+- Copy the output data from UB (Unified Buffer) to GM (Global Memory).
 
-- Call Implementation:  
-  Use the kernel call operator <<<>>> to call the kernel function.
+- On the host side, use the kernel call operator <<<>>> to call the kernel function.
 
 ## Compilation and Execution
 

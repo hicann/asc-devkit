@@ -1,9 +1,7 @@
 # SIMD与SIMT混合编程实现gather和adds计算
 
-
 ## 概述
 本样例基于SIMD和SIMT混合编程模式实现gather和adds计算，以SIMT编程方式实现离散内存访问操作gather，以SIMD编程方式实现连续内存访问操作adds。
-
 
 ## 本样例支持的产品及CANN软件版本
 
@@ -43,19 +41,21 @@
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">gather_and_adds_kernel</td></tr>
   </table>
 
-- 样例实现：  
-  Vector Core中SIMT单元和SIMD单元共享片上存储，可以使用片上存储完成SIMT和SIMD的混合编程。本例中样例输入index的shape为[8192]，可设置核数为8，每个核处理数据量为1024，设置线程数`THREAD_COUNT`为1024，每个线程处理1个数据元素，单个核只需调用1次simt_gather函数即可完成gather运算。
+## 样例实现
 
-  > ⚠️ **注意** 当单核处理数据量大于设置的线程数时，需要切分数据到多个线程块，可使用asc_vf_call多次调用simt_gather函数启动多个线程块完成获取指定索引数据的操作。
+Vector Core中SIMT单元和SIMD单元共享片上存储，可以使用片上存储完成SIMT和SIMD的混合编程。本例中样例输入index的shape为[8192]，可设置核数为8，每个核处理数据量为1024，设置线程数`THREAD_COUNT`为1024，每个线程处理1个数据元素，单个核只需调用1次simt_gather函数即可完成gather运算。
 
-  基于上述数据拆分，在simd_adds函数中，处理1024个数据元素的加1操作。
+> ⚠️ **注意** 当单核处理数据量大于设置的线程数时，需要切分数据到多个线程块，可使用asc_vf_call多次调用simt_gather函数启动多个线程块完成获取指定索引数据的操作。
 
-  > ⚠️ **注意** simd_adds中加1运算实际可以直接在simt_gather函数中快速实现，本例目的仅仅是通过一个简单用例展示SIMT和SIMD两种编程模式的混合编程方式，不是该样例最佳实践。
+基于上述数据拆分，在simd_adds函数中，处理1024个数据元素的加1操作。
 
-  gather & adds样例的实现流程主要分为3个步骤：simt_gather，simd_adds和数据搬出。
+> ⚠️ **注意** simd_adds中加1运算实际可以直接在simt_gather函数中快速实现，本例目的仅仅是通过一个简单用例展示SIMT和SIMD两种编程模式的混合编程方式，不是该样例最佳实践。
 
-  （1）simt_gather从GM（Global Memory）输入中获取指定索引的数据。
-  ```
+gather & adds样例的实现流程主要分为3个步骤：simt_gather，simd_adds和数据搬出。
+
+- simt_gather从GM（Global Memory）输入中获取指定索引的数据。
+
+  ```cpp
   uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
   ...
   uint32_t gather_idx = index[idx];
@@ -63,8 +63,9 @@
   local_output[threadIdx.x] = input[gather_idx];
   ```
 
-  （2）simd_adds将UB（Unified Buffer）中数据做加1操作。调用asc_loadalign将数据从UB（Unified Buffer）搬运到寄存器上，调用asc_add_scalar完成加1运算并输出到目标寄存器，最后调用asc_storealign将数据从寄存器搬运到UB。重复上述操作即可完成1024个数据元素的加1运算。
-  ```
+- simd_adds将UB（Unified Buffer）中数据做加1操作。调用asc_loadalign将数据从UB（Unified Buffer）搬运到寄存器上，调用asc_add_scalar完成加1运算并输出到目标寄存器，最后调用asc_storealign将数据从寄存器搬运到UB。重复上述操作即可完成1024个数据元素的加1运算。
+
+  ```cpp
   for (uint16_t i = 0; i < repeat_times; i++) {
       mask_reg = asc_update_mask_b32(count);
       asc_loadalign(src_reg0, input + i * one_repeat_size);
@@ -73,10 +74,9 @@
   }
   ```
 
-  （3）将输出数据从UB（Unified Buffer）搬出至GM（Global Memory）上。
+- 将输出数据从UB（Unified Buffer）搬出至GM（Global Memory）上。
 
-- 调用实现：  
-  使用内核调用符<<<>>>调用核函数。
+- Host侧使用内核调用符<<<>>>调用核函数。
 
 ## 编译运行
 
