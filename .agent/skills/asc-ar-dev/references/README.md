@@ -20,6 +20,7 @@
 ## 与其他 skill 的边界
 
 - 芯片调用名、`SocVersion`、`__NPU_ARCH__`、dtype 事实由 [`../../asc-npu-arch/SKILL.md`](../../asc-npu-arch/SKILL.md) 维护。
+- ASC 产品代码规范由 [`../../asc-code-dev-standards/SKILL.md`](../../asc-code-dev-standards/SKILL.md) 维护；产品实现不以测试目录为参考依据。
 - API UT 生成、覆盖率扫描和 `tests/api/` 补齐由 [`../../asc-api-ut-gen/SKILL.md`](../../asc-api-ut-gen/SKILL.md) 维护。
 - 本 skill 不维护完整芯片类型表、通用 dtype 表或 UT 生成器事实。
 

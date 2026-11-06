@@ -79,7 +79,7 @@ Useful files to inspect in the user's devkit:
 - Python build and compile scripts
 - CMake modules and toolchain files
 - metadata/DFX generation code
-- tests or sample build invocations near the changed tool
+- non-test sample build invocations near the changed tool
 
 Design expectations:
 

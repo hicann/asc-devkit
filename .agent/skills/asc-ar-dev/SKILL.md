@@ -18,6 +18,7 @@ Boundary with other repository skills:
 
 - API UT generation and coverage backfill belong to [`../asc-api-ut-gen/SKILL.md`](../asc-api-ut-gen/SKILL.md).
 - Chip names, `SocVersion`, `__NPU_ARCH__`, dtype facts, and architecture support boundaries belong to [`../asc-npu-arch/SKILL.md`](../asc-npu-arch/SKILL.md). This skill may reference those facts but must not maintain a duplicated full chip or dtype table.
+- Before implementing or reviewing C/C++, AscendC, or Shell product code, load [`../asc-code-dev-standards/SKILL.md`](../asc-code-dev-standards/SKILL.md) and its applicable references; recheck them before delivery. ASC-28 excludes `test/` and `tests/` as product implementation evidence, while allowing tests to be run or maintained for verification.
 - Markdown documentation style checks belong to `asc-doc-checker` when that skill is available.
 
 Keep this skill generic. Do not encode user-specific paths, SSH hosts, token files, private PR links, employee IDs, or one-off debugging transcripts. If a task needs such information, ask for it at runtime or derive it from the live environment.
@@ -85,10 +86,10 @@ For each such API:
 
 1. Start from `${DEVKIT_PATH}/docs/zh/api/README.md` and `${DEVKIT_PATH}/docs/zh/api/Ascend-C-API列表.md`, then locate the exact SIMD basic/high-level API, C API, SIMT API, AI CPU API, or Utils API document.
 2. Read the API document sections for product support, header path, function prototype, parameters, supported data types, constraints, synchronization requirements, and calling examples.
-3. Cross-check the public declaration under `${DEVKIT_PATH}/include`, the implementation under `${DEVKIT_PATH}/impl`, and relevant tests or examples. Documentation selects the supported usage; source inspection confirms the exact repository revision and overload.
+3. Cross-check the public declaration under `${DEVKIT_PATH}/include`, the implementation under `${DEVKIT_PATH}/impl`, and relevant non-test examples. Documentation selects the supported usage; source inspection confirms the exact repository revision and overload.
 4. Keep a compact API evidence log in the working notes: `API -> documentation path -> declaration path -> selected overload -> target SoC/dtype/TPosition -> key constraints`.
 
-Do not write the API call until this lookup is complete. If the exact API document is absent, do not guess from a similarly named interface or a bundled snippet. Inspect the declaration, implementation, tests, and examples, explicitly record that documentation is missing, and state any remaining uncertainty before using the API.
+Do not write the API call until this lookup is complete. If the exact API document is absent, do not guess from a similarly named interface or a bundled snippet. Inspect the declaration, implementation, and non-test examples, explicitly record that documentation is missing, and state any remaining uncertainty before using the API.
 
 Follow [`references/08_api_lookup.md`](references/08_api_lookup.md) for the search order and evidence checklist.
 

@@ -73,14 +73,14 @@ After reading the documentation, cross-check the current repository revision:
 
 1. Find the public declaration under `${DEVKIT_PATH}/include` and confirm the documented header and prototype.
 2. Find the target-architecture implementation under `${DEVKIT_PATH}/impl` when behavior, compile-time dispatch, or synchronization matters.
-3. Inspect relevant `${DEVKIT_PATH}/tests` and `${DEVKIT_PATH}/examples` for a call matching the selected overload and target architecture.
+3. Inspect relevant non-test `${DEVKIT_PATH}/examples` for a call matching the selected overload and target architecture; do not use `test/` or `tests/` as product implementation evidence.
 4. If documentation and source disagree, stop and report the conflict instead of silently choosing one.
 
 Documentation defines the supported public usage. Source confirms that the selected usage matches the current checkout. A nearby call site or snippet does not replace either check.
 
 ## Missing Documentation Fallback
 
-If no exact API document exists, search the declaration, implementation, tests, and examples. Explicitly record that the documentation is missing and identify the source-backed evidence used instead. Do not copy a similarly named overload or another architecture's implementation by analogy.
+If no exact API document exists, search the declaration, implementation, and non-test examples. Explicitly record that the documentation is missing and identify the source-backed evidence used instead. Do not copy a similarly named overload or another architecture's implementation by analogy.
 
 If the available evidence cannot establish the signature, target-architecture support, dtype, tensor position, or required synchronization, do not write the API call. Report the unresolved item and ask for authoritative input or a newer devkit revision.
 
@@ -103,5 +103,5 @@ Before accepting generated or edited kernel code, confirm:
 - product, core, dtype, tensor type, and `TPosition` are supported;
 - alignment, overlap, count/repeat, temporary-buffer, and synchronization constraints are satisfied;
 - parameter structures use documented fields and supported values;
-- examples or tests match the intended overload rather than only sharing the same API name;
+- non-test examples match the intended overload rather than only sharing the same API name;
 - no call was justified only by a bundled snippet, memory, or another architecture's implementation.
