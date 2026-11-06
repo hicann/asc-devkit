@@ -440,13 +440,13 @@ __aicore__ inline void ScatterToGlobalImpl(
                 (__gm__ uint64_t*)dst, (__ubuf__ uint64_t*)src, 0, offsetType, offsetSrc, cacheMode,
                 scatterParam.burstLen, scatterParam.srcStride, scatterParam.offsetNum);
         } else {
-            ASSERT(false && "Current Gather API is not supported on current device!");
+            ASSERT(false && "Current Scatter API is not supported on current device!");
         }
     }
 #else
-    ASSERT(false && "Current Gather API is not supported on current device!");
+    ASSERT(false && "Current Scatter API is not supported on current device!");
 #endif
-};
+}
 
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_SCATTER_IMPL_H

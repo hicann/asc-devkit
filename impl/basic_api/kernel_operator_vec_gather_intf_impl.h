@@ -246,7 +246,7 @@ __aicore__ inline void Gather(
 #endif
 }
 
-#if (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
+#if (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5162)
 /*
  * @brief gather element from srcGlobal according to srcOffsetLocal
  * @param [out] dstLocal output LocalTensor

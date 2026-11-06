@@ -428,6 +428,44 @@ __aicore__ inline void ScatterImpl(
         ScatterImplB64(dstLocal, srcLocal, dstOffsetLocal, dstBaseOffset, count);
     }
 }
+
+template <typename T>
+struct ScatterOffsetDTypeEncoding {
+    static constexpr int32_t value = [] {
+        if constexpr (std::is_same_v<int32_t, T>)
+            return 0b00;
+        if constexpr (std::is_same_v<int64_t, T>)
+            return 0b01;
+        return 0;
+    }();
+};
+
+template <typename T, typename U>
+__aicore__ inline void ScatterToGlobalImpl(
+    __gm__ T* dst, __ubuf__ T* src, __ubuf__ U* offsetSrc, const ScatterParams& scatterParam, const uint8_t cacheMode,
+    const uint8_t sid = 2)
+{
+    constexpr uint8_t offsetType = ScatterOffsetDTypeEncoding<U>::value;
+    if constexpr (sizeof(T) == B8_BYTE_SIZE) {
+        scatter_ubuf_to_gm(
+            (__gm__ uint8_t*)dst, (__ubuf__ uint8_t*)src, sid, offsetType, offsetSrc, cacheMode, scatterParam.burstLen,
+            scatterParam.srcStride, scatterParam.offsetNum);
+    } else if constexpr (sizeof(T) == B16_BYTE_SIZE) {
+        scatter_ubuf_to_gm(
+            (__gm__ uint16_t*)dst, (__ubuf__ uint16_t*)src, sid, offsetType, offsetSrc, cacheMode,
+            scatterParam.burstLen, scatterParam.srcStride, scatterParam.offsetNum);
+    } else if constexpr (sizeof(T) == B32_BYTE_SIZE) {
+        scatter_ubuf_to_gm(
+            (__gm__ uint32_t*)dst, (__ubuf__ uint32_t*)src, sid, offsetType, offsetSrc, cacheMode,
+            scatterParam.burstLen, scatterParam.srcStride, scatterParam.offsetNum);
+    } else if constexpr (sizeof(T) == B64_BYTE_SIZE) {
+        scatter_ubuf_to_gm(
+            (__gm__ uint64_t*)dst, (__ubuf__ uint64_t*)src, sid, offsetType, offsetSrc, cacheMode,
+            scatterParam.burstLen, scatterParam.srcStride, scatterParam.offsetNum);
+    } else {
+        ASSERT(false && "Current Scatter API is not supported on current device!");
+    }
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_SCATTER_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_SCATTER_IMPL_H__)

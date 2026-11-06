@@ -84,7 +84,7 @@ enum class GatherPaddingMode : uint8_t { FIRST_ELEM_EVERY_BRUST = 0, CONSTANT_PA
 
 template <typename T>
 struct GatherPadParams {
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5162))
     using TYPE = typename GetPadValueType<T>::Type;
     __aicore__ GatherPadParams() : padSel(GatherPaddingMode::FIRST_ELEM_EVERY_BRUST), paddingValue(0) {}
 
@@ -97,7 +97,7 @@ struct GatherPadParams {
 #endif
 };
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5162))
 struct GatherParams {
     __aicore__ GatherParams() {}
 

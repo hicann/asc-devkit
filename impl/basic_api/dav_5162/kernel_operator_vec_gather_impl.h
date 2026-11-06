@@ -578,6 +578,47 @@ __aicore__ inline void GatherbImpl(
         "bfloat16_t, uint64_t, int64_t.");
     GatherbImpl(dst, src, srcOffsetLocal, repeatTime, repeatParams);
 }
+
+template <typename T>
+struct GatherOffsetDTypeEncoding {
+    static constexpr int32_t value = [] {
+        if constexpr (std::is_same_v<int32_t, T>)
+            return 0b00;
+        if constexpr (std::is_same_v<int64_t, T>)
+            return 0b01;
+        return 0;
+    }();
+};
+
+template <typename T, typename U>
+__aicore__ inline void GatherFromGlobalImpl(
+    __ubuf__ T* dst, __gm__ T* src, __ubuf__ U* offsetSrc, const GatherParams& gatherParam,
+    const GatherPadParams<T>& gatherPadParam, const uint8_t cacheMode, const uint8_t sid = 2)
+{
+    const bool constPaddingCtrl = gatherPadParam.padSel == GatherPaddingMode::CONSTANT_PADDING_MODE;
+    constexpr uint8_t offsetType = GatherOffsetDTypeEncoding<U>::value;
+
+    set_pad_val_outtoub(GetScalarBitcodeValue(gatherPadParam.paddingValue));
+    if constexpr (sizeof(T) == B8_BYTE_SIZE) {
+        gather_gm_to_ubuf(
+            (__ubuf__ uint8_t*)dst, (__gm__ uint8_t*)src, sid, offsetType, constPaddingCtrl, offsetSrc, cacheMode,
+            gatherParam.burstLen, gatherParam.dstStride, gatherParam.offsetNum);
+    } else if constexpr (sizeof(T) == B16_BYTE_SIZE) {
+        gather_gm_to_ubuf(
+            (__ubuf__ uint16_t*)dst, (__gm__ uint16_t*)src, sid, offsetType, constPaddingCtrl, offsetSrc, cacheMode,
+            gatherParam.burstLen, gatherParam.dstStride, gatherParam.offsetNum);
+    } else if constexpr (sizeof(T) == B32_BYTE_SIZE) {
+        gather_gm_to_ubuf(
+            (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, offsetType, constPaddingCtrl, offsetSrc, cacheMode,
+            gatherParam.burstLen, gatherParam.dstStride, gatherParam.offsetNum);
+    } else if constexpr (sizeof(T) == B64_BYTE_SIZE) {
+        gather_gm_to_ubuf(
+            (__ubuf__ uint64_t*)dst, (__gm__ uint64_t*)src, sid, offsetType, constPaddingCtrl, offsetSrc, cacheMode,
+            gatherParam.burstLen, gatherParam.dstStride, gatherParam.offsetNum);
+    } else {
+        ASSERT(false && "Current Gather API is not supported on current device!");
+    }
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_GATHER_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_GATHER_IMPL_H__)

@@ -1063,7 +1063,7 @@ __aicore__ inline void DataCopyPadGm2L1Impl(
     const uint8_t cacheMode = 0, const uint8_t sid = 3)
 {
     if (padParams.isPad == true) {
-        set_pad_val_outtol1(GetScalarBitcodeValue((T)padParams.paddingValue));
+        set_pad_val_outtol1(GetScalarBitcodeValue(padParams.paddingValue));
     }
     if constexpr (sizeof(T) > B32_BYTE_SIZE) {
         ASCENDC_ASSERT((padParams.paddingValue == 0), {

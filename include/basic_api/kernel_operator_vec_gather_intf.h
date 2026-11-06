@@ -99,7 +99,7 @@ __aicore__ inline void Gather(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const LocalTensor<uint32_t>& srcOffset,
     const uint32_t srcBaseOffset, const uint32_t count);
 
-#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5162))
 /*
  * @brief gather element from srcGlobal according to srcOffsetLocal
  * @param [out] dstLocal output LocalTensor
