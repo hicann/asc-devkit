@@ -69,6 +69,13 @@
   <img src="figures/fixpipe_l0c2ub_split_n.png" width="500">
 </p>
 
+## CV同步说明
+
+本样例使用模式2的 `CrossCoreSetFlag<0x2, PIPE_FIX>(0x8)` 在Fixpipe搬运完成后通知同组的两个AIV。两个AIV都必须执行对应的 `CrossCoreWaitFlag<0x2>(0x8)`，确保同步标记被完整消费。
+
+- 场景1、2为单目标输出：两个AIV先等待同步，再由AIV1返回，仅AIV0执行UB到GM的搬运。不能在等待同步之前让AIV1提前返回，否则会残留未消费的同步标记。
+- 场景3、4为双目标输出：两个AIV都等待同步，并分别将各自UB中的结果搬运到GM的对应位置。
+
 ## 编译运行
 
 在本样例根目录下执行如下步骤，编译并执行样例。

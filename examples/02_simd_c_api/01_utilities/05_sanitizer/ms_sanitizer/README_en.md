@@ -54,7 +54,7 @@ When reproducing anomaly scenarios, modify the code in `ms_sanitizer.asc` accord
 
     ```bash
     make -B demo
-    mssanitizer ./demo
+    mssanitizer ./demo # Memory detection is enabled by default; --tool=memcheck can also be specified.
     ```
 
   - Unaligned access: Memory access does not meet byte alignment requirements.
@@ -72,7 +72,7 @@ When reproducing anomaly scenarios, modify the code in `ms_sanitizer.asc` accord
 
     ```bash
     make -B demo
-    mssanitizer ./demo
+    mssanitizer ./demo # Memory detection is enabled by default; --tool=memcheck can also be specified.
     ```
 
   - Memory leak: Allocated memory is used but not freed, causing memory usage to increase continuously during program execution.
@@ -152,6 +152,32 @@ When reproducing anomaly scenarios, modify the code in `ms_sanitizer.asc` accord
   mssanitizer ./demo --tool=initcheck
   ```
 
+- **Synchronization Anomaly Detection**
+
+  Synchronization anomaly detection locates incorrectly paired synchronization instructions, such as a synchronization notification without a corresponding wait operation.
+
+  Users can add the following synchronization code after `asc_unlock(PIPE_MTE3, mutex_id)` at the end of `add_custom`. `asc_sync_notify` and `asc_sync_wait` must use the same source pipeline, destination pipeline, and event ID, and must be used in pairs.
+
+  ```cpp
+  asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  asc_sync_wait(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  ```
+
+  Comment out `asc_sync_wait` above and keep only `asc_sync_notify` to reproduce a synchronization anomaly in which the notification has no corresponding wait:
+
+  ```cpp
+  asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  ```
+
+  Notice: Pass `--tool=synccheck` when calling `mssanitizer` to enable synchronization anomaly detection. This scenario reproduces unpaired synchronization instructions, unlike the data race caused by removing inter-pipeline synchronization in "Race Condition Detection".
+
+  Rebuild and run detection:
+
+  ```bash
+  make -B demo
+  mssanitizer ./demo --tool=synccheck
+  ```
+
 ## Build and Run
 
 Run the following steps in the root directory of this example to build and run the example.
@@ -172,11 +198,12 @@ Run the following steps in the root directory of this example to build and run t
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..; make -j
 
   # Run the corresponding mssanitizer command based on debugging requirements.
-  mssanitizer ./demo
+  mssanitizer ./demo # Memory detection is enabled by default; --tool=memcheck can also be specified.
   mssanitizer ./demo --leak-check=yes
   mssanitizer ./demo --check-unused-memory=yes
   mssanitizer ./demo --tool=racecheck
   mssanitizer ./demo --tool=initcheck
+  mssanitizer ./demo --tool=synccheck
   ```
 
 - Build options

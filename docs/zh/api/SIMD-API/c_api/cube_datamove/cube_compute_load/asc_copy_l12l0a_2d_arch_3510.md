@@ -41,6 +41,19 @@
 
 搬入前的数据排布参见[关键分形格式详解](../../cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md)；地址对齐与搬运粒度要求参见[矩阵计算输入搬运约束](cube_compute_input_move_constraint.md)，并结合本接口的参数和约束说明使用。
 
+### A矩阵输入布局与接口选择
+
+本接口的“非转置搬运”和“转置搬运”描述的是L1 Buffer到L0A Buffer的数据搬运方式，不直接代表矩阵乘法表达式中的左矩阵是否转置。
+
+以目标计算`C = A × B`为例，其中A的形状为`M×K`，B的形状为`K×N`。当GM中的输入采用ND格式，并通过`asc_copy_gm2l1_nd2nz`转换为L1 Buffer中的Nz格式时，A侧接口选择如下：
+
+| GM中存储的数据 | GM输入形状 | L1到L0A搬运接口 | 目标计算 |
+| --- | --- | --- | --- |
+| A | `M×K` | `asc_copy_l12l0a` | `C = A × B` |
+| Aᵀ，即预先转置的A | `K×M` | `asc_copy_l12l0a_transpose` | `C = A × B` |
+
+L0A Buffer使用Nz分形排布，应结合源矩阵的实际布局选择接口，不能仅根据接口名中的`transpose`判断最终乘法方向。B侧也需根据实际输入布局选择对应的L1 Buffer到L0B Buffer搬运接口。转置搬运仍需满足本页参数说明和约束说明中的分形、对齐及空间要求。
+
 ## 函数原型
 
 ### 2D搬运模式
@@ -215,7 +228,11 @@ $$
 
 ## 调用示例
 
-仓库中的完整工程样例请参考[mmad样例](../../../../../../../examples/02_simd_c_api/03_c_api/03_matrix_compute/mmad)。
+以下示例演示`asc_copy_l12l0a`的非转置搬运。示例输入矩阵A的形状为`M×K`，输入矩阵B的形状为`N×K`，A/B侧分别使用`asc_copy_l12l0a`和`asc_copy_l12l0b`进行非转置搬运，实际计算为`C = A × Bᵀ`，输出形状为`M×N`。Host侧Golden按相同公式计算。
+
+本例中的B指代码变量`b`所存储的输入矩阵；A侧非转置搬运并不意味着整个示例计算`C = A × B`。
+
+涵盖A/B矩阵转置与非转置输入、int8_t/half/float数据类型的完整工程，请参考[load_data_l12l0_950样例](../../../../../../../examples/02_simd_c_api/03_c_api/03_matrix_compute/load_data_l12l0_950/README.md)。
 
 将代码保存为`examples.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[`__NPU_ARCH__`](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
@@ -251,7 +268,7 @@ __global__ __cube__ void AscCopyL12l0aKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     __cb__ int8_t b_l0[K * N];
     __cc__ int32_t c_l0[ELEMENTS];
 
-    // 配置Nz格式，并将128 x 128矩阵从GM搬入L1 Buffer。
+    // 将形状为M×K的A矩阵和形状为N×K的B矩阵从GM搬入L1 Buffer，并转换为Nz格式。
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
     asc_copy_gm2l1_nd2nz(a_l1, a, K, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, M, K, 0, false);
     asc_set_gm2l1_nz_para(1, 1, 128, 0);
@@ -260,13 +277,13 @@ __global__ __cube__ void AscCopyL12l0aKernel(__gm__ int8_t* a, __gm__ int8_t* b,
     asc_sync_notify(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
     asc_sync_wait(PIPE_MTE2, PIPE_MTE1, EVENT_ID0);
 
-    // Move all A and B fractals to L0A Buffer and L0B Buffer for the 128x128x128 matrix multiplication.
+    // 将A矩阵和B矩阵从L1 Buffer分别非转置搬入L0A Buffer和L0B Buffer。
     asc_copy_l12l0a(a_l0, a_l1, 0, 0, M / CUBE_M, K / CUBE_K, M / CUBE_M, M / CUBE_M);
     asc_copy_l12l0b(b_l0, b_l1, 0, 0, N / CUBE_M, K / CUBE_K, N / CUBE_M, N / CUBE_M);
     asc_sync_notify(PIPE_MTE1, PIPE_M, EVENT_ID0);
     asc_sync_wait(PIPE_MTE1, PIPE_M, EVENT_ID0);
 
-    // Multiply A and B after PIPE_MTE1 has produced both operands.
+    // 等待PIPE_MTE1完成搬运后，执行C = A × Bᵀ的矩阵乘法，其中M=N=K=128。
     asc_mmad(c_l0, a_l0, b_l0, M, K, N, asc_unit_flag_mode::DISABLE, true, false, true);
     asc_sync_notify(PIPE_M, PIPE_FIX, EVENT_ID0);
     asc_sync_wait(PIPE_M, PIPE_FIX, EVENT_ID0);
@@ -291,7 +308,7 @@ void PrintRow(const char* label, const std::vector<T>& data)
 
 int main()
 {
-    // Generate deterministic dense inputs and the corresponding host-side golden result.
+    // 构造确定性输入矩阵，并在Host侧按C = A × Bᵀ计算Golden结果。
     std::vector<int8_t> a(M * K), b(N * K);
     std::vector<int32_t> output(ELEMENTS), golden(ELEMENTS);
     for (uint32_t row = 0; row < M; ++row) {

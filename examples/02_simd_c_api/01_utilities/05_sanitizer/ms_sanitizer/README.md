@@ -54,7 +54,7 @@ z = x + y
 
     ```bash
     make -B demo
-    mssanitizer ./demo
+    mssanitizer ./demo # 默认开启内存检测，也可通过传入 --tool=memcheck 开启
     ```
 
   - 非对齐访问：内存访问未满足字节对齐要求。
@@ -72,7 +72,7 @@ z = x + y
 
     ```bash
     make -B demo
-    mssanitizer ./demo
+    mssanitizer ./demo  # 默认开启内存检测，也可通过传入 --tool=memcheck 开启
     ```
 
   - 内存泄漏：申请内存使用后未释放，导致程序在运行过程中内存占用持续增加的异常。
@@ -152,6 +152,32 @@ z = x + y
   mssanitizer ./demo --tool=initcheck
   ```
 
+- **同步异常检测**
+
+  同步异常检测用于定位同步指令未正确配对的问题，例如发出同步通知后没有执行对应的等待操作。
+
+  用户可以在`add_custom`末尾的`asc_unlock(PIPE_MTE3, mutex_id)`之后添加以下同步代码。`asc_sync_notify`与`asc_sync_wait`的源流水、目的流水和事件ID需要一致，且应配对使用。
+
+  ```cpp
+  asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  asc_sync_wait(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  ```
+
+  注释掉上面的`asc_sync_wait`，仅保留`asc_sync_notify`，即可构造通知未被等待的同步异常：
+
+  ```cpp
+  asc_sync_notify(PIPE_MTE3, PIPE_S, EVENT_ID0);
+  ```
+
+  注意：调用`mssanitizer`时需要传入`--tool=synccheck`来开启同步异常检测。此处复现的是同步指令不配对问题，与“竞争检测”中删除流水间同步后产生的数据竞争不同。
+
+  重新编译并执行检测：
+
+  ```bash
+  make -B demo
+  mssanitizer ./demo --tool=synccheck
+  ```
+
 ## 编译运行
 
 在本样例根目录下执行如下步骤，编译并执行样例。
@@ -172,11 +198,12 @@ z = x + y
   cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..; make -j
 
   # 根据调测需求执行对应的mssanitizer命令。
-  mssanitizer ./demo
+  mssanitizer ./demo # 默认开启内存检测，也可通过传入 --tool=memcheck 开启
   mssanitizer ./demo --leak-check=yes
   mssanitizer ./demo --check-unused-memory=yes
   mssanitizer ./demo --tool=racecheck
   mssanitizer ./demo --tool=initcheck
+  mssanitizer ./demo --tool=synccheck
   ```
 
 - 编译选项说明

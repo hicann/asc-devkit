@@ -69,6 +69,13 @@ This example selects different output scenarios through the compilation paramete
   <img src="figures/fixpipe_l0c2ub_split_n.png" width="500">
 </p>
 
+## Cube-Vector Synchronization
+
+This example uses mode 2 with `CrossCoreSetFlag<0x2, PIPE_FIX>(0x8)` to notify both AIVs in the same group after the Fixpipe transfer completes. Both AIVs must execute the matching `CrossCoreWaitFlag<0x2>(0x8)` to consume their synchronization tokens.
+
+- Scenarios 1 and 2 use a single output target: both AIVs wait for synchronization before AIV1 returns, and only AIV0 transfers data from UB to GM. AIV1 must not return before the wait, as doing so leaves an unconsumed synchronization token.
+- Scenarios 3 and 4 use dual output targets: both AIVs wait for synchronization and transfer their respective UB results to the corresponding GM locations.
+
 ## Build and Run
 
 Run the following steps in the root directory of this example to build and run the example.
