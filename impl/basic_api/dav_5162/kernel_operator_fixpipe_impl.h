@@ -309,6 +309,45 @@ __aicore__ inline void FixpipeL12GmImpl(
     FixpipeL1ToOut<DstT, SrcT, config>(dst, src, params, 0, sid);
 }
 
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2L1Impl(__cbuf__ DstT* dst, __cc__ SrcT* src, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->L1) is not supported on current device"); });
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2L1Impl(
+    __cbuf__ DstT* dst, __cc__ SrcT* src, __cbuf__ uint64_t* cbufWorkspace, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->L1) is not supported on current device"); });
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2UBImpl(__ubuf__ DstT* dst, __cc__ SrcT* src, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->UB) is not supported on current device"); });
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2UBImpl(
+    __ubuf__ DstT* dst, __cc__ SrcT* src, __cbuf__ uint64_t* cbufWorkspace, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->UB) is not supported on current device"); });
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2GMImpl(__gm__ DstT* dst, __cc__ SrcT* src, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->GM) is not supported on current device"); });
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2GMImpl(
+    __gm__ DstT* dst, __cc__ SrcT* src, __cbuf__ uint64_t* cbufWorkspace, const FixpipeParamsV220& intriParams)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Fixpipe(L0C->GM) is not supported on current device"); });
+}
+
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_FIXPIPE_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_FIXPIPE_IMPL_H__)

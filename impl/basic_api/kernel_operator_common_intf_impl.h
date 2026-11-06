@@ -226,7 +226,7 @@ __aicore__ inline void CheckLocalMemoryIA(const CheckLocalMemoryIAParam& checkPa
 }
 
 #if (__NPU_ARCH__ == 2201) || (__NPU_ARCH__ == 3002) || (__NPU_ARCH__ == 3102) || (__NPU_ARCH__ == 3510) || \
-    (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+    (__NPU_ARCH__ == 5102)
 template <HardEvent event, MemoryT memT, bool isVirtual>
 __aicore__ inline void HSetFlag(int32_t eventID)
 {
