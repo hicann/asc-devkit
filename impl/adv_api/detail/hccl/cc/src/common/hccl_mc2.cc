@@ -18,6 +18,7 @@
 #include "op_common.h"
 #include "ccu_assist_pub.h"
 #include "hccl_ccu_res.h"
+#include "hccl_res.h"
 #include "adapter_acl.h"
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "kfc_server_protocol.h"
@@ -887,9 +888,8 @@ CcuResult LoadResourceCtx(const OpParam& opParamHost, AlgResourceCtxSerializable
     return CCU_SUCCESS;
 }
 
-CcuResult GetLaunchMissionNum(const AlgResourceCtxSerializable& resourceCtx, uint32_t& missionNum)
+CcuResult GetLaunchMissionNum(const AlgResourceCtxSerializable& resourceCtx, uint32_t& missionNum, bool useLegacyThread)
 {
-    CHK_PRT_RET(resourceCtx.threads.empty(), HCCL_ERROR("empty ccu threads"), CCU_E_PARA);
     CHK_PRT_RET(resourceCtx.ccuKernels.empty(), HCCL_ERROR("empty ccu kernels"), CCU_E_PARA);
     CHK_PRT_RET(
         resourceCtx.kfcServerArgSize != KFC_SERVER_ARG_NUM || resourceCtx.kfcServerArgs.size() < KFC_SERVER_ARG_NUM,
@@ -900,6 +900,14 @@ CcuResult GetLaunchMissionNum(const AlgResourceCtxSerializable& resourceCtx, uin
             resourceCtx.kfcServerArgs.size() != missionNum * KFC_SERVER_ARG_NUM,
         HCCL_ERROR("invalid mission layout, missionNum[%u], args[%zu]", missionNum, resourceCtx.kfcServerArgs.size()),
         CCU_E_PARA);
+    if (useLegacyThread) {
+        // 兼容路径（stream 为空）：threads 仍是 launch 输入，沿用旧版校验
+        CHK_PRT_RET(
+            resourceCtx.threads.size() < missionNum,
+            HCCL_ERROR(
+                "insufficient launch handles, missionNum[%u], threads[%zu]", missionNum, resourceCtx.threads.size()),
+            CCU_E_PARA);
+    }
     const uint64_t xnAddr = resourceCtx.kfcServerArgs[KFC_SERVER_XN_ADDR_ARG_INDEX];
     const uint64_t ckeAddr = resourceCtx.kfcServerArgs[KFC_SERVER_CKE_ADDR_ARG_INDEX];
     for (uint32_t missionIndex = 0; missionIndex < missionNum; ++missionIndex) {
@@ -912,21 +920,10 @@ CcuResult GetLaunchMissionNum(const AlgResourceCtxSerializable& resourceCtx, uin
             HCCL_ERROR("inconsistent KFC launch args for mission[%u]", missionIndex), CCU_E_PARA);
     }
     CHK_PRT_RET(
-        resourceCtx.threads.size() < missionNum || resourceCtx.ccuKernels.size() < missionNum,
+        resourceCtx.ccuKernels.size() < missionNum,
         HCCL_ERROR(
-            "insufficient launch handles, missionNum[%u], threads[%zu], kernels[%zu]", missionNum,
-            resourceCtx.threads.size(), resourceCtx.ccuKernels.size()),
+            "insufficient launch handles, missionNum[%u], kernels[%zu]", missionNum, resourceCtx.ccuKernels.size()),
         CCU_E_PARA);
-    for (uint32_t missionIndex = 0; missionIndex < missionNum; ++missionIndex) {
-        for (uint32_t previousIndex = 0; previousIndex < missionIndex; ++previousIndex) {
-            CHK_PRT_RET(
-                resourceCtx.threads[missionIndex] == resourceCtx.threads[previousIndex],
-                HCCL_ERROR(
-                    "missions[%u] and [%u] use duplicate threadHandle[0x%llx]", previousIndex, missionIndex,
-                    static_cast<unsigned long long>(resourceCtx.threads[missionIndex])),
-                CCU_E_PARA);
-        }
-    }
     return CCU_SUCCESS;
 }
 
@@ -958,22 +955,39 @@ void LogKernelLaunchArgs(
 }
 } // namespace
 
-CcuResult LaunchCcuKernel(const HcclComm comm, const OpParam& opParamHost)
+CcuResult LaunchCcuKernel(const HcclComm comm, aclrtStream stream, const OpParam& opParamHost)
 {
     CHK_PRT_RET(comm == nullptr, HCCL_ERROR("[%s] comm is nullptr.", __func__), CCU_E_PTR);
+    // stream 非空：用 HcclThreadAcquireWithStream 将用户 stream 封装为通信 thread；
+    // stream 为空：兼容老样例，走资源上下文中预分配 threads 的旧流程。
+    const bool useLegacyThread = (stream == nullptr);
     AlgResourceCtxSerializable resourceCtx;
     CcuResult ret = LoadResourceCtx(opParamHost, resourceCtx);
     if (ret != CCU_SUCCESS) {
         return ret;
     }
     uint32_t missionNum = 0;
-    ret = GetLaunchMissionNum(resourceCtx, missionNum);
+    ret = GetLaunchMissionNum(resourceCtx, missionNum, useLegacyThread);
     if (ret != CCU_SUCCESS) {
         return ret;
     }
-    HCCL_INFO("[CcuKernelLaunch] start [%u] KFC server missions.", missionNum);
+    HCCL_INFO(
+        "[CcuKernelLaunch] start [%u] KFC server missions, stream[%p], mode[%s].", missionNum, stream,
+        useLegacyThread ? "legacy-preallocated-thread" : "stream-acquired-thread");
     for (uint32_t missionIndex = 0; missionIndex < missionNum; ++missionIndex) {
-        const ThreadHandle threadHandle = resourceCtx.threads[missionIndex];
+        ThreadHandle threadHandle = 0;
+        if (useLegacyThread) {
+            threadHandle = resourceCtx.threads[missionIndex];
+        } else {
+            HcclResult acquireRet = HcclThreadAcquireWithStream(
+                comm, COMM_ENGINE_CCU, stream, resourceCtx.notifyNumOnMainThread, &threadHandle);
+            if (acquireRet != HCCL_SUCCESS) {
+                HCCL_ERROR(
+                    "[CcuKernelLaunch] mission[%u] HcclThreadAcquireWithStream failed, ret[%d], stream[%p].",
+                    missionIndex, acquireRet, stream);
+                return static_cast<CcuResult>(acquireRet);
+            }
+        }
         const CcuKernelHandle kernelHandle = resourceCtx.ccuKernels[missionIndex];
         CHK_PRT_RET(
             threadHandle == 0 || kernelHandle == 0, HCCL_ERROR("invalid launch handles for mission[%u]", missionIndex),
@@ -1115,7 +1129,9 @@ CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
     if (ret != CCU_SUCCESS) {
         return ret;
     }
-    return LaunchCcuKernel(comm, opParamHost);
+    // stream 非空（A5 资源流 OpParam.stream 记录了用户 stream）：经 HcclThreadAcquireWithStream
+    // 封装为通信 thread；stream 为空：兼容老样例，走资源上下文中预分配 threads 的旧流程。
+    return LaunchCcuKernel(comm, opParamHost.stream, opParamHost);
 }
 
 HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(HcclComm comm, uint8_t ccType, void* ccArgs)
@@ -1268,9 +1284,9 @@ uint32_t __attribute__((visibility("default"))) Mc2CcKernelLaunch(void* stream, 
                 return HCCL_E_INTERNAL;
             }
             const HcclComm comm = static_cast<HcclComm>(opParamHost.hcclComm);
-            // The CCU launch stream is carried by the thread handles in the resource context.
-            (void)stream;
-            CcuResult launchRet = LaunchCcuKernel(comm, opParamHost);
+            // stream 非空：经 HcclThreadAcquireWithStream 封装为通信 thread（新路径）；
+            // stream 为空：兼容老样例，走资源上下文中预分配 threads 的旧流程。
+            CcuResult launchRet = LaunchCcuKernel(comm, static_cast<aclrtStream>(stream), opParamHost);
             if (launchRet != CCU_SUCCESS) {
                 HCCL_ERROR("[Mc2CcKernelLaunch] CcuKernelLaunch failed, ret[%d].", launchRet);
                 return HCCL_E_INTERNAL;

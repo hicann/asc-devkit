@@ -180,12 +180,16 @@ extern Mc2Result __attribute__((visibility("default"))) Mc2AcquireCcResCtx(
 
 /**
  * @brief Launch MC2 builtin kernel from the prepared resource context.
- * @param stream Stream reserved for the AICPU launch path. It is ignored by the CCU path.
+ * @param stream Launch stream. Required by the AICPU path. For the CCU path:
+ *               when non-null, the stream is wrapped into a communication thread
+ *               via HcclThreadAcquireWithStream before launching the CCU kernels;
+ *               when null, the launch falls back to the pre-allocated thread
+ *               handles embedded in ccResCtx (legacy behavior, kept for
+ *               compatibility with existing callers).
  * @param ccResCtx Device-side resource context returned by Mc2AcquireCcResCtx.
  * @param ccResCtxSize Size of the resource context.
  * @note The launch path dispatches by commEngine in the OpParam referenced by the context.
- *       The CCU path currently supports Ascend 950 only and obtains its launch stream
- *       from the thread resource embedded in ccResCtx.
+ *       The CCU path currently supports Ascend 950 only.
  */
 extern Mc2Result __attribute__((visibility("default"))) Mc2CcKernelLaunch(
     void* stream, void* ccResCtx, uint32_t ccResCtxSize);

@@ -1898,9 +1898,31 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_CcuPath)
         HCCL_SUCCESS);
     ASSERT_NE(ccResCtx, nullptr);
 
-    // CCU obtains the launch stream from the thread handles in ccResCtx.
-    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize), HCCL_SUCCESS);
+    // CCU wraps the launch stream via HcclThreadAcquireWithStream instead of using the
+    // pre-allocated thread handles in ccResCtx; the stub thread manager returns a valid handle.
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, ccResCtx, ccResCtxSize), HCCL_SUCCESS);
     EXPECT_EQ(mc2_ops_hccl::g_stubAclrtMemcpyCallCount, 5U);
+    EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 1U);
+    EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
+}
+
+TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_CcuPathLegacyNullStream)
+{
+    SetCommEngineEnv(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED));
+    void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
+    ASSERT_NE(ccArgs, nullptr);
+
+    void* ccResCtx = nullptr;
+    uint32_t ccResCtxSize = 0U;
+    ASSERT_EQ(
+        Mc2AcquireCcResCtx(
+            comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs, &ccResCtx, &ccResCtxSize),
+        HCCL_SUCCESS);
+    ASSERT_NE(ccResCtx, nullptr);
+
+    // Null stream falls back to the legacy path: the pre-allocated thread handles in ccResCtx
+    // are used for launching, matching the behavior expected by existing callers.
+    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize), HCCL_SUCCESS);
     EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 1U);
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }
@@ -1920,7 +1942,7 @@ TEST_F(CcuMc2TestSuite, Mc2CcKernelLaunch_PropagatesCcuLaunchFailure)
     ASSERT_NE(ccResCtx, nullptr);
 
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail = true;
-    EXPECT_EQ(Mc2CcKernelLaunch(nullptr, ccResCtx, ccResCtxSize), HCCL_E_INTERNAL);
+    EXPECT_EQ(Mc2CcKernelLaunch(stream_, ccResCtx, ccResCtxSize), HCCL_E_INTERNAL);
     EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, 1U);
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }

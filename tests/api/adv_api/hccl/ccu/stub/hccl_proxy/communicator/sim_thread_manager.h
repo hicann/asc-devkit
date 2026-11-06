@@ -39,7 +39,7 @@ private:
     std::vector<std::shared_ptr<SimHcclThread>> threads_;
 
     std::mutex mainThreadMutex_;
-    std::map<rtStream_t, std::unique_ptr<SimHcclThread>> mainThread_;
+    std::map<rtStream_t, std::shared_ptr<SimHcclThread>> mainThread_;
 }; // class SimThreadMgr
 
 }; // namespace HcclSim
