@@ -106,10 +106,13 @@ public:
         uint64_t loop1_src_stride = src_b_col_stride * sizeof(type);
         uint64_t loop4_src_stride = src_dn_matrix_stride * sizeof(type);
 
+        // When dst uses c0_element_half, strides are in hif4_scale units (sizeof(type) bytes each);
+        // otherwise they are in e8m0 units (sizeof(fp8_e8m0_t) bytes each).
+        constexpr auto dst_stride_bytes = layout_stride_bytes<DstLayout, type>;
         uint16_t loop2_dst_stride = dst_nz_n_stride; // loop2_dst_stride = dst_nz_n_stride
         uint16_t loop3_dst_stride =
-            dst_b_col_stride * sizeof(fp8_e8m0_t) / c0_size<>; // loop3_dst_stride = dst_nz_c0_Stride
-        uint16_t loop4_dst_stride = dst_nz_matrix_stride * sizeof(fp8_e8m0_t) / c0_size<>;
+            dst_b_col_stride * dst_stride_bytes / c0_size<>; // loop3_dst_stride = dst_nz_c0_stride
+        uint16_t loop4_dst_stride = dst_nz_matrix_stride * dst_stride_bytes / c0_size<>;
         auto cache_mode = static_cast<asc_load_l2_cache_mode>(src.engine().get_cache_mode());
         // scale use b16 for movement
         copy_gm_to_l1_multi_dn2nz_instr::data_copy(

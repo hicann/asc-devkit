@@ -77,13 +77,20 @@ private:
     __aicore__ inline static void load_data_fractal(
         const DstTensor& dst, const SrcTensor& src, const DstLayout& dst_layout, const SrcLayout& src_layout)
     {
+        using type = typename SrcTensor::element_type;
         uint16_t m_start_position = 0;
         uint16_t k_start_position = 0;
         auto m_step = get_element<attr_info::shape, attr_info::row, 1>(dst_layout);
         auto k_step = get_element<attr_info::shape, attr_info::column, 1>(dst_layout);
         TENSOR_API_DEBUG_CHECK(debug_check_l0_step, m_step, "m_step", "copy_l1_to_l0scalea path");
         TENSOR_API_DEBUG_CHECK(debug_check_l0_step, k_step, "k_step", "copy_l1_to_l0scalea path");
-        auto src_stride = get_element<attr_info::stride, attr_info::row, 1>(src_layout) >> 5;
+        // For c0_element_half layouts, stride is in hif4_scale units (sizeof(type) e8m0 each);
+        // convert to e8m0 before dividing by c0_size (>> 5).
+        auto src_stride_raw = static_cast<size_t>(get_element<attr_info::stride, attr_info::row, 1>(src_layout));
+        auto src_stride = static_cast<int16_t>(
+            is_c0_element_half_v<decltype(get_layout_trait<SrcLayout>::c0_element)> ?
+                (src_stride_raw * sizeof(type)) >> 5 :
+                src_stride_raw >> 5);
         auto dst_stride = k_step;
         uint64_t mx_dst_addr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(dst.data().get()));
         load_l1_to_l0a_scale_instr::load_data(

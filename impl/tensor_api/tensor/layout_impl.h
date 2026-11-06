@@ -40,7 +40,11 @@ struct min_op {
     template <typename SrcValue, typename DstValue>
     __aicore__ inline constexpr auto operator()(const SrcValue& src, const DstValue& dst) const
     {
-        return Std::min(src, dst);
+        if constexpr (is_c0_element_half_v<SrcValue> || is_c0_element_half_v<DstValue>) {
+            return c0_element_half{};
+        } else {
+            return Std::min(src, dst);
+        }
     }
 };
 
@@ -48,9 +52,23 @@ struct diff_op {
     template <typename Shape, typename Coord>
     __aicore__ inline constexpr auto operator()(const Shape& shape, const Coord& coord) const
     {
-        return shape - coord;
+        if constexpr (is_c0_element_half_v<Shape>) {
+            return shape;
+        } else {
+            return shape - coord;
+        }
     }
 };
+
+template <typename Inner, typename Val>
+__aicore__ inline constexpr auto scale_to_layout_units(const Val& val)
+{
+    if constexpr (is_c0_element_half_v<Inner>) {
+        return val * 2;
+    } else {
+        return val;
+    }
+}
 
 template <typename Value>
 __aicore__ inline constexpr auto make_zero_coord_like(const Value& value);
@@ -146,11 +164,11 @@ __aicore__ inline constexpr decltype(auto) make_4d_slice_shape(
     auto inner_row = get<0, 0>(layout.shape());
     auto inner_col = get<1, 0>(layout.shape());
 
-    auto src_row = inner_row * get<0, 1>(layout.shape()) - get<0>(coord);
-    auto src_col = inner_col * get<1, 1>(layout.shape()) - get<1>(coord);
+    auto src_row = inner_row * get<0, 1>(layout.shape()) - scale_to_layout_units<decltype(inner_row)>(get<0>(coord));
+    auto src_col = inner_col * get<1, 1>(layout.shape()) - scale_to_layout_units<decltype(inner_col)>(get<1>(coord));
 
-    auto real_row = Std::min(src_row, get<0>(slice_shape));
-    auto real_col = Std::min(src_col, get<1>(slice_shape));
+    auto real_row = Std::min(src_row, scale_to_layout_units<decltype(inner_row)>(get<0>(slice_shape)));
+    auto real_col = Std::min(src_col, scale_to_layout_units<decltype(inner_col)>(get<1>(slice_shape)));
     return make_fractal_shape(make_shape(real_row, real_col), make_shape(inner_row, inner_col));
 }
 
@@ -169,11 +187,13 @@ __aicore__ inline constexpr decltype(auto) make_flat_slice_impl(
     auto inner_col = get<fractal_block_index, 1, 0>(layout.shape());
 
     auto real_row = Std::min(
-        inner_row * get<fractal_block_index, 0, 1>(layout.shape()) - get<fractal_block_index, 0>(coord),
-        get<fractal_block_index, 0>(slice_shape));
+        inner_row * get<fractal_block_index, 0, 1>(layout.shape()) -
+            scale_to_layout_units<decltype(inner_row)>(get<fractal_block_index, 0>(coord)),
+        scale_to_layout_units<decltype(inner_row)>(get<fractal_block_index, 0>(slice_shape)));
     auto real_col = Std::min(
-        inner_col * get<fractal_block_index, 1, 1>(layout.shape()) - get<fractal_block_index, 1>(coord),
-        get<fractal_block_index, 1>(slice_shape));
+        inner_col * get<fractal_block_index, 1, 1>(layout.shape()) -
+            scale_to_layout_units<decltype(inner_col)>(get<fractal_block_index, 1>(coord)),
+        scale_to_layout_units<decltype(inner_col)>(get<fractal_block_index, 1>(slice_shape)));
     auto fractal_shape = make_fractal_shape(make_shape(real_row, real_col), make_shape(inner_row, inner_col));
 
     return make_shape(

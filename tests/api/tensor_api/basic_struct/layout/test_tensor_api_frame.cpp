@@ -703,3 +703,49 @@ TEST_F(tensor_api_frame_layout, multi_batch_frame_layout_keeps_existing_arities)
     EXPECT_EQ(AscendC::Std::get<4>(get_shape(nc1hwc0_keep)), 16);
     static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(nc1hwc0_keep)>, nc1hwc0_layout_ptn>);
 }
+
+TEST_F(tensor_api_frame_layout, zz_layout_with_c0_element_half)
+{
+    using namespace asc::te;
+
+    auto layout = make_frame_layout<zz_layout_ptn, c0_element_half>(32, 32);
+
+    static_assert(is_c0_element_half_v<decltype(get_layout_trait<decltype(layout)>::c0_element)>);
+    static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(layout)>, zz_layout_ptn>);
+    static_assert(has_c0_element_half_v<decltype(layout.shape())>);
+
+    EXPECT_EQ((get<0, 0>(layout.shape())), fractal_fixed);
+    EXPECT_EQ((get<0, 1>(layout.shape())), 2);
+    EXPECT_EQ((get<1, 0>(layout.shape())), c0_element_half{});
+    EXPECT_EQ((get<1, 1>(layout.shape())), 64);
+    EXPECT_EQ((get<0, 0>(layout.stride())), c0_element_half{});
+    EXPECT_EQ((get<0, 1>(layout.stride())), 512);
+    EXPECT_EQ((get<1, 0>(layout.stride())), c0_element_half{});
+    EXPECT_EQ((get<1, 1>(layout.stride())), 8);
+    EXPECT_EQ(layout(make_coord(1, 1)), 17);
+}
+
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 9201
+TEST_F(tensor_api_frame_layout, nn_layout_with_c0_element_half)
+{
+    using namespace asc::te;
+
+    auto layout = make_frame_layout<nn_layout_ptn, c0_element_half>(32, 32);
+
+    static_assert(is_c0_element_half_v<decltype(get_layout_trait<decltype(layout)>::c0_element)>);
+    static_assert(AscendC::Std::is_same_v<get_layout_pattern<decltype(layout)>, nn_layout_ptn>);
+    static_assert(has_c0_element_half_v<decltype(layout.shape())>);
+
+    EXPECT_EQ((get<0, 0>(layout.shape())), c0_element_half{});
+    EXPECT_EQ((get<0, 1>(layout.shape())), 64);
+    EXPECT_EQ((get<1, 0>(layout.shape())), fractal_fixed);
+    EXPECT_EQ((get<1, 1>(layout.shape())), 2);
+    EXPECT_EQ((get<0, 0>(layout.stride())), c0_element_half{});
+    EXPECT_EQ((get<0, 1>(layout.stride())), 8);
+    EXPECT_EQ((get<1, 0>(layout.stride())), c0_element_half{});
+    EXPECT_EQ((get<1, 1>(layout.stride())), 512);
+    EXPECT_EQ(layout(make_coord(1, 1)), 8 + 512);
+}
+#else
+TEST_F(tensor_api_frame_layout, nn_layout_with_c0_element_half_unsupported_on_3510) { GTEST_SUCCEED(); }
+#endif

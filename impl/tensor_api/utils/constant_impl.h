@@ -175,6 +175,29 @@ constexpr size_t c0_size = get_c0_size<DataType>();
 template <typename DataType>
 constexpr size_t c0_element = c0_size<DataType> / sizeof(DataType);
 
+// Syntax sugar for hif4_scale: 4-byte type split in half, c0_element = 1/2.
+struct c0_element_half {
+    __aicore__ inline constexpr operator size_t() const noexcept { return 1; }
+};
+
+template <typename T>
+struct is_c0_element_half : Std::false_type {};
+
+template <>
+struct is_c0_element_half<c0_element_half> : Std::true_type {};
+
+template <typename T>
+constexpr bool is_c0_element_half_v = is_c0_element_half<Std::remove_cvref_t<T>>::value;
+
+template <typename T>
+struct has_c0_element_half : Std::bool_constant<is_c0_element_half_v<T>> {};
+
+template <typename... Ts>
+struct has_c0_element_half<Std::tuple<Ts...>> : Std::bool_constant<(has_c0_element_half<Ts>::value || ...)> {};
+
+template <typename T>
+constexpr bool has_c0_element_half_v = has_c0_element_half<Std::remove_cvref_t<T>>::value;
+
 // is_integral_constant
 template <typename Constant>
 struct is_integral_constant : Std::false_type {};

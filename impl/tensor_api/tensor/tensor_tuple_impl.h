@@ -106,7 +106,7 @@ struct product {
             } else {
                 return transform_apply(value, product{}, multiplies_unary_left_fold{});
             }
-        } else if constexpr (Std::is_integral<Value>::value) {
+        } else if constexpr (Std::is_integral<Value>::value || is_c0_element_half_v<Value>) {
             return value;
         } else {
             static_assert(sizeof(Value) == 0, "Invalid Product parameters");
