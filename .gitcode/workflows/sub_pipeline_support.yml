@@ -1,4 +1,4 @@
 on:
     pr_comment:
         types: [ created ]
-        keyword: '^(?:\/)?compile*'
+        keyword: '^/?compile(@[A-Za-z0-9._-]+)?$'
