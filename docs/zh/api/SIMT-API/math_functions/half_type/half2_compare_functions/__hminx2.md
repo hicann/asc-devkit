@@ -54,8 +54,10 @@ half2 __hminx2(const half2 x, const half2 y)
 | -0 | 0 | -0 | -0 |
 | -0 | -0 | -0 | -0 |
 | 0 | 0 | 0 | 0 |
-| nan | 任意值 | nan | 0 |
-| 任意值 | nan | nan | 0 |
+| nan | 有限值 | y值 | y值 |
+| 有限值 | nan | x值 | x值 |
+| nan | ±inf | ±inf | ±ASCRT\_MAX\_NORMAL\_FP16 |
+| ±inf | nan | ±inf | ±ASCRT\_MAX\_NORMAL\_FP16 |
 | nan | nan | nan | 0 |
 | 任意非nan值 | -inf | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
 | -inf | 任意非nan值 | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
