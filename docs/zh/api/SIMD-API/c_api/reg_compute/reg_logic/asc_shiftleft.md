@@ -108,20 +108,27 @@ __simd_callee__ inline void asc_shiftleft(vector_uint16_t& dst,
 
 ### 位移约束
 
-- `shift`中的元素不支持设置为负数，负数行为未定义。
-- 当位移量大于`src`的数据类型位宽时，输出结果中的有效元素置零。
+<!-- npu="950" id8 -->
+- Ascend 950PR&950DT系列产品，当`位移值`设置为负数时，将对源操作数执行右移操作，右移规则取决于源操作数的数据类型：
+    - 源操作数为无符号整型：执行逻辑右移，高位补`0`。
+    - 源操作数为有符号整型：执行算术右移，高位补符号位。
+- Ascend 950PR&950DT系列产品，当`位移值`为负数，且绝对值大于`src`的数据类型位宽时，输出结果取决于源操作数的数据类型：
+    - 源操作数为无符号整型：结果为 `0`；
+    - 源操作数为有符号整型：结果收敛至符号位，源操作数为正数或`0`得到 `0`，为负数得到 `-1`。
+<!-- end id8 -->
+- 当`位移值`为正数，且值大于`src`的数据类型位宽时，输出结果中的有效元素置`0`。
 
 ## 调用示例
 
 将代码保存为`example.asc`后，可通过`bisheng`命令编译运行，其中`--npu-arch`参数需根据实际产品型号指定对应的NPU架构，具体产品与NPU架构的映射关系请参考[\_\_NPU\_ARCH\_\_](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#npu-arch)。
 
-<!-- npu="950" id8 -->
+<!-- npu="950" id9 -->
 以Ascend 950PR&950DT系列产品（对应NPU架构为`dav-3510`）为例，编译运行命令如下：
 
 ```bash
 bisheng example.asc -o main --npu-arch=dav-3510 && ./main
 ```
-<!-- end id8 -->
+<!-- end id9 -->
 
 ```cpp
 #include <cstdint>
