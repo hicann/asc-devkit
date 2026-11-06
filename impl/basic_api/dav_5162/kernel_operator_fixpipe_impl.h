@@ -262,7 +262,7 @@ __aicore__ inline void FixpipeL1ToUb(
 template <typename DstT, typename SrcT, const FixpipeConfig& config>
 __aicore__ inline void FixpipeL1ToOut(
     __gm__ DstT* dst, __cbuf__ SrcT* src, const FixpipeParamsV516& params, uint16_t nIterIndex = 0,
-    const uint8_t sid = 4)
+    const uint8_t sid = 5)
 {
     SetFixpipeNzParaImpl<config>(params);
     if constexpr (config.format == CO2Layout::NZ) {
@@ -303,7 +303,7 @@ __aicore__ inline void FixpipeL12UbImpl(__ubuf__ DstT* dst, __cbuf__ SrcT* src, 
 template <typename DstT, typename SrcT, const FixpipeConfig& config>
 __aicore__ inline void FixpipeL12GmImpl(
     __gm__ DstT* dst, __cbuf__ SrcT* src, const FixpipeParamsV516& params, const uint8_t cacheMode = 0,
-    const uint8_t sid = 4)
+    const uint8_t sid = 5)
 {
     CheckFixpipeParams<DstT, SrcT, config>(params);
     FixpipeL1ToOut<DstT, SrcT, config>(dst, src, params, 0, sid);

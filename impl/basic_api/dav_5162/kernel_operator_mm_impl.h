@@ -149,7 +149,7 @@ __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const
 template <typename T, typename U>
 __aicore__ inline void LoadData2DGM2L1Cal(
     __cbuf__ T* dst, __gm__ U* src, const LoadData2DParamsV2& loadDataParam, const Nd2NzParamsV2& nd2nzParams,
-    const uint8_t sid = 6)
+    const uint8_t sid = 12)
 {
     static_assert(
         ((IsSameType<T, int8_t>::value && IsSameType<U, int4b_t>::value) ||
@@ -226,7 +226,7 @@ __aicore__ inline void LoadData2DGM2L0ACal(
 template <typename T>
 __aicore__ inline void LoadData2DGM2L0BCal(
     __cb__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam, const uint8_t cacheMode = 0,
-    const uint8_t sid = 0)
+    const uint8_t sid = 5)
 {
     set_mte2_src_para(uint64_t(loadDataParam.srcStride));
     if constexpr (SupportType<T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t>()) {
@@ -243,7 +243,7 @@ __aicore__ inline void LoadData2DGM2L0BCal(
 template <typename T, typename U>
 __aicore__ inline void LoadData2DGM2L0BCal(
     __cb__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam, const Nd2NzParamsV2& nd2nzParams,
-    const uint8_t sid = 0)
+    const uint8_t sid = 5)
 {
     static_assert(
         ((IsSameType<T, int8_t>::value && IsSameType<U, int4b_t>::value) ||
@@ -273,7 +273,7 @@ __aicore__ inline void LoadData2DGM2L0BCal(
 template <typename T>
 __aicore__ inline void LoadData2DGM2L1Cal(
     __cbuf__ T* dst, __gm__ T* src, const LoadData2DParamsV2& loadDataParam, const uint8_t cacheMode = 0,
-    const uint8_t sid = 6)
+    const uint8_t sid = 12)
 {
     static_assert(
         SupportType<
@@ -627,7 +627,7 @@ __aicore__ inline void LoadData3DV2L12UBCal(
  * Aipp/Waipp                                                                                        *
  * ************************************************************************************************* */
 template <typename T>
-__aicore__ inline void LoadImageToLocalCal(__cbuf__ T* dst, const LoadImageToLocalParams& params, const uint8_t sid = 3)
+__aicore__ inline void LoadImageToLocalCal(__cbuf__ T* dst, const LoadImageToLocalParams& params, const uint8_t sid = 6)
 {
     static_assert(
         (SupportType<T, uint8_t, int8_t, int16_t>()),
