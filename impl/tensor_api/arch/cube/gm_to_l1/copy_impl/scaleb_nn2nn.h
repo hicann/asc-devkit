@@ -22,7 +22,7 @@
 #ifndef IMPL_TENSOR_API_ARCH_CUBE_GM_TO_L1_COPY_IMPL_SCALEB_NN2NN_H
 #define IMPL_TENSOR_API_ARCH_CUBE_GM_TO_L1_COPY_IMPL_SCALEB_NN2NN_H
 
-#include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/instruction.h"
+#include "impl/tensor_api/arch/cube/gm_to_l1/copy_impl/copy_common.h"
 
 namespace asc {
 namespace te {
@@ -139,10 +139,17 @@ private:
 
         // lprp mode, dst_stride % c0_size should be 0
         // multi rows copy, dst non-contiguous case
+        // For c0_element_half layouts, count e8m0 elements for inner/outer-dim stride/shape
+        // values so the existing instruction formulas (written for e8m0) produce correct results.
+        auto eff_src_shape_col_s = inner_dim_e8m0_num<type>(src_shape_col_s);
+        auto eff_src_stride_col_s = inner_dim_e8m0_num<type>(src_stride_col_s);
+        auto eff_src_stride_col_b = outer_dim_e8m0_num<SrcLayout, type>(src_stride_col_b);
+        auto eff_dst_stride_col_b = outer_dim_e8m0_num<DstLayout, type>(dst_stride_col_b);
+
         uint32_t block_count = src_shape_col_b;
-        uint32_t block_len = src_shape_row_b * sizeof(type) * src_shape_col_s * src_stride_col_s;
-        uint64_t src_stride = src_stride_col_b * sizeof(type);
-        uint32_t dst_stride = dst_stride_col_b * sizeof(type);
+        uint32_t block_len = src_shape_row_b * sizeof(type) * eff_src_shape_col_s * eff_src_stride_col_s;
+        uint64_t src_stride = eff_src_stride_col_b * sizeof(type);
+        uint32_t dst_stride = eff_dst_stride_col_b * sizeof(type);
 
         uint8_t left_padding_cnt = 0;
         uint8_t right_padding_cnt = 0;

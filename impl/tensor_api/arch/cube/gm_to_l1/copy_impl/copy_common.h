@@ -81,6 +81,48 @@ __aicore__ inline void run_gm_to_l1_batched(
         dst, src, src_shape, matrix_num, src_matrix_stride, dst_matrix_stride, dst_offset, src_offset);
 }
 
+// ---- c0_element_half helpers for scale copy ----
+// When the ZZ/NN layout uses c0_element_half, layout stride/shape values are in different
+// units than the old c0Ele approach:
+//   - Outer dims: in hif4_scale units (1 hif4_scale = sizeof(type) e8m0 bytes)
+//   - Inner c0_element_half dims: in half-element units (1 half-elem = sizeof(type)/2 e8m0 bytes)
+// The old c0Ele approach keeps everything in e8m0 units (1 e8m0 = sizeof(fp8_e8m0_t) bytes).
+// These helpers convert layout values to e8m0 units so the existing instruction formulas
+// (written for e8m0) produce correct results with c0_element_half layouts.
+
+// Byte size of one layout-element unit. For c0_element_half layouts, outer-dim values are in
+// hif4_scale units (sizeof(type) bytes); for old c0Ele layouts, they are in e8m0 units
+// (sizeof(fp8_e8m0_t) bytes).
+template <typename LayoutType, typename Type>
+constexpr size_t layout_stride_bytes =
+    is_c0_element_half_v<decltype(get_layout_trait<LayoutType>::c0_element)> ? sizeof(Type) : sizeof(fp8_e8m0_t);
+
+// Number of e8m0 elements covered by an inner-dim (within-fractal) stride/shape value.
+// c0_element_half(1) covers sizeof(ElemType)/2 e8m0; a plain integer already counts e8m0
+// (old c0Ele approach).
+template <typename ElemType, typename Val>
+__aicore__ inline constexpr auto inner_dim_e8m0_num(const Val& val)
+{
+    if constexpr (is_c0_element_half_v<Val>) {
+        return static_cast<size_t>(val) * sizeof(ElemType) / 2;
+    } else {
+        return static_cast<size_t>(val);
+    }
+}
+
+// Number of e8m0 elements covered by an outer-dim (fractal-level) stride/shape value.
+// For c0_element_half layouts, each scale element covers sizeof(ElemType) e8m0; otherwise the
+// value already counts e8m0.
+template <typename LayoutType, typename ElemType, typename Val>
+__aicore__ inline constexpr auto outer_dim_e8m0_num(const Val& val)
+{
+    if constexpr (is_c0_element_half_v<decltype(get_layout_trait<LayoutType>::c0_element)>) {
+        return static_cast<size_t>(val) * sizeof(ElemType);
+    } else {
+        return static_cast<size_t>(val);
+    }
+}
+
 } // namespace te
 } // namespace asc
 

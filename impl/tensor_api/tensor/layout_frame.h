@@ -72,8 +72,8 @@ private:
 
     static_assert(
         Std::is_same_v<raw_trait, Std::ignore_t> || is_integral_constant_v<raw_trait> ||
-            is_frame_layout_trait_v<raw_trait> || is_data_type<raw_trait>,
-        "TraitType must be ignore_t, integral constant, frame layout trait, or data type.");
+            is_c0_element_half_v<raw_trait> || is_frame_layout_trait_v<raw_trait> || is_data_type<raw_trait>,
+        "TraitType must be ignore_t, integral constant, c0_element_half, frame layout trait, or data type.");
 
     using from_pattern = typename format_trait_set::template get<LayoutPattern>;
     using from_int = layout_trait<Std::ignore_t, raw_trait>;
@@ -83,7 +83,7 @@ private:
     using converted = typename Std::conditional<
         Std::is_same_v<raw_trait, Std::ignore_t>, from_pattern,
         typename Std::conditional<
-            is_integral_constant_v<raw_trait>, from_int,
+            is_integral_constant_v<raw_trait> || is_c0_element_half_v<raw_trait>, from_int,
             typename Std::conditional<is_frame_layout_trait_v<raw_trait>, from_trait, from_data_type>::type>::type>::
         type;
 

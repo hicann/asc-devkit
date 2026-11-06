@@ -158,14 +158,24 @@ struct make_zz_frame_layout {
     __aicore__ inline static auto make(Row row, Column column)
     {
         constexpr auto c0_ele = TraitType::c0_element;
-        auto shape = make_shape(
-            make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(row, fractal_fixed)),
-            make_shape(c0_ele, Std::ceil_division(column, c0_ele)));
-        auto stride = make_stride(
-            make_stride(c0_ele, fractal_fixed * Std::ceil_align(column, c0_ele)),
-            make_stride(_1{}, c0_ele * Std::Int<fractal_fixed>{}));
-        using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<zz_layout_ptn, TraitType>>;
-        return layout_t(shape, stride);
+        if constexpr (is_c0_element_half_v<decltype(c0_ele)>) {
+            auto shape = make_shape(
+                make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(row, fractal_fixed)),
+                make_shape(c0_element_half{}, column * 2));
+            auto stride = make_stride(
+                make_stride(c0_element_half{}, fractal_fixed * column), make_stride(c0_element_half{}, _8{}));
+            using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<zz_layout_ptn, TraitType>>;
+            return layout_t(shape, stride);
+        } else {
+            auto shape = make_shape(
+                make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(row, fractal_fixed)),
+                make_shape(c0_ele, Std::ceil_division(column, c0_ele)));
+            auto stride = make_stride(
+                make_stride(c0_ele, fractal_fixed * Std::ceil_align(column, c0_ele)),
+                make_stride(_1{}, c0_ele * Std::Int<fractal_fixed>{}));
+            using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<zz_layout_ptn, TraitType>>;
+            return layout_t(shape, stride);
+        }
     }
 
     template <typename TraitType, typename Batch, typename Row, typename Column>
@@ -182,18 +192,28 @@ struct make_nn_frame_layout {
         constexpr auto c0_ele = TraitType::c0_element;
 #if defined(__NPU_ARCH__) && __NPU_ARCH__ == 9201
         static_assert(
-            c0_ele == 2 || c0_ele == 1,
+            c0_ele == 2 || c0_ele == 1 || is_c0_element_half_v<decltype(c0_ele)>,
             "NnLayoutPtn only supports fp8_e8m0_t and ShapeColumn0 as 2 or hif4_scale and ShapeColumn0 as 1.");
 #else
         static_assert(c0_ele == 2, "NnLayoutPtn only supports fp8_e8m0_t and ShapeColumn0 as 2.");
 #endif
-        auto shape = make_shape(
-            make_shape(c0_ele, row / c0_ele),
-            make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(column, fractal_fixed)));
-        auto stride = make_stride(
-            make_stride(_1{}, c0_ele * Std::Int<fractal_fixed>{}), make_stride(c0_ele, row * fractal_fixed));
-        using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<nn_layout_ptn, TraitType>>;
-        return layout_t(shape, stride);
+        if constexpr (is_c0_element_half_v<decltype(c0_ele)>) {
+            auto shape = make_shape(
+                make_shape(c0_element_half{}, row * 2),
+                make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(column, fractal_fixed)));
+            auto stride =
+                make_stride(make_stride(c0_element_half{}, _8{}), make_stride(c0_element_half{}, row * fractal_fixed));
+            using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<nn_layout_ptn, TraitType>>;
+            return layout_t(shape, stride);
+        } else {
+            auto shape = make_shape(
+                make_shape(c0_ele, row / c0_ele),
+                make_shape(Std::Int<fractal_fixed>{}, Std::ceil_division(column, fractal_fixed)));
+            auto stride = make_stride(
+                make_stride(_1{}, c0_ele * Std::Int<fractal_fixed>{}), make_stride(c0_ele, row * fractal_fixed));
+            using layout_t = layout<decltype(shape), decltype(stride), Std::tuple<nn_layout_ptn, TraitType>>;
+            return layout_t(shape, stride);
+        }
     }
 
     template <typename TraitType, typename Batch, typename Row, typename Column>

@@ -33,24 +33,24 @@ struct check_nz_layout_pattern {
     template <typename Tensor, typename TraitType>
     __aicore__ inline static constexpr void check()
     {
-        constexpr auto c0_element = TraitType::c0_element;
+        constexpr auto c0_ele = TraitType::c0_element;
         using shape_row0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::row, 0>::type;
         using shape_column0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::column, 0>::type;
         static_assert(
             Std::is_same_v<shape_row0, Std::Int<fractal_fixed>>, "Layout->Shape->Row->ZeroDim must be Int<16>!");
         static_assert(
-            Std::is_same_v<shape_column0, Std::Int<c0_element>>,
+            Std::is_same_v<shape_column0, Std::Int<c0_ele>>,
             "Layout->Shape->Column->ZeroDim is different from c0_element!");
 
         using stride_row0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::row, 0>::type;
         using stride_column0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::column, 0>::type;
         using stride_row1 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::row, 1>::type;
         static_assert(
-            Std::is_same_v<stride_row0, Std::Int<c0_element>>,
+            Std::is_same_v<stride_row0, Std::Int<c0_ele>>,
             "Layout->Stride->Row->ZeroDim is different from c0_element!");
         static_assert(Std::is_same_v<stride_column0, _1>, "Layout->Stride->Column->ZeroDim must be Int<1>!");
         static_assert(
-            Std::is_same_v<stride_row1, Std::Int<c0_element * fractal_fixed>>,
+            Std::is_same_v<stride_row1, Std::Int<c0_ele * fractal_fixed>>,
             "Layout->Stride->Row->OneDim is different from c0_element * fractal_fixed!");
     }
 };
@@ -124,15 +124,29 @@ struct check_nn_layout_pattern {
     {
         using shape_row0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::row, 0>::type;
         using shape_column0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::column, 0>::type;
-        static_assert(Std::is_same_v<shape_row0, _2>, "Src->Layout->Shape->Row->ZeroDim must be Int<2>!");
         static_assert(Std::is_same_v<shape_column0, _16>, "Src->Layout->Shape->Column->ZeroDim must be Int<16>!");
 
         using stride_row0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::row, 0>::type;
         using stride_row1 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::row, 1>::type;
         using stride_column0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::column, 0>::type;
-        static_assert(Std::is_same_v<stride_row0, _1>, "Src->Layout->Stride->Row->ZeroDim must be Int<1>!");
-        static_assert(Std::is_same_v<stride_row1, _32>, "Src->Layout->Stride->Row->OneDim must be Int<32>!");
-        static_assert(Std::is_same_v<stride_column0, _2>, "Src->Layout->Stride->Column->ZeroDim must be Int<2>!");
+        constexpr auto c0_ele = TraitType::c0_element;
+        if constexpr (is_c0_element_half_v<decltype(c0_ele)>) {
+            static_assert(
+                Std::is_same_v<shape_row0, c0_element_half>,
+                "Src->Layout->Shape->Row->ZeroDim must be c0_element_half!");
+            static_assert(
+                Std::is_same_v<stride_row0, c0_element_half>,
+                "Src->Layout->Stride->Row->ZeroDim must be c0_element_half!");
+            static_assert(Std::is_same_v<stride_row1, _8>, "Src->Layout->Stride->Row->OneDim must be Int<8>!");
+            static_assert(
+                Std::is_same_v<stride_column0, c0_element_half>,
+                "Src->Layout->Stride->Column->ZeroDim must be c0_element_half!");
+        } else {
+            static_assert(Std::is_same_v<shape_row0, _2>, "Src->Layout->Shape->Row->ZeroDim must be Int<2>!");
+            static_assert(Std::is_same_v<stride_row0, _1>, "Src->Layout->Stride->Row->ZeroDim must be Int<1>!");
+            static_assert(Std::is_same_v<stride_row1, _32>, "Src->Layout->Stride->Row->OneDim must be Int<32>!");
+            static_assert(Std::is_same_v<stride_column0, _2>, "Src->Layout->Stride->Column->ZeroDim must be Int<2>!");
+        }
     }
 };
 
@@ -140,21 +154,32 @@ struct check_zz_layout_pattern {
     template <typename Tensor, typename TraitType>
     __aicore__ inline static constexpr void check()
     {
-        constexpr auto c0_element = TraitType::c0_element;
+        constexpr auto c0_ele = TraitType::c0_element;
         using shape_row0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::row, 0>::type;
         using shape_column0 = typename get_n_dim_type<Tensor, attr_info::shape, attr_info::column, 0>::type;
-        static_assert(
-            Std::is_same_v<shape_column0, Std::Int<c0_element>>,
-            "Layout->Shape->Column->ZeroDim is different from c0_element!");
         static_assert(
             Std::is_same_v<shape_row0, Std::Int<fractal_fixed>>, "Layout->Shape->Row->ZeroDim must be Int<16>!");
 
         using stride_row0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::row, 0>::type;
         using stride_column0 = typename get_n_dim_type<Tensor, attr_info::stride, attr_info::column, 0>::type;
-        static_assert(Std::is_same_v<stride_column0, _1>, "Layout->Stride->Column->ZeroDim must be Int<1>!");
-        static_assert(
-            Std::is_same_v<stride_row0, Std::Int<c0_element>>,
-            "Layout->Stride->Row->ZeroDim is different from c0_element!");
+        if constexpr (is_c0_element_half_v<decltype(c0_ele)>) {
+            static_assert(
+                Std::is_same_v<shape_column0, c0_element_half>,
+                "Layout->Shape->Column->ZeroDim must be c0_element_half!");
+            static_assert(
+                Std::is_same_v<stride_column0, c0_element_half>,
+                "Layout->Stride->Column->ZeroDim must be c0_element_half!");
+            static_assert(
+                Std::is_same_v<stride_row0, c0_element_half>, "Layout->Stride->Row->ZeroDim must be c0_element_half!");
+        } else {
+            static_assert(
+                Std::is_same_v<shape_column0, Std::Int<c0_ele>>,
+                "Layout->Shape->Column->ZeroDim is different from c0_element!");
+            static_assert(Std::is_same_v<stride_column0, _1>, "Layout->Stride->Column->ZeroDim must be Int<1>!");
+            static_assert(
+                Std::is_same_v<stride_row0, Std::Int<c0_ele>>,
+                "Layout->Stride->Row->ZeroDim is different from c0_element!");
+        }
     }
 };
 

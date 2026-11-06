@@ -71,7 +71,11 @@ __aicore__ inline constexpr auto crd2idx(const Coord& coord, const Shape& shape,
     } else {
         if constexpr (Std::is_tuple_v<Shape>) { // "int" tuple tuple
             static_assert(Std::tuple_size_v<Shape> == Std::tuple_size_v<Stride>, "Shape and Stride Mismatched Ranks");
-            return crd2idx_itt(coord, shape, stride, tuple_sequence<Shape>{});
+            if constexpr (has_c0_element_half_v<Shape>) {
+                return crd2idx_itt(coord * 2, shape, stride, tuple_sequence<Shape>{});
+            } else {
+                return crd2idx_itt(coord, shape, stride, tuple_sequence<Shape>{});
+            }
         } else { // "int" "int" "int"
             return coord * stride;
         }
