@@ -52,8 +52,9 @@ bfloat16x2_t __hmaxx2(const bfloat16x2_t x, const bfloat16x2_t y)
 |---|---|---|
 | 0 | -0 | 0 |
 | -0 | 0 | 0 |
-| nan | 任意值 | nan |
-| 任意值 | nan | nan |
+| nan | 任意值 | y值 |
+| 任意值 | nan | x值 |
+| nan | nan | nan |
 | inf | 非nan | inf |
 | 非nan | inf | inf |
 
