@@ -11,6 +11,7 @@
 #include "kernel_compilation_plan_builder.h"
 
 #include "ascendc_tool_log.h"
+#include "process_compilation_context.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/system/error_code.hpp>
@@ -25,7 +26,6 @@ namespace aclrtc {
 namespace {
 namespace fs = boost::filesystem;
 constexpr char ENVIRONMENT_REFERENCE_PREFIX[] = "${env:";
-
 void ReplaceAllLiteralOccurrences(std::string& text, const std::string& literalText, const std::string& replacementText)
 {
     size_t occurrencePosition = 0U;
@@ -122,6 +122,22 @@ std::string FormatBytesAsCppInitializerList(const void* constantAddress, uint64_
     return encodedBytes.str();
 }
 
+bool AppendCompilerTargetOptions(const std::vector<std::string>& arguments, std::vector<std::string>& targetArguments)
+{
+    bool foundTarget = false;
+    for (const std::string& argument : arguments) {
+        if (argument.compare(0, sizeof("--cce-aicore-arch=") - 1U, "--cce-aicore-arch=") == 0 ||
+            argument.compare(0, sizeof("--npu-arch=") - 1U, "--npu-arch=") == 0) {
+            if (argument.back() == '=') {
+                return false;
+            }
+            targetArguments.emplace_back(argument);
+            foundTarget = true;
+        }
+    }
+    return foundTarget;
+}
+
 } // namespace
 
 bool KernelCompilationPlanBuilder::ExpandPathAndEnvironmentReferences(
@@ -205,8 +221,29 @@ aclError KernelCompilationPlanBuilder::BindManifestCommand(
     return ACLRTC_SUCCESS;
 }
 
+aclError KernelCompilationPlanBuilder::BuildSpecializationMetadata(
+    const CompilationCommand& basicCompileCommand, fs::path& objectPath) const
+{
+    std::string ascendHome;
+    if (!ExpandPathAndEnvironmentReferences("${env:ASCEND_HOME_PATH}", "specialization flag compiler", ascendHome)) {
+        return ACLRTC_ERROR_FAILURE;
+    }
+    if (!IsAbsoluteExecutableRegularFile(fs::path(ascendHome) / "bin/bisheng")) {
+        ASCENDLOGE("Specialization metadata requires an executable bisheng under ASCEND_HOME_PATH");
+        return ACLRTC_ERROR_FAILURE;
+    }
+    std::vector<std::string> targetOptions;
+    if (!AppendCompilerTargetOptions(basicCompileCommand.arguments, targetOptions)) {
+        ASCENDLOGE(
+            "Basic compile command %s requires an explicit target architecture for specialization metadata",
+            basicCompileCommand.diagnosticLabel.c_str());
+        return ACLRTC_ERROR_FAILURE;
+    }
+    return ProcessCompilationContext::Instance().GetSpecializationFlagObject(ascendHome, targetOptions, objectPath);
+}
+
 aclError KernelCompilationPlanBuilder::BindLinkCommand(
-    const CompilationManifest& manifest, KernelCompilationPlan& plan) const
+    const CompilationManifest& manifest, const fs::path& metadataObjectPath, KernelCompilationPlan& plan) const
 {
     CompilationCommand linkCommand;
     std::set<fs::path> requiredOutputDirectories{outputDirectoryPath_};
@@ -234,6 +271,7 @@ aclError KernelCompilationPlanBuilder::BindLinkCommand(
         requiredOutputDirectories.emplace(fs::path(resolvedInput).parent_path());
         linkCommand.arguments.emplace_back(std::move(resolvedInput));
     }
+    linkCommand.arguments.emplace_back(metadataObjectPath.string());
     plan.linkedKernelElfPath = outputDirectoryPath_ / "linked_kernel.elf";
     linkCommand.arguments.emplace_back("-o");
     linkCommand.arguments.emplace_back(plan.linkedKernelElfPath.string());
@@ -246,6 +284,32 @@ aclError KernelCompilationPlanBuilder::BindLinkCommand(
     }
     plan.compilationCommands.emplace_back(std::move(linkCommand));
     plan.requiredOutputDirectoryPaths.assign(requiredOutputDirectories.begin(), requiredOutputDirectories.end());
+    return ACLRTC_SUCCESS;
+}
+
+aclError KernelCompilationPlanBuilder::BindOutputKernelNameCommand(KernelCompilationPlan& plan) const
+{
+    const auto& outputName = specializationRequest_.outputKernelName;
+    if (outputName.empty() || outputName == specializationRequest_.kernelName) {
+        return ACLRTC_SUCCESS;
+    }
+    std::string objectCopyPath;
+    if (!ExpandPathAndEnvironmentReferences(
+            "${env:ASCEND_HOME_PATH}/bin/llvm-objcopy", "kernel symbol renaming", objectCopyPath)) {
+        return ACLRTC_ERROR_FAILURE;
+    }
+    CompilationCommand command;
+    command.commandKind = CompilationCommandKind::ObjectCopy;
+    command.diagnosticLabel = "rename_output_kernel";
+    command.executablePath = std::move(objectCopyPath);
+    if (!IsAbsoluteExecutableRegularFile(command.executablePath)) {
+        ASCENDLOGE("Kernel symbol renaming requires an executable llvm-objcopy: %s", command.executablePath.c_str());
+        return ACLRTC_ERROR_FAILURE;
+    }
+    // Inspect symbols and metadata sections after the preceding link command has produced the ELF.
+    command.kernelSymbolRename = KernelSymbolRename{specializationRequest_.kernelName, outputName};
+    command.arguments.emplace_back(plan.linkedKernelElfPath.string());
+    plan.compilationCommands.emplace_back(std::move(command));
     return ACLRTC_SUCCESS;
 }
 
@@ -293,15 +357,33 @@ aclError KernelCompilationPlanBuilder::BuildCompilationPlan(KernelCompilationPla
         return result;
     }
     KernelCompilationPlan plan;
+    std::optional<size_t> basicCompileCommandIndex;
     for (const ManifestCommand& spec : borrowedManifest_.commands) {
         CompilationCommand command;
         result = BindManifestCommand(spec, command);
         if (result != ACLRTC_SUCCESS) {
             return result;
         }
+        if (!basicCompileCommandIndex.has_value() && spec.objectKind == ManifestObjectKind::Basic &&
+            spec.commandKind == CompilationCommandKind::Compile) {
+            basicCompileCommandIndex = plan.compilationCommands.size();
+        }
         plan.compilationCommands.emplace_back(std::move(command));
     }
-    result = BindLinkCommand(borrowedManifest_, plan);
+    if (!basicCompileCommandIndex.has_value()) {
+        ASCENDLOGE("Specialization metadata requires a basic compile command in the selected manifest");
+        return ACLRTC_ERROR_FAILURE;
+    }
+    fs::path metadataObjectPath;
+    result = BuildSpecializationMetadata(plan.compilationCommands[*basicCompileCommandIndex], metadataObjectPath);
+    if (result != ACLRTC_SUCCESS) {
+        return result;
+    }
+    result = BindLinkCommand(borrowedManifest_, metadataObjectPath, plan);
+    if (result != ACLRTC_SUCCESS) {
+        return result;
+    }
+    result = BindOutputKernelNameCommand(plan);
     if (result != ACLRTC_SUCCESS) {
         return result;
     }

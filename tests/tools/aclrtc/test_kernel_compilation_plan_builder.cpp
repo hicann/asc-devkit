@@ -9,6 +9,7 @@
  */
 
 #include "specialization/kernel_compilation_plan_builder.h"
+#include "specialization/process_compilation_context.h"
 #include "specialization/compilation_manifest_parser.h"
 
 #include <gtest/gtest.h>
@@ -63,6 +64,9 @@ class KernelPlanTestWorkspace final {
 public:
     KernelPlanTestWorkspace()
     {
+        auto& metadata = ascendc::aclrtc::ProcessCompilationContext::Instance();
+        (void)metadata.specializationFlagDirectory_.RemoveDirectory();
+        metadata.specializationFlagConfiguration_.clear();
         static uint64_t sequence = 0;
         rootPath_ = fs::temp_directory_path() /
                     ("aclrtc_plan_test_" + std::to_string(getpid()) + "_" + std::to_string(sequence++));
@@ -84,8 +88,15 @@ public:
 
     ~KernelPlanTestWorkspace()
     {
+        (void)ascendc::aclrtc::ProcessCompilationContext::Instance().specializationFlagDirectory_.RemoveDirectory();
         boost::system::error_code ignoredError;
         fs::remove_all(rootPath_, ignoredError);
+    }
+
+    std::string CompilerArguments() const
+    {
+        std::ifstream input((toolchainPath_ / "bin/bisheng.args").string());
+        return {std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>()};
     }
 
     const fs::path& ResourcePath() const { return resourcePath_; }
@@ -101,7 +112,13 @@ private:
 
     static void WriteExecutable(const fs::path& path)
     {
-        WriteFile(path, "#!/bin/sh\nexit 0\n");
+        WriteFile(
+            path, "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$0.args\"\n"
+                  "printf 'compile\\n' >> \"$0.calls\"\n"
+                  "while [ \"$#\" -gt 0 ]; do\n"
+                  "  if [ \"$1\" = '-o' ]; then shift; printf 'object' > \"$1\"; exit $?; fi\n"
+                  "  shift\n"
+                  "done\nexit 0\n");
         chmod(path.c_str(), 0755);
     }
 
@@ -117,7 +134,9 @@ Json CreateManifest()
         {"schema_version", "1.0"},
         {"source_file", "add_custom.cpp"},
         {"options",
-         {{"common_compile", Json::array({"-I", "${source_file_path}", "-I${env:ACLRTC_TEST_TOOLCHAIN}/include"})}}},
+         {{"common_compile", Json::array(
+                                 {"-I", "${source_file_path}", "-I${env:ACLRTC_TEST_TOOLCHAIN}/include",
+                                  "--cce-aicore-arch=dav-c220-cube"})}}},
         {"kernels",
          Json::array(
              {{{"kernel_name", "other_kernel"}, {"unsupported_future_field", Json::object()}},
@@ -276,12 +295,151 @@ TEST(KernelCompilationPlanBuilderTest, BuildsBasicPlanFromOnlySelectedManifestFi
         compileCommand.arguments,
         (std::vector<std::string>{
             "-I", workspace.SourceDirectoryPath().string(), "-I" + (workspace.ToolchainPath() / "include").string(),
-            "-I" + workspace.SourceDirectoryPath().string() + "/../../common",
+            "--cce-aicore-arch=dav-c220-cube", "-I" + workspace.SourceDirectoryPath().string() + "/../../common",
             (workspace.ResourcePath() / "resources/src/basic.cpp").string(), "-g", "-DVALUE=1", "-o",
             (workspace.ResourcePath() / ".aclrtc_session_1/outputs/basic.o").string()}));
-    EXPECT_EQ(plan.compilationCommands[1].commandKind, CompilationCommandKind::Link);
-    EXPECT_EQ(plan.compilationCommands[1].executablePath, workspace.ToolchainPath() / "bin/ld.lld");
+    EXPECT_EQ(plan.compilationCommands.back().commandKind, CompilationCommandKind::Link);
+    EXPECT_EQ(plan.compilationCommands.back().executablePath, workspace.ToolchainPath() / "bin/ld.lld");
     EXPECT_EQ(plan.linkedKernelElfPath, workspace.ResourcePath() / ".aclrtc_session_1/outputs/linked_kernel.elf");
+}
+
+TEST(KernelCompilationPlanBuilderTest, RenamesOutputSymbolsAndFunctionMetadataAfterLinking)
+{
+    KernelPlanTestWorkspace workspace;
+    ScopedEnvironmentVariable toolchain("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable skToolchain("ACLRTC_TEST_SK_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable ascendHome("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
+    const uint8_t bytes[] = {1, 2};
+    const void* addresses[] = {bytes};
+    auto request = CreateRequest(workspace, addresses, nullptr);
+    for (const bool enableSuperKernel : {false, true}) {
+        request.enableSuperKernel = enableSuperKernel;
+        for (const std::string output : {std::string(), request.kernelName, std::string("specialized_add")}) {
+            request.outputKernelName = output;
+            KernelCompilationPlan plan;
+            ASSERT_EQ(
+                BuildPlanFromManifest(
+                    request, CreateManifest(), workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
+                0);
+            if (output.empty() || output == request.kernelName) {
+                EXPECT_EQ(plan.compilationCommands.back().commandKind, CompilationCommandKind::Link);
+                continue;
+            }
+            ASSERT_GE(plan.compilationCommands.size(), 2U);
+            EXPECT_EQ(
+                plan.compilationCommands[plan.compilationCommands.size() - 2U].commandKind,
+                CompilationCommandKind::Link);
+            const auto& rename = plan.compilationCommands.back();
+            EXPECT_EQ(rename.commandKind, CompilationCommandKind::ObjectCopy);
+            EXPECT_EQ(rename.executablePath, workspace.ToolchainPath() / "bin/llvm-objcopy");
+            EXPECT_EQ(rename.arguments, (std::vector<std::string>{plan.linkedKernelElfPath.string()}));
+            ASSERT_TRUE(rename.kernelSymbolRename.has_value());
+            EXPECT_EQ(rename.kernelSymbolRename->original, request.kernelName);
+            EXPECT_EQ(rename.kernelSymbolRename->renamed, output);
+        }
+    }
+}
+
+TEST(KernelCompilationPlanBuilderTest, CompilesSpecializationFlagForNormalAndSuperKernel)
+{
+    KernelPlanTestWorkspace workspace;
+    ScopedEnvironmentVariable toolchainEnvironment("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable skToolchainEnvironment("ACLRTC_TEST_SK_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable ascendHomeEnvironment("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
+    const uint8_t tilingBytes[] = {1, 2};
+    const void* argumentAddresses[] = {tilingBytes};
+    NormalizedKernelSpecializationRequest request = CreateRequest(workspace, argumentAddresses, nullptr);
+    Json manifest = CreateManifest();
+    for (const bool enableSuperKernel : {false, true}) {
+        SCOPED_TRACE(enableSuperKernel);
+        request.enableSuperKernel = enableSuperKernel;
+        KernelCompilationPlan plan;
+        ASSERT_EQ(
+            BuildPlanFromManifest(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
+            ascendc::aclrtc::ACLRTC_SUCCESS);
+        ASSERT_EQ(plan.compilationCommands.size(), enableSuperKernel ? 4U : 2U);
+        const std::string arguments = workspace.CompilerArguments();
+        EXPECT_NE(arguments.find("--cce-aicore-arch=dav-c220-cube"), std::string::npos);
+        const std::string objectPath = (fs::path(ascendc::aclrtc::ProcessCompilationContext::Instance()
+                                                     .specializationFlagDirectory_.GetDirectoryPath()) /
+                                        "_ascendc_specialization_flag.o")
+                                           .string();
+        EXPECT_TRUE(fs::is_regular_file(objectPath));
+        const auto& linkArguments = plan.compilationCommands.back().arguments;
+        EXPECT_EQ(std::count(linkArguments.begin(), linkArguments.end(), objectPath), 1);
+    }
+}
+
+TEST(KernelCompilationPlanBuilderTest, UsesBasicTargetWhenSuperKernelCommandsComeFirst)
+{
+    KernelPlanTestWorkspace workspace;
+    ScopedEnvironmentVariable toolchainEnvironment("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable skToolchainEnvironment("ACLRTC_TEST_SK_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable ascendHomeEnvironment("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
+    const uint8_t tilingBytes[] = {0x01, 0x02};
+    const void* argumentAddresses[] = {tilingBytes};
+    NormalizedKernelSpecializationRequest request = CreateRequest(workspace, argumentAddresses, nullptr);
+    request.enableSuperKernel = true;
+    Json manifest = CreateManifest();
+    auto& objects = manifest["kernels"][1]["objects"];
+    objects[1]["commands"][0]["cmd"].push_back("--npu-arch=dav-3510");
+    std::swap(objects[0], objects[1]);
+
+    KernelCompilationPlan plan;
+    ASSERT_EQ(
+        BuildPlanFromManifest(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
+        ascendc::aclrtc::ACLRTC_SUCCESS);
+    const std::string arguments = workspace.CompilerArguments();
+    EXPECT_NE(arguments.find("--cce-aicore-arch=dav-c220-cube"), std::string::npos);
+    EXPECT_EQ(arguments.find("--npu-arch=dav-3510"), std::string::npos);
+}
+
+TEST(KernelCompilationPlanBuilderTest, RejectsMissingOrEmptySpecializationTarget)
+{
+    KernelPlanTestWorkspace workspace;
+    ScopedEnvironmentVariable toolchainEnvironment("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable ascendHomeEnvironment("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
+    const uint8_t tilingBytes[] = {0x01, 0x02};
+    const void* argumentAddresses[] = {tilingBytes};
+    const auto request = CreateRequest(workspace, argumentAddresses, nullptr);
+    for (const std::string& targetOption : {"", "--cce-aicore-arch=", "--npu-arch="}) {
+        SCOPED_TRACE(targetOption);
+        // Exercise each target in an independently initialized process singleton.
+        (void)ascendc::aclrtc::ProcessCompilationContext::Instance().specializationFlagDirectory_.RemoveDirectory();
+        Json manifest = CreateManifest();
+        manifest["options"]["common_compile"] = Json::array();
+        if (!targetOption.empty()) {
+            manifest["options"]["common_compile"].push_back(targetOption);
+        }
+        KernelCompilationPlan plan;
+        plan.linkedKernelElfPath = "unchanged.elf";
+        EXPECT_EQ(
+            BuildPlanFromManifest(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
+            ascendc::aclrtc::ACLRTC_ERROR_FAILURE);
+        EXPECT_EQ(plan.linkedKernelElfPath, "unchanged.elf");
+    }
+}
+
+TEST(KernelCompilationPlanBuilderTest, PreservesSpecializationTargetOptionsWithEquals)
+{
+    KernelPlanTestWorkspace workspace;
+    ScopedEnvironmentVariable toolchainEnvironment("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
+    ScopedEnvironmentVariable ascendHomeEnvironment("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
+    const uint8_t tilingBytes[] = {0x01, 0x02};
+    const void* argumentAddresses[] = {tilingBytes};
+    const auto request = CreateRequest(workspace, argumentAddresses, nullptr);
+    for (const std::string& targetOption : {"--cce-aicore-arch=dav-c220-cube", "--npu-arch=dav-2201"}) {
+        SCOPED_TRACE(targetOption);
+        // Exercise each target in an independently initialized process singleton.
+        (void)ascendc::aclrtc::ProcessCompilationContext::Instance().specializationFlagDirectory_.RemoveDirectory();
+        Json manifest = CreateManifest();
+        manifest["options"]["common_compile"] = Json::array({targetOption});
+        KernelCompilationPlan plan;
+        ASSERT_EQ(
+            BuildPlanFromManifest(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
+            ascendc::aclrtc::ACLRTC_SUCCESS);
+        EXPECT_NE(workspace.CompilerArguments().find(targetOption), std::string::npos);
+    }
 }
 
 TEST(KernelCompilationPlanBuilderTest, BuildsPlanWithoutOptionalExternalSourceFile)
@@ -295,7 +453,8 @@ TEST(KernelCompilationPlanBuilderTest, BuildsPlanWithoutOptionalExternalSourceFi
     NormalizedKernelSpecializationRequest request = CreateRequest(workspace, argumentAddresses, argumentByteCounts);
     Json manifest = CreateManifest();
     manifest.erase("source_file");
-    manifest["options"]["common_compile"] = Json::array({"-I${env:ACLRTC_TEST_TOOLCHAIN}/include"});
+    manifest["options"]["common_compile"] =
+        Json::array({"-I${env:ACLRTC_TEST_TOOLCHAIN}/include", "--cce-aicore-arch=dav-c220-cube"});
 
     KernelCompilationPlan plan;
     EXPECT_EQ(
@@ -357,8 +516,8 @@ TEST(KernelCompilationPlanBuilderTest, AcceptsCommandWithoutStageAndPreservesMan
     ASSERT_EQ(plan.compilationCommands.size(), 2U);
     EXPECT_EQ(plan.compilationCommands[0].diagnosticLabel, "basic/compile[0]");
     EXPECT_FALSE(plan.compilationCommands[0].parallelStage.has_value());
-    EXPECT_EQ(plan.compilationCommands[1].commandKind, CompilationCommandKind::Link);
-    EXPECT_FALSE(plan.compilationCommands[1].parallelStage.has_value());
+    EXPECT_EQ(plan.compilationCommands.back().commandKind, CompilationCommandKind::Link);
+    EXPECT_FALSE(plan.compilationCommands.back().parallelStage.has_value());
 }
 
 TEST(KernelCompilationPlanBuilderTest, PreservesExplicitStagesAndManifestCommandOrder)
@@ -383,11 +542,11 @@ TEST(KernelCompilationPlanBuilderTest, PreservesExplicitStagesAndManifestCommand
     EXPECT_EQ(plan.compilationCommands[0].diagnosticLabel, "basic/compile[0]");
     EXPECT_EQ(plan.compilationCommands[1].diagnosticLabel, "sk/compile[0]");
     EXPECT_EQ(plan.compilationCommands[2].diagnosticLabel, "sk/objcopy[1]");
-    EXPECT_EQ(plan.compilationCommands[3].diagnosticLabel, "link");
+    EXPECT_EQ(plan.compilationCommands.back().diagnosticLabel, "link");
     EXPECT_EQ(plan.compilationCommands[0].parallelStage, 0U);
     EXPECT_EQ(plan.compilationCommands[1].parallelStage, 0U);
     EXPECT_EQ(plan.compilationCommands[2].parallelStage, 1U);
-    EXPECT_FALSE(plan.compilationCommands[3].parallelStage.has_value());
+    EXPECT_FALSE(plan.compilationCommands.back().parallelStage.has_value());
     EXPECT_NE(
         std::find(plan.compilationCommands[1].arguments.begin(), plan.compilationCommands[1].arguments.end(), "-g"),
         plan.compilationCommands[1].arguments.end());
@@ -431,7 +590,7 @@ TEST(KernelCompilationPlanBuilderTest, SelectsAllRequestedObjectsInManifestOrder
     EXPECT_EQ(plan.compilationCommands[3].diagnosticLabel, "basic_aux/compile[0]");
     EXPECT_EQ(plan.compilationCommands[4].diagnosticLabel, "sk_aux/compile[0]");
     EXPECT_EQ(plan.compilationCommands[5].diagnosticLabel, "sk_aux/objcopy[1]");
-    EXPECT_EQ(plan.compilationCommands[6].diagnosticLabel, "link");
+    EXPECT_EQ(plan.compilationCommands.back().diagnosticLabel, "link");
 
     const std::vector<std::string>& linkArguments = plan.compilationCommands.back().arguments;
     EXPECT_NE(

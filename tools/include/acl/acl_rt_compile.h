@@ -34,6 +34,9 @@ typedef void* aclrtcProg;
 typedef struct aclrtcKernelSpecRequest {
     const char* resourceId;
     const char* kernelEntry;
+    // Kernel symbol in the output ELF/so. NULL or an empty string keeps kernelEntry.
+    // An explicit name must not contain commas or ASCII control characters, or end with mix_aic/mix_aiv.
+    const char* outputKernelEntry;
 
     uint64_t argsCount;
     const void* const* argsAddr;
@@ -137,6 +140,9 @@ ACLRTC_API aclError aclrtcGetCompileLog(aclrtcProg prog, char* log);
  * @brief Specializes and compiles an ACLNN kernel from a registered JIT resource.
  * @param[in] request Kernel resource, entry, constant argument, and compiler option request.
  *                    The structure must be zero-initialized before setting fields.
+ *                    kernelEntry selects the original Manifest entry. outputKernelEntry optionally renames
+ *                    the output kernel symbol; NULL or an empty string keeps kernelEntry.
+ *                    An explicit outputKernelEntry must not contain commas or ASCII control characters.
  * @param[in] outPath Output path for the linked kernel ELF. A relative path is resolved against the current
  *                    working directory when this function is called.
  * @return aclError: ACL_SUCCESS or ACL_ERROR_RTC_XXX

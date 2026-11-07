@@ -45,6 +45,7 @@ struct NormalizedKernelSpecializationRequest {
     std::string specializationSessionId;
     std::string resourceId;
     std::string kernelName;
+    std::string outputKernelName;
     boost::filesystem::path outputElfPath;
     bool enableSuperKernel{false};
     KernelCompilerOptions compilerOptions;
@@ -59,12 +60,18 @@ struct KernelSourcePatch {
     std::string replacementText;
 };
 
+struct KernelSymbolRename {
+    std::string original;
+    std::string renamed;
+};
+
 struct CompilationCommand {
     CompilationCommandKind commandKind;
     std::optional<uint32_t> parallelStage;
     std::string diagnosticLabel;
     boost::filesystem::path executablePath;
     std::vector<std::string> arguments;
+    std::optional<KernelSymbolRename> kernelSymbolRename{};
 };
 
 struct KernelCompilationPlan {

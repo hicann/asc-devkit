@@ -96,7 +96,8 @@ enum BinaryMetaType { // function level TLV type
     B_TYPE_OPTIONAL_PARAM = 3,
     B_TYPE_SK_INFO = 5,
     B_TYPE_SPECIALIZATION_RESOURCE_ID = 6,
-    B_TYPE_ICACHE_PRELOAD_FLAG = 7
+    B_TYPE_ICACHE_PRELOAD_FLAG = 7,
+    B_TYPE_SPECIALIZATION_FLAG = 8
 };
 
 struct BaseTlv { // definition of TLV head
@@ -107,6 +108,11 @@ struct BaseTlv { // definition of TLV head
 struct BinaryMetaSpecializationResourceId {
     BaseTlv head;
     char value[64];
+};
+
+struct BinaryMetaSpecializationFlag {
+    BaseTlv head;
+    uint32_t flag; // 0: static kernel, 1: dynamic kernel
 };
 
 struct BinaryMetaVersion {

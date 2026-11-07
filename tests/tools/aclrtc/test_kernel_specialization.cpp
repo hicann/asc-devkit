@@ -46,11 +46,12 @@ TEST(KernelSpecializationApiTest, RequestLayoutIsStableAndExtensible)
     static_assert(std::is_same_v<decltype(aclrtcKernelSpecRequest::skOptionCount), uint64_t>);
     static_assert(offsetof(aclrtcKernelSpecRequest, resourceId) == 0U);
     static_assert(offsetof(aclrtcKernelSpecRequest, kernelEntry) == 8U);
-    static_assert(offsetof(aclrtcKernelSpecRequest, argsCount) == 16U);
-    static_assert(offsetof(aclrtcKernelSpecRequest, options) == 40U);
-    static_assert(offsetof(aclrtcKernelSpecRequest, skOptions) == 56U);
-    static_assert(offsetof(aclrtcKernelSpecRequest, reserved) == 72U);
-    static_assert(sizeof(aclrtcKernelSpecRequest) == 328U);
+    static_assert(offsetof(aclrtcKernelSpecRequest, outputKernelEntry) == 16U);
+    static_assert(offsetof(aclrtcKernelSpecRequest, argsCount) == 24U);
+    static_assert(offsetof(aclrtcKernelSpecRequest, options) == 48U);
+    static_assert(offsetof(aclrtcKernelSpecRequest, skOptions) == 64U);
+    static_assert(offsetof(aclrtcKernelSpecRequest, reserved) == 80U);
+    static_assert(sizeof(aclrtcKernelSpecRequest) == 336U);
 }
 
 TEST(KernelSpecializationApiTest, PublicApiVisibilityMacroIsEmptyForConsumers)
@@ -85,6 +86,52 @@ TEST(KernelSpecializationRequestTest, AcceptsOpaqueResourceIdAndNormalizesRelati
         ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "relative/kernel.elf", normalizedRequest), 0);
     EXPECT_EQ(normalizedRequest.resourceId, request.resourceId);
     EXPECT_EQ(normalizedRequest.outputElfPath, boost::filesystem::absolute("relative/kernel.elf").lexically_normal());
+}
+
+TEST(KernelSpecializationRequestTest, NormalizesOptionalOutputKernelNameAndOwnsItsStorage)
+{
+    auto request = CreateValidRequest();
+    ascendc::aclrtc::NormalizedKernelSpecializationRequest normalized;
+    for (const char* output : {static_cast<const char*>(nullptr), "", "add_custom_100000"}) {
+        request.outputKernelEntry = output;
+        ASSERT_EQ(ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "kernel.elf", normalized), 0);
+        EXPECT_EQ(normalized.outputKernelName, request.kernelEntry);
+    }
+    std::string output = "specialized_add";
+    request.outputKernelEntry = output.c_str();
+    ASSERT_EQ(ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "kernel.elf", normalized), 0);
+    output.assign("changed");
+    EXPECT_EQ(normalized.kernelName, "add_custom_100000");
+    EXPECT_EQ(normalized.outputKernelName, "specialized_add");
+
+    for (const char* name :
+         {"specialized.add=$1", "specialized_mix_aic_extra", "specialized_mix_aiv_extra", "specialized"}) {
+        SCOPED_TRACE(name);
+        request.outputKernelEntry = name;
+        ASSERT_EQ(ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "kernel.elf", normalized), 0);
+        EXPECT_EQ(normalized.outputKernelName, name);
+    }
+}
+
+TEST(KernelSpecializationRequestTest, RejectsInvalidOutputKernelNames)
+{
+    auto request = CreateValidRequest();
+    ascendc::aclrtc::NormalizedKernelSpecializationRequest normalized;
+    normalized.outputKernelName = "unchanged";
+    std::vector<std::string> invalidNames{
+        "specialized,alloc",   "specialized,badflag", "mix_aic",           "mix_aiv", "specialized_mix_aic",
+        "specialized_mix_aiv", "specializedmix_aic",  "specializedmix_aiv"};
+    for (unsigned char control : {0x01, 0x09, 0x0a, 0x1f, 0x7f}) {
+        invalidNames.emplace_back("specialized" + std::string(1, static_cast<char>(control)) + "add");
+    }
+    for (const auto& name : invalidNames) {
+        SCOPED_TRACE(name);
+        request.outputKernelEntry = name.c_str();
+        EXPECT_EQ(
+            ascendc::aclrtc::NormalizeKernelSpecializationRequest(request, "kernel.elf", normalized),
+            ACL_ERROR_RTC_INVALID_INPUT);
+        EXPECT_EQ(normalized.outputKernelName, "unchanged");
+    }
 }
 
 TEST(KernelSpecializationRequestTest, EnablesSuperKernelAndRemovesControlOption)

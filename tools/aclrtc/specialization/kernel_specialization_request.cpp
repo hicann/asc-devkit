@@ -56,11 +56,10 @@ bool CopyRequiredBoundedCString(
     return true;
 }
 
-bool FindAsciiControlCharacter(
-    const std::string& compilerOption, size_t& controlBytePosition, unsigned char& controlByteValue)
+bool FindAsciiControlCharacter(const std::string& text, size_t& controlBytePosition, unsigned char& controlByteValue)
 {
-    for (size_t bytePosition = 0U; bytePosition < compilerOption.size(); ++bytePosition) {
-        const unsigned char byteValue = static_cast<unsigned char>(compilerOption[bytePosition]);
+    for (size_t bytePosition = 0U; bytePosition < text.size(); ++bytePosition) {
+        const unsigned char byteValue = static_cast<unsigned char>(text[bytePosition]);
         if (byteValue < 0x20U || byteValue == 0x7fU) {
             controlBytePosition = bytePosition;
             controlByteValue = byteValue;
@@ -68,6 +67,32 @@ bool FindAsciiControlCharacter(
         }
     }
     return false;
+}
+
+bool ValidateOutputKernelEntryCharacters(const std::string& outputKernelEntry)
+{
+    size_t controlBytePosition = 0U;
+    unsigned char controlByteValue = 0U;
+    if (FindAsciiControlCharacter(outputKernelEntry, controlBytePosition, controlByteValue)) {
+        ASCENDLOGE(
+            "outputKernelEntry contains prohibited control byte 0x%02x at byte %zu",
+            static_cast<unsigned int>(controlByteValue), controlBytePosition);
+        return false;
+    }
+    const size_t commaPosition = outputKernelEntry.find(',');
+    if (commaPosition != std::string::npos) {
+        ASCENDLOGE(
+            "outputKernelEntry contains a comma at byte %zu; commas delimit objcopy section flags", commaPosition);
+        return false;
+    }
+    for (const std::string suffix : {"mix_aic", "mix_aiv"}) {
+        if (outputKernelEntry.size() >= suffix.size() &&
+            outputKernelEntry.compare(outputKernelEntry.size() - suffix.size(), suffix.size(), suffix) == 0) {
+            ASCENDLOGE("outputKernelEntry must not end with the reserved MIX suffix '%s'", suffix.c_str());
+            return false;
+        }
+    }
+    return true;
 }
 
 bool OverridesCompilerOutputPath(const std::string& compilerOption)
@@ -242,6 +267,14 @@ aclError NormalizeKernelSpecializationRequest(
     }
     if (!CopyRequiredBoundedCString(
             apiRequest.kernelEntry, "kernelEntry", request.kernelName, copiedRequestTextByteCount)) {
+        return ACLRTC_ERROR_INVALID_INPUT;
+    }
+    if (apiRequest.outputKernelEntry == nullptr || apiRequest.outputKernelEntry[0] == '\0') {
+        request.outputKernelName = request.kernelName;
+    } else if (
+        !CopyRequiredBoundedCString(
+            apiRequest.outputKernelEntry, "outputKernelEntry", request.outputKernelName, copiedRequestTextByteCount) ||
+        !ValidateOutputKernelEntryCharacters(request.outputKernelName)) {
         return ACLRTC_ERROR_INVALID_INPUT;
     }
 

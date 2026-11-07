@@ -32,7 +32,12 @@ private:
         const std::string& text, const std::string& location, std::string& resolvedText) const;
     aclError BuildConstantSourcePatches(KernelCompilationPlan& plan) const;
     aclError BindManifestCommand(const ManifestCommand& spec, CompilationCommand& compilationCommand) const;
-    aclError BindLinkCommand(const CompilationManifest& manifest, KernelCompilationPlan& plan) const;
+    aclError BuildSpecializationMetadata(
+        const CompilationCommand& basicCompileCommand, boost::filesystem::path& objectPath) const;
+    aclError BindLinkCommand(
+        const CompilationManifest& manifest, const boost::filesystem::path& metadataObjectPath,
+        KernelCompilationPlan& plan) const;
+    aclError BindOutputKernelNameCommand(KernelCompilationPlan& plan) const;
 
     const NormalizedKernelSpecializationRequest& specializationRequest_;
     const CompilationManifest& borrowedManifest_;
