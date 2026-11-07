@@ -883,13 +883,11 @@ TEST_F(CcuMc2TestSuite, CcuAlgorithmGateAcceptsOnlyExternalAlgConfig)
     strcpy(tiling.algConfig, "AllReduce=level0:doublering");
     EXPECT_FALSE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
 
-    // 已注册裸名放行（fork 裸名强制算法通路；桩默认 IsRegistered=true）
+    // 裸名（无论是否已注册）归 NONE → 拒绝并回退默认 selector
     strcpy(tiling.algConfig, "CcuSchedAllReduceSoleMesh");
-    EXPECT_TRUE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
-    // 未注册裸名 → 拒绝并回退默认 selector
-    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName = "CcuSchedAllReduceSoleMesh";
     EXPECT_FALSE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
-    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
+    strcpy(tiling.algConfig, "CcuNoSuchAlgorithm");
+    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(ccTilingList, 1U));
 
     // 合法外部名放行
     strcpy(tiling.algConfig, "sole[mesh]");
@@ -1056,14 +1054,9 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_AllGatherMesh1D_KfcServerArgs)
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "allgather_tag", &ccTiling, opParam), HCCL_SUCCESS);
 
     std::string algName;
-    std::string extBareName;
-    ExternalAlgSpec extSpec;
-    std::string extParseErrMsg;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    // 裸名识别为 BARE_NAME 并产出 algName
-    ASSERT_EQ(
-        ClassifyForcedAlgConfig(ccTiling.algConfig, extBareName, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
-    algName = extBareName;
+    // 外部名定名（走 ResolveExternalAlgName 同构路径：解析 → topo → 消歧）
+    algName = "CcuSchedAllGatherSoleMesh";
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuSchedAllGatherSoleMesh");
@@ -1137,14 +1130,9 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam1), HCCL_SUCCESS);
 
     std::string algName;
-    std::string extBareName1;
-    ExternalAlgSpec extSpec;
-    std::string extParseErrMsg;
     auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
-    // 裸名识别为 BARE_NAME 并产出 algName
-    ASSERT_EQ(
-        ClassifyForcedAlgConfig(ccTiling.algConfig, extBareName1, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
-    algName = extBareName1;
+    // 外部名定名（走 ResolveExternalAlgName 同构路径：解析 → topo → 消歧）
+    algName = "CcuSchedAllGatherSoleMesh";
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam1, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam1, algName), HCCL_SUCCESS);
     ASSERT_EQ(algName, "CcuSchedAllGatherSoleMesh");
@@ -1175,10 +1163,7 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
 
     OpParam opParam2{};
     ASSERT_EQ(InitOpParamByTiling(comm_, stream_, "reuse_tag", &ccTiling, opParam2), HCCL_SUCCESS); // 相同tag
-    std::string extBareName2;
-    ASSERT_EQ(
-        ClassifyForcedAlgConfig(ccTiling.algConfig, extBareName2, extSpec, extParseErrMsg), ForcedAlgKind::BARE_NAME);
-    algName = extBareName2;
+    algName = "CcuSchedAllGatherSoleMesh";
     ASSERT_EQ(PrepareTopoInfoForOp(comm_, opParam2, topoInfo), HCCL_SUCCESS);
     ASSERT_EQ(PrepareEngineForAlg(opParam2, algName), HCCL_SUCCESS);
     result = sprintf_s(opParam2.algName, sizeof(opParam2.algName), "%s", algName.c_str());
@@ -1535,12 +1520,10 @@ TEST_F(CcuMc2TestSuite, CheckOpResSufficientByArgs_RejectsNonExternalAlgConfig)
     void* ccArgs = CreateMc2CcArgs(static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), "CcuSchedAllGatherSoleMesh");
     ASSERT_NE(ccArgs, nullptr);
 
-    // 已注册裸名走资源探测链，未注册裸名才向上报不支持
-    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName = "CcuSchedAllGatherSoleMesh";
+    // 裸名（无论是否已注册）不再作为强制算法 → 向上报不支持
     EXPECT_EQ(
         CheckOpResSufficient(comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs),
         HCCL_E_ALG_NOT_SUPPORTED);
-    mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
 
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);
 }

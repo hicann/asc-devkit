@@ -130,20 +130,19 @@ TEST(ExtAlgParser, IllegalNamesAreRejectedWithReason)
     }
 }
 
-TEST(ExtAlgClassify, FourStates)
+TEST(ExtAlgClassify, ThreeStates)
 {
     ExternalAlgSpec spec;
-    std::string bareName;
     std::string errMsg;
 
-    EXPECT_EQ(ClassifyForcedAlgConfig("", bareName, spec, errMsg), ForcedAlgKind::NONE);
-    EXPECT_EQ(ClassifyForcedAlgConfig("allgather=level0:fullmesh", bareName, spec, errMsg), ForcedAlgKind::LEGACY);
-    EXPECT_EQ(ClassifyForcedAlgConfig("InsReduceScatterMesh1D", bareName, spec, errMsg), ForcedAlgKind::BARE_NAME);
-    EXPECT_EQ(bareName, "InsReduceScatterMesh1D");
-    EXPECT_EQ(ClassifyForcedAlgConfig("parallel[mesh, nhr]", bareName, spec, errMsg), ForcedAlgKind::EXTERNAL);
+    EXPECT_EQ(ClassifyForcedAlgConfig("", spec, errMsg), ForcedAlgKind::NONE);
+    EXPECT_EQ(ClassifyForcedAlgConfig("allgather=level0:fullmesh", spec, errMsg), ForcedAlgKind::LEGACY);
+    // 裸算法名不再作为强制算法入口，归为 NONE
+    EXPECT_EQ(ClassifyForcedAlgConfig("InsReduceScatterMesh1D", spec, errMsg), ForcedAlgKind::NONE);
+    EXPECT_EQ(ClassifyForcedAlgConfig("parallel[mesh, nhr]", spec, errMsg), ForcedAlgKind::EXTERNAL);
     EXPECT_TRUE(errMsg.empty());
     EXPECT_EQ(spec.canonical(), "parallel[mesh,nhr]");
-    EXPECT_EQ(ClassifyForcedAlgConfig("sole[ring]", bareName, spec, errMsg), ForcedAlgKind::EXTERNAL);
+    EXPECT_EQ(ClassifyForcedAlgConfig("sole[ring]", spec, errMsg), ForcedAlgKind::EXTERNAL);
     EXPECT_FALSE(errMsg.empty());
 }
 

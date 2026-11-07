@@ -12,6 +12,8 @@
 #include "ccu_temp_kfc_half_alltoallv_mesh_1D.h"
 #endif
 #include "topo_match_1d.h"
+#include "alg_meta_registry.h"
+#include "external_alg_rules.h"
 
 namespace mc2_ops_hccl {
 namespace {
@@ -154,6 +156,8 @@ HcclResult InsV2HalfAlltoAllVSoleExecutor<AlgTopoMatch, InsAlgTemplate>::Orchest
 REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_HALF_ALLTOALLV, CcuHalfAll2AllVMesh1D, InsV2HalfAlltoAllVSoleExecutor, TopoMatch1D,
     CcuTempKfcHalfAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_HALF_ALLTOALLV, CcuHalfAll2AllVMesh1D, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 
 #endif
 } // namespace mc2_ops_hccl

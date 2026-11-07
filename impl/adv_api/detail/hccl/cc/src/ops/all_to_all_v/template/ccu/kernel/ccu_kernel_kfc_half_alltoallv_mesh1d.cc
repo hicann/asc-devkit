@@ -199,12 +199,12 @@ static void SelectSendSlice(
     }
 }
 
-// 双 mission 下 m1 的接收地址须跳过 m0 的数据段（目的地址 += sizeA）
-static void ApplyDualMissionRecvOffset(KfcHalfAlltoAllVMesh1DContext& ctx, ccu::Address& addr)
+// 双 mission 下 m1 的接收地址须跳过 m0 的数据段：偏移量是本端发往该 peer 的 A 片大小，
+static void ApplyDualMissionRecvOffset(KfcHalfAlltoAllVMesh1DContext& ctx, ccu::Address& addr, uint32_t peerId)
 {
     CCU_IF(ctx.missionNum == HA2AV_DUAL_MISSION_NUM)
     {
-        CCU_IF(ctx.missionIndex != 0) { addr += (*ctx.sendSize)[ctx.rankId]; }
+        CCU_IF(ctx.missionIndex != 0) { addr += (*ctx.sendSize)[peerId]; }
     }
 }
 
@@ -232,7 +232,7 @@ static CcuResult DoHalfAlltoAllVWrite(
             localDst.addr = ctx.peerBuffer[ctx.rankId];
             localDst.addr += ctx.recvOffset;
 
-            ApplyDualMissionRecvOffset(ctx, localDst.addr);
+            ApplyDualMissionRecvOffset(ctx, localDst.addr, peerId);
 
             localDst.token = ctx.token[ctx.rankId];
             CCU_CHK_RET(ccu::EventRecord(ctx.writeDoneEvents[eventIdx], peerBit));
@@ -243,7 +243,7 @@ static CcuResult DoHalfAlltoAllVWrite(
         dst.addr = ctx.peerBuffer[peerId];
         dst.addr += ctx.recvOffset;
 
-        ApplyDualMissionRecvOffset(ctx, dst.addr);
+        ApplyDualMissionRecvOffset(ctx, dst.addr, peerId);
 
         dst.token = ctx.token[peerId];
 
@@ -279,7 +279,7 @@ static CcuResult DoHalfAlltoAllV(KfcHalfAlltoAllVMesh1DContext& ctx)
     CCU_CHK_RET(DoHalfAlltoAllVWrite(ctx, localSrc, localDst));
 
     // 本地拷贝仅 mission 0 执行
-    CCU_IF(ctx.missionIndex == 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, ctx.goSize)); }
+    CCU_IF(ctx.missionIndex == 0) { CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, ctx.goSize, GetCcuVersion())); }
 
     CCU_CHK_RET(DoHalfAlltoAllVWait(ctx));
 
