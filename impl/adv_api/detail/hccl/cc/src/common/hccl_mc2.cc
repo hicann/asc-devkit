@@ -1116,9 +1116,8 @@ CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
     if (ret != CCU_SUCCESS) {
         return ret;
     }
-    // stream 非空（A5 资源流 OpParam.stream 记录了用户 stream）：经 HcclThreadAcquireWithStream
-    // 封装为通信 thread；stream 为空：兼容老样例，走资源上下文中预分配 threads 的旧流程。
-    return LaunchCcuKernel(comm, opParamHost.stream, opParamHost);
+    // 传入空的 stream，默认走资源上下文中预分配 threads 的旧流程。
+    return LaunchCcuKernel(comm, nullptr, opParamHost);
 }
 
 HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(HcclComm comm, uint8_t ccType, void* ccArgs)
