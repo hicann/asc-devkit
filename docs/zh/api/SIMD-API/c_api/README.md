@@ -32,13 +32,13 @@ C API是Ascend C三层梯度化编程接口中的**语言扩展层SIMD API**，�
 |-----------------------|-----------------------|
 |\_\_gm\_\_|存储空间定义修饰符，表示被修饰的变量位于Global Memory地址空间。|
 |\_\_ubuf\_\_|存储空间定义修饰符，表示被修饰的变量位于Unified Buffer（UB）地址空间。|
-|\_\_aicore\_\_|执行空间限定符。表示该函数只能在Ai Core上执行。|
+|\_\_aicore\_\_|执行空间限定符。表示该函数只能在AI Core上执行。|
 |\_\_cbuf\_\_|存储空间定义修饰符，表示被修饰的变量位于L1 Buffer地址空间。|
 |\_\_simd\_callee\_\_|执行空间限定符。表示该函数只能在Reg上执行。|
 
 ## 流水类型
 
-NPU内部有不同的计算单元，在计算时往往需要把计算数据搬运到计算单元上。不同计算单元上的计算过程、数据搬运过程可划分为不同的流水线。在AI Core上执行的操作会被分配到不同的流水线(PIPE)上执行，包括以下几种：
+NPU内部有不同的计算单元，在计算时往往需要把计算数据搬运到计算单元上。不同计算单元上的计算过程、数据搬运过程可划分为不同的流水线。在AI Core上执行的操作会被分配到不同的流水线（PIPE）上执行，包括以下几种：
 - PIPE_S：标量流水线，负责指令分发和标量计算。
 - PIPE_V：矢量计算流水线。
 - PIPE_M：矩阵计算流水线。
@@ -55,20 +55,20 @@ NPU内部有不同的计算单元，在计算时往往需要把计算数据搬�
 |      目录      |
 |-----------------------|
 | [数据搬运导览](data_move_guide/data_move_guide.md) |
-| [基础定义](c_api.md#基础定义) |
-| [工具接口](c_api.md#工具接口) |
-| [矩阵计算](c_api.md#矩阵计算) |
-| [矩阵计算搬运](c_api.md#矩阵计算搬运) |
-| [Memory矢量计算](c_api.md#memory矢量计算) |
-| [矢量数据搬运](c_api.md#矢量数据搬运) |
-| [Reg矢量计算](c_api.md#reg矢量计算) |
-| [标量计算](c_api.md#标量计算) |
-| [原子操作](c_api.md#原子操作) |
-| [缓存控制](c_api.md#缓存控制) |
-| [同步控制](c_api.md#同步控制) |
-| [其他操作](c_api.md#其他操作) |
-| [特殊寄存器访问](c_api.md#特殊寄存器访问) |
-| [废弃接口](deprecated_interface/deprecated_interface.md) |
+| [基础定义](defs/overview.md) |
+| [工具接口](utils/overview.md) |
+| [矩阵计算](cube_compute/overview.md) |
+| [矩阵计算搬运](cube_datamove/overview.md) |
+| [Memory矢量计算](vector_compute/overview.md) |
+| [矢量数据搬运](vector_datamove/overview.md) |
+| [Reg矢量计算](reg_compute/overview.md) |
+| [标量计算](scalar_compute/overview.md) |
+| [原子操作](atomic/overview.md) |
+| [缓存控制](cache_ctrl/overview.md) |
+| [同步控制](sync/overview.md) |
+| [试验接口](experimental/overview.md) |
+| [特殊寄存器访问](spr/overview.md) |
+| [废弃接口](deprecated_interface/overview.md) |
 
 ## 参考样例
 

@@ -53,7 +53,7 @@ $$
 
 本接口为矩阵计算接口，仅在AIC上生效。
 
-输入矩阵、Bias与Scale矩阵的排布分别参见[关键分形格式详解](../cube_compute_fractal_intro/key_fractal_format_details.md)和[辅助矩阵分形格式详解](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md)；数据准备、计算和结果搬出的衔接参见[矩阵计算流程](../overview/cube_compute_flow.md)。
+输入矩阵、Bias与Scale矩阵的排布分别参见[关键分形格式详解](../cube_compute_fractal_intro/key_fractal_format_details.md)和[辅助矩阵分形格式详解](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md)；数据准备、计算和结果搬出的衔接参见[矩阵计算流程](../overview.md#mx矩阵计算流程)。
 
 ## 函数原型
 

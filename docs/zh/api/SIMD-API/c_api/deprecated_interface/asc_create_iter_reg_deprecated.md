@@ -1,4 +1,4 @@
-# asc_create_iter_reg (废弃)
+# asc_create_iter_reg（废弃）
 
 ## 产品支持情况
 

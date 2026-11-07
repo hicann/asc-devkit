@@ -28,7 +28,7 @@
 
 头文件路径为：`"c_api/cube_datamove/cube_datamove.h"`。
 
-用于调用[asc_copy_l12l0b_arch_3510（3D矩阵搬运）](../cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md)时设置3D格式分形矩阵搬运（im2col展开）搬运指令使用的填充值。当`asc_copy_l12l0b`接口中的`f_matrix_ctrl`参数设置为`true`时，3D格式分形矩阵搬运（im2col展开）场景会使用本接口设置的值作为填充值。
+用于调用[asc_copy_l12l0b（NPU架构版本3510，3D矩阵搬运）](../cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md)时设置3D格式分形矩阵搬运（im2col展开）搬运指令使用的填充值。当`asc_copy_l12l0b`接口中的`f_matrix_ctrl`参数设置为`true`时，3D格式分形矩阵搬运（im2col展开）场景会使用本接口设置的值作为填充值。
 
 本接口为矩阵3D格式搬入相关配置接口，仅在AIC上生效。
 

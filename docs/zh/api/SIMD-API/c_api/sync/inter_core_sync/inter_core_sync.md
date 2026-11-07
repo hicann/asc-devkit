@@ -1,6 +1,5 @@
 # 核间同步
 
-- **[核间同步能力概述](inter_core_sync_overview.md)**
 - **[关键特性说明](key_features.md)**
 - **[asc_sync_inter_arrive](asc_sync_inter_arrive.md)**
 - **[asc_sync_inter_wait](asc_sync_inter_wait.md)**

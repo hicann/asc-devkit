@@ -87,7 +87,7 @@ asc_sync_wait(PIPE_MTE2, PIPE_V, EVENT_ID0);
 // 在此调用读取ub0的PIPE_V接口。
 ```
 
-事件ID由同一对源、目的流水共享，`asc_sync_notify`和`asc_sync_wait`的流水与事件参数必须完全一致。可用流水组合和事件资源请参见[核内同步](../../sync/intra_core_sync/intra_core_sync_overview.md)。
+事件ID由同一对源、目的流水共享，`asc_sync_notify`和`asc_sync_wait`的流水与事件参数必须完全一致。可用流水组合和事件资源请参见[核内同步](../../sync/overview.md#核内同步原理)。
 
 ## 地址重叠
 

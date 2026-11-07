@@ -1,4 +1,4 @@
-# asc_get_ar_spr (废弃)
+# asc_get_ar_spr（废弃）
 
 ## 产品支持情况
 

@@ -1,4 +1,4 @@
-# asc_copy_gm2l1_nd2nz_arch_3510（废弃）
+# asc_copy_gm2l1_nd2nz（NPU架构版本3510，废弃）
 
 ## 产品支持情况
 

@@ -32,7 +32,7 @@
 
 本接口仅在AIC上执行有效。
 
-填充操作用于准备矩阵输入缓冲区，后续数据搬入及矩阵乘加的衔接参见[矩阵计算流程](../../cube_compute/overview/cube_compute_flow.md)；输入缓冲区布局参见[L1 Buffer、L0A Buffer/L0B Buffer内存结构介绍](../cube_compute_load/L1_L0A_B_memory_structure_intro.md)。
+填充操作用于准备矩阵输入缓冲区，后续数据搬入及矩阵乘加的衔接参见[矩阵计算流程](../../cube_compute/overview.md#矩阵计算流程)；输入缓冲区布局参见[L1 Buffer、L0A Buffer/L0B Buffer内存结构介绍](../cube_compute_load/L1_L0A_B_memory_structure_intro.md)。
 
 ## 函数原型
 
@@ -94,7 +94,7 @@ PIPE_MTE2
 - 本接口非AIC调用直接返回。
 - `dst`起始地址需要按照32字节对齐（L1 Buffer对齐要求），否则触发地址对齐异常。
 - L1 Buffer总容量为512KB。`dst`偏移量与实际占用空间之和不可超过L1 Buffer容量，否则触发地址溢出异常。
-- 如果本指令与其他指令存在数据依赖，需要插入[同步指令](../../sync/system_sync_overview.md)，保证多个指令串行化，防止出现异常数据。
+- 如果本指令与其他指令存在数据依赖，需要插入[同步指令](../../sync/overview.md#同步控制概述)，保证多个指令串行化，防止出现异常数据。
 - `value`的数据类型需与`dst`的数据类型满足函数原型章节中的组合关系。两者数据类型不相同时，需要根据`dst`的数据类型转换`value`的值，具体请参考调用示例。
 
 ## 调用示例

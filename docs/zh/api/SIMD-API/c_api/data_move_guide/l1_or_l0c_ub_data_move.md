@@ -115,4 +115,4 @@ __aicore__ inline void asc_copy_l0c2ub(__ubuf__ <dst_dtype>* dst,
 - AIV通过PIPE_MTE3把UB写入L1后，AIC读取L1前需要完成AIV到AIC的核间同步并建立后续流水依赖。AIC依赖同一group内全部AIV时，使用模式2的[asc_sync_block_arrive](../sync/inter_core_sync/asc_sync_block_arrive.md)和[asc_sync_block_wait](../sync/inter_core_sync/asc_sync_block_wait.md)，由各AIV发送通知、AIC等待；仅依赖单个AIV时，使用模式4的[asc_sync_intra_arrive](../sync/inter_core_sync/asc_sync_intra_arrive.md)和[asc_sync_intra_wait](../sync/inter_core_sync/asc_sync_intra_wait.md)。
 - AIC通过PIPE_MTE1把L1写入UB，或通过PIPE_FIX把L0C写入UB后，AIV读取UB前需要完成AIC到目标AIV的同步。全部AIV均消费数据时使用模式2，由AIC发送通知、各AIV等待；仅指定AIV消费数据时使用模式4。
 - L0C由PIPE_M生成，PIPE_FIX搬出前需要同步；满足条件时也可通过UnitFlag让矩阵计算和搬出按分形并行。
-- 多条指令写入相同L1或UB范围时，需要按[同步控制](../sync/system_sync_overview.md)要求串行化，不能仅依赖源码顺序。
+- 多条指令写入相同L1或UB范围时，需要按[同步控制](../sync/overview.md#同步控制概述)要求串行化，不能仅依赖源码顺序。

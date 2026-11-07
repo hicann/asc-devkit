@@ -30,7 +30,7 @@
 
 将图像数据从Global Memory搬运到L1 Buffer。
 
-图像搬入在卷积计算流程中的位置参见[矩阵计算流程](../../cube_compute/overview/cube_compute_flow.md)。
+图像搬入在卷积计算流程中的位置参见[矩阵计算流程](../../cube_compute/overview.md#conv2d前向计算流程)。
 <!-- npu="A3,910b" id8 -->
 后续L1到L0的3D搬运参见[asc_copy_l12l0a（Atlas A3系列产品和Atlas A2系列产品）](../cube_compute_load/asc_copy_l12l0a_arch_2201.md)和[asc_copy_l12l0b（Atlas A3系列产品和Atlas A2系列产品）](../cube_compute_load/asc_copy_l12l0b_arch_2201.md)。
 <!-- end id8 -->

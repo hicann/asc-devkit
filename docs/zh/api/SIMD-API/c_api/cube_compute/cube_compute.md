@@ -1,6 +1,6 @@
 # 矩阵计算
 
-- **[概述](overview/overview.md)**
+- **[概述](overview.md)**
 
 - **[矩阵计算分形介绍](cube_compute_fractal_intro/cube_compute_fractal_intro.md)**
 

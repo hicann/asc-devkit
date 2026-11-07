@@ -1,4 +1,4 @@
-# asc_squeeze_v2 (废弃)
+# asc_squeeze_v2（废弃）
 
 ## 产品支持情况
 

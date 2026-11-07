@@ -1,5 +1,7 @@
 # 废弃接口
 
+- **[概述](overview.md)**
+
 ## 矩阵数据搬运
 
 - **[asc_copy_gm2l1_align（废弃）](asc_copy_gm2l1_align_deprecated.md)**（旧常规重载和同步接口）
@@ -21,9 +23,9 @@
 - **[asc_set_l12l0_padding_val（废弃）](asc_set_l12l0_padding_val_deprecated.md)**
 - **[asc_set_l13d_padding（废弃）](asc_set_l13d_padding_deprecated.md)**
 - **[asc_copy_gm2l1_dn2nz（废弃）](asc_copy_gm2l1_dn2nz_deprecated.md)**
-- **[asc_copy_gm2l1_nd2nz（废弃）](asc_copy_gm2l1_nd2nz_deprecated.md)**
-- **[asc_copy_gm2l1（高维切分旧形式，废弃）](asc_copy_gm2l1_highdim_deprecated.md)**
-- **[asc_copy_gm2l1（2D矩阵搬运旧形式，废弃）](asc_copy_gm2l1_2d_deprecated.md)**
+- **[asc_copy_gm2l1_nd2nz（NPU架构版本3510，废弃）](asc_copy_gm2l1_nd2nz_deprecated.md)**
+- **[asc_copy_gm2l1（NPU架构版本3510，高维切分数据搬运，废弃）](asc_copy_gm2l1_highdim_deprecated.md)**
+- **[asc_copy_gm2l1（NPU架构版本3510，2D矩阵搬运模式，废弃）](asc_copy_gm2l1_2d_deprecated.md)**
 - **[asc_copy_l12ub_sync（废弃）](asc_copy_l12ub_sync_deprecated.md)**
 - **[asc_copy_l0c2gm（废弃）](asc_copy_l0c2gm_deprecated.md)**
 - **[asc_copy_l0c2l1（废弃）](asc_copy_l0c2l1_deprecated.md)**
@@ -35,33 +37,32 @@
 - **[asc_copy_gm2l0b_sync（废弃）](asc_copy_gm2l0b_sync_deprecated.md)**
 - **[asc_copy_gm2l1_align_sync（废弃）](asc_copy_gm2l1_align_sync_deprecated.md)**
 - **[asc_copy_gm2l1_dn2nz_sync（废弃）](asc_copy_gm2l1_dn2nz_sync_deprecated.md)**
-- **[asc_copy_gm2l1_nd2nz_sync_arch_2201（废弃）](asc_copy_gm2l1_nd2nz_sync_arch_2201_deprecated.md)**
-- **[asc_copy_gm2l1_nd2nz_sync_arch_3510（废弃）](asc_copy_gm2l1_nd2nz_sync_arch_3510_deprecated.md)**
-- **[asc_copy_gm2l1_sync_2d_arch_3510（废弃）](asc_copy_gm2l1_sync_2d_arch_3510_deprecated.md)**
-- **[asc_copy_gm2l1_sync_arch_2201（废弃）](asc_copy_gm2l1_sync_arch_2201_deprecated.md)**
-- **[asc_copy_gm2l1_sync_highdim_split_arch_3510（废弃）](asc_copy_gm2l1_sync_highdim_split_arch_3510_deprecated.md)**
-- **[asc_copy_l0c2gm_sync_arch_2201（废弃）](asc_copy_l0c2gm_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l0c2l1_sync_arch_2201（废弃）](asc_copy_l0c2l1_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l0c2l1_sync_arch_3510（废弃）](asc_copy_l0c2l1_sync_arch_3510_deprecated.md)**
-- **[asc_copy_l12bt_sync_arch_2201（废弃）](asc_copy_l12bt_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l12bt_sync_arch_3510（废弃）](asc_copy_l12bt_sync_arch_3510_deprecated.md)**
-- **[asc_copy_l12fb_sync_arch_2201（废弃）](asc_copy_l12fb_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l12fb_sync_arch_3510（废弃）](asc_copy_l12fb_sync_arch_3510_deprecated.md)**
+- **[asc_copy_gm2l1_nd2nz_sync（NPU架构版本2201，废弃）](asc_copy_gm2l1_nd2nz_sync_arch_2201_deprecated.md)**
+- **[asc_copy_gm2l1_nd2nz_sync（NPU架构版本3510，废弃）](asc_copy_gm2l1_nd2nz_sync_arch_3510_deprecated.md)**
+- **[asc_copy_gm2l1_sync（NPU架构版本3510，2D矩阵搬运模式，废弃）](asc_copy_gm2l1_sync_2d_arch_3510_deprecated.md)**
+- **[asc_copy_gm2l1_sync（NPU架构版本2201，废弃）](asc_copy_gm2l1_sync_arch_2201_deprecated.md)**
+- **[asc_copy_gm2l1_sync（NPU架构版本3510，高维切分数据搬运，废弃）](asc_copy_gm2l1_sync_highdim_split_arch_3510_deprecated.md)**
+- **[asc_copy_l0c2gm_sync（NPU架构版本2201，废弃）](asc_copy_l0c2gm_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l0c2l1_sync（NPU架构版本2201，废弃）](asc_copy_l0c2l1_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l0c2l1_sync（NPU架构版本3510，废弃）](asc_copy_l0c2l1_sync_arch_3510_deprecated.md)**
+- **[asc_copy_l12bt_sync（NPU架构版本2201，废弃）](asc_copy_l12bt_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l12bt_sync（NPU架构版本3510，废弃）](asc_copy_l12bt_sync_arch_3510_deprecated.md)**
+- **[asc_copy_l12fb_sync（NPU架构版本2201，废弃）](asc_copy_l12fb_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l12fb_sync（NPU架构版本3510，废弃）](asc_copy_l12fb_sync_arch_3510_deprecated.md)**
 - **[asc_copy_l12gm_sync（废弃）](asc_copy_l12gm_sync_deprecated.md)**
 - **[asc_copy_l12l0a_mx_sync（废弃）](asc_copy_l12l0a_mx_sync_deprecated.md)**
-- **[asc_copy_l12l0a_sync_2d_arch_3510（废弃）](asc_copy_l12l0a_sync_2d_arch_3510_deprecated.md)**
-- **[asc_copy_l12l0a_sync_3d_arch_3510（废弃）](asc_copy_l12l0a_sync_3d_arch_3510_deprecated.md)**
-- **[asc_copy_l12l0a_sync_arch_2201（废弃）](asc_copy_l12l0a_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l12l0a_sync（NPU架构版本3510，2D矩阵搬运，废弃）](asc_copy_l12l0a_sync_2d_arch_3510_deprecated.md)**
+- **[asc_copy_l12l0a_sync（NPU架构版本3510，3D矩阵搬运，废弃）](asc_copy_l12l0a_sync_3d_arch_3510_deprecated.md)**
+- **[asc_copy_l12l0a_sync（NPU架构版本2201，废弃）](asc_copy_l12l0a_sync_arch_2201_deprecated.md)**
 - **[asc_copy_l12l0a_trans_sync（废弃）](asc_copy_l12l0a_trans_sync_deprecated.md)**
 - **[asc_copy_l12l0b_mx_sync（废弃）](asc_copy_l12l0b_mx_sync_deprecated.md)**
 - **[asc_copy_l12l0b_sparse_sync（废弃）](asc_copy_l12l0b_sparse_sync_deprecated.md)**
-- **[asc_copy_l12l0b_sync_2d_arch_3510（废弃）](asc_copy_l12l0b_sync_2d_arch_3510_deprecated.md)**
-- **[asc_copy_l12l0b_sync_3d_arch_3510（废弃）](asc_copy_l12l0b_sync_3d_arch_3510_deprecated.md)**
-- **[asc_copy_l12l0b_sync_arch_2201（废弃）](asc_copy_l12l0b_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l12l0b_trans_sync_arch_2201（废弃）](asc_copy_l12l0b_trans_sync_arch_2201_deprecated.md)**
-- **[asc_copy_l12l0b_trans_sync_arch_3510（废弃）](asc_copy_l12l0b_trans_sync_arch_3510_deprecated.md)**
+- **[asc_copy_l12l0b_sync（NPU架构版本3510，2D矩阵搬运，废弃）](asc_copy_l12l0b_sync_2d_arch_3510_deprecated.md)**
+- **[asc_copy_l12l0b_sync（NPU架构版本3510，3D矩阵搬运，废弃）](asc_copy_l12l0b_sync_3d_arch_3510_deprecated.md)**
+- **[asc_copy_l12l0b_sync（NPU架构版本2201，废弃）](asc_copy_l12l0b_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l12l0b_trans_sync（NPU架构版本2201，废弃）](asc_copy_l12l0b_trans_sync_arch_2201_deprecated.md)**
+- **[asc_copy_l12l0b_trans_sync（NPU架构版本3510，废弃）](asc_copy_l12l0b_trans_sync_arch_3510_deprecated.md)**
 - **[asc_copy_l12l0c_sync（废弃）](asc_copy_l12l0c_sync_deprecated.md)**
-- **[asc_copy_l12ub_sync（废弃）](asc_copy_l12ub_sync_deprecated.md)**
 - **[asc_fill_l0a_sync（废弃）](asc_fill_l0a_sync_deprecated.md)**
 - **[asc_fill_l0b_sync（废弃）](asc_fill_l0b_sync_deprecated.md)**
 - **[asc_fill_l1_sync（废弃）](asc_fill_l1_sync_deprecated.md)**
@@ -189,17 +190,17 @@
 
 ## 矢量数据搬运
 
-- **[asc_copy_gm2ub_align_arch_3510（废弃）](asc_copy_gm2ub_align_arch_3510_deprecated.md)**
-- **[asc_copy_gm2ub_align_sync_arch_2201（废弃）](asc_copy_gm2ub_align_sync_arch_2201_deprecated.md)**
-- **[asc_copy_gm2ub_align_sync_arch_3510（废弃）](asc_copy_gm2ub_align_sync_arch_3510_deprecated.md)**
-- **[asc_copy_gm2ub_sync_arch_2201（废弃）](asc_copy_gm2ub_sync_arch_2201_deprecated.md)**
-- **[asc_copy_gm2ub_sync_arch_3510（废弃）](asc_copy_gm2ub_sync_arch_3510_deprecated.md)**
+- **[asc_copy_gm2ub_align（NPU架构版本3510，废弃）](asc_copy_gm2ub_align_arch_3510_deprecated.md)**
+- **[asc_copy_gm2ub_align_sync（NPU架构版本2201，废弃）](asc_copy_gm2ub_align_sync_arch_2201_deprecated.md)**
+- **[asc_copy_gm2ub_align_sync（NPU架构版本3510，废弃）](asc_copy_gm2ub_align_sync_arch_3510_deprecated.md)**
+- **[asc_copy_gm2ub_sync（NPU架构版本2201，废弃）](asc_copy_gm2ub_sync_arch_2201_deprecated.md)**
+- **[asc_copy_gm2ub_sync（NPU架构版本3510，废弃）](asc_copy_gm2ub_sync_arch_3510_deprecated.md)**
 - **[asc_copy_sync（废弃）](asc_copy_sync_deprecated.md)**
-- **[asc_copy_ub2gm_align_arch_3510（废弃）](asc_copy_ub2gm_align_arch_3510_deprecated.md)**
-- **[asc_copy_ub2gm_align_sync_arch_2201（废弃）](asc_copy_ub2gm_align_sync_arch_2201_deprecated.md)**
-- **[asc_copy_ub2gm_align_sync_arch_3510（废弃）](asc_copy_ub2gm_align_sync_arch_3510_deprecated.md)**
-- **[asc_copy_ub2gm_sync_arch_2201（废弃）](asc_copy_ub2gm_sync_arch_2201_deprecated.md)**
-- **[asc_copy_ub2gm_sync_arch_3510（废弃）](asc_copy_ub2gm_sync_arch_3510_deprecated.md)**
+- **[asc_copy_ub2gm_align（NPU架构版本3510，废弃）](asc_copy_ub2gm_align_arch_3510_deprecated.md)**
+- **[asc_copy_ub2gm_align_sync（NPU架构版本2201，废弃）](asc_copy_ub2gm_align_sync_arch_2201_deprecated.md)**
+- **[asc_copy_ub2gm_align_sync（NPU架构版本3510，废弃）](asc_copy_ub2gm_align_sync_arch_3510_deprecated.md)**
+- **[asc_copy_ub2gm_sync（NPU架构版本2201，废弃）](asc_copy_ub2gm_sync_arch_2201_deprecated.md)**
+- **[asc_copy_ub2gm_sync（NPU架构版本3510，废弃）](asc_copy_ub2gm_sync_arch_3510_deprecated.md)**
 - **[asc_copy_ub2l1_sync（废弃）](asc_copy_ub2l1_sync_deprecated.md)**
 - **[asc_copy_ub2ub_sync（废弃）](asc_copy_ub2ub_sync_deprecated.md)**
 - **[asc_set_gm2ub_pad（废弃）](asc_set_gm2ub_pad_deprecated.md)**
@@ -213,16 +214,16 @@
 
 ### Reg数据搬入
 
-- **[asc_loadalign (废弃)](asc_loadalign_v1_deprecated.md)**（BRCV2、BRCV3和UNPACKV2无偏移量原型）
-- **[asc_loadalign (废弃)](asc_loadalign_v2_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`addr_reg`偏移原型）
-- **[asc_loadalign (废弃)](asc_loadalign_v3_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`int32_t`偏移原型）
-- **[asc_loadalign (废弃)](asc_loadalign_v4_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`int32_t`偏移Post Update原型）
+- **[asc_loadalign（无偏移，废弃）](asc_loadalign_v1_deprecated.md)**（BRCV2、BRCV3和UNPACKV2无偏移量原型）
+- **[asc_loadalign（地址寄存器偏移，废弃）](asc_loadalign_v2_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`addr_reg`偏移原型）
+- **[asc_loadalign（立即数偏移，废弃）](asc_loadalign_v3_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`int32_t`偏移原型）
+- **[asc_loadalign（Post Update，废弃）](asc_loadalign_v4_deprecated.md)**（BRCV2、BRCV3和UNPACKV2的`int32_t`偏移Post Update原型）
 
 ### Reg数据搬出
 
-- **[asc_storealign_pack_v2（废弃）](asc_storealign_v1_deprecated.md)**（无偏移量原型）
-- **[asc_storealign_pack_v2（废弃）](asc_storealign_v2_deprecated.md)**（`addr_reg`偏移原型）
-- **[asc_storealign_pack_v2（废弃）](asc_storealign_v3_deprecated.md)**（`int32_t`偏移原型）
+- **[asc_storealign_pack_v2（无偏移，废弃）](asc_storealign_v1_deprecated.md)**（无偏移量原型）
+- **[asc_storealign_pack_v2（地址寄存器偏移，废弃）](asc_storealign_v2_deprecated.md)**（`addr_reg`偏移原型）
+- **[asc_storealign_pack_v2（立即数偏移，废弃）](asc_storealign_v3_deprecated.md)**（`int32_t`偏移原型）
 - **[asc_storealign_pack_postupdate_v2（废弃）](asc_storealign_v4_deprecated.md)**（`int32_t`偏移Post Update原型）
 - **[asc_scatter（废弃）](asc_scatter_deprecated.md)**
 - **[asc_storeunalign_post（废弃）](asc_storeunalign_post_deprecated.md)**

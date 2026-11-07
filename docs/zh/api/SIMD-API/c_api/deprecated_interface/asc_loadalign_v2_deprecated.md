@@ -1,4 +1,4 @@
-# asc_loadalign (废弃)
+# asc_loadalign（地址寄存器偏移，废弃）
 
 ## 产品支持情况
 

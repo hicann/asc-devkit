@@ -64,7 +64,7 @@ $$
 
 本接口为矩阵计算接口，仅在AIC上生效。
 
-输入矩阵与Bias矩阵的排布分别参见[关键分形格式详解](../cube_compute_fractal_intro/key_fractal_format_details.md)和[辅助矩阵分形格式详解](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md)；数据准备、计算和结果搬出的衔接参见[矩阵计算流程](../overview/cube_compute_flow.md)。
+输入矩阵与Bias矩阵的排布分别参见[关键分形格式详解](../cube_compute_fractal_intro/key_fractal_format_details.md)和[辅助矩阵分形格式详解](../cube_compute_fractal_intro/aux_cube_fractal_format_details.md)；数据准备、计算和结果搬出的衔接参见[矩阵计算流程](../overview.md#普通矩阵计算流程)。
 
 FP32输入的计算模式及精度说明见[HF32](../mmad_compute_key_features/HF32.md)，通过[asc_enable_hf32](../mmad_compute_aux_config/asc_enable_hf32.md)和[asc_disable_hf32](../mmad_compute_aux_config/asc_disable_hf32.md)控制开关。
 

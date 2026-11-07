@@ -50,7 +50,7 @@ __aicore__ inline void asc_sync_wait(pipe_t pipe,
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| pipe | 输入 | 源流水类型，即“等待哪条流水的前序指令完成”。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](intra_core_sync_overview.md#硬件流水类型)。 |
+| pipe | 输入 | 源流水类型，即“等待哪条流水的前序指令完成”。<br>参数的类型是`pipe_t`枚举，各个枚举取值的含义请参考[硬件流水类型](../overview.md#硬件流水类型)。 |
 | tpipe | 输入 | 目标流水类型，即“解除哪条流水的`asc_sync_wait`阻塞”。取值范围与`pipe`相同，为`pipe_t`枚举。 |
 | id | 输入 | 同步事件ID，每对`pipe`与`tpipe`组合各自拥有8个独立的同步事件ID。取值范围为`event_t`枚举类型。 |
 
@@ -79,7 +79,7 @@ PIPE_S
 
 ## 约束说明
 
-- **`pipe`与`tpipe`并非任意组合，两者组合的取值存在限制**：针对不同产品，AIC与AIV中支持的组合不同，具体请参考[核内同步分类](intra_core_sync_overview.md#核内同步分类)中的[表2](intra_core_sync_overview.md#aic_intra_core_sync_combinations)和[表3](intra_core_sync_overview.md#aiv_intra_core_sync_combinations)。
+- **`pipe`与`tpipe`并非任意组合，两者组合的取值存在限制**：针对不同产品，AIC与AIV中支持的组合不同，具体请参考[核内同步组合](../overview.md#核内同步组合)中的[表2](../overview.md#aic_intra_core_sync_combinations)和[表3](../overview.md#aiv_intra_core_sync_combinations)。
 - 相同源流水、相同目标流水、相同`id`下，连续使用`asc_sync_wait`会引发未定义行为。
 - 本接口需与`asc_sync_notify`配对使用，配对的两条调用其`pipe`、`tpipe`、`id`三个参数必须完全一致。
 - `pipe`与`tpipe`均不可取`PIPE_ALL`，否则触发异常。

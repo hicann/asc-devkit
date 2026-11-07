@@ -1,6 +1,5 @@
 # 核内同步
 
-- **[核内同步能力概述](intra_core_sync_overview.md)**
 - **[asc_sync_notify](asc_sync_notify.md)**
 - **[asc_sync_wait](asc_sync_wait.md)**
 - **[asc_sync_pipe](asc_sync_pipe.md)**

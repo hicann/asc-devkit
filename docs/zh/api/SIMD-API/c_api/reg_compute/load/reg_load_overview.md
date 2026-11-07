@@ -1,110 +1,23 @@
-# Reg数据搬入概述
+# 概述
+
+## Reg数据搬入概述
 
 Reg数据搬入接口用于将Unified Buffer（UB）中的数据搬入矢量数据寄存器、掩码寄存器或非对齐寄存器。接口均仅在AIV上生效，且需在Vector Function（`__simd_vf__`标记的函数）内调用。
 
-## 接口分类与选择
-
-根据数据访问方式、搬入后的数据排布以及是否需要自动更新地址，选择相应接口。
-
-### 矢量数据寄存器搬入
-
-#### 对齐搬入
-
-**表1** 矢量数据寄存器对齐搬入接口
-
-| 接口名称 | 模式 | 功能简述 | 地址对齐要求 |
-| --- | --- | --- | --- |
-| [asc_loadalign](asc_loadalign.md) | 连续对齐搬入 | 连续搬入一个VL长度的数据，由用户更新源地址。 | 32字节 |
-| [asc_loadalign](asc_loadalign.md) | 立即数偏移搬入模式 | 从源起始地址偏移指定距离后搬入一个VL长度的数据。 | 32字节 |
-| [asc_loadalign](asc_loadalign.md) | 地址寄存器偏移搬入模式 | 按地址寄存器指定的偏移搬入一个VL长度的数据。 | 32字节 |
-| [asc_loadalign](asc_loadalign.md) | 非连续对齐搬入模式 | 按配置的DataBlock步长非连续搬入8个DataBlock。 | 32字节 |
-| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 立即数偏移搬入模式 | 搬入一个VL长度的数据，并按立即数偏移更新源地址。 | 32字节 |
-| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 非连续对齐搬入模式 | 非连续搬入8个DataBlock，并自动更新源地址。 | 32字节 |
-| [asc_loadalign_datablock_strided](asc_loadalign_datablock_strided.md) | 非连续对齐搬入模式 | 按配置的DataBlock步长非连续搬入8个DataBlock，通过返回值返回结果。 | 32字节 |
-| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 对齐搬入模式 | 将一个DataBlock广播到整个矢量数据寄存器。 | 32字节 |
-| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取一个DataBlock并广播。 | 32字节 |
-| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取一个DataBlock并广播。 | 32字节 |
-| [asc_loadalign_brc_datablock_postupdate](asc_loadalign_brc_datablock_postupdate.md) | Post Update搬入模式 | 将一个DataBlock广播到整个矢量数据寄存器，并自动更新源地址。 | 32字节 |
-| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 对齐搬入模式 | 将一个元素广播到整个矢量数据寄存器。 | 按dtype对齐 |
-| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取一个元素并广播。 | 按dtype对齐 |
-| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取一个元素并广播。 | 按dtype对齐 |
-| [asc_loadalign_brc_elem_postupdate](asc_loadalign_brc_elem_postupdate.md) | Post Update搬入模式 | 将一个元素广播到整个矢量数据寄存器，并自动更新源地址。 | 按dtype对齐 |
-| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 对齐搬入模式 | 连续读取8个元素，并将每个元素广播到一个DataBlock。 | b16为16字节，b32为32字节 |
-| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取8个元素，并分别广播到一个DataBlock。 | b16为16字节，b32为32字节 |
-| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取8个元素，并分别广播到一个DataBlock。 | b16为16字节，b32为32字节 |
-| [asc_loadalign_brc_elem2datablock_postupdate](asc_loadalign_brc_elem2datablock_postupdate.md) | Post Update搬入模式 | 连续读取并广播8个元素，并自动更新源地址。 | b16为16字节，b32为32字节 |
-| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 对齐搬入模式 | 读取2×VL长度的数据，解交织后写入两个矢量数据寄存器。 | 32字节 |
-| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并解交织。 | 32字节 |
-| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并解交织。 | 32字节 |
-| [asc_loadalign_deintlv_postupdate](asc_loadalign_deintlv_postupdate.md) | Post Update搬入模式 | 读取数据并解交织到两个矢量数据寄存器，同时自动更新源地址。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 对齐搬入模式 | 读取2×VL长度的数据，保留偶数下标元素。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍下采样。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍下采样。 | 32字节 |
-| [asc_loadalign_downsample_postupdate](asc_loadalign_downsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍下采样，同时自动更新源地址。 | 32字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 对齐搬入模式 | 读取VL/2长度的数据，将每个元素重复两次。 | 32字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍上采样。 | 32字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍上采样。 | 32字节 |
-| [asc_loadalign_upsample_postupdate](asc_loadalign_upsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍上采样，同时自动更新源地址。 | 32字节 |
-| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 对齐搬入模式 | 读取VL/2长度的数据，在每个源元素后补1个0。 | 32字节 |
-| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据，在每个源元素后补1个0。 | 32字节 |
-| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据，在每个源元素后补1个0。 | 32字节 |
-| [asc_loadalign_unpack_postupdate](asc_loadalign_unpack_postupdate.md) | Post Update搬入模式 | 读取VL/2长度的数据，在每个源元素后补1个0，并自动更新源地址。 | 32字节 |
-| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 对齐搬入模式 | 读取VL/4长度的数据，在每个源元素后补3个0。 | 32字节 |
-| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据，在每个源元素后补3个0。 | 32字节 |
-| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据，在每个源元素后补3个0。 | 32字节 |
-| [asc_loadalign_unpack4_postupdate](asc_loadalign_unpack4_postupdate.md) | Post Update搬入模式 | 读取VL/4长度的数据，在每个源元素后补3个0，并自动更新源地址。 | 32字节 |
-
-#### 非对齐搬入
-
-**表2** 矢量数据寄存器非对齐搬入接口
-
-| 接口名称 | 模式 | 功能简述 | 地址对齐要求 |
-| --- | --- | --- | --- |
-| [asc_load](asc_load.md) | 连续非对齐搬入模式 | 搬入一个VL长度的数据，由用户更新源地址。该接口为易用性接口。 | 按dtype对齐 |
-| [asc_loadunalign_pre](asc_loadunalign_pre.md) | 源地址预处理模式 | 根据源地址初始化非对齐寄存器。 | 按dtype对齐 |
-| [asc_loadunalign_pre](asc_loadunalign_pre.md) | 地址寄存器偏移预处理模式 | 根据源地址和地址寄存器偏移初始化非对齐寄存器。 | 按dtype对齐 |
-| [asc_loadunalign](asc_loadunalign.md) | 连续非对齐搬入模式 | 使用预处理结果搬入一个VL长度的数据，由用户更新源地址。 | 按dtype对齐 |
-| [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md) | 连续非对齐搬入模式 | 使用预处理结果搬入指定数量的元素，并自动更新源地址和非对齐寄存器。 | 按dtype对齐 |
-| [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置搬入数据，并自动更新偏移和非对齐寄存器。 | 按dtype对齐 |
-
-`asc_load`为易用性接口。对性能有要求的连续非对齐搬入场景，可使用`asc_loadunalign`或`asc_loadunalign_postupdate`。
-
-### 掩码寄存器搬入
-
-**表3** 掩码寄存器搬入接口
-
-| 接口名称 | 模式 | 功能简述 | 地址对齐要求 |
-| --- | --- | --- | --- |
-| [asc_loadalign](asc_loadalign.md) | 连续对齐搬入 | 连续搬入VL/8长度的数据，由用户更新源地址。 | 32字节 |
-| [asc_loadalign](asc_loadalign.md) | 立即数偏移搬入模式 | 从源起始地址偏移指定距离后搬入VL/8长度的数据。 | 32字节 |
-| [asc_loadalign](asc_loadalign.md) | 地址寄存器偏移搬入模式 | 按地址寄存器指定的偏移搬入VL/8长度的数据。 | 32字节 |
-| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 立即数偏移搬入模式 | 搬入VL/8长度的数据，并按立即数偏移更新源地址。 | 32字节 |
-| [asc_loadalign_mask](asc_loadalign_mask.md) | 连续对齐搬入 | 连续搬入VL/8长度的数据，通过返回值返回结果。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 对齐搬入模式 | 读取VL/4长度的数据，保留偶数下标bit。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍下采样。 | 32字节 |
-| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍下采样。 | 32字节 |
-| [asc_loadalign_downsample_postupdate](asc_loadalign_downsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍下采样，同时自动更新源地址。 | 32字节 |
-| [asc_loadalign_mask_downsample](asc_loadalign_mask_downsample.md) | 对齐搬入模式 | 读取VL/4长度的数据，保留偶数下标bit，通过返回值返回结果。 | 32字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 对齐搬入模式 | 读取VL/16长度的数据，将每个bit重复两次。 | 16字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍上采样。 | 16字节 |
-| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍上采样。 | 16字节 |
-| [asc_loadalign_upsample_postupdate](asc_loadalign_upsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍上采样，同时自动更新源地址。 | 16字节 |
-| [asc_loadalign_mask_upsample](asc_loadalign_mask_upsample.md) | 对齐搬入模式 | 读取VL/16长度的数据，将每个bit重复两次，通过返回值返回结果。 | 16字节 |
-
-## 通用约束
+### 通用约束
 
 - Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
-- 各功能模式下的实际读取地址必须满足[接口分类与选择](#接口分类与选择)中的地址对齐要求，且实际读取范围必须在UB地址空间内且不越界，否则会报错。
+- 各功能模式下的实际读取地址必须满足[API列表](#api列表)中的地址对齐要求，且实际读取范围必须在UB地址空间内且不越界，否则会报错。
 - UB容量上限为256KB，用户可用容量随编译选项与编程场景变化。UB地址偏移后不可超过实际可用容量，否则会报错。详细说明请参见[存储单元说明](../../general_description_and_constraints.md#存储单元说明)。
 - 如果本指令与其他指令存在数据依赖，需要插入同步指令[asc_mem_bar](../reg_sync/asc_mem_bar.md)，保证多个指令串行化，防止出现异常数据。
 
-## 关键特性说明
+### 关键特性说明
 
-### 对齐连续搬入方式对比
+#### 对齐连续搬入方式对比
 
 对齐连续搬入提供四种源地址维护方式。以下示例均将长度为1024、数据类型为`half`的源数据连续搬入矢量数据寄存器，再写入UB。单次迭代处理128个元素，共迭代8次，最终结果均为`dst[i] = src[i]`。
 
-**表4** 对齐连续搬入方式对比
+**表1** 对齐连续搬入方式对比
 
 | 场景 | 搬入方式 | 源地址维护方式 | 适用场景 |
 | --- | --- | --- | --- |
@@ -113,7 +26,7 @@ Reg数据搬入接口用于将Unified Buffer（UB）中的数据搬入矢量数�
 | 场景3 | 地址寄存器偏移搬入 | 通过[asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)生成`addr_reg`，由硬件在迭代中更新偏移。 | Hardware Loop内偏移随迭代变化。 |
 | 场景4 | Post Update搬入 | `asc_loadalign_postupdate`在每次搬入后自动更新源地址指针。 | 连续搬入且无需用户手动维护源地址。 |
 
-#### 连续对齐搬入
+##### 连续对齐搬入
 
 调用`asc_loadalign`的连续对齐搬入形式。源地址通过`src + i * one_repeat_size`计算，`one_repeat_size`为128个`half`元素。
 
@@ -130,7 +43,7 @@ __simd_vf__ inline void load_align_continuous_vf(__ubuf__ half* dst, __ubuf__ ha
 }
 ```
 
-#### 立即数偏移搬入
+##### 立即数偏移搬入
 
 调用`asc_loadalign`的立即数偏移搬入模式。`offset`相对`src`基地址，单位为元素；本示例通过`i * one_repeat_size`计算每次搬入的偏移。
 
@@ -147,7 +60,7 @@ __simd_vf__ inline void load_align_immediate_offset_vf(__ubuf__ half* dst, __ubu
 }
 ```
 
-#### 地址寄存器偏移搬入
+##### 地址寄存器偏移搬入
 
 调用`asc_loadalign`的地址寄存器偏移搬入模式。`addr_reg`须在最内层循环中赋值并使用，b16模式下偏移单位为元素。
 
@@ -166,7 +79,7 @@ __simd_vf__ inline void load_align_addr_reg_offset_vf(__ubuf__ half* dst, __ubuf
 }
 ```
 
-#### Post Update搬入
+##### Post Update搬入
 
 调用`asc_loadalign_postupdate`的立即数偏移搬入模式。源地址以引用方式传入，接口在每次搬入后将其向后更新`one_repeat_size`个元素。
 
@@ -183,11 +96,11 @@ __simd_vf__ inline void load_align_post_update_vf(__ubuf__ half* dst, __ubuf__ h
 }
 ```
 
-### 非对齐搬运特性
+#### 非对齐搬运特性
 
 非对齐搬运用于有效起始地址满足dtype对齐、但不满足32字节对齐的连续数据搬入或搬出场景。搬入和搬出均通过[非对齐寄存器](../../defs/type/data_type_definition.md#非对齐寄存器)保存跨32字节边界的数据，以保证连续数据的完整性。
 
-#### 非对齐搬入原理
+##### 非对齐搬入原理
 
 非对齐搬入通过非对齐寄存器缓存起始地址所在32字节块的前置数据，再与后续读取的数据拼接，得到从有效起始地址开始的VL长度数据。
 
@@ -202,7 +115,7 @@ __simd_vf__ inline void load_align_post_update_vf(__ubuf__ half* dst, __ubuf__ h
 
 实际访问会覆盖向低地址方向对齐后的32字节范围，因此除有效起始地址满足dtype对齐外，对齐后的读取范围也必须位于UB地址空间内。
 
-**表5** 非对齐搬入接口的配合关系
+**表2** 非对齐搬入接口的配合关系
 
 | 主搬入方式 | 配套接口 | 说明 |
 | --- | --- | --- |
@@ -210,7 +123,7 @@ __simd_vf__ inline void load_align_post_update_vf(__ubuf__ half* dst, __ubuf__ h
 | [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)的立即数偏移模式 | [asc_loadunalign_pre](asc_loadunalign_pre.md) | 接口自动更新源地址。首次搬入前调用预处理接口；后续连续搬入可复用更新后的非对齐寄存器，源地址被另行修改后必须重新预处理。 |
 | [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md)的地址寄存器偏移模式 | [asc_update_addr_reg](../reg_addr_reg/asc_update_addr_reg.md)、[asc_loadunalign_pre](asc_loadunalign_pre.md) | 接口自动更新地址寄存器偏移。每次循环迭代先生成起始偏移，再使用相同的源地址和偏移进行预处理；迭代内连续搬入可复用更新后的非对齐寄存器，源地址或偏移被另行修改后必须重新预处理。 |
 
-#### 非对齐搬出原理
+##### 非对齐搬出原理
 
 非对齐搬出将矢量数据寄存器中的连续数据写入非32字节对齐的UB地址。每次主搬出会将可以直接写入的主块写入UB，并将末尾不能构成32字节对齐块的数据保存在非对齐寄存器。后续连续搬出时，接口将该尾块与本次主块的起始数据拼接后写入UB，并更新本次尾块。
 
@@ -228,7 +141,7 @@ __simd_vf__ inline void load_align_post_update_vf(__ubuf__ half* dst, __ubuf__ h
 
 后续连续搬出时，主搬出接口将非对齐寄存器中的前序尾块与本次矢量数据寄存器的主块数据拼接后写入UB，再将本次尾块更新至非对齐寄存器。连续搬出结束后，调用后处理接口写入最后一次缓存的尾块。
 
-**表6** 非对齐搬出接口的配合关系
+**表3** 非对齐搬出接口的配合关系
 
 | 主搬出方式 | 配套接口 | 说明 |
 | --- | --- | --- |
@@ -236,7 +149,7 @@ __simd_vf__ inline void load_align_post_update_vf(__ubuf__ half* dst, __ubuf__ h
 | [asc_storeunalign_postupdate](../store/asc_storeunalign_postupdate.md)的立即数偏移模式 | [asc_storeunalign_post_postupdate](../store/asc_storeunalign_post_postupdate.md) | 接口自动更新目的地址。 |
 | [asc_storeunalign_postupdate](../store/asc_storeunalign_postupdate.md)的地址寄存器偏移模式 | [asc_storeunalign_post](../store/asc_storeunalign_post.md) | 主搬出和后处理接口需复用同一个非对齐寄存器及地址寄存器。 |
 
-#### 非对齐搬入搬出示例
+##### 非对齐搬入搬出示例
 
 下图以`uint32_t`数据为例，展示连续非对齐搬入后再连续非对齐搬出的过程。搬入前置初始化和搬出后处理均位于循环外：连续搬入时，`asc_loadunalign_postupdate`更新的非对齐寄存器可供下一次搬入使用；连续搬出时，`asc_storeunalign_postupdate`将尾块保存在非对齐寄存器，最后一次循环结束后再统一写回。
 
@@ -273,11 +186,11 @@ __simd_vf__ inline void load_store_unalign_vf(__ubuf__ uint32_t* dst, __ubuf__ u
 
 示例中`count`为每次搬运的元素个数。`src`和`dst`分别由搬入、搬出接口自动更新，循环内需要复用各自的非对齐寄存器。`count`不超过单个矢量数据寄存器可容纳的元素个数，且搬入、搬出地址范围必须位于实际可用UB空间内。
 
-### b64数据类型的搬运
+#### b64数据类型的搬运
 
 以下接口支持b64数据类型。
 
-**表7** 支持b64数据类型的接口
+**表4** 支持b64数据类型的接口
 
 | 支持的数据类型 | 接口 |
 | --- | --- |
@@ -305,3 +218,92 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
     asc_storealign_pack(output, src_reg, store_offset, mask_b64);
 }
 ```
+
+## API列表
+
+根据数据访问方式、搬入后的数据排布以及是否需要自动更新地址，选择相应接口。
+
+### 矢量数据寄存器搬入
+
+#### 对齐搬入
+
+**表5** 矢量数据寄存器对齐搬入接口
+
+| 接口名称 | 模式 | 接口描述 | 地址对齐要求 | 最细粒度公共头文件 |
+| --- | --- | --- | --- | --- |
+| [asc_loadalign](asc_loadalign.md) | 连续对齐搬入 | 连续搬入一个VL长度的数据，由用户更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign](asc_loadalign.md) | 立即数偏移搬入模式 | 从源起始地址偏移指定距离后搬入一个VL长度的数据。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign](asc_loadalign.md) | 地址寄存器偏移搬入模式 | 按地址寄存器指定的偏移搬入一个VL长度的数据。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign](asc_loadalign.md) | 非连续对齐搬入模式 | 按配置的DataBlock步长非连续搬入8个DataBlock。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 立即数偏移搬入模式 | 搬入一个VL长度的数据，并按立即数偏移更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 非连续对齐搬入模式 | 非连续搬入8个DataBlock，并自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_datablock_strided](asc_loadalign_datablock_strided.md) | 非连续对齐搬入模式 | 按配置的DataBlock步长非连续搬入8个DataBlock，通过返回值返回结果。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 对齐搬入模式 | 将一个DataBlock广播到整个矢量数据寄存器。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取一个DataBlock并广播。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_datablock](asc_loadalign_brc_datablock.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取一个DataBlock并广播。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_datablock_postupdate](asc_loadalign_brc_datablock_postupdate.md) | Post Update搬入模式 | 将一个DataBlock广播到整个矢量数据寄存器，并自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 对齐搬入模式 | 将一个元素广播到整个矢量数据寄存器。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取一个元素并广播。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem](asc_loadalign_brc_elem.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取一个元素并广播。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem_postupdate](asc_loadalign_brc_elem_postupdate.md) | Post Update搬入模式 | 将一个元素广播到整个矢量数据寄存器，并自动更新源地址。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 对齐搬入模式 | 连续读取8个元素，并将每个元素广播到一个DataBlock。 | b16为16字节，b32为32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取8个元素，并分别广播到一个DataBlock。 | b16为16字节，b32为32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem2datablock](asc_loadalign_brc_elem2datablock.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取8个元素，并分别广播到一个DataBlock。 | b16为16字节，b32为32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_brc_elem2datablock_postupdate](asc_loadalign_brc_elem2datablock_postupdate.md) | Post Update搬入模式 | 连续读取并广播8个元素，并自动更新源地址。 | b16为16字节，b32为32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 对齐搬入模式 | 读取2×VL长度的数据，解交织后写入两个矢量数据寄存器。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并解交织。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_deintlv](asc_loadalign_deintlv.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并解交织。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_deintlv_postupdate](asc_loadalign_deintlv_postupdate.md) | Post Update搬入模式 | 读取数据并解交织到两个矢量数据寄存器，同时自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 对齐搬入模式 | 读取2×VL长度的数据，保留偶数下标元素。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍下采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍下采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample_postupdate](asc_loadalign_downsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍下采样，同时自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 对齐搬入模式 | 读取VL/2长度的数据，将每个元素重复两次。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍上采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍上采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample_postupdate](asc_loadalign_upsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍上采样，同时自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 对齐搬入模式 | 读取VL/2长度的数据，在每个源元素后补1个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据，在每个源元素后补1个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack](asc_loadalign_unpack.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据，在每个源元素后补1个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack_postupdate](asc_loadalign_unpack_postupdate.md) | Post Update搬入模式 | 读取VL/2长度的数据，在每个源元素后补1个0，并自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 对齐搬入模式 | 读取VL/4长度的数据，在每个源元素后补3个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据，在每个源元素后补3个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack4](asc_loadalign_unpack4.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据，在每个源元素后补3个0。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_unpack4_postupdate](asc_loadalign_unpack4_postupdate.md) | Post Update搬入模式 | 读取VL/4长度的数据，在每个源元素后补3个0，并自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+
+#### 非对齐搬入
+
+**表6** 矢量数据寄存器非对齐搬入接口
+
+| 接口名称 | 模式 | 接口描述 | 地址对齐要求 | 最细粒度公共头文件 |
+| --- | --- | --- | --- | --- |
+| [asc_load](asc_load.md) | 连续非对齐搬入模式 | 搬入一个VL长度的数据，由用户更新源地址。该接口为易用性接口。 | 按`dtype`对齐 | `c_api/composite/loadunalign_composite.h` |
+| [asc_loadunalign_pre](asc_loadunalign_pre.md) | 源地址预处理模式 | 根据源地址初始化非对齐寄存器。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadunalign.h` |
+| [asc_loadunalign_pre](asc_loadunalign_pre.md) | 地址寄存器偏移预处理模式 | 根据源地址和地址寄存器偏移初始化非对齐寄存器。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadunalign.h` |
+| [asc_loadunalign](asc_loadunalign.md) | 连续非对齐搬入模式 | 使用预处理结果搬入一个VL长度的数据，由用户更新源地址。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadunalign.h` |
+| [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md) | 连续非对齐搬入模式 | 使用预处理结果搬入指定数量的元素，并自动更新源地址和非对齐寄存器。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadunalign.h` |
+| [asc_loadunalign_postupdate](asc_loadunalign_postupdate.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置搬入数据，并自动更新偏移和非对齐寄存器。 | 按`dtype`对齐 | `c_api/reg_compute/load/loadunalign.h` |
+
+`asc_load`为易用性接口。对性能有要求的连续非对齐搬入场景，可使用`asc_loadunalign`或`asc_loadunalign_postupdate`。
+
+### 掩码寄存器搬入
+
+**表7** 掩码寄存器搬入接口
+
+| 接口名称 | 模式 | 接口描述 | 地址对齐要求 | 最细粒度公共头文件 |
+| --- | --- | --- | --- | --- |
+| [asc_loadalign](asc_loadalign.md) | 连续对齐搬入 | 连续搬入VL/8长度的数据，由用户更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign](asc_loadalign.md) | 立即数偏移搬入模式 | 从源起始地址偏移指定距离后搬入VL/8长度的数据。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign](asc_loadalign.md) | 地址寄存器偏移搬入模式 | 按地址寄存器指定的偏移搬入VL/8长度的数据。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_postupdate](asc_loadalign_postupdate.md) | 立即数偏移搬入模式 | 搬入VL/8长度的数据，并按立即数偏移更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_mask](asc_loadalign_mask.md) | 连续对齐搬入 | 连续搬入VL/8长度的数据，通过返回值返回结果。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 对齐搬入模式 | 读取VL/4长度的数据，保留偶数下标bit。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍下采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample](asc_loadalign_downsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍下采样。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_downsample_postupdate](asc_loadalign_downsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍下采样，同时自动更新源地址。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_mask_downsample](asc_loadalign_mask_downsample.md) | 对齐搬入模式 | 读取VL/4长度的数据，保留偶数下标bit，通过返回值返回结果。 | 32字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 对齐搬入模式 | 读取VL/16长度的数据，将每个bit重复两次。 | 16字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 立即数偏移搬入模式 | 从立即数偏移位置读取数据并进行2倍上采样。 | 16字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample](asc_loadalign_upsample.md) | 地址寄存器偏移搬入模式 | 从地址寄存器偏移位置读取数据并进行2倍上采样。 | 16字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_upsample_postupdate](asc_loadalign_upsample_postupdate.md) | Post Update搬入模式 | 读取数据并进行2倍上采样，同时自动更新源地址。 | 16字节 | `c_api/reg_compute/load/loadalign.h` |
+| [asc_loadalign_mask_upsample](asc_loadalign_mask_upsample.md) | 对齐搬入模式 | 读取VL/16长度的数据，将每个bit重复两次，通过返回值返回结果。 | 16字节 | `c_api/reg_compute/load/loadalign.h` |

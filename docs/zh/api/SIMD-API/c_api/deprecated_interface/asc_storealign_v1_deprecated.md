@@ -1,4 +1,4 @@
-# asc_storealign_pack_v2（废弃）
+# asc_storealign_pack_v2（无偏移，废弃）
 
 ## 产品支持情况
 
