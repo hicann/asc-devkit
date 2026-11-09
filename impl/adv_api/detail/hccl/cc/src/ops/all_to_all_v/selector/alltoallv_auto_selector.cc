@@ -74,11 +74,11 @@ SelectorStatus AlltoAllVAutoSelector::SelectAicpuAlgo(
     CHK_PRT_RET(
         CheckMeshNumEqualToClosNum(topoInfo, isMeshNumEqualToClosNum) != HCCL_SUCCESS,
         HCCL_ERROR("[AlltoAllVAutoSelector] failed to compare Mesh/CLOS rank counts."), SelectorStatus::NOT_MATCH);
-    CHK_PRT_RET(
-        !isMeshNumEqualToClosNum || topoInfo->userRankSize > CONCURRENT_RANK_LIMIT,
-        HCCL_WARNING("[AlltoAllVAutoSelector] topology does not satisfy Concurrent constraints."),
-        SelectorStatus::NOT_MATCH);
-    selectAlgName = "AicpuAllToAllVSoleMeshConcurrent";
+    if (isMeshNumEqualToClosNum && topoInfo->userRankSize <= CONCURRENT_RANK_LIMIT) {
+        selectAlgName = "AicpuAllToAllVSoleMeshConcurrent";
+    } else {
+        selectAlgName = "AicpuAllToAllVSoleMeshMultiJetty";
+    }
     HCCL_INFO("[AlltoAllVAutoSelector] Algo match[%s].", selectAlgName.c_str());
     return SelectorStatus::MATCH;
 #endif
