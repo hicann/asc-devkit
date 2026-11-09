@@ -138,7 +138,8 @@ def tpl_tilingkey_native_extract(tiling_key_list, decode_tiling_result, op_info)
         ):
             post_filter_tilingkey_list.append(x)
     tiling_key_list = post_filter_tilingkey_list
-    decode_tiling_result = {k: v for k, v in decode_tiling_result.items() if str(k) in tiling_key_list}
+    tiling_key_list_in_int_format = {int(x) for x in tiling_key_list}
+    decode_tiling_result = {k: v for k, v in decode_tiling_result.items() if k in tiling_key_list_in_int_format}
     return tiling_key_list, decode_tiling_result
 
 
