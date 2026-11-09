@@ -133,129 +133,24 @@ __simd_callee__ inline void asc_neg(vector_float& dst, vector_float src, vector_
 
 __simd_callee__ inline vector_float asc_neg(vector_float src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Computes element-wise absolute values of src under mask and stores the results in dst.
- *
- * @override_id asc_abs__Rvi8_vi8_vb
- * @archs 3510
- * @param [out] dst Destination operand (vector data register).
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline void asc_abs(vector_int8_t& dst, vector_int8_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Computes element-wise absolute values of src under mask and stores the results in dst.
- *
- * @override_id asc_abs__Rvi16_vi16_vb
- * @archs 3510
- * @param [out] dst Destination operand (vector data register).
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline void asc_abs(vector_int16_t& dst, vector_int16_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Computes element-wise absolute values of src under mask and stores the results in dst.
- *
- * @override_id asc_abs__Rvi32_vi32_vb
- * @archs 3510
- * @param [out] dst Destination operand (vector data register).
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline void asc_abs(vector_int32_t& dst, vector_int32_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Computes element-wise absolute values of src under mask and stores the results in dst.
- *
- * @override_id asc_abs__Rvf16_vf16_vb
- * @archs 3510
- * @param [out] dst Destination operand (vector data register).
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline void asc_abs(vector_half& dst, vector_half src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Computes element-wise absolute values of src under mask and stores the results in dst.
- *
- * @override_id asc_abs__Rvf32_vf32_vb
- * @archs 3510
- * @param [out] dst Destination operand (vector data register).
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline void asc_abs(vector_float& dst, vector_float src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Returns element-wise absolute values of src under mask.
- *
- * @override_id asc_abs__vi8_vb
- * @archs 3510
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline vector_int8_t asc_abs(vector_int8_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Returns element-wise absolute values of src under mask.
- *
- * @override_id asc_abs__vi16_vb
- * @archs 3510
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline vector_int16_t asc_abs(vector_int16_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Returns element-wise absolute values of src under mask.
- *
- * @override_id asc_abs__vi32_vb
- * @archs 3510
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline vector_int32_t asc_abs(vector_int32_t src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Returns element-wise absolute values of src under mask.
- *
- * @override_id asc_abs__vf16_vb
- * @archs 3510
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline vector_half asc_abs(vector_half src, vector_bool mask);
 
-/**
- * @ingroup simd_c_api.reg_compute.reg_arith
- * @brief Returns element-wise absolute values of src under mask.
- *
- * @override_id asc_abs__vf32_vb
- * @archs 3510
- * @param [in] src Source operand (vector data register).
- * @param [in] mask Mask register that controls whether each element participates in the computation.
- * A value of 1 selects the corresponding element; a value of 0 excludes it. Unselected elements are set to zero.
- */
 __simd_callee__ inline vector_float asc_abs(vector_float src, vector_bool mask);
 
 __simd_callee__ inline void asc_mull(

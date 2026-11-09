@@ -1,12 +1,3 @@
----
-okftype: reference.api
-description: "根据mask对源操作数矢量数据寄存器按元素取绝对值，结果写入目的操作数或通过函数返回值返回；输入为有符号整数类型最小负值时结果保留原值不变。"
-tag:
-  - roles: [compute]
-  - operations: [absolute]
-dependencies: []
-version: ">=9.2.0"
----
 # asc_abs
 
 ## 产品支持情况
