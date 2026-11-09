@@ -132,7 +132,19 @@ remove_python_package "asc_opc_tool" "asc_opc_tool" "asc_opc_tool"
 remove_empty_dir "${whl_install_dir}"
 remove_empty_dir "${sourcedir}/python"
 
-rm -rf "${sourcedir}/${pkg_arch_name}-linux/tikcpp/ascendc_kernel_cmake/legacy_modules/util/__pycache__"
+# RPM passes a positive instance count when another version remains installed.
+# DEB passes a nonnumeric action. Leave bytecode in place during RPM upgrades.
+if ! [ "${1:-0}" -gt 0 ] 2>/dev/null; then
+    # Python bytecode generated after installation is not in filelist.csv.
+    for module in legacy_modules fwk_modules; do
+        module_dir="${sourcedir}/${pkg_arch_name}-linux/tikcpp/ascendc_kernel_cmake/${module}"
+        [ -d "${module_dir}" ] || continue
+        if ! find "${module_dir}" -type d -name '__pycache__' -prune -exec rm -rf -- {} + \
+            -o -type f -name '*.pyc' -exec rm -f -- {} +; then
+            echo "[AscDevkit] [WARNING]: Failed to remove Python bytecode from ${module_dir}." >&2
+        fi
+    done
+fi
 remove_stub_softlinks
 preserve_rpm_owned_paths "${1:-}"
 remove_package_directories

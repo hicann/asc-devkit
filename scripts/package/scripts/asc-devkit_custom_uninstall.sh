@@ -163,9 +163,16 @@ custom_uninstall() {
         remove_empty_dir "${common_parse_dir}/python"
     fi
 
-    if [ -d "$common_parse_dir/$arch_linux_path/tikcpp/ascendc_kernel_cmake/legacy_modules/util/__pycache__" ];then
-        rm -rf "$common_parse_dir/$arch_linux_path/tikcpp/ascendc_kernel_cmake/legacy_modules/util/__pycache__"
-    fi
+    # Python bytecode generated after installation is not in filelist.csv.
+    local module module_dir
+    for module in legacy_modules fwk_modules; do
+        module_dir="$common_parse_dir/$arch_linux_path/tikcpp/ascendc_kernel_cmake/$module"
+        [ -d "$module_dir" ] || continue
+        if ! find "$module_dir" -type d -name '__pycache__' -prune -exec rm -rf -- {} + \
+            -o -type f -name '*.pyc' -exec rm -f -- {} +; then
+            log "WARNING" "Failed to remove Python bytecode from $module_dir."
+        fi
+    done
 
     # remove softlinks for stub libs in devlib/linux/${ARCH}
     remove_stub_softlink "$common_parse_dir"
