@@ -89,22 +89,19 @@ Fixpipe接口用于将矩阵乘结果从L0C Buffer搬运到GM。3510架构引入
 
 - 样例执行
 
-  在本样例目录下执行如下命令。通过`-DSCENARIO_NUM=1`或`-DSCENARIO_NUM=2`选择场景。
+  在本样例目录下执行如下命令，编译并运行指定场景。
 
   ```bash
-  mkdir -p build && cd build;
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=1 ..;make -j;   # 场景1：NZ2ND
+  SCENARIO_NUM=1                                                           # 场景编号：1=NZ2ND，2=NZ2NZ
+  mkdir -p build && cd build
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=$SCENARIO_NUM ..
+  make -j
   python3 ../scripts/gen_data.py
   ./demo
-  python3 ../scripts/verify_result.py output/output.bin output/golden.bin
-
-  # 切换场景前需清理cmake缓存
-  rm CMakeCache.txt
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=2 ..;make -j;   # 场景2：NZ2NZ
-  python3 ../scripts/gen_data.py
-  SCENARIO_NUM=2 ./demo
-  SCENARIO_NUM=2 python3 ../scripts/verify_result.py output/output.bin output/golden.bin
+  SCENARIO_NUM=$SCENARIO_NUM python3 ../scripts/verify_result.py output/output.bin output/golden.bin
   ```
+
+  `SCENARIO_NUM`是编译期宏（`add_definitions`），切换场景需重新cmake；`verify_result.py`则从环境变量读取该值来决定golden的排布，因此两处都要传。
 
   使用CPU调试或NPU仿真模式时，添加`-DCMAKE_ASC_RUN_MODE=cpu`或`-DCMAKE_ASC_RUN_MODE=sim`参数即可。
 

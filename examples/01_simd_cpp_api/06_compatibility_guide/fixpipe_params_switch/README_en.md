@@ -88,22 +88,19 @@ Run the following steps in the root directory of this example to build and run t
 
 - Run the example
 
-  Run the following commands in this example directory. Select scenario with `-DSCENARIO_NUM=1` or `-DSCENARIO_NUM=2`.
+  Run the following commands in this example directory to build and run the selected scenario.
 
   ```bash
-  mkdir -p build && cd build;
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=1 ..;make -j;   # Scenario 1: NZ2ND
+  SCENARIO_NUM=1                                                           # Scenario: 1=NZ2ND, 2=NZ2NZ
+  mkdir -p build && cd build
+  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=$SCENARIO_NUM ..
+  make -j
   python3 ../scripts/gen_data.py
   ./demo
-  python3 ../scripts/verify_result.py output/output.bin output/golden.bin
-
-  # Clear cmake cache before switching scenarios
-  rm CMakeCache.txt
-  cmake -DCMAKE_ASC_ARCHITECTURES=dav-2201 -DSCENARIO_NUM=2 ..;make -j;   # Scenario 2: NZ2NZ
-  python3 ../scripts/gen_data.py
-  SCENARIO_NUM=2 ./demo
-  SCENARIO_NUM=2 python3 ../scripts/verify_result.py output/output.bin output/golden.bin
+  SCENARIO_NUM=$SCENARIO_NUM python3 ../scripts/verify_result.py output/output.bin output/golden.bin
   ```
+
+  `SCENARIO_NUM` is a compile-time macro (`add_definitions`), so switching scenarios requires re-running cmake; `verify_result.py` reads the same value from the environment to decide the golden layout, so it has to be passed in both places.
 
   To build for Ascend 950PR&950DT products:
 

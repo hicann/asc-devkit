@@ -274,26 +274,31 @@ stages:
           -
             name: smoke executor
             timeout-minutes: 30
+            env:
+              RUN_URL: ${{ jobs.JOB_arm_compile.outputs.arm_run_url }}
             run: |
                 set -e
-                # set env
                 export WORKSPACE=${{ steps.process_checkout.outputs.path }}
+                export run_url="$RUN_URL"
                 export repo_name=${{env.repo_name}}
                 export pr_id=${{ env.MERGE_ID }}
                 export obs_path=${{env.obs_path}}
                 export AK=${{secrets.AK}}
                 export SK=${{secrets.SK}}
                 export obs_smoke_path=${{ env.obs_smoke_path }}
-                bash ${{ steps.process_checkout.outputs.path }}/pre_smoke.sh
+                ARCH=dav-2201 \
+                  PRESMOKE_MULTI_CARD_MODE=fixed NPU_SLOTS=1 TIMEOUT=120 \
+                  bash ${{ steps.process_checkout.outputs.path }}/pre_smoke.sh
           - name: upload
             uses: obs-upload
+            if: ${{ always() }}
             with:
               endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
               bucket: "ascend-ci"
               access-key: ${{ secrets.AK }}
               secret-key: ${{ secrets.SK }}
               artifact-path: "${{ steps.process_checkout.outputs.path }}/slog*.tar.gz"
-              object-prefix: ${obs_smoke_path}/plog/
+              object-prefix: ${{ env.obs_smoke_path }}/plog/
         if: env.TARGET_BRANCH == 'master'
         runs-on: ['self-hosted','npu=8','smoke=204']
         container:
