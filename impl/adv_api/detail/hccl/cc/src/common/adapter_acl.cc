@@ -101,7 +101,7 @@ HcclResult hcalrtGetDeviceInfo(u32 deviceId, aclrtDevAttr devAttr, s64& val)
 #ifndef AICPU_COMPILE
     static const std::set<aclrtDevAttr> supportType = {
         {ACL_DEV_ATTR_PHY_CHIP_ID},
-        {ACL_DEV_ATTR_SUPER_POD_DEVIDE_ID},
+        {ACL_DEV_ATTR_SUPER_POD_DEVICE_ID},
         {ACL_DEV_ATTR_SUPER_POD_SERVER_ID},
         {ACL_DEV_ATTR_SUPER_POD_ID},
         {ACL_DEV_ATTR_CUST_OP_PRIVILEGE}};

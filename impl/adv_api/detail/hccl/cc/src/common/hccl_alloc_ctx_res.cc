@@ -1250,7 +1250,7 @@ HcclResult CopyCcuOpParamToDevice(
     uint64_t opParamSize = sizeof(OpParam);
     CHK_RET(GetOrCreateCcuCtx(comm, tagParam, opParamSize, &opParamPtr));
     aclError aclRet = aclrtMemcpy(opParamPtr, opParamSize, &opParam, opParamSize, ACL_MEMCPY_HOST_TO_DEVICE);
-    CHK_RET(aclRet == ACL_ERROR_NONE ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+    CHK_RET(aclRet == ACL_SUCCESS ? HCCL_SUCCESS : HCCL_E_RUNTIME);
     opResCtx.algInfo[tilingIndex].opParam = reinterpret_cast<uint64_t>(opParamPtr);
     opResCtx.algInfo[tilingIndex].offset = initTiling->offset[tilingIndex];
     opResCtx.opParamSize[tilingIndex] = opParamSize;

@@ -68,17 +68,17 @@ aclError aclrtRecordEvent(aclrtEvent event, aclrtStream stream)
 {
     g_aclrtRecordEventLastEvent = event;
     g_aclrtRecordEventLastStream = stream;
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtStreamWaitEvent(aclrtStream stream, aclrtEvent event)
 {
     g_aclrtStreamWaitEventLastStream = stream;
     g_aclrtStreamWaitEventLastEvent = event;
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
-aclError aclrtResetEvent(aclrtEvent event, aclrtStream stream) { return ACL_ERROR_NONE; }
+aclError aclrtResetEvent(aclrtEvent event, aclrtStream stream) { return ACL_SUCCESS; }
 
 aclError aclrtGetDeviceInfo(uint32_t deviceId, aclrtDevAttr attr, int64_t* value)
 {
@@ -90,14 +90,14 @@ aclError aclrtGetDeviceInfo(uint32_t deviceId, aclrtDevAttr attr, int64_t* value
     } else if (attr == ACL_DEV_ATTR_VECTOR_CORE_NUM) {
         *value = g_aclrtGetDeviceInfoVectorNum;
     }
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtDestroyEvent(aclrtEvent event)
 {
     ++g_aclrtDestroyEventCallCount;
     g_aclrtDestroyEventLastEvent = event;
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 const char* aclrtGetSocName() { return " "; }
@@ -106,10 +106,10 @@ aclError aclrtDestroyStream(aclrtStream stream)
 {
     ++g_aclrtDestroyStreamCallCount;
     g_aclrtDestroyStreamLastStream = stream;
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
-aclError aclrtCreateEventWithFlag(aclrtEvent* event, uint32_t flag) { return ACL_ERROR_NONE; }
+aclError aclrtCreateEventWithFlag(aclrtEvent* event, uint32_t flag) { return ACL_SUCCESS; }
 
 aclError aclrtCreateEventExWithFlag(aclrtEvent* event, uint32_t flag)
 {
@@ -122,7 +122,7 @@ aclError aclrtCreateEventExWithFlag(aclrtEvent* event, uint32_t flag)
     } else {
         *event = g_aclrtCreateEventExWithFlagLastEventB;
     }
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtCreateStreamWithConfig(aclrtStream* stream, uint32_t priority, uint32_t flag)
@@ -132,7 +132,7 @@ aclError aclrtCreateStreamWithConfig(aclrtStream* stream, uint32_t priority, uin
         return 1;
     }
     *stream = g_aclrtCreateStreamWithConfigLastStream;
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtFree(void* devPtr)
@@ -140,7 +140,7 @@ aclError aclrtFree(void* devPtr)
     if (devPtr == nullptr) {
         return 1;
     }
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtMallocHost(void** hostPtr, size_t size)
@@ -149,7 +149,7 @@ aclError aclrtMallocHost(void** hostPtr, size_t size)
         return 1;
     }
     *hostPtr = std::malloc(size);
-    return *hostPtr == nullptr ? 1 : ACL_ERROR_NONE;
+    return *hostPtr == nullptr ? 1 : ACL_SUCCESS;
 }
 
 aclError aclrtFreeHost(void* hostPtr)
@@ -158,7 +158,7 @@ aclError aclrtFreeHost(void* hostPtr)
         return 1;
     }
     std::free(hostPtr);
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtMallocWithCfg(void** devPtr, size_t size, aclrtMemMallocPolicy policy, aclrtMallocConfig* cfg)
@@ -166,7 +166,7 @@ aclError aclrtMallocWithCfg(void** devPtr, size_t size, aclrtMemMallocPolicy pol
     if (devPtr == nullptr) {
         return 1;
     }
-    return ACL_ERROR_NONE;
+    return ACL_SUCCESS;
 }
 
 aclError aclrtBinaryGetFunction(const aclrtBinHandle binHandle, const char* kernelName, aclrtFuncHandle* funcHandle)

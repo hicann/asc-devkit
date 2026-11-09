@@ -180,7 +180,7 @@ int32_t AscendDevBinaryLazyRegister(const char* binBuf, size_t binSize, void** h
 {
     constexpr uint32_t optLen = 2;
     aclrtBinaryLoadOption opList[optLen] = {
-        {ACL_RT_BINARY_LOAD_OPT_LAZY_MAGIC, {ACL_RT_BINARY_MAGIC_ELF_AICORE}},
+        {ACL_RT_BINARY_LOAD_OPT_MAGIC, {ACL_RT_BINARY_MAGIC_ELF_AICORE}},
         {ACL_RT_BINARY_LOAD_OPT_LAZY_LOAD, {/* isLazyLoad = */ 1}}};
     aclrtBinaryLoadOptions opts = {opList, optLen};
     return aclrtBinaryLoadFromData(binBuf, binSize, &opts, handle);

@@ -29,7 +29,7 @@
 #define CHECK_ACL_PTR(x)                                \
     do {                                                \
         aclError __ret = x;                             \
-        if (__ret != ACL_ERROR_NONE) {                  \
+        if (__ret != ACL_SUCCESS) {                     \
             ASCENDLOGE("[Check]acl Error: %d.", __ret); \
             return nullptr;                             \
         }                                               \
@@ -38,7 +38,7 @@
 #define CHECK_ACL_FREE(x, ptr)                          \
     do {                                                \
         aclError __ret = x;                             \
-        if (__ret != ACL_ERROR_NONE) {                  \
+        if (__ret != ACL_SUCCESS) {                     \
             ASCENDLOGE("[Check]acl Error: %d.", __ret); \
             free(ptr);                                  \
             return;                                     \
@@ -48,7 +48,7 @@
 #define CHECK_ACL_ERR(x)                                \
     do {                                                \
         aclError __ret = x;                             \
-        if (__ret != ACL_ERROR_NONE) {                  \
+        if (__ret != ACL_SUCCESS) {                     \
             ASCENDLOGE("[Check]acl Error: %d.", __ret); \
             ;                                           \
             return __ret;                               \
@@ -58,7 +58,7 @@
 #define CHECK_ACL(x)                                    \
     do {                                                \
         aclError __ret = x;                             \
-        if (__ret != ACL_ERROR_NONE) {                  \
+        if (__ret != ACL_SUCCESS) {                     \
             ASCENDLOGE("[Check]acl Error: %d.", __ret); \
             return;                                     \
         }                                               \

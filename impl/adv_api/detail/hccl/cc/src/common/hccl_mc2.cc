@@ -545,7 +545,7 @@ HcclResult AllocComResourceByTilingCcu(
         "rankSize=%llu",
         opResCtx, *opResCtx, opResCtxSize, resCtx.workSpace, resCtx.workSpaceSize, resCtx.xnAddr, resCtx.ckeAddr,
         resCtx.rankId, resCtx.rankSize);
-    CHK_RET(aclRet == ACL_ERROR_NONE ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+    CHK_RET(aclRet == ACL_SUCCESS ? HCCL_SUCCESS : HCCL_E_RUNTIME);
     HCCL_INFO("[AllocComResourceByTilingCcu]end AllocComResourceByTilingCcu!");
     return HCCL_SUCCESS;
 }
