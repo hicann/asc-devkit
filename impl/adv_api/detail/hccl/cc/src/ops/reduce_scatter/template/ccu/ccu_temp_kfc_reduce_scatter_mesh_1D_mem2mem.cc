@@ -83,7 +83,7 @@ u64 CcuTempKfcReduceScatterMesh1DMem2Mem::CalcScratchMultiple(BufferType inBuffT
 }
 
 HcclResult CcuTempKfcReduceScatterMesh1DMem2Mem::FlattenChannelsToSingleDie(
-    HcclComm comm, std::vector<HcclChannelDesc>& channels)
+    const HcclComm comm, std::vector<HcclChannelDesc>& channels)
 {
     std::map<u32, std::vector<HcclChannelDesc>> rankIdToChannelDesc;
     CHK_RET(RestoreChannelMap(channels, rankIdToChannelDesc));
