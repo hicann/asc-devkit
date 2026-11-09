@@ -74,8 +74,8 @@ __aicore__ inline __inout_pipe__(MTE2) void LoadDataImpl(
     } else if (dstScope == Hardware::L1) {
         const uint8_t cacheMode = ExtractCacheMode(src);
         LoadData2DGM2L1Cal(
-            (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__gm__ PrimT<T>*)src.GetPhyAddr(), loadDataParams,
-            enablePreReadIgnoreSync, cacheMode);
+            (__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__gm__ PrimT<T>*)src.GetPhyAddr(), loadDataParams, cacheMode,
+            enablePreReadIgnoreSync);
     }
 }
 #else

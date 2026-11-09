@@ -555,7 +555,7 @@ __simd_callee__ inline void CastImpl(S& dstReg, V& srcReg, MaskReg& mask)
         } else {
             static_assert(allNotSupport, "current cast data type is not supported on current device!");
         }
-        CopyMerging(dstReg, dstCopyReg, mask);
+        CopyMergingImpl<DefaultType, ActualU, trait.layoutMode, V::trait>(dstReg, dstCopyReg, mask);
     } else {
         if constexpr (layoutMerge) {
             if constexpr (CheckRegTrait<S, RegTraitNumTwo>()) {

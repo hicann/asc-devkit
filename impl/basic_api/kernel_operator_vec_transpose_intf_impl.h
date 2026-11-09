@@ -67,7 +67,9 @@ __aicore__ inline void CheckTransDataTo5HDParams(const TransDataTo5HDParams& nch
 {
     using PrimType = PrimT<T>;
 
-#if (__NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162)
+#if (                                                                                               \
+    __NPU_ARCH__ == 3102 || __NPU_ARCH__ == 3510 || __NPU_ARCH__ == 5102 || __NPU_ARCH__ == 5162 || \
+    __NPU_ARCH__ == 9201)
     ASCENDC_DEBUG_ASSERT(
         (SupportType<PrimType, int8_t, uint8_t, int16_t, uint16_t, half, bfloat16_t, int32_t, uint32_t, float>()),
         KERNEL_LOG_INTERNAL(

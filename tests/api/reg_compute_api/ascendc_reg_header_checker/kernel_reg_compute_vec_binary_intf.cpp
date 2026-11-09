@@ -37,6 +37,21 @@ extern "C" __simd_vf__ void vec_binary_test()
     // __simd_callee__ inline void Div(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask);
     AscendC::Reg::Div(dstReg, srcReg0, srcReg1, mask);
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510 || __NPU_ARCH__ == 9201)
+    // Explicit algorithms must also accept the inferred register element type.
+    static constexpr AscendC::Reg::DivSpecificMode divFtzFalse = {
+        AscendC::Reg::MaskMergeMode::ZEROING, false, AscendC::DivAlgo::PRECISION_1ULP_FTZ_FALSE};
+    static constexpr AscendC::Reg::DivSpecificMode divPreciseFtzFalse = {
+        AscendC::Reg::MaskMergeMode::ZEROING, false, AscendC::DivAlgo::PRECISION_0ULP_FTZ_FALSE};
+    static constexpr AscendC::Reg::DivSpecificMode divPreciseFtzTrue = {
+        AscendC::Reg::MaskMergeMode::ZEROING, false, AscendC::DivAlgo::PRECISION_0ULP_FTZ_TRUE};
+    AscendC::Reg::Div<AscendC::Reg::DefaultType, &divFtzFalse>(dstReg, srcReg0, srcReg1, mask);
+    AscendC::Reg::Div<AscendC::Reg::DefaultType, &divPreciseFtzFalse>(dstReg, srcReg0, srcReg1, mask);
+    AscendC::Reg::Div<AscendC::Reg::DefaultType, &divPreciseFtzTrue>(dstReg, srcReg0, srcReg1, mask);
+    AscendC::Reg::RegTensor<half> halfDst, halfSrc0, halfSrc1;
+    AscendC::Reg::Div<AscendC::Reg::DefaultType, &divFtzFalse>(halfDst, halfSrc0, halfSrc1, mask);
+#endif
+
     // template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
     // __simd_callee__ inline void Max(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask);
     AscendC::Reg::Max(dstReg, srcReg0, srcReg1, mask);

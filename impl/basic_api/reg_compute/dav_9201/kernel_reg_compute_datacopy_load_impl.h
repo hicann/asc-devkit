@@ -321,7 +321,13 @@ __simd_callee__ inline void DataCopyUnAlignImpl(U& dstReg, UnalignReg& ureg, __u
     static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(
         SupportBytes<ActualT, 1, 2, 4, 8>(), "LoadUnAlign only support type b8/b16/b32/b64 on current device");
-    if constexpr (SupportBytes<T, 1>()) {
+    if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
+        static_assert(
+            SupportType<ActualT, complex32>() || SupportBytes<ActualT, 8>(),
+            "RegTraitNumTwo only support type complex32/b64 on current device!");
+        constexpr uint32_t twoRepeatNum = VECTOR_REG_WIDTH * 2 / sizeof(ActualT);
+        DataCopyUnAlignImpl<T, PostLiteral::POST_MODE_UPDATE, U>(dstReg, ureg, srcAddr, twoRepeatNum);
+    } else if constexpr (SupportBytes<T, 1>()) {
         vldus((RegTensor<uint8_t>&)dstReg, ureg, (__ubuf__ uint8_t*)srcAddr);
     } else {
         if constexpr (std::is_same_v<T, bool>) {
@@ -342,7 +348,6 @@ __simd_callee__ inline void LoadImpl(U& dstReg, __ubuf__ T* srcAddr)
     using ActualT = typename U::ActualT;
     static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(SupportBytes<ActualT, 1, 2, 4, 8>(), "Load only support type b8/b16/b32/b64 on current device");
-    static_assert(CheckRegTrait<U, RegTraitNumOne>(), "RegTensor only support RegTraitNumOne on current device!");
     UnalignRegForLoad ureg;
     DataCopyUnAlignPreImpl<T>(ureg, srcAddr);
     DataCopyUnAlignImpl<T, U>(dstReg, ureg, srcAddr);
@@ -417,10 +422,11 @@ template <typename T = DefaultType, DataCopyMode dataMode, PostLiteral postMode,
 __simd_callee__ inline void DataCopyImpl(
     U& dstReg, __ubuf__ T*& srcAddr, uint32_t dataBlockStride, uint32_t repeatStride, MaskReg& mask)
 {
+    using ActualT = typename U::ActualT;
     if constexpr (postMode == PostLiteral::POST_MODE_NORMAL) {
-        DataCopyImpl<T, dataMode, U>(dstReg, srcAddr, dataBlockStride, mask);
+        DataCopyImpl<T, dataMode, U>(
+            dstReg, srcAddr + repeatStride * ONE_BLK_SIZE / sizeof(ActualT), dataBlockStride, mask);
     } else {
-        using ActualT = typename U::ActualT;
         static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
         static_assert(CheckRegTrait<U, RegTraitNumOne>(), "RegTensor only support RegTraitNumOne on current device!");
         if constexpr (SupportBytes<ActualT, 1>()) {

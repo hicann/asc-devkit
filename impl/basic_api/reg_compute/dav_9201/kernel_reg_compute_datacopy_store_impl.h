@@ -312,10 +312,11 @@ template <typename T = DefaultType, DataCopyMode dataMode, PostLiteral postMode,
 __simd_callee__ inline void DataCopyImpl(
     __ubuf__ T*& dstAddr, U& srcReg, uint32_t dataBlockStride, uint32_t repeatStride, MaskReg& mask)
 {
+    using ActualT = typename U::ActualT;
     if constexpr (postMode == PostLiteral::POST_MODE_NORMAL) {
-        DataCopyImpl<T, dataMode, U>(dstAddr, srcReg, dataBlockStride, mask);
+        DataCopyImpl<T, dataMode, U>(
+            dstAddr + repeatStride * ONE_BLK_SIZE / sizeof(ActualT), srcReg, dataBlockStride, mask);
     } else {
-        using ActualT = typename U::ActualT;
         static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
         static_assert(CheckRegTrait<U, RegTraitNumOne>(), "RegTensor only support RegTraitNumOne on current device!");
         if constexpr (SupportBytes<ActualT, 1>()) {
@@ -433,7 +434,7 @@ __simd_callee__ inline void StoreImpl(__ubuf__ T* dstAddr, U& srcReg)
     static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
     static_assert(SupportBytes<ActualT, 1, 2, 4, 8>(), "Store only support type b8/b16/b32/b64 on current device");
     UnalignRegForStore ureg;
-    constexpr uint32_t count = GetVecLen() / sizeof(T);
+    constexpr uint32_t count = GetVecLen() * U::trait.REG_NUM / sizeof(ActualT);
     DataCopyUnAlignImpl<T, PostLiteral::POST_MODE_UPDATE, U>(dstAddr, srcReg, ureg, count);
     DataCopyUnAlignPostImpl<T, PostLiteral::POST_MODE_UPDATE>(dstAddr, ureg, 0);
 }

@@ -416,7 +416,7 @@ __simd_callee__ inline void SqrtImpl(U& dstReg, U& srcReg, MaskReg& mask)
                     HalfUnion subnormalThreshold;
                     subnormalThreshold.i = 0x03FF;
 
-                    vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+                    vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
                     vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
                     vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
                     vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
@@ -430,7 +430,7 @@ __simd_callee__ inline void SqrtImpl(U& dstReg, U& srcReg, MaskReg& mask)
                     NotNumUnion subnormalThreshold;
                     subnormalThreshold.i = 0x007FFFFF;
 
-                    vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+                    vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
                     vmuls(tmpReg, srcRegCopy, multiplyFactor0.f, mask, modeValue);
                     vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
                     vsqrt(dstRegCopy, srcRegCopy, mask, modeValue);
@@ -612,7 +612,7 @@ __simd_callee__ inline void Log2Impl(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             LogXImpl<sprMode.mrgMode>(dstRegCopy, srcRegCopy, mask, ln2Reciprocal);
@@ -629,7 +629,7 @@ __simd_callee__ inline void Log2Impl(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             vln(dstRegCopy, srcRegCopy, mask, modeValue);
@@ -679,7 +679,7 @@ __simd_callee__ inline void Log10Impl(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             LogXImpl<sprMode.mrgMode>(dstRegCopy, srcRegCopy, mask, ln10Reciprocal);
@@ -696,7 +696,7 @@ __simd_callee__ inline void Log10Impl(U& dstReg, U& srcReg, MaskReg& mask)
             RegTensor<ActualT> srcRegCopy = srcReg;
             MaskReg cmpMaskReg;
 
-            vcmps_lt(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
+            vcmps_le(cmpMaskReg, srcRegCopy, subnormalThreshold.f, mask);
             vmuls(tmpReg, srcRegCopy, multiplyFactor.f, mask, modeValue);
             vsel(srcRegCopy, tmpReg, srcRegCopy, cmpMaskReg);
             vln(dstRegCopy, srcRegCopy, mask, modeValue);

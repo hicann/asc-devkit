@@ -1030,10 +1030,13 @@ __aicore__ inline void VecCopyLevel0Template(
 {
     BasicAPIMaskStruct maskArrayStruct;
     if constexpr (isMaskBitMode) {
-        ASCENDC_ASSERT(maskCount == 0, "maskCount must be 0 when isMaskBitMode is true.");
+        ASCENDC_ASSERT(
+            maskCount == 0, { KERNEL_LOG(KERNEL_ERROR, "maskCount must be 0 when isMaskBitMode is true."); });
         maskArrayStruct = *(reinterpret_cast<const BasicAPIMaskStruct*>(maskArray));
     } else {
-        ASCENDC_ASSERT(maskArray == nullptr, "maskArray must be nullptr when isMaskBitMode is false.");
+        ASCENDC_ASSERT(maskArray == nullptr, {
+            KERNEL_LOG(KERNEL_ERROR, "maskArray must be nullptr when isMaskBitMode is false.");
+        });
     }
     __ubuf__ uint64_t* maskBuf = nullptr;
 
@@ -1137,8 +1140,8 @@ __aicore__ inline void DataCopySliceUB2GMImpl(
  * ************************************************************************************************* */
 __aicore__ inline void CheckSrcGmDataCopyExtParamsRange(const DataCopyExtParams& intriParams)
 {
-    ASCENDC_ASSERT((intriParams.srcStride <= static_cast<int64_t>(1ul << 40 - 1)), {
-        KERNEL_LOG(KERNEL_ERROR, "srcStride is %ld, which should be no more than 2^40-1", intriParams.srcStride);
+    ASCENDC_ASSERT((intriParams.srcStride < static_cast<int64_t>(1ul << 40)), {
+        KERNEL_LOG(KERNEL_ERROR, "srcStride is %ld, which should be less than 2^40", intriParams.srcStride);
     });
     ASCENDC_ASSERT((intriParams.srcStride >= (-static_cast<int64_t>(intriParams.blockLen))), {
         KERNEL_LOG(
@@ -1282,8 +1285,8 @@ __aicore__ inline void DataCopyPadUB2GMImpl(
         __gm__ uint8_t* workSpace = GetSysWorkSpacePtr();
         AscendCUtils::CheckGmMemOverflowNormal(dst, workSpace, false, true, intriParams);
     }
-    ASCENDC_ASSERT((intriParams.dstStride <= static_cast<int64_t>(1ul << 40 - 1)), {
-        KERNEL_LOG(KERNEL_ERROR, "dstStride is %ld, which should be no more than 2^40-1", intriParams.dstStride);
+    ASCENDC_ASSERT((intriParams.dstStride < static_cast<int64_t>(1ul << 40)), {
+        KERNEL_LOG(KERNEL_ERROR, "dstStride is %ld, which should be less than 2^40", intriParams.dstStride);
     });
     ASCENDC_ASSERT((intriParams.dstStride >= static_cast<int64_t>(0)), {
         KERNEL_LOG(KERNEL_ERROR, "dstStride is %ld, which should be no less than 0", intriParams.dstStride);
