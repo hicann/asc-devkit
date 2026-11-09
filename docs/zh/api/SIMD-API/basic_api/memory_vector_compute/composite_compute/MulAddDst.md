@@ -191,6 +191,7 @@ PAR列表示矢量计算单元一个迭代能够处理的元素个数。
 - 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#section668772811100)。
 - 源操作数的数据类型为half、目的操作数的数据类型为float的情况下，不支持地址重叠。
+- 对于本接口不支持的数据类型组合，可以通过将源数据类型转换为支持的数据类型，调用本接口进行计算后再转换为目标数据类型。例如，若需对bfloat16_t数据进行乘加计算，建议先通过[Cast](../type_conversion/Cast.md)接口将源操作数转换为float，再调用本接口完成float类型的乘加计算，最后按需将结果转换为bfloat16_t。
 <!-- npu="A3,910b,950" id17 -->
 - 当参数count或repeatTime取值为0时，该接口的行为如下：
   <!-- npu="A3,910b" id18 -->
