@@ -39,6 +39,11 @@ OOM_STORAGE_SHAPE_INIT_PATTERN = (
     "tmpTilingSizeForOOM + {legacy_len_offset};\n"
     "    bool hasOomStorageShape = "
     "AscendC::OOMHasStorageShapeHeader(oomStorageShapeCursor);\n"
+    "    if (!hasOomStorageShape && "
+    "AscendC::OOMHasStorageShapeHeader(oomStorageShapeCursor - 8)) {{\n"
+    "        oomStorageShapeCursor -= 8;\n"
+    "        hasOomStorageShape = true;\n"
+    "    }}\n"
     "    if (hasOomStorageShape) {{\n"
     "        oomStorageShapeCursor += 2;\n"
     "    }}\n"
@@ -402,7 +407,9 @@ def add_op_param_to_workspace(
         legacy_len_count = len([item for item in input_output_info if item is not None]) + 1
         if opinfo.output_shape_depend_on_compute is not None and len(opinfo.output_shape_depend_on_compute) > 0:
             legacy_len_count += 1
-        source += OOM_STORAGE_SHAPE_INIT_PATTERN.format(legacy_len_offset=8 * legacy_len_count)
+        # 8 * legacy_len_count skips the oom size table; the extra 8 skips the
+        # atomicIndex slot, so the extension header is probed at tilingPtr +  opParaSize
+        source += OOM_STORAGE_SHAPE_INIT_PATTERN.format(legacy_len_offset=8 * legacy_len_count + 8)
 
     for io_index, op_param in enumerate(input_output_info):
         if op_param is None:

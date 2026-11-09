@@ -96,7 +96,7 @@ class MockMatch:
 
 class TestCompileOp(unittest.TestCase):
     def test_oom_storage_shape_patterns(self):
-        init_source = ascendc_compile_gen_code.OOM_STORAGE_SHAPE_INIT_PATTERN.format(legacy_len_offset=32)
+        init_source = ascendc_compile_gen_code.OOM_STORAGE_SHAPE_INIT_PATTERN.format(legacy_len_offset=40)
         tensor_source = ascendc_compile_gen_code.OOM_TENSOR_REGISTER_PATTERN.format(
             param_name="x", element_size=4, input_shape_len="inputShapeLen"
         )
@@ -104,8 +104,12 @@ class TestCompileOp(unittest.TestCase):
             param_name="xs", element_size=2
         )
 
-        self.assertIn("tmpTilingSizeForOOM + 32", init_source)
+        self.assertIn("tmpTilingSizeForOOM + 40", init_source)
         self.assertIn("OOMHasStorageShapeHeader(oomStorageShapeCursor)", init_source)
+        self.assertIn(
+            "if (!hasOomStorageShape && AscendC::OOMHasStorageShapeHeader(oomStorageShapeCursor - 8))", init_source
+        )
+        self.assertIn("oomStorageShapeCursor -= 8", init_source)
         self.assertIn(
             "OOMTryRegisterTensorWithStorageShape(oomStorageShapeCursor, x, static_cast<uint64_t>(4))", tensor_source
         )
@@ -7672,14 +7676,14 @@ void add_custom()
             cfg.current().config["tir.op_debug_config"] = ["oom"]
             dfx_string = DFXSectionGenerator()._tran_dfx_info_to_string("tiling")
             compare_string = [
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 56) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 48) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 40) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 32) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 24) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 16) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 8) & 0xff)",
-                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0 + 2) >> 0) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 56) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 48) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 40) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 32) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 24) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 16) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 8) & 0xff)",
+                "(((((sizeof(tiling) + 7) / 8) * 8 + 8 + 8 * 0) >> 0) & 0xff)",
             ]
             self.assertEqual(dfx_string, compare_string)
 
@@ -7769,7 +7773,7 @@ void add_custom()
             value_string = DFXSectionGenerator()._tran_dfx_info_to_value_string(size_value)
 
             aligned_size = ((size_value + 7) // 8) * 8  # 16 -> 16
-            total_size = aligned_size + 8 + 8 * 0 + 2  # 16 + 8 + 0 + 2 = 26
+            total_size = aligned_size + 8 + 8 * 0  # 16 + 8 + 0 = 24
             expected_string = [
                 str((total_size >> 56) & 0xFF),
                 str((total_size >> 48) & 0xFF),
