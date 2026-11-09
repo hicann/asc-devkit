@@ -24,6 +24,9 @@
 - Atlas训练系列产品：不支持
 <!-- end id9 -->
 
+
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/RTC/aclrtcCreateProg_res.md#id1 -->
+
 ## 功能说明<a name="section618mcpsimp"></a>
 
 通过给定的参数，创建编译程序的实例。

@@ -3606,26 +3606,43 @@
     -   [DataStoreBarrier](AI-CPU-API/DataStoreBarrier.md)
 
 -   [附录](appendix/appendix.md)
+    <!-- npu="950,A3,910b" id1 -->
     -   [API流水类型汇总](appendix/api_pipeline_type_summary.md)
     -   [Cube指令理论性能汇总](appendix/cube_instruction_theoretical_perf_summary.md)
     -   [Vector指令理论性能汇总](appendix/vector_instruction_theoretical_perf_summary.md)
+    <!-- end id1 -->
+    <!-- npu="A3,910b" id2 -->
     -   [Mask接口汇总](appendix/Mask_interface_summary.md)
+    <!-- end id2 -->
+    <!-- npu="950,A3,910b" id3 -->
     -   [Mmad接口边界值汇总](appendix/mmad_interface_boundary_value_summary.md)
+    <!-- end id3 -->
+    <!-- npu="950" id4 -->
     -   [矩阵计算搬出相关接口边界值汇总](appendix/matrix_compute_move_out_interface_boundary_value_summary.md)
+    <!-- end id4 -->
+    <!-- npu="A3,910b" id5 -->
     -   [Memory矢量计算接口边界值汇总](appendix/memory_vector_compute_interface_boundary_value_summary.md)
+    <!-- end id5 -->
+    <!-- npu="950" id6 -->
     -   [Reg矢量计算接口边界值汇总](appendix/reg_vector_compute_interface_boundary_value_summary.md)
     -   [Reg矢量计算接口MergeMode支持情况汇总](appendix/reg_vector_compute_interface_mergemode_support_summary.md)
     -   [Reg矢量计算接口软仿情况汇总](appendix/reg_vector_compute_interface_soft_simulation_summary.md)
     -   [Reg矢量计算接口精度标准汇总](appendix/reg_vector_compute_interface_precision_standard_summary.md)
     -   [Reg矢量计算接口指令单双发汇总](appendix/reg_vector_compute_interface_instruction_single_dual_issue_summary.md)
     -   [Reg矢量计算接口理论性能汇总](appendix/reg_vector_compute_interface_theoretical_perf_summary.md)
+    -   [C-API-Reg矢量计算接口理论性能汇总](appendix/c_api_reg_vector_compute_theoretical_perf_summary.md)
+    <!-- end id6 -->
+    <!-- npu="A3,910b" id7 -->
     -   [原子操作类接口边界值汇总](appendix/atomic_operations_interface_boundary_value_summary.md)
+    <!-- end id7 -->
     -   [SIMT接口软仿情况汇总](appendix/SIMT_interface_soft_simulation_summary.md)
     -   [SIMT接口精度标准汇总](appendix/SIMT_interface_precision_standard_summary.md)
     -   [SIMT指令理论性能汇总](appendix/SIMT_instruction_theoretical_perf_summary.md)
     -   [废弃接口](appendix/deprecated_interface.md)
+    <!-- npu="A3,910b,950,310b,310p" id8 -->
     -   [接口变更说明](appendix/interface_change_description.md)
     -   [Release Notes](appendix/Release_Notes/release_notes.md)
         -   [CANN 9.2.0](appendix/Release_Notes/CANN_9_2_0.md)
         -   [CANN 9.1.0](appendix/Release_Notes/CANN_9_1_0.md)
         -   [CANN 9.0.0](appendix/Release_Notes/CANN_9_0_0.md)
+    <!-- end id8 -->

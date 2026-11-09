@@ -30,6 +30,9 @@
 - Kirin 9030处理器系列产品：不支持
 <!-- end id2 -->
 
+
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/SuperKernel/SK_BIND_res.md#id1 -->
+
 ## 功能说明<a name="section259105813316"></a>
 
 本接口为算子SuperKernel场景提供绑定原核函数（Kernel）和SK子函数的能力。核函数（Kernel）直调算子的完整适配方法请参见[核函数（Kernel）直调算子额外适配说明](../../../guide/programming_guide/advanced_programming/super_kernel/kernel_direct_call_adaptation.md)。

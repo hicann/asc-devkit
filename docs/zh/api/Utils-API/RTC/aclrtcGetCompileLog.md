@@ -24,6 +24,9 @@
 - Atlas训练系列产品：不支持
 <!-- end id9 -->
 
+
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/RTC/aclrtcGetCompileLog_res.md#id1 -->
+
 ## 功能说明<a name="section618mcpsimp"></a>
 
 获取编译日志的内容，以字符串形式保存。

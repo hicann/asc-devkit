@@ -24,6 +24,9 @@
 - Atlas训练系列产品：不支持
 <!-- end id9 -->
 
+
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/RTC/aclrtcGetCompileLogSize_res.md#id1 -->
+
 ## 功能说明<a name="section618mcpsimp"></a>
 
 获取编译日志的大小。用于在[aclrtcGetCompileLog](aclrtcGetCompileLog.md)获取日志内容时分配对应大小的内存空间。

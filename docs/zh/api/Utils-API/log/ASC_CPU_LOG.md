@@ -24,6 +24,9 @@
 - Atlas训练系列产品：支持
 <!-- end id9 -->
 
+
+<!-- @ref: asc-devkit/res/docs/zh/api/Utils-API/log/ASC_CPU_LOG_res.md#id1 -->
+
 ## 功能说明<a name="section618mcpsimp"></a>
 
 提供Host侧打印Log的功能。开发者可以在算子的TilingFunc代码中使用ASC\_CPU\_LOG\_XXX接口来输出相关内容。一般情况下，开发者也可以选择使用printf等Host侧通用的打印方式进行调试。然而，在Tiling下沉场景中，由于Tiling函数运行在AI CPU上，必须使用本接口进行打印。
