@@ -146,7 +146,7 @@ FTZ（Flush-To-Zero）是一种浮点运算模式，当结果为[Subnormal](../.
 
 #### 使用建议
 
-- 一般场景可使用`div(src0, src1)`，在`--cce-ftz=true`（默认值）时采用硬件除法路径，避免高精度差值补偿的额外开销。
+- 一般场景可使用div(src0, src1)，采用默认的1 ULP精度算法，Subnormal处理跟随--cce-ftz编译选项。
 - 需要0 ULP精度且Subnormal处理跟随编译选项时，使用`div<true>(src0, src1)`。
 - 需要0 ULP精度且始终采用FTZ模式时，使用`div<true, div_algo::PRECISION_0ULP_FTZ_TRUE>(src0, src1)`。
 - 需要保留Subnormal结果且不依赖编译选项时，使用`div<false, div_algo::PRECISION_1ULP_FTZ_FALSE>(src0, src1)`；若同时要求0 ULP精度，使用`div<false, div_algo::PRECISION_0ULP_FTZ_FALSE>(src0, src1)`。
