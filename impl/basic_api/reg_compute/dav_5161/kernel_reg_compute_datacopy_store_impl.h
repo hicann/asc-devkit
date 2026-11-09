@@ -358,6 +358,28 @@ __simd_callee__ inline void DataCopyUnAlignPostImpl(__ubuf__ T* dstAddr, Unalign
         }
     }
 }
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void StoreImpl(__ubuf__ T* dstAddr, U& srcReg, uint32_t count)
+{
+    using ActualT = typename U::ActualT;
+    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
+    static_assert(SupportBytes<ActualT, 1, 2, 4>(), "Store only support type b8/b16/b32 on current device");
+    static_assert(CheckRegTrait<U, RegTraitNumOne>(), "RegTensor only suppoort RegTraitNumOne on current device!");
+    UnalignRegForStore ureg;
+    DataCopyUnAlignImpl<T, PostLiteral::POST_MODE_UPDATE, U>(dstAddr, srcReg, ureg, count);
+    DataCopyUnAlignPostImpl<T, PostLiteral::POST_MODE_UPDATE>(dstAddr, ureg, 0);
+}
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void StoreImpl(__ubuf__ T* dstAddr, U& srcReg)
+{
+    constexpr uint32_t count = GetVecLen() / sizeof(T);
+    StoreImpl(dstAddr, srcReg, count);
+}
+#endif
+
 } // namespace Reg
 } // namespace AscendC
 #endif // ASCENDC_MODULE_REG_COMPUTE_DATACOPY_STORE_IMPL_H
