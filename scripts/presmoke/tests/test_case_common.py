@@ -88,6 +88,49 @@ wait "$second"; second_rc=$?
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse(collision.exists())
 
+    def test_skip_applies_to_arch_gates_the_shell_side_skip(self) -> None:
+        """run.sh 里的 SKIP_* 是独立于 Python 选型层的第二条执行路径，也必须认 arch。
+
+        不认 arch 的话，一个 archs=["dav-3510"] 的登记会在 A2 上也把用例跳掉。
+        """
+        project_root = Path(__file__).resolve().parents[3]
+        case_common = project_root / "scripts/presmoke/case_common.sh"
+
+        cases = [
+            # (SKIP_ARCHS 声明, 当前 ARCH, 期望是否跳过)
+            ("", "dav-3510", True),  # 不限 arch：照旧跳
+            ("SKIP_ARCHS=(dav-3510)", "dav-3510", True),
+            ("SKIP_ARCHS=(dav-3510)", "dav-2201", False),  # 这条是本次修复的点
+            ("SKIP_ARCHS=(dav-2201 dav-3510)", "dav-2201", True),
+        ]
+        tmp_build = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp_build.cleanup)
+        for declaration, arch, expect_skip in cases:
+            with self.subTest(declaration=declaration, arch=arch):
+                script = f"""
+set -u
+source {case_common}
+SKIP_REASON='because'
+SKIP_MODES=(npu)
+{declaration}
+ARCH={arch}
+MODE=npu
+case_build() {{ echo RAN-build; }}
+case_run() {{ echo RAN-run; }}
+case_verify() {{ :; }}
+case_clean() {{ :; }}
+BUILD_DIR={tmp_build.name}/build
+presmoke_case_main all
+"""
+                result = subprocess.run(["bash", "-c", script], text=True, capture_output=True, check=False)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                if expect_skip:
+                    self.assertIn("SKIP: because", result.stdout)
+                    self.assertNotIn("RAN-run", result.stdout)
+                else:
+                    self.assertNotIn("SKIP:", result.stdout)
+                    self.assertIn("RAN-run", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

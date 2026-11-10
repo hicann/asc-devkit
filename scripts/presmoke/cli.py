@@ -216,6 +216,7 @@ def run_and_emit(args: argparse.Namespace, config: RuntimeConfig, cells: list, s
             keep_artifacts=args.keep_artifacts,
             jobs=config.jobs,
             npu_slots=args.npu_slots,
+            cards=tuple(os.environ.get("PRESMOKE_SHARED_CARDS", "").split()),
             cpu_run_slots=config.cpu_run_slots,
             stages=args.stages,
         ),

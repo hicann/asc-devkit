@@ -237,19 +237,6 @@ detect_cpu_count() {
     getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1
 }
 
-resolve_npu_jobs_for_cpus() {
-    local cpus="$1"
-    if (( cpus >= 160 )); then
-        echo 12
-    elif (( cpus >= 80 )); then
-        echo 8
-    elif (( cpus >= 24 )); then
-        echo 6
-    else
-        echo 4
-    fi
-}
-
 resolve_shard_parallel_value() {
     local value="$1"
     local resolved="$2"
@@ -268,7 +255,23 @@ resolve_multi_card_shard_parallel() {
     if (( per_card_cpus < 1 )); then
         per_card_cpus=1
     fi
-    shard_jobs="$(resolve_npu_jobs_for_cpus "$per_card_cpus")"
+    # Keep several independent builds feeding each card while earlier cases run.
+    # Most samples have few translation units, so large make -j values do not use
+    # the CPU budget efficiently. Budget four CPUs per build, which keeps
+    # shard_make_jobs at 4 on every runner, and cap the build count to limit
+    # compiler memory pressure.
+    # 每个 build 分 4 个 CPU 是两台 CI runner 实测值的共同解：
+    #   A2  192 核 / 8 卡 -> per_card_cpus=24 -> jobs=6、make_jobs=4
+    #   A5  256 核 / 4 卡 -> per_card_cpus=64 -> jobs=16、make_jobs=4
+    # 上限 16 在这两台上都不生效（A5 恰好等于 16），只用来兜住更大的机器 ——
+    # 16 也是目前实测过的最大值。
+    shard_jobs=$(( per_card_cpus / 4 ))
+    if (( shard_jobs < 1 )); then
+        shard_jobs=1
+    elif (( shard_jobs > 16 )); then
+        shard_jobs=16
+    fi
+    shard_jobs="$(resolve_shard_parallel_value "$JOBS" "$shard_jobs")"
     shard_make_jobs=$(( per_card_cpus / shard_jobs ))
     if (( shard_make_jobs < 1 )); then
         shard_make_jobs=1
@@ -615,6 +618,12 @@ write_final_report() {
 }
 
 main() {
+    # 先做静态对齐检查：examples 下有「编译运行」段却没有 run.sh 的样例，对 strict-schedule
+    # 和分片校验都是不存在的，会静默漏跑。这个检查不到 1s，放最前面，省掉十几分钟后才报错。
+    if ! run_python_module presmoke.check_case_coverage; then
+        log "presmoke_abort reason=case_coverage_mismatch"
+        return 1
+    fi
     acquire_lock
     log "presmoke_start out_root=$OUT_ROOT"
     if should_clean_cann_vendors "$@"; then
@@ -630,7 +639,27 @@ main() {
         [[ -n "$card" ]] && cards+=("$card")
     done <<< "$cards_csv"
     if should_run_multi_card "${#cards[@]}" "$@"; then
-        run_multi_card_presmoke "$cards_csv" "$@"
+        # 默认 fixed：shared 当默认会让 test_orchestrate 里 4 个断言多卡分片行为的用例
+        # 直接失败（它们等的是 multi_card_start / multi_card_fixed_shards / full_cardN
+        # 目录）。shared 还没有任何一轮 CI 数据，先当显式 opt-in。
+        if [[ "${PRESMOKE_MULTI_CARD_MODE:-fixed}" == "fixed" ]]; then
+            run_multi_card_presmoke "$cards_csv" "$@"
+        else
+            # 复用 fixed 的每卡预算再乘卡数，两种模式的 CPU 占用才可比：fixed 是每卡一个
+            # 子跑、各开 per_card_jobs 个 build worker，shared 只有一个进程，所以要
+            # jobs = per_card_jobs x 卡数、make_jobs 仍按每卡算。
+            # 原来的 (cpus+1)/2 在 256 核上会算出 jobs=128、make_jobs=2 —— build worker
+            # 比 NPU 槽多一个数量级，而 make -j2 又把单个 build 拖慢。
+            local jobs make_jobs shard_parallel per_card_jobs
+            shard_parallel="$(resolve_multi_card_shard_parallel "${#cards[@]}")"
+            IFS=$'\t' read -r per_card_jobs make_jobs _ _ <<< "$shard_parallel"
+            jobs=$(( per_card_jobs * ${#cards[@]} ))
+            (( jobs >= 1 )) || jobs=1
+            (( make_jobs >= 1 )) || make_jobs=1
+            log "multi_card_shared cards=${cards[*]} jobs=$jobs make_jobs=$make_jobs per_card_jobs=$per_card_jobs"
+            PRESMOKE_SHARED_CARDS="${cards[*]}" RUN_PRESMOKE_JOBS="$jobs" \
+                RUN_PRESMOKE_MAKE_JOBS="$make_jobs" run_presmoke "full_card${cards[0]}" "${cards[0]}" "$@"
+        fi
     else
         card="${cards[0]:-$PRIMARY_CARD}"
         run_presmoke "full_card${card}" "$card" "$@"

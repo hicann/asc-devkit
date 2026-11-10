@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable, List
 
@@ -55,6 +55,9 @@ class RunnerInfo:
     skip_modes: List[str]
     confidence: str
     reasons: List[str]
+    # 空表示该 skip 不限 arch；非空时只在列出的 arch 上生效。manifest 带的是完整声明，
+    # arch 在这里求值 —— 生成阶段按单 arch 一过滤，别的 arch 上就整条失效了。
+    skip_archs: List[str] = field(default_factory=list)
 
 
 def build_case_runner_cells_with_skips(
@@ -106,6 +109,7 @@ def load_runner_info(context: CaseRunnerContext, runner_dir: Path, manifest: dic
         skip_modes=list(info.get("skip_modes", [])),
         confidence=info.get("confidence", ""),
         reasons=list(info.get("reasons", [])),
+        skip_archs=list(info.get("skip_archs") or []),
     )
 
 
@@ -124,8 +128,12 @@ def arch_supported(context: CaseRunnerContext, info: RunnerInfo) -> bool:
     return False
 
 
+def skip_applies_to_arch(context: CaseRunnerContext, info: RunnerInfo) -> bool:
+    return not info.skip_archs or context.arch in info.skip_archs
+
+
 def append_skip_result(context: CaseRunnerContext, info: RunnerInfo) -> bool:
-    if not info.skip:
+    if not info.skip or not skip_applies_to_arch(context, info):
         return False
     for mode in context.modes:
         context.skipped.append(
@@ -150,17 +158,13 @@ def append_confidence_suggestion(context: CaseRunnerContext, info: RunnerInfo) -
 
 
 def mode_supported(context: CaseRunnerContext, info: RunnerInfo, mode: str) -> bool:
-    if mode in info.skip_modes:
+    if mode in info.skip_modes and skip_applies_to_arch(context, info):
+        # 优先报 manifest 里登记的真实理由。原先一律写 "Mode npu in skip_modes"，等于把
+        # SKIP_CONFIG 写的理由丢掉 —— 报告里只剩「它被 skip 了」，看不出为什么。
+        # 全模式 skip 走 append_skip_result，一直是带理由的；只有部分模式 skip 漏了。
+        reason = info.skip_reason if info.skip_reason != "explicit skip" else f"Mode {mode} in skip_modes"
         context.skipped.append(
-            RunResult(
-                info.rel_path,
-                context.arch,
-                mode,
-                "SKIP",
-                f"Mode {mode} in skip_modes",
-                duration_s=0,
-                source="case-runner",
-            )
+            RunResult(info.rel_path, context.arch, mode, "SKIP", reason, duration_s=0, source="case-runner")
         )
         context.suggestions.append(
             Suggestion(

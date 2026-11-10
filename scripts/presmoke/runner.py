@@ -29,6 +29,8 @@ from typing import Callable, Iterable, Iterator, List, Optional, Union
 from .model import Cell, Command, NpuStats, RunCellsResult, RunResult, StepResult
 
 
+_worker_device = threading.local()
+
 NpuGate = Callable[[Callable[[], int]], tuple[int, float]]
 
 PRESERVE_BUILD_ARTIFACT_CASES = {"01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op"}
@@ -83,6 +85,7 @@ class PipelineOptions:
     npu_slots: int = 1
     cpu_run_slots: Optional[int] = None
     stages: str = "all"
+    cards: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -224,7 +227,7 @@ def run_cells_pipeline_with_options(cells: Iterable[Cell], options: PipelineOpti
     try:
         if options.stages == "build":
             return run_build_only(cells_list, options)
-        if options.jobs <= 1:
+        if options.jobs <= 1 and not options.cards:
             npu_pool = NpuSlotPool(options.npu_slots)
             results = [
                 run_cell_with_options(
@@ -282,8 +285,15 @@ class _PipelineExecutor:
         self.options = options
         uses_npu_queue = cells_use_npu_queue(cells)
         self.run_slots = options.npu_slots if uses_npu_queue else max(options.cpu_run_slots or options.jobs, 1)
+        if uses_npu_queue and options.cards:
+            # npu_slots 是「每卡」并发度，和 fixed 模式一致：fixed 给每张卡起一个独立的
+            # run_presmoke 子跑、各自开 npu_slots 个槽，总并发是 cards x npu_slots。
+            # shared 只有一个进程，所以这里必须自己乘上卡数，否则 4 卡只有 4 个槽
+            # （每卡 1 并发），吞吐只有 fixed 的 1/npu_slots。
+            self.run_slots = len(options.cards) * options.npu_slots
         queue_model = "pipeline" if uses_npu_queue else "pipeline-cpu"
-        self.npu_pool = NpuSlotPool(options.npu_slots)
+        npu_pool_size = len(options.cards) * options.npu_slots if options.cards else options.npu_slots
+        self.npu_pool = NpuSlotPool(npu_pool_size)
         self.ready: "queue.Queue[Union[_PipelineItem, None]]" = queue.Queue()
         self.verify_ready: "queue.Queue[Union[_PipelineItem, None]]" = queue.Queue()
         self.results: List[RunResult] = []
@@ -395,6 +405,10 @@ class _PipelineExecutor:
             self.append_result(item.result)
 
     def npu_worker(self, slot_idx: int) -> None:
+        if self.options.cards and cells_use_npu_queue(self.cells):
+            # run_slots = cards x npu_slots，所以 slot_idx 要取模才落回卡号；
+            # 取模后每张卡正好拿到 npu_slots 个 worker。
+            _worker_device.card = self.options.cards[slot_idx % len(self.options.cards)]
         while True:
             wait_started = time.monotonic()
             item = self.ready.get()
@@ -753,6 +767,10 @@ def execute_command_step(command: Command, context: CommandContext, options: Run
 def _run_command(command: Command, cwd: Path, log, timeout: Optional[int]) -> int:
     env = os.environ.copy()
     env.update(command.env)
+    card = getattr(_worker_device, "card", None)
+    if card is not None:
+        env.update(ASCEND_RT_VISIBLE_DEVICES=card, ASCEND_VISIBLE_DEVICES=card, ASCEND_DEVICE_ID="0", NPU_DEVICE_ID="0")
+        log.write(f"[NPU card={card}]\n")
     try:
         proc = subprocess.Popen(
             ["/bin/bash", "-lc", command.raw],

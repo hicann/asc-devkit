@@ -174,11 +174,29 @@ def _pick_preferred_block(blocks: List[str]) -> str:
     return runnable_blocks[0]
 
 
+SET_ENV_RE = re.compile(r"^(?:source|\.)\s+\S*set_env\.sh\b")
+
+
+def _is_set_env_line(line: str) -> bool:
+    return bool(SET_ENV_RE.match(line.strip()))
+
+
 def _is_runnable_block(block: str) -> bool:
     text = block.strip()
     if not text:
         return False
-    if "set_env.sh" in text or text.startswith("pip3 install") or text.startswith("pip install"):
+    if text.startswith("pip3 install") or text.startswith("pip install"):
+        return False
+    # 只有「整块都是环境设置」才拒绝。原先的判断是「块里出现 set_env.sh 就拒绝」，而
+    # cube_buffer_dump 这类 README 把 source set_env.sh 和编译运行命令写在同一个块里，
+    # 整块被丢掉后会**静默**退化成 convention_commands 的通用五件套 —— 用例照样是绿的，
+    # 但跑的已经不是 README 写的东西（verify_result.py 少传 4 个参数都发现不了）。
+    payload = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip() and not line.strip().startswith("#") and not _is_set_env_line(line)
+    ]
+    if not payload:
         return False
     return bool(re.search(r"\b(cmake|make|python3|./|msprof)\b", text))
 
@@ -189,6 +207,11 @@ def split_commands(block: str) -> List[Command]:
     for original in _join_line_continuations(block):
         line = _strip_comment(original).strip()
         if not line:
+            continue
+        # presmoke 自己已经 source 过 CANN 环境，README 里的 source ${install_path}/... 原样
+        # 搬过来只会因为 ${install_path} 未定义而失败。export 行不在此列，由
+        # merge_export_commands_into_run 另行处理。
+        if _is_set_env_line(line):
             continue
         for part in _split_shell_line(line):
             part = part.strip()
@@ -209,7 +232,8 @@ def _join_line_continuations(block: str) -> List[str]:
         if stripped.endswith("\\"):
             current += stripped[:-1].rstrip() + " "
             continue
-        lines.append(current + line)
+        # 续行拼接时去掉下一行的缩进，否则生成的命令里会留一串空格
+        lines.append(current + (line.strip() if current else line))
         current = ""
     if current:
         lines.append(current.rstrip())
@@ -283,6 +307,15 @@ def _consume_assignments(command: str) -> Tuple[Dict[str, str], str]:
     return assignments, " ".join(shlex.quote(x) for x in parts[consumed:])
 
 
+# 这几个都是「包装器」：自己不算，真正要跑的二进制在参数里，而那个二进制是 make 产物、
+# 在 build 目录下。它们都必须归到 "run" 阶段 —— 归成 "shell" 会被
+# build_commands_for_runner 收进 case_build，而 case_build 跑在 jobs 宽的 build worker 池
+# 里（A5 CI 是 16），绕过只有 npu_slots 个槽的 NPU 队列；shared 模式下还会拿不到
+# npu_worker 设的 per-slot card，全部落到 cards[0]。
+# cwd 由 generate_case_runners.strip_profiler_wrapper 一并处理。
+NPU_TOOL_WRAPPERS = {"msprof", "msopprof", "mssanitizer"}
+
+
 def classify_command(command: str) -> str:
     stripped = command.strip()
     first = stripped.split()[0] if stripped.split() else ""
@@ -294,7 +327,7 @@ def classify_command(command: str) -> str:
         return "gen_data"
     if "verify_result.py" in stripped:
         return "verify"
-    if first == "msprof":
+    if first in NPU_TOOL_WRAPPERS:
         return "run"
     if first.startswith("./") or re.match(r"python3\s+.*(_test|test_).*\.py", stripped):
         return "run"
@@ -341,11 +374,18 @@ def _archs_from_supported_products(text: str) -> List[str]:
 
 def parse_modes(text: str, command_block: str) -> List[str]:
     modes = _values_from_option_rows(text, "CMAKE_ASC_RUN_MODE", MODE_RE)
-    if modes:
-        return [m.lower() for m in modes]
+    # 只有选中的命令块自己声明了 CMAKE_ASC_RUN_MODE，才认为这个样例"就是"跑那个模式的
+    # (06_cpu_debug / 08_simulator 这类)，可以排除 npu。否则 text 里的声明只是正文在介绍
+    # 可选的仿真用法(例如"使用NPU仿真模式时，添加 -DCMAKE_ASC_RUN_MODE=sim 即可")，
+    # 这时必须把 npu 留着 —— 否则 06_compile 这 4 个本来在 A5 清单里跑的用例会被判成
+    # 只支持 sim，重跑生成器时静默掉出 npu 清单。
+    block_modes = _values_from_option_rows(command_block, "CMAKE_ASC_RUN_MODE", MODE_RE) if command_block else []
+    if modes and block_modes:
+        return sorted({m.lower() for m in modes})
     found = {"npu"}
     if command_block:
         found.update(m.lower() for m in MODE_RE.findall(command_block))
+    found.update(m.lower() for m in modes)
     return sorted(found)
 
 

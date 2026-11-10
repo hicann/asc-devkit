@@ -25,7 +25,7 @@ from presmoke.case_runners import CaseRunnerOptions, build_case_runner_cells_wit
 from presmoke.cli import parse_args
 from presmoke.model import Cell, Command, ExampleSpec, RunReport
 from presmoke.report import write_json, write_markdown
-from presmoke.runner import NpuSlotPool, PipelineOptions, RunOptions
+from presmoke.runner import NpuSlotPool, PipelineOptions, RunOptions, _PipelineExecutor
 from presmoke.runner import run_cell_with_options
 from presmoke.runner import run_cells_pipeline_with_options
 
@@ -308,6 +308,50 @@ class RunnerPoolTest(unittest.TestCase):
 
         self.assertEqual(result.status, "FAIL")
         self.assertEqual(result.rc, 124)
+
+    def test_shared_cards_open_npu_slots_per_card(self) -> None:
+        # shared 模式只有一个进程，而 npu_slots 是「每卡」并发度（fixed 模式给每张卡起一个
+        # 子跑、各开 npu_slots 个槽）。总槽数必须是 cards x npu_slots，少乘一次卡数就会
+        # 退化成每卡 1 并发。
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            npu_cells = [cell(root, "x", commands=[Command(":", "run")])]
+            executor = _PipelineExecutor(
+                npu_cells, PipelineOptions(root / "logs", timeout=1, jobs=2, npu_slots=4, cards=("0", "1", "2", "3"))
+            )
+            self.assertEqual(executor.run_slots, 16)
+
+            without_cards = _PipelineExecutor(npu_cells, PipelineOptions(root / "logs", timeout=1, jobs=2, npu_slots=4))
+            self.assertEqual(without_cards.run_slots, 4)
+
+    def test_shared_cards_bind_run_commands_to_every_card(self) -> None:
+        # slot_idx 要对卡数取模才落回卡号，否则 slot_idx >= len(cards) 会 IndexError。
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            seen = root / "seen"
+            cells = [
+                cell(
+                    root,
+                    f"case_{idx}",
+                    commands=[
+                        Command(":", "build"),
+                        Command(f'echo "$ASCEND_RT_VISIBLE_DEVICES" >> {seen}', "run"),
+                        Command(":", "verify"),
+                    ],
+                )
+                for idx in range(16)
+            ]
+            run = run_cells_pipeline_with_options(
+                cells,
+                PipelineOptions(
+                    root / "logs", timeout=30, keep_artifacts=True, jobs=4, npu_slots=4, cards=("0", "1", "2", "3")
+                ),
+            )
+            cards_used = seen.read_text().split()
+
+        self.assertTrue(all(result.status == "PASS" for result in run.results))
+        self.assertEqual(len(cards_used), 16)
+        self.assertEqual(sorted(set(cards_used)), ["0", "1", "2", "3"])
 
     def test_npu_gate_limits_concurrency(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

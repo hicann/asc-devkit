@@ -141,6 +141,22 @@ presmoke_default_clean() {
     rm -rf "$BUILD_DIR"
 }
 
+# SKIP_ARCHS 为空表示该 skip 不限 arch；非空时只在列出的 arch 上生效。
+# 一个 run.sh 服务所有 arch，所以 arch 限定只能这样在运行时判。
+presmoke_skip_applies_to_arch() {
+    if [[ -z "${SKIP_ARCHS:-}" ]]; then
+        return 0
+    fi
+    local current_arch="${ARCH:-$(presmoke_arch)}"
+    local skip_arch
+    for skip_arch in "${SKIP_ARCHS[@]}"; do
+        if [[ "$current_arch" == "$skip_arch" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 presmoke_case_main() {
     local action="${1:-all}"
 
@@ -149,7 +165,7 @@ presmoke_case_main() {
         return
     fi
 
-    if [[ -n "${SKIP_REASON:-}" ]]; then
+    if [[ -n "${SKIP_REASON:-}" ]] && presmoke_skip_applies_to_arch; then
         if [[ -z "${SKIP_MODES:-}" ]]; then
             echo "SKIP: $SKIP_REASON"
             return 0
