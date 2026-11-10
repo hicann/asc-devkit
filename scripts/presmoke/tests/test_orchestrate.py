@@ -445,11 +445,14 @@ EOF
 
             result = subprocess.run(["bash", str(script)], text=True, capture_output=True, env=env, check=False)
 
+            # 探测到的是宿主机节点号 4/6，但卡号最终要喂给 ASCEND_RT_VISIBLE_DEVICES，
+            # 它认的是可见设备集合里的下标（范围 [0, deviceCnt)），所以必须折成 0/1。
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertTrue((root / "out/full_card4/results/report.json").exists())
-            self.assertTrue((root / "out/full_card6/results/report.json").exists())
-            self.assertFalse((root / "out/full_card0/results/report.json").exists())
-            self.assertIn("multi_card_start cards=4 6 cases=5", result.stdout)
+            self.assertTrue((root / "out/full_card0/results/report.json").exists())
+            self.assertTrue((root / "out/full_card1/results/report.json").exists())
+            self.assertFalse((root / "out/full_card4/results/report.json").exists())
+            self.assertFalse((root / "out/full_card6/results/report.json").exists())
+            self.assertIn("multi_card_start cards=0 1 cases=5", result.stdout)
 
     def test_single_detected_npu_card_is_used_for_single_run(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -470,10 +473,11 @@ EOF
                 ["bash", str(script), "--filter", "case/a"], text=True, capture_output=True, env=env, check=False
             )
 
+            # 同上：唯一一张卡不管宿主机叫 davinci7 还是 davinci0，运行时看到的都是 0。
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertTrue((root / "out/full_card7/results/report.json").exists())
-            self.assertFalse((root / "out/full_card0/results/report.json").exists())
-            self.assertIn("device=7", (root / "out/full_card7/run_env.txt").read_text(encoding="utf-8"))
+            self.assertTrue((root / "out/full_card0/results/report.json").exists())
+            self.assertFalse((root / "out/full_card7/results/report.json").exists())
+            self.assertIn("device=0", (root / "out/full_card0/run_env.txt").read_text(encoding="utf-8"))
 
     def test_make_wrapper_limits_explicit_parallel_jobs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

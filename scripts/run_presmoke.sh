@@ -292,7 +292,7 @@ resolve_npu_cards() {
             detected="$(detect_npu_cards_by_smi)"
         fi
         if [[ -n "$detected" ]]; then
-            printf '%s\n' "$detected"
+            printf '%s\n' "$detected" | awk '{print NR - 1}'
         else
             printf '%s\n' "$PRIMARY_CARD"
         fi
