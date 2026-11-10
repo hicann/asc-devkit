@@ -126,14 +126,15 @@ __simd_vf__ inline void GatherData(SrcTensor src, IndexTensor index,
     DstTensor dst, uint32_t repeat_times, uint32_t total_length,
     uint32_t one_repeat_size)
 {
-    using data_type = typename Src0TensorType::data_type;
+    using data_type = typename SrcTensor::data_type;
     uint32_t count = total_length;
     for (uint16_t i = 0; i < repeat_times; ++i) {
         auto mask = asc::te::experimental::update_mask<data_type>(count);
         uint32_t offset = i * one_repeat_size;
         const auto coord = asc::te::make_coord(offset);
         auto index_reg = asc::te::experimental::load(index);
-        auto src_reg = asc::te::experimental::load_gather<gather_mode::element>(src, coord, index, mask);
+        auto src_reg = asc::te::experimental::load_gather<
+            asc::te::experimental::gather_mode::element>(src, coord, index_reg, mask);
         asc::te::experimental::store(dst, coord, src_reg);
     }
 }

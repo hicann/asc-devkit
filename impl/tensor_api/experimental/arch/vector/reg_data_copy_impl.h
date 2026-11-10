@@ -24,7 +24,7 @@ namespace experimental {
 namespace detail {
 template <typename T>
 inline constexpr bool is_move_support_type =
-    Std::is_one_of_v<T, bool, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, float>;
+    Std::is_one_of_v<T, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, float>;
 } // namespace detail
 
 template <int16_t Offset, typename T>

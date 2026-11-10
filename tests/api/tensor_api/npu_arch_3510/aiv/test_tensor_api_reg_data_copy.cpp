@@ -15,6 +15,8 @@
 
 class TensorApiVectorRegDataCopy3510 : public testing::Test {};
 
+static_assert(!asc::te::experimental::detail::is_move_support_type<bool>, "move with dst input does not support bool");
+
 template <typename T>
 __aicore__ inline void TestMoveWithDst()
 {
