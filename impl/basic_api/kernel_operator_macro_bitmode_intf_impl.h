@@ -228,6 +228,49 @@ __aicore__ inline uint64_t ConvPaddingBitModeParams<T>::GetConfig0() const
     return config0;
 };
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline FixPipeConfigBitModeParams::FixPipeConfigBitModeParams() { config0 = 0; }
+__aicore__ inline FixPipeConfigBitModeParams::FixPipeConfigBitModeParams(const FixPipeConfigParams& fixPipeConfigParams)
+{
+    config0BitMode.Init(fixPipeConfigParams);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetPreReluAddr(uint8_t preReluAddr_)
+{
+    config0BitMode.SetPreReluAddr(preReluAddr_);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetPreQuantAddr(uint8_t preQuantAddr_)
+{
+    config0BitMode.SetPreQuantAddr(preQuantAddr_);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetPostQuantAddr(uint8_t postQuantAddr_)
+{
+    config0BitMode.SetPostQuantAddr(postQuantAddr_);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetAntiquantAddr(uint8_t antiquantAddr_)
+{
+    config0BitMode.SetAntiquantAddr(antiquantAddr_);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetShiftValue(uint8_t shiftValue_)
+{
+    config0BitMode.SetShiftValue(shiftValue_);
+}
+__aicore__ inline void FixPipeConfigBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline uint8_t FixPipeConfigBitModeParams::GetPreReluAddr() const { return config0BitMode.GetPreReluAddr(); }
+__aicore__ inline uint8_t FixPipeConfigBitModeParams::GetPreQuantAddr() const
+{
+    return config0BitMode.GetPreQuantAddr();
+}
+__aicore__ inline uint8_t FixPipeConfigBitModeParams::GetPostQuantAddr() const
+{
+    return config0BitMode.GetPostQuantAddr();
+}
+__aicore__ inline uint8_t FixPipeConfigBitModeParams::GetAntiquantAddr() const
+{
+    return config0BitMode.GetAntiquantAddr();
+}
+__aicore__ inline uint8_t FixPipeConfigBitModeParams::GetShiftValue() const { return config0BitMode.GetShiftValue(); }
+__aicore__ inline uint64_t FixPipeConfigBitModeParams::GetConfig0() const { return config0; };
+#else
 __aicore__ inline FixPipeConfigBitModeParams::FixPipeConfigBitModeParams() { config0 = 0; }
 __aicore__ inline FixPipeConfigBitModeParams::FixPipeConfigBitModeParams(const FixPipeConfigParams& fixPipeConfigParams)
 {
@@ -277,6 +320,7 @@ __aicore__ inline uint8_t FixPipeConfigBitModeParams::GetRestorationCtrl() const
     return config0BitMode.GetRestorationCtrl();
 }
 __aicore__ inline uint64_t FixPipeConfigBitModeParams::GetConfig0() const { return config0; };
+#endif
 
 __aicore__ inline FixPipeReluAlphaBitModeParams::FixPipeReluAlphaBitModeParams() { config0 = 0; }
 __aicore__ inline FixPipeReluAlphaBitModeParams::FixPipeReluAlphaBitModeParams(
@@ -722,6 +766,216 @@ __aicore__ inline bool PostProcBitModeParams::GetDependEnable() const { return c
 __aicore__ inline instr_id_t PostProcBitModeParams::GetInstrId() const { return config0BitMode.GetInstrId(); }
 __aicore__ inline uint16_t PostProcBitModeParams::GetN() const { return config0BitMode.GetN(); }
 __aicore__ inline uint64_t PostProcBitModeParams::GetConfig0() const { return config0; };
+
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline FixpNzParaBitModeParams::FixpNzParaBitModeParams() { config0 = 0; }
+__aicore__ inline FixpNzParaBitModeParams::FixpNzParaBitModeParams(const FixpNzParaParams& fixpNzParaParams)
+{
+    config0BitMode.Init(fixpNzParaParams);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop4Size(uint16_t loop4Size_)
+{
+    config0BitMode.SetLoop4Size(loop4Size_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop2SrcStride(uint16_t loop2SrcStride_)
+{
+    config0BitMode.SetLoop2SrcStride(loop2SrcStride_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop3SrcStride(uint16_t loop3SrcStride_)
+{
+    config0BitMode.SetLoop3SrcStride(loop3SrcStride_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop4SrcStride(uint16_t loop4SrcStride_)
+{
+    config0BitMode.SetLoop4SrcStride(loop4SrcStride_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop4Size() const { return config0BitMode.GetLoop4Size(); }
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop2SrcStride() const
+{
+    return config0BitMode.GetLoop2SrcStride();
+}
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop3SrcStride() const
+{
+    return config0BitMode.GetLoop3SrcStride();
+}
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop4SrcStride() const
+{
+    return config0BitMode.GetLoop4SrcStride();
+}
+__aicore__ inline uint64_t FixpNzParaBitModeParams::GetConfig0() const { return config0; };
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline FixpNzParaBitModeParams::FixpNzParaBitModeParams() { config0 = 0; }
+__aicore__ inline FixpNzParaBitModeParams::FixpNzParaBitModeParams(const FixpNzParaParams& fixpNzParaParams)
+{
+    config0BitMode.Init(fixpNzParaParams);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop4Size(uint16_t loop4Size_)
+{
+    config0BitMode.SetLoop4Size(loop4Size_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop4SrcStride(uint16_t loop4SrcStride_)
+{
+    config0BitMode.SetLoop4SrcStride(loop4SrcStride_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetLoop4DstStride(uint32_t loop4DstStride_)
+{
+    config0BitMode.SetLoop4DstStride(loop4DstStride_);
+}
+__aicore__ inline void FixpNzParaBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop4Size() const { return config0BitMode.GetLoop4Size(); }
+__aicore__ inline uint16_t FixpNzParaBitModeParams::GetLoop4SrcStride() const
+{
+    return config0BitMode.GetLoop4SrcStride();
+}
+__aicore__ inline uint32_t FixpNzParaBitModeParams::GetLoop4DstStride() const
+{
+    return config0BitMode.GetLoop4DstStride();
+}
+__aicore__ inline uint64_t FixpNzParaBitModeParams::GetConfig0() const { return config0; };
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline FixpLoopenhanceParaBitModeParams::FixpLoopenhanceParaBitModeParams() { config0 = 0; }
+__aicore__ inline FixpLoopenhanceParaBitModeParams::FixpLoopenhanceParaBitModeParams(
+    const FixpLoopenhanceParaParams& fixpLoopenhanceParaParams)
+{
+    config0BitMode.Init(fixpLoopenhanceParaParams);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetLoop3DstStride(uint64_t loop3DstStride_)
+{
+    config0BitMode.SetLoop3DstStride(loop3DstStride_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetLoop1Size(uint16_t loop1Size_)
+{
+    config0BitMode.SetLoop1Size(loop1Size_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetPadEn(bool padEn_) { config0BitMode.SetPadEn(padEn_); }
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetSplitEn(bool splitEn_)
+{
+    config0BitMode.SetSplitEn(splitEn_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline uint64_t FixpLoopenhanceParaBitModeParams::GetLoop3DstStride() const
+{
+    return config0BitMode.GetLoop3DstStride();
+}
+__aicore__ inline uint16_t FixpLoopenhanceParaBitModeParams::GetLoop1Size() const
+{
+    return config0BitMode.GetLoop1Size();
+}
+__aicore__ inline bool FixpLoopenhanceParaBitModeParams::GetPadEn() const { return config0BitMode.GetPadEn(); }
+__aicore__ inline bool FixpLoopenhanceParaBitModeParams::GetSplitEn() const { return config0BitMode.GetSplitEn(); }
+__aicore__ inline uint64_t FixpLoopenhanceParaBitModeParams::GetConfig0() const { return config0; };
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline FixpLoopenhanceParaBitModeParams::FixpLoopenhanceParaBitModeParams() { config0 = 0; }
+__aicore__ inline FixpLoopenhanceParaBitModeParams::FixpLoopenhanceParaBitModeParams(
+    const FixpLoopenhanceParaParams& fixpLoopenhanceParaParams)
+{
+    config0BitMode.Init(fixpLoopenhanceParaParams);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetLoop3DstStride(uint32_t loop3DstStride_)
+{
+    config0BitMode.SetLoop3DstStride(loop3DstStride_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetLoop1Size(uint16_t loop1Size_)
+{
+    config0BitMode.SetLoop1Size(loop1Size_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetPadEn(bool padEn_) { config0BitMode.SetPadEn(padEn_); }
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetSplitEn(bool splitEn_)
+{
+    config0BitMode.SetSplitEn(splitEn_);
+}
+__aicore__ inline void FixpLoopenhanceParaBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline uint32_t FixpLoopenhanceParaBitModeParams::GetLoop3DstStride() const
+{
+    return config0BitMode.GetLoop3DstStride();
+}
+__aicore__ inline uint16_t FixpLoopenhanceParaBitModeParams::GetLoop1Size() const
+{
+    return config0BitMode.GetLoop1Size();
+}
+__aicore__ inline bool FixpLoopenhanceParaBitModeParams::GetPadEn() const { return config0BitMode.GetPadEn(); }
+__aicore__ inline bool FixpLoopenhanceParaBitModeParams::GetSplitEn() const { return config0BitMode.GetSplitEn(); }
+__aicore__ inline uint64_t FixpLoopenhanceParaBitModeParams::GetConfig0() const { return config0; };
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline FixpBitModeParams::FixpBitModeParams()
+{
+    config0 = 0;
+    config1 = 0;
+}
+__aicore__ inline FixpBitModeParams::FixpBitModeParams(const FixpParams& fixpipeParams)
+{
+    config0BitMode.Init(fixpipeParams);
+    config1BitMode.Init(fixpipeParams);
+}
+__aicore__ inline void FixpBitModeParams::SetLoop2DstStride(uint64_t loop2DstStride_)
+{
+    config0BitMode.SetLoop2DstStride(loop2DstStride_);
+}
+__aicore__ inline void FixpBitModeParams::SetLoop3Size(uint32_t loop3Size_) { config0BitMode.SetLoop3Size(loop3Size_); }
+__aicore__ inline void FixpBitModeParams::SetTransMode(uint8_t transMode_) { config0BitMode.SetTransMode(transMode_); }
+__aicore__ inline void FixpBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline void FixpBitModeParams::SetLoop4DstStride(uint64_t loop4DstStride_)
+{
+    config1BitMode.SetLoop4DstStride(loop4DstStride_);
+}
+__aicore__ inline void FixpBitModeParams::SetLoop2Size(uint16_t loop2Size_) { config1BitMode.SetLoop2Size(loop2Size_); }
+__aicore__ inline void FixpBitModeParams::SetSid(uint8_t sid_) { config1BitMode.SetSid(sid_); }
+__aicore__ inline void FixpBitModeParams::SetConfig1(uint64_t config1_) { config1 = config1_; };
+__aicore__ inline uint64_t FixpBitModeParams::GetLoop2DstStride() const { return config0BitMode.GetLoop2DstStride(); }
+__aicore__ inline uint32_t FixpBitModeParams::GetLoop3Size() const { return config0BitMode.GetLoop3Size(); }
+__aicore__ inline uint8_t FixpBitModeParams::GetTransMode() const { return config0BitMode.GetTransMode(); }
+__aicore__ inline uint64_t FixpBitModeParams::GetConfig0() const { return config0; };
+__aicore__ inline uint64_t FixpBitModeParams::GetLoop4DstStride() const { return config1BitMode.GetLoop4DstStride(); }
+__aicore__ inline uint16_t FixpBitModeParams::GetLoop2Size() const { return config1BitMode.GetLoop2Size(); }
+__aicore__ inline uint8_t FixpBitModeParams::GetSid() const { return config1BitMode.GetSid(); }
+__aicore__ inline uint64_t FixpBitModeParams::GetConfig1() const { return config1; };
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline FixpBitModeParams::FixpBitModeParams()
+{
+    config0 = 0;
+    config1 = 0;
+}
+__aicore__ inline FixpBitModeParams::FixpBitModeParams(const FixpParams& fixpipeParams)
+{
+    config0BitMode.Init(fixpipeParams);
+    config1BitMode.Init(fixpipeParams);
+}
+__aicore__ inline void FixpBitModeParams::SetLoop3Size(uint16_t loop3Size_) { config0BitMode.SetLoop3Size(loop3Size_); }
+__aicore__ inline void FixpBitModeParams::SetLoop2Size(uint16_t loop2Size_) { config0BitMode.SetLoop2Size(loop2Size_); }
+__aicore__ inline void FixpBitModeParams::SetLoop2DstStride(uint32_t loop2DstStride_)
+{
+    config0BitMode.SetLoop2DstStride(loop2DstStride_);
+}
+__aicore__ inline void FixpBitModeParams::SetConfig0(uint64_t config0_) { config0 = config0_; };
+__aicore__ inline void FixpBitModeParams::SetLoop3SrcStride(uint16_t loop3SrcStride_)
+{
+    config1BitMode.SetLoop3SrcStride(loop3SrcStride_);
+}
+__aicore__ inline void FixpBitModeParams::SetLoop2SrcStride(uint16_t loop2SrcStride_)
+{
+    config1BitMode.SetLoop2SrcStride(loop2SrcStride_);
+}
+__aicore__ inline void FixpBitModeParams::SetTransMode(uint8_t transMode_) { config1BitMode.SetTransMode(transMode_); }
+__aicore__ inline void FixpBitModeParams::SetSid(uint8_t sid_) { config1BitMode.SetSid(sid_); }
+__aicore__ inline void FixpBitModeParams::SetConfig1(uint64_t config1_) { config1 = config1_; };
+__aicore__ inline uint16_t FixpBitModeParams::GetLoop3Size() const { return config0BitMode.GetLoop3Size(); }
+__aicore__ inline uint16_t FixpBitModeParams::GetLoop2Size() const { return config0BitMode.GetLoop2Size(); }
+__aicore__ inline uint32_t FixpBitModeParams::GetLoop2DstStride() const { return config0BitMode.GetLoop2DstStride(); }
+__aicore__ inline uint64_t FixpBitModeParams::GetConfig0() const { return config0; };
+__aicore__ inline uint16_t FixpBitModeParams::GetLoop3SrcStride() const { return config1BitMode.GetLoop3SrcStride(); }
+__aicore__ inline uint16_t FixpBitModeParams::GetLoop2SrcStride() const { return config1BitMode.GetLoop2SrcStride(); }
+__aicore__ inline uint8_t FixpBitModeParams::GetTransMode() const { return config1BitMode.GetTransMode(); }
+__aicore__ inline uint8_t FixpBitModeParams::GetSid() const { return config1BitMode.GetSid(); }
+__aicore__ inline uint64_t FixpBitModeParams::GetConfig1() const { return config1; };
+#endif
+#endif // __NPU_ARCH__ 5101/5161/5165/5163
 } // namespace AscendC
 
 #endif // __NPU_ARCH__

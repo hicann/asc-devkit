@@ -255,6 +255,75 @@ __aicore__ inline void PostProcImpl(const LocalTensor<T>& dst, const LocalTensor
 {
     PostProcCal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
 }
+
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline void SetFixpNzParaImpl(const FixpNzParaBitModeParams& params) { SetFixpNzParaCal(params); }
+
+__aicore__ inline void SetFixpNzParaImpl(const FixpNzParaParams& params) { SetFixpNzParaCal(params); }
+
+__aicore__ inline void SetFixpLoopenhanceParaImpl(const FixpLoopenhanceParaBitModeParams& params)
+{
+    SetFixpLoopenhanceParaCal(params);
+}
+
+__aicore__ inline void SetFixpLoopenhanceParaImpl(const FixpLoopenhanceParaParams& params)
+{
+    SetFixpLoopenhanceParaCal(params);
+}
+
+template <typename T, typename U>
+__aicore__ inline void FixpipeImpl(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpParams& params)
+{
+    const Hardware srcScope = GetPhyType((TPosition)src.GetPosition());
+    ASSERT(srcScope == Hardware::L1 && "Fixpipe src must be L1 Buffer");
+    const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
+    if (dstScope == Hardware::L1) {
+        FixpipeL1ToL1Cal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+    } else if (dstScope == Hardware::UB) {
+        FixpipeL1ToUbCal((__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+    } else {
+        ASSERT(false && "Fixpipe dst only supports L1 Buffer or UB");
+    }
+}
+
+template <typename T, typename U>
+__aicore__ inline void FixpipeImpl(
+    const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpBitModeParams& params)
+{
+    const Hardware srcScope = GetPhyType((TPosition)src.GetPosition());
+    ASSERT(srcScope == Hardware::L1 && "Fixpipe src must be L1 Buffer");
+    const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
+    if (dstScope == Hardware::L1) {
+        FixpipeL1ToL1Cal((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+    } else if (dstScope == Hardware::UB) {
+        FixpipeL1ToUbCal((__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+    } else {
+        ASSERT(false && "Fixpipe dst only supports L1 Buffer or UB");
+    }
+}
+
+template <typename T, typename U>
+__aicore__ inline void FixpipeImpl(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpParams& params)
+{
+    const Hardware srcScope = GetPhyType((TPosition)src.GetPosition());
+    ASSERT(srcScope == Hardware::L1 && "Fixpipe src must be L1 Buffer");
+    const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
+    ASSERT(dstScope == Hardware::GM && "Fixpipe GlobalTensor dst must be GM");
+    FixpipeL1ToGmCal((__gm__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+}
+
+template <typename T, typename U>
+__aicore__ inline void FixpipeImpl(
+    const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpBitModeParams& params)
+{
+    const Hardware srcScope = GetPhyType((TPosition)src.GetPosition());
+    ASSERT(srcScope == Hardware::L1 && "Fixpipe src must be L1 Buffer");
+    const Hardware dstScope = GetPhyType((TPosition)dst.GetPosition());
+    ASSERT(dstScope == Hardware::GM && "Fixpipe GlobalTensor dst must be GM");
+    FixpipeL1ToGmCal((__gm__ PrimT<T>*)dst.GetPhyAddr(), (__cbuf__ PrimT<U>*)src.GetPhyAddr(), params);
+}
+#endif // __NPU_ARCH__ 5101/5161/5165/5163
 } // namespace AscendC
 
 #endif // __NPU_ARCH__

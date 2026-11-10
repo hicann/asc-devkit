@@ -157,6 +157,25 @@ __aicore__ inline void SetConvPaddingCal(const ConvPaddingParams<T>& params)
 
 __aicore__ inline void SetFixPipeConfigCal(const FixPipeConfigBitModeParams& params) { set_m_fpc(params.GetConfig0()); }
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline void SetFixPipeConfigCal(const FixPipeConfigParams& params)
+{
+    constexpr uint8_t POS_RELU_PRE_ADDR = 0;
+    constexpr uint8_t POS_QUANT_PRE_ADDR = 8;
+    constexpr uint8_t POS_QUANT_POST_ADDR = 24;
+    constexpr uint8_t POS_ANTIQ_PARA_ADDR = 32;
+    constexpr uint8_t POS_FIXED_SHIFT_VAL = 40;
+
+    uint64_t fpc = 0;
+    fpc |= (uint64_t)(params.preReluAddr) << POS_RELU_PRE_ADDR;
+    fpc |= (uint64_t)(params.preQuantAddr) << POS_QUANT_PRE_ADDR;
+    fpc |= (uint64_t)(params.postQuantAddr) << POS_QUANT_POST_ADDR;
+    fpc |= (uint64_t)(params.antiquantAddr) << POS_ANTIQ_PARA_ADDR;
+    fpc |= (uint64_t)(params.shiftValue) << POS_FIXED_SHIFT_VAL;
+
+    set_m_fpc(fpc);
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 __aicore__ inline void SetFixPipeConfigCal(const FixPipeConfigParams& params)
 {
     constexpr uint8_t POS_RELU_PRE_ADDR = 0;
@@ -176,6 +195,7 @@ __aicore__ inline void SetFixPipeConfigCal(const FixPipeConfigParams& params)
 
     set_m_fpc(fpc);
 }
+#endif
 
 __aicore__ inline void SetFixPipeReluAlphaCal(const FixPipeReluAlphaBitModeParams& params)
 {
@@ -579,6 +599,218 @@ __aicore__ inline void PostProcCal(__cbuf__ DstT* dst, __cbuf__ SrcT* src, const
 
     postproc((__cbuf__ void*)dst, src, config0);
 }
+
+__aicore__ inline void SetFixpNzParaCal(const FixpNzParaBitModeParams& params)
+{
+    set_fixp_nz_para(params.GetConfig0());
+}
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline void SetFixpNzParaCal(const FixpNzParaParams& params)
+{
+    ASSERT(
+        !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+        "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+    constexpr uint8_t POS_LOOP4_SIZE = 0;
+    constexpr uint8_t POS_LOOP2_SRC_STRIDE = 16;
+    constexpr uint8_t POS_LOOP3_SRC_STRIDE = 32;
+    constexpr uint8_t POS_LOOP4_SRC_STRIDE = 48;
+
+    uint64_t config0 = 0;
+    config0 |= (uint64_t)(params.loop4Size) << POS_LOOP4_SIZE;
+    config0 |= (uint64_t)(params.loop2SrcStride | params.loop1SrcStride) << POS_LOOP2_SRC_STRIDE;
+    config0 |= (uint64_t)(params.loop3SrcStride) << POS_LOOP3_SRC_STRIDE;
+    config0 |= (uint64_t)(params.loop4SrcStride) << POS_LOOP4_SRC_STRIDE;
+
+    set_fixp_nz_para(config0);
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline void SetFixpNzParaCal(const FixpNzParaParams& params)
+{
+    constexpr uint8_t POS_LOOP4_SIZE = 0;
+    constexpr uint8_t POS_LOOP4_SRC_STRIDE = 16;
+    constexpr uint8_t POS_LOOP4_DST_STRIDE = 32;
+
+    uint64_t config0 = 0;
+    config0 |= (uint64_t)(params.loop4Size) << POS_LOOP4_SIZE;
+    config0 |= (uint64_t)(params.loop4SrcStride) << POS_LOOP4_SRC_STRIDE;
+    config0 |= (uint64_t)(params.loop4DstStride) << POS_LOOP4_DST_STRIDE;
+
+    set_fixp_nz_para(config0);
+}
+#endif
+
+__aicore__ inline void SetFixpLoopenhanceParaCal(const FixpLoopenhanceParaBitModeParams& params)
+{
+    set_loopenhance_para(params.GetConfig0());
+}
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+__aicore__ inline void SetFixpLoopenhanceParaCal(const FixpLoopenhanceParaParams& params)
+{
+    constexpr uint8_t POS_LOOP3_DST_STRIDE = 0;
+    constexpr uint8_t POS_LOOP1_SIZE = 40;
+    constexpr uint8_t POS_PAD_EN = 56;
+    constexpr uint8_t POS_SPLIT_EN = 57;
+
+    uint64_t config0 = 0;
+    config0 |= (params.loop3DstStride & 0xFFFFFFFFFFULL) << POS_LOOP3_DST_STRIDE;
+    config0 |= (uint64_t)(params.loop1Size) << POS_LOOP1_SIZE;
+    config0 |= (uint64_t)(params.padEn ? 1 : 0) << POS_PAD_EN;
+    config0 |= (uint64_t)(params.splitEn ? 1 : 0) << POS_SPLIT_EN;
+
+    set_loopenhance_para(config0);
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+__aicore__ inline void SetFixpLoopenhanceParaCal(const FixpLoopenhanceParaParams& params)
+{
+    constexpr uint8_t POS_LOOP3_DST_STRIDE = 0;
+    constexpr uint8_t POS_LOOP1_SIZE = 40;
+    constexpr uint8_t POS_PAD_EN = 56;
+    constexpr uint8_t POS_SPLIT_EN = 57;
+
+    uint64_t config0 = 0;
+    config0 |= (uint64_t)(params.loop3DstStride) << POS_LOOP3_DST_STRIDE;
+    config0 |= (uint64_t)(params.loop1Size) << POS_LOOP1_SIZE;
+    config0 |= (uint64_t)(params.padEn ? 1 : 0) << POS_PAD_EN;
+    config0 |= (uint64_t)(params.splitEn ? 1 : 0) << POS_SPLIT_EN;
+
+    set_loopenhance_para(config0);
+}
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToL1Cal(__cbuf__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_cbuf(
+        dst, src, params.loop2DstStride, params.loop3Size, params.transMode, params.loop4DstStride, params.loop2Size);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToL1Cal(__cbuf__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_cbuf(
+        dst, src, params.GetLoop2DstStride(), params.GetLoop3Size(), params.GetTransMode(), params.GetLoop4DstStride(),
+        params.GetLoop2Size());
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToL1Cal(__cbuf__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    ASSERT(
+        !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+        "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+    fix_cbuf_to_cbuf(
+        dst, src, params.loop3Size, params.loop2Size, params.loop2DstStride, params.loop3SrcStride,
+        params.loop2SrcStride | params.loop1SrcStride, params.transMode);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToL1Cal(__cbuf__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_cbuf(
+        dst, src, params.GetLoop3Size(), params.GetLoop2Size(), params.GetLoop2DstStride(), params.GetLoop3SrcStride(),
+        params.GetLoop2SrcStride(), params.GetTransMode());
+}
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToUbCal(__ubuf__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_ubuf(
+        dst, src, params.loop2DstStride, params.loop3Size, params.transMode, params.loop4DstStride, params.loop2Size);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToUbCal(__ubuf__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_ubuf(
+        dst, src, params.GetLoop2DstStride(), params.GetLoop3Size(), params.GetTransMode(), params.GetLoop4DstStride(),
+        params.GetLoop2Size());
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToUbCal(__ubuf__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    ASSERT(
+        !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+        "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+    fix_cbuf_to_ubuf(
+        dst, src, params.loop3Size, params.loop2Size, params.loop2DstStride, params.loop3SrcStride,
+        params.loop2SrcStride | params.loop1SrcStride, params.transMode);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToUbCal(__ubuf__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_ubuf(
+        dst, src, params.GetLoop3Size(), params.GetLoop2Size(), params.GetLoop2DstStride(), params.GetLoop3SrcStride(),
+        params.GetLoop2SrcStride(), params.GetTransMode());
+}
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToGmCal(__gm__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_gm(
+        dst, src, params.loop2DstStride, params.loop3Size, params.transMode, params.loop4DstStride, params.loop2Size,
+        params.sid);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToGmCal(__gm__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_gm(
+        dst, src, params.GetLoop2DstStride(), params.GetLoop3Size(), params.GetTransMode(), params.GetLoop4DstStride(),
+        params.GetLoop2Size(), params.GetSid());
+}
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToGmCal(__gm__ DstT* dst, __cbuf__ SrcT* src, const FixpParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    ASSERT(
+        !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+        "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+    fix_cbuf_to_gm(
+        dst, src, params.loop3Size, params.loop2Size, params.loop2DstStride, params.loop3SrcStride,
+        params.loop2SrcStride | params.loop1SrcStride, params.transMode, params.sid);
+}
+
+template <typename DstT, typename SrcT>
+__aicore__ inline void FixpipeL1ToGmCal(__gm__ DstT* dst, __cbuf__ SrcT* src, const FixpBitModeParams& params)
+{
+    static_assert(IsSameType<DstT, SrcT>::value, "src type and dst type must be same!");
+    static_assert(sizeof(DstT) == 1 || sizeof(DstT) == 2, "only b8 and b16 is valid!");
+    fix_cbuf_to_gm(
+        dst, src, params.GetLoop3Size(), params.GetLoop2Size(), params.GetLoop2DstStride(), params.GetLoop3SrcStride(),
+        params.GetLoop2SrcStride(), params.GetTransMode(), params.GetSid());
+}
+#endif
 } // namespace AscendC
 
 #endif // __NPU_ARCH__

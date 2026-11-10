@@ -269,6 +269,42 @@ __aicore__ inline void PostProc(
     const LocalTensor<T>& dst, const LocalTensor<U>& src, const PostProcBitModeParams& params);
 template <typename T, typename U>
 __aicore__ inline void PostProc(const LocalTensor<T>& dst, const LocalTensor<U>& src, const PostProcParams& params);
+
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+/*
+ * @ingroup MacroCube
+ * @brief setting the register
+ * @param [in] params register
+ */
+__aicore__ inline void SetFixpNzPara(const FixpNzParaBitModeParams& params);
+__aicore__ inline void SetFixpNzPara(const FixpNzParaParams& params);
+
+/*
+ * @ingroup MacroCube
+ * @brief setting the register
+ * @param [in] params register
+ */
+__aicore__ inline void SetFixpLoopenhancePara(const FixpLoopenhanceParaBitModeParams& params);
+__aicore__ inline void SetFixpLoopenhancePara(const FixpLoopenhanceParaParams& params);
+
+/*
+ * @ingroup MacroCube
+ * @brief performs fixpipe copy
+ * @param [out] dst
+ * @param [in] src
+ * @param [in] Params
+ */
+template <typename T, typename U>
+__aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpParams& params);
+template <typename T, typename U>
+__aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpBitModeParams& params);
+template <typename T, typename U>
+__aicore__ inline void Fixpipe(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpParams& params);
+template <typename T, typename U>
+__aicore__ inline void Fixpipe(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpBitModeParams& params);
+#endif // __NPU_ARCH__ 5101/5161/5165/5163
+
 } // namespace AscendC
 
 #if defined(__NPU_ARCH__)

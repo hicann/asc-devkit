@@ -205,6 +205,38 @@ struct ConvPaddingBitModeConfig0 {
     __aicore__ inline uint16_t GetPaddingAddr() const { return paddingAddr; };
 };
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixPipeConfigBitModeConfig0 {
+    uint64_t preReluAddr : 8;
+    uint64_t preQuantAddr : 8;
+    uint64_t reserved0 : 8;
+    uint64_t postQuantAddr : 8;
+    uint64_t antiquantAddr : 8;
+    uint64_t shiftValue : 6;
+    uint64_t reserved1 : 18;
+
+    __aicore__ inline void Init(const FixPipeConfigParams& params)
+    {
+        preReluAddr = params.preReluAddr;
+        preQuantAddr = params.preQuantAddr;
+        postQuantAddr = params.postQuantAddr;
+        antiquantAddr = params.antiquantAddr;
+        shiftValue = params.shiftValue;
+    }
+
+    __aicore__ inline void SetPreReluAddr(uint8_t preReluAddr_) { preReluAddr = preReluAddr_; };
+    __aicore__ inline void SetPreQuantAddr(uint8_t preQuantAddr_) { preQuantAddr = preQuantAddr_; };
+    __aicore__ inline void SetPostQuantAddr(uint8_t postQuantAddr_) { postQuantAddr = postQuantAddr_; };
+    __aicore__ inline void SetAntiquantAddr(uint8_t antiquantAddr_) { antiquantAddr = antiquantAddr_; };
+    __aicore__ inline void SetShiftValue(uint8_t shiftValue_) { shiftValue = shiftValue_; };
+
+    __aicore__ inline uint8_t GetPreReluAddr() const { return preReluAddr; };
+    __aicore__ inline uint8_t GetPreQuantAddr() const { return preQuantAddr; };
+    __aicore__ inline uint8_t GetPostQuantAddr() const { return postQuantAddr; };
+    __aicore__ inline uint8_t GetAntiquantAddr() const { return antiquantAddr; };
+    __aicore__ inline uint8_t GetShiftValue() const { return shiftValue; };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
 struct FixPipeConfigBitModeConfig0 {
     uint64_t preReluAddr : 8;
     uint64_t preQuantAddr : 8;
@@ -239,6 +271,7 @@ struct FixPipeConfigBitModeConfig0 {
     __aicore__ inline uint8_t GetShiftValue() const { return shiftValue; };
     __aicore__ inline uint8_t GetRestorationCtrl() const { return restorationCtrl; };
 };
+#endif
 
 struct FixPipeReluAlphaBitModeConfig0 {
     uint64_t lut : 3;
@@ -703,6 +736,210 @@ struct PostProcBitModeConfig0 {
     __aicore__ inline instr_id_t GetInstrId() const { return static_cast<instr_id_t>(instrId); };
     __aicore__ inline uint16_t GetN() const { return n; };
 };
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpNzParaBitModeConfig0 {
+    uint64_t loop4Size : 16;
+    uint64_t loop2SrcStride : 16;
+    uint64_t loop3SrcStride : 16;
+    uint64_t loop4SrcStride : 16;
+
+    __aicore__ inline void Init(const FixpNzParaParams& params)
+    {
+        ASSERT(
+            !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+            "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+        loop4Size = params.loop4Size;
+        loop2SrcStride = params.loop2SrcStride | params.loop1SrcStride;
+        loop3SrcStride = params.loop3SrcStride;
+        loop4SrcStride = params.loop4SrcStride;
+    }
+
+    __aicore__ inline void SetLoop4Size(uint16_t loop4Size_) { loop4Size = loop4Size_; };
+    __aicore__ inline void SetLoop2SrcStride(uint16_t loop2SrcStride_) { loop2SrcStride = loop2SrcStride_; };
+    __aicore__ inline void SetLoop3SrcStride(uint16_t loop3SrcStride_) { loop3SrcStride = loop3SrcStride_; };
+    __aicore__ inline void SetLoop4SrcStride(uint16_t loop4SrcStride_) { loop4SrcStride = loop4SrcStride_; };
+
+    __aicore__ inline uint16_t GetLoop4Size() const { return loop4Size; };
+    __aicore__ inline uint16_t GetLoop2SrcStride() const { return loop2SrcStride; };
+    __aicore__ inline uint16_t GetLoop3SrcStride() const { return loop3SrcStride; };
+    __aicore__ inline uint16_t GetLoop4SrcStride() const { return loop4SrcStride; };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpNzParaBitModeConfig0 {
+    uint64_t loop4Size : 16;
+    uint64_t loop4SrcStride : 16;
+    uint64_t loop4DstStride : 32;
+
+    __aicore__ inline void Init(const FixpNzParaParams& params)
+    {
+        loop4Size = params.loop4Size;
+        loop4SrcStride = params.loop4SrcStride;
+        loop4DstStride = params.loop4DstStride;
+    }
+
+    __aicore__ inline void SetLoop4Size(uint16_t loop4Size_) { loop4Size = loop4Size_; };
+    __aicore__ inline void SetLoop4SrcStride(uint16_t loop4SrcStride_) { loop4SrcStride = loop4SrcStride_; };
+    __aicore__ inline void SetLoop4DstStride(uint32_t loop4DstStride_) { loop4DstStride = loop4DstStride_; };
+
+    __aicore__ inline uint16_t GetLoop4Size() const { return loop4Size; };
+    __aicore__ inline uint16_t GetLoop4SrcStride() const { return loop4SrcStride; };
+    __aicore__ inline uint32_t GetLoop4DstStride() const { return loop4DstStride; };
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpLoopenhanceParaBitModeConfig0 {
+    uint64_t loop3DstStride : 40;
+    uint64_t loop1Size : 16;
+    uint64_t padEn : 1;
+    uint64_t splitEn : 1;
+    uint64_t reserved0 : 6;
+
+    __aicore__ inline void Init(const FixpLoopenhanceParaParams& params)
+    {
+        loop3DstStride = params.loop3DstStride;
+        loop1Size = params.loop1Size;
+        padEn = params.padEn ? 1 : 0;
+        splitEn = params.splitEn ? 1 : 0;
+    }
+
+    __aicore__ inline void SetLoop3DstStride(uint64_t loop3DstStride_) { loop3DstStride = loop3DstStride_; };
+    __aicore__ inline void SetLoop1Size(uint16_t loop1Size_) { loop1Size = loop1Size_; };
+    __aicore__ inline void SetPadEn(bool padEn_) { padEn = padEn_ ? 1 : 0; };
+    __aicore__ inline void SetSplitEn(bool splitEn_) { splitEn = splitEn_ ? 1 : 0; };
+
+    __aicore__ inline uint64_t GetLoop3DstStride() const { return loop3DstStride; };
+    __aicore__ inline uint16_t GetLoop1Size() const { return loop1Size; };
+    __aicore__ inline bool GetPadEn() const { return padEn != 0; };
+    __aicore__ inline bool GetSplitEn() const { return splitEn != 0; };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpLoopenhanceParaBitModeConfig0 {
+    uint64_t loop3DstStride : 32;
+    uint64_t reserved0 : 8;
+    uint64_t loop1Size : 16;
+    uint64_t padEn : 1;
+    uint64_t splitEn : 1;
+    uint64_t reserved1 : 6;
+
+    __aicore__ inline void Init(const FixpLoopenhanceParaParams& params)
+    {
+        loop3DstStride = params.loop3DstStride;
+        loop1Size = params.loop1Size;
+        padEn = params.padEn ? 1 : 0;
+        splitEn = params.splitEn ? 1 : 0;
+    }
+
+    __aicore__ inline void SetLoop3DstStride(uint32_t loop3DstStride_) { loop3DstStride = loop3DstStride_; };
+    __aicore__ inline void SetLoop1Size(uint16_t loop1Size_) { loop1Size = loop1Size_; };
+    __aicore__ inline void SetPadEn(bool padEn_) { padEn = padEn_ ? 1 : 0; };
+    __aicore__ inline void SetSplitEn(bool splitEn_) { splitEn = splitEn_ ? 1 : 0; };
+
+    __aicore__ inline uint32_t GetLoop3DstStride() const { return loop3DstStride; };
+    __aicore__ inline uint16_t GetLoop1Size() const { return loop1Size; };
+    __aicore__ inline bool GetPadEn() const { return padEn != 0; };
+    __aicore__ inline bool GetSplitEn() const { return splitEn != 0; };
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpBitModeConfig0 {
+    uint64_t loop2DstStride : 40;
+    uint64_t loop3Size : 21;
+    uint64_t transMode : 2;
+    uint64_t reserved0 : 1;
+
+    __aicore__ inline void Init(const FixpParams& params)
+    {
+        loop2DstStride = params.loop2DstStride;
+        loop3Size = params.loop3Size;
+        transMode = static_cast<uint8_t>(params.transMode);
+    }
+
+    __aicore__ inline void SetLoop2DstStride(uint64_t loop2DstStride_) { loop2DstStride = loop2DstStride_; };
+    __aicore__ inline void SetLoop3Size(uint32_t loop3Size_) { loop3Size = loop3Size_; };
+    __aicore__ inline void SetTransMode(uint8_t transMode_) { transMode = transMode_; };
+
+    __aicore__ inline uint64_t GetLoop2DstStride() const { return loop2DstStride; };
+    __aicore__ inline uint32_t GetLoop3Size() const { return loop3Size; };
+    __aicore__ inline uint8_t GetTransMode() const { return transMode; };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpBitModeConfig0 {
+    uint64_t loop3Size : 16;
+    uint64_t loop2Size : 16;
+    uint64_t loop2DstStride : 32;
+
+    __aicore__ inline void Init(const FixpParams& params)
+    {
+        loop3Size = params.loop3Size;
+        loop2Size = params.loop2Size;
+        loop2DstStride = params.loop2DstStride;
+    }
+
+    __aicore__ inline void SetLoop3Size(uint16_t loop3Size_) { loop3Size = loop3Size_; };
+    __aicore__ inline void SetLoop2Size(uint16_t loop2Size_) { loop2Size = loop2Size_; };
+    __aicore__ inline void SetLoop2DstStride(uint32_t loop2DstStride_) { loop2DstStride = loop2DstStride_; };
+
+    __aicore__ inline uint16_t GetLoop3Size() const { return loop3Size; };
+    __aicore__ inline uint16_t GetLoop2Size() const { return loop2Size; };
+    __aicore__ inline uint32_t GetLoop2DstStride() const { return loop2DstStride; };
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpBitModeConfig1 {
+    uint64_t loop4DstStride : 40;
+    uint64_t loop2Size : 16;
+    uint64_t sid : 4;
+    uint64_t reserved0 : 4;
+
+    __aicore__ inline void Init(const FixpParams& params)
+    {
+        loop4DstStride = params.loop4DstStride;
+        loop2Size = params.loop2Size;
+        sid = params.sid;
+    }
+
+    __aicore__ inline void SetLoop4DstStride(uint64_t loop4DstStride_) { loop4DstStride = loop4DstStride_; };
+    __aicore__ inline void SetLoop2Size(uint16_t loop2Size_) { loop2Size = loop2Size_; };
+    __aicore__ inline void SetSid(uint8_t sid_) { sid = sid_; };
+
+    __aicore__ inline uint64_t GetLoop4DstStride() const { return loop4DstStride; };
+    __aicore__ inline uint16_t GetLoop2Size() const { return loop2Size; };
+    __aicore__ inline uint8_t GetSid() const { return sid; };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpBitModeConfig1 {
+    uint64_t loop3SrcStride : 16;
+    uint64_t loop2SrcStride : 16;
+    uint64_t transMode : 2;
+    uint64_t sid : 4;
+    uint64_t reserved0 : 26;
+
+    __aicore__ inline void Init(const FixpParams& params)
+    {
+        ASSERT(
+            !(params.loop2SrcStride != 0 && params.loop1SrcStride != 0) &&
+            "loop2SrcStride and loop1SrcStride are mutually exclusive, only one can be non-zero");
+        loop3SrcStride = params.loop3SrcStride;
+        loop2SrcStride = params.loop2SrcStride | params.loop1SrcStride;
+        transMode = static_cast<uint8_t>(params.transMode);
+        sid = params.sid;
+    }
+
+    __aicore__ inline void SetLoop3SrcStride(uint16_t loop3SrcStride_) { loop3SrcStride = loop3SrcStride_; };
+    __aicore__ inline void SetLoop2SrcStride(uint16_t loop2SrcStride_) { loop2SrcStride = loop2SrcStride_; };
+    __aicore__ inline void SetTransMode(uint8_t transMode_) { transMode = transMode_; };
+    __aicore__ inline void SetSid(uint8_t sid_) { sid = sid_; };
+
+    __aicore__ inline uint16_t GetLoop3SrcStride() const { return loop3SrcStride; };
+    __aicore__ inline uint16_t GetLoop2SrcStride() const { return loop2SrcStride; };
+    __aicore__ inline uint8_t GetTransMode() const { return transMode; };
+    __aicore__ inline uint8_t GetSid() const { return sid; };
+};
+#endif
 } // namespace AscendC
 
 #endif // __NPU_ARCH__

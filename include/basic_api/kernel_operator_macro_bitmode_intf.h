@@ -175,6 +175,33 @@ private:
     };
 };
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+class FixPipeConfigBitModeParams {
+public:
+    __aicore__ inline FixPipeConfigBitModeParams();
+    __aicore__ inline FixPipeConfigBitModeParams(const FixPipeConfigParams& fixPipeConfigParams);
+
+    __aicore__ inline void SetPreReluAddr(uint8_t preReluAddr_);
+    __aicore__ inline void SetPreQuantAddr(uint8_t preQuantAddr_);
+    __aicore__ inline void SetPostQuantAddr(uint8_t postQuantAddr_);
+    __aicore__ inline void SetAntiquantAddr(uint8_t antiquantAddr_);
+    __aicore__ inline void SetShiftValue(uint8_t shiftValue_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline uint8_t GetPreReluAddr() const;
+    __aicore__ inline uint8_t GetPreQuantAddr() const;
+    __aicore__ inline uint8_t GetPostQuantAddr() const;
+    __aicore__ inline uint8_t GetAntiquantAddr() const;
+    __aicore__ inline uint8_t GetShiftValue() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixPipeConfigBitModeConfig0 config0BitMode;
+    };
+};
+#else
 class FixPipeConfigBitModeParams {
 public:
     __aicore__ inline FixPipeConfigBitModeParams();
@@ -202,6 +229,7 @@ private:
         struct FixPipeConfigBitModeConfig0 config0BitMode;
     };
 };
+#endif
 
 class FixPipeReluAlphaBitModeParams {
 public:
@@ -500,6 +528,183 @@ private:
         struct PostProcBitModeConfig0 config0BitMode;
     };
 };
+
+#if defined(__NPU_ARCH__) && \
+    (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+class FixpNzParaBitModeParams {
+public:
+    __aicore__ inline FixpNzParaBitModeParams();
+    __aicore__ inline FixpNzParaBitModeParams(const FixpNzParaParams& fixpNzParaParams);
+
+    __aicore__ inline void SetLoop4Size(uint16_t loop4Size_);
+    __aicore__ inline void SetLoop2SrcStride(uint16_t loop2SrcStride_);
+    __aicore__ inline void SetLoop3SrcStride(uint16_t loop3SrcStride_);
+    __aicore__ inline void SetLoop4SrcStride(uint16_t loop4SrcStride_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline uint16_t GetLoop4Size() const;
+    __aicore__ inline uint16_t GetLoop2SrcStride() const;
+    __aicore__ inline uint16_t GetLoop3SrcStride() const;
+    __aicore__ inline uint16_t GetLoop4SrcStride() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpNzParaBitModeConfig0 config0BitMode;
+    };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+class FixpNzParaBitModeParams {
+public:
+    __aicore__ inline FixpNzParaBitModeParams();
+    __aicore__ inline FixpNzParaBitModeParams(const FixpNzParaParams& fixpNzParaParams);
+
+    __aicore__ inline void SetLoop4Size(uint16_t loop4Size_);
+    __aicore__ inline void SetLoop4SrcStride(uint16_t loop4SrcStride_);
+    __aicore__ inline void SetLoop4DstStride(uint32_t loop4DstStride_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline uint16_t GetLoop4Size() const;
+    __aicore__ inline uint16_t GetLoop4SrcStride() const;
+    __aicore__ inline uint32_t GetLoop4DstStride() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpNzParaBitModeConfig0 config0BitMode;
+    };
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+class FixpLoopenhanceParaBitModeParams {
+public:
+    __aicore__ inline FixpLoopenhanceParaBitModeParams();
+    __aicore__ inline FixpLoopenhanceParaBitModeParams(const FixpLoopenhanceParaParams& fixpLoopenhanceParaParams);
+
+    __aicore__ inline void SetLoop3DstStride(uint64_t loop3DstStride_);
+    __aicore__ inline void SetLoop1Size(uint16_t loop1Size_);
+    __aicore__ inline void SetPadEn(bool padEn_);
+    __aicore__ inline void SetSplitEn(bool splitEn_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline uint64_t GetLoop3DstStride() const;
+    __aicore__ inline uint16_t GetLoop1Size() const;
+    __aicore__ inline bool GetPadEn() const;
+    __aicore__ inline bool GetSplitEn() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpLoopenhanceParaBitModeConfig0 config0BitMode;
+    };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+class FixpLoopenhanceParaBitModeParams {
+public:
+    __aicore__ inline FixpLoopenhanceParaBitModeParams();
+    __aicore__ inline FixpLoopenhanceParaBitModeParams(const FixpLoopenhanceParaParams& fixpLoopenhanceParaParams);
+
+    __aicore__ inline void SetLoop3DstStride(uint32_t loop3DstStride_);
+    __aicore__ inline void SetLoop1Size(uint16_t loop1Size_);
+    __aicore__ inline void SetPadEn(bool padEn_);
+    __aicore__ inline void SetSplitEn(bool splitEn_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline uint32_t GetLoop3DstStride() const;
+    __aicore__ inline uint16_t GetLoop1Size() const;
+    __aicore__ inline bool GetPadEn() const;
+    __aicore__ inline bool GetSplitEn() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpLoopenhanceParaBitModeConfig0 config0BitMode;
+    };
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+class FixpBitModeParams {
+public:
+    __aicore__ inline FixpBitModeParams();
+    __aicore__ inline FixpBitModeParams(const FixpParams& fixpipeParams);
+
+    __aicore__ inline void SetLoop2DstStride(uint64_t loop2DstStride_);
+    __aicore__ inline void SetLoop3Size(uint32_t loop3Size_);
+    __aicore__ inline void SetTransMode(uint8_t transMode_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline void SetLoop4DstStride(uint64_t loop4DstStride_);
+    __aicore__ inline void SetLoop2Size(uint16_t loop2Size_);
+    __aicore__ inline void SetSid(uint8_t sid_);
+    __aicore__ inline void SetConfig1(uint64_t config1_);
+
+    __aicore__ inline uint64_t GetLoop2DstStride() const;
+    __aicore__ inline uint32_t GetLoop3Size() const;
+    __aicore__ inline uint8_t GetTransMode() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+    __aicore__ inline uint64_t GetLoop4DstStride() const;
+    __aicore__ inline uint16_t GetLoop2Size() const;
+    __aicore__ inline uint8_t GetSid() const;
+    __aicore__ inline uint64_t GetConfig1() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpBitModeConfig0 config0BitMode;
+    };
+    union {
+        uint64_t config1;
+        struct FixpBitModeConfig1 config1BitMode;
+    };
+};
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+class FixpBitModeParams {
+public:
+    __aicore__ inline FixpBitModeParams();
+    __aicore__ inline FixpBitModeParams(const FixpParams& fixpipeParams);
+
+    __aicore__ inline void SetLoop3Size(uint16_t loop3Size_);
+    __aicore__ inline void SetLoop2Size(uint16_t loop2Size_);
+    __aicore__ inline void SetLoop2DstStride(uint32_t loop2DstStride_);
+    __aicore__ inline void SetConfig0(uint64_t config0_);
+
+    __aicore__ inline void SetLoop3SrcStride(uint16_t loop3SrcStride_);
+    __aicore__ inline void SetLoop2SrcStride(uint16_t loop2SrcStride_);
+    __aicore__ inline void SetTransMode(uint8_t transMode_);
+    __aicore__ inline void SetSid(uint8_t sid_);
+    __aicore__ inline void SetConfig1(uint64_t config1_);
+
+    __aicore__ inline uint16_t GetLoop3Size() const;
+    __aicore__ inline uint16_t GetLoop2Size() const;
+    __aicore__ inline uint32_t GetLoop2DstStride() const;
+    __aicore__ inline uint64_t GetConfig0() const;
+
+    __aicore__ inline uint16_t GetLoop3SrcStride() const;
+    __aicore__ inline uint16_t GetLoop2SrcStride() const;
+    __aicore__ inline uint8_t GetTransMode() const;
+    __aicore__ inline uint8_t GetSid() const;
+    __aicore__ inline uint64_t GetConfig1() const;
+
+private:
+    union {
+        uint64_t config0;
+        struct FixpBitModeConfig0 config0BitMode;
+    };
+    union {
+        uint64_t config1;
+        struct FixpBitModeConfig1 config1BitMode;
+    };
+};
+#endif
+#endif // __NPU_ARCH__ 5101/5161/5165/5163
 } // namespace AscendC
 
 #if defined(__NPU_ARCH__)

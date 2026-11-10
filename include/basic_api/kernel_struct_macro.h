@@ -378,6 +378,151 @@ struct PostProcParams {
     instr_id_t instrId = instr_id_t::ID_0;
     uint16_t n = 0;
 };
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpNzParaParamsArch5101 {
+    __aicore__ FixpNzParaParamsArch5101() {}
+
+    __aicore__ FixpNzParaParamsArch5101(
+        const uint16_t loop4SizeIn, const uint16_t loop2SrcStrideIn, const uint16_t loop1SrcStrideIn,
+        const uint16_t loop3SrcStrideIn, const uint16_t loop4SrcStrideIn)
+    {
+        loop4Size = loop4SizeIn;
+        loop2SrcStride = loop2SrcStrideIn;
+        loop1SrcStride = loop1SrcStrideIn;
+        loop3SrcStride = loop3SrcStrideIn;
+        loop4SrcStride = loop4SrcStrideIn;
+    }
+
+    uint16_t loop4Size = 0;
+    uint16_t loop2SrcStride = 0;
+    uint16_t loop1SrcStride = 0;
+    uint16_t loop3SrcStride = 0;
+    uint16_t loop4SrcStride = 0;
+};
+using FixpNzParaParams = FixpNzParaParamsArch5101;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpNzParaParamsArch5161 {
+    __aicore__ FixpNzParaParamsArch5161() {}
+
+    __aicore__ FixpNzParaParamsArch5161(
+        const uint16_t loop4SizeIn, const uint16_t loop4SrcStrideIn, const uint32_t loop4DstStrideIn)
+    {
+        loop4Size = loop4SizeIn;
+        loop4SrcStride = loop4SrcStrideIn;
+        loop4DstStride = loop4DstStrideIn;
+    }
+
+    uint16_t loop4Size = 0;
+    uint16_t loop4SrcStride = 0;
+    uint32_t loop4DstStride = 0;
+};
+using FixpNzParaParams = FixpNzParaParamsArch5161;
+#else
+struct FixpNzParaParams {
+    __aicore__ FixpNzParaParams() {}
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpLoopenhanceParaParamsArch5101 {
+    __aicore__ FixpLoopenhanceParaParamsArch5101() {}
+
+    __aicore__ FixpLoopenhanceParaParamsArch5101(
+        const uint64_t loop3DstStrideIn, const uint16_t loop1SizeIn, const bool padEnIn, const bool splitEnIn)
+        : loop3DstStride(loop3DstStrideIn), loop1Size(loop1SizeIn), padEn(padEnIn), splitEn(splitEnIn)
+    {}
+
+    uint64_t loop3DstStride = 0;
+    uint16_t loop1Size = 0;
+    bool padEn = 0;
+    bool splitEn = 0;
+};
+using FixpLoopenhanceParaParams = FixpLoopenhanceParaParamsArch5101;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpLoopenhanceParaParamsArch5161 {
+    __aicore__ FixpLoopenhanceParaParamsArch5161() {}
+
+    __aicore__ FixpLoopenhanceParaParamsArch5161(
+        const uint32_t loop3DstStrideIn, const uint16_t loop1SizeIn, const bool padEnIn, const bool splitEnIn)
+        : loop3DstStride(loop3DstStrideIn), loop1Size(loop1SizeIn), padEn(padEnIn), splitEn(splitEnIn)
+    {}
+
+    uint32_t loop3DstStride = 0;
+    uint16_t loop1Size = 0;
+    bool padEn = 0;
+    bool splitEn = 0;
+};
+using FixpLoopenhanceParaParams = FixpLoopenhanceParaParamsArch5161;
+#else
+struct FixpLoopenhanceParaParams {
+    __aicore__ FixpLoopenhanceParaParams() {}
+};
+#endif
+
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+struct FixpParamsArch5101 {
+    __aicore__ FixpParamsArch5101() {}
+
+    __aicore__ FixpParamsArch5101(
+        const uint64_t loop2DstStrideIn, const uint32_t loop3SizeIn,
+        const fixp_trans_mode_t transModeIn = fixp_trans_mode_t::NORMAL_DMA, const uint64_t loop4DstStrideIn = 0,
+        const uint16_t loop2SizeIn = 0, const uint8_t sidIn = 0)
+    {
+        loop2DstStride = loop2DstStrideIn;
+        loop3Size = loop3SizeIn;
+        transMode = transModeIn;
+
+        loop4DstStride = loop4DstStrideIn;
+        loop2Size = loop2SizeIn;
+        sid = sidIn;
+    }
+
+    uint64_t loop2DstStride = 0;
+    uint32_t loop3Size = 0;
+    fixp_trans_mode_t transMode = fixp_trans_mode_t::NORMAL_DMA;
+
+    uint64_t loop4DstStride = 0;
+    uint16_t loop2Size = 0;
+    uint8_t sid = 0;
+};
+using FixpParams = FixpParamsArch5101;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
+struct FixpParamsArch5161 {
+    __aicore__ FixpParamsArch5161() {}
+
+    __aicore__ FixpParamsArch5161(
+        const uint16_t loop3SizeIn, const uint16_t loop2SizeIn, const uint32_t loop2DstStrideIn,
+        const uint16_t loop3SrcStrideIn, const uint16_t loop2SrcStrideIn, const uint16_t loop1SrcStrideIn,
+        const fixp_trans_mode_t transModeIn = fixp_trans_mode_t::NORMAL_DMA, const uint8_t sidIn = 0)
+    {
+        loop3Size = loop3SizeIn;
+        loop2Size = loop2SizeIn;
+        loop2DstStride = loop2DstStrideIn;
+
+        loop3SrcStride = loop3SrcStrideIn;
+        loop2SrcStride = loop2SrcStrideIn;
+        loop1SrcStride = loop1SrcStrideIn;
+        transMode = transModeIn;
+        sid = sidIn;
+    }
+
+    uint16_t loop3Size = 0;
+    uint16_t loop2Size = 0;
+    uint32_t loop2DstStride = 0;
+
+    uint16_t loop3SrcStride = 0;
+    uint16_t loop2SrcStride = 0;
+    uint16_t loop1SrcStride = 0;
+    fixp_trans_mode_t transMode = fixp_trans_mode_t::NORMAL_DMA;
+    uint8_t sid = 0;
+};
+using FixpParams = FixpParamsArch5161;
+#else
+struct FixpParams {
+    __aicore__ FixpParams() {}
+};
+#endif
 } // namespace AscendC
 
 #endif // __NPU_ARCH__
