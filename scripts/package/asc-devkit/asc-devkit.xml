@@ -227,6 +227,9 @@
         <file value="aicpu-config.cmake" install_softlink="$(TARGET_ENV)/tikcpp/ascendc_kernel_cmake/aicpu-config.cmake"/>
         <file value="asc-config.cmake" install_softlink="$(TARGET_ENV)/tikcpp/ascendc_kernel_cmake/asc-config.cmake"/>
     </file_info>
+    <file_info value="asccomm_config" copy_type="delivery" src_path="lib/host" dst_path="$(TARGET_ENV)/lib64/cmake" install_path="$(TARGET_ENV)/lib64/cmake" install_type="all" install_mod="440">
+        <file value="asccomm-config.cmake"/>
+    </file_info>
     <file_info value="acl_rt"  copy_type="delivery" src_path="lib/host" dst_path="$(TARGET_ENV)/include/acl" install_path="$(TARGET_ENV)/include/acl" install_mod="440">
         <file value="acl_rt_compile.h"/>
     </file_info>
