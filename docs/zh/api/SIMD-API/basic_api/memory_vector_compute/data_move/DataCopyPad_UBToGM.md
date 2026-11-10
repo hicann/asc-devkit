@@ -25,6 +25,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id34 -->
+- KirinX90处理器系列产品：支持
+<!-- end id34 -->
+<!-- npu="9020" id37 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id37 -->
+<!-- npu="9030" id38 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id38 -->
+<!-- npu="9050" id39 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id39 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_UBToGM_res.md#id1 -->
 
 ### 支持数据搬运模式mode的原型
@@ -50,6 +62,18 @@
 <!-- npu="910" id14 -->
 - Atlas训练系列产品：不支持
 <!-- end id14 -->
+<!-- npu="x90" id43 -->
+- KirinX90处理器系列产品：支持
+<!-- end id43 -->
+<!-- npu="9020" id35 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id35 -->
+<!-- npu="9030" id44 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id44 -->
+<!-- npu="9050" id45 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id45 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopyPad_UBToGM_res.md#id2 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -194,6 +218,30 @@
 - Atlas 200I/500 A2推理产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
 
 <!-- end id19 -->
+
+<!-- npu="x90" id40 -->
+
+- Kirinx90处理器系列产品，支持的数据类型为：b8、b16、b32。
+
+<!-- end id40 -->
+
+<!-- npu="9020" id36 -->
+
+- Kirin9020处理器系列产品，支持的数据类型为：b8、b16、b32。
+
+<!-- end id36 -->
+
+<!-- npu="9030" id41 -->
+
+- Kirin9030处理器系列产品，支持的数据类型为：b8、b16、b32。
+
+<!-- end id41 -->
+
+<!-- npu="9050" id42 -->
+
+- Kirin9050处理器系列产品，支持的数据类型为：b8、b16、b32。
+
+<!-- end id42 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

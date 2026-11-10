@@ -23,6 +23,12 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id32 -->
+- KirinX90处理器系列产品：支持
+<!-- end id32 -->
+<!-- npu="9030" id34 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id34 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Gather_res.md#id1 -->
 
 ## 功能说明<a name="section17600329101418"></a>
@@ -111,6 +117,17 @@ Atlas 200I/500 A2推理产品，支持的数据类型为：int8_t、uint8_t、in
 Atlas推理系列产品AI Core，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id12 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Gather_res.md#id2 -->
+
+<!-- npu="x90" id35 -->
+KirinX90处理器系列产品，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id35 -->
+
+<!-- npu="9030" id37 -->
+Kirin9030处理器系列产品，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id37 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/scatter_gather/Gather_res.md#id2 -->
+
+
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

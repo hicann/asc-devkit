@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id10 -->
+- KirinX90处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="9020" id8 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id8 -->
+<!-- npu="9030" id9 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id9 -->
+<!-- npu="9050" id14 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id14 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/logical_compute/Not_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -91,6 +103,19 @@
 ## 数据类型
 
 支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t。
+
+<!-- npu="x90" id13 -->
+- 针对KirinX90处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id13 -->
+<!-- npu="9020" id11 -->
+- 针对Kirin9020处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id11 -->
+<!-- npu="9030" id12 -->
+- 针对Kirin9030处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id12 -->
+<!-- npu="9050" id15 -->
+- 针对Kirin9050处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id15 -->
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

@@ -23,6 +23,18 @@
 <!-- npu="910" id19 -->
 - Atlas训练系列产品：不支持
 <!-- end id19 -->
+<!-- npu="x90" id6 -->
+- Kirinx90处理器系列产品：支持
+<!-- end id6 -->
+<!-- npu="9020" id8 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id8 -->
+<!-- npu="9030" id9 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id9 -->
+<!-- npu="9050" id10 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id10 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_UBToGM_NZ2ND_res.md#id1 -->
 
 ## 功能说明<a name="section12840195813362"></a>
@@ -117,6 +129,9 @@ __aicore__ inline void DataCopy(const GlobalTensor<T>& dst, const LocalTensor<T>
 <!-- npu="310p" id5 -->
 - Atlas推理系列产品AI Core，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id5 -->
+<!-- npu="x90,9020,9030,9050" id7 -->
+- KirinX90、Kirin9020、Kirin9030、Kirin9050处理器系列产品，支持的数据类型为：b16、b32。
+<!-- end id7 -->
 
 ## 返回值说明<a name="section129001927113216"></a>
 

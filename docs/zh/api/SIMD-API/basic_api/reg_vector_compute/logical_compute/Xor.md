@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id10 -->
+- KirinX90处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="9020" id11 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id11 -->
+<!-- npu="9030" id12 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9050" id8 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id8 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/logical_compute/Xor_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -93,6 +105,19 @@
 ## 数据类型
 
 支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t。
+
+<!-- npu="x90" id13 -->
+- KirinX90处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id13 -->
+<!-- npu="9020" id14 -->
+- Kirin9020处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id14 -->
+<!-- npu="9030" id15 -->
+- Kirin9030处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id15 -->
+<!-- npu="9050" id9 -->
+- Kirin9050处理器系列产品，支持的数据类型为bool、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id9 -->
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

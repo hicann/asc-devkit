@@ -6,8 +6,14 @@
 
 - **[SetFixpipePreQuantFlag](SetFixpipePreQuantFlag.md)**
 
+- **[SetFixpipePostQuantFlag](SetFixpipePostQuantFlag.md)**
+
 - **[SetFixpipeNz2ndFlag](SetFixpipeNz2ndFlag.md)**
 
 - **[SetFixPipeClipRelu](SetFixPipeClipRelu.md)**
 
+- **[SetFixPipeReluAlpha](SetFixPipeReluAlpha.md)**
+
 - **[SetFixPipeAddr](SetFixPipeAddr.md)**
+
+- **[SetFixpipeEltAntiq](SetFixpipeEltAntiq.md)**

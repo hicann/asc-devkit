@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id12 -->
+- KirinX90处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -113,7 +122,15 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 目的操作数与源操作数的数据类型需要保持一致。
 - 当RegTensor模板参数regTrait为RegTraitNumOne时，支持的数据类型为：b8、b16、b32、b64。
 - 当RegTensor模板参数regTrait为RegTraitNumTwo时，支持的数据类型为：complex32、b64。
-
+<!-- npu="9020" id15 -->
+- 针对Kirin9020处理器系列产品：仅支持RegTraitNumOne，不支持RegTraitNumTwo。
+  - PostUpdate扩展搬运接口：支持b8、b16、b32。
+  - 使用AddrReg寄存器存储偏移量接口：支持b8、b16、b32。
+  - 使用AR寄存器存储偏移量接口：b8、b16、b32。
+<!-- end id15 -->
+<!-- npu="9050" id17 -->
+- 针对Kirin9050处理器系列产品：仅支持RegTraitNumOne，不支持RegTraitNumTwo,b64。
+<!-- end id17 -->
 ## 返回值说明
 
 无
@@ -264,4 +281,3 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
         AscendC::Reg::StoreUnAlignPost(dstAddr, ureg);
     }
     ```
-

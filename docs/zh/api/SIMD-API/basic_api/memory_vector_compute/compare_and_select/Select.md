@@ -24,10 +24,13 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id34 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id34 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/compare_and_select/Select_res.md#id1 -->
 
@@ -82,12 +85,17 @@ Atlas训练系列产品，仅支持模式0。
 <!-- end id22 -->
 
 <!-- npu="x90" id23 -->
-Kirin X90处理器系列产品，支持模式0、1、2。
+KirinX90处理器系列产品，支持模式0、1、2。
 <!-- end id23 -->
 
+<!-- npu="9020" id36 -->
+Kirin9020处理器系列产品，支持模式0、1、2。
+<!-- end id36 -->
+
 <!-- npu="9030" id24 -->
-Kirin 9030处理器系列产品，支持模式0、1、2。
+Kirin9030处理器系列产品，支持模式0、1、2。
 <!-- end id24 -->
+
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -204,11 +212,15 @@ Kirin 9030处理器系列产品，支持模式0、1、2。
   <!-- end id30 -->
     
   <!-- npu="x90" id31 -->
-  - Kirin X90处理器系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
+  - KirinX90处理器系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
   <!-- end id31 -->
+
+  <!-- npu="9020" id35 -->
+  - Kirin9020处理器系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
+  <!-- end id35 -->
     
   <!-- npu="9030" id32 -->
-  - Kirin 9030处理器系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
+  - Kirin9030处理器系列产品，支持的数据类型为：int8_t/uint8_t/int16_t/uint16_t/half/int32_t/uint32_t/float。
     <!-- end id32 -->
 
 - U支持的数据类型为：uint8_t、uint16_t、uint32_t、uint64_t。

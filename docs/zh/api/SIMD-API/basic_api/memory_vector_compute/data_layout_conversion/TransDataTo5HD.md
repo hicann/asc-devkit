@@ -24,13 +24,16 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id22 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id22 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- npu="9050" id10 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id10 -->
 <!-- npu="kirin1" id11 -->
 - KirinDev0001处理器系列产品：支持
@@ -104,21 +107,21 @@ TransDataTo5HD接口数据格式转换，一般用于将NCHW格式转换成[NC1H
 
 ## 数据类型
 
-<!-- npu="950" id10 -->
+<!-- npu="950" id24 -->
 Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。
-<!-- end id10 -->
+<!-- end id24 -->
 
-<!-- npu="A3" id11 -->
+<!-- npu="A3" id25 -->
 Atlas A3系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
-<!-- end id11 -->
+<!-- end id25 -->
 
-<!-- npu="910b" id12 -->
+<!-- npu="910b" id26 -->
 Atlas A2系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
-<!-- end id12 -->
+<!-- end id26 -->
 
-<!-- npu="310b" id13 -->
+<!-- npu="310b" id27 -->
 Atlas 200I/500 A2推理产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
-<!-- end id13 -->
+<!-- end id27 -->
 
 <!-- npu="310p" id14 -->
 Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
@@ -129,15 +132,19 @@ Atlas训练系列产品，支持的数据类型为：int8_t、uint8_t、int16_t�
 <!-- end id15 -->
 
 <!-- npu="x90" id16 -->
-Kirin X90处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+KirinX90处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id16 -->
 
+<!-- npu="9020" id23 -->
+Kirin9020处理器系列产品，支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id23 -->
+
 <!-- npu="9030" id17 -->
-Kirin 9030处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+Kirin9030处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id17 -->
 
 <!-- npu="9050" id18 -->
-Kirin 9050处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+Kirin9050处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id18 -->
 
 <!-- npu="kirin1" id19 -->

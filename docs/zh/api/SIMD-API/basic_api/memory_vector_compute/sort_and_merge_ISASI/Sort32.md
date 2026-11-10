@@ -23,6 +23,15 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id15 -->
+- KirinX90处理器系列产品：支持
+<!-- end id15 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/Sort32_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -98,7 +107,17 @@ __aicore__ inline void Sort32(const LocalTensor<T>& dst, const LocalTensor<T>& s
 - 如果存在score\[i\]==score\[j\]并且i\>j，将优先选取score\[j\]排在前面。
 - 每次迭代内的数据会进行排序，不同迭代间的数据不会进行排序。
 - 每次迭代输入src0要求128B\(float\)/64B\(half\)对齐，src1要求128B对齐，输出dst要求256B对齐。
+<!-- npu="x90" id18 -->
+- KirinX90处理器系列产品，支持src0数据类型：half，src1数据类型：uint32，dst数据类型：half。
+<!-- end id18 -->
+<!-- npu="9020" id16 -->
+- Kirin9020处理器系列产品，支持src0数据类型：half，src1数据类型：uint32，dst数据类型：half。
+<!-- end id16 -->
+<!-- npu="9030" id17 -->
+- Kirin9030处理器系列产品，支持src0数据类型：half，src1数据类型：uint32，dst数据类型：half。
+<!-- end id17 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/Sort32_res.md#id3 -->
+
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

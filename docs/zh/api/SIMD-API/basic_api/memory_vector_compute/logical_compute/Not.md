@@ -24,10 +24,13 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id23 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id23 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/logical_compute/Not_res.md#id1 -->
 
@@ -104,12 +107,17 @@ $dst_i = \sim src_i$
 - 针对Atlas训练系列产品，T支持的数据类型为：int16_t、uint16_t。
 <!-- end id15 -->
 <!-- npu="x90" id16 -->
-- 针对Kirin X90处理器系列产品，T支持的数据类型为：int16_t、uint16_t。
+- 针对KirinX90处理器系列产品，T支持的数据类型为：int16_t、uint16_t。
 <!-- end id16 -->
+<!-- npu="9020" id24 -->
+- 针对Kirin9020处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id24 -->
 <!-- npu="9030" id17 -->
-- 针对Kirin 9030处理器系列产品，T支持的数据类型为：int16_t、uint16_t。
+- 针对Kirin9030处理器系列产品，T支持的数据类型为：int16_t、uint16_t。
 <!-- end id17 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/logical_compute/Not_res.md#id2 -->
+
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

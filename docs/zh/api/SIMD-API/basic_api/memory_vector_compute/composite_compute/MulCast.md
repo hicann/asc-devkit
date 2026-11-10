@@ -23,6 +23,15 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id19 -->
+- KirinX90处理器系列产品：支持
+<!-- end id19 -->
+<!-- npu="9020" id21 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id21 -->
+<!-- npu="9030" id20 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id20 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/composite_compute/MulCast_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -140,6 +149,38 @@ $$
 | half               | uint8_t     |
 
 <!-- end id12 -->
+
+
+<!-- npu="x90" id22 -->
+
+**表**  KirinX90处理器系列产品数据类型组合情况
+
+| src0、src1数据类型 | dst数据类型 |
+| :----------------- | :---------- |
+| half               | int8_t      |
+| half               | uint8_t     |
+
+<!-- end id22 -->
+<!-- npu="9020" id24 -->
+
+**表**  Kirin9020处理器系列产品数据类型组合情况
+
+| src0、src1数据类型 | dst数据类型 |
+| :----------------- | :---------- |
+| half               | int8_t      |
+| half               | uint8_t     |
+
+<!-- end id24 -->
+<!-- npu="9030" id23 -->
+
+**表**  Kirin9030处理器系列产品数据类型组合情况
+
+| src0、src1数据类型 | dst数据类型 |
+| :----------------- | :---------- |
+| half               | int8_t      |
+| half               | uint8_t     |
+
+<!-- end id23 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/composite_compute/MulCast_res.md#id2 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>

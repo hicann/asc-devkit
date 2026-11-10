@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id14 -->
+- KirinX90处理器系列产品：支持
+<!-- end id14 -->
+<!-- npu="9020" id15 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id15 -->
+<!-- npu="9030" id16 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id16 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -35,6 +44,7 @@
 <!-- npu="kirin3" id11 -->
 - KirinDev0003处理器系列产品：支持
 <!-- end id11 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/data_padding/Duplicate_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -101,7 +111,12 @@
 
 ## 约束说明<a name="section177921451558"></a>
 
-无
+<!-- npu="x90,9020,9030" id12 -->
+- KirinX90处理器系列产品、Kirin9020处理器系列产品、Kirin9030处理器系列产品暂不支持：fp4x2_e2m1_t、fp4x2_e1m2_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、bfloat16_t、complex32、int64_t、uint64_t、complex64。
+<!-- end id12 -->
+<!-- npu="9050" id13 -->
+- Kirin9050处理器系列产品暂不支持：complex32、int64_t、uint64_t、complex64。
+<!-- end id13 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

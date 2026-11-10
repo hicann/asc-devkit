@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id17 -->
+- KirinX90处理器系列产品：支持
+<!-- end id17 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9030" id16 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id16 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -79,7 +88,7 @@ __simd_callee__ inline void Reduce(S& dstReg, V srcReg, MaskReg mask)
 
 ## 数据类型
 
-<!-- npu="950" id8 -->
+<!-- npu="950" id19 -->
 **表3** Ascend 950PR&950DT系列产品，ReduceType::SUM数据类型支持情况
 
 | dstReg | srcReg |
@@ -105,7 +114,72 @@ __simd_callee__ inline void Reduce(S& dstReg, V srcReg, MaskReg mask)
 | float | float |
 | int64_t | int64_t |
 | uint64_t | uint64_t |
-<!-- end id8 -->
+<!-- end id19 -->
+
+
+<!-- npu="x90,9030" id13 -->
+**表7** KirinX90/Kirin9030处理器系列产品，版本ReduceType::SUM、ReduceType::MAX、ReduceType::MIN数据类型支持情况
+
+| dstReg | srcReg |
+| --- | --- |
+| half | half |
+| float | float |
+<!-- end id13 -->
+
+<!-- npu="9020" id14 -->
+**表8** Kirin9020处理器系列产品，ReduceType::SUM数据类型支持情况
+
+| dstReg | srcReg |
+| --- | --- |
+| int16_t | int8_t |
+| uint16_t | uint8_t |
+| half | half |
+| float | float |
+| int32_t | int16_t |
+| int32_t | int32_t |
+| uint32_t | uint16_t |
+| uint32_t | uint32_t |
+
+
+**表9** Kirin9020处理器系列产品，ReduceType::MAX或ReduceType::MIN数据类型支持情况
+
+| dstReg | srcReg |
+| --- | --- |
+| int8_t | int8_t |
+| uint8_t | uint8_t |
+| int16_t | int16_t |
+| uint16_t | uint16_t |
+| half | half |
+| int32_t | int32_t |
+| uint32_t | uint32_t |
+| float | float |
+<!-- end id14 -->
+
+<!-- npu="9050" id20 -->
+**表5** Kirin9050处理器系列产品，ReduceType::SUM数据类型支持情况
+
+| dstReg | srcReg |
+| --- | --- |
+| half | half |
+| float | float |
+| int32_t | int16_t |
+| int32_t | int32_t |
+| uint32_t | uint16_t |
+| uint32_t | uint32_t |
+
+
+**表6** Kirin9050处理器系列产品，ReduceType::MAX或ReduceType::MIN数据类型支持情况
+
+| dstReg | srcReg |
+| --- | --- |
+| int16_t | int16_t |
+| uint16_t | uint16_t |
+| half | half |
+| int32_t | int32_t |
+| uint32_t | uint32_t |
+| float | float |
+<!-- end id20 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/reduction_compute/Reduce_res.md#id2 -->
 
 ## 返回值说明
@@ -122,6 +196,8 @@ __simd_callee__ inline void Reduce(S& dstReg, V srcReg, MaskReg mask)
 - 当归约求最小值或者归约求最大值时，源操作数的数据类型和目的操作数相同。
 - mask为空场景及异常值处理参考[mask为空场景及异常值处理](#mask为空场景及异常值处理)。
 - 指令内累加顺序采用二叉树累加方式，规则参考[ReduceType::SUM累加顺序](#ReduceType::SUM累加顺序)。
+
+
 
 ## 关键特性<a name="zh-cn_topic_0000002537812548_section18972943153217"></a>
 

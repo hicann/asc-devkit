@@ -2,6 +2,12 @@
 
 - **[SetMMColumnMajor/SetMMRowMajor](SetMMColumnMajor-SetMMRowMajor.md)**
 
+- **[SetMMLayoutTransform](SetMMLayoutTransform.md)**
+
 - **[SetHF32Mode](SetHF32Mode.md)**
 
 - **[SetHF32TransMode](SetHF32TransMode.md)**
+
+- **[SetMatrixPara](SetMatrixPara.md)**
+
+- **[SetMmadStridePara](SetMmadStridePara.md)**

@@ -23,6 +23,15 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id22 -->
+- KirinX90处理器系列产品：支持
+<!-- end id22 -->
+<!-- npu="9020" id20 -->
+- Kirin9020处理器系列产品：不支持
+<!-- end id20 -->
+<!-- npu="9030" id21 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id21 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI_res.md#id1 -->
 
 ## 功能说明
@@ -94,7 +103,15 @@
 - 用于[ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md)场景时，仅可获取准确最值，不能获取对应的准确索引；如需准确索引，以[ReduceMax](../reduction_compute/ReduceMax.md)/[ReduceMin](../reduction_compute/ReduceMin.md)自身输出为准。
 - 索引`maxMinIndex`按操作数数据类型存储，比如操作数使用`half`类型时，`maxMinIndex`是按照`half`类型进行存储的，如果按照`half`格式进行读取，`maxMinIndex`的值是不对的，因此`maxMinIndex`的读取需要使用`reinterpret_cast`方法转换到整数类型，若输入数据类型是`half`，需要使用`reinterpret_cast<uint16_t*>`，若输入是`float`，需要使用`reinterpret_cast<uint32_t*>`。
 - 操作数数据类型T，需要与所使用的归约接口目的操作数数据类型一致，否则会导致精度错误。
+
+<!-- npu="x90" id25 -->
+- 针对KirinX90处理器系列产品，支持数据类型为：float。
+<!-- end id25 -->
+<!-- npu="9030" id24 -->
+- 针对Kirin9030处理器系列产品，支持数据类型为：float。
+<!-- end id24 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/reduction_compute_aux_config/GetReduceRepeatMaxMinSpr_ISASI_res.md#id3 -->
+
 
 ## 调用示例
 

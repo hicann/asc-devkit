@@ -23,6 +23,15 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id37 -->
+- KirinX90处理器系列产品：支持
+<!-- end id37 -->
+<!-- npu="9020" id38 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id38 -->
+<!-- npu="9030" id39 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id39 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopy_L0CToL1_res.md#id1 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002511188540_section106841136114319"></a>
@@ -204,8 +213,9 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
     对于整数类型只有饱和模式。
 <!-- end id24 -->
 
-<!-- npu="950,A3,910b" id25 -->
 
+
+<!-- npu="950,A3,910b" id40 -->
 ## 调用示例<a id="zh-cn_topic_0000002511188540_section088124295117"></a>
 
 示例：通路L0C Buffer->L1 Buffer。输入A矩阵和B矩阵的数据类型为half，输出C矩阵为int8_t，不开启NZ2ND的格式转换，开启scalar量化。
@@ -226,4 +236,4 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
     AscendC::SetFixpipePreQuantFlag(deqScalar);
     AscendC::DataCopy(c1Local, c, dataCopyParams);
     ```
-<!-- end id25 -->
+<!-- end id40 -->

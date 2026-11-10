@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id18 -->
+- KirinX90处理器系列产品：支持
+<!-- end id18 -->
+<!-- npu="9020" id16 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id16 -->
+<!-- npu="9030" id17 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id17 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -81,9 +90,24 @@ __simd_callee__ inline void Arange(S& dstReg, U scalarValue);
 
 支持的数据类型为：int8_t/int16_t/int32_t/half/float/int64_t。
 
+
+
 ## 约束说明<a name="section177921451558"></a>
 
 对于int8_t/int16_t/int32_t/int64_t，当索引超过该数据类型的边界值时会翻转为负数，如对于int8_t，127之后为-128、-127，以此类推。
+
+<!-- npu="x90" id15 -->
+- KirinX90处理器系列产品，支持数据类型为：int8_t/int16_t/int32_t/half/float。
+<!-- end id15 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品，支持数据类型为：int8_t/int16_t/int32_t/half/float。
+<!-- end id12 -->
+<!-- npu="9030" id13 -->
+- Kirin9030处理器系列产品，支持数据类型为：int8_t/int16_t/int32_t/half/float。
+<!-- end id13 -->
+<!-- npu="9050" id14 -->
+- Kirin9050处理器系列产品，支持数据类型为：int8_t/int16_t/int32_t/half/float。
+<!-- end id14 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

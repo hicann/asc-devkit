@@ -24,11 +24,17 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：不支持
+- KirinX90处理器系列产品：不支持
 <!-- end id8 -->
+<!-- npu="9020" id10 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id10 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id11 -->
+- Kirin9050处理器系列产品：支持(仅限 L0B Buffer)
+<!-- end id11 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_V2_res.md#id1 -->
 
 ## 功能说明
@@ -110,6 +116,12 @@ LoadData2DParamsV2结构体在不启用转置时，示意图如下，参数设�
 - mStep和kStep为0时，表示不执行搬运，该接口将被视为NOP（空操作）。
 - 当目的地址位于L0A Buffer/L0B Buffer时，地址必须512字节对齐；当源地址或目的地址位于L1 Buffer时，地址必须32字节对齐。
 - 对于矩阵转置操作，不同的数据类型需要满足不同的mStep和kStep约束：b4数据类型时，mStep必须是4的倍数；b8数据类型时，mStep必须是2的倍数；b16数据类型时，mStep必须是1的倍数；b32数据类型时，kStep必须是2的倍数。
+<!-- npu="9020,9030" id12 -->
+- 针对Kirin9020/Kirin9030处理器系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half。
+<!-- end id12 -->
+<!-- npu="9050" id13 -->
+- 针对Kirin9050处理器系列产品，支持数据类型为：int4b_t、uint8_t、int8_t、uint16_t、int16_t、half、hifloat8_t、bfloat16_t。
+<!-- end id13 -->
 
 ## 关键特性说明
 

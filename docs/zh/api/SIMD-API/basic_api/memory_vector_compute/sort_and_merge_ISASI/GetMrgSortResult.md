@@ -23,6 +23,16 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id31 -->
+- KirinX90处理器系列产品：支持
+<!-- end id31 -->
+<!-- npu="9020" id29 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id29 -->
+<!-- npu="9030" id30 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id30 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/GetMrgSortResult_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -106,7 +116,19 @@ __aicore__ inline void GetMrgSortResult(uint16_t &mrgSortList1, uint16_t &mrgSor
 <!-- npu="310p" id15 -->
 针对Atlas推理系列产品AI Core，需与MrgSort4接口配合使用，且MrgSort4接口中的MrgSort4Info.ifExhaustedSuspension参数必须设置为true。
 <!-- end id15 -->
+
+<!-- npu="x90" id28 -->
+- 针对KirinX90处理器系列产品，支持数据类型为：half。
+<!-- end id28 -->
+<!-- npu="9020" id26 -->
+- 针对Kirin9020处理器系列产品，支持数据类型为：half。
+<!-- end id26 -->
+<!-- npu="9030" id27 -->
+- 针对Kirin9030处理器系列产品，支持数据类型为：half。
+<!-- end id27 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/GetMrgSortResult_res.md#id2 -->
+
 
 ## 调用示例<a name="section837496171220"></a>
 

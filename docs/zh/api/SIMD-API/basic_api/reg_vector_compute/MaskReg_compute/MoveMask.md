@@ -23,6 +23,12 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="9020" id8 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id8 -->
+<!-- npu="9050" id9 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/MaskReg_compute/MoveMask_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>

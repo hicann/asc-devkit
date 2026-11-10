@@ -24,11 +24,17 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：不支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id22 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id22 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id23 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id23 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable_res.md#id1 -->
 
 ## 功能说明<a id="zh-cn_topic_0000002566886667_section106841136114319"></a>
@@ -110,6 +116,18 @@ DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动�
 <!-- npu="910b" id12 -->
 针对Atlas A2系列产品，src支持的数据为：half、int32_t、float；dst支持的数据为：int32_t、float。
 <!-- end id12 -->
+<!-- npu="x90" id24 -->
+针对KirinX90处理器系列产品，支持的数据为：half、int32_t、float。
+<!-- end id24 -->
+<!-- npu="9020" id25 -->
+针对Kirin9020处理器系列产品，支持的数据为：half、int32_t、float。
+<!-- end id25 -->
+<!-- npu="9030" id26 -->
+针对Kirin9030处理器系列产品，支持的数据为：half、int32_t、float。
+<!-- end id26 -->
+<!-- npu="9050" id27 -->
+针对Kirin9050处理器系列产品，支持的数据为：half、int32_t、float、bfloat16_t。
+<!-- end id27 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable_res.md#id2 -->
 
 ## 返回值说明

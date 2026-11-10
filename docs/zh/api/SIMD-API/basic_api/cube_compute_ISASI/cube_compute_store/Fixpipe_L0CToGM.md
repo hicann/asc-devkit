@@ -24,10 +24,13 @@
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：仅支持包含FixpipeParamsV220参数的接口。
 <!-- end id8 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品：仅支持包含FixpipeParamsV220参数的接口。
+<!-- end id12 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：仅支持包含FixpipeParamsV220参数的接口。
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM_res.md#id1 -->
 
@@ -222,7 +225,7 @@
 <!-- end id22 -->
 
 <!-- npu="x90" id23 -->
-针对Kirin X90处理器系列产品，Fixpipe接口支持的数据类型组合如下：
+针对KirinX90处理器系列产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -232,7 +235,7 @@
 <!-- end id23 -->
 
 <!-- npu="9030" id24 -->
-针对Kirin 9030处理器系列产品，Fixpipe接口支持的数据类型组合如下：
+针对Kirin9030处理器系列产品，Fixpipe接口支持的数据类型组合如下：
 
 | 源矩阵（L0C Buffer） | 目的矩阵（GM） |
 | ---------- | ---------- |
@@ -327,4 +330,3 @@ Fixpipe完整样例请参考[fixpipe\_l0c2gm样例](../../../../../../../example
 <!-- end id30 -->
 
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM_res.md#id4 -->
-

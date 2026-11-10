@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id12 -->
+- KirinX90处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -102,6 +111,12 @@ StoreAlign能够实现数据从[MaskReg](../register_data_types/MaskReg.md)搬�
 ## 数据类型
 
 目的操作数支持的数据类型为：b8、b16、b32、b64。
+<!-- npu="9020" id15 -->
+Kirin9020处理器系列产品，目的操作数支持的数据类型为：b8、b16、b32。
+<!-- end id15 -->
+<!-- npu="9050" id16 -->
+Kirin9050处理器系列产品，目的操作数支持的数据类型为：b8、b16、b32。
+<!-- end id16 -->
 
 ## 返回值说明<a name="section1575141714439"></a>
 
@@ -157,4 +172,3 @@ StoreAlign能够实现数据从[MaskReg](../register_data_types/MaskReg.md)搬�
         }
     }
     ```
-

@@ -26,11 +26,18 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id39 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id39 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id40 -->
+- Kirin9050处理器系列产品：不支持
+<!-- end id40 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad_res.md#id1 -->
 
 ### 传入bias的原型
@@ -57,11 +64,18 @@
 - Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id17 -->
+<!-- npu="9020" id50 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id50 -->
 <!-- npu="9030" id18 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：支持
 <!-- end id18 -->
+<!-- npu="9050" id59 -->
+- Kirin9050处理器系列产品：不支持
+<!-- end id59 -->
+
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad_res.md#id2 -->
 
 ## 功能说明
@@ -172,11 +186,11 @@ Atlas A2系列产品
 | n | 右矩阵Width，取值范围：n∈[0, 4095]。默认值为0。 |
 | k | 左矩阵Width、右矩阵Height，取值范围：k∈[0, 4095]。默认值为0。 |
 | cmatrixInitVal | 是否开启C矩阵默认初始化清零操作。默认值为 true。<br>&nbsp;&nbsp;&bull; true：C矩阵默认初始化为0；<br>&nbsp;&nbsp;&bull; false：C矩阵不进行默认操作，通过设置cmatrixSource参数进行初始化。 |
-| cmatrixSource | 配置C矩阵初始值是否来源于BT Buffer。默认值为false。<br>&nbsp;&nbsp;&bull; false：不对L0C Buffer进行初始化操作；<br>&nbsp;&nbsp;&bull; true：使用BT Buffer(TPosition:C2)的数据对L0C Buffer进行初始化操作。<br><br><!-- npu="910" id30 -->Atlas训练系列产品，仅支持配置为false。<br><!-- end id30 --><!-- npu="310p" id31 -->Atlas推理系列产品AI Core，仅支持配置为false。<br><!-- end id31 --><!-- npu="910b" id32 -->Atlas A2系列产品，支持配置为true/false。<br><!-- end id32 --><!-- npu="A3" id33 -->Atlas A3系列产品，支持配置为true/false。<br><!-- end id33 --><!-- npu="310b" id34 -->Atlas 200I/500 A2推理产品，支持配置为true/false。<br><!-- end id34 --><!-- npu="950" id35 -->Ascend 950PR&950DT系列产品，支持配置为true/false。<br><!-- end id35 --><!-- npu="x90" id36 -->Kirin X90处理器系列产品仅支持配置为false。<br><!-- end id36 --><!-- npu="9030" id37 -->Kirin 9030处理器系列产品仅支持配置为false。<br><!-- end id37 --><br>注意：带Bias输入的接口配置该参数无效，会根据bias输入的位置来判断C矩阵初始值是否来源于BT Buffer。 |
+| cmatrixSource | 配置C矩阵初始值是否来源于BT Buffer。默认值为false。<br>&nbsp;&nbsp;&bull; false：不对L0C Buffer进行初始化操作；<br>&nbsp;&nbsp;&bull; true：使用BT Buffer(TPosition:C2)的数据对L0C Buffer进行初始化操作。<br><br><!-- npu="910" id30 -->Atlas训练系列产品，仅支持配置为false。<br><!-- end id30 --><!-- npu="310p" id31 -->Atlas推理系列产品AI Core，仅支持配置为false。<br><!-- end id31 --><!-- npu="910b" id32 -->Atlas A2系列产品，支持配置为true/false。<br><!-- end id32 --><!-- npu="A3" id33 -->Atlas A3系列产品，支持配置为true/false。<br><!-- end id33 --><!-- npu="310b" id34 -->Atlas 200I/500 A2推理产品，支持配置为true/false。<br><!-- end id34 --><!-- npu="950" id35 -->Ascend 950PR&950DT系列产品，支持配置为true/false。<br><!-- end id35 --><!-- npu="x90" id36 -->KirinX90处理器系列产品仅支持配置为false。<br><!-- end id36 --><!-- npu="9030" id37 -->Kirin9030处理器系列产品仅支持配置为false。<br><!-- end id37 --><br>注意：带Bias输入的接口配置该参数无效，会根据bias输入的位置来判断C矩阵初始值是否来源于BT Buffer。 |
 | isBias | 该参数废弃，新开发内容不要使用该参数。如果需要累加初始矩阵，请使用带Bias的接口来实现；也可以通过cmatrixInitVal和cmatrixSource参数配置C矩阵的初始值来源来实现。推荐使用带Bias的接口，相比于配置cmatrixInitVal和cmatrixSource参数更加简单方便。<br><br>配置是否需要累加初始矩阵，默认值为false，取值说明如下：<br>&nbsp;&nbsp;&bull; false：矩阵乘，无需累加初始矩阵，C = A \* B。<br>&nbsp;&nbsp;&bull; true：矩阵乘加，需要累加初始矩阵，C += A \* B。 |
-| disableGemv | M=1时，该参数用来配置Mmad计算是否开启[GEMV](../mmad_compute_key_features/GEMV.md#ZH-CN_TOPIC_0000002538231187)模式。<br>&nbsp;&nbsp;&bull; false：开启GEMV模式。<br>&nbsp;&nbsp;&bull; true：关闭GEMV模式。<br><br>该参数的产品支持情况如下：<!-- npu="950" id38 --><br>Ascend 950PR&950DT系列产品：支持<!-- end id38 --><!-- npu="A3" id51 --><br>Atlas A3系列产品：不支持<!-- end id51 --><!-- npu="910b" id52 --><br>Atlas A2系列产品：不支持<!-- end id52 --><!-- npu="310b" id53 --><br>Atlas 200I/500 A2推理产品：不支持<!-- end id53 --><!-- npu="310p" id54 --><br>Atlas推理系列产品AI Core：不支持<!-- end id54 --><!-- npu="310p" id55 --><br>Atlas推理系列产品Vector Core：不支持<!-- end id55 --><!-- npu="910" id56 --><br>Atlas训练系列产品：不支持<!-- end id56 --><!-- npu="x90" id57 --><br>Kirin X90处理器系列产品：不支持<!-- end id57 --><!-- npu="9030" id58 --><br>Kirin 9030处理器系列产品：不支持<!-- end id58 --> |
-| unitFlag | unitFlag可以控制Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag；<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位；<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br><br>该参数的产品支持情况如下：<br><!-- npu="950" id69 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id69 --><!-- npu="A3" id61 -->Atlas A3系列产品：支持<br><!-- end id61 --><!-- npu="910b" id62 -->Atlas A2系列产品：支持<br><!-- end id62 --><!-- npu="310b" id63 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id63 --><!-- npu="310p" id64 -->Atlas推理系列产品AI Core：不支持<br><!-- end id64 --><!-- npu="310p" id65 -->Atlas推理系列产品Vector Core：不支持<br><!-- end id65 --><!-- npu="910" id66 -->Atlas训练系列产品：不支持<br><!-- end id66 --><!-- npu="x90" id67 -->Kirin X90处理器系列产品：不支持<br><!-- end id67 --><!-- npu="9030" id68 -->Kirin 9030处理器系列产品：不支持<br><!-- end id68 --><br>参数设置方案和特性细节可参考：[UnitFlag特性说明](../mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788) |
-| kDirectionAlign | K方向对齐的核心功能是通过`kDirectionAlign`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。<br><br>取值说明如下：<br>&nbsp;&nbsp;&bull; false：默认值，K方向对齐到`ceil(K / 8) * 8`。<br>&nbsp;&nbsp;&bull; true：K方向对齐到`ceil(K/16)*16`。<br><br><!-- npu="910" id42 -->Atlas训练系列产品，仅支持配置为false。<br><!-- end id42 --><!-- npu="310p" id43 -->Atlas推理系列产品AI Core，仅支持配置为false。<br><!-- end id43 --><!-- npu="910b" id44 -->Atlas A2系列产品，仅支持配置为true/false。<br><!-- end id44 --><!-- npu="A3" id45 -->Atlas A3系列产品，仅支持配置为true/false。<br><!-- end id45 --><!-- npu="310b" id46 -->Atlas 200I/500 A2推理产品，仅支持配置为false。<br><!-- end id46 --><!-- npu="950" id47 -->Ascend 950PR&950DT系列产品，仅支持配置为false。<br><!-- end id47 --><!-- npu="x90" id48 -->Kirin X90处理器系列产品支持配置为true/false。<br><!-- end id48 --><!-- npu="9030" id49 -->Kirin 9030处理器系列产品支持配置为true/false。<br><!-- end id49 --><br>特性细节可参考：[kDirectionAlign特性说明](../mmad_compute_key_features/k_direction_alignment_constraint.md#ZH-CN_TOPIC_0000002569070973)。 |
+| disableGemv | M=1时，该参数用来配置Mmad计算是否开启[GEMV](../mmad_compute_key_features/GEMV.md#ZH-CN_TOPIC_0000002538231187)模式。<br>&nbsp;&nbsp;&bull; false：开启GEMV模式。<br>&nbsp;&nbsp;&bull; true：关闭GEMV模式。<br><br>该参数的产品支持情况如下：<!-- npu="950" id38 --><br>Ascend 950PR&950DT系列产品：支持<!-- end id38 --><!-- npu="A3" id51 --><br>Atlas A3系列产品：不支持<!-- end id51 --><!-- npu="910b" id52 --><br>Atlas A2系列产品：不支持<!-- end id52 --><!-- npu="310b" id53 --><br>Atlas 200I/500 A2推理产品：不支持<!-- end id53 --><!-- npu="310p" id54 --><br>Atlas推理系列产品AI Core：不支持<!-- end id54 --><!-- npu="310p" id55 --><br>Atlas推理系列产品Vector Core：不支持<!-- end id55 --><!-- npu="910" id56 --><br>Atlas训练系列产品：不支持<!-- end id56 --><!-- npu="x90" id57 --><br>KirinX90处理器系列产品：不支持<!-- end id57 --><!-- npu="9030" id58 --><br>Kirin9030处理器系列产品：不支持<!-- end id58 --> |
+| unitFlag | unitFlag可以控制Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag；<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位；<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br><br>该参数的产品支持情况如下：<br><!-- npu="950" id69 -->Ascend 950PR&950DT系列产品：支持<br><!-- end id69 --><!-- npu="A3" id61 -->Atlas A3系列产品：支持<br><!-- end id61 --><!-- npu="910b" id62 -->Atlas A2系列产品：支持<br><!-- end id62 --><!-- npu="310b" id63 -->Atlas 200I/500 A2推理产品：不支持<br><!-- end id63 --><!-- npu="310p" id64 -->Atlas推理系列产品AI Core：不支持<br><!-- end id64 --><!-- npu="310p" id65 -->Atlas推理系列产品Vector Core：不支持<br><!-- end id65 --><!-- npu="910" id66 -->Atlas训练系列产品：不支持<br><!-- end id66 --><!-- npu="x90" id67 -->KirinX90处理器系列产品：不支持<br><!-- end id67 --><!-- npu="9030" id68 -->Kirin9030处理器系列产品：不支持<br><!-- end id68 --><br>参数设置方案和特性细节可参考：[UnitFlag特性说明](../mmad_compute_key_features/UnitFlag.md#ZH-CN_TOPIC_00000025690709788) |
+| kDirectionAlign | K方向对齐的核心功能是通过`kDirectionAlign`参数控制在使用float数据类型时，L0A Buffer和L0B Buffer矩阵在K方向上的对齐方式。<br><br>取值说明如下：<br>&nbsp;&nbsp;&bull; false：默认值，K方向对齐到`ceil(K / 8) * 8`。<br>&nbsp;&nbsp;&bull; true：K方向对齐到`ceil(K/16)*16`。<br><br><!-- npu="910" id42 -->Atlas训练系列产品，仅支持配置为false。<br><!-- end id42 --><!-- npu="310p" id43 -->Atlas推理系列产品AI Core，仅支持配置为false。<br><!-- end id43 --><!-- npu="910b" id44 -->Atlas A2系列产品，仅支持配置为true/false。<br><!-- end id44 --><!-- npu="A3" id45 -->Atlas A3系列产品，仅支持配置为true/false。<br><!-- end id45 --><!-- npu="310b" id46 -->Atlas 200I/500 A2推理产品，仅支持配置为false。<br><!-- end id46 --><!-- npu="950" id47 -->Ascend 950PR&950DT系列产品，仅支持配置为false。<br><!-- end id47 --><!-- npu="x90" id48 -->KirinX90处理器系列产品支持配置为true/false。<br><!-- end id48 --><!-- npu="9030" id49 -->Kirin9030处理器系列产品支持配置为true/false。<br><!-- end id49 --><br>特性细节可参考：[kDirectionAlign特性说明](../mmad_compute_key_features/k_direction_alignment_constraint.md#ZH-CN_TOPIC_0000002569070973)。 |
 | fmOffset | 注意，该参数为预留的扩展参数，当前因后续架构升级，该参数已废弃，不对其进行业务处理。<br>左矩阵offset（整个左矩阵对应一个值），支持Scalar（应与src_fm.dtype一致）/立即数，默认0。 |
 | enSsparse | 注意，该参数为预留的扩展参数，当前因后续架构升级，该参数已废弃，不对其进行业务处理。<br>开启结构化稀疏特性，默认false。 |
 | enWinogradA | 注意，该参数为预留的扩展参数，当前因后续架构升级，该参数已废弃，不对其进行业务处理。<br>指示矩阵a是否通过winograd_feature_map_transform()生成，用于支持winograd特性，bool类型，默认false。 |
@@ -266,21 +280,45 @@ Atlas A2系列产品
 <!-- end id26 -->
 
 <!-- npu="x90" id27 -->
-**表11** dst、fm、filter、bias支持的精度类型组合（Kirin X90处理器系列产品）
+**表11** dst、fm、filter、bias支持的精度类型组合（KirinX90处理器系列产品）
 
 | 左矩阵fm type | 右矩阵filter type | bias type | 结果矩阵dst type |
 | --- | --- | --- | --- |
+| uint8_t | uint8_t | int32_t | int32_t |
 | int8_t | int8_t | int32_t | int32_t |
 | half | half | half | half |
+| uint8_t | int8_t | int32_t | int32_t |
+| int16_t | int8_t | int32_t | int32_t |
+| int8_t | int4b_t | int32_t | int32_t |
 
 <!-- end id27 -->
 
-<!-- npu="9030" id28 -->
-**表12** dst、fm、filter、bias支持的精度类型组合（Kirin 9030处理器系列产品）
+<!-- npu="9020" id41 -->
+
+**表12** dst、fm、filter、bias支持的精度类型组合（Kirin9020处理器系列产品）
 
 | 左矩阵fm type | 右矩阵filter type | bias type | 结果矩阵dst type |
 | --- | --- | --- | --- |
+| uint8_t | uint8_t | int32_t | int32_t |
+| int8_t | int8_t | int32_t | int32_t |
 | half | half | half | half |
+| uint8_t | int8_t | int32_t | int32_t |
+| int16_t | int8_t | int32_t | int32_t |
+| int8_t | int4b_t | int32_t | int32_t |
+<!-- end id41 -->
+
+
+
+<!-- npu="9030" id28 -->
+**表13** dst、fm、filter、bias支持的精度类型组合（Kirin9030处理器系列产品）
+
+| 左矩阵fm type | 右矩阵filter type | bias type | 结果矩阵dst type |
+| --- | --- | --- | --- |
+| uint8_t | uint8_t | int32_t | int32_t |
+| int8_t | int8_t | int32_t | int32_t |
+| half | half | half | half |
+| uint8_t | int8_t | int32_t | int32_t |
+| int16_t | int8_t | int32_t | int32_t |
 
 <!-- end id28 -->
 

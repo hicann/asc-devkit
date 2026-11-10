@@ -23,6 +23,12 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id18 -->
+- KirinX90处理器系列产品：支持
+<!-- end id18 -->
+<!-- npu="9030" id20 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id20 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_padding/CreateVecIndex_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -102,6 +108,15 @@ def CreateVecIndex(dst, firstValue, count):
 - 针对Atlas推理系列产品AI Core，T支持的数据类型为：int16_t、half、int32_t、float。
 <!-- end id12 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_padding/CreateVecIndex_res.md#id2 -->
+
+<!-- npu="x90" id21 -->
+- 针对KirinX90处理器系列产品，T支持的数据类型为：int16_t、half、int32_t、float。
+<!-- end id21 -->
+<!-- npu="9030" id23 -->
+- 针对Kirin9030处理器系列产品，T支持的数据类型为：int16_t、half、int32_t、float。
+<!-- end id23 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_padding/CreateVecIndex_res.md#id2 -->
+
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

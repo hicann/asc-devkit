@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id15 -->
+- KirinX90处理器系列产品：支持
+<!-- end id15 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -81,6 +90,18 @@ __simd_callee__ inline void Div(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask
 - 当模式为DivAlgo::DIFF_COMPENSATION或DivAlgo::PRECISION_0ULP_FTZ_TRUE时，支持的数据类型为：float、complex64。
 - 当模式为DivAlgo::PRECISION_0ULP_FTZ_FALSE时，支持的数据类型为：float。
 - 当模式为DivAlgo::PRECISION_1ULP_FTZ_FALSE时，支持的数据类型为：half、float。
+<!-- npu="x90" id17 -->
+- 针对KirinX90处理器系列产品，T支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id17 -->
+<!-- npu="9020" id12 -->
+- 针对Kirin9020处理器系列产品，T支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id12 -->
+<!-- npu="9030" id16 -->
+- 针对Kirin9030处理器系列产品，T支持的数据类型为：int16_t、uint16_t、half、int32_t、uint32_t、float。
+<!-- end id16 -->
+<!-- npu="9050" id18 -->
+- 针对Kirin9050处理器系列产品，T支持的数据类型为：half、float。
+<!-- end id18 -->
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

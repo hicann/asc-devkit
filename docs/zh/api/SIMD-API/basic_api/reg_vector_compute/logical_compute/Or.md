@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id14 -->
+- KirinX90处理器系列产品：支持
+<!-- end id14 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9030" id13 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id13 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -105,6 +114,19 @@
 ## 数据类型
 
 支持的数据类型为：bool、int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t、int64_t、uint64_t。
+
+<!-- npu="x90" id17 -->
+- 针对KirinX90处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id17 -->
+<!-- npu="9020" id15 -->
+- 针对Kirin9020处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id15 -->
+<!-- npu="9030" id16 -->
+- 针对Kirin9030处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id16 -->
+<!-- npu="9050" id18 -->
+- 针对Kirin9050处理器系列产品，T支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id18 -->
 
 ## 约束说明<a name="section633mcpsimp"></a>
 

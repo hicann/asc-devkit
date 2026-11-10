@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id11 -->
+- KirinX90处理器系列产品：支持
+<!-- end id11 -->
+<!-- npu="9020" id9 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id9 -->
+<!-- npu="9030" id10 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="9050" id15 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id15 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/reduction_compute/PairReduceElem_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -75,6 +87,18 @@ __simd_callee__ inline void PairReduceElem(U& dstReg, U srcReg, MaskReg mask)
   - 若连续两个元素a、b仅元素b参与计算，目的操作数结果为b。
 
 - 求和后，dst中仅前一半元素为有效数据，后一半填充为0。搬出至Unified Buffer（UB）时需要避免数据踩踏。
+<!-- npu="x90" id13 -->
+- 针对KirinX90处理器系列产品，支持数据类型为：half、float。
+<!-- end id13 -->
+<!-- npu="9020" id8 -->
+- 针对Kirin9020处理器系列产品，支持数据类型为：half、float。
+<!-- end id8 -->
+<!-- npu="9030" id12 -->
+- 针对Kirin9030处理器系列产品，支持数据类型为：half、float。
+<!-- end id12 -->
+<!-- npu="9050" id14 -->
+- 针对Kirin9050处理器系列产品，支持数据类型为：half、float。
+<!-- end id14 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

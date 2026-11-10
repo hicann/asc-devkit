@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id8 -->
+- KirinX90处理器系列产品：不支持
+<!-- end id8 -->
+<!-- npu="9020" id9 -->
+- Kirin9020处理器系列产品：不支持
+<!-- end id9 -->
+<!-- npu="9030" id10 -->
+- Kirin9030处理器系列产品：不支持
+<!-- end id10 -->
+<!-- npu="9050" id11 -->
+- Kirin9050处理器系列产品：不支持
+<!-- end id11 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeAddr_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>

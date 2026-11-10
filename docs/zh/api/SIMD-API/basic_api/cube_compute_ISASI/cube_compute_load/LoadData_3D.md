@@ -26,10 +26,10 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：不支持
+- KirinX90处理器系列产品：不支持
 <!-- end id8 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：不支持
 <!-- end id9 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D_res.md#id1 -->
 
@@ -57,10 +57,10 @@
 - Atlas训练系列产品：不支持
 <!-- end id16 -->
 <!-- npu="x90" id17 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id17 -->
 <!-- npu="9030" id18 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：不支持
 <!-- end id18 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_3D_res.md#id2 -->
 
@@ -187,7 +187,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## 数据类型<a id="zh-cn_topic_0000002512171652_section4219135304818"></a>
 
-<!-- npu="310p,910" id19 -->
+
 **LoadData（卷积数据搬运） v1接口：**
 
 <!-- npu="310p" id20 -->
@@ -197,9 +197,9 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- npu="910" id21 -->
 - Atlas训练系列产品，支持的数据类型为：int8_t、uint8_t、half。
 <!-- end id21 -->
-<!-- end id19 -->
 
-<!-- npu="950,A3,910b,310b,310p,x90" id22 -->
+
+
 **LoadData（卷积数据搬运） v2接口、LoadData（卷积数据搬运） v2 Pro接口：**
 
 <!-- npu="950" id23 -->
@@ -229,11 +229,11 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- end id27 -->
 
 <!-- npu="x90" id28 -->
-- Kirin X90处理器系列产品：
+- KirinX90处理器系列产品：
     - TPosition为A1/A2时，支持数据类型为：int8_t、half。
     - TPosition为B1/B2时，支持数据类型为：int8_t、half。
 <!-- end id28 -->
-<!-- end id22 -->
+
 
 ## 返回值说明<a id="zh-cn_topic_0000002512171652_section640mcpsimp"></a>
 
@@ -288,7 +288,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
     <!-- end id36 -->
 
     <!-- npu="950,A3,910b,310b,x90" id37 -->
-    - 针对Ascend 950PR&950DT系列产品、Atlas A3系列产品、Atlas A2系列产品、Atlas 200I/500 A2推理产品、Kirin X90处理器系列产品：对于uint32_t/int32_t/float，channelSize可取值为4，N\*8，N\*8+4；对于half/bfloat16，channelSize可取值为4，8，N\*16，N\*16 + 4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32\*N，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
+    - 针对Ascend 950PR&950DT系列产品、Atlas A3系列产品、Atlas A2系列产品、Atlas 200I/500 A2推理产品、KirinX90处理器系列产品：对于uint32_t/int32_t/float，channelSize可取值为4，N\*8，N\*8+4；对于half/bfloat16，channelSize可取值为4，8，N\*16，N\*16 + 4，N\*16+8；对于int8_t/uint8_t，channelSize可取值为4，8，16，32\*N，N\*32+4，N\*32+8，N\*32+16；对于int4b_t，channelSize可取值为8，16，32，N\*64，N\*64+8，N\*64+16，N\*64+32。N为正整数。
     <!-- end id37 -->
 
 - LoadData3DParamsV2结构体中enTranspose的有效条件如下：<a id="zh-cn_topic_0000002512171652_entranspose_constraint"></a>

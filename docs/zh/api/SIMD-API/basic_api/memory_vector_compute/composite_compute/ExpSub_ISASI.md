@@ -23,6 +23,15 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id10 -->
+- KirinX90处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9030" id11 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id11 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/composite_compute/ExpSub_ISASI_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -68,7 +77,17 @@ __aicore__ inline void ExpSub(const LocalTensor<T>& dst, const LocalTensor<U>& s
 <!-- npu="950" id8 -->
 Ascend 950PR&950DT系列产品，T和U支持的数据类型为：half、float。
 <!-- end id8 -->
+<!-- npu="x90" id13 -->
+针对KirinX90处理器系列产品，支持的数据类型为：half、float。
+<!-- end id13 -->
+<!-- npu="9020" id15 -->
+针对Kirin9020处理器系列产品，支持的数据类型为：half、float。
+<!-- end id15 -->
+<!-- npu="9030" id14 -->
+针对Kirin9030处理器系列产品，支持的数据类型为：half、float。
+<!-- end id14 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/composite_compute/ExpSub_ISASI_res.md#id2 -->
+
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

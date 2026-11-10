@@ -23,8 +23,17 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id12 -->
+- KirinX90处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
 <!-- npu="9050" id8 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id8 -->
 <!-- npu="kirin1" id9 -->
 - KirinDev0001处理器系列产品：支持
@@ -117,6 +126,9 @@ __simd_callee__ inline void Scatter(__ubuf__ T* baseAddr, S& srcReg, V& index, M
     | uint64_t | uint64_t |  RegTensor<uint64_t, RegTraitNumOne> | RegTensor<uint64_t, RegTraitNumOne> | - |
     | uint64_t | uint64_t | RegTensor<uint64_t, RegTraitNumOne> | RegTensor<uint64_t, RegTraitNumTwo> | index的前32个数有效 |
     | uint64_t | uint64_t | RegTensor<uint64_t, RegTraitNumTwo> | RegTensor<uint64_t, RegTraitNumTwo> | - |
+<!-- npu="x90,9020,9030,9050" id15 -->
+- 针对KirinX90处理器系列产品、Kirin9020处理器系列产品、Kirin9030处理器系列产品和Kirin9050处理器系列产品,暂不支持bfloat16_t/uint64_t/int64_t数据类型。
+<!-- end id15 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
@@ -136,4 +148,3 @@ __simd_vf__ inline void ScatterVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ub
     }
 }
 ```
-

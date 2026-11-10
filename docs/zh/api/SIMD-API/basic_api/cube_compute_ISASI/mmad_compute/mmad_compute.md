@@ -6,6 +6,8 @@
 
 - **[MmadBitMode](MmadBitMode.md)**
 
+- **[MmadFix](MmadFix.md)**
+
 - **[MmadWithSparse](MmadWithSparse.md)**
 
 - **[Conv2D（废弃）](Conv2D_deprecated.md)**

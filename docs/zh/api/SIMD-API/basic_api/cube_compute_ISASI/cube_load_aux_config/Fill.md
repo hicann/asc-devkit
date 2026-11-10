@@ -24,11 +24,17 @@
 - Atlas训练系列产品：支持
 <!-- end id7 -->
 <!-- npu="x90" id8 -->
-- Kirin X90处理器系列产品：支持
+- KirinX90处理器系列产品：支持
 <!-- end id8 -->
+<!-- npu="9020" id22 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id22 -->
 <!-- npu="9030" id9 -->
-- Kirin 9030处理器系列产品：支持
+- Kirin9030处理器系列产品：支持
 <!-- end id9 -->
+<!-- npu="9050" id23 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id23 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/cube_compute_ISASI/cube_load_aux_config/Fill_res.md#id1 -->
 
 ## 功能说明<a name="section618mcpsimp"></a>
@@ -88,9 +94,10 @@ __aicore__ inline void Fill(const LocalTensor<T>& dst, const InitConstValueParam
 <!-- npu="A3" id13 -->Atlas A3系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id13 --><br>
 <!-- npu="310b" id14 -->Atlas 200I/500 A2推理产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id14 --><br>
 <!-- npu="950" id15 -->Ascend 950PR&950DT系列产品，支持的数据类型为：int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float。<!-- end id15 --><br>
-<!-- npu="x90" id16 -->Kirin X90处理器系列产品，支持的数据类型为：int8_t、half。<!-- end id16 --><br>
-<!-- npu="9030" id17 -->Kirin 9030处理器系列产品，支持的数据类型为：half。<!-- end id17 -->
-
+<!-- npu="x90" id16 -->KirinX90处理器系列产品，支持的数据类型为：int8_t、half。<!-- end id16 --><br>
+<!-- npu="9020" id24 -->Kirin9020处理器系列产品，支持的数据类型为：half。<!-- end id24 --><br>
+<!-- npu="9030" id17 -->Kirin9030处理器系列产品，支持的数据类型为：half。<!-- end id17 --><br>
+<!-- npu="9050" id25 -->Kirin9050处理器系列产品，支持的数据类型为：half。<!-- end id25 --><br>
 ## 返回值说明
 
 无

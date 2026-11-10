@@ -24,13 +24,13 @@
 - Atlas训练系列产品：支持
 <!-- end id22 -->
 <!-- npu="x90" id23 -->
-- Kirin X90处理器系列产品：不支持
+- KirinX90处理器系列产品：支持
 <!-- end id23 -->
 <!-- npu="9030" id24 -->
-- Kirin 9030处理器系列产品：不支持
+- Kirin9030处理器系列产品：支持
 <!-- end id24 -->
 <!-- npu="9050" id25 -->
-- Kirin 9050处理器系列产品：支持
+- Kirin9050处理器系列产品：支持
 <!-- end id25 -->
 <!-- npu="kirin1" id26 -->
 - KirinDev0001处理器系列产品：支持
@@ -41,6 +41,18 @@
 <!-- npu="kirin3" id28 -->
 - KirinDev0003处理器系列产品：支持
 <!-- end id28 -->
+<!-- npu="x90" id10 -->
+- Kirinx90处理器系列产品：支持
+<!-- end id10 -->
+<!-- npu="9020" id13 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id13 -->
+<!-- npu="9030" id14 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id14 -->
+<!-- npu="9050" id15 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id15 -->
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_UBToUB_continuous_res.md#id1 -->
 
 ## 功能说明<a name="section474617392321"></a>
@@ -109,7 +121,7 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_UBToUB_continuous_res.md#id2 -->
 
 <!-- npu="9050" id6 -->
-- Kirin 9050处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
+- Kirin9050处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id6 -->
 <!-- npu="kirin1" id7 -->
 - KirinDev0001处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
@@ -120,6 +132,18 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 <!-- npu="kirin3" id9 -->
 - KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float。
 <!-- end id9 -->
+<!-- npu="x90" id12 -->
+- KirinX90处理器系列产品，支持的数据类型为：b8、b16、b32。
+<!-- end id12 -->
+<!-- npu="9020" id29 -->
+- Kirin9020处理器系列产品，支持的数据类型为：b8、b16、b32。
+<!-- end id29 -->
+<!-- npu="9030" id30 -->
+- Kirin9030处理器系列产品，支持的数据类型为：b8、b16、b32。
+<!-- end id30 -->
+<!-- npu="9050" id31 -->
+- Kirin9050处理器系列产品，支持的数据类型为：b8、b16、b32。
+<!-- end id31 -->
 
 ## 返回值说明<a name="section44801012174220"></a>
 
@@ -129,13 +153,13 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 - 位于UB的地址必须32字节对齐。
 - 调用连续搬运接口时，count \* sizeof\(T\)需要32字节对齐，若未对齐，则搬运量会向下取整到32字节对齐。
-<!-- npu="910b,A3" id6 -->
+<!-- npu="A3,910b" id11 -->
 - 针对如下产品型号：
     - Atlas A2系列产品
     - Atlas A3系列产品
 
     在跨卡通信算子开发场景，DataCopy类接口支持跨卡数据搬运，仅支持HCCS物理链路，不支持其他通路；开发者开发过程中，需要关注涉及卡间通信的物理通路，可通过`npu-smi info -t topo`命令查询HCCS物理链路。
-<!-- end id6 -->
+<!-- end id11 -->
 
 ## 调用示例<a name="section122101199486"></a>
 

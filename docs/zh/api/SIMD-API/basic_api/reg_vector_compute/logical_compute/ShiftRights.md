@@ -23,6 +23,18 @@
 <!-- npu="910" id7 -->
 - Atlas训练系列产品：不支持
 <!-- end id7 -->
+<!-- npu="x90" id11 -->
+- KirinX90处理器系列产品：支持
+<!-- end id11 -->
+<!-- npu="9020" id12 -->
+- Kirin9020处理器系列产品：支持
+<!-- end id12 -->
+<!-- npu="9030" id16 -->
+- Kirin9030处理器系列产品：支持
+<!-- end id16 -->
+<!-- npu="9050" id17 -->
+- Kirin9050处理器系列产品：支持
+<!-- end id17 -->
 <!-- npu="kirin1" id8 -->
 - KirinDev0001处理器系列产品：支持
 <!-- end id8 -->
@@ -102,6 +114,19 @@ __simd_callee__ inline void ShiftRights(S& dstReg, S& srcReg, U scalarValue, Mas
 - 对于逻辑位移（无符号数据类型），如果位移量（scalarValue）大于数据类型位宽，则输出为0。
 - 对于算术位移（有符号数据类型），如果srcReg小于0，位移量大于数据类型位宽，则输出-1；如果srcReg大于0，位移量大于数据类型位宽，则输出0。
 - scalarValue不支持设置为负数，负数行为未定义。
+<!-- npu="x90" id13 -->
+- KirinX90处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id13 -->
+<!-- npu="9020" id14 -->
+- Kirin9020处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id14 -->
+<!-- npu="9030" id15 -->
+- Kirin9030处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id15 -->
+<!-- npu="9050" id18 -->
+- Kirin9050处理器系列产品，支持的数据类型为int8_t、uint8_t、int16_t、uint16_t、int32_t、uint32_t。
+<!-- end id18 -->
+
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
