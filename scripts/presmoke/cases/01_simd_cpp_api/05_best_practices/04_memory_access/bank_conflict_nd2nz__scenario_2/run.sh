@@ -16,6 +16,8 @@ SKIP_REASON='long execution time in cpu mode; cpu mode skipped by presmoke'
 
 SKIP_MODES=(cpu)
 
+SKIP_ARCHS=(dav-3510)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"

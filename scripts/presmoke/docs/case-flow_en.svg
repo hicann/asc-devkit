@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 1200" width="1040" height="1200" role="img">
+<style>@media (prefers-color-scheme:dark){.r-panel-gen{fill:#241e12;stroke:#6d5a2c}.r-panel-run{fill:#121a24;stroke:#2f4a68}.r-stage{fill:#0f141a;stroke:#2c333b}.r-box{fill:#11161c;stroke:#343c45}.r-src{fill:#2a2113;stroke:#8a6420}.r-out{fill:#122019;stroke:#2f6b44}.r-key{fill:#1d1830;stroke:#6d58a8}.r-gate{fill:#2a1710;stroke:#a35232}.t{fill:#e6edf3}.ts{fill:#9198a1}.phase{fill:#9198a1}.stagelab{fill:#9198a1}.gate{fill:#e0a183}.edge,.edge-d{stroke:#5a636d}.ah{fill:#5a636d}}</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z" fill="#9aa4ae"/></marker></defs>
+<rect class="r-panel-gen" x="20" y="18" width="1000" height="262" rx="10" ry="10" fill="#fff9ec" stroke="#e3c88a" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text class="phase" x="38" y="44" fill="#59636e" font-size="13.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Generation — offline, products are committed</text>
+<rect class="r-src" x="44" y="60" width="330" height="54" rx="7" ry="7" fill="#fff4e0" stroke="#d9a441" stroke-width="1.2"/>
+<text class="t" x="60" y="82" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start" font-weight="600">examples/&lt;case&gt;/README.md</text>
+<text class="ts" x="60" y="100" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">the only source, hand-maintained</text>
+<path class="edge" d="M209,114 L209,146" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-box" x="44" y="148" width="330" height="56" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="60" y="170" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">scripts/presmoke/generate_case_runners.py</text>
+<text class="ts" x="60" y="190" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">+ SKIP_CONFIG / HAND_WRITTEN_CASES</text>
+<path class="edge" d="M374,176 L404,176" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<path class="edge" d="M404,176 L404,146 L434,146" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<path class="edge" d="M404,176 L404,212 L434,212" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-box" x="436" y="122" width="560" height="48" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="452" y="142" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">scripts/presmoke/cases/&lt;case&gt;/run.sh</text>
+<text class="ts" x="452" y="159" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">executable: clean / build / run / verify</text>
+<rect class="r-box" x="436" y="188" width="560" height="48" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="452" y="208" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">scripts/presmoke/reports/case_runner_manifest.json</text>
+<text class="ts" x="452" y="225" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">metadata: supported_archs / supported_modes / skip / skip_modes</text>
+<text class="ts" x="44" y="262" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">Both products come from one generation run and must ship together: a case missing from the manifest falls back to supported_archs=[current arch].</text>
+<rect class="r-panel-run" x="20" y="300" width="1000" height="826" rx="10" ry="10" fill="#f2f7fd" stroke="#a8c5e6" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text class="phase" x="38" y="326" fill="#59636e" font-size="13.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Runtime — every CI build</text>
+<path class="edge" d="M520,280 L520,300" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<rect class="r-box" x="44" y="340" width="300" height="38" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="194" y="364" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">.gitcode/scripts/pre_smoke.sh</text>
+<path class="edge" d="M344,359 L394,359" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-box" x="396" y="340" width="300" height="38" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="546" y="364" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">scripts/run_presmoke.sh</text>
+<rect class="r-stage" x="40" y="398" width="960" height="256" rx="9" ry="9" fill="#ffffff" stroke="#d0d7de" stroke-width="1.2"/>
+<text class="stagelab" x="58" y="422" fill="#59636e" font-size="12.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Stage A — planning (single dry-run)</text>
+<rect class="r-box" x="58" y="436" width="440" height="104" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="74" y="458" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">scripts/presmoke/case_runners.py</text>
+<text class="ts" x="74" y="482" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">1. rglob("cases/**/run.sh")  →  case identity</text>
+<text class="ts" x="74" y="503" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">2. load_manifest()  →  case attributes</text>
+<text class="ts" x="74" y="524" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">3. arch_supported → append_skip_result → mode_supported</text>
+<path class="edge" d="M498,488 L536,488" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-key" x="538" y="442" width="442" height="92" rx="7" ry="7" fill="#f0eaff" stroke="#9d84d8" stroke-width="1.6"/>
+<text class="t" x="558" y="468" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start" font-weight="700">planned</text>
+<text class="ts" x="558" y="492" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">cells (executed) + skipped (SKIP records)</text>
+<text class="ts" x="558" y="512" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">the one baseline both gates check</text>
+<path class="edge" d="M577,534 L577,566" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<path class="edge" d="M570,540 L570,566" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<path class="edge" d="M584,560 L584,534" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<text class="gate" x="604" y="553" fill="#8f3c17" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Gate 1 validate_fixed_schedule_coverage</text>
+<rect class="r-box" x="538" y="568" width="442" height="48" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="558" y="588" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">scripts/presmoke/schedules/&lt;arch&gt;_&lt;modes&gt;.txt</text>
+<text class="ts" x="558" y="605" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">validation and ordering only</text>
+<path class="edge" d="M278,540 L278,676 L336,676" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-out" x="338" y="654" width="500" height="46" rx="7" ry="7" fill="#eef7f0" stroke="#86b894" stroke-width="1.2"/>
+<text class="t" x="356" y="674" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">presmoke_reports/&lt;run&gt;/.plan/results/report.json</text>
+<text class="ts" x="356" y="691" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">results[].example  =  the full planned set</text>
+<rect class="r-stage" x="40" y="722" width="960" height="196" rx="9" ry="9" fill="#ffffff" stroke="#d0d7de" stroke-width="1.2"/>
+<text class="stagelab" x="58" y="746" fill="#59636e" font-size="12.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Stage B — sharding</text>
+<path class="edge" d="M588,700 L588,722" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<rect class="r-box" x="58" y="760" width="300" height="52" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="208" y="781" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">presmoke.orchestrate_report</text>
+<text class="t" x="208" y="799" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">shard-examples</text>
+<path class="edge" d="M358,786 L388,786" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<path class="edge" d="M388,786 L388,772 L418,772" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<path class="edge" d="M388,786 L388,834 L418,834" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-gate" x="420" y="750" width="560" height="46" rx="7" ry="7" fill="#fdefe9" stroke="#d2744a" stroke-width="1.4"/>
+<text class="t" x="436" y="769" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">schedules/shards/&lt;arch&gt;_&lt;modes&gt;_&lt;n&gt;cards/ exists  →  load_fixed_shards</text>
+<text class="gate" x="436" y="787" fill="#8f3c17" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Gate 2 fixed shards must cover all planned; `#` lines count as disabled</text>
+<rect class="r-box" x="420" y="810" width="560" height="46" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="436" y="829" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">no fixed shard dir  →  shard_examples_by_pipeline_makespan</text>
+<text class="ts" x="436" y="847" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">simulates per-card pipeline finish from measured build / run / verify times</text>
+<path class="edge" d="M700,856 L700,874" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-out" x="420" y="876" width="560" height="30" rx="7" ry="7" fill="#eef7f0" stroke="#86b894" stroke-width="1.2"/>
+<text class="t" x="700" y="896" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">.plan/shards.tsv  →  .plan/shards/card_0.txt … card_N.txt</text>
+<rect class="r-stage" x="40" y="940" width="960" height="172" rx="9" ry="9" fill="#ffffff" stroke="#d0d7de" stroke-width="1.2"/>
+<text class="stagelab" x="58" y="964" fill="#59636e" font-size="12.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start" font-weight="600">Stage C — execution</text>
+<path class="edge" d="M208,906 L208,940" fill="none" stroke="#9aa4ae" stroke-width="1.4"/>
+<rect class="r-box" x="58" y="978" width="440" height="86" rx="7" ry="7" fill="#ffffff" stroke="#c2cad3" stroke-width="1.2"/>
+<text class="t" x="74" y="1000" fill="#1f2328" font-size="13" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">one independent presmoke subprocess per card</text>
+<text class="t" x="74" y="1021" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">--exact-filter with that card's list</text>
+<text class="ts" x="74" y="1045" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">with --exact-filter, Gate 1 is skipped</text>
+<path class="edge" d="M498,1021 L524,1021" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-out" x="526" y="978" width="454" height="50" rx="7" ry="7" fill="#eef7f0" stroke="#86b894" stroke-width="1.2"/>
+<text class="t" x="544" y="999" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">full_card&lt;N&gt;/results/report.json</text>
+<text class="ts" x="544" y="1017" fill="#59636e" font-size="11.5" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="start">per-case status / duration_s / per-stage steps</text>
+<path class="edge" d="M753,1028 L753,1052" fill="none" stroke="#9aa4ae" stroke-width="1.4" marker-end="url(#a)"/>
+<rect class="r-out" x="526" y="1054" width="454" height="32" rx="7" ry="7" fill="#eef7f0" stroke="#86b894" stroke-width="1.2"/>
+<text class="t" x="753" y="1075" fill="#1f2328" font-size="13" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" text-anchor="middle">FINAL_REPORT.md  /  ALL_CASE_TIMINGS.tsv  /  junit.xml</text>
+<path class="edge-d" d="M980,1070 L1004,1070 L1004,833 L982,833" fill="none" stroke="#9aa4ae" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<text class="ts" x="998" y="932" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="end">measured timings feed back via --schedule-report</text>
+<rect class="r-src" x="58" y="1146" width="16" height="16" rx="4" ry="4" fill="#fff4e0" stroke="#d9a441" stroke-width="1.2"/>
+<text class="ts" x="82" y="1159" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">read-only input</text>
+<rect class="r-out" x="238" y="1146" width="16" height="16" rx="4" ry="4" fill="#eef7f0" stroke="#86b894" stroke-width="1.2"/>
+<text class="ts" x="262" y="1159" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">produced by this run</text>
+<rect class="r-gate" x="448" y="1146" width="16" height="16" rx="4" ry="4" fill="#fdefe9" stroke="#d2744a" stroke-width="1.2"/>
+<text class="ts" x="472" y="1159" fill="#59636e" font-size="11.5" font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" text-anchor="start">fail-fast gate</text>
+</svg>

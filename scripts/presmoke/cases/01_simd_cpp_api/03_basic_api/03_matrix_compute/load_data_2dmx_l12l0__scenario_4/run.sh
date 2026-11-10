@@ -20,7 +20,7 @@ export BUILD_DIR
 
 case_build() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=4 soc_version=$SOC_VERSION bash -lc 'cmake .. -DSCENARIO_NUM=4 -DCMAKE_ASC_ARCHITECTURES="$ARCH" $RUN_MODE_ARG')
+    (cd "$BUILD_DIR" && SCENARIO_NUM=4 soc_version=$SOC_VERSION bash -lc 'cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES="$ARCH" $RUN_MODE_ARG')
     (cd "$BUILD_DIR" && SCENARIO_NUM=4 soc_version=$SOC_VERSION bash -lc 'make -j')
     (cd "$BUILD_DIR" && SCENARIO_NUM=4 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/gen_data.py -scenarioNum=4')
 }

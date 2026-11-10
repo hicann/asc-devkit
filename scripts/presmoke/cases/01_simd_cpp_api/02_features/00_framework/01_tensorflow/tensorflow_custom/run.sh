@@ -12,7 +12,7 @@
 set -euo pipefail
 
 CASE_REL=01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_custom
-SKIP_REASON='requires TensorFlow 2.6.5 environment; skipped by presmoke'
+SKIP_REASON='requires the Ascend TensorFlow plugin package (tfplugin, pinned to TF 2.6.5), which is not installed in CI; skipped by presmoke'
 
 SKIP_MODES=(npu)
 

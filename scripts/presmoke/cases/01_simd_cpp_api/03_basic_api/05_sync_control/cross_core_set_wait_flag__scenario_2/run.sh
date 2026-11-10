@@ -20,19 +20,19 @@ export BUILD_DIR
 
 case_build() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'cmake .. -DSCENARIO_NUM=2 -DCMAKE_ASC_ARCHITECTURES="$ARCH" $RUN_MODE_ARG')
-    (cd "$BUILD_DIR" && SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'make -j')
-    (cd "$BUILD_DIR" && SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/gen_data.py -scenarioNum 2')
+    (cd "$BUILD_DIR" && ASC_ARCH=$ARCH SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'cmake .. -DSCENARIO_NUM=2 -DCMAKE_ASC_ARCHITECTURES="$ARCH" $RUN_MODE_ARG')
+    (cd "$BUILD_DIR" && ASC_ARCH=$ARCH SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'make -j')
+    (cd "$BUILD_DIR" && ASC_ARCH=$ARCH SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/gen_data.py -scenarioNum 2')
 }
 
 case_run() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc ./demo)
+    (cd "$BUILD_DIR" && ASC_ARCH=$ARCH SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc ./demo)
 }
 
 case_verify() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/verify_result.py ./output/output.bin ./output/golden.bin')
+    (cd "$BUILD_DIR" && ASC_ARCH=$ARCH SCENARIO_NUM=2 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/verify_result.py ./output/output.bin ./output/golden.bin')
 }
 
 case_clean() {

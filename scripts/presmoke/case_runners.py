@@ -82,6 +82,8 @@ def build_case_runner_cells_with_skips(
 
 def add_runner_cells(context: CaseRunnerContext, runner_dir: Path, manifest: dict[str, dict]) -> None:
     info = load_runner_info(context, runner_dir, manifest)
+    if not arch_supported(context, info):
+        return
     if append_skip_result(context, info):
         return
     append_confidence_suggestion(context, info)
@@ -105,6 +107,21 @@ def load_runner_info(context: CaseRunnerContext, runner_dir: Path, manifest: dic
         confidence=info.get("confidence", ""),
         reasons=list(info.get("reasons", [])),
     )
+
+
+def arch_supported(context: CaseRunnerContext, info: RunnerInfo) -> bool:
+    if context.arch in info.supported_archs:
+        return True
+    context.suggestions.append(
+        Suggestion(
+            info.rel_path,
+            "case-runner",
+            "info",
+            f"Excluded on unsupported arch {context.arch}",
+            f"Supported archs: {', '.join(info.supported_archs)}",
+        )
+    )
+    return False
 
 
 def append_skip_result(context: CaseRunnerContext, info: RunnerInfo) -> bool:
@@ -152,17 +169,6 @@ def mode_supported(context: CaseRunnerContext, info: RunnerInfo, mode: str) -> b
                 "info",
                 "Excluded on skip_modes list",
                 f"Skip modes: {', '.join(info.skip_modes)}",
-            )
-        )
-        return False
-    if context.arch not in info.supported_archs:
-        context.suggestions.append(
-            Suggestion(
-                info.rel_path,
-                "case-runner",
-                "info",
-                f"Excluded on unsupported arch {context.arch}",
-                f"Supported archs: {', '.join(info.supported_archs)}",
             )
         )
         return False

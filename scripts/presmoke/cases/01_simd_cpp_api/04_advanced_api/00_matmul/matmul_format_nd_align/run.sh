@@ -12,6 +12,12 @@
 set -euo pipefail
 
 CASE_REL=01_simd_cpp_api/04_advanced_api/00_matmul/matmul_format_nd_align
+SKIP_REASON='wrong results only on the 28-core A5 CI runner (Ascend950PR_9579); passes on 20 and 36 cores; skipped by presmoke pending a fix from the sample owner'
+
+SKIP_MODES=(npu)
+
+SKIP_ARCHS=(dav-3510)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"

@@ -6,6 +6,27 @@
 
 执行全量看护前，编排脚本会清理当前 CANN `opp/vendors` 目录下的所有内容，保证自定义算子包安装状态可复现。带 `--filter` 或 `--dry-run` 的运行不会清理 `opp/vendors`。
 
+## 用例流动
+
+![presmoke 用例流动](docs/case-flow.svg)
+
+一个用例从 README 走到某张卡上执行，要经过两段性质完全不同的流程。
+
+**生成期**离线执行，产物提交进仓。`generate_case_runners.py` 从 `examples/<case>/README.md` 的「编译运行」段一次产出两样东西：`cases/<case>/run.sh` 是可执行体，`reports/case_runner_manifest.json` 是元数据。两者必须一起更新 —— manifest 里查不到条目的用例，`load_runner_info` 会回退成 `supported_archs=[当前 arch]`，等同于「所有架构都支持」，于是其他架构的用例也会被算进本架构的待执行集合。
+
+**运行期**由 CI 触发。用例的身份来自 `rglob("cases/**/run.sh")`，属性来自 manifest，经架构、skip 和模式过滤后得到 `planned` —— 真正执行的 `cells` 加上 `SKIP` 记录。`planned` 是后续所有校验唯一的基准集合。
+
+`schedules/` 和 `schedules/shards/` 都是运行期的只读输入，各自独立对着同一个 `planned` 校验，互不替代：
+
+| 门禁 | 位置 | 要求 |
+|---|---|---|
+| 1 | `cli.py` 的 `validate_fixed_schedule_coverage` | 调度表与 `planned` 双向集合相等 |
+| 2 | `orchestrate_report.py` 的 `load_fixed_shards` | 固定分片覆盖全部 `planned` |
+
+调度表里的 `#` 注释行只是把用例从 `planned` 里扣掉（`temporarily_disabled_names`），对门禁 2 完全不起作用，分片文件需要自己的 `#` 行。此外，「在 `planned` 里但不执行」更常见的写法是保留活跃行并在 manifest 里标 `skip`，这样 presmoke 会如实报出 `SKIP` 和原因。
+
+整条链上唯一的写入目标是最后的 `presmoke_reports/`；`run.sh`、manifest、调度表和固定分片四者都是只读输入。
+
 ## 快速开始
 
 使用默认参数运行。该命令最短，并保持与旧 `run_presmoke.sh` 调用方约定兼容：

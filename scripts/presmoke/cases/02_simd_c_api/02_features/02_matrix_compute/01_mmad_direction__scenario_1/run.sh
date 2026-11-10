@@ -32,7 +32,7 @@ case_run() {
 
 case_verify() {
     mkdir -p "$BUILD_DIR"
-    (cd "$BUILD_DIR" && SCENARIO_NUM=1 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/verify_result.py -scenarioNum=1     output/output.bin output/golden.bin')
+    (cd "$BUILD_DIR" && SCENARIO_NUM=1 soc_version=$SOC_VERSION bash -lc 'python3 ../scripts/verify_result.py -scenarioNum=1 output/output.bin output/golden.bin')
 }
 
 case_clean() {

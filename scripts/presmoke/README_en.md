@@ -6,6 +6,27 @@ For direct Python CLI experiments, use `PYTHONPATH=scripts PRESMOKE_PROJECT_ROOT
 
 Before a full watch run, the orchestrator removes all entries under the active CANN `opp/vendors` directory. This keeps custom-op package installation deterministic across rounds. Runs with `--filter` or `--dry-run` do not clean `opp/vendors`.
 
+## How a Case Flows
+
+![presmoke case flow](docs/case-flow_en.svg)
+
+Getting a case from its README onto a card goes through two very different pipelines.
+
+**Generation** runs offline and its products are committed. `generate_case_runners.py` reads the build-and-run section of `examples/<case>/README.md` and emits two things in one pass: `cases/<case>/run.sh` is the executable, `reports/case_runner_manifest.json` is the metadata. They must be updated together — a case with no manifest entry makes `load_runner_info` fall back to `supported_archs=[current arch]`, which means "every arch", so cases belonging to another arch end up in this arch's planned set.
+
+**Runtime** is driven by CI. Case identity comes from `rglob("cases/**/run.sh")` and case attributes come from the manifest. After the arch, skip and mode filters, what remains is `planned` — the `cells` that actually execute plus the `SKIP` records. Everything downstream is checked against that one set.
+
+`schedules/` and `schedules/shards/` are both read-only runtime inputs. They check the same `planned` set independently and neither substitutes for the other:
+
+| Gate | Location | Requirement |
+|---|---|---|
+| 1 | `validate_fixed_schedule_coverage` in `cli.py` | schedule file and `planned` must be set-equal in both directions |
+| 2 | `load_fixed_shards` in `orchestrate_report.py` | fixed shards must cover all of `planned` |
+
+A `#` line in the schedule file only subtracts the case from `planned` (`temporarily_disabled_names`); it does nothing for gate 2, where the shard files need their own `#` lines. The more common way to express "planned but not executed" is to keep the line active and mark `skip` in the manifest, so presmoke reports a real `SKIP` with its reason.
+
+The only write target in the whole chain is `presmoke_reports/` at the end; `run.sh`, the manifest, the schedule files and the fixed shards are all read-only inputs.
+
 ## Quick Start
 
 Run with defaults. This is the shortest command and is intended to be compatible with the old `run_presmoke.sh` caller contract:
