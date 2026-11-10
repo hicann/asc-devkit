@@ -57,6 +57,7 @@ set_target_properties(custom_ops PROPERTIES
 # ======================================================================================
 target_compile_options(custom_ops PRIVATE
     ${TF_CFLAGS}
+    -std=c++14
 )
 
 target_link_libraries(custom_ops PRIVATE
