@@ -569,7 +569,7 @@ HcclResult DispatchAllocByCommEngine(
                 "[HcclAllocComResourceByTiling]Failed to resolve a supported CCU version; refusing V1 fallback.");
             return HCCL_E_NOT_SUPPORT;
         }
-        if (!CheckCcuAlgorithmsRegistered(ccTilingList, tilingNum)) {
+        if (checkOnly && !CheckCcuAlgorithmsRegistered(ccTilingList, tilingNum)) {
             HCCL_INFO("[HcclAllocComResourceByTiling]Current ccu algorithm is not supported in mc2_client.");
             return HCCL_E_ALG_NOT_SUPPORTED;
         }

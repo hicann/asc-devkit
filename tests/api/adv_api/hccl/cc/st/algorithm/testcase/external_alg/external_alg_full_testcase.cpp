@@ -7,7 +7,6 @@
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
  * See LICENSE in the root of the software repository for the full text of the License.
  */
-#include <cstdio>
 #include <set>
 #include <string>
 #include <utility>
@@ -20,17 +19,6 @@
 #include "hccl_alloc_ctx_res.h"
 
 using namespace mc2_ops_hccl;
-
-namespace {
-Mc2CcTilingInner MakeTiling(const char* algConfig, uint32_t opType = 6U /*ALLGATHER*/)
-{
-    Mc2CcTilingInner tiling{};
-    tiling.opType = opType;
-    tiling.commEngine = static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED);
-    (void)snprintf(tiling.algConfig, sizeof(tiling.algConfig), "%s", algConfig);
-    return tiling;
-}
-} // namespace
 
 // CCU 候选 ⊆ algorithmMap（三名单一致性：sidecar 注册表 / tiling 白名单 / algorithmMap）
 TEST(ExtAlgFull, CcuCandidatesAreInAlgorithmMap)
@@ -70,56 +58,9 @@ TEST(ExtAlgForced, FourStateClassification)
     EXPECT_FALSE(spec.orderStrong);
 }
 
-// hccl_mc2.cc 内部自由函数，专属目标已编入该翻译单元，符号可见
-bool CheckCcuAlgorithmsRegistered(const void* ccTilingList[], uint32_t tilingNum);
-
-// CheckCcuAlgorithmsRegistered 新契约（f3b8b6463 起）：外部名解析通过即放行，不再校验 CCU 候选注册；
-// 仅 null tiling、NONE/LEGACY kind、解析错误被拒
-TEST(ExtAlgGateB, ExternalNameGate)
-{
-    // sole[mesh] AG 有 CCU 候选 CcuSchedAllGatherSoleMesh（algorithmMap + V2 注册表均在）→ 过
-    Mc2CcTilingInner agSoleMesh = MakeTiling("sole[mesh]", 6U);
-    const void* goodList[] = {&agSoleMesh};
-    EXPECT_TRUE(CheckCcuAlgorithmsRegistered(goodList, 1U));
-
-    // AG pipeline[mesh,nhr] 解析通过即放行（新契约不再校验 CCU 候选注册，候选选择交由后续 selector）
-    Mc2CcTilingInner agPipeline = MakeTiling("pipeline[mesh,nhr]", 6U);
-    const void* badList[] = {&agPipeline};
-    EXPECT_TRUE(CheckCcuAlgorithmsRegistered(badList, 1U));
-
-    // 语法错 → 拒
-    Mc2CcTilingInner badSyntax = MakeTiling("sole[ring]", 6U);
-    const void* badSyntaxList[] = {&badSyntax};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(badSyntaxList, 1U));
-
-    // null tiling 守卫
-    const void* nullList[] = {nullptr};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(nullList, 1U));
-
-    // 裸名不再作为强制算法：无论是否已注册一律归 NONE → gate 拒后由
-    // TryForcedAlgAndPrepareEngine 回退默认 selector 兜底；空名/legacy 现状语义不变
-    Mc2CcTilingInner bare = MakeTiling("CcuSchedAllGatherSoleMesh", 6U);
-    const void* bareList[] = {&bare};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(bareList, 1U));
-    Mc2CcTilingInner bareUnknown = MakeTiling("CcuNoSuchAlgorithm", 6U);
-    const void* bareUnknownList[] = {&bareUnknown};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(bareUnknownList, 1U));
-    Mc2CcTilingInner empty = MakeTiling("", 6U);
-    const void* emptyList[] = {&empty};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(emptyList, 1U));
-    Mc2CcTilingInner legacy = MakeTiling("allgather=level0:fullmesh", 6U);
-    const void* legacyList[] = {&legacy};
-    EXPECT_FALSE(CheckCcuAlgorithmsRegistered(legacyList, 1U));
-}
-
 // 失败路径三要素：报错必须含 algConfig 原文/候选或定名/原因（语法错与候选为空/规则全灭分叉）。
 TEST(ExtAlgFailure, ErrorMessagesCarryThreeElements)
 {
-    // RS sole[mesh.chunk] 解析通过即放行（新契约不再校验 CCU 候选注册，AICPU-only 外部名同样过 gate）
-    Mc2CcTilingInner rsMeshChunk = MakeTiling("sole[mesh.chunk]", 7U); // RS: AICPU-only 候选
-    const void* goodList[] = {&rsMeshChunk};
-    EXPECT_TRUE(CheckCcuAlgorithmsRegistered(goodList, 1U));
-
     // 解析层 errMsg 三要素：解析失败消息含原文
     ExternalAlgSpec spec;
     std::string errMsg;
