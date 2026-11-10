@@ -279,13 +279,17 @@ The following are basic dependencies for compiling the source code and compiling
 
 #### UT Execution
 
-Method 1: Execute the following command in the open source repository root directory. It will run test cases in the tests directory by module sequentially and generate result logs for monitoring compilation status.
+Method 1: Run the following group commands as needed from the repository root to execute the corresponding unit tests and generate result logs.
 
 ```bash
 bash build.sh --adv_test                         # Run test cases in tests/adv_api
+bash build.sh --adv_test_two                     # Run test cases in the second adv_api group under tests
 bash build.sh --basic_test_one                   # Run test cases in tests/basic_api part-one
 bash build.sh --basic_test_two                   # Run test cases in tests/basic_api part-two
 bash build.sh --basic_test_three                 # Run test cases in tests/basic_api part-three
+bash build.sh --basic_test_four                  # Run test cases in the basic_test_four group under tests
+bash build.sh --basic_test_five                  # Run test cases in the basic_test_five group under tests
+bash build.sh --arm_test                         # Run test cases in the arm_test group under tests
 ```
 
 Method 2: Users can also use offline download function to manually download [third-party library source packages](#open-source-third-party-software-dependencies) and save them to a custom directory PATH_TO_DOWNLOAD. Execute the following command in the open source repository root directory to run test cases for each module.
@@ -293,9 +297,13 @@ Method 2: Users can also use offline download function to manually download [thi
 ```bash
 # Using PATH_TO_DOWNLOAD as custom download directory as example
 bash build.sh --adv_test --cann_3rd_lib_path={PATH_TO_DOWNLOAD}          # Run test cases in tests/adv_api
+bash build.sh --adv_test_two --cann_3rd_lib_path={PATH_TO_DOWNLOAD}      # Run test cases in the second adv_api group under tests
 bash build.sh --basic_test_one --cann_3rd_lib_path={PATH_TO_DOWNLOAD}    # Run test cases in tests/basic_api part-one
 bash build.sh --basic_test_two --cann_3rd_lib_path={PATH_TO_DOWNLOAD}    # Run test cases in tests/basic_api part-two
 bash build.sh --basic_test_three --cann_3rd_lib_path={PATH_TO_DOWNLOAD}  # Run test cases in tests/basic_api part-three
+bash build.sh --basic_test_four --cann_3rd_lib_path={PATH_TO_DOWNLOAD}   # Run test cases in the basic_test_four group under tests
+bash build.sh --basic_test_five --cann_3rd_lib_path={PATH_TO_DOWNLOAD}   # Run test cases in the basic_test_five group under tests
+bash build.sh --arm_test --cann_3rd_lib_path={PATH_TO_DOWNLOAD}          # Run test cases in the arm_test group under tests
 ```
 
 #### Open Source Third-Party Software Dependencies

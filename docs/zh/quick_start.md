@@ -280,13 +280,17 @@ git clone https://gitcode.com/cann/asc-devkit.git
 
 #### UT执行
 
-方式一：在开源仓根目录执行下列命令，将按各模块依次批跑tests目录下的用例，得到结果日志，用于看护编译是否正常。
+方式一：在开源仓根目录根据需要执行以下分组命令，批跑相应模块的单元测试，得到结果日志，用于看护编译是否正常。
 
 ```bash
 bash build.sh --adv_test                         # 批跑tests目录下adv_api里的用例
+bash build.sh --adv_test_two                     # 批跑tests目录下adv_api第二组里的用例
 bash build.sh --basic_test_one                   # 批跑tests目录下basic_api part-one里的用例
 bash build.sh --basic_test_two                   # 批跑tests目录下basic_api part-two里的用例
 bash build.sh --basic_test_three                 # 批跑tests目录下basic_api part-three里的用例
+bash build.sh --basic_test_four                  # 批跑tests目录下basic_test_four分组里的用例
+bash build.sh --basic_test_five                  # 批跑tests目录下basic_test_five分组里的用例
+bash build.sh --arm_test                         # 批跑tests目录下arm_test分组里的用例
 ```
 
 方式二：用户也可使用离线下载功能，手动下载[三方库源码包](#开源第三方软件依赖)存放至自定义目录PATH_TO_DOWNLOAD，在开源仓根目录执行下列命令，同时批跑执行各模块的用例。
@@ -294,9 +298,13 @@ bash build.sh --basic_test_three                 # 批跑tests目录下basic_api
 ```bash
 # 以PATH_TO_DOWNLOAD为自定义下载目录为例
 bash build.sh --adv_test --cann_3rd_lib_path={PATH_TO_DOWNLOAD}          # 批跑tests目录下adv_api里的用例
+bash build.sh --adv_test_two --cann_3rd_lib_path={PATH_TO_DOWNLOAD}      # 批跑tests目录下adv_api第二组里的用例
 bash build.sh --basic_test_one --cann_3rd_lib_path={PATH_TO_DOWNLOAD}    # 批跑tests目录下basic_api part-one里的用例
 bash build.sh --basic_test_two --cann_3rd_lib_path={PATH_TO_DOWNLOAD}    # 批跑tests目录下basic_api part-two里的用例
 bash build.sh --basic_test_three --cann_3rd_lib_path={PATH_TO_DOWNLOAD}  # 批跑tests目录下basic_api part-three里的用例
+bash build.sh --basic_test_four --cann_3rd_lib_path={PATH_TO_DOWNLOAD}   # 批跑tests目录下basic_test_four分组里的用例
+bash build.sh --basic_test_five --cann_3rd_lib_path={PATH_TO_DOWNLOAD}   # 批跑tests目录下basic_test_five分组里的用例
+bash build.sh --arm_test --cann_3rd_lib_path={PATH_TO_DOWNLOAD}          # 批跑tests目录下arm_test分组里的用例
 ```
 
 #### 开源第三方软件依赖
