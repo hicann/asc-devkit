@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "将MX矩阵计算所需的左矩阵量化系数（fp8_e8m0_t）以32字节分形从L1 Buffer搬入L0A_MX Buffer，需与左矩阵2D搬运配合以保证地址映射一致。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [datablock_granularity, quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md
+    kind: related
+    condition: "需与左矩阵数据搬运配合使用"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_l12l0a_mx
 
 ## 产品支持情况

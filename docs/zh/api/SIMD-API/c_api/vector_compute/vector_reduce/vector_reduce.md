@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 归约计算
 
 - **[asc_datablock_reduce_max](asc_datablock_reduce_max.md)**

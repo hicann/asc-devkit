@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 直方图
 
 - **[asc_cumulative_histogram](asc_cumulative_histogram.md)**

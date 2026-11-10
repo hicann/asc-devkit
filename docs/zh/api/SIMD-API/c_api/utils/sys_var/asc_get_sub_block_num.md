@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "无参查询接口，在分离模式下读取当前AI Core上Cube Core或Vector Core的数量，返回值随核函数类型（AIV_ONLY、AIC_ONLY、MIX_AIC_1_2等）不同，由系统控制器在核函数启动前配置且运行期不可修改。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/utils/sys_var/asc_get_sub_block_id.md
+    kind: related
+    condition: "该接口返回的索引以本接口的返回值为上界"
+  - path: docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md
+    kind: related
+    condition: "分离模式与逻辑AI Core架构说明"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_sub_block_num
 
 ## 产品支持情况

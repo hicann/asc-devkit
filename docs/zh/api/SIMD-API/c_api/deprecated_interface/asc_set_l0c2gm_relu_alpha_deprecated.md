@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_set_l0c2gm_relu_alpha 以 64 位 config 设置 RELU_ALPHA 寄存器中 Scalar ReLU 的 M2 值，31:13 与 63:45 位分别对应 ReLU_PRE 与 ReLU_POST，建议改用 asc_set_l0c_copy_relu_alpha。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "随路 Scalar ReLU 时由该搬出接口消费 alpha 值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_relu_alpha.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求把 uint64_t config 改为 float 标量参数的 asc_set_l0c_copy_relu_alpha"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_relu_alpha 列为废弃，替代接口把 uint64_t config 改为 float 标量；本页原型仍保留，属废弃而非移除。"
+---
 # asc_set_l0c2gm_relu_alpha（废弃）
 
 ## 产品支持情况

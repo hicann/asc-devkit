@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 联合体
 
 - **[asc_fill_value_config](asc_fill_value_config.md)**

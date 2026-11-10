@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "给出随路量化与随路ReLU组合时M1、M2随路系数的来源：不激活时M1与M2都取量化参数，Normal ReLU时M2置0作为NORMAL系数；并按2201与3510列出Scalar、Vector及3510额外激活模式的参数准备入口。"
+---
 # 随路量化与随路ReLU场景组合
 
 矩阵搬出支持多种随路量化与随路ReLU的组合，常用的不激活/Normal ReLU组合参考下表，Scalar/Vector扩展组合见后文。

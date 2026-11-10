@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：2201 架构下 asc_copy_l12gm_sync 按数据块个数、块长与源目的间隔把 L1 Buffer 数据同步搬到 GM，块长以 32 字节为单位，建议改用非同步 asc_copy_l12gm 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l12gm.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "空间与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该同步形式，替代路径是非同步 asc_copy_l12gm 加 asc_sync；接口未移除。"
+---
 # asc_copy_l12gm_sync（废弃）
 
 ## 产品支持情况

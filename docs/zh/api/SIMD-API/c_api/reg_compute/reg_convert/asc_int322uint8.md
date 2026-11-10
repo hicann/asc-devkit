@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的int32_t元素转换为uint8_t元素，支持饱和/非饱和模式，quarter 位置离散写入、其他位置置零。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, saturation_mode, split_high_low]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_int322uint8
 
 ## 产品支持情况

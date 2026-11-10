@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "在Unified Buffer内部把数据从UB搬运到UB，提供按size的连续搬运与按burst_count、burst_len及DataBlock间隔的高维切分搬运两种原型，连续模式size取值上限为65535乘32字节。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循存储单元说明与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入同步指令"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_ub2ub
 
 ## 产品支持情况

@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "设置HF32模式下FP32转HF32的舍入方式，通过asc_hf32_round_mode枚举在NEAREST_AWAY与NEAREST_EVEN之间选择；须先开启HF32模式并在asc_mmad前调用，未配置时默认NEAREST_EVEN。"
+tag:
+  - roles: [configuration]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: constrained_by
+    condition: "须在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_enable_hf32.md
+    kind: requires
+    condition: "须先开启HF32模式，否则配置不产生实际作用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/HF32.md
+    kind: related
+    condition: "HF32格式、舍入模式与精度影响说明"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_hf32_round_mode.md
+    kind: requires
+    condition: "入参类型枚举，取值 NEAREST_AWAY 与 NEAREST_EVEN"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "取代 9.2.0 废弃的 asc_enable_hf32_trans(uint32_t mode)：写入同一 HF32_TRANS_MODE_BIT（控制寄存器第47位），但入参由 uint32_t 的 0/1 改为 asc_hf32_round_mode 枚举（NEAREST_AWAY、NEAREST_EVEN；旧 NEAREST_ZERO 保留为 NEAREST_AWAY 别名）；依据为两版实现对比、ASC_DEPRECATED(9.2.0, ..., asc_set_hf32_round_mode) 与 CANN_9_2_0.md 枚举统一说明。"
+---
 # asc_set_hf32_round_mode
 
 ## 产品支持情况

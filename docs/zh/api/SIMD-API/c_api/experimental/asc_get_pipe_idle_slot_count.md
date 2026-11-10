@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "试验接口，查询PIPE_MTE2、MTE3、V、M、MTE1、FIX发射队列当前空闲槽位数量，用于观察队列占用并区分AIC与AIV适用性。"
+tag:
+  - roles: [query]
+dependencies: []
+version: ">=9.2.0"
+version_changes: []
+---
 # 指令发射队列空闲槽位查询
 
 ## 产品支持情况

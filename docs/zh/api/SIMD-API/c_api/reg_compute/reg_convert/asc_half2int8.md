@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的half元素转换为int8_t元素，VL 数据分两部分，按 dst_pos 选择偶数或奇数索引位置写入。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_half2int8
 
 ## 产品支持情况

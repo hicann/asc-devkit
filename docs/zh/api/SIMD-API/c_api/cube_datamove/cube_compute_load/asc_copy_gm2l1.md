@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # asc_copy_gm2l1
 
 - **[asc_copy_gm2l1（NPU架构版本2201）](asc_copy_gm2l1_arch_2201.md)**

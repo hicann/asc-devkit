@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "读取CTRL控制寄存器中特定比特位的当前值并以int64返回，可配合写接口完成读改写后再恢复。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: related
+    condition: "读改写CTRL寄存器时配合使用"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_ctrl
 
 ## 产品支持情况

@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "把2、3或4条已按score降序排列的队列归并为一条有序队列，输入通常来自asc_bitsort，支持half与float且源目的指针类型需一致，repeat大于1时4条队列长度须相同并按4×L×8字节步进。"
+tag:
+  - roles: [compute]
+  - operations: [sort]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_sort/asc_bitsort.md
+    kind: requires
+    condition: "输入队列一般为该接口处理后的有序数据"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_sort/asc_get_vms4_sr.md
+    kind: related
+    condition: "if_exhausted_suspension为true时可用该接口查询各队列已处理个数"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_mrgsort4
 
 ## 产品支持情况

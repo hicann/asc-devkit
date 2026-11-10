@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "执行矢量与标量的逐元素减法，把源矢量元素减去同类型标量后写入目的地址，提供前n个数据连续计算与非连续高维切分两种模式。"
+tag:
+  - roles: [compute]
+  - operations: [subtract]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用通用地址重叠约束"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_sub_scalar
 
 ## 产品支持情况

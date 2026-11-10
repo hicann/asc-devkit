@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "按掩码把源矢量寄存器中每两个相邻元素相加，结果连续写入目的寄存器低半部分、高半部分置零，支持 half 与 float。"
+tag:
+  - roles: [compute]
+  - operations: [reduction]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_pair_reduce_sum 的 half 与 float 两种 dtype 补充 2 个函数返回值形式重载，9.0.0/9.1.0 只有把结果写入 dst 的引用输出形式；当前 include 中该名字共 2 条引用输出 + 2 条返回值声明。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_reduce.h（9.2.0 起），与正文头文件路径一致。"
+---
 # asc_pair_reduce_sum
 
 ## 产品支持情况

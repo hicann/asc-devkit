@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "按掩码把源矢量数据寄存器的元素右移，移位数由 int16_t 标量 shift 给出，支持 int8_t 至 uint32_t 六种整型，负数位移未定义、位移超出位宽时输出元素置零。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_shift]
+  - traits: [scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵守 Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:shift"
+    scope_basis: resolved
+    note: "标量位移参数名由 value 改为 shift（9.0.0 与 9.1.0 的 include/c_api/reg_compute/reg_vector.h 声明为 int16_t value，9.2.0 起 reg_logic.h 声明为 int16_t shift），类型与语义不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "补充函数返回值形式的重载（返回 vector_<dtype>），引用参数输出形式保留；history_probe 显示 vector_int8_t asc_shiftright_scalar(vector_int8_t src, int16_t shift, vector_bool mask) 最早出现于 9.2.0 的 impl/c_api/reg_base_impl/reg_logic_intf_impl.h:220。"
+---
 # asc_shiftright_scalar
 
 ## 产品支持情况

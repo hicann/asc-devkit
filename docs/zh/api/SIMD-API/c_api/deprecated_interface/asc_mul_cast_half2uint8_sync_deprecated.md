@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "已废弃的同步求积转换接口，将两个 half 源矢量逐元素相乘后按 RINT 舍入并饱和转换为 uint8_t，仅在 Atlas A2、A3 支持，替代方案为 asc_mul_cast_half2uint8 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion, multiply, synchronization]
+  - traits: [rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_mul_cast_half2uint8.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_mul_cast_half2uint8 与 asc_sync；include/c_api/composite/vector_compute_composite.h 的声明带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_mul_cast_half2uint8_sync（废弃）
 
 ## 产品支持情况

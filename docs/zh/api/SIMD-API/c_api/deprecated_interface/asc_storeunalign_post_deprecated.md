@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_storeunalign_post 把 asc_storeunalign_postupdate 暂存在非对齐寄存器中的尾块搬到 UB 非 32 字节对齐地址，dst 无需 32 字节对齐但需按元素宽度对齐，建议改用 asc_squeeze_and_storeunalign_finalize。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "非对齐寄存器与地址寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/deprecated_interface/asc_storeunalign_postupdate_deprecated.md
+    kind: requires
+    condition: "必须先调用该接口把主块搬出并把尾块暂存到非对齐寄存器，且两者使用同一非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求统一有效元素筛选与非对齐连续搬出流程"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_storeunalign_post 及部分 asc_storeunalign_postupdate 旧重载列为废弃，替代为 asc_squeeze_and_storeunalign 与 finalize 或当前同名 B16/B32 重载；接口未移除。"
+---
 # asc_storeunalign_post（废弃）
 
 ## 产品支持情况

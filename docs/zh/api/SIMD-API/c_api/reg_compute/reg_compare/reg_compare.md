@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 比较计算
 
 - **[asc_eq](asc_eq.md)**

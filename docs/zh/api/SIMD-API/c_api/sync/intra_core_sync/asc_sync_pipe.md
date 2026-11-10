@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "完成同一流水内的同步控制，传入PIPE_ALL时等价于asc_sync，传入其他合法流水时仅阻塞该流水后续指令。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "PIPE_ALL 时功能等价"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_sync_pipe
 
 ## 产品支持情况

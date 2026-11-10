@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "获取asc_reduce操作后剩余元素数量的查询接口，无参数、返回int64_t，需在asc_reduce执行完成并同步后调用，流水类型为PIPE_S。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_reduce/asc_reduce.md
+    kind: related
+    condition: "读取该数据收集接口执行后的剩余元素数量"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_rsvd_count
 
 ## 产品支持情况

@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "对两个矢量按元素执行按位或运算的C API接口，提供前n个数据计算与高维切分计算两种形式，支持int16_t与uint16_t，流水类型为PIPE_V。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_or]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址重叠约束见该页通用地址重叠约束节"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_or
 
 ## 产品支持情况

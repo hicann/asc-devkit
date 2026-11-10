@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码对矢量数据寄存器逐元素取相反数，可通过目的寄存器或函数返回值输出，浮点按符号位翻转且保留 nan 与最小负整数语义。"
+tag:
+  - roles: [compute]
+  - operations: [negate]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_neg 的 5 种 dtype（int8_t/int16_t/half/int32_t/float）补充函数返回值形式重载，9.0.0/9.1.0 只有引用输出形式；Release Notes CANN_9_2_0 的补充返回值形式清单直接列出 asc_neg。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早，9.0.0 还存在 vector_reg/reg_compute.h 重复路径）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）。"
+---
 # asc_neg
 
 ## 产品支持情况

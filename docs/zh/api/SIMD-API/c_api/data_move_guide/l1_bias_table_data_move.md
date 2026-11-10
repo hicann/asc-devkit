@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510上L1到BiasTable的bias搬运：asc_copy_l12bt的连续与高维切分原型、half与bfloat16_t等源类型的写入转换规则、conv_control约束，以及L1容量上限512KB与BiasTable容量上限4KB的同步要求。"
+---
 # L1到BiasTable数据搬运
 
 BiasTable Buffer保存Mmad使用的bias。NPU架构版本3510通过[asc_copy_l12bt](../cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md)把L1中的偏置数据搬入BiasTable，接口运行在PIPE_MTE1，仅在AIC生效，支持连续和高维切分两种模式。

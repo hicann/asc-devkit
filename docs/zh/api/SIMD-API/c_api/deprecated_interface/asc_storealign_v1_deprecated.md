@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_storealign_pack_v2 无偏移形式把 mask 选中的 32 位元素低 8 位压缩搬出到 32 字节对齐的 UB 地址，目的地址需用户自行更新，建议改用 asc_storealign_pack_quarter。"
+tag:
+  - roles: [data_movement]
+  - operations: [compression, store]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用该接口表达四分之一宽度的 pack 模式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_storealign_pack_v2 列为废弃，替代为 asc_storealign_pack_quarter 与 asc_storealign_pack_quarter_postupdate；接口未移除。"
+---
 # asc_storealign_pack_v2（无偏移，废弃）
 
 ## 产品支持情况

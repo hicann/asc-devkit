@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "对Global Memory中address指向的单个元素执行原子取大，比较旧值与输入标量val并把较大值写回该地址、返回旧值；不受数据搬运随路原子配置影响，float类型下是否使用返回值会影响性能。"
+tag:
+  - roles: [compute]
+  - operations: [maximum]
+  - traits: [atomic, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_max.md
+    kind: related
+    condition: "本接口不受该数据搬运随路原子设置影响，也不会影响后续搬运指令"
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "接口访问GM时绕过DCache，其他通路经缓存访问同一GM地址时需清理或失效对应Cache Line"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md
+    kind: requires
+    condition: "清理或失效Cache Line后需保证相关访存操作的执行顺序与数据可见性"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "与PIPE_MTE2/PIPE_MTE3搬运同一GM地址且顺序影响结果时，需配合asc_sync_wait保证执行顺序"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: requires
+    condition: "跨流水访问同一GM地址且执行顺序影响结果时按实际依赖插入"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "与asc_sync_notify配对使用，等待搬运流水完成"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN_9_2_0 公共头文件按模块拆分，本页接口的最细粒度公共头文件路径由 c_api/scalar_compute/scalar_compute.h 迁移为 c_api/atomic/scalar_atomic.h；接口签名与 5 个重载集合不变"
+---
 # asc_atomic_max
 
 ## 产品支持情况

@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "已废弃的矢量数乘累加同步接口，按源元素乘标量 value 再与目的元素相加的公式计算，提供 half、half 源配 float 目的、float 三种形式，替代方案为 asc_axpy 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add, synchronization]
+  - traits: [scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_axpy.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "复合同步接口族废弃，改用 asc_axpy 与 asc_sync；include/c_api/composite/vector_compute_composite.h:3601-3629 的 3 个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_axpy_sync（废弃）
 
 ## 产品支持情况

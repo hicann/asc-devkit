@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中的Bias数据搬运到BiasTable Buffer，供矩阵计算单元作为Bias读取，提供按size连续搬运与按块个数、块长和源目间隔高维切分两种参数列表。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: related
+    condition: "Bias作为C矩阵初始值时由Mmad读取"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_l12bt（NPU架构版本2201）
 
 ## 产品支持情况

@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的位图排序同步接口，每次迭代排序 32 个元素，分数存于 src0、索引存于 src1，按分数从大到小把分数与索引成对写入 dst，替代方案为 asc_bitsort 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [sort, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_sort/asc_bitsort.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 3510（Ascend 950PR&950DT）实现：history_probe 显示 npu_arch_3510/vector_compute_impl.h 中的 asc_bitsort_sync 自 9.1.0 起出现，CANN_9_1_0「新增特性」面向 3510 列出该接口；9.0.0 时仅 2201（Atlas A2/A3）可用。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_bitsort 与 asc_sync；include/c_api/composite/vector_compute_composite.h:177,192 的两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_bitsort_sync（废弃）
 
 ## 产品支持情况

@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "不经过DCache向Global Memory写入整型标量数据，避免多核按Cache Line读写导致的随机覆盖，写入后需按缓存一致性要求处理。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [aligned_transfer, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "其他通路经缓存访问同一GM地址时需清理/失效Cache Line"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md
+    kind: requires
+    condition: "保证相关访存操作的执行顺序与数据可见性"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_store_dev
 
 ## 产品支持情况

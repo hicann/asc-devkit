@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # Reg矢量计算
 
 - **[概述](./overview.md)**

@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_gm2ub_sync 以 dst、src 与字节数同步把 GM 数据搬入 UB，隐含同步等待，前 n 个数据搬运要求 32 字节对齐，建议改用非同步 asc_copy_gm2ub 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "各存储单元的空间大小与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该 3510 同步接口，替代路径是非同步 asc_copy_gm2ub 加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2ub_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

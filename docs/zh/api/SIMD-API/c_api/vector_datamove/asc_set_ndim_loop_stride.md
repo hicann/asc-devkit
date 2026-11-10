@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "设置asc_ndim_copy_gm2ub五维搬运各维源、目的步长的配置接口族，包含loop0至loop4共5个函数，loop0为最内层、loop4为最外层，步长单位为元素个数，须在搬运前配置。"
+tag:
+  - roles: [configuration]
+  - traits: [high_dimensional]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_count.md
+    kind: requires
+    condition: "loop1至loop4的填充元素数由该接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_value.md
+    kind: requires
+    condition: "常数填充模式还需设置填充值"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_ndim_loop_stride
 
 ## 产品支持情况

@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_set_l0c2gm_lrelu_alpha 以 half 或 float 引用设置 asc_copy_l0c2l1 与 asc_copy_l0c2gm 使用的 Leaky ReLU alpha 值，建议改用仅提供 float 形式的 asc_set_l0c_copy_lrelu_alpha。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "随路 Leaky ReLU 时由该搬出接口消费 alpha 值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "随路 Leaky ReLU 时由该搬出接口消费 alpha 值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_lrelu_alpha.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用新接口，新接口仅支持 float 参数"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_lrelu_alpha 的 half& 与 float& 重载列为废弃，替代接口 asc_set_l0c_copy_lrelu_alpha 仅支持 float；本页原型仍保留，属废弃而非移除。"
+---
 # asc_set_l0c2gm_lrelu_alpha（废弃）
 
 ## 产品支持情况

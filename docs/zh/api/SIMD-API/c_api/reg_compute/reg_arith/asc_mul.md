@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码对两个矢量数据寄存器逐元素相乘，结果可写入目的数据寄存器或由函数返回值返回，支持 16 位与 32 位整型、half、bfloat16_t 与 float。"
+tag:
+  - roles: [compute]
+  - operations: [multiply]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_mul 补充 7 个函数返回值形式重载（int16_t/uint16_t/half/bfloat16_t/int32_t/uint32_t/float），9.0.0/9.1.0 只有引用输出形式；Release Notes CANN_9_2_0 的接口清单直接列出 asc_mul。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）。"
+---
 # asc_mul
 
 ## 产品支持情况

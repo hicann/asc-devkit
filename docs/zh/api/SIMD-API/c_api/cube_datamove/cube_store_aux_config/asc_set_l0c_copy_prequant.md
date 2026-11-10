@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "配置L0C Buffer搬出过程中随路Scalar量化所需的缩放系数、偏移量和量化结果符号，支持逐项传入或打包64位配置值；逐项形式仅Ascend 950PR&950DT系列产品支持，须在搬出接口执行前调用并选择对应Scalar量化模式。"
+tag:
+  - roles: [data_movement_configuration]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: requires
+    condition: "Ascend 950PR&950DT系列产品经GM搬出时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: requires
+    condition: "Ascend 950PR&950DT系列产品经L1搬出时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: requires
+    condition: "Ascend 950PR&950DT系列产品经UB搬出时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+    condition: "量化模式与config编码的说明页"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_quant_mode.md
+    kind: requires
+    condition: "搬出接口的quant_pre_mode需选取其中的Scalar量化枚举值"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_set_l0c_copy_prequant__f32_u16_b"
+    scope_basis: resolved
+    note: "新增逐项传入scale、offset与is_signed的(float, uint16_t, bool)重载，调用者无需再自行拼装64位config；该重载仅Ascend 950PR&950DT系列产品（dav-3510）支持，9.0.0起的(uint64_t config)重载继续覆盖Atlas A2/A3与Ascend 950PR&950DT。"
+---
 # asc_set_l0c_copy_prequant
 
 ## 产品支持情况

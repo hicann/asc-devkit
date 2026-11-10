@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "将Mask模式设置为系统默认Normal模式的配置接口，该模式下Mask参数控制高维切分计算单次迭代内参与计算的元素，需与asc_set_vector_mask配合使用，流水类型为PIPE_S。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_mask_config/asc_set_vector_mask.md
+    kind: related
+    condition: "本接口设置的Normal模式需与掩码值设置接口配合使用"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_set_mask_norm
 
 ## 产品支持情况

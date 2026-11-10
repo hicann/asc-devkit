@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍NPU架构3510上使用asc_copy_ub2ub在Unified Buffer内部搬运数据的连续与高维切分两种模式，说明各自的参数单位、对齐与取值范围、地址重叠判定规则以及UB容量和PIPE_V同步约束。"
+---
 # UB与UB数据搬运
 
 NPU架构版本3510通过[asc_copy_ub2ub](../vector_datamove/asc_copy_ub2ub.md)在UB内部复制数据。接口运行在PIPE_V，仅在AIV生效，支持连续和高维切分两种模式，数据格式和内容保持不变。

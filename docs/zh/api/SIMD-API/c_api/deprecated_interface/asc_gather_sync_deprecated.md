@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的同步收集接口，按 src_offset 给出的字节偏移把 src 中 count 个元素收集到 dst，运行在 PIPE_V 且仅在 2201 架构支持，需改用非同步的 asc_gather 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [gather]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代本接口原有的同步等待语义"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_gather/asc_gather.md
+    kind: replaced_by
+    condition: "替代本接口的按偏移收集能力，需另行插入同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/composite/vector_compute_composite.h 中该接口全部重载标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_gather and asc_sync)，正文明确改用 asc_gather 加 asc_sync；声明在 9.3.0-beta.1 仍保留，因此只登记废弃、不登记移除，也不设可用上限。"
+---
 # asc_gather_sync（废弃）
 
 ## 产品支持情况

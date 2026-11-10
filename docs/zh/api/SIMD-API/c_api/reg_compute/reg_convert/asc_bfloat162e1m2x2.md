@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "把bfloat16_t矢量按舍入模式转换为fp4x2_e1m2_t并写入目的寄存器或作为返回值，结果按离散四分之一位置写入索引0、4、8或1、5、9等位置，其余位置清零，支持rd、rn、rna、ru、rz五种舍入。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入模式说明"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_added
+    scope: "param:dst_quarter_pos"
+    scope_basis: resolved
+    note: "位置控制由函数名后缀 _v2/_v3/_v4（对应 deprecated_interface/asc_bfloat162e1m2x2_deprecated.md）改为显式编译期标签参数 dst_quarter_pos：std::integral_constant<asc_position_quarter_mode, DISPERSE_FIRST/SECOND/THIRD/FOURTH_QUARTER>；旧三参同名重载自 9.2.0 起标记 ASC_DEPRECATED（reg_convert.h:4191 起，计划移除日期 2027/09/07），CANN_9_2_0 Release Notes 增强节同源。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增通过函数返回值输出结果的重载（返回 vector_fp4x2_e1m2_t，参数为 src、mask、dst_quarter_pos）；9.2.0 起两形式合计 40 条声明（5 种舍入 × 4 个离散位置 × 2 种结果形式），对应 CANN_9_2_0 Release Notes「为…类型转换…接口补充函数返回值形式的重载」。"
+---
 # asc_bfloat162e1m2x2
 
 ## 产品支持情况

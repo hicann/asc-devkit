@@ -30,6 +30,12 @@ constexpr uint32_t S1_BIAS_ELEMS = S1_BIAS_BYTES / sizeof(int32_t);
 
 // ========== 阶段1：GM → L1 ==========
 
+//! [asc_copy_gm2l1_nd2nz__PL1i32_PGi32_u64_loadl2_u16_u32_u64_b,
+//! asc_copy_gm2l1_nd2nz__PL1i8_PGi8_u64_loadl2_u16_u32_u64_b,
+//! asc_copy_l0c2gm__PGi32_PCCi32_u16_u16_u32_u16_storel2_unitflag_quantmode_relupre_b_b_b_b,
+//! asc_copy_l12bt__u64_PL1i32_u16_u16_u16_u16_u16, asc_copy_l12l0a__PCAi8_PL1i8_u16_u16_u8_u8_i16_u16,
+//! asc_copy_l12l0b_trans__PCBi8_PL1i8_u16_u8_u16_u16_u16_u16, asc_mmad__PCCi32_PCAi8_PCBi8_u16_u16_u16_unitflag_b_b_b,
+//! asc_set_gm2l1_nz_para__u64, asc_set_l0c_copy_nz_para__u16_u16_u32]
 __aicore__ inline void s1_copy_matrix_a_to_l1(__cbuf__ int8_t* dst, __gm__ int8_t* src)
 {
     uint64_t config = (static_cast<uint64_t>(0) << 48) | (static_cast<uint64_t>(ceil_align(M, BLOCK_CUBE)) << 32) |
@@ -199,3 +205,9 @@ __aicore__ inline void s1_copy_result_to_gm(__gm__ int32_t* dst, __cc__ int32_t*
         dst, src, n_size, m_size, loop_dst_stride, loop_src_stride, l2_cache_ctl, unit_flag_ctl, quant_pre, relu_pre,
         split_en, nz2nd_en, nz2dn_en, clip_relu_pre);
 }
+//! [asc_copy_gm2l1_nd2nz__PL1i32_PGi32_u64_loadl2_u16_u32_u64_b,
+//! asc_copy_gm2l1_nd2nz__PL1i8_PGi8_u64_loadl2_u16_u32_u64_b,
+//! asc_copy_l0c2gm__PGi32_PCCi32_u16_u16_u32_u16_storel2_unitflag_quantmode_relupre_b_b_b_b,
+//! asc_copy_l12bt__u64_PL1i32_u16_u16_u16_u16_u16, asc_copy_l12l0a__PCAi8_PL1i8_u16_u16_u8_u8_i16_u16,
+//! asc_copy_l12l0b_trans__PCBi8_PL1i8_u16_u8_u16_u16_u16_u16, asc_mmad__PCCi32_PCAi8_PCBi8_u16_u16_u16_unitflag_b_b_b,
+//! asc_set_gm2l1_nz_para__u64, asc_set_l0c_copy_nz_para__u16_u16_u32]

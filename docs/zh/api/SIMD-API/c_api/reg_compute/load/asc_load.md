@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "从Unified Buffer按dtype对齐的起始地址搬入VL长度数据到矢量数据寄存器，可用返回值或引用参数输出，是易用性搬入接口。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign.md
+    kind: related
+    condition: "对性能有要求时改用非对齐搬入接口"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_load
 
 ## 产品支持情况

@@ -1,3 +1,35 @@
+---
+okftype: reference.api
+description: "设置 L0C Buffer 搬出时随路 tensor 量化与激活参数在 Fixpipe Buffer 中的起始地址索引，并可初始化 UnitFlag 全局状态，三项配置每次调用一并覆盖且仅在 AIC 上生效。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12fb.md
+    kind: requires
+    condition: "tensor 量化与激活参数需先由该接口搬入 Fixpipe Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "搬出接口开启随路量化或激活时需先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "搬出接口开启随路量化或激活时需先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: configures
+    condition: "搬出接口开启随路量化或激活时需先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization_and_relu_scenario_combination.md
+    kind: related
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "由 asc_set_l0c2gm_config（9.0.0 提供）更名并调整参数名为 relu_pre_addr、quant_pre_addr、is_clean_unit_flag（Release Notes CANN_9_2_0 重命名表记为「函数名和参数名调整」）；旧名保留为 deprecated_interface 页面，本页三个参数每次调用同时覆盖。"
+---
 # asc_set_l0c_copy_config
 
 ## 产品支持情况

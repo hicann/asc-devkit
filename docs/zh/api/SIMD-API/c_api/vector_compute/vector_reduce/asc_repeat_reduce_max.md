@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "对每个Repeat内元素求最大值及其首个最大值的索引，一次Repeat处理256字节，提供index_value、value_index、only_value与only_index四种输出组合，支持前n个数据计算与高维切分两种原型。"
+tag:
+  - roles: [compute]
+  - operations: [maximum, reduction]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_reduce/asc_get_reduce_max_cnt.md
+    kind: related
+    condition: "可继续用该接口获取全部repeat内的最大值及首个最大值索引"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_repeat_reduce_max
 
 ## 产品支持情况

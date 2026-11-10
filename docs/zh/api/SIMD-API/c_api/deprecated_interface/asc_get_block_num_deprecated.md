@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "已废弃的核数查询接口，返回当前任务配置的核数；迁移时直接在代码中使用内置变量 block_num，两者取值一致，头文件为 c_api/utils/sys_var.h。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: replaced_by
+    condition: "内置变量 block_num 的取值与原接口返回值一致，可直接替换"
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/utils/sys_var.h 中声明标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", block_num)，CANN 9.2.0 Release Notes 接口废弃表把 asc_get_block_num 与 asc_get_block_idx 并列为改用内置变量；9.3.0-beta.1 声明仍保留，属废弃而非移除，不设版本上限。"
+---
 # asc_get_block_num（废弃）
 
 ## 产品支持情况

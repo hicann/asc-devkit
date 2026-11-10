@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵搬入辅助配置接口
 
 - **[asc_fill_l0a](asc_fill_l0a.md)**

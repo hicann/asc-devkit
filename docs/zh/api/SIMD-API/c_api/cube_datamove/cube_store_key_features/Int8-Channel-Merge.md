@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明Nz输出且目标类型转换为int8_t或uint8_t时硬件自动开启的通道合并行为：16×16分形矩阵按N方向两两合并为16×32，N为16的奇数倍时最后一组16通道不合并，并提示据此调整目的缓冲区与步长。"
+---
 # Int8 Channel Merge
 
 ## 特性说明

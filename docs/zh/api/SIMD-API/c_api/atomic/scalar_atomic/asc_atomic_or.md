@@ -1,3 +1,34 @@
+---
+okftype: reference.api
+description: "对Global Memory中address指向的单个元素执行原子按位或：读取旧值，与输入标量按位或后写回原地址，并返回计算前的旧值，读取、计算与写回由硬件保证原子性；仅Ascend 950PR&950DT系列产品支持。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_or]
+  - traits: [atomic, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "其他核或其他通路通过缓存访问同一GM地址时，需清理或失效对应Cache Line"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md
+    kind: requires
+    condition: "保证相关访存操作的执行顺序和数据可见性"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: related
+    condition: "与asc_sync_wait配合保证跨流水执行顺序的备选方案"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: requires
+    condition: "本接口与PIPE_MTE2或PIPE_MTE3上的数据搬运指令访问同一GM地址且执行顺序影响结果时，需插入该同步"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: related
+    condition: "与asc_sync_notify配合保证跨流水执行顺序的备选方案"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "公共头文件按模块拆分后，本接口的公共头文件路径由 c_api/scalar_compute/scalar_compute.h 变为正文所写的 c_api/atomic/scalar_atomic.h（9.1.0 声明位置见 Release Notes 9.2.0「公共头文件」节）；函数原型与语义不变。"
+---
 # asc_atomic_or
 
 ## 产品支持情况

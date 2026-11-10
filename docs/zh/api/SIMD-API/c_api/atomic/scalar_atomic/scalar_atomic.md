@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 标量原子操作
 
 - **[标量原子操作概述](../overview.md#标量原子操作)**

@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍Reg矢量计算C API的寄存器级编程模型、Vector Function使用流程与通用约束，并给出搬入计算搬出的完整编程示例。"
+---
 # 概述
 
 ## Reg矢量计算概述

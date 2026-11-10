@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 打包接口，取源操作数元素的低 8、16 或 32 位写入目的寄存器的低半部分或高半部分，覆盖 vector_uint8_t 等 5 组类型，替代方案为 asc_pack_to_low 与 asc_pack_to_high。"
+tag:
+  - roles: [compute]
+  - operations: [bit_manipulation]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_high.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_pack_to_low.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "asc_pack 与 asc_pack_v2 废弃，改用 asc_pack_to_low 与 asc_pack_to_high；include/c_api/reg_compute/compute/reg_permute_sel.h:2709 起的 10 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表第 124 行同源。"
+---
 # asc_pack（废弃）
 
 ## 产品支持情况

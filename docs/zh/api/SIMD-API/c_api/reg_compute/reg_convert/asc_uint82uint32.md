@@ -1,3 +1,60 @@
+---
+okftype: reference.api
+description: "将源矢量数据寄存器中的uint8_t元素按每隔4个元素的四分之一索引分组转换为uint32_t，结果写入目的矢量数据寄存器或由函数返回，读取组别由编译期标签asc_position_quarter_mode选择，掩码未选中的目的元素置0。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_position_quarter_mode.md
+    kind: requires
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__Rvu32_vu8_vb_icposqfirst"
+    scope_basis: resolved
+    note: "引用输出原型新增显式四分之一位置标签重载，src_quarter_pos 固定为 asc_position_quarter_mode::DISPERSE_FIRST_QUARTER，读取索引 0、4、8…；取代无位置后缀的三参数原型，该旧原型自本版本起以 ASC_DEPRECATED(9.2.0) 标记但未移除。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__Rvu32_vu8_vb_icposqsecond"
+    scope_basis: resolved
+    note: "引用输出原型新增 DISPERSE_SECOND_QUARTER 重载，读取索引 1、5、9…；取代 asc_uint82uint32_v2。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__Rvu32_vu8_vb_icposqthird"
+    scope_basis: resolved
+    note: "引用输出原型新增 DISPERSE_THIRD_QUARTER 重载，读取索引 2、6、10…；取代 asc_uint82uint32_v3。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__Rvu32_vu8_vb_icposqfourth"
+    scope_basis: resolved
+    note: "引用输出原型新增 DISPERSE_FOURTH_QUARTER 重载，读取索引 3、7、11…；取代 asc_uint82uint32_v4。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__vu8_vb_icposqfirst"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载 asc_uint82uint32(src, mask, src_quarter_pos)，返回 vector_uint32_t，此处 src_quarter_pos 为 DISPERSE_FIRST_QUARTER（索引 0、4、8…）。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__vu8_vb_icposqsecond"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载，src_quarter_pos 为 DISPERSE_SECOND_QUARTER，读取索引 1、5、9…。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__vu8_vb_icposqthird"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载，src_quarter_pos 为 DISPERSE_THIRD_QUARTER，读取索引 2、6、10…。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint32__vu8_vb_icposqfourth"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载，src_quarter_pos 为 DISPERSE_FOURTH_QUARTER，读取索引 3、7、11…。"
+---
 # asc_uint82uint32
 
 ## 产品支持情况

@@ -1,3 +1,38 @@
+---
+okftype: reference.api
+description: "在3510架构上把UB数据按非32字节整数倍长度搬出到GM，读UB补dummy、写GM丢弃，支持Compact/Normal模式与asc_store_l2_cache_mode配置。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md
+    kind: related
+    condition: "高维切分原型的 l2_cache_mode 取值说明"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "有数据依赖时按该页插入同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增仅传入 dst、src、size 的简化重载：CANN 9.1.0 Release Notes 记载 asc_copy_ub2gm_align（含 _sync）新增简化重载，对应正文连续数据搬运的三参数形式。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 L2 Cache 策略重载：CANN 9.2.0 Release Notes 记载 asc_copy_ub2gm_align 新增使用 asc_store_l2_cache_mode 配置 L2 Cache 的重载（仅 Ascend 950PR&950DT 支持），对应正文高维切分原型的 l2_cache_mode 参数。"
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "修复 n_burst 参数位宽不足：CANN 9.2.0 Release Notes 记载修复3510架构下 asc_copy_ub2gm_align 等对齐搬运接口的 n_burst 位宽问题并扩展为 uint32_t，与正文 burst_count 为 uint32_t、取值[1, 2^21−1]一致。"
+---
 # asc_copy_ub2gm_align（NPU架构版本3510）
 
 ## 产品支持情况

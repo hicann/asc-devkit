@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的同步版带转置 2D 搬运接口，面向 Ascend 950PR&950DT 的 4/8/16/32 位数据类型，把 L1 数据转置后写入 L0B，替代方案为 asc_copy_l12l0b_trans 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [load, transpose]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_trans_arch_3510.md
+    kind: replaced_by
+    condition: "正文声明的替代非同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代方案中的同步部分"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 中 3510 组声明同样标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_copy_l12l0b_trans and asc_sync)；接口声明保留，属废弃而非移除，页面未设置可用上限。"
+---
 # asc_copy_l12l0b_trans_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "把参与mask筛选的bfloat16_t矢量元素按rd、rn、rna、ru、rz舍入与饱和或非饱和模式转换为int32_t，并按src_pos标签读取源偶数或奇数位置写入目的寄存器或作为返回值，仅在AIV生效。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: requires
+    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增显式编译期位置标签src_pos（std::integral_constant<asc_position_mode, EVEN/ODD>），1:2位宽比下选择读取源索引偶数或奇数位置；原位置后缀形式自9.2.0起废弃，见deprecated_interface对应页。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增通过函数返回值返回结果的重载（返回vector_int32_t），9.2.0两形式共40条声明（5种舍入×饱和与非饱和×2个位置×2种结果形式）。"
+---
 # asc_bfloat162int32
 
 ## 产品支持情况

@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 宏
 
 - **[ASC_DEPRECATED](asc_deprecation.md)**

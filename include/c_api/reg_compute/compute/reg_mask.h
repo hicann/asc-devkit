@@ -25,14 +25,60 @@
 #include "impl/c_api/reg_base_impl/reg_mask_intf_impl.h"
 #endif
 
+/**
+ * @ingroup simd_c_api.reg_compute.reg_mask
+ * @brief Generates a b8 mask from the element count value and subtracts the 256-element vector processing granularity
+ * from value in place.
+ *
+ * @override_id asc_update_mask_b8__Ru32
+ * @archs 3510
+ * @param [in,out] value Number of remaining elements; after the call it becomes value = (value < 256) ? 0 : (value -
+ * 256), so the count is consumed by one b8 vector processing unit.
+ */
 __simd_callee__ inline vector_bool asc_update_mask_b8(uint32_t& value);
 
+/**
+ * @ingroup simd_c_api.reg_compute.reg_mask
+ * @brief Generates a b16 mask from the element count value and subtracts the 128-element vector processing granularity
+ * from value in place.
+ *
+ * @override_id asc_update_mask_b16__Ru32
+ * @archs 3510
+ * @param [in,out] value Number of remaining elements; after the call it becomes value = (value < 128) ? 0 : (value -
+ * 128), so the count is consumed by one b16 vector processing unit.
+ */
 __simd_callee__ inline vector_bool asc_update_mask_b16(uint32_t& value);
 
+/**
+ * @ingroup simd_c_api.reg_compute.reg_mask
+ * @brief Generates a b32 mask from the element count value and subtracts the 64-element vector processing granularity
+ * from value in place.
+ *
+ * @override_id asc_update_mask_b32__Ru32
+ * @archs 3510
+ * @param [in,out] value Number of remaining elements; after the call it becomes value = (value < 64) ? 0 : (value -
+ * 64), so the count is consumed by one b32 vector processing unit.
+ */
 __simd_callee__ inline vector_bool asc_update_mask_b32(uint32_t& value);
 
+/**
+ * @ingroup simd_c_api.reg_compute.reg_mask
+ * @brief Reads the b16 mask value from the SPR and returns it as a 256-bit mask register with every SPR bit expanded to
+ * two bits.
+ *
+ * @override_id asc_get_mask_spr_b16__z
+ * @archs 3510
+ */
 __simd_callee__ inline vector_bool asc_get_mask_spr_b16();
 
+/**
+ * @ingroup simd_c_api.reg_compute.reg_mask
+ * @brief Reads the b32 mask value from the SPR and returns it as a 256-bit mask register with every SPR bit expanded to
+ * four bits.
+ *
+ * @override_id asc_get_mask_spr_b32__z
+ * @archs 3510
+ */
 __simd_callee__ inline vector_bool asc_get_mask_spr_b32();
 
 #define asc_create_mask_b8 pset_b8

@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "对两个矢量数据寄存器按元素做不等比较，结果以掩码寄存器返回值或写入引用参数dst，支持9种dtype且仅在AIV生效；浮点含nan时结果位写1，与小于比较的置0规则相反。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增9个通过vector_bool返回值返回比较结果的重载（9种dtype各一个），引用参数形式自9.0.0起已可用。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_ne__Rvb_vbf16_vbf16_vb"
+    scope_basis: resolved
+    note: "引用参数形式新增bfloat16_t重载（vector_bool& dst, vector_bfloat16_t, vector_bfloat16_t, vector_bool）；CANN_9_2_0 Release Notes亦记载asc_ne新增bfloat16_t重载，其余dtype的引用形式9.0.0已存在。"
+---
 # asc_ne
 
 ## 产品支持情况

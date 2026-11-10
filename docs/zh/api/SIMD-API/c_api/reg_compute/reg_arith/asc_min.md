@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码对两个矢量数据寄存器逐元素求最小值，结果写入目的数据寄存器或由函数返回值返回，遵循 min(-0, +0) = -0 的符号语义。"
+tag:
+  - roles: [compute]
+  - operations: [minimum]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_min 补充 9 个函数返回值形式重载（含 bfloat16_t），9.0.0/9.1.0 只有引用输出形式；Release Notes CANN_9_2_0 明确把 asc_min 列入补充函数返回值形式的接口清单。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早，9.0.0 还存在 vector_reg/reg_compute.h 的重复路径）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）。"
+---
 # asc_min
 
 ## 产品支持情况

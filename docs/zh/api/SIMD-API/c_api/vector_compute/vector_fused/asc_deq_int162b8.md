@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "把 int16_t 源矢量按 scale 与 offset 反量化后转为 int8_t 或 uint8_t，并可选择写入每个 DataBlock 的高半块或低半块，使用前需调用 asc_set_deq_scale 设置量化参数。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_set_deq_scale.md
+    kind: requires
+    condition: "使用前须先设置量化 scale、offset 与符号模式"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_deq_int162b8
 

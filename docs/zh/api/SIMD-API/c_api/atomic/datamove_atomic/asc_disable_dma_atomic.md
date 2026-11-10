@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "在完成数据搬运原子操作后关闭原子操作状态，避免已开启的原子操作影响后续搬运。接口无参数、无返回值，流水类型为 PIPE_S，需与 asc_set_atomic_add、asc_set_atomic_max、asc_set_atomic_min 配合使用，支持 Ascend 950PR&950DT、Atlas A3 与 Atlas A2 系列产品。"
+tag:
+  - roles: [data_movement_configuration]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_add.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_max.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_min.md
+    kind: related
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_disable_dma_atomic
 
 ## 产品支持情况

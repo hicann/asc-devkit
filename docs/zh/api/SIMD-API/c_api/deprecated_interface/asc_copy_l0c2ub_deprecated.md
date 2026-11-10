@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下旧参数形式的 asc_copy_l0c2ub 及 _sync 重载把 L0C Buffer 的矩阵结果搬到 UB，可组合随路量化、ReLU、通道拆分、双目标控制与 Nz2ND 或 Nz2DN 转换，建议改用强类型枚举重载加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [conversion, store]
+  - traits: [quantization, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用强类型枚举参数的新重载加 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md
+    kind: requires
+    condition: "Nz2DN 场景需预先配置源矩阵步长"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: requires
+    condition: "随路 tensor 量化需先设置量化 tensor 起始地址"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md
+    kind: requires
+    condition: "开启 Nz2ND 或 Nz2DN 前需先配置格式转换参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md
+    kind: requires
+    condition: "随路 scalar 量化需先设置量化参数"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该 3510 同步形式，Release Notes 9.2.0 废弃表要求改用强类型枚举参数的重载加 asc_sync；接口未移除。"
+---
 # asc_copy_l0c2ub（废弃）
 
 ## 产品支持情况

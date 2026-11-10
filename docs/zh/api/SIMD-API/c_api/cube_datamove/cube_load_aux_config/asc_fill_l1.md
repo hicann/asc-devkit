@@ -1,3 +1,42 @@
+---
+okftype: reference.api
+description: "把一个标量填充值广播写入 L1 Buffer 中 dst 起始的多个 32 字节分形块，按 asc_fill_value_config 配置重复次数、单次块数与块间隔，用于 L1 Buffer 的内存初始化。"
+tag:
+  - roles: [data_initialization]
+  - operations: [fill]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/overview/cube_compute_flow.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/L1_L0A_B_memory_structure_intro.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_fill_value_config.md
+    kind: requires
+    condition: "所有重载均需传入 config 指定 repeat、blk_num 与 dst_gap"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "L1 Buffer 512KB 容量、32 字节起始对齐与通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "本指令与其它指令存在数据依赖时需插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 的实现仅有 npu_arch_2201 版本，9.1.0 起 impl/c_api/instr_impl/npu_arch_3510/cube_datamove_impl.h 出现 asc_fill_l1，与 Release Notes 9.1.0 将 asc_fill_l1 列入 3510 架构新增数据搬运接口一致，页面产品支持表中 Ascend 950PR&950DT 的支持自 9.1.0 起。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_fill_l1__PL1bf16_f16_RCfillcfg"
+    scope_basis: resolved
+    note: "9.1.0 起 include 与 impl 新增 bfloat16_t* dst 配 half 填充值的重载，9.0.0 只有 bfloat16_t 配 bfloat16_t；当前 include 该重载 @override_id 为 asc_fill_l1__PL1bf16_f16_RCfillcfg，@archs 2201 3510。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_fill_l1__PL1bf16_u32_RCfillcfg"
+    scope_basis: resolved
+    note: "9.1.0 起 include 与 impl 新增 bfloat16_t* dst 配 uint32_t 填充值的重载，9.0.0 只有 bfloat16_t 配 bfloat16_t；当前 include 该重载 @override_id 为 asc_fill_l1__PL1bf16_u32_RCfillcfg，@archs 2201 3510。"
+---
 # asc_fill_l1
 
 ## 产品支持情况

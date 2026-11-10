@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "非对齐读取接口：从 UB 按 dtype 对齐的起始地址读取 VL 长度连续数据，并与 asc_loadunalign_pre 缓存在 32 字节非对齐寄存器中的前置数据拼接后搬入矢量寄存器，每次搬入前须用同一 src1 先做源地址预处理初始化，仅在 AIV 上生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign_pre.md
+    kind: requires
+    condition: "每次搬入前必须用源地址预处理模式初始化，且与本接口使用相同的 src1"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_loadunalign
 
 ## 产品支持情况

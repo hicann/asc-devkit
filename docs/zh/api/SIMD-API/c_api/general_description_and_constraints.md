@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "汇总 C API 的通用说明与约束，包括各级存储单元用途与不同产品下的容量、对齐注意事项，高维切分计算接口的通用地址重叠规则，repeatTime、dataBlockStride 与 repeatStride 的迭代配置含义，mask 的位宽取值范围和 2201 架构上前 n 个数据计算改写 Mask 的提示，以及以数组方式申请内存的使用限制与反例。"
+---
 # 通用说明和约束
 
 ## 存储单元说明<a name="存储单元说明"></a>

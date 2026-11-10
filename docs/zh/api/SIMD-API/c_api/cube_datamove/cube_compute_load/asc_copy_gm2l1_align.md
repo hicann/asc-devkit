@@ -1,3 +1,48 @@
+---
+okftype: reference.api
+description: "将Global Memory数据搬运到L1 Buffer并支持长度非32字节整数倍的数据，通过dst_stride选择Normal或Compact填充模式，非对齐部分可手动或自动填充，并支持左右填充与循环填充模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [padding, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: requires
+    condition: "搬入前源数据需按分形格式排布"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+    condition: "地址对齐与搬运粒度要求"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop1_stride.md
+    kind: requires
+    condition: "使用循环填充模式时配置内层循环步长"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop2_stride.md
+    kind: requires
+    condition: "使用循环填充模式时配置外层循环步长"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop_size.md
+    kind: requires
+    condition: "使用循环填充模式时配置循环次数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md
+    kind: requires
+    condition: "enable_data_select为true或使用左右填充模式时须先配置填充值"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: requires
+    condition: "l2_cache_mode参数取值与语义"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入同步指令"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_gm2l1_align__PL1i8_PGi8_u32_u32_u8_u8_b_loadl2_u64_u32"
+    scope_basis: resolved
+    note: "9.2.0新增以 asc_load_l2_cache_mode 强类型枚举配置L2 Cache的重载，参数为 burst_count、burst_len、left_padding_count、right_padding_count、enable_data_select、src_stride、dst_stride；同形态同时覆盖 uint8_t、hifloat8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float 共10种dtype，仅3510。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_copy_gm2l1_align__PL1i8_PGi8_u32_u32_u8_u8_b_u8_u64_u32"
+    scope_basis: resolved
+    note: "旧参数重载（第7参数为 uint8_t l2_cache_ctl 原始缓存码）及对应 asc_copy_gm2l1_align_sync 自9.2.0起被标记废弃（头文件 ASC_DEPRECATED(9.2.0)）但实现保留、仍可调用；建议改用本页强类型重载并配合 asc_sync。"
+---
 # asc_copy_gm2l1_align
 
 ## 产品支持情况

@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的uint32_t元素转换为uint16_t，2:1 写（EVEN/ODD 两组），支持引用参数与函数返回值两种输出形式。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_uint322uint16
 
 ## 产品支持情况

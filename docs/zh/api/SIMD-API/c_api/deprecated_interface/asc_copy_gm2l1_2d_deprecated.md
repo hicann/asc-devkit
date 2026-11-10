@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "已废弃的 2D 矩阵搬运旧重载，以 512 字节分形为单位按行列起始位置与步长从 GM 切分搬运到 L1 Buffer，含 decomp_mode 与 l2_cache_ctl 两个整数参数，替代方案改用 l2_cache_mode 枚举重载。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "同步场景替代 asc_copy_gm2l1_sync"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "使用 uint8_t decomp_mode 与 uint8_t l2_cache_ctl 的旧 2D 重载及对应 _sync 重载废弃，改用带 asc_load_l2_cache_mode l2_cache_mode 的 asc_copy_gm2l1_2d_arch_3510；include/c_api/cube_datamove/cube_datamove.h 的 30 个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_copy_gm2l1（NPU架构版本3510，2D矩阵搬运模式，废弃）
 
 ## 产品支持情况

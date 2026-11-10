@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "按掩码对矢量数据寄存器中的half/bfloat16_t/float（同类型）元素执行TRUNC（向零截断），1:1（类型与元素数量不变），支持引用参数与函数返回值两种输出形式。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_trunc
 
 ## 产品支持情况

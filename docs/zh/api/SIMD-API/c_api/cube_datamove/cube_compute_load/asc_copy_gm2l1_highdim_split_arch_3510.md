@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "在AIC上将Global Memory数据按数据块个数、块长与源目间隔高维切分搬运到L1 Buffer，并可按通道padding模式对32字节粒度数据插入或移除padding，搬运时格式与内容保持不变。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [datablock_granularity, high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_padding.md
+    kind: requires
+    condition: "使用通道padding模式时需先设置padding值"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_copy_gm2l1（NPU架构版本3510，高维切分数据搬运）
 
 ## 产品支持情况

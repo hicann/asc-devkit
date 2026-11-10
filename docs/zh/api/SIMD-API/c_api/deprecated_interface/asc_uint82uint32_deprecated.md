@@ -1,3 +1,39 @@
+---
+okftype: reference.api
+description: "已废弃的uint8_t到uint32_t矢量转换原型说明，按读取索引0到3分为无后缀与v2、v3、v4四种形式，源目位宽比1比4。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_uint82uint32.md
+    kind: replaced_by
+    condition: "迁移到显式位置参数重载"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_uint82uint32__Rvu32_vu8_vb"
+    scope_basis: resolved
+    note: "9.2.0 起 ASC_DEPRECATED 标记该位置后缀原型，迁移到显式位置参数重载；仅废弃未移除，不设可用上限。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_uint82uint32_v2__Rvu32_vu8_vb"
+    scope_basis: resolved
+    note: "9.2.0 起 ASC_DEPRECATED 标记该位置后缀原型，迁移到显式位置参数重载；仅废弃未移除，不设可用上限。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_uint82uint32_v3__Rvu32_vu8_vb"
+    scope_basis: resolved
+    note: "9.2.0 起 ASC_DEPRECATED 标记该位置后缀原型，迁移到显式位置参数重载；仅废弃未移除，不设可用上限。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_uint82uint32_v4__Rvu32_vu8_vb"
+    scope_basis: resolved
+    note: "9.2.0 起 ASC_DEPRECATED 标记该位置后缀原型，迁移到显式位置参数重载；仅废弃未移除，不设可用上限。"
+---
 # asc_uint82uint32（废弃）
 
 ## 产品支持情况

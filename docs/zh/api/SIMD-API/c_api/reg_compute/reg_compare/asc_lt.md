@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "对两个矢量数据寄存器按元素做小于比较，结果以掩码寄存器返回值或写入引用参数dst，支持int8_t到float共9种dtype，仅在AIV生效；浮点比较时+0.0与-0.0相等、含nan时结果位写0。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增9个通过vector_bool返回值返回比较结果的重载（int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float各一个），引用参数形式自9.0.0起已可用；9.2.0两形式合计18个重载，arch仍为3510。"
+---
 # asc_lt
 
 ## 产品支持情况

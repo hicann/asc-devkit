@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 基础算术
 
 - **[概述](overview.md)**

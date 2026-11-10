@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的同步版 Unified Buffer 内部数据搬运接口，支持 16 位与 32 位整型并支持高维切分，替代方案为 asc_copy 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代方案中的同步部分"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy.md
+    kind: replaced_by
+    condition: "正文声明的替代非同步接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_copy and asc_sync)，正文同步给出替代方案；声明保留，属 deprecated 而非 removed。"
+---
 # asc_copy_sync（废弃）
 
 ## 产品支持情况

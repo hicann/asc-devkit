@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510的GM与L1/L0通路：GM到L1的连续、高维切分、二维分形、ND2Nz、DN2Nz与非对齐搬运，以及L0C到GM的组合量化激活格式转换搬出，并给出各原型的参数单位、对齐与L1空间要求。"
+---
 # GM与L1/L0数据搬运
 
 NPU架构版本3510提供GM到L1 Buffer和L0C Buffer到GM两类直达通路。矩阵输入从GM进入L0A Buffer/L0B Buffer时，需要先通过PIPE_MTE2搬到L1 Buffer，再通过PIPE_MTE1装载到L0A Buffer/L0B Buffer；矩阵计算结果可通过PIPE_FIX从L0C Buffer直接搬回GM。NPU架构版本3510不提供GM到L0A Buffer/L0B Buffer或L1 Buffer到GM的直达搬运。

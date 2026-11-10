@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "计算有符号 64 位整数二进制中从最高数值位开始与符号位相同的连续比特位个数，输入为 -1 或 0 时返回 -1，其余输入返回值落在 0 到 62 之间，运行在标量流水上。"
+tag:
+  - roles: [compute]
+  - operations: [bit_manipulation]
+  - traits: [count_limited]
+dependencies: []
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_sflbits
 
 ## 产品支持情况

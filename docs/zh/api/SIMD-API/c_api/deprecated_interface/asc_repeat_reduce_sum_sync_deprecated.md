@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的按迭代求和同步接口，用二叉树两两相加对每个 Repeat 内元素求和，half 中间结果超过 65504 时按饱和保存，替代方案为 asc_repeat_reduce_sum 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [reduction, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_reduce/asc_repeat_reduce_sum.md
+    kind: replaced_by
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合归约接口废弃，改用 asc_repeat_reduce_sum 与 asc_sync；include/c_api/composite/vector_compute_composite.h 的两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_repeat_reduce_sum_sync（废弃）
 
 ## 产品支持情况

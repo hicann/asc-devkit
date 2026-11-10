@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 位置后缀原型说明，按接口后缀选择读取 half 源寄存器的偶数或奇数索引元素并按掩码转换为 float 写入目的寄存器，应改用 asc_half2float 的显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_half2float.md
+    kind: replaced_by
+    condition: "使用带 ASC_POSITION_EVEN 或 ASC_POSITION_ODD 显式位置参数的重载替代位置后缀原型"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/reg_compute/reg_convert.h 中位置后缀原型 asc_half2float__Rvf32_vf16_vb（第19637-19648行）与 asc_half2float_v2__Rvf32_vf16_vb（第22750-22761行）标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_half2float)，替代为带显式位置参数的重载；显式位置版本（asc_half2float__Rvf32_vf16_vb_icposeven/icposodd）仍保留，属废弃而非移除。"
+---
 # asc_half2float（废弃）
 
 ## 产品支持情况

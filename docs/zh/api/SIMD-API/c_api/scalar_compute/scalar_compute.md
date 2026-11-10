@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 标量计算
 
 - **[概述](overview.md)**

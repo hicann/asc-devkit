@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_gm2l1_nd2nz_sync 同步完成 GM 到 L1 Buffer 的 ND 转 Nz 搬运并隐含等待，参数含行偏移、L2 策略、N/D 尺寸与 SmallC0 开关，官方建议改用带 L2 策略参数的非同步重载加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, layout_transform]
+  - traits: [aligned_transfer, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md
+    kind: requires
+    condition: "调用本接口前需配置 ND2Nz 搬运的目的 Nz 矩阵步长与 ND 矩阵个数"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该 3510 同步重载，Release Notes 9.2.0 废弃表要求改用带 asc_load_l2_cache_mode 的重载加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2l1_nd2nz_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

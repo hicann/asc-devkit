@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "配置 GM 到 L1 高维切分数据搬运的 padding 值，支持按 int8_t 到 float 等 dtype 直接传入标量或传入 64 位配置寄存器，该值同时被左矩阵 3D 搬运取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md
+    kind: configures
+    condition: "高维切分搬运的 padding 模式取用本接口设置的值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md
+    kind: related
+    condition: "因共用寄存器，本接口设置的值也是该 3D 矩阵搬运使用的填充值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md
+    kind: related
+    condition: "两个接口底层使用相同的寄存器，设置的值互相覆盖"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_set_gm2l1_padding
 
 ## 产品支持情况

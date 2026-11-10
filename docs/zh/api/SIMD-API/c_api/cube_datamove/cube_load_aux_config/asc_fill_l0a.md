@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "将标量填充值 value 的二进制值写入 L0A Buffer 中 dst 起始的矩阵区域，按 asc_fill_value_config 的 repeat、blk_num 与 dst_gap 重复填充，用于矩阵输入缓冲区的初始化。"
+tag:
+  - roles: [data_initialization]
+  - operations: [fill]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/overview/cube_compute_flow.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/L1_L0A_B_memory_structure_intro.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_fill_value_config.md
+    kind: requires
+    condition: "所有重载均需传入 config 指定迭代次数、单次数据块数与块间隔"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "L0A 存储单元容量、对齐要求与通用地址重叠约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.1.0 起 impl/c_api/memory_base_impl/cube_datamove_intf_impl.h 新增 bfloat16_t* dst 配 half 与配 uint32_t 填充值的两个重载（9.0.0 的实现中没有），正文函数原型已列出这两个签名；该页对应重载在 include 头文件中至今没有声明，无法给出 canonical override id，故事件范围落在函数原型小节。"
+---
 # asc_fill_l0a
 
 ## 产品支持情况

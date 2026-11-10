@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的矢量加法加 ReLU 同步接口，先对两个源矢量逐元素求和再与 0 比较取较大值，并支持目的类型转换组合，仅在 Atlas A2、A3 支持，替代方案为 asc_add_relu 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [add, relu, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_add_relu.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "复合同步接口族整体废弃，改用 asc_add_relu 与 asc_sync 分步调用；include/c_api/composite/vector_compute_composite.h 中 6 个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_add_relu_sync（废弃）
 
 ## 产品支持情况

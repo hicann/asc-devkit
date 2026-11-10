@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 废弃接口
 
 - **[概述](overview.md)**

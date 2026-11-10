@@ -1,3 +1,38 @@
+---
+okftype: reference.api
+description: "设置Mmad计算逐列生成L0C Buffer上的结果分形，使结果生成顺序与数据搬出顺序一致以提升性能；只改变分形生成顺序，不改变计算结果、乘加次数与输出格式，须在asc_mmad前调用。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: constrained_by
+    condition: "须在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md
+    kind: constrained_by
+    condition: "须在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_n.md
+    kind: related
+    condition: "切换为逐行生成需调用对方接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: related
+    condition: "计算方向与结果搬出顺序的配合说明"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2DN.md
+    kind: related
+    condition: "搬出布局区别参照"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2ND.md
+    kind: related
+    condition: "搬出布局区别参照"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2NZ.md
+    kind: related
+    condition: "搬出布局区别参照"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 仅在 2201 分支声明与实现；9.1.0 起同签名在 include 的 3510 分支与 impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl.h 中出现，Ascend 950PR&950DT 自 9.1.0 起可用，方向配置语义未变。"
+---
 # asc_set_mmad_direction_m
 
 ## 产品支持情况

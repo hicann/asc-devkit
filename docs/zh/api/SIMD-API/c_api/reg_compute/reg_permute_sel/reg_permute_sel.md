@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 排布变换
 
 - **[asc_deintlv](asc_deintlv.md)**

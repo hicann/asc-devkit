@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "无参查询接口，读取只读的系统虚拟基地址特殊寄存器并按int64_t返回，用于在核函数内把相对偏移换算为系统虚拟地址，可在AIC与AIV上下文调用且不支持纯SIMT编译模式。"
+tag:
+  - roles: [query]
+dependencies: []
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_get_sys_virtual_base
 
 ## 产品支持情况

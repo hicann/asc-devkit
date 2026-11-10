@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "在AIC上将NC1HWC0格式Feature Map做3D im2col展开后从L1 Buffer搬入L0A Buffer，也可以用于2D格式搬运，需预先配置Feature Map属性、填充值与repeat参数。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, img2col]
+  - traits: [datablock_granularity, high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md
+    kind: requires
+    condition: "需先配置填充值与填充模式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix.md
+    kind: requires
+    condition: "3D模式需先配置Feature Map属性描述"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md
+    kind: requires
+    condition: "使用repeat模式时需先配置repeat方向/次数/步长"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l12l0a（NPU架构版本3510，3D矩阵搬运）
 
 ## 产品支持情况

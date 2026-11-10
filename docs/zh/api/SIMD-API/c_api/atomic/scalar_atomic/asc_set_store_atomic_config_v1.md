@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "设置标量原子操作的启用位与操作类型：type指定参与原子操作的数据类型编码，op指定原子操作类型（当前仅支持求和）；仅Atlas A2、Atlas A3系列产品生效，使用后建议用asc_disable_dma_atomic清空原子操作状态。"
+tag:
+  - roles: [data_movement_configuration]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md
+    kind: related
+    condition: "使用完成后建议调用它清空原子操作状态，避免影响后续指令"
+  - path: docs/zh/api/SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md
+    kind: related
+    condition: "示例中用于回读并校验本接口写入的配置值"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "公共头文件模块拆分后，本接口由 include/c_api/atomic/atomic.h 改到正文所写的 c_api/atomic/scalar_atomic.h，实现迁至 impl/c_api/memory_base_impl/scalar_atomic_intf_impl.h；type_mask=0x7、op_bit=3 的编码方式与两参数签名保持不变。"
+---
 # asc_set_store_atomic_config_v1
 
 ## 产品支持情况

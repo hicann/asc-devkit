@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "配置 3D img2col 搬运中左矩阵 repeat 模式所需的步长、次数、方向与目的位置参数，支持逐参数或位域结构体两种形式，供 f_matrix_ctrl 为 false 的 asc_copy_l12l0a 取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md
+    kind: configures
+    condition: "仅当该 3D 搬运的 f_matrix_ctrl 参数为 false 时取用本配置"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_l13d_repeat_direction.md
+    kind: requires
+    condition: "逐参数形式需传入该枚举选择 M 或 K 方向"
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_load3d_v2_config.md
+    kind: requires
+    condition: "位域参数形式需传入该结构体"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_set_l13d_rpt__u16_u8_l13ddir_u16_u16"
+    scope_basis: resolved
+    note: "9.2.0 新增逐参数重载 asc_set_l13d_rpt(uint16_t repeat_stride, uint8_t repeat_times, asc_l13d_repeat_direction repeat_direction, uint16_t dst_stride_k, uint16_t dst_start_pos_m)；9.0.0 与 9.1.0 只有 asc_load3d_v2_config& 位域形式。Release Notes CANN_9_2_0 记录该参数化重载同时支持 A2/A3 与 950PR&950DT，当前 include 两个重载的 @archs 均为 2201 3510。"
+---
 # asc_set_l13d_rpt
 
 ## 产品支持情况

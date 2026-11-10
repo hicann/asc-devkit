@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510上L1到Fixpipe Buffer的参数装载：asc_copy_l12fb的连续与高维切分原型，量化与ReLU参数各自独立的地址空间选择、对齐与容量上限，以及参数必须在L0C搬出前完成的PIPE_FIX同步要求。"
+---
 # L1到Fixpipe Buffer数据搬运
 
 Fixpipe Buffer保存L0C搬出时使用的随路Vector量化参数和随路ReLU参数。NPU架构版本3510通过[asc_copy_l12fb](../cube_datamove/cube_compute_load/asc_copy_l12fb_arch_3510.md)从L1装载参数，接口运行在PIPE_FIX，仅在AIC生效，支持连续和高维切分两种模式。

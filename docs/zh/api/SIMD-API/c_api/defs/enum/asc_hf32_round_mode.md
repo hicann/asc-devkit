@@ -1,3 +1,21 @@
+---
+okftype: reference.enum
+description: "Mmad开启HF32模式后FP32舍入到HF32的舍入模式管理策略枚举，供asc_set_hf32_round_mode配置，含平局远离零的NEAREST_AWAY、平局向偶数的NEAREST_EVEN和兼容别名NEAREST_ZERO。"
+tag:
+  - roles: [configuration]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_hf32_round_mode.md
+    kind: related
+    condition: "开启HF32模式后由该接口消费本枚举"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: enum_value_changed
+    scope: "enum_value:asc_hf32_round_mode.NEAREST_ZERO"
+    scope_basis: resolved
+    note: "NEAREST_ZERO 由向最接近值舍入且平局向零方向的独立取值改为等同 NEAREST_AWAY 的兼容别名（写作 NEAREST_ZERO = NEAREST_AWAY，同值保留），不再表示独立舍入行为；旧写法行为随之变化，新代码应使用 NEAREST_AWAY 或 NEAREST_EVEN。"
+---
 # asc_hf32_round_mode
 
 asc_hf32_round_mode用于Mmad计算开启HF32模式时由FP32舍入到HF32的舍入模式管理策略，在调用[asc_set_hf32_round_mode](../../cube_compute/mmad_compute_aux_config/asc_set_hf32_round_mode.md)时使用。

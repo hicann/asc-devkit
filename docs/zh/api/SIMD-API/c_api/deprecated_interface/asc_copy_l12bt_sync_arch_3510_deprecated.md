@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_l12bt_sync 把 MMAD 的 Bias 数据从 L1 Buffer 同步搬到 BiasTable Buffer，支持 half、bfloat16_t、int32_t、float，前 n 个数据搬运要求 32 字节对齐，建议改用非同步接口加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "空间、对齐与地址重叠约束按其存储单元说明与通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该 3510 同步形式，替代路径是非同步 asc_copy_l12bt 加 asc_sync；接口未移除。"
+---
 # asc_copy_l12bt_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

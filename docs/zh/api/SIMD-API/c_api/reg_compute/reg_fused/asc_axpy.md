@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "将源矢量元素与标量相乘后累加到目的矢量数据寄存器的Reg融合计算接口，dst同时作为输入累加器与输出，支持half与float，仅在AIV上生效。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束见该页通用约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_axpy
 
 ## 产品支持情况

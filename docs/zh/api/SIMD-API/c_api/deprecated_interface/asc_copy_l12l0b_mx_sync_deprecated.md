@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_l12l0b_mx_sync 以 32 字节分形为单位把 L1 Buffer 中的 MX 右量化系数搬到 L0B_MX Buffer，分形固定为 2x16，需与 asc_copy_l12l0b 配合使用，建议改用非同步接口加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [datablock_granularity, quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md
+    kind: requires
+    condition: "需与右矩阵数据搬运接口配合使用，使量化系数与数据写入相互映射的地址"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头在 asc_copy_l12l0b_mx_sync 声明前标注 ASC_DEPRECATED(9.2.0)，替代路径是非同步 asc_copy_l12l0b_mx 加 asc_sync；接口未移除。"
+---
 # asc_copy_l12l0b_mx_sync（废弃）
 
 ## 产品支持情况

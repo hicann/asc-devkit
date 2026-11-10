@@ -1,3 +1,15 @@
+---
+okftype: reference.union
+description: "为三维载入接口设置 repeat 迭代参数的联合体，位域 rpt_stride、rpt_time、rpt_mode 分别描述 height 或 width 方向相邻迭代起始地址的距离、迭代次数与迭代方向，默认 config 值为 0x0000000000010000。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_load3d_v2_config
 
 头文件路径为：`"c_api/defs/union.h"`。

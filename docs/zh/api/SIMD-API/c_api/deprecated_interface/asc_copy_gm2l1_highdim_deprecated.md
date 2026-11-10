@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "已废弃的高维切分搬运旧重载，按数据块个数与长度把 GM 数据搬到 L1 Buffer，并通过 uint8 的 pad_func_mode 插入或移除 32 字节粒度填充，替代方案改用 asc_channel_pad_mode 枚举重载。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_highdim_split_arch_3510.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_padding.md
+    kind: constrained_by
+    condition: "pad_func_mode 为填充模式时须先配置 padding 值"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_channel_pad_mode.md
+    kind: related
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "使用 uint8_t pad_func_mode 的旧高维切分重载及对应 _sync 重载废弃，改用带 asc_channel_pad_mode pad_mode 的 asc_copy_gm2l1_highdim_split_arch_3510；include/c_api/cube_datamove/cube_datamove.h（asc_copy_gm2l1）与 include/c_api/composite/cube_datamove_composite.h（asc_copy_gm2l1_sync）两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_copy_gm2l1（NPU架构版本3510，高维切分数据搬运，废弃）
 
 ## 产品支持情况

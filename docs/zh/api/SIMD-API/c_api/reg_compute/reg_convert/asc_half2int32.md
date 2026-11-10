@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "把half矢量按rd、rn、rna、ru、rz舍入模式并在src_pos标签指定的偶数或奇数索引位置读取元素转换为int32_t，结果写入目的寄存器或作为返回值，未参与计算的元素置零。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入模式说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增显式编译期位置标签src_pos（std::integral_constant<asc_position_mode, EVEN/ODD>），1:2位宽比下选择读取源偶数或奇数索引位置；原位置后缀原型自9.2.0起废弃，见deprecated_interface对应页。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增通过函数返回值返回结果的重载（返回vector_int32_t），9.2.0两形式合计20条声明（5种舍入×2个位置×2种结果形式，无饱和参数）。"
+---
 # asc_half2int32
 
 ## 产品支持情况

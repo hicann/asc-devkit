@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码对两个矢量数据寄存器逐元素求最大值，结果写入目的数据寄存器或由函数返回值返回，支持 8 至 32 位整型、half、bfloat16_t 与 float。"
+tag:
+  - roles: [compute]
+  - operations: [maximum]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_max 补充函数返回值形式重载：9.0.0/9.1.0 只有 9 个引用输出（void）形式，9.2.0 起 include 增加 9 个返回 vector_<dtype> 的重载（int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/half/bfloat16_t/float）；Release Notes CANN_9_2_0「为 Reg 算术接口补充函数返回值形式的重载」明确列出 asc_max。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "该族声明在 9.1.0 及更早位于 include/c_api/reg_compute/reg_vector.h，9.2.0 起统一到 include/c_api/reg_compute/compute/reg_arith.h（Release Notes CANN_9_2_0 同步说明统一公共头文件），正文头文件路径已按新位置书写。"
+---
 # asc_max
 
 ## 产品支持情况

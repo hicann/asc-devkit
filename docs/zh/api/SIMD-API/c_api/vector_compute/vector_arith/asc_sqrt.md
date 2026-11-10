@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "对half或float矢量按元素开平方，支持前n个数据计算与按repeat和DataBlock步长的高维切分两种原型，结果写入目的矢量并需32字节地址对齐。"
+tag:
+  - roles: [compute]
+  - operations: [sqrt]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_sqrt
 
 ## 产品支持情况

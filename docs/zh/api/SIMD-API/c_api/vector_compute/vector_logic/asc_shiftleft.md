@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "把矢量元素左移指定位数的C API接口，提供前n个数据计算与高维切分计算两种形式，支持int16_t、uint16_t、int32_t与uint32_t，流水类型为PIPE_V。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_shift]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址重叠约束见该页通用地址重叠约束节"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_shiftleft
 

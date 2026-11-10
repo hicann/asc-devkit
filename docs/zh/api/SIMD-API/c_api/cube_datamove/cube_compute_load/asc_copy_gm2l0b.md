@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "将Global Memory中的矩阵数据按16乘16元素分块搬运到L0B Buffer，以base_idx指定起始分块、repeat指定迭代次数，提供int4b_t到float共八种数据类型的重载，仅Atlas A2与A3系列产品可用。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: requires
+    condition: "搬入前源数据需按分形格式排布"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+    condition: "地址对齐与搬运粒度要求"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_gm2l0b
 
 ## 产品支持情况

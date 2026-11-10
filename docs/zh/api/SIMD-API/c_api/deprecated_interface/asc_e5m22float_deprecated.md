@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的FP8转换接口：把vector_fp8_e5m2_t源操作数按256B分为四部分，分别读取其中一部分并转换为vector_float写入目的操作数，替代方案是显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_e5m22float.md
+    kind: replaced_by
+    condition: "显式位置参数重载替代无位置参数的废弃原型"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "无显式位置参数原型及_v2/_v3/_v4位置后缀形式自9.2.0进入废弃期，include头对4个重载均标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_e5m22float)；CANN_9_2_0 Release Notes废弃表覆盖Reg类型转换位置后缀重载；接口保留，未移除。"
+---
 # asc_e5m22float（废弃）
 
 ## 产品支持情况

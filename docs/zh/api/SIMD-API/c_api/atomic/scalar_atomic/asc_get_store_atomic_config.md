@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "读取标量原子操作的启用位与操作类型配置值，用于校验asc_set_store_atomic_config_v1或已废弃的v2接口的设置是否符合预期；在Ascend 950PR&950DT系列产品上该接口已废弃，原子加可直接改用asc_atomic_add。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/scalar_atomic/asc_set_store_atomic_config_v1.md
+    kind: related
+    condition: "用于校验该接口设置的原子操作启用位与操作类型值"
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_store_atomic_config.md
+    kind: requires
+    condition: "输出参数 config 的类型定义，获取值的详细说明见该页"
+  - path: docs/zh/api/SIMD-API/c_api/deprecated_interface/asc_set_store_atomic_config_v2_deprecated.md
+    kind: related
+    condition: "另一个可被本接口读取校验的配置来源，该接口自身已废弃"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: deprecated
+    scope: "section:功能说明"
+    scope_basis: resolved
+    note: "仅 Ascend 950PR&950DT系列产品（dav-3510）上废弃：CANN_9_1_0.md 废弃表首列逐字标注该产品且替代接口为 asc_atomic_add，9.1.0 的 3510 公共声明与实现带 [[deprecated]]/ASC_DEPRECATED 提示；Atlas A2/A3（2201）无任何废弃标记、接口继续可用，故本事件限定在该小节陈述的产品范围，不代表整页在所有架构废弃。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "公共头文件模块拆分后，本接口的公共头文件由 include/c_api/atomic/atomic.h 改为正文所写的 c_api/atomic/scalar_atomic.h（见 Release Notes 9.2.0「公共头文件」节）；实现迁至 impl/c_api/memory_base_impl/scalar_atomic_intf_impl.h，签名与语义不变。"
+---
 # asc_get_store_atomic_config
 
 ## 产品支持情况

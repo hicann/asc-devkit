@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "阻塞后续指令直到此前已发出但未完成的内存访问指令全部完成，可通过参数限定等待的内存范围。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies: []
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_sync_data_barrier
 
 ## 产品支持情况

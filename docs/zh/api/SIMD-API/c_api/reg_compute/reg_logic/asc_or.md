@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "按掩码对两个矢量数据寄存器或两个掩码寄存器执行按位或，结果可经函数返回值或目的参数输出，矢量形式支持 int8_t 至 uint32_t 六种整型，掩码位为 0 的输出位写 0。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_or]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵守 Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "补充函数返回值形式的重载（返回 vector_<dtype> 或 vector_bool），引用参数输出形式保留；CANN_9_2_0 增强节把 asc_or 列入补充返回值形式的逻辑接口，include 中返回值形式与引用形式成对出现（各 7 条）。"
+---
 # asc_or
 
 ## 产品支持情况

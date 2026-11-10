@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "废弃接口页：2201 架构下 asc_copy_gm2ub_align_sync 以 dst、src 与字节数完成 GM 到 UB 的同步非对齐搬运，非 32 字节对齐部分按手动填充值或硬件 dummy 值补齐，官方建议改用非同步 asc_copy_gm2ub_align 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [padding, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_2201.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md
+    kind: requires
+    condition: "采用手动填充时需先配置填充值"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该同步接口，替代路径是非同步 asc_copy_gm2ub_align 加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2ub_align_sync（NPU架构版本2201，废弃）
 
 ## 产品支持情况

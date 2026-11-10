@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "设置核间同步寄存器基地址的配置接口，入参为Host侧aclrtGetHardwareSyncAddr取得的地址，取值范围0到2的48次方减1，必须在asc_sync_block_wait与asc_sync_block_arrive之前调用。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_block_arrive.md
+    kind: requires
+    condition: "使用该同步接口前必须先设置基地址"
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_block_wait.md
+    kind: requires
+    condition: "使用该同步接口前必须先设置基地址"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_ffts_base_addr
 
 ## 产品支持情况

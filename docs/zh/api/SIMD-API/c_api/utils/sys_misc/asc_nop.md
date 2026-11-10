@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "生成一条空操作指令、不执行实际计算，每调用一次阻塞一拍流水，可用于调试与流水对齐场景。"
+tag:
+  - roles: [control]
+dependencies: []
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_nop
 
 ## 产品支持情况

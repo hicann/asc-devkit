@@ -26,11 +26,55 @@
 #include "impl/c_api/reg_base_impl/scalar_convert_intf_impl.h"
 #endif
 
+/**
+ * @ingroup simd_c_api.scalar_compute.scalar_convert
+ * @brief Converts a float scalar to half with a fixed round-to-nearest-odd rounding mode.
+ *
+ * @override_id asc_float2half_ro__f32
+ * @archs 3510
+ * @param [in] value Source scalar of type float to be converted.
+ */
 __aicore__ inline half asc_float2half_ro(float value);
 
+/**
+ * @ingroup simd_c_api.scalar_compute.scalar_convert
+ * @brief Converts the scalar float value to int32_t using FLOOR rounding (toward negative infinity) and returns the
+ * int32_t result.
+ *
+ * @override_id asc_float2int32_rd__f32
+ * @archs 3510
+ * @param [in] value Source scalar of type float that is converted; passed by value and never written.
+ */
 __aicore__ inline int32_t asc_float2int32_rd(float value);
+/**
+ * @ingroup simd_c_api.scalar_compute.scalar_convert
+ * @brief Converts the scalar float value to int32_t using CEIL rounding (toward positive infinity) and returns the
+ * int32_t result.
+ *
+ * @override_id asc_float2int32_ru__f32
+ * @archs 3510
+ * @param [in] value Source scalar of type float that is converted; passed by value and never written.
+ */
 __aicore__ inline int32_t asc_float2int32_ru(float value);
+/**
+ * @ingroup simd_c_api.scalar_compute.scalar_convert
+ * @brief Converts the scalar float value to int32_t using RINT rounding (with ties rounded to the nearest even value
+ * (bankers rounding)) and returns the int32_t result.
+ *
+ * @override_id asc_float2int32_rn__f32
+ * @archs 3510
+ * @param [in] value Source scalar of type float that is converted; passed by value and never written.
+ */
 __aicore__ inline int32_t asc_float2int32_rn(float value);
+/**
+ * @ingroup simd_c_api.scalar_compute.scalar_convert
+ * @brief Converts the scalar float value to int32_t using ROUND rounding (with a fractional part of 0.5 or more rounded
+ * away from zero) and returns the int32_t result.
+ *
+ * @override_id asc_float2int32_rna__f32
+ * @archs 3510
+ * @param [in] value Source scalar of type float that is converted; passed by value and never written.
+ */
 __aicore__ inline int32_t asc_float2int32_rna(float value);
 
 #endif

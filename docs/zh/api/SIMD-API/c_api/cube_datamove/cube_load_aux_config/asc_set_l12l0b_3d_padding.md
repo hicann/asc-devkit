@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "为右矩阵 3D 分形矩阵搬运设置 im2col 展开使用的填充值，支持按 dtype 传入标量或传入 64 位配置寄存器，供 f_matrix_ctrl 为 true 的 asc_copy_l12l0b 取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md
+    kind: configures
+    condition: "仅当该 3D 搬运的 f_matrix_ctrl 参数为 true 时取用本值"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起由 asc_set_l12l0_padding_val（9.1.0 提供，旧名现标记 ASC_DEPRECATED(9.2.0) 并保留 deprecated_interface 页）调整为本名称，Release Notes CANN_9_2_0 记录为「函数名调整」；旧名重载在 9.2.0 仍在实现中保留。"
+---
 # asc_set_l12l0b_3d_padding
 
 ## 产品支持情况

@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "已废弃的矢量相等比较同步接口，比较两路half、float或int32_t矢量对应元素并把结果比特位写入寄存器或dst，寄存器形式固定处理256B需配asc_get_cmp_mask读取，替代方案为asc_eq配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_eq.md
+    kind: replaced_by
+    condition: "非同步比较接口替代本页同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_get_cmp_mask.md
+    kind: requires
+    condition: "结果存入寄存器的形式需用该接口读取比较结果"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_set_cmp_mask.md
+    kind: related
+    condition: "需要初始化比较结果寄存器时使用"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对5个重载统一标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_eq and asc_sync)；CANN_9_2_0 Release Notes废弃表覆盖该类*_sync复合接口；接口保留且仅2201可用。"
+---
 # asc_eq_sync（废弃）
 
 ## 产品支持情况

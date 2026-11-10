@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的FP8转换接口：把fp8_e4m3fn_t源操作数按索引0至3分为四部分读取并转换为float，无显式位置参数的原型已废弃，替代方案是显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_e4m32float.md
+    kind: replaced_by
+    condition: "显式位置参数重载替代无位置参数的废弃原型"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "无显式位置参数原型及_v2/_v3/_v4位置后缀形式自9.2.0进入废弃期，include头对4个重载均标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_e4m32float)；CANN_9_2_0 Release Notes废弃表覆盖Reg类型转换位置后缀重载；接口保留，未移除。"
+---
 # asc_e4m32float（废弃）
 
 ## 产品支持情况

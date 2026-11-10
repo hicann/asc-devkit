@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "为左矩阵 3D 分形矩阵搬运设置 im2col 展开使用的填充值，支持按 dtype 传入标量或传入 64 位配置寄存器，供 f_matrix_ctrl 为 false 的 asc_copy_l12l0a 取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md
+    kind: configures
+    condition: "仅当该 3D 搬运的 f_matrix_ctrl 参数为 false 时取用本值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_padding.md
+    kind: related
+    condition: "两个接口底层使用相同寄存器，设置的值互相覆盖"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起由 asc_set_l13d_padding（9.0.0 起提供，旧名现标记 ASC_DEPRECATED(9.2.0) 对应 deprecated_interface 页）更名为 asc_set_l12l0a_3d_padding，Release Notes CANN_9_2_0 的重命名表记录为「接口重命名」；重命名同时把参数形式扩展为 9 种 dtype 标量加 uint64_t config 共 10 个重载。"
+---
 # asc_set_l12l0a_3d_padding
 
 ## 产品支持情况

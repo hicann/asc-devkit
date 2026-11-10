@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "在AIC上将L1 Buffer的2D数据以512字节分形为单位转置搬运到L0B Buffer，按分形索引、重复次数、源步长与分形间间隔组织，覆盖b4至b32数据类型。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, transpose]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l12l0b_trans（NPU架构版本3510）
 
 ## 产品支持情况

@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 试验接口
 
 - **[概述](overview.md)**

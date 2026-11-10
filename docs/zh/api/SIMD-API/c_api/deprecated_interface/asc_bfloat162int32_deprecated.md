@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置重载，按掩码把 bfloat16_t 源矢量转成 int32_t，覆盖 rn、rna、rd、ru、rz 五种舍入与饱和、非饱和及偶数、奇数索引组合，应改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode, saturation_mode, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_bfloat162int32.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: constrained_by
+    condition: "使用饱和或非饱和模式时需先配置 ctrl 寄存器"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "通过接口后缀控制读取位置的重载废弃，含 _v2 位置后缀与 _sat 饱和后缀组合；include/c_api/reg_compute/reg_convert.h:20299-20416 的 20 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表同源。"
+---
 # asc_bfloat162int32（废弃）
 
 ## 产品支持情况

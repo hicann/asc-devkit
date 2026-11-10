@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_set_l0c2gm_config 以 relu_pre、quant_pre 起始地址与 enable_unit_flag 三个参数设置随路量化在矢量化流程中的参数，量化参数不可为 inf 或 NaN，建议改用 asc_set_l0c_copy_config。"
+tag:
+  - roles: [configuration]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "随路量化时由该搬出接口消费本配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用函数名与参数名调整后的新接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_config 列为废弃，替代为 asc_set_l0c_copy_config；接口仍保留可用。"
+---
 # asc_set_l0c2gm_config（废弃）
 
 ## 产品支持情况

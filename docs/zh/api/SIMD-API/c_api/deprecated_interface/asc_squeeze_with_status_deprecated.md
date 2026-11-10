@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_squeeze_with_status 在按 mask 压缩有效元素的同时把有效数据大小写入 AR 寄存器，供 asc_storeunalign_postupdate 作为存储偏移量，该接口为 9.2.0 新增兼容形式并同时标记废弃，建议改用 asc_squeeze_and_storeunalign。"
+tag:
+  - roles: [compute]
+  - operations: [compact, selection]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md
+    kind: replaced_by
+    condition: "建议改用该接口族实现筛选并连续搬出有效元素"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/store/asc_storeunalign_postupdate.md
+    kind: related
+    condition: "使用 AR 寄存器中的有效数据大小作为存储偏移量"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_get_squeeze_status.md
+    kind: related
+    condition: "AR 寄存器中的数值可通过该接口获取"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 说明 asc_squeeze_with_status 作为兼容接口在本版本新增并同时标记废弃，替代为 asc_squeeze_and_storeunalign 接口族或当前 asc_squeeze 重载；接口保留可用。"
+---
 # asc_squeeze_with_status（废弃）
 
 ## 产品支持情况

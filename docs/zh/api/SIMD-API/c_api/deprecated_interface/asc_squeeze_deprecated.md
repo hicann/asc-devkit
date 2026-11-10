@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_squeeze_v2 把 mask 选中的有效元素依次连续复制到目的矢量寄存器并把其余位置置零，可与 asc_storeunalign_postupdate 配合通过 AR 寄存器传递有效数据大小，建议改用 asc_squeeze_and_storeunalign。"
+tag:
+  - roles: [compute]
+  - operations: [compact, selection]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md
+    kind: replaced_by
+    condition: "建议改用该接口族实现筛选并连续搬出有效元素"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/store/asc_storeunalign_postupdate.md
+    kind: related
+    condition: "配合使用时把有效数据大小保存到 AR 寄存器并作为存储偏移量"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_get_squeeze_status.md
+    kind: related
+    condition: "AR 寄存器中的有效数据大小可通过该接口读取"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 写明 asc_squeeze_v2 在 CANN 9.1.0 已存在、本版本新增废弃标记，替代为 asc_squeeze_and_storeunalign 接口族；接口未移除。"
+---
 # asc_squeeze_v2（废弃）
 
 ## 产品支持情况

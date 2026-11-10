@@ -1,3 +1,36 @@
+---
+okftype: reference.enum
+description: "数据从GM搬运到Unified Buffer或L1 Buffer时的L2 Cache管理策略枚举，供向量搬运、支持L2配置的矩阵搬入以及标量访存路径的配置与查询接口使用，区分NORMAL启用与NOTALLOC不启用两类策略。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_get_scalar_load_cache_mode.md
+    kind: related
+    condition: "该接口返回本枚举表示的当前load策略"
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_set_scalar_cache_mode.md
+    kind: related
+    condition: "该接口以本枚举设置标量访存路径的load策略"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md
+    kind: related
+    condition: "该3510矩阵搬入接口使用本枚举配置L2 Cache"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md
+    kind: related
+    condition: "该矩阵搬入接口的重载使用本枚举配置L2 Cache"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md
+    kind: related
+    condition: "该矩阵搬入接口使用本枚举配置L2 Cache"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md
+    kind: related
+    condition: "该3510矩阵搬入接口使用本枚举配置L2 Cache"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md
+    kind: related
+    condition: "该向量搬运接口以本枚举配置L2 Cache策略"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md
+    kind: related
+    condition: "该向量搬运接口以本枚举配置L2 Cache策略"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_load_l2_cache_mode
 
 asc_load_l2_cache_mode用于表示数据从GM搬运到Unified Buffer（UB）或L1 Buffer时的L2 Cache管理策略，可用于：

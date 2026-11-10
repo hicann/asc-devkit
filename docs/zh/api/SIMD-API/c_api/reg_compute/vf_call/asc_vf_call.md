@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "在 SIMD C API 场景下于 Kernel 中启动 Vector Function 子任务，用模板参数 funcPtr 指定以 __simd_vf__ 修饰的入口函数并通过可变参数传递实参，入口函数内可调用 Reg 矢量计算接口，仅 Ascend 950PR&950DT 生效。"
+tag:
+  - roles: [control]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "Vector Function 内存在 UB 地址重叠或跨流水依赖时需插入该同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: related
+    condition: "示例在启动 Vector Function 前后用该指令与 MTE2、MTE3 流水同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md
+    kind: related
+    condition: "示例用该接口把 GM 数据搬入 UB 后再启动 Vector Function"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc\_vf\_call
 
 ## 产品支持情况

@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "设置CTRL控制寄存器中特定比特位的值，常用比特位覆盖饱和模式、DCache访问、MASK模式与饱和策略选择。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_get_ctrl.md
+    kind: requires
+    condition: "读改写前需先读取当前值"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_set_ctrl
 
 ## 产品支持情况

@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "Reg 矢量收集接口：给定 UB 基地址与索引矢量寄存器，按 DataBlock（32 字节）粒度把对应数据块收集到目的矢量寄存器，index 仅前 8 个元素有效，同时提供掩码控制与无掩码两种形式，仅在 AIV 生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [gather]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束按其概述页"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_gather_datablock__Rvi4x2_PUi4x2_vu32_vb@3510"
+    scope_basis: resolved
+    note: "Release Notes 9.1.0 记录新增 int4b_t 重载与无需传入掩码参数的 uint64_t 重载（对应 asc_gather_datablock__Rvu64_PUu64_vu32）；本事件定位到 int4b_t 掩码形式，同批新增的无掩码形式见无掩码原型表"
+---
 # asc_gather_datablock
 
 ## 产品支持情况

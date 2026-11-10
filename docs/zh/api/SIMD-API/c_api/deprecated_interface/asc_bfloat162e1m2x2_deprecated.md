@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的无显式位置参数重载，将 bfloat16_t 矢量转换为 fp4x2_e1m2_t 并按 rn、rna、rd、ru、rz 五种舍入模式写入索引 0 至 3，应改用带显式位置参数的同名重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_bfloat162e1m2x2.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "param:dst"
+    scope_basis: resolved
+    note: "目的操作数类型由 vector_f4e1m2x2 修正为 vector_fp4x2_e1m2_t（二者为同一底层类型的别名，见 include/c_api/defs/type.h:48），源 bfloat16_t 与 mask 不变；CANN_9_1_0 Bug修复节列出 rn/rna/rd/ru/rz 全族。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "通过接口后缀隐式控制目的位置的重载进入废弃期，改用显式传入 asc_position_quarter_mode 的当前同名重载；include 中 20 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表同源。"
+---
 # asc_bfloat162e1m2x2（废弃）
 
 ## 产品支持情况

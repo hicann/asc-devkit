@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码对每个 32 字节 DataBlock 内参与计算的元素求和，结果依次写入目的寄存器最低位，16 位输入提升到 32 位精度。"
+tag:
+  - roles: [compute]
+  - operations: [reduction]
+  - traits: [datablock_granularity, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_reduce_sum_datablock 的 6 组 src/dst dtype 对 补充 6 个函数返回值形式重载，9.0.0/9.1.0 只有把结果写入 dst 的引用输出形式；当前 include 中该名字共 6 条引用输出 + 6 条返回值声明。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_reduce.h（9.2.0 起），与正文头文件路径一致。"
+---
 # asc_reduce_sum_datablock
 
 ## 产品支持情况

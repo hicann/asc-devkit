@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矢量数据搬运
 
 - **[概述](overview.md)**

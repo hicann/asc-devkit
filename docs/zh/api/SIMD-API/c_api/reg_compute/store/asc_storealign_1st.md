@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "把矢量数据寄存器中的首个元素按对齐方式搬出到UB，单次一个元素且不支持掩码，提供对齐、立即数偏移与地址寄存器偏移三种模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器/掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器偏移模式必须先调用它生成偏移"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: capability_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 int4b_t、vector_int4x2_t 数据重载：CANN 9.1.0 Release Notes 明确列出 asc_storealign_1st 新增低精度重载，对应正文 dtype 列表中的 int4b_t。"
+---
 # asc_storealign_1st
 
 ## 产品支持情况

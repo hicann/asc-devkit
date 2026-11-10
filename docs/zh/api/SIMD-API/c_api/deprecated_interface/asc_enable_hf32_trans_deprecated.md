@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的HF32舍入方式设置接口，按mode选择向最接近偶数或远离零的平局舍入规则，需先开启HF32模式且在矩阵乘加前调用，替代方案为asc_set_hf32_round_mode。"
+tag:
+  - roles: [configuration]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: requires
+    condition: "需在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_enable_hf32.md
+    kind: requires
+    condition: "舍入模式仅在HF32开启期间生效，需先开启HF32模式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_hf32_round_mode.md
+    kind: replaced_by
+    condition: "改用强类型枚举配置HF32舍入方式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_set_hf32_round_mode)；CANN_9_2_0 Release Notes废弃表说明改用枚举配置HF32舍入方式；接口保留，未移除。"
+---
 # asc_enable_hf32_trans（废弃）
 
 ## 产品支持情况

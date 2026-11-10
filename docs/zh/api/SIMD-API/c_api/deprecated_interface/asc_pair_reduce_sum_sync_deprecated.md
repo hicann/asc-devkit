@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的相邻元素求和同步接口，把源矢量奇偶相邻的两个元素两两相加写入目的矢量，支持 half 与 float，替代方案为 asc_pair_reduce_sum 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [reduction, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_reduce/asc_pair_reduce_sum.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合归约接口废弃，改用 asc_pair_reduce_sum 与 asc_sync；include/c_api/composite/vector_compute_composite.h 的两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_pair_reduce_sum_sync（废弃）
 
 ## 产品支持情况

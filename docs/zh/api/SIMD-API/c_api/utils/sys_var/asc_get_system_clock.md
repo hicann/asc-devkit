@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "无参查询接口，读取系统cycle计数器并按芯片时钟频率换算后返回int64_t微秒时间值；Ascend 950PR&950DT按1GHz除以1000换算，Atlas A3与Atlas A2按50MHz除以50换算。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/utils/sys_var/asc_get_system_cycle.md
+    kind: related
+    condition: "两者读取同一底层计数器，本接口在内部完成频率换算"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_get_system_clock
 
 ## 产品支持情况

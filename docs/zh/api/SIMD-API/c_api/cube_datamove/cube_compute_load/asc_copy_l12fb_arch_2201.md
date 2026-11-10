@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中的随路量化参数搬入Fixpipe Buffer，提供按size连续搬运与按数据块个数、块长和源目间隔高维切分两种形式，供后续L0C搬出时读取。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: requires
+    condition: "搬入后需配置量化参数区起始地址索引"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_l12fb（NPU架构版本2201）
 
 ## 产品支持情况

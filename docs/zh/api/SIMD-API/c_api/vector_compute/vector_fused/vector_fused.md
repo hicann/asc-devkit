@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 复合计算
 
 - **[asc_add_relu](asc_add_relu.md)**

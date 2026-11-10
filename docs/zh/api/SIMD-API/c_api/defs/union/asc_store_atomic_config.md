@@ -1,3 +1,15 @@
+---
+okftype: reference.union
+description: "保存数据搬出原子操作启用位与操作类型的联合体，atomic_type 取 0 至 6 分别表示不开启或 float、half、int16_t、int32_t、int8_t、bfloat16_t 类型，atomic_op 为 0 表示求和，供 asc_get_store_atomic_config 读取。"
+tag:
+  - roles: [data_movement_configuration]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/scalar_atomic/asc_get_store_atomic_config.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_store_atomic_config
 
 头文件路径为：`"c_api/defs/union.h"`。

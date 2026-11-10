@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "把源矢量数据寄存器最低位元素广播到目的寄存器被掩码筛选的位置，未筛选位置保留原值，属于合并模式写入的广播接口。"
+tag:
+  - roles: [compute]
+  - operations: [broadcast]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_broadcast/asc_duplicate.md
+    kind: related
+    condition: "正文对比说明两者广播源相同但本接口保留未筛选元素"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_duplicate_merge
 
 ## 产品支持情况

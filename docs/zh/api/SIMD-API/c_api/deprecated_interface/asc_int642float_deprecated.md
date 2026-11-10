@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置类型转换接口，将int64_t数据按RINT、ROUND、FLOOR、CEIL或TRUNC五种舍入模式转换为float，每种模式含偶数位与奇数位两个原型，替代方案为显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int642float.md
+    kind: replaced_by
+    condition: "替代本页隐式位置原型的显式位置参数重载所在页"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "五种舍入模式的详细说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "十个隐式位置原型（asc_int642float_rn/_rna/_rd/_ru/_rz 及各自 _v2）在 include/c_api/reg_compute/reg_convert.h 中按舍入模式分别以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int642float_<模式>) 标记废弃，替代方案为同名显式位置参数重载（第四个参数传 ASC_POSITION_EVEN 或 ASC_POSITION_ODD）；CANN_9_2_0 Release Notes 第 129 行说明位置后缀重载进入废弃期，废弃不封可用上限。"
+---
 # asc_int642float（废弃）
 
 ## 产品支持情况

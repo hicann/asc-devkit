@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "在Atlas A2与A3系列产品上将矩阵数据从Global Memory搬运到L1 Buffer，包含普通搬运、八种pad模式的普通与高维切分搬运，以及按分形迭代的2D搬运三类重载。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [datablock_granularity, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: requires
+    condition: "搬入前源数据需按分形格式排布"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+    condition: "地址对齐与搬运粒度要求"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_copy_gm2l1__PL1bf16_PGbf16_u16_u8_u16_u16"
+    scope_basis: resolved
+    note: "9.1.0新增2D搬运模式重载（参数 base_idx、repeat、src_stride、dst_gap，base_idx与stride单位512B），同形态同时覆盖 half、float、int32_t、int8_t、uint32_t、uint8_t 共7种dtype，仅2201架构可用。"
+---
 # asc_copy_gm2l1（NPU架构版本2201）
 
 ## 产品支持情况

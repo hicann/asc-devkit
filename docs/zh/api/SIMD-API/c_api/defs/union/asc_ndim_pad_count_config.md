@@ -1,3 +1,18 @@
+---
+okftype: reference.union
+description: "为 asc_set_ndim_pad_count 提供各维 padding 元素个数的联合体，8 个 uint8_t 字段分别表示 1 至 4 维左右两侧需补齐的元素个数，供 asc_ndim_copy_gm2ub 使用，默认值全为 0。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [copy]
+  - traits: [high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_count.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_ndim_pad_count_config
 
 头文件路径为：`"c_api/defs/union.h"`。

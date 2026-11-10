@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "从当前Global Memory地址把指令预加载到ICache，减少后续Scalar取指的ICache未命中；预取长度prefetch_len单位为2K Byte，AIC取值范围0到15、AIV为0到7，地址通常由asc_get_program_counter取得并掩码低48位。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_get_icache_preload_status.md
+    kind: related
+    condition: "示例用该接口查询预取是否完成，仅作调试用途"
+  - path: docs/zh/api/SIMD-API/c_api/utils/sys_var/asc_get_program_counter.md
+    kind: requires
+    condition: "预加载地址需由该接口取得PC值后再与0xFFFFFFFFFFFF掩码清零高16位"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.0.0"
+    kind: parameter_added
+    scope: "param:prefetch_len"
+    scope_basis: resolved
+    note: "9.0.0-beta.1 仅声明 asc_icache_preload(const void* addr)，9.0.0 起增加 int64_t prefetch_len 指定预取长度，单位为2K Byte，AIC 取 0~15、AIV 取 0~7。"
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 起 cache_ctrl.h 复用原子操作头文件的保护宏，包含顺序不当时 asc_icache_preload 声明会被跳过；CANN 9.1.0 Release Notes 记录该问题已修复，修复自 9.1.0 生效。"
+---
 # asc_icache_preload
 
 ## 产品支持情况

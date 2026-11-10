@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的int4x2_t元素按1:4 读（src 每4个存储单元取一组）规则进行转换，转换为int16_t，支持引用参数与函数返回值两种输出形式。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, split_high_low]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN 9.2.0 Release Notes 第61条明确 asc_int4x22int16、asc_int4x22half 等新增显式四分之一位置标签重载；该页的 asc_position_quarter_mode 四种位置值与引用/返回值两种输出形式组合的显式标签重载于 9.2.0 补齐，9.0.0 仅有位置模式重载。"
+---
 # asc_int4x22int16
 
 ## 产品支持情况

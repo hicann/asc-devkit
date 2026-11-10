@@ -1,3 +1,35 @@
+---
+okftype: reference.api
+description: "从UB按对应粒度读取连续数据并做2倍上采样后搬入矢量或掩码寄存器：矢量寄存器每元素重复两次，掩码寄存器每bit重复两次，支持三种偏移模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [broadcast, load]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_mask_upsample.md
+    kind: related
+    condition: "对齐搬入模式需要以函数返回值返回掩码寄存器时改用该接口"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器偏移模式必须先调用它生成偏移"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: capability_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增低精度数据类型重载：CANN 9.1.0 Release Notes 记载 asc_loadalign_upsample 等接口新增 int4b_t、vector_int4x2_t 重载，对应正文 dtype 列表中的 int4b_t（dst 实际类型为 vector_int4x2_t）。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增搬入掩码寄存器的 vector_bool 重载：CANN 9.1.0 Release Notes 记载 asc_loadalign_upsample 新增 vector_bool 重载，对应函数原型中三种模式下以 vector_bool& dst 与 __ubuf__ uint32_t* src 为参数的形态。"
+---
 # asc_loadalign_upsample
 
 ## 产品支持情况

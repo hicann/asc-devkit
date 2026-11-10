@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_transpose_sync 对 16x16 的二维矩阵数据块做转置，提供 int16_t 与 uint16_t 两种形式，dst 与 src 需 32 字节对齐，建议改用非同步 asc_transpose 加 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [transpose]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "地址重叠约束按其通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transpose.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头在 asc_transpose_sync 声明前标注 ASC_DEPRECATED(9.2.0)，Release Notes 9.2.0 把 _sync 复合接口整体列为废弃；接口未移除。"
+---
 # asc_transpose_sync（废弃）
 
 ## 产品支持情况

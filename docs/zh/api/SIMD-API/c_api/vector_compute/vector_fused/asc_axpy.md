@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "把源矢量逐元素乘标量 value 后与目的矢量相加并写回目的矢量的数乘累加接口，覆盖 half 同类型、half 源配 float 目的、float 同类型，提供连续数据与高维切分两种形式。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add]
+  - traits: [scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_axpy
 
 ## 产品支持情况

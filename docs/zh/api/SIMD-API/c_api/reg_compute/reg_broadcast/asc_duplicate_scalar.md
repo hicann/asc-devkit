@@ -1,3 +1,43 @@
+---
+okftype: reference.api
+description: "把标量 value 广播到矢量数据寄存器，带掩码形式只写被筛选位置并将其余位置置零，不带掩码形式写满全部元素，两种形式都可返回结果。"
+tag:
+  - roles: [compute]
+  - operations: [broadcast]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与前后 Reg 数据搬运接口访问同一 UB 地址且存在写后读/写后写依赖时需同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.1.0 新增 12 个不带 mask 的引用输出重载（例如 void asc_duplicate_scalar(vector_uint8_t& dst, uint8_t value)），9.0.0 的 11 个重载均要求传入 vector_bool mask；该组重载把 value 写入 dst 的全部元素位置。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 新增带 mask 的 fp8_e8m0_t 引用输出重载（dtype 集合由 11 种扩到 12 种），Release Notes CANN_9_2_0 记录 asc_duplicate_scalar 新增 fp8_e8m0_t 重载。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为带 mask 与不带 mask 两类重载各补充函数返回值形式（共 24 个返回 vector_<dtype> 的重载），9.0.0/9.1.0 只有引用输出形式；Release Notes 9.2.0 的补充返回值形式清单包含 asc_duplicate_scalar。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_broadcast.h（9.2.0 起）。"
+---
 # asc_duplicate_scalar
 
 ## 产品支持情况

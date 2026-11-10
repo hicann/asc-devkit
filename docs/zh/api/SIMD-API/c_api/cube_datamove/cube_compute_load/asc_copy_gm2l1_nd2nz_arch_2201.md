@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "将Global Memory上的ND排布矩阵搬运到L1 Buffer并转换为NZ分形排布，通过nd_num、n_value、d_value及Nz各步长参数控制多矩阵搬运，供后续矩阵计算读取。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, layout_transform]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_gm2l1_nd2nz（NPU架构版本2201）
 
 ## 产品支持情况

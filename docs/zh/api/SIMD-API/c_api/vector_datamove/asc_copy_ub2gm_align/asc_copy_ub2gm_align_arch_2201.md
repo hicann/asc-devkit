@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "在2201架构上把UB数据按非32字节整数倍长度搬出到GM，补齐读取UB后丢弃dummy仅写有效数据，支持前n个数据与Normal模式高维切分。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "有数据依赖时按该页插入同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增仅传入 dst、src、size 的简化重载：CANN 9.1.0 Release Notes 记载 asc_copy_ub2gm_align（含 _sync）新增简化重载，对应正文前n个数据搬运的三参数形式。"
+---
 # asc_copy_ub2gm_align（NPU架构版本2201）
 
 ## 产品支持情况

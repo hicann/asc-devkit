@@ -1,3 +1,32 @@
+---
+okftype: reference.api
+description: "已废弃的多维搬运旧重载，把 GM 数据按最多 5 维配置搬入 Unified Buffer，支持逐维 Stride 与常数、最近值 Padding，末参为 uint8 的 cache_mode，替代方案改用 l2_cache_mode 枚举。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_loop_stride.md
+    kind: requires
+    condition: "逐维 Stride 需先经该接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_count.md
+    kind: requires
+    condition: "1 至 4 维的左右 padding 个数经该接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_value.md
+    kind: requires
+    condition: "padding_mode 为 true 时须先配置常数填充值"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "末参为 uint8_t cache_mode 的旧重载废弃，改用 asc_load_l2_cache_mode l2_cache_mode 参数；include/c_api/vector_datamove/vector_datamove.h:2181 起的 14 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表列有以整数参数表达 L2 Cache 策略的旧重载。"
+---
 # asc_ndim_copy_gm2ub（废弃）
 
 ## 产品支持情况

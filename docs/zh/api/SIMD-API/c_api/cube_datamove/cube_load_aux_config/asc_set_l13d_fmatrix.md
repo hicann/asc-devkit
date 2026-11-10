@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "配置 3D img2col 搬运中左矩阵的 Feature Map 属性，包括宽高与四周 padding 大小，支持逐参数或位域结构体两种形式，供 f_matrix_ctrl 为 false 的 asc_copy_l12l0a 取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md
+    kind: configures
+    condition: "仅当该 3D 搬运的 f_matrix_ctrl 参数为 false 时取用本配置"
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_l13d_fmatrix_config.md
+    kind: requires
+    condition: "位域参数形式需传入该结构体"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_set_l13d_fmatrix__u16_u16_u8_u8_u8_u8"
+    scope_basis: resolved
+    note: "9.2.0 新增逐参数重载 asc_set_l13d_fmatrix(uint16_t fmatrix_w, uint16_t fmatrix_h, uint8_t pad_left, uint8_t pad_right, uint8_t pad_top, uint8_t pad_bottom)；9.0.0 与 9.1.0 只有 asc_l13d_fmatrix_config& 位域形式。Release Notes CANN_9_2_0 记录该参数化重载同时支持 A2/A3 与 950PR&950DT，当前 include 两个重载的 @archs 均为 2201 3510。"
+---
 # asc_set_l13d_fmatrix
 
 ## 产品支持情况

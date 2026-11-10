@@ -1,3 +1,13 @@
+---
+okftype: reference.api
+description: "把 64 位无符号整数的第 idx 位清零并返回修改后的整数，其余位保持不变，idx 超出 0 到 63 时按 idx 对 64 取模再取绝对值计算，运行在标量流水上且 AIC 与 AIV 行为一致。"
+tag:
+  - roles: [compute]
+  - operations: [bit_manipulation]
+dependencies: []
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_clear_nthbit
 
 ## 产品支持情况

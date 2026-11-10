@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "从UB中32字节对齐地址读取VL/4长度数据，在每个源元素后补3个0解包为VL长度后搬入矢量寄存器，提供对齐、立即数偏移和地址寄存器偏移三种搬入模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器偏移模式必须先调用它生成偏移"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_loadalign_unpack4
 
 ## 产品支持情况

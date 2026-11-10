@@ -1,3 +1,40 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下旧参数形式的 asc_copy_l0c2gm 及 _sync 重载把 L0C Buffer 中的矩阵结果搬出到 GM，可组合随路量化、ReLU 与 Nz2ND 或 Nz2DN 格式转换，需先配置相应参数寄存器，建议改用强类型枚举重载加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [conversion, store]
+  - traits: [aligned_transfer, quantization, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用强类型枚举参数的新重载加 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md
+    kind: requires
+    condition: "Nz2DN 场景需预先配置源矩阵步长"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: requires
+    condition: "随路 tensor 量化需先设置量化 tensor 起始地址"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_lrelu_alpha.md
+    kind: requires
+    condition: "随路 Leaky ReLU 需先配置激活参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md
+    kind: requires
+    condition: "开启 Nz2ND 或 Nz2DN 前需先配置格式转换参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md
+    kind: requires
+    condition: "随路 scalar 量化需先设置量化参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_relu_alpha.md
+    kind: requires
+    condition: "随路 ReLU 需先配置激活参数"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把旧参数重载 asc_copy_l0c2gm 及对应 _sync 重载列为废弃，替代路径是强类型枚举参数的重载加 asc_sync；include 仍保留原型，属废弃而非移除。"
+---
 # asc_copy_l0c2gm（废弃）
 
 ## 产品支持情况

@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "将Mask模式设置为Counter模式的配置接口，该模式下无需感知迭代次数与处理非对齐尾块，实际迭代次数由Vector计算单元自动推断，前n个数据计算类接口内部会自动设置，需与asc_set_vector_mask配合使用，流水类型为PIPE_S。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_mask_config/asc_set_vector_mask.md
+    kind: related
+    condition: "本接口设置的Counter模式需与掩码值设置接口配合使用"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_set_mask_count
 
 ## 产品支持情况

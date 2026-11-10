@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 掩码寄存器操作
 
 - **[asc_create_mask](asc_create_mask.md)**

@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "获取当前AI Core的编号，用于区分同一AI Core内的AIC与若干AIV执行单元。"
+tag:
+  - roles: [query]
+dependencies: []
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_core_id
 
 ## 产品支持情况

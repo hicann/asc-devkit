@@ -1,3 +1,12 @@
+---
+okftype: reference.enum
+description: "配置矩阵计算或矩阵搬出接口执行后UnitFlag行为的枚举，作为相关接口unit_flag_mode参数的类型，区分不使能、使能后保持单元标志位和使能后改变单元标志位。"
+tag:
+  - roles: [configuration]
+dependencies: []
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_unit_flag_mode
 
 `asc_unit_flag_mode`用于配置矩阵计算或矩阵搬出接口执行后的UnitFlag行为，作为相关接口中`unit_flag_mode`参数的类型。

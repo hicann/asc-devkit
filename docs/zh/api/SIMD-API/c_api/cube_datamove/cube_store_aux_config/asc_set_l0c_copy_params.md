@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "为 Atlas A3 与 Atlas A2 系列产品设置 L0C Buffer 搬运到 GM 或 L1 Buffer 时随路 Nz 转 ND 的配置，包括 ND 矩阵数量、源相邻 Nz 矩阵偏移与目的相邻 ND 矩阵偏移。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_2201.md
+    kind: configures
+    condition: "与 Atlas A3/A2 对应的 L0C 到 GM 搬出接口配合使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_2201.md
+    kind: configures
+    condition: "与 Atlas A3/A2 对应的 L0C 到 L1 搬出接口配合使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md
+    kind: related
+    condition: "Ascend 950PR&950DT 使用该接口替代本接口，参数单位以其说明为准"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2ND.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_l0c_copy_params
 
 ## 产品支持情况

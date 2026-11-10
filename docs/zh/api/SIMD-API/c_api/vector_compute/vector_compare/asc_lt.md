@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "逐元素比较 src0 是否小于 src1，结果可按每元素1bit写入目的地址或留在比较寄存器中，仅在2201架构支持。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_get_cmp_mask.md
+    kind: related
+    condition: "寄存器形式需配合它读取比较结果"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_set_cmp_mask.md
+    kind: related
+    condition: "寄存器残留时用它初始化比较掩码"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_lt
 
 ## 产品支持情况

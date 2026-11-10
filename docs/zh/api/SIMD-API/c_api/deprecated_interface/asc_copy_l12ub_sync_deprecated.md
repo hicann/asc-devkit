@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的同步版 L1 Buffer 到 Unified Buffer 搬运接口，在 Cube 与 Vector 核间搬数据并可选目的 Vector Core，替代方案为 asc_copy_l12ub 加 asc_sync，仅 950PR&950DT 支持。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [datablock_granularity, inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l12ub.md
+    kind: replaced_by
+    condition: "正文声明的替代非同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小、对齐要求与通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代方案中的同步部分"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_copy_l12ub and asc_sync)，Release Notes CANN_9_2_0 的替代关系表同样记录 asc_copy_l12ub_sync 由 asc_copy_l12ub 加 asc_sync 取代；声明保留，属 deprecated 而非 removed。"
+---
 # asc_copy_l12ub_sync（废弃）
 
 ## 产品支持情况

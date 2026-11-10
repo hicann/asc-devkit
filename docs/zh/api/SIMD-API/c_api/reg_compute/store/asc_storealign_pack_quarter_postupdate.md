@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "把矢量数据寄存器每个32位有效元素的低8位按mask压缩搬出到UB，并在写入后按元素偏移自动更新目的地址指针。"
+tag:
+  - roles: [data_movement]
+  - operations: [compression, store]
+  - traits: [post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_storealign_pack_quarter_postupdate
 
 ## 产品支持情况

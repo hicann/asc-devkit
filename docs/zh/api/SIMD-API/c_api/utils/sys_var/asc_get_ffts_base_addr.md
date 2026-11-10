@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "获取核间同步寄存器的基地址，需先在Host侧取得硬件同步地址并经设置接口写入。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/utils/sys_var/asc_set_ffts_base_addr.md
+    kind: requires
+    condition: "Host 侧经 aclrtGetHardwareSyncAddr 取基址后需先设置"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_get_ffts_base_addr
 
 ## 产品支持情况

@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "关闭Mmad计算的HiF8模式，当左矩阵A与右矩阵B均为fp8_e4m3fn_t时，L0A Buffer和L0B Buffer数据不再转换为hifloat8_t，而是直接以FP8参与矩阵乘法；须在asc_mmad前调用，仅950PR/950DT支持。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: constrained_by
+    condition: "须在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md
+    kind: constrained_by
+    condition: "须在矩阵乘加指令执行前调用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_enable_hif8.md
+    kind: related
+    condition: "作用相反，重新开启HiF8模式需调用对方接口"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "以语义明确的无参接口 asc_disable_hif8 取代 9.2.0 废弃的 asc_enable_fp8：两者实现同为清除 HIF8_MODE_BIT（控制寄存器第45位），签名均为无参无返回；依据为 impl 对比与 ASC_DEPRECATED(9.2.0, ..., asc_disable_hif8)。"
+---
 # asc_disable_hif8
 
 ## 产品支持情况

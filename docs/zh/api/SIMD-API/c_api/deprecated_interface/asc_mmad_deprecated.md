@@ -1,3 +1,38 @@
+---
+okftype: reference.api
+description: "已废弃的矩阵乘加接口，在AIC上完成C等于A乘B加C的矩阵计算并支持结果矩阵初始化来源配置，旧原型以uint8_t unit_flag与feat_offset传参，替代方案为强类型asc_mmad配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [matrix_multiply_accumulate]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: replaced_by
+    condition: "替代本页uint8_t unit_flag与feat_offset原型的强类型接口"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元说明与操作数地址约束见该页"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: related
+    condition: "通过CTRL[48]配置inf/nan的饱和或非饱和处理"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代原同步接口的同步方式"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: related
+    condition: "K轴分块累加且分形数小于10时需在相邻乘加间同步PIPE_M"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 NPU 架构 3510（Ascend 950PR&950DT）的一组矩阵乘加原型，支持 int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、half、bfloat16_t、float 的同精度与混合精度组合，并改用 disable_gemv 参数；依据 CANN_9_1_0 Release Notes 第 50 行与 upstream/9.1.0 首次出现的 npu_arch_3510/cube_compute_impl.h 声明（9.0.0 及更早该架构无此组原型）。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "入参 unit_flag 类型为 uint8_t 的 asc_mmad、asc_mmad_sync 原型（含 2201 的 feat_offset/smask_offset/is_weight_offset 形式）在 include/c_api/cube_compute/cube_compute.h 中以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_mmad(...)) 标记废弃，替代方案为使用 asc_unit_flag_mode 的 asc_mmad 加 asc_sync；强类型原型（unitflag 形参）无该标记，故属部分原型废弃，页面不封可用上限。"
+---
 # asc_mmad（废弃）
 
 ## 产品支持情况

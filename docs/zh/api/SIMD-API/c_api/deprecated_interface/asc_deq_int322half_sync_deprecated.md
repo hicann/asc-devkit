@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的int32_t反量化同步接口，使用asc_set_deq_scale设置的scale把int32_t按元素量化为half并等待矢量流水完成，替代方案为asc_deq_int322half配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_deq_int322half.md
+    kind: replaced_by
+    condition: "非同步接口替代本页同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_set_deq_scale.md
+    kind: requires
+    condition: "需以非向量模式配合asc_set_deq_scale使用"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_deq_int322half and asc_sync)；CANN_9_2_0 Release Notes废弃表覆盖该类*_sync复合接口；替代后仍保留本接口，未移除。"
+---
 # asc_deq_int322half_sync（废弃）
 
 ## 产品支持情况

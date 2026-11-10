@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的原子比较取小配置接口，为后续搬出开启 int32_t 原子最小操作，把待传数据与 GM 已有数据逐元素取小，替代方案为 asc_set_atomic_min_int32。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [minimum]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_set_atomic_min.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 3510（Ascend 950PR&950DT）实现：history_probe 显示 npu_arch_3510/atomic_impl.h 中的 asc_set_atomic_min_int 自 9.1.0 起出现；9.0.0 时仅 2201（Atlas A2/A3）可用。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "接口废弃，改用带明确数据类型后缀的 asc_set_atomic_min_int32；include/c_api/atomic/datamove_atomic.h 的声明带 ASC_DEPRECATED(9.2.0, asc_set_atomic_min_int32)，CANN_9_2_0 废弃表同源。"
+---
 # asc_set_atomic_min_int（废弃）
 
 ## 产品支持情况

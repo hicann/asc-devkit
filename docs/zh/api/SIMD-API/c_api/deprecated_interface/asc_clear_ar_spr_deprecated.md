@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "已废弃的 AR 特殊寄存器清零接口，调用 asc_squeeze_with_status 前用它把累计有效元素字节数的 AR 寄存器归零，仅在 AIV 生效，替代方案为 asc_squeeze_and_storeunalign_init。"
+tag:
+  - roles: [control]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/deprecated_interface/asc_squeeze_with_status_deprecated.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "AR 寄存器读写接口废弃，改用 asc_get_squeeze_status 与 asc_squeeze_and_storeunalign_init；CANN_9_2_0 废弃表列出 asc_get_ar_spr、asc_clear_ar_spr，include 声明已归入 deprecated_interface 分组。"
+---
 # asc_clear_ar_spr（废弃）
 
 ## 产品支持情况

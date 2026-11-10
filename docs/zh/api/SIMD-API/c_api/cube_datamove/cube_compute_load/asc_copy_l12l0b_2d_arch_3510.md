@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "在AIC上以512字节分形为单位将L1 Buffer中的2D矩阵搬入L0B Buffer，支持非转置与转置两种模式，覆盖b4至b32数据类型。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, transpose]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l12l0b（NPU架构版本3510，2D矩阵搬运）
 
 ## 产品支持情况

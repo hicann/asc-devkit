@@ -1,3 +1,54 @@
+---
+okftype: reference.api
+description: "在Ascend 950PR&950DT系列产品上把L0C Buffer矩阵结果搬入Unified Buffer，支持随路量化、激活与Nz2ND/Nz2DN格式转换，并可用双目标模式按M或N维度拆分后同时写入两个Vector Core的UB。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [quantization, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: constrained_by
+    condition: "unit_flag_mode需与MMAD类指令的UnitFlag设置配合"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md
+    kind: requires
+    condition: "Nz2DN转换前配置非0的源矩阵步长"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: requires
+    condition: "随路tensor量化时设置量化tensor起始地址"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_lrelu_alpha.md
+    kind: requires
+    condition: "随路Leaky ReLU激活时配置激活参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md
+    kind: requires
+    condition: "Nz2ND或Nz2DN格式转换前配置格式转换参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md
+    kind: requires
+    condition: "随路scalar量化时设置量化参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_relu_alpha.md
+    kind: requires
+    condition: "随路ReLU激活时配置激活参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/F32-Channel-Split.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/L0C_to_UB_dual_target_mode.md
+    kind: constrained_by
+    condition: "启用dual_dst_ctrl双目标模式时决定拆分方向与约束"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2ND.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:sub_blockid"
+    scope_basis: resolved
+    note: "sub_blockid由bool改为int8_t：9.1.0原型用bool的true或false选择目的Vector，9.2.0起用0或1分别写入SUB BLOCK0与SUB BLOCK1；该调整只涉及Ascend 950PR&950DT系列产品即3510原型。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "补充强类型枚举原型：dual_dst_ctrl改用asc_dual_dst_mode，unit_flag_mode、quant_pre_mode、relu_pre_mode改用asc_unit_flag_mode、asc_quant_mode、asc_relu_pre_mode，并新增enable_nz2dn与enable_clip_relu_pre参数；9.1.0的整数参数原型（含dual_dst_ctl、unit_flag_ctl、quant_pre、quant_post、eltwise_op等21个参数）同版本标记废弃并迁往废弃接口文档，未移除。"
+---
 # asc_copy_l0c2ub
 
 ## 产品支持情况

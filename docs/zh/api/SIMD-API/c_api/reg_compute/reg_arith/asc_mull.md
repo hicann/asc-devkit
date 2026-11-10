@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "按掩码将两个 32 位矢量数据寄存器的元素相乘得到 64 位乘积，低 32 位与高 32 位分别写入两个目的数据寄存器，支持 int32_t 与 uint32_t。"
+tag:
+  - roles: [compute]
+  - operations: [multiply]
+  - traits: [elementwise, split_high_low, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）；本页只有 2 个引用输出重载，9.2.0 未为 asc_mull 增加函数返回值形式（include 中始终为 2 条），故不登记 overload_added。"
+---
 # asc_mull
 
 ## 产品支持情况

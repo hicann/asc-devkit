@@ -1,3 +1,18 @@
+---
+okftype: reference.enum
+description: "互斥锁阻塞或非阻塞执行模式的枚举，作为asc_lock与asc_unlock的mode参数类型，ASC_LOCK_BLOCK为默认阻塞模式，兼容类型名ascMutexExecuteMode是该类型的别名。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md
+    kind: related
+    condition: "该接口以本枚举作为mode参数选择阻塞或非阻塞"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md
+    kind: related
+    condition: "该接口使用同一mode类型"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_mutex_execute_mode
 
 `asc_mutex_execute_mode`用于选择互斥锁的阻塞或非阻塞执行模式，作为[asc_lock](../../sync/intra_core_sync/asc_lock.md)和[asc_unlock](../../sync/intra_core_sync/asc_unlock.md)接口的`mode`参数类型。兼容类型名`ascMutexExecuteMode`是该类型的别名。

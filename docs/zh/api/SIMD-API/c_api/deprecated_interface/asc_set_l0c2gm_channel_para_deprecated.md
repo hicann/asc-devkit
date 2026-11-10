@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_set_l0c2gm_channel_para 以单个 64 位 config 设置 Nz2DN 源矩阵相邻行地址偏移，供开启 Nz2DN 的 L0C 搬出接口使用，仅在 AIC 生效，建议改用 asc_set_l0c_copy_channel_para。"
+tag:
+  - roles: [configuration]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "开启 Nz2DN 时由该搬出接口消费本配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "开启 Nz2DN 时由该搬出接口消费本配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: configures
+    condition: "开启 Nz2DN 时由该搬出接口消费本配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用逐项传入参数的强类型重载"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_channel_para 列为废弃，替代为逐项传入参数的 asc_set_l0c_copy_channel_para；include 仍保留原型，属废弃而非移除。"
+---
 # asc_set_l0c2gm_channel_para（废弃）
 
 ## 产品支持情况

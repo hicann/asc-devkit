@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_uint82half 与 asc_uint82half_v2 把 uint8_t 矢量扩宽为 half，因位宽比 1:2 需按后缀选择索引为奇数或偶数的读取位置，建议改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_uint82half.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用显式位置参数重载替代后缀控制位置的原型"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 把 Reg 类型转换中通过接口后缀或隐式规则控制目的位置的重载列为废弃，替代为 asc_uint82half 的显式位置参数重载；本页两个原型仍保留可用。"
+---
 # asc_uint82half（废弃）
 
 ## 产品支持情况

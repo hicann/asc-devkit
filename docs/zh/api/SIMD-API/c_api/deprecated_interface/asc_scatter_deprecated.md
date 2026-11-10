@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 离散写旧参数顺序重载，按 index 把源矢量寄存器元素分散写入 Unified Buffer，含 int8_t 到 float 共 9 组类型，替代方案为目的地址在前、源寄存器在后的同名重载。"
+tag:
+  - roles: [compute]
+  - operations: [scatter]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/scatter/asc_scatter.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "源矢量寄存器在前、目的 UB 地址在后的 9 组重载废弃，改用目的 UB 地址在前、源矢量寄存器在后的同名重载（仅调整参数顺序，支持数据类型不变）；include/c_api/reg_compute/scatter/ub_scatter.h 的 9 个声明均带 ASC_DEPRECATED(9.1.0)，CANN_9_1_0 废弃表同源。"
+---
 # asc_scatter（废弃）
 
 ## 产品支持情况

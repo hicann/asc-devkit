@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "按内置固定模式或用户自定义gather mask从源操作数选取元素写入目的地址的数据收集接口，内置模式取值1至7、取0时用src1自定义掩码，支持uint16_t与uint32_t。"
+tag:
+  - roles: [compute]
+  - operations: [selection]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址重叠约束见该页通用地址重叠约束节"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_mask_config/asc_set_vector_mask.md
+    kind: related
+    condition: "本接口不支持通过该接口配置掩码"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_reduce
 
 ## 产品支持情况

@@ -1,3 +1,18 @@
+---
+okftype: reference.macro
+description: "为C API声明添加C++废弃属性的宏，接收开始废弃版本、计划移除日期和替代接口三个参数，使编译器对调用被标记接口的代码发出含替代建议的告警，但不阻止编译也不自动删除接口。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/deprecated_interface/asc_muls_deprecated.md
+    kind: related
+    condition: "调用示例用本宏标记该接口声明"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_fused/asc_mul_scalar_float2half_rn.md
+    kind: related
+    condition: "示例中作为被标记接口的推荐替代接口"
+version: ">=9.2.0"
+version_changes: []
+---
 # ASC_DEPRECATED
 
 ## 功能说明

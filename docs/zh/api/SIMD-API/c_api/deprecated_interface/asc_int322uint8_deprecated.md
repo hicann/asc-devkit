@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置类型转换接口，按mask将int32_t元素转换为uint8_t并以四选一索引写入目的寄存器，提供饱和与非饱和共八个原型，替代方案为显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int322uint8.md
+    kind: replaced_by
+    condition: "替代本页隐式位置原型的显式位置参数重载所在页"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入模式与饱和/非饱和模式说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "八个隐式位置原型（asc_int322uint8、_sat 及 _v2、_v3、_v4 位置变体）在 include/c_api/reg_compute/reg_convert.h 中以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int322uint8) 标记废弃，替代方案为按 ASC_POSITION_* 显式位置参数的新重载；CANN_9_2_0 Release Notes 第 129 行说明位置后缀重载进入废弃期，废弃不封可用上限。"
+---
 # asc_int322uint8（废弃）
 
 ## 产品支持情况

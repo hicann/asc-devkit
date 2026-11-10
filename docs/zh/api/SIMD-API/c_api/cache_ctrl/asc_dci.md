@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "使整个DCache的全部Cache Line失效且不检查、不回写脏数据，此后标量访问这些地址将从Global Memory重新加载；调用前必须先用asc_sync_data_barrier以DSB_ALL等待此前访存结束。"
+tag:
+  - roles: [control]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md
+    kind: constrained_by
+    condition: "调用asc_dci前必须以mem_dsb_t::DSB_ALL执行，等待此前内存访问指令结束"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_dci
 
 ## 产品支持情况

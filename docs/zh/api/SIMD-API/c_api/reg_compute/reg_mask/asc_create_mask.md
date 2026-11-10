@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "按 pat_mode 指定的元素位置模式生成 b8、b16 或 b32 位宽的掩码寄存器，用于筛选后续 Reg 矢量计算中参与计算的元素。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束与掩码寄存器数量上限"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include/c_api/reg_compute/compute/reg_mask.h 以对象式宏别名提供该接口（#define asc_create_mask_b8 pset_b8、asc_create_mask_b16 pset_b16、asc_create_mask_b32 pset_b32），9.0.0/9.1.0 的 include 中只有注释形式的调用示例、没有可注解的声明；因此本页三个标识符在 doc_overrides 中显示为未写入头，本页不使用 overload scope。"
+---
 # asc_create_mask
 
 ## 产品支持情况

@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明Nz2ND格式转换的逐块地址关系与可配置参数：Atlas A3/A2经asc_copy_l0c2gm的nz2nd_en开启并由asc_set_l0c_copy_params配置矩阵数量与间隔，Ascend 950PR&950DT经enable_nz2nd与asc_set_l0c_copy_nz_para配置，不同架构参数单位不能直接复用。"
+---
 # NZ2ND
 
 ## 特性说明

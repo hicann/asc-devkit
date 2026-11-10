@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "在Unified Buffer内部把数据从UB搬运到UB，支持int16_t、uint16_t、int32_t、uint32_t四种元素类型的前n个数据计算与按repeat和DataBlock步长的高维切分两种原型，需32字节地址对齐。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_copy
 

@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "针对PIPE_MTE3执行同步的易用性接口，保证其前序指令全部完成后PIPE_MTE2 与 PIPE_V的后续指令才能开始执行。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies: []
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_sync_mte3
 
 ## 产品支持情况

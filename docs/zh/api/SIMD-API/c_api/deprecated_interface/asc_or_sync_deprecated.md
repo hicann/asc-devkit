@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的矢量按位或同步接口，对 int16_t 与 uint16_t 两种源矢量逐元素按位或并写入目的矢量，仅在 Atlas A2、A3 支持，替代方案为 asc_or 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_or, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_logic/asc_or.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_or 与 asc_sync；include/c_api/composite/vector_compute_composite.h 的两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_or_sync（废弃）
 
 ## 产品支持情况

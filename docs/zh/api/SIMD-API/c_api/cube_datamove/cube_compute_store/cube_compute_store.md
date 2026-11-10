@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵计算的搬出
 
 - **[矩阵搬出总体说明](cube_compute_store_overall_description.md)**

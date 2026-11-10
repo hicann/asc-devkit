@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "更新地址寄存器addr_reg以支持1至4维迭代寻址，按b8、b16、b32三种位宽模式分别以1、2、4字节为单位计算各维偏移，供Reg搬入搬出接口在循环中递增UB地址。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明 addr_reg 地址寄存器类型"
+  - path: docs/zh/api/SIMD-API/c_api/deprecated_interface/asc_create_iter_reg_deprecated.md
+    kind: related
+    condition: "本接口族替代已废弃的 asc_create_iter_reg_* 与 iter_reg 类型"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "接口族与类型统一更名：CANN 9.2.0 Release Notes 新增特性节说明用 addr_reg 保存偏移替代原 iter_reg 接口族，接口废弃表列明 iter_reg、asc_create_iter_reg_b8/b16/b32 更名为 addr_reg 与 asc_update_addr_reg_b8/b16/b32；本页描述的即是更名后的新接口族。"
+---
 # asc_update_addr_reg
 
 ## 产品支持情况

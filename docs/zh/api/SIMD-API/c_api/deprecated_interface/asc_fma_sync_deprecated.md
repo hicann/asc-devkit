@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的融合乘加同步接口，按元素计算src0与src1之积再加到dst上并等待PIPE_V，支持half与float组合，替代方案为asc_fma配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_fma.md
+    kind: replaced_by
+    condition: "非同步融合乘加接口替代本页同步接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对half、float×half、float三个重载统一标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_fma and asc_sync)；CANN_9_2_0 Release Notes废弃表覆盖该类*_sync复合接口；接口保留且仅2201可用。"
+---
 # asc_fma_sync（废弃）
 
 ## 产品支持情况

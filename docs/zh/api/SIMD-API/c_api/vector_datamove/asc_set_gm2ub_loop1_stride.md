@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "设置asc_copy_gm2ub_align循环搬运模式内层循环loop1的源、目的数据块步长的配置接口，源步长范围到2的40次方减1、目的步长到2的21次方减1且须32字节对齐，仅在AIV生效。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_gm2ub_loop2_stride.md
+    kind: requires
+    condition: "循环搬运需同时配置外层循环步长"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_gm2ub_loop_size.md
+    kind: requires
+    condition: "循环搬运需同时配置两层循环次数"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_gm2ub_loop1_stride
 
 ## 产品支持情况

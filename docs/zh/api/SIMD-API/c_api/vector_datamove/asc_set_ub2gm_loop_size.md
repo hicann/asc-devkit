@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "设置asc_copy_ub2gm_align循环搬运模式两层循环次数的配置接口，loop1_size与loop2_size均为uint32_t且取值范围0到2的21次方减1，任务结束需复位为1以免影响下一次搬运。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ub2gm_loop1_stride.md
+    kind: requires
+    condition: "循环搬运需同时配置内层步长"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ub2gm_loop2_stride.md
+    kind: requires
+    condition: "循环搬运需同时配置外层步长"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_ub2gm_loop_size
 
 ## 产品支持情况

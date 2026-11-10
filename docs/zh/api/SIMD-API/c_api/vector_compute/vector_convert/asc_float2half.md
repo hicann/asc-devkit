@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "将 float 类型数据转换为 half，提供 6 种舍入模式（RINT/ROUND/FLOOR/CEIL/TRUNC/ODD），含前 n 个数据计算与高维切分计算两种重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "通用地址重叠约束与 32 字节起始地址对齐要求"
+version: ">=8.5.0"
+version_changes:
+  - since: "9.0.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.0.0 新增六个按舍入模式区分的公开重载 asc_float2half_rn/_rna/_rd/_ru/_rz/_ro（8.5.0 期头文件只有无后缀的 asc_float2half 以及 _a/_c/_f/_o/_r/_z 等旧写法），本页 7 个函数名中的 6 个自 9.0.0 起提供。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/vector_compute/vector_compute.h（9.1.0 及更早）迁移到 include/c_api/vector_compute/compute/vector_convert.h（9.2.0 起），与正文头文件路径一致。"
+---
 # asc_float2half
 
 ## 产品支持情况

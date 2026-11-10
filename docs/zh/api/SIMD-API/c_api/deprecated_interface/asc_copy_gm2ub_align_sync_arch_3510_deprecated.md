@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下同步接口 asc_copy_gm2ub_align_sync 按字节数把 GM 数据非对齐搬运到 UB，非 32 字节对齐部分按手动填充值或硬件 dummy 值补齐，支持 8 位、16 位、32 位以及 hifloat8、fp8 类型，建议改用非同步接口加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [padding, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "各存储单元的空间大小与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "UB 地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用连续数据搬运形式并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md
+    kind: requires
+    condition: "采用手动填充时需先配置填充值"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该同步接口，替代路径是 3510 的 asc_copy_gm2ub_align 连续数据搬运加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2ub_align_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

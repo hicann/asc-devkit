@@ -1,3 +1,32 @@
+---
+okftype: reference.api
+description: "根据索引矢量寄存器把源矢量元素按元素收集到目的矢量的Reg收集接口，dst的每个元素取自src中索引指定的位置，提供写入dst引用与函数返回值两种形式，支持8/16/32位多种数据与索引类型，仅在AIV上生效。"
+tag:
+  - roles: [compute]
+  - operations: [gather]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器的类型定义与Vector Length说明"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束见该页通用约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_gather__Rvf32_vf32_vu32"
+    scope_basis: resolved
+    note: "寄存器源收集模式新增 float 数据重载：dst/src 为 vector_float、index 为 vector_uint32_t；依据 CANN_9_2_0 Release Notes 第 55 行（寄存器源 asc_gather 新增 vector_float 重载）与 upstream/9.2.0 首次出现的该声明（9.1.0 及更早无该组合）。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 13 种 dtype/index_dtype 组合的函数返回值形式重载（asc_gather__vi8_vu8 至 asc_gather__vf32_vu32），原 dst 引用形式保留；这批重载属 CANN_9_2_0 为 Reg 收集等接口补充函数返回值形式的批次（Release Notes 第 54 行），并由 upstream/9.2.0 首次出现这些声明印证；因同一批共 13 条重载，按函数原型小节聚合登记。"
+---
 # asc_gather
 
 ## 产品支持情况

@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "把Compare操作的比较结果从寄存器取出并写入UB目的地址，需与比较操作配合使用，每元素比较结果占1bit。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "地址重叠与通用约束口径同族一致"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_eq.md
+    kind: related
+    condition: "正文要求与 Compare 操作配合使用，asc_eq 为同族代表"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_cmp_mask
 
 ## 产品支持情况

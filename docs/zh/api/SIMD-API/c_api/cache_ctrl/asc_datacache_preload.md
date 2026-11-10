@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "从Global Memory的指定地址加有符号偏移处预加载一个64字节Cache Line的数据到DCache，为后续标量单元读取该地址提前填充缓存、降低首次访问延迟，需配合标量单元读取Global Memory的指令使用。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+dependencies: []
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 起 cache_ctrl.h 复用原子操作头文件的保护宏，包含顺序不当时 asc_datacache_preload 等缓存控制声明会被跳过；CANN 9.1.0 Release Notes 记录该保护宏复用问题已修复，修复自 9.1.0 生效。"
+---
 # asc_datacache_preload
 
 ## 产品支持情况

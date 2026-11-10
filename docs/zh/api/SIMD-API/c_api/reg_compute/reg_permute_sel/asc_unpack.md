@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "把源矢量寄存器低半部分或高半部分的元素按位宽扩充写入目的寄存器或作为返回值返回，无符号整型高位补 0、有符号整型按符号位扩展。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_unpack_lower 与 asc_unpack_upper 各补充函数返回值形式重载（__simd_callee__ inline vector_<dtype_dst> asc_unpack_lower/upper(vector_<dtype_src> src)），9.0.0/9.1.0 只有把结果写入 dst 的引用输出形式；当前 include 两个名字各 10 条声明（5 引用 + 5 返回）。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_permute_sel.h（9.2.0 起）。"
+---
 # asc_unpack
 
 ## 产品支持情况

@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_gm2l1_sync 的 2D 重载以 512 字节分形为最小粒度，按行列起始位置与步长从 GM 切取分形矩阵搬入 L1 Buffer，搬运中不做格式转换，仅 AIC 生效，建议改用非同步 asc_copy_gm2l1 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步 2D 接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记该 3510 2D 同步重载，替代路径是非同步 2D 接口加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2l1_sync（NPU架构版本3510，2D矩阵搬运模式，废弃）
 
 ## 产品支持情况

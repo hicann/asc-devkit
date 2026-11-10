@@ -1,3 +1,39 @@
+---
+okftype: reference.api
+description: "已废弃的地址寄存器偏移对齐搬入接口，从Unified Buffer连续对齐搬入并通过addr_reg传入偏移，用户可选择更新偏移或源地址，支持三种搬入模式共32个原型，替代方案为语义命名的新接口。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与地址寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_datablock.md
+    kind: replaced_by
+    condition: "替代BRCV2搬入模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_elem2datablock.md
+    kind: replaced_by
+    condition: "替代BRCV3搬入模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack4.md
+    kind: replaced_by
+    condition: "替代UNPACKV2搬入模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "offset 必须由该接口族的地址寄存器生成"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:offset"
+    scope_basis: resolved
+    note: "offset 形参类型由 iter_reg 更名为 addr_reg（同一底层类型 vector_address，语义与取值单位不变）：变更前原型为 asc_loadalign_*_v*(..., iter_reg offset)，变更后为 asc_loadalign_*_v*(..., addr_reg offset)；CANN_9_2_0 Release Notes 第 56 行「Reg搬入、搬出接口的迭代偏移参数由 iter_reg 迁移为 addr_reg」与第 120 行的统一更名条目为据。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "本页 32 个原型在 include/c_api/reg_compute/load/loadalign.h 中按模式分别带 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_loadalign_unpack4)、asc_loadalign_brc_datablock、asc_loadalign_brc_elem2datablock 标记；CANN_9_2_0 Release Notes 第 121 行把这些后缀接口列入废弃替换表；废弃不封可用上限。"
+---
 # asc_loadalign（地址寄存器偏移，废弃）
 
 ## 产品支持情况

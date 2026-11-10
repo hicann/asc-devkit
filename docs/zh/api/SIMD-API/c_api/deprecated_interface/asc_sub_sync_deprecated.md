@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：2201 架构下 asc_sub_sync 对两个矢量逐元素相减并写入 dst，支持 int16_t、half、int32_t、float，dst 与两个源操作数均需 32 字节对齐，建议改用非同步 asc_sub 加 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [subtract]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "地址重叠约束按其通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_arith/asc_sub.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头在 asc_sub_sync 声明前标注 ASC_DEPRECATED(9.2.0)，Release Notes 9.2.0 把 _sync 复合接口整体列为废弃；接口未移除。"
+---
 # asc_sub_sync（废弃）
 
 ## 产品支持情况

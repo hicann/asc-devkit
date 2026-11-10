@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍辅助矩阵分形格式：Ascend 950PR&950DT 上 MX 量化系数矩阵 scaleA 在 L1 需按 Zz 排布、L0A_MX 分形 16x2，scaleB 需按 Nn 排布、L0B_MX 分形 2x16，数据类型均为 fp8_e8m0_t；Atlas A2/A3 上 4 选 2 稀疏索引矩阵按 Zn 排布，并给出索引编码规则与相关接口入口。"
+---
 # 辅助矩阵分形格式详解
 
 <!-- npu="950" id1 -->

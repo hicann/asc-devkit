@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "在非对齐搬入中把UB数据与前置缓存拼接后搬入矢量寄存器，连续模式按count自动更新源地址与非对齐寄存器，地址寄存器偏移模式按inc更新偏移。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [post_update, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign_pre.md
+    kind: requires
+    condition: "首次搬入前必须用它初始化非对齐寄存器，且与紧随其后的首次搬入使用相同的 src1"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器偏移模式每次迭代先由它生成起始偏移，b64 时须使用 b32 模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "修复地址按值传递问题：CANN 9.2.0 Release Notes 记载 asc_loadunalign_postupdate 的 UB 源地址与 addr_reg 偏移改为引用传递，确保接口执行后的更新结果可回写调用方，与正文 __ubuf__ <dtype>*& src1 及 addr_reg& offset 的引用形式一致。"
+---
 # asc_loadunalign_postupdate
 
 ## 产品支持情况

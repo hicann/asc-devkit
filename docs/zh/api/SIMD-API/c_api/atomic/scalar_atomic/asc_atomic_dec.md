@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "对Global Memory中address指向的uint32_t或uint64_t计数器执行原子递减，读出旧值，旧值为0或大于val时把val写回，否则写回旧值减1，接口返回递减前的旧值。"
+tag:
+  - roles: [compute]
+  - operations: [subtract]
+  - traits: [atomic, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "Scalar原子操作绕过DCache，读写后需调用该接口保证GM与DCache的一致性"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN_9_2_0 公共头文件按模块拆分，本页接口的最细粒度公共头文件路径由 c_api/scalar_compute/scalar_compute.h 迁移为 c_api/atomic/scalar_atomic.h；接口签名与 2 个无符号整型重载不变"
+---
 # asc_atomic_dec
 
 ## 产品支持情况

@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置类型转换接口，将int8_t数据转换为half并按偶数或奇数索引读取源数据，两个原型由函数名后缀决定读取位置，替代方案为显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "vector_int8_t 与 vector_half 的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int82half.md
+    kind: replaced_by
+    condition: "替代本页隐式位置原型的显式位置参数重载所在页"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "两个隐式位置原型在 include/c_api/reg_compute/reg_convert.h 中以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int82half(...ASC_POSITION_EVEN)) 形式标记（_v2 对应 ASC_POSITION_ODD），替代方案为显式位置参数重载；CANN_9_2_0 Release Notes 第 129 行说明位置后缀重载进入废弃期，废弃不封可用上限。"
+---
 # asc_int82half（废弃）
 
 ## 产品支持情况

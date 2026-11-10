@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_set_l0c2gm_quant_post 以 64 位 config 设置 Fixpipe 后处理阶段的 QUANT_POST 寄存器，寄存器各 bit 分别表达 S4、S8、S16 等后量化模式的偏移量与 M3 值，暂无替代接口。"
+tag:
+  - roles: [configuration]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: related
+    condition: "寄存器中各量化模式的含义在该搬出接口的量化模式说明中定义"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_quant_post 列为废弃且注明无替代接口；接口本身仍保留在头文件中，未移除。"
+---
 # asc_set_l0c2gm_quant_post（废弃）
 
 ## 产品支持情况

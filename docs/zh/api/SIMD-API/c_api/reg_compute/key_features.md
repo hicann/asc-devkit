@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明Reg矢量计算的关键特性：HardwareLoop编码规范、指令双发与VF融合优化，以及按场景选择搬入搬出接口的数据搬运优化建议。"
+---
 # 关键特性说明
 
 ## 硬件循环（HardwareLoop）

@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "稀疏矩阵乘加接口，左矩阵A为稀疏矩阵并在计算时完成稠密化，右矩阵B需预先稠密化并通过asc_copy_l12l0b_sparse连同索引矩阵载入，索引矩阵再用于A的稠密化。仅Atlas A3、A2系列产品（2201架构）支持，计算时每4个元素最多保留2个非零元素。"
+tag:
+  - roles: [compute]
+  - operations: [matrix_multiply_accumulate]
+  - traits: [sparse_input]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/aux_cube_fractal_format_details.md
+    kind: related
+    condition: "稀疏权重及索引矩阵的排布格式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/overview/cube_compute_flow.md
+    kind: related
+    condition: "稀疏场景下从稀疏数据准备到矩阵乘加的流程"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_sparse.md
+    kind: requires
+    condition: "稠密矩阵B需通过该接口载入L0B Buffer，同时加载其生成的索引矩阵"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:unit_flag_mode"
+    scope_basis: resolved
+    note: "UnitFlag 参数由 uint8_t unitFlag 改为强类型枚举 asc_unit_flag_mode，参数名同步由 unitFlag/cmatrixSource/cmatrixInitVal 调整为 unit_flag_mode/c_matrix_source/c_matrix_init_val；旧 uint8_t 原型保留为废弃重载，不再在本页展示（upstream/9.2.0 声明与 CANN_9_2_0.md 废弃表一致）"
+---
 # asc_mmad_sparse
 
 ## 产品支持情况

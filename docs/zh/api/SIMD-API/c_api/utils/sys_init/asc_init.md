@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "将当前AI Core上可能由前序算子遗留的控制状态恢复为接口约定的初始状态，仅初始化控制状态、不清零用户数据。"
+tag:
+  - roles: [control]
+dependencies: []
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_init
 
 ## 产品支持情况

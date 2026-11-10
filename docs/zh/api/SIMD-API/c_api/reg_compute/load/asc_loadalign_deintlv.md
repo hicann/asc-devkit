@@ -1,3 +1,36 @@
+---
+okftype: reference.api
+description: "从UB的32字节对齐地址读取2倍VL长度数据，将偶数下标元素写入dst0、奇数下标元素写入dst1，支持无偏移、立即数偏移和地址寄存器偏移三种搬入模式，后者需先用asc_update_addr_reg生成偏移寄存器。"
+tag:
+  - roles: [data_movement]
+  - operations: [deinterleave, load]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与地址寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束与UB容量约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: requires
+    condition: "地址寄存器偏移搬入模式必须先调用该接口生成 addr_reg"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入该同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 int4b_t 数据重载：dst0、dst1 实际类型为 vector_int4x2_t，src 为 __ubuf__ int4b_t*；该重载在 upstream/9.1.0 首次出现（9.0.0-beta.1/9.0.0 无），与 Release Notes 9.1.0「asc_loadalign_deintlv 新增 int4b_t、vector_int4x2_t 重载」一致。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增基于 addr_reg 的偏移重载，形成地址寄存器偏移搬入模式；偏移单位为元素个数，b8/b16/b32 分别表示每元素 1/2/4 字节，调用前必须用 asc_update_addr_reg 生成该寄存器（upstream 中该重载声明于 9.2.0 首次出现，9.1.0 无）。"
+---
 # asc_loadalign_deintlv
 
 ## 产品支持情况

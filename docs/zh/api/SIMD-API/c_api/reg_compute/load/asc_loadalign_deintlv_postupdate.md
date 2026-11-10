@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "解交织搬入的Post Update形式：从UB的32字节对齐地址读取2倍VL长度数据，按奇偶下标分别写入dst0与dst1，搬运完成后按offset步长自动更新源UB指针src，使地址变化对调用方可见。"
+tag:
+  - roles: [data_movement]
+  - operations: [deinterleave, load]
+  - traits: [aligned_transfer, post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束与UB容量约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入该同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "param:src"
+    scope_basis: resolved
+    note: "src 由 __ubuf__ <dtype>* src 改为指针引用 __ubuf__ <dtype>*& src（上游 9.1.0 首次出现 vector_int16_t& dst0, vector_int16_t& dst1, __ubuf__ int16_t*& src, int32_t offset），使 Post Update 后的地址更新对调用方可见；变更前只更新局部副本。offset 单位仍为元素个数、src 增加 offset×sizeof(dtype) 字节。"
+---
 # asc_loadalign_deintlv_postupdate
 
 ## 产品支持情况

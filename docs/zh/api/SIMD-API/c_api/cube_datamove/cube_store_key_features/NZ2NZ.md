@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明Nz2Nz搬出前后保持Nz大分形排布的地址换算与参数单位：2201的目标步长以32字节计、3510以element计，并给出F32 Channel Split与B8/B4 Channel Merge开启时小分形宽度及512B小z分形约束。"
+---
 # NZ2NZ
 
 ## 特性说明

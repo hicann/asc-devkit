@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "按mask对两个矢量寄存器与输入进位carry_src逐元素做带进位加法，和值写入目的寄存器、每个元素的进位写入目的掩码寄存器，仅支持int32与uint32。"
+tag:
+  - roles: [compute]
+  - operations: [add]
+  - traits: [carry_input, elementwise, supports_carry_output]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_add.md
+    kind: related
+    condition: "关键特性以 asc_add 与 asc_addc 的适用场景对比为例"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: related
+    condition: "正文说明该运算不受此饱和配置影响"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_addc
 
 ## 产品支持情况

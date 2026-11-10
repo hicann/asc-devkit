@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "把float矢量按rna或rh舍入与饱和或非饱和模式转换为hifloat8_t，并按dst_quarter_pos标签写入索引0、4、8或1、5、9等离散四分之一位置、其余位置清零，结果也可作为返回值，仅在AIV生效。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: requires
+    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_added
+    scope: "param:dst_quarter_pos"
+    scope_basis: resolved
+    note: "目的位置由函数名后缀（_v2/_v3/_v4，含 _sat 组合）改为显式编译期标签参数 dst_quarter_pos（std::integral_constant<asc_position_quarter_mode, DISPERSE_*_QUARTER>）；旧三参形式自 9.2.0 起标记 ASC_DEPRECATED（reg_convert.h:4150 起）。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增通过函数返回值输出结果的重载（返回 vector_hifloat8_t，参数为 src、mask、dst_quarter_pos）；9.2.0 起两形式合计 32 条声明（rna/rna_sat/rh/rh_sat 四种模式 × 4 个离散位置 × 2 种结果形式），此前只有 4 条三参引用输出声明。"
+---
 # asc_float2hif8
 
 ## 产品支持情况

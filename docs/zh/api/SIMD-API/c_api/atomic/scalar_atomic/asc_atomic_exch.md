@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "对Global Memory中address指向的单个元素执行原子交换操作，支持int32_t、uint32_t、float、int64_t和uint64_t五种类型，读出旧值后把val写入该地址替换旧值并返回旧值。"
+tag:
+  - roles: [compute]
+  - operations: [copy]
+  - traits: [atomic, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "Scalar原子操作绕过DCache，读写后需调用该接口保证GM与DCache的一致性"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN_9_2_0 公共头文件按模块拆分，本页接口的最细粒度公共头文件路径由 c_api/scalar_compute/scalar_compute.h 迁移为 c_api/atomic/scalar_atomic.h；接口签名与 5 个重载集合不变"
+---
 # asc_atomic_exch
 
 ## 产品支持情况

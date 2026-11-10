@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中的矩阵搬运到L0C Buffer作为矩阵乘加累加初值，支持bfloat16_t、half、float、int32_t、uint32_t及float到half或bfloat16_t的类型组合。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: related
+    condition: "L0C数据作为c_matrix_source/c_matrix_init_val累加初值"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l12l0c
 
 ## 产品支持情况

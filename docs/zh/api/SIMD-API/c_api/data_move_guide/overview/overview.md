@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "数据搬运章节的入口概览，说明AI Core分层存储与GM、L1、L0、UB之间的数据流转，按矢量、矩阵、Reg三类给出接口目录与硬件流水分工，并提示同流水与跨流水的同步要求。"
+---
 # 概览
 
 数据搬运是算子开发中最基础且最关键的操作之一。在AI Core的分层存储架构中，输入数据需要从Global Memory（GM）搬入片上存储，计算结果也需要从片上存储搬回GM；矩阵计算和矢量计算之间交换中间结果时，还会涉及L1 Buffer、L0 Buffer、Unified Buffer（UB）和寄存器之间的数据流转。

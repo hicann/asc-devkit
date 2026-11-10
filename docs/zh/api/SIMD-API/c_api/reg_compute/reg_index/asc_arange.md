@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "以标量 value 为起点在矢量数据寄存器中生成递增或递减的索引序列，支持 int8_t、int16_t、half、int32_t、float，整型结果超出可表示范围时按回绕处理。"
+tag:
+  - roles: [compute]
+  - operations: [fill]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵守 Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "param:value"
+    scope_basis: resolved
+    note: "公开头声明中的标量参数名由 index 统一为 value（9.0.0 的 include/c_api/reg_compute/reg_vector.h 使用 index，9.1.0 起使用 value），签名的类型与语义不变；CANN_9_1_0 Bug修复节记录该改名。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "为 asc_arange 与 asc_arange_descend 补充函数返回值形式的重载（返回 vector_<dtype>），引用输出形式保留；history_probe 显示 vector_int32_t asc_arange(int32_t value) 等返回值形式最早出现于 9.2.0 的 impl/c_api/reg_base_impl/reg_index_intf_impl.h:107，CANN_9_2_0 增强节列出该批返回值形式重载。"
+---
 # asc_arange
 
 ## 产品支持情况

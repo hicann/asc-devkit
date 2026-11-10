@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "同一AI Core内全部AIV组内同步的等待侧接口，与asc_sync_subblock_arrive配对实现模式1同步：阻塞流水后续指令直到flag_id计数器非0并减1，3510上pipe生效而2201上不生效。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_subblock_arrive.md
+    kind: requires
+    condition: "必须与该到达侧成对使用且flag_id完全一致，否则出现未定义行为"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "四种核间同步模式与模式1的总体说明"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "overload:asc_sync_subblock_wait__pipe_i64@2201"
+    scope_basis: resolved
+    note: "修复2201架构下asc_sync_subblock_wait宏向底层接口多传pipe参数的问题，修复后2201上pipe按文档不生效、等待全部流水。"
+---
 # asc_sync_subblock_wait
 
 ## 产品支持情况

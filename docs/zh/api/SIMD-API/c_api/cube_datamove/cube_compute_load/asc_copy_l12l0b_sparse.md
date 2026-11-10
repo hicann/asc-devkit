@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中512字节分形的稠密权重矩阵搬入L0B Buffer，同时读取128字节索引矩阵完成稀疏化，供稀疏矩阵乘加使用。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [datablock_granularity, sparse_input]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_sparse.md
+    kind: related
+    condition: "压缩权重与索引矩阵供稀疏矩阵乘加读取"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_l12l0b_sparse
 
 ## 产品支持情况

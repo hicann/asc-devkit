@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的矢量 ReLU 同步接口，按目标元素等于源元素与 0 取较大值的公式逐元素计算，支持 half、int32_t、float，替代方案为 asc_relu 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [relu, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_relu.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_relu 与 asc_sync；include/c_api/composite/vector_compute_composite.h 的三个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_relu_sync（废弃）
 
 ## 产品支持情况

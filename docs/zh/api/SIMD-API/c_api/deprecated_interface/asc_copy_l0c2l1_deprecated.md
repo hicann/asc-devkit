@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下旧参数形式的 asc_copy_l0c2l1 及 _sync 重载把矩阵计算结果从 L0C Buffer 搬到 L1 Buffer，可组合随路量化、ReLU、通道拆分与 Nz2ND 或 Nz2DN 转换，建议改用强类型枚举重载加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [conversion, store]
+  - traits: [aligned_transfer, quantization, rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用强类型枚举参数的新重载加 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "各存储单元的空间大小与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把旧参数重载 asc_copy_l0c2l1 及对应 _sync 重载列为废弃，替代路径是强类型枚举参数的重载加 asc_sync；接口仍保留可用。"
+---
 # asc_copy_l0c2l1（废弃）
 
 ## 产品支持情况

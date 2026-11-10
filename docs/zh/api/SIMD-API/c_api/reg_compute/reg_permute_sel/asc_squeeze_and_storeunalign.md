@@ -1,3 +1,32 @@
+---
+okftype: reference.api
+description: "把源矢量寄存器中被 squeeze_mask 选中的元素压缩到目的寄存器并连续非对齐搬出到 UB，满 32B 主块直接写入、不足 32B 的非对齐尾块暂存在 src0 非对齐寄存器中等待 finalize 收尾，用 AR 寄存器记录已搬出字节数作为下次写入偏移，仅在 AIV 上生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [compact, store]
+  - traits: [post_update, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器、掩码寄存器与 AR 寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md
+    kind: related
+    condition: "结束连续搬出时需调用该接口写入尾块"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md
+    kind: requires
+    condition: "首次调用前需用该接口清零 AR 寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与前后 Reg 数据搬运接口访问同一 UB 地址且存在依赖时需同步"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_get_squeeze_status.md
+    kind: related
+    condition: "用于读取 AR 寄存器累计的已搬出字节数"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_squeeze_and_storeunalign
 
 ## 产品支持情况

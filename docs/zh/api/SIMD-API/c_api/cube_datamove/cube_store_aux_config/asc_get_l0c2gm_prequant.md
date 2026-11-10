@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "读取 L0C Buffer 搬出随路量化时使用的量化参数起始地址，返回 FPC 寄存器中由 asc_set_l0c_copy_config 写入的 quant_pre_addr 配置字段，而非量化计算后的数据。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: related
+    condition: "返回的地址索引由该接口的 quant_pre_addr 参数配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization_and_relu_scenario_combination.md
+    kind: related
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.1.0 的声明位于 include/c_api/cube_compute/cube_compute.h，9.2.0 起该符号的声明迁到 include/c_api/cube_datamove/cube_datamove.h 并延续到 9.3.0-beta.1（签名不变，仍为无参返回 uint64_t）；页面功能说明中的头文件路径已按迁移后的位置书写。"
+---
 # asc_get_l0c2gm_prequant
 
 ## 产品支持情况

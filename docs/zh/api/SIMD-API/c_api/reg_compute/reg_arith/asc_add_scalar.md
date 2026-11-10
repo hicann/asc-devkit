@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "按mask把矢量寄存器元素与同类型标量逐元素相加，结果写入目的寄存器或由函数返回值返回，支持int8至float的常见dtype。"
+tag:
+  - roles: [compute]
+  - operations: [add]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载：探测 inline vector_* asc_add_scalar 首次出现在 9.2.0 的 reg_base_impl/reg_arith_intf_impl.h:1275（version-map 未给出该草稿，此处以声明史与 CANN 9.2.0 Release Notes 的 Reg 算术返回值重载条目为依据），对应正文 vector_<dtype> asc_add_scalar(vector_<dtype> src, <dtype> value, vector_bool mask)。"
+---
 # asc_add_scalar
 
 ## 产品支持情况

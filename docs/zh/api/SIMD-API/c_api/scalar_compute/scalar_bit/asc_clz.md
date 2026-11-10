@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "统计 64 位无符号整数二进制表示的前导零个数，即从最高位到第一个 1 之间连续 0 的数量，输入为 0 时返回 64，运行在标量流水上，AIC 与 AIV 行为一致。"
+tag:
+  - roles: [compute]
+  - operations: [bit_manipulation]
+  - traits: [count_limited]
+dependencies: []
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_clz
 
 ## 产品支持情况

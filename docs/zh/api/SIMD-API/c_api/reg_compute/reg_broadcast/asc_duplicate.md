@@ -1,3 +1,38 @@
+---
+okftype: reference.api
+description: "把源矢量数据寄存器的最低元素广播到目的寄存器中被掩码筛选的位置，未筛选位置置零，支持含 fp8_e8m0_t 在内的整型、半精度与浮点类型。"
+tag:
+  - roles: [compute]
+  - operations: [broadcast]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与前后 Reg 数据搬运接口访问同一 UB 地址且存在写后读/写后写依赖时需同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 新增 fp8_e8m0_t 引用输出重载（9.0.0/9.1.0 的 11 种 dtype 不含 fp8_e8m0_t，9.2.0 增至 12 种），Release Notes CANN_9_2_0 记录 asc_duplicate、asc_duplicate_scalar 新增 fp8_e8m0_t 引用输出重载。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 12 种 dtype 补充函数返回值形式重载（vector_<dtype> asc_duplicate(vector_<dtype> src, vector_bool mask)），9.0.0/9.1.0 只有引用输出形式；当前 include 共 24 条声明。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_broadcast.h（9.2.0 起），与正文头文件路径一致。"
+---
 # asc_duplicate
 
 ## 产品支持情况

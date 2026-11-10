@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵计算
 
 - **[概述](overview.md)**

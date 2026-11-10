@@ -1,3 +1,19 @@
+---
+okftype: reference.union
+description: "为 asc_fill_l0a、asc_fill_l0b 和 asc_fill_l1 初始化接口提供参数的联合体，config 位域携带 repeat、blk_num、dst_gap；目的位于 L1 时块大小与间隔按 32 字节、位于 L0A 或 L0B 时按 512 字节解释。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [fill]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_fill_l0a.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_fill_l0b.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_fill_l1.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_fill_value_config
 
 头文件路径为：`"c_api/defs/union.h"`。

@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "基于偏移量获取片上实际物理地址，用于调试、地址推导或tiling地址计算场景。"
+tag:
+  - roles: [query]
+dependencies: []
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_get_phy_buf_addr
 
 ## 产品支持情况

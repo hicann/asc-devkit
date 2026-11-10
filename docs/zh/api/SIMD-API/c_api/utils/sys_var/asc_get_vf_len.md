@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "constexpr无参查询接口，返回当前芯片矢量寄存器长度VL（单位字节），常用于以VL除以数据类型宽度推导循环次数与元素个数；不触发硬件指令且不支持纯SIMT编译模式。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "VL与矢量数据寄存器长度定义见该页"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_get_vf_len
 
 ## 产品支持情况

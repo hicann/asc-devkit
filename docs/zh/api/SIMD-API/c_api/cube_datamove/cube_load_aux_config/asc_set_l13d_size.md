@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "设置 asc_copy_l12l0a 与 asc_copy_l12l0b 的 3D 格式搬运接口在 L1 Buffer 上的边界值，单位为字节，取 0 表示无边界、可使用整个 L1 Buffer。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_arch_2201.md
+    kind: configures
+    condition: "该 3D 格式搬运的源起始地址需落在设置的边界内，越界则从 L1 起始地址读取"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_arch_2201.md
+    kind: configures
+    condition: "该 3D 格式搬运的源起始地址需落在设置的边界内，越界则从 L1 起始地址读取"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址对齐需参考存储单元说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_l13d_size
 
 ## 产品支持情况

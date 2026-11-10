@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "对 uint8_t 源矢量寄存器元素做累计频率统计并累加到 uint16_t 目的寄存器，提供低位模式统计取值不大于 n 的元素个数、高位模式统计取值不大于 128 加 n 的元素个数，可用掩码筛选参与元素。"
+tag:
+  - roles: [compute]
+  - operations: [histogram]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_cumulative_histogram
 
 ## 产品支持情况

@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "已废弃的同步非对齐搬运接口，在 GM 到 L1 Buffer 搬运中把非 32 字节对齐数据补齐，并按 Normal、Compact 或左右模式填充，替代方案为 asc_copy_gm2l1_align 配合 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, synchronization]
+  - traits: [padding, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_align.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_pad.md
+    kind: constrained_by
+    condition: "data_select_bit 为 true 或使用左右填充模式时须先配置填充值"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步非对齐搬运接口废弃，改用带 asc_load_l2_cache_mode 的 asc_copy_gm2l1_align 并额外调用 asc_sync；include/c_api/composite/cube_datamove_composite.h 中 10 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表列有对应 _sync 重载。"
+---
 # asc_copy_gm2l1_align_sync（废弃）
 
 ## 产品支持情况

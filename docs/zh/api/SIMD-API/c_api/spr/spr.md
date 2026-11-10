@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 特殊寄存器访问
 
 - **[概述](overview.md)**

@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "按索引寄存器把源矢量寄存器元素分散搬出到UB，掩码为1的元素写入对应索引位置、为0则保留目的地址原数据，目的为b8类型时仅偶数位置源元素有效。"
+tag:
+  - roles: [data_movement]
+  - operations: [scatter]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增9组目的UB地址在前、源矢量寄存器在后的重载（int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float），CANN 9.1.0 Release Notes 逐项记载；本页函数原型即该组重载，include/c_api/reg_compute/scatter/ub_scatter.h 中9条 @override_id 与之一一对应。原「源矢量寄存器在前、目的UB地址在后」的重载在 9.1.0 进入废弃期，其说明与原型由 deprecated_interface/asc_scatter_deprecated.md 承载，故不在本页重复登记 deprecated 事件。"
+---
 # asc_scatter
 
 ## 产品支持情况

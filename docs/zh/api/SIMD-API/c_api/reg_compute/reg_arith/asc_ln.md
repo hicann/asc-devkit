@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "按mask对矢量寄存器元素逐元素取自然对数，结果写入目的寄存器，支持half与float，掩码位为0的元素结果置0。"
+tag:
+  - roles: [compute]
+  - operations: [natural_log]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_ln
 
 ## 产品支持情况

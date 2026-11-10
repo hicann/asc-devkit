@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 核内同步
 
 - **[asc_sync_notify](asc_sync_notify.md)**

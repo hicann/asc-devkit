@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍Cube侧L1 Buffer、L0A Buffer与L0B Buffer的Bank与Bank Group内存结构，给出各Buffer容量、Bank数量、行宽以及地址编码位域划分，并说明同一Bank与同一Bank Group内的读写并发限制。"
+---
 # L1 Buffer、L0A Buffer/L0B Buffer内存结构介绍
 
 为提升数据访问效率和吞吐量，Buffer采用了等容量的内存模块（Bank）结构设计。内存空间被划分为多个Bank，并以Bank为单位进一步分组形成多个Bank Group（BG）；每个Bank Group包含若干Bank，每个Bank都是一个可独立操作的存储单元子模块。

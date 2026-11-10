@@ -1,3 +1,49 @@
+---
+okftype: reference.api
+description: "从UB的32字节对齐地址读取连续数据并做2倍下采样，目的为矢量数据寄存器时读2倍VL保留偶数下标元素，目的为掩码寄存器时读VL/4保留偶数bit，支持返回值形式与三种偏移模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [compact, load]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_mask_downsample.md
+    kind: related
+    condition: "对齐搬入模式中通过函数返回值返回掩码寄存器时改用该接口"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束与UB容量约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: requires
+    condition: "地址寄存器偏移搬入模式必须先调用该接口生成 addr_reg"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入该同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 int4b_t 数据重载：目的为 vector_int4x2_t、源为 __ubuf__ int4b_t*（upstream 9.1.0 首次出现，9.0.0 无），对应 Release Notes 9.1.0「asc_loadalign_downsample 新增 int4b_t、vector_int4x2_t 重载」。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增目的为 vector_bool 掩码寄存器的重载：源为 __ubuf__ uint32_t*，读 VL/4 保留偶数下标 bit 得 VL/8；立即数偏移形式的 offset 单位为字节（矢量数据寄存器目的时为元素个数）。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "对齐搬入模式新增函数返回值重载 vector_<dtype> asc_loadalign_downsample(__ubuf__ <dtype>* src)（upstream 9.2.0 首次出现，9.1.0 无此类返回值声明），覆盖页面列出的 13 种 dtype，不含 int32_t、uint32_t、float。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 addr_reg 地址寄存器偏移重载，矢量数据寄存器与掩码寄存器目的均含该形式；偏移单位为元素个数，掩码目的应使用 b32 模式，调用前必须用 asc_update_addr_reg 生成寄存器（upstream 9.2.0 首次出现）。"
+---
 # asc_loadalign_downsample
 
 ## 产品支持情况

@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "配置asc_ndim_copy_gm2ub中loop1至loop4各维左右两侧填充元素数的接口，接收asc_ndim_pad_count_config引用；loop0的填充数由搬运接口自身参数配置，常数填充时还需设置填充值。"
+tag:
+  - roles: [configuration]
+  - traits: [high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_ndim_pad_count_config.md
+    kind: requires
+    condition: "配置字段定义见该结构体页"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_value.md
+    kind: requires
+    condition: "常数填充模式需与填充值配置配合使用"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_ndim_pad_count
 
 ## 产品支持情况

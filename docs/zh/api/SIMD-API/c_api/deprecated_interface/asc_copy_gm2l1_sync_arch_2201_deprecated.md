@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "废弃接口页：2201 架构下 asc_copy_gm2l1_sync 同步把矩阵数据从 GM 搬入 L1 Buffer，提供普通连续搬运、pad1 至 pad8 的 32 字节粒度插入或删除填充，以及带分形编号的 2D 搬运，官方建议改用非同步接口加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [datablock_granularity, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_arch_2201.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "各存储单元的空间大小与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_copy_gm2l1_sync__PL1bf16_PGbf16_u16_u8_u16_u16@2201"
+    scope_basis: resolved
+    note: "9.1.0 新增带 base_idx、repeat、src_stride、dst_gap 的 2D 搬运重载，覆盖本页 2D 搬运模式中 bfloat16_t、half、float、int32_t、int8_t、uint32_t、uint8_t 各 dtype 形式"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记普通搬运、pad1 至 pad8 与 2D 全部形式，Release Notes 9.2.0 给出的替代路径是非同步 asc_copy_gm2l1 加 asc_sync；接口未移除。"
+---
 # asc_copy_gm2l1_sync（NPU架构版本2201，废弃）
 
 ## 产品支持情况

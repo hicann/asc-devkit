@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "总体说明矩阵搬入接口的分类、数据通路与存储层级，并分别列出GM到L1、L1到L0A/L0B、稀疏与MX等场景的接口以及配套辅助配置接口。"
+---
 # 矩阵搬入总体说明
 
 矩阵计算的搬入是Ascend C编程框架中用于数据搬运的一类核心接口，主要实现Global Memory到L0A Buffer/L0B Buffer之间的数据高效传输。该类接口提供了多种数据搬运模式，能够满足矩阵计算中左右矩阵等数据的搬运需求，通常与Mmad接口配合使用。

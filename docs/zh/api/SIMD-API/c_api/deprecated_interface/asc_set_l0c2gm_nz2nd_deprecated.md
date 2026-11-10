@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_set_l0c2gm_nz2nd 以 ND 矩阵个数与源目的 ND 步长配置 L0C 搬出时的随路 Nz 转 ND 所需参数，须在搬出接口前调用且仅在 AIC 生效，建议改用 asc_set_l0c_copy_nz_para。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "启用随路 Nz 转 ND 前必须先调用本接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "启用随路 Nz 转 ND 前必须先调用本接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: configures
+    condition: "启用随路 Nz 转 ND 前必须先调用本接口配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_nz_para.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用逐项传入参数的强类型重载"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l0c2gm_nz2nd 列为废弃，替代为 asc_set_l0c_copy_nz_para；接口仍保留可用。"
+---
 # asc_set_l0c2gm_nz2nd（废弃）
 
 ## 产品支持情况

@@ -28,6 +28,14 @@
 #include "impl/c_api/reg_base_impl/sys_init_intf_impl.h"
 #endif
 
+/**
+ * @ingroup simd_c_api.utils.sys_init
+ * @brief Restores AI Core control state left over from previous kernels to the documented initial state without
+ * clearing any data memory.
+ *
+ * @override_id asc_init__z
+ * @archs 2201 3510
+ */
 __aicore__ inline void asc_init();
 
 #endif

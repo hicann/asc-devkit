@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "配置 L0C Buffer 搬出过程中随路 Scalar 激活所需的缩放系数，取值采用 1 位符号位、8 位指数位与 10 位尾数位的高 19 位格式，需与搬出接口的激活模式搭配使用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "需与搬出接口的 relu_pre_mode 搭配使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "需与搬出接口的 relu_pre_mode 搭配使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: configures
+    condition: "需与搬出接口的 relu_pre_mode 搭配使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization_and_relu_scenario_combination.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_relu.md
+    kind: related
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "由 asc_set_l0c2gm_lrelu_alpha（9.1.0 提供 half& 与 float& 两种参数形式）改为 asc_set_l0c_copy_lrelu_alpha，新接口只保留 float 标量参数形式；Release Notes CANN_9_2_0 重命名表记为「接口名变化；新接口仅支持 float 参数，不再提供 half 参数形式」，旧名保留为 deprecated_interface 页面。"
+---
 # asc_set_l0c_copy_lrelu_alpha
 
 ## 产品支持情况

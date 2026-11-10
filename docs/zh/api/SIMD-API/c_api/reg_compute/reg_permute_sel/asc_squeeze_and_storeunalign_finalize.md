@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "结束一组 asc_squeeze_and_storeunalign 连续搬出操作，把暂存在非对齐寄存器中的尾块写入 Unified Buffer，仅在 AIV 上生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md
+    kind: related
+    condition: "本接口用于结束该接口开启的连续搬出序列"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md
+    kind: related
+    condition: "同一搬出序列的起始清零接口"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与前后 Reg 数据搬运接口访问同一 UB 地址且存在依赖时需同步"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_squeeze_and_storeunalign_finalize
 
 ## 产品支持情况

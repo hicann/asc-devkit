@@ -1,3 +1,12 @@
+---
+okftype: reference.api
+description: "获取系统内存管理单元SMMU的版本信息，便于运行时按版本做相应处理。"
+tag:
+  - roles: [query]
+dependencies: []
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_get_smmu_tag_version
 
 ## 产品支持情况

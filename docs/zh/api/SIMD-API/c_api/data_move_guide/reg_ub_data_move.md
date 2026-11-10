@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510上UB与矢量、掩码及非对齐寄存器之间的搬入搬出接口选择：按连续、广播、交织、压缩、采样与Post Update等模式分类，并给出VL为256字节、掩码32字节的容量前提与非对齐状态复用要求。"
+---
 # Reg与UB数据搬运
 
 <!-- npu="950" id1 -->

@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "设置Mask值的配置接口：Normal模式下按位控制单次迭代内参与计算的元素，Counter模式下由低位入参指定整个计算过程参与计算的元素个数，950上用于VF场景外配置掩码寄存器，流水类型为PIPE_S。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_mask/asc_get_mask_spr.md
+    kind: related
+    condition: "950上通过该接口的b16/b32形式获取掩码寄存器值"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_mask/reg_mask.md
+    kind: related
+    condition: "Reg矢量计算掩码配置的推荐接口章节"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_mask_config/asc_set_mask_count.md
+    kind: related
+    condition: "A3/A2上使用Counter模式前需先调用该接口切换模式"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_mask_config/asc_set_mask_norm.md
+    kind: related
+    condition: "A3/A2上使用Normal模式需先调用该接口切换模式"
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: arch_support_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 Ascend 950PR&950DT（NPU 架构 3510）支持：可在 Vector Function 外配置掩码寄存器并配合 Reg 矢量计算接口使用，通过 asc_get_mask_spr 的 b16/b32 形式取值；依据 CANN_9_2_0 Release Notes 第 32 行与 include/c_api/vector_compute/compute/vector_mask_config.h 中该声明 @archs 由 2201 扩展为 2201 与 3510。"
+---
 # asc_set_vector_mask
 
 ## 产品支持情况

@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "统计 64 位无符号整数二进制表示中值为 1 的位数，返回 0 到 64 之间的整型计数，运行在标量流水上，同一流水内的数据依赖由指令顺序保证。"
+tag:
+  - roles: [compute]
+  - operations: [bit_manipulation]
+  - traits: [count_limited]
+dependencies: []
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_popc
 
 ## 产品支持情况

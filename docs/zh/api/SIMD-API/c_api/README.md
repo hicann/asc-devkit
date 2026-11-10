@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "C API 是 Ascend C 三层梯度化可编程接口中最底层的语言扩展层 SIMD API，基于指针编程，由开发者自行管理内存搬运与流水同步。页面覆盖定位介绍、必须包含的 c_api/asc_simd.h 头文件、存储空间与执行空间关键字表、PIPE 流水类型清单，以及按矩阵计算、矢量计算、标量计算、原子操作、缓存与同步分类的 API 目录入口和参考样例。"
+---
 # C API
 
 C API开放芯片完备编程能力，支持[以数组形式分配内存](general_description_and_constraints.md#以数组方式申请内存)，一般基于指针编程。提供与业界一致的C语言编程体验。

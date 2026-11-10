@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的矢量选择同步接口，按 asc_set_cmp_mask 设置的 sel_mask 逐位从两个源矢量选择元素写入目的矢量，支持 half 与 float，替代方案为 asc_select 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [selection, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_set_cmp_mask.md
+    kind: constrained_by
+    condition: "选择依据 sel_mask 需先经该接口设置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_permute_sel/asc_select.md
+    kind: replaced_by
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_select 与 asc_sync；include/c_api/composite/vector_compute_composite.h:2262 起的两个声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_select_sync（废弃）
 
 ## 产品支持情况

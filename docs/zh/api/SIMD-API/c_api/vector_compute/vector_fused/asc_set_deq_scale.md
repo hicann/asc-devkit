@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "设置 DEQSCALE 量化参数寄存器，提供十六组 scale、offset、sign_mode 加临时内存的数组形式、float 三参标量形式与 half 单参形式，供 int32 转 half 等反量化接口取用。"
+tag:
+  - roles: [configuration]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_deq_int322half.md
+    kind: related
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_deq_scale
 
 ## 产品支持情况

@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "在 L0C Buffer 搬出并启用随路 Nz 转 ND 或 DN 格式时，配置矩阵数量、源相邻 Nz 矩阵偏移与目的相邻 ND 或 DN 矩阵偏移，仅 Ascend 950PR&950DT 支持。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: configures
+    condition: "搬出接口 enable_nz2nd 或 enable_nz2dn 为 true 时必须先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: configures
+    condition: "搬出接口 enable_nz2nd 或 enable_nz2dn 为 true 时必须先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: configures
+    condition: "搬出接口 enable_nz2nd 或 enable_nz2dn 为 true 时必须先调用本接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_channel_para.md
+    kind: related
+    condition: "Nz2DN 场景还需由该接口设置源 Nz 分形行间隔"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2DN.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2ND.md
+    kind: related
+version: ">=9.2.0"
+version_changes:
+  - since: "9.2.0"
+    kind: renamed
+    scope: "page"
+    scope_basis: kind_default
+    note: "由 asc_set_l0c2gm_nz2nd（9.0.0 提供，参数为拼装的 config）改为 asc_set_l0c_copy_nz_para(matrix_num, src_nz_matrix_stride, dst_matrix_stride)，参数个数、类型与单位随之调整（源步长单位 64 字节、目的步长单位为元素）；旧名保留为 deprecated_interface 页面。"
+---
 # asc_set_l0c_copy_nz_para
 
 ## 产品支持情况

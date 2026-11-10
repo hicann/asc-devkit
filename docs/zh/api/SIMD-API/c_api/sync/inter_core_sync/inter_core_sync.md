@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 核间同步
 
 - **[关键特性说明](key_features.md)**

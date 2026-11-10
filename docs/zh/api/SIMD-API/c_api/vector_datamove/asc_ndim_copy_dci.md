@@ -1,3 +1,15 @@
+---
+okftype: reference.api
+description: "无参缓存维护接口，用于刷新NDDMA DataCache，避免多核读取同一GM地址时命中旧数据；应在调用asc_ndim_copy_gm2ub前使用，仅在AIV生效且非AIV调用直接返回。"
+tag:
+  - roles: [control]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md
+    kind: requires
+    condition: "多核可能读取同一GM地址且数据可能被其他核更新时，需在本接口之后调用该搬运接口"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_ndim_copy_dci
 
 ## 产品支持情况

@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的int32_t元素转换为int64_t元素，仅引用参数输出形式（EVEN/ODD 两条），按 src_pos 奇偶索引读取。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_int322int64
 
 ## 产品支持情况

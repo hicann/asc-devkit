@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_set_l13d_padding 以 uint64_t、half、int16_t 或 uint16_t 四种形式设置 Pad 属性描述，为 asc_copy_l12l0a 配置填充数值，建议改用 asc_set_l12l0a_3d_padding。"
+tag:
+  - roles: [configuration]
+  - traits: [padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a.md
+    kind: configures
+    condition: "调用 asc_copy_l12l0a 的 3D 搬运时使用该填充值"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用重命名后的 asc_set_l12l0a_3d_padding"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l13d_padding 列为废弃，替代为接口重命名后的 asc_set_l12l0a_3d_padding；本页四种形式仍保留，属废弃而非移除。"
+---
 # asc_set_l13d_padding（废弃）
 
 ## 产品支持情况

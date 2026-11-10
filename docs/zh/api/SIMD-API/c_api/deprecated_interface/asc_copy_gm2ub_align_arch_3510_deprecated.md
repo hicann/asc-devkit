@@ -1,3 +1,36 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下整数 l2_cache_mode 版本的 asc_copy_gm2ub_align 提供非对齐搬运，把 GM 数据按 32 字节对齐补齐后搬入 UB，按 dst_stride 选择 Compact 或 Normal 模式并对不齐尾部手动或自动填充，官方建议改用枚举配置 L2 策略的新重载。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [padding, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: related
+    condition: "新重载改用该枚举表达 L2 Cache 管理策略"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "各存储单元的空间大小与对齐要求按其存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md
+    kind: replaced_by
+    condition: "新接口形式改用 asc_load_l2_cache_mode 枚举配置 L2 Cache 策略"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md
+    kind: requires
+    condition: "手动填充或左右 padding 非 0 时需先设置填充值"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:n_burst"
+    scope_basis: fallback
+    note: "Release Notes 9.2.0 记录修复 3510 对齐搬运接口 n_burst 位宽不足并将相关重载扩展为 uint32_t，本页废弃原型仍写 uint16_t；具体生效重载范围待核实，故用 fallback 标注。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃以整数参数表达 L2 Cache 策略的旧重载，替代路径是使用 asc_load_l2_cache_mode 枚举的同名重载；接口未移除。"
+---
 # asc_copy_gm2ub_align（NPU架构版本3510，废弃）
 
 ## 产品支持情况

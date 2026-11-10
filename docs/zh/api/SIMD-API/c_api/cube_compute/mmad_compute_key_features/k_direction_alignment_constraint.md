@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍asc_mmad的K方向对齐约束特性：float数据类型下由k_direction_align控制L0A与L0B矩阵在K方向的对齐，true时按16对齐、false时按8对齐；A矩阵非转置无需开启、转置场景需开启，该参数只在Atlas A2与A3系列产品重载提供，Ascend 950PR&950DT因L0A为Nz排布且K方向8对齐而无需开启。"
+---
 # K方向对齐约束
 
 **特性说明：**

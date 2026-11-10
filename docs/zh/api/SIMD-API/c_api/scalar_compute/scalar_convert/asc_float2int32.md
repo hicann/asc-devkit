@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "在标量流水上将float标量按指定舍入模式转换为int32_t并返回，支持rd、rn、rna、ru四种舍入后缀。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode, saturation_mode, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: requires
+    condition: "饱和或非饱和模式需配置CTRL寄存器"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_float2int32
 
 ## 产品支持情况

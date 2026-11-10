@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 原子操作
 
 - **[概述](overview.md)**

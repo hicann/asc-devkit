@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置类型转换接口，将int64_t源操作数转换为int32_t并按偶数或奇数索引写入目的寄存器，支持饱和与非饱和共四个原型，替代方案为显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int642int32.md
+    kind: replaced_by
+    condition: "替代本页隐式位置原型的显式位置参数重载所在页"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入模式与饱和/非饱和模式说明"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: constrained_by
+    condition: "开启饱和或非饱和模式需先配置ctrl寄存器"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "四个隐式位置原型在 include/c_api/reg_compute/reg_convert.h 中带多行 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int642int32(..., ASC_POSITION_EVEN)) 形式标记（饱和形式对应 asc_int642int32_sat，_v2 形式对应 ASC_POSITION_ODD），替代方案为显式位置参数重载；CANN_9_2_0 Release Notes 第 129 行说明位置后缀重载进入废弃期，废弃不封可用上限。"
+---
 # asc_int642int32（废弃）
 
 ## 产品支持情况

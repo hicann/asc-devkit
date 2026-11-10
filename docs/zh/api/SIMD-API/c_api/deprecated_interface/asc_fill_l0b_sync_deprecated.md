@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的L0B Buffer初始化同步接口，按asc_fill_value_config的repeat、blk_num与dst_gap把标量value的二进制值填充到L0B，支持half与uint32_t两种入参，替代方案为asc_fill_l0b配合asc_sync。"
+tag:
+  - roles: [data_initialization]
+  - operations: [fill]
+  - traits: [scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_fill_l0b.md
+    kind: replaced_by
+    condition: "非同步填充接口替代本页同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/defs/union/asc_fill_value_config.md
+    kind: requires
+    condition: "repeat、blk_num与dst_gap等初始化参数由该结构体承载"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对全部15个重载统一标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_fill_l0b and asc_sync)；CANN_9_2_0 Release Notes废弃表列出asc_fill_*_sync族；接口保留且仅2201可用。"
+---
 # asc_fill_l0b_sync（废弃）
 
 ## 产品支持情况

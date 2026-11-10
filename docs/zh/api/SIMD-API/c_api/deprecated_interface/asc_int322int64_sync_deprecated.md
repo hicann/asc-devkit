@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的同步类型转换接口，将int32_t数据转换为int64_t并按PIPE_V流水计算，替代方案为对应的非同步接口asc_int322int64配合asc_sync同步使用。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址重叠约束见该页通用地址重叠约束节"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "与非同步接口配合完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_convert/asc_int322int64.md
+    kind: replaced_by
+    condition: "替代本同步接口的非同步接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明处以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int322int64 and asc_sync) 标记废弃（include/c_api/composite/vector_compute_composite.h 中该 @override_id 之前的宏行），替代方案为对应非同步接口 asc_int322int64 加 asc_sync；本页全部原型均属废弃范围，属整页废弃，不封可用上限。"
+---
 # asc_int322int64_sync（废弃）
 
 ## 产品支持情况

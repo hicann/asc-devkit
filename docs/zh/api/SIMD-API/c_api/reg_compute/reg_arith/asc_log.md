@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "按mask对矢量寄存器元素逐元素取自然对数，结果写入目的寄存器；与asc_ln同为自然对数语义，支持half与float。"
+tag:
+  - roles: [compute]
+  - operations: [natural_log]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_ln.md
+    kind: related
+    condition: "两页均描述逐元素自然对数，语义相同可交叉参考"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_log
 
 ## 产品支持情况

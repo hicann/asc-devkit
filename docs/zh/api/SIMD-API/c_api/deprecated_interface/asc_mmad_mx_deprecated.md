@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "已废弃的MX矩阵乘加接口，在AIC上完成带左右量化系数矩阵的矩阵乘加并支持C矩阵初始化配置，仅Ascend 950PR&950DT可用，替代方案为强类型asc_mmad_mx配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [matrix_multiply_accumulate]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md
+    kind: replaced_by
+    condition: "替代本页uint8_t unit_flag原型的强类型接口"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md
+    kind: requires
+    condition: "调用前需用该接口把ScaleA矩阵搬入L0A_MX Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md
+    kind: requires
+    condition: "调用前需用该接口把ScaleB矩阵搬入L0B_MX Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: related
+    condition: "通过CTRL[48]配置inf/nan的饱和或非饱和处理"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代原同步接口的同步方式"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: related
+    condition: "K轴分块累加且分形数小于10时需在相邻乘加间同步PIPE_M"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "入参 unit_flag 类型为 uint8_t 的 asc_mmad_mx 与 asc_mmad_mx_sync 原型（16 条）在 include/c_api/cube_compute/cube_compute.h 中以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_mmad_mx(...)) 标记废弃，替代方案为使用 asc_unit_flag_mode 的 asc_mmad_mx 加 asc_sync；本页全部原型均属废弃范围，不封可用上限。"
+---
 # asc_mmad_mx（废弃）
 
 ## 产品支持情况

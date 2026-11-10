@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "单AI Core内AIC与单个AIV核间同步的到达侧接口，与asc_sync_intra_wait配对实现模式4同步：在指定流水前序指令完成后通知调度模块，sync_id两端取值按跨核映射对应，仅3510架构支持。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_wait.md
+    kind: requires
+    condition: "必须与该等待侧按跨核ID映射配对使用，否则出现未定义行为"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "四种核间同步模式与模式4的总体说明"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_sync_intra_arrive
 
 ## 产品支持情况

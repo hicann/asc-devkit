@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的 UB 到 GM 非对齐搬运高维切分形式，用 uint8_t 的 l2_cache_mode 选择 Normal 或 Compact 模式并按 32 字节补齐，改用 asc_store_l2_cache_mode 枚举形式。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md
+    kind: related
+    condition: "替代的 L2 Cache 管理策略配置类型"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md
+    kind: replaced_by
+    condition: "正文声明的高维切分数据搬运新接口形式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 中该 7 参数 uint8_t l2_cache_mode 形式标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_store_l2_cache_mode)，正文同步建议改用 asc_store_l2_cache_mode 枚举；同版本头文件把搬运参数名由 n_burst/len_burst 调整为 burst_count/burst_len，导致本页原型与当前声明不可安全匹配（doc_overrides 报无可定位声明），该差异只登记在本文档标注中、未改正文。"
+---
 # asc_copy_ub2gm_align（NPU架构版本3510，废弃）
 
 ## 产品支持情况

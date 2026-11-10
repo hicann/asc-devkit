@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "汇总矩阵搬出随路量化的模式分类与参数准备流程：类型转换无需系数，Scalar量化共享一组QUANT_PRE寄存器参数，Vector量化按C矩阵列准备8B打包参数并搬入Fixpipe Buffer；Ascend 950PR&950DT与Atlas A3/A2的模式集合及寄存器编码不同。"
+---
 # 随路量化
 
 ## 特性说明

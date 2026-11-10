@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "把asc_squeeze_and_storeunalign后保存在AR特殊寄存器的有效数据长度写入UB，支持直接写入dst或按字节偏移写入两个重载。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md
+    kind: requires
+    condition: "调用前需先由该接口完成squeeze操作以产生AR中的有效长度"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_storealign_squeeze_status
 
 ## 产品支持情况

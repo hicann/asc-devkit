@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "按 src_offset 给出的字节偏移把源矢量元素收集到目的矢量，支持 int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float 七种类型，提供前 n 个元素与高维切分两种形式。"
+tag:
+  - roles: [data_movement]
+  - operations: [gather]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_gather
 

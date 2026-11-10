@@ -1,3 +1,20 @@
+---
+okftype: reference.macro
+description: "AIC和AIV分离模式下的两个条件宏，分别判断当前代码路径是否运行在Cube Core或Vector Core上，作为if语句条件隔离矩阵与矢量代码，是ASCEND_IS_AIC和ASCEND_IS_AIV的C API别名。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/guide/programming_guide/advanced_programming/hardware_implementation/basic_architecture.md
+    kind: related
+    condition: "正文引该页说明AIC与AIV分离模式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "ASC_IS_AIC/ASC_IS_AIV 由 impl/c_api/instr_impl/npu_arch_2201/utils_impl/utils_impl.h 迁移至公共头文件 c_api/defs/macro.h，用户可直接包含该头文件；定义形式统一为 ASCEND_IS_AIC/ASCEND_IS_AIV 别名（9.0.0-beta.1 时二者曾是 g_c_api_core_type 比较表达式，9.0.0 起改为别名），语义不变。"
+---
 # ASC_IS_AIC/ASC_IS_AIV
 
 ## 功能说明

@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_set_l12l0_padding_val 以 64 位 config 设置 PADDING_B 寄存器，31:0 位存放 padding 值并随数据位宽取用不同字节，33:32 位选择固定 padding 或按通道 padding，建议改用 asc_set_l12l0b_3d_padding。"
+tag:
+  - roles: [configuration]
+  - traits: [padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md
+    kind: configures
+    condition: "3D 搬运时由该接口消费 padding 值与模式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0b_3d_padding.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用函数名调整后的 asc_set_l12l0b_3d_padding"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_set_l12l0_padding_val 列为废弃，替代为函数名调整后的 asc_set_l12l0b_3d_padding；接口仍保留可用。"
+---
 # asc_set_l12l0_padding_val（废弃）
 
 ## 产品支持情况

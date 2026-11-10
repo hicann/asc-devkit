@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "已废弃的同步搬运接口，按分形 id、迭代次数、源步长与目的间隔把 Global Memory 的矩阵数据搬入 L0A Buffer，覆盖 bfloat16_t 与 half 等八种类型，替代方案为 asc_copy_gm2l0a 配合 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l0a.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "矩阵搬运类同步复合接口废弃，改用 asc_copy_gm2l0a 与 asc_sync；include/c_api/composite/cube_datamove_composite.h:2301 起的 8 个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表以 asc_copy_*_sync 复合接口条目覆盖。"
+---
 # asc_copy_gm2l0a_sync（废弃）
 
 ## 产品支持情况

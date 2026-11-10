@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "对Global Memory中address指向的单个元素执行原子按位与操作，支持int32_t、uint32_t、int64_t和uint64_t四种整数类型，读取旧值后把旧值与val的按位与结果写回该地址并返回旧值。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_and]
+  - traits: [atomic, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_dcci.md
+    kind: requires
+    condition: "Scalar原子操作绕过DCache，读写后需调用该接口保证GM与DCache的一致性"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN_9_2_0 公共头文件按模块拆分，本页接口的最细粒度公共头文件路径由 c_api/scalar_compute/scalar_compute.h 迁移为 c_api/atomic/scalar_atomic.h；接口签名与 4 个重载集合不变"
+---
 # asc_atomic_and
 
 ## 产品支持情况

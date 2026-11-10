@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "把矢量数据寄存器按元素与同类型标量value做不等比较，结果以掩码寄存器返回值或写入引用参数dst，每个元素占1bit，支持9种dtype且仅在AIV生效，浮点含nan时结果位写1。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增9个通过vector_bool返回值返回比较结果的重载（9种dtype各一个），引用参数形式自9.0.0起已可用；语义为src_i不等于value时结果位为1。"
+---
 # asc_ne_scalar
 
 ## 产品支持情况

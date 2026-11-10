@@ -1,3 +1,32 @@
+---
+okftype: reference.api
+description: "完成寄存器间数据搬运的接口，支持矢量数据寄存器到矢量数据寄存器、掩码寄存器到掩码寄存器以及从指定数据块提取bit生成掩码三种模式，仅在AIV上生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束见该页通用约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射、编译命令所需宏说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_copy__Rvb_vu16_i16"
+    scope_basis: resolved
+    note: "新增矢量数据寄存器复制到掩码寄存器的重载：源为 vector_uint16_t、第二参数为编译期常量 part（取值范围 0 至 15），把选定 16B 数据块的每个 bit 广播成 2bit 生成 32B 掩码；依据 CANN_9_1_0 Release Notes 第 128 行与 upstream/9.1.0 首次出现的该声明。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_copy__Rvb_vu32_i16"
+    scope_basis: resolved
+    note: "新增矢量数据寄存器复制到掩码寄存器的重载：源为 vector_uint32_t、第二参数为编译期常量 part（取值范围 0 至 31），把选定 8B 数据块的每个 bit 广播成 4bit 生成 32B 掩码；与 uint16_t 重载同批加入（CANN_9_1_0 Release Notes 第 128 行）。"
+---
 # asc_copy
 
 ## 产品支持情况

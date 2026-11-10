@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "配置L0C Buffer搬出过程中随路Scalar激活所用的缩放系数，仅在AIC上生效且仅Ascend 950PR&950DT系列产品支持，需在搬出接口执行前调用并在其激活模式参数中选择Scalar模式。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [relu]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md
+    kind: requires
+    condition: "以relu_pre_mode为SCALAR搬出到GM时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md
+    kind: requires
+    condition: "以relu_pre_mode为SCALAR搬出到L1时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md
+    kind: requires
+    condition: "以relu_pre_mode为SCALAR搬出到UB时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization_and_relu_scenario_combination.md
+    kind: related
+    condition: "与随路量化同时使用时的场景组合说明"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_relu.md
+    kind: related
+    condition: "随路ReLU激活模式与配套配置的说明页"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_set_l0c_copy_relu_alpha
 
 ## 产品支持情况

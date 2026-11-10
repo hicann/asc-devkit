@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "为后续目的地址为 Global Memory 的数据搬运开启原子累加：与 GM 已有数据求和后写回。由 int8、int16、int32、float16、bfloat、float 六种无参原型选择累加类型，需与后续搬运一致；仅对 MTE1/MTE2/MTE3 搬运生效，标量写 GM 不受影响，可用 asc_disable_dma_atomic 关闭。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [add]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/atomic/key_features.md
+    kind: related
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "asc_set_atomic_add_int8、asc_set_atomic_add_int16 与旧名 asc_set_atomic_add_int 自 9.1.0 起在 Ascend 950PR&950DT（3510）可用：upstream/9.1.0 的 impl/c_api/instr_impl/npu_arch_3510/atomic_impl.h 新增三者定义，公共头文件亦将其提升到架构分支之外；Atlas A2/A3（2201）自 9.0.0 起即已声明，Release Notes 9.1.0 增强节同样列出这三个接口。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 asc_set_atomic_add_int32()，以显式数据类型后缀命名替代 9.2.0 起标记废弃的 asc_set_atomic_add_int()；两者同为 int32_t 原子累加，旧名在头文件加 ASC_DEPRECATED(9.2.0, ...) 修饰但仍保留。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明由 include/c_api/atomic/atomic.h 迁入按模块拆分的 include/c_api/atomic/datamove_atomic.h，正文标注的头文件路径 c_api/atomic/datamove_atomic.h 正是 9.2.0 之后的路径。"
+---
 # asc_set_atomic_add
 
 ## 产品支持情况

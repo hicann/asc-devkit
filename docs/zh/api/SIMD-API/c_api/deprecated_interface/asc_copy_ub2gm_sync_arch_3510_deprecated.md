@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "已废弃的同步版 UB 到 GM 搬运接口的 950PR&950DT 变体，按字节数搬运连续数据并在返回前同步等待，替代方案为 asc_copy_ub2gm 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代方案中的同步部分"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "与其他指令存在 UB 地址重叠时需插入的同步指令"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "与其他指令存在 UB 地址重叠时需插入的同步指令"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm_arch_3510.md
+    kind: replaced_by
+    condition: "正文声明的替代非同步接口"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_copy_ub2gm and asc_sync)；声明保留，属 deprecated 而非 removed。"
+---
 # asc_copy_ub2gm_sync（NPU架构版本3510，废弃）
 
 ## 产品支持情况

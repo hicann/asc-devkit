@@ -1,3 +1,34 @@
+---
+okftype: reference.type
+description: "Ascend 950PR&950DT上C API寄存器类型的定义页：给出矢量数据寄存器的VL与b8、b16、b32、b64位宽分类，vector_bool掩码寄存器的逐位含义与设置方式，vector_load_unalign、vector_store_unalign非对齐缓冲用法，以及addr_reg地址寄存器的偏移计算和数量上限。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign.md
+    kind: related
+    condition: "对齐搬入接口支持以 addr_reg 作为偏移输入"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign_pre.md
+    kind: related
+    condition: "从非对齐地址搬入前须先用该接口初始化非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器 addr_reg 由该接口族在循环内生成偏移"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_mask/asc_create_mask.md
+    kind: related
+    condition: "掩码寄存器可通过该接口按模式创建"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "寄存器类型定义随 C API 公共头文件拆分迁入最细粒度公共头文件 c_api/defs/type.h：9.0.0 与 9.1.0 各 ref 无 include/c_api 目录，别名位于 impl/c_api/instr_impl/npu_arch_3510/utils_impl/utils_type.h；CANN_9_2_0 Release Notes「公共头文件」节第 87 行说明公共头文件按 defs、reg_compute 等模块拆分并改用最细粒度路径。"
+  - since: "9.2.0"
+    kind: renamed
+    scope: "section:地址寄存器"
+    scope_basis: resolved
+    note: "地址寄存器类型由 iter_reg 更名为 addr_reg（CANN_9_2_0 Release Notes 第 120 行「地址寄存器类型和初始化接口统一更名」、第 56 行「Reg搬入、搬出接口的迭代偏移参数由 iter_reg 迁移为 addr_reg」）；旧名 iter_reg 在 include/c_api/defs/type.h 中保留为带 ASC_DEPRECATED 标记的别名，仍指向 addr_reg，行为不变。"
+---
 # 寄存器类型定义
 
 ## 产品支持情况

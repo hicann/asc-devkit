@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_transto5hd_b8_sync、b16_sync 与 b32_sync 按地址寄存器序列把 NCHW 数据转换成 NC1HWC0 排布，单次 repeat 处理 512 字节并可用于二维矩阵转置，建议改用 asc_transto5hd 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [layout_transform, transpose]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "对齐、地址重叠与 repeatStride 说明按其通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "替代方案中承担同步等待"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_permute_sel/asc_set_va_reg.md
+    kind: requires
+    condition: "需先用该接口把前后各 8 个地址序列关联到地址寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_permute_sel/asc_transto5hd.md
+    kind: replaced_by
+    condition: "建议改用 asc_transto5hd 接口并显式调用 asc_sync"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 把矢量数据搬运等 _sync 复合接口列为废弃，替代路径是 asc_transto5hd 加 asc_sync；接口未移除。"
+---
 # asc_transto5hd_sync（废弃）
 
 ## 产品支持情况

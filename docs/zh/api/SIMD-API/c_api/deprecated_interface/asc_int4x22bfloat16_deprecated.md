@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置类型转换接口，按mask将打包在int4x2_t中的4bit有符号整数转换为bfloat16_t，四个原型分别按索引0至3读取源数据，替代方案为显式四分之一位置重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "vector_int4x2_t 与 vector_bfloat16_t 的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int4x22bfloat16.md
+    kind: replaced_by
+    condition: "替代本页隐式位置原型的显式四分之一位置重载所在页"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "四个隐式位置原型（asc_int4x22bfloat16 及 _v2、_v3、_v4）在 include/c_api/reg_compute/reg_convert.h 中以 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_int4x22bfloat16) 标记废弃，替代方案为用 asc_position_quarter_mode 四分之一位置值显式选位置的当前同名重载（CANN_9_2_0 Release Notes 第 61 行说明该组显式四分之一位置重载为 9.2.0 新增）；废弃不封可用上限。"
+---
 # asc_int4x22bfloat16（废弃）
 
 ## 产品支持情况

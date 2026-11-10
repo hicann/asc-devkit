@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "把矢量元素与标量逐元素比较是否相等，结果按每元素1bit写入目的地址，覆盖half、int32与float，仅在2201架构支持。"
+tag:
+  - roles: [compute]
+  - operations: [comparison]
+  - traits: [scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_eq_scalar
 

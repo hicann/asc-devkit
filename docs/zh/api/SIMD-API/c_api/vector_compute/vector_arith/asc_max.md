@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "对int16_t、half、int32_t或float矢量逐元素取两路源的最大值，支持前n个数据计算与按repeat和DataBlock步长的高维切分两种原型，结果写入目的矢量。"
+tag:
+  - roles: [compute]
+  - operations: [maximum]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵循通用地址重叠约束"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_max
 
 ## 产品支持情况

@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中的half、bfloat16_t、int32_t或float偏置数据搬运到BiasTable Buffer，half与bfloat16_t支持随路转换为float，提供高维切分与按size连续两种搬运模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [conversion, copy]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md
+    kind: related
+    condition: "Bias作为C矩阵初始值时由Mmad读取"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_l12bt__u64_PL1f16_u32"
+    scope_basis: resolved
+    note: "连续数据搬运模式（uint64_t dst, __cbuf__ <dtype>* src, uint32_t size）重载随9.2.0头文件统一与参数化改造新增；9.1.0仅有七参数高维切分原型。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_l12bt__u64_PL1bf16_u32"
+    scope_basis: resolved
+    note: "连续数据搬运模式（uint64_t dst, __cbuf__ <dtype>* src, uint32_t size）重载随9.2.0头文件统一与参数化改造新增；9.1.0仅有七参数高维切分原型。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_l12bt__u64_PL1i32_u32"
+    scope_basis: resolved
+    note: "连续数据搬运模式（uint64_t dst, __cbuf__ <dtype>* src, uint32_t size）重载随9.2.0头文件统一与参数化改造新增；9.1.0仅有七参数高维切分原型。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_l12bt__u64_PL1f32_u32"
+    scope_basis: resolved
+    note: "连续数据搬运模式（uint64_t dst, __cbuf__ <dtype>* src, uint32_t size）重载随9.2.0头文件统一与参数化改造新增；9.1.0仅有七参数高维切分原型。"
+---
 # asc_copy_l12bt（NPU架构版本3510）
 
 ## 产品支持情况

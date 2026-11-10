@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "把转置所需的16个DataBlock地址序列关联到地址寄存器的配置接口，每个地址寄存器关联8个地址，支持int8_t至float共8种数据类型的地址数组，流水类型为PIPE_V。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址对齐与地址重叠约束见该页存储单元说明与通用地址重叠约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射说明"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_va_reg
 
 ## 产品支持情况

@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵搬出辅助配置接口
 
 - **[asc_get_l0c2gm_prequant](asc_get_l0c2gm_prequant.md)**

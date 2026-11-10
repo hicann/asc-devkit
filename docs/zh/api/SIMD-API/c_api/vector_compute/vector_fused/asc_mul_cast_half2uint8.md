@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "把两个 half 源矢量逐元素相乘后按 RINT 舍入并做溢出饱和，结果转换为 uint8_t 写入目的矢量，提供前 n 个元素与高维切分两种计算形式。"
+tag:
+  - roles: [compute]
+  - operations: [conversion, multiply]
+  - traits: [rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_mul_cast_half2uint8
 

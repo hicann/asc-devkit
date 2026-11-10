@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510的三条片上单向通路：UB到L1、L1到UB与L0C到UB，给出asc_copy_ub2l1、asc_copy_l12ub与asc_copy_l0c2ub的参数、DataBlock单位、双目标拆分约束，以及AIC与AIV之间的核间同步要求。"
+---
 # L1/L0C与UB数据搬运
 
 NPU架构版本3510支持L1到UB、UB到L1以及L0C到UB三条片上通路，用于在Cube侧和Vector侧之间交换输入或中间结果。三条通路均为单向通路，分别属于PIPE_MTE1、PIPE_MTE3和PIPE_FIX；NPU架构版本3510不提供UB到L0C的通用搬运。

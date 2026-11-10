@@ -1,3 +1,30 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的每个元素与标量 value 比较并取较大值，结果可写入目的数据寄存器或作为函数返回值，掩码为 0 的元素置零。"
+tag:
+  - roles: [compute]
+  - operations: [maximum]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为 asc_max_scalar 补充 9 个函数返回值形式重载（int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/half/bfloat16_t/float），9.0.0/9.1.0 只有同名引用输出形式；Release Notes CANN_9_2_0 说明本版本为 Reg 接口补充函数返回值形式。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起），与正文头文件路径一致。"
+---
 # asc_max_scalar
 
 ## 产品支持情况

@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "针对PIPE_V执行同步的易用性接口，保证PIPE_V前序指令完成后其他流水的后续指令才能开始；无入参原型已废弃。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "页面声明无入参原型 asc_sync_vec() 改用 asc_sync"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_sync_vec
 
 ## 产品支持情况

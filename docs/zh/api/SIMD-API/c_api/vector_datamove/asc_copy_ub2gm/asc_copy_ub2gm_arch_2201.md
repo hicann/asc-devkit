@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "在2201架构上把数据从UB搬运到GM，提供按size的连续搬运与按burst_count/burst_len及源目的间隔的高维切分搬运两种形式。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: related
+    condition: "正文据此引用存储单元说明"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "有数据依赖时按该页插入同步指令"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_copy_ub2gm（NPU架构版本2201）
 
 ## 产品支持情况

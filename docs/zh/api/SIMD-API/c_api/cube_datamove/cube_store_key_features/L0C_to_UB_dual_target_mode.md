@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明3510上L0C Buffer到UB双目标模式：M×N矩阵按M或N方向拆成两半分别写入两个Vector Core的UB，前半部分写入SUB BLOCK0、后半部分写入SUB BLOCK1，经asc_copy_l0c2ub的asc_dual_dst_mode选择切分方向并需满足行列倍数约束。"
+---
 # L0C Buffer到UB双目标模式
 
 ## 特性说明

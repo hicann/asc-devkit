@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "按mask对矢量寄存器元素逐元素求自然指数，即以e为底、以源元素为指数，结果写入目的寄存器或由函数返回值返回，仅支持half与float。"
+tag:
+  - roles: [compute]
+  - operations: [exponential]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载：CANN 9.2.0 Release Notes 明确列出 asc_exp 补充函数返回值形式重载；探测 inline vector_* asc_exp 首次出现在 9.2.0 的 reg_base_impl/reg_arith_intf_impl.h:1261，对应正文 vector_<dtype> asc_exp(vector_<dtype> src, vector_bool mask)。"
+---
 # asc_exp
 
 ## 产品支持情况

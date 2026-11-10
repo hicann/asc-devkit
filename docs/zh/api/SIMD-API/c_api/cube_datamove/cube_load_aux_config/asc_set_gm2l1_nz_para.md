@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "配置 GM 到 L1 的 ND2Nz 或 DN2Nz 格式转换所需目的地址布局，包括矩阵数量、相邻行、相邻 Z 分形与相邻 Nz 矩阵的步长，供后续搬运接口取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_dn2nz.md
+    kind: configures
+    condition: "配置完成后由该搬运接口在格式转换时使用"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md
+    kind: configures
+    condition: "配置完成后由该搬运接口在格式转换时使用"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_set_gm2l1_nz_para__u16_u16_u16_u16"
+    scope_basis: resolved
+    note: "9.2.0 新增逐项传入 matrix_num、dst_nz_n_stride、dst_nz_c0_stride、dst_nz_matrix_stride 的 4 参数重载（9.1.0 只有 uint64_t config），Release Notes CANN_9_2_0 明确该重载仅支持 Ascend 950PR&950DT 系列产品，调用者无需再自行拼装 64 位配置值；原 uint64_t config 重载保留，两个重载的 @archs 均为 3510。"
+---
 # asc_set_gm2l1_nz_para
 
 ## 产品支持情况

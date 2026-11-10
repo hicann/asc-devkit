@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的float转bfloat16_t寄存器接口：按舍入与饱和后缀组合把float转换为bfloat16_t并按奇偶索引写入目的寄存器，无显式位置参数的原型已废弃，替代方案是显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_float2bfloat16.md
+    kind: replaced_by
+    condition: "显式位置参数重载替代带位置后缀的废弃原型"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: requires
+    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "仅源、目的、掩码三参数并用位置后缀控制写入位置的整族原型自9.2.0进入废弃期，include头对rd/rn/rna/ru/rz及其_sat、_sat_v2重载逐条标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_float2bfloat16_<mode>)；CANN_9_2_0 Release Notes废弃表列出Reg类型转换位置后缀重载；接口保留，未移除。"
+---
 # asc_float2bfloat16（废弃）
 
 ## 产品支持情况

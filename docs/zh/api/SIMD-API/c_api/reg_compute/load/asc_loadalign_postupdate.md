@@ -1,3 +1,41 @@
+---
+okftype: reference.api
+description: "从UB中32字节对齐地址把数据搬入矢量或掩码寄存器并在搬运后自动更新源指针，支持立即数偏移与非连续DataBlock间隔两种搬入模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "int64_t 掩码示例中用 asc_update_addr_reg_b32 生成地址寄存器偏移"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_unpack.md
+    kind: related
+    condition: "dtype 为 int64_t 时需把 b32 掩码展开为 b64 可用掩码"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "UB 源指针参数改为引用传递：CANN 9.1.0 Release Notes 记载 asc_loadalign_postupdate 等 Post Update 接口中需要自动更新的 UB 源指针参数修正为指针引用，确保调用后地址变化对调用方可见（与正文 __ubuf__ <dtype>*& src 的引用形式一致）。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增搬入掩码寄存器的 vector_bool 重载：CANN 9.1.0 Release Notes 记载 asc_loadalign_postupdate 新增 vector_bool 重载，对应函数原型中 asc_loadalign_postupdate(vector_bool& dst, __ubuf__ uint32_t*& src, int32_t offset) 一条。"
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "修复重载缺陷：CANN 9.2.0 Release Notes 记载修复 vector_bool 重载缺少 offset 参数的问题（使公开声明与实现一致），以及带 block_stride、repeat_stride 的重载只更新局部源指针副本的问题，保证连续调用时源地址更新可回写调用方并从正确位置继续搬入。"
+---
 # asc_loadalign_postupdate
 
 ## 产品支持情况

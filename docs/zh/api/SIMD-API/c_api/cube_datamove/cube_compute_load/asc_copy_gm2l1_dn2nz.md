@@ -1,3 +1,39 @@
+---
+okftype: reference.api
+description: "将Global Memory中的DN格式矩阵搬运到L1 Buffer并转换为Nz分形排布，需先用asc_set_gm2l1_nz_para配置目的Nz步长与DN矩阵个数，enable_small_c0可控制数据不足对齐时的自动补零。"
+tag:
+  - roles: [data_movement]
+  - operations: [layout_transform, load]
+  - traits: [aligned_transfer, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: requires
+    condition: "搬入前源数据需按分形格式排布"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+    condition: "地址对齐与搬运粒度要求"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md
+    kind: requires
+    condition: "调用本接口前必须先配置DN2Nz目的Nz矩阵步长与DN矩阵搬运个数"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: requires
+    condition: "l2_cache_mode参数取值与语义"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入同步指令"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_copy_gm2l1_dn2nz__PL1f16_PGf16_u64_loadl2_u16_u32_u64_b"
+    scope_basis: resolved
+    note: "9.2.0新增以 asc_load_l2_cache_mode 强类型枚举配置L2 Cache的重载，参数为 src_d_value、n_value、d_value、src_nd_matrix_stride、enable_small_c0；同形态同时覆盖 int8_t、uint8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、bfloat16_t、int32_t、uint32_t、float 共12种dtype，仅3510。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "overload:asc_copy_gm2l1_dn2nz__PL1f16_PGf16_u64_u8_u16_u32_u64_b"
+    scope_basis: resolved
+    note: "旧参数重载（第3参数 uint64_t loop1_src_stride、第4参数 uint8_t l2_cache_ctl）及对应 asc_copy_gm2l1_dn2nz_sync 自9.2.0起被标记废弃（头文件 ASC_DEPRECATED(9.2.0)）但实现保留、仍可调用；建议改用本页强类型重载并配合 asc_sync。"
+---
 # asc_copy_gm2l1_dn2nz
 
 ## 产品支持情况

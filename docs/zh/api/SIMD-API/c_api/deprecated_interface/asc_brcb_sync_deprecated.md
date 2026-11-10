@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的矢量广播同步接口，每次取源矢量 8 个元素分别填充到目的的 8 个 32 字节 DataBlock，支持 uint16_t 与 uint32_t 并需逐项传入块步长、迭代步长与迭代次数。"
+tag:
+  - roles: [compute]
+  - operations: [broadcast, synchronization]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_broadcast/asc_brcb.md
+    kind: replaced_by
+version: ">=8.5.0"
+version_changes:
+  - since: "9.0.0"
+    kind: parameter_changed
+    scope: "page"
+    scope_basis: kind_default
+    note: "参数形态由 8.5.0 的 const asc_brcb_config& config 改为逐项传入 uint16_t dst_block_stride、uint16_t dst_repeat_stride、uint8_t repeat；history_probe 显示 asc_brcb_config& 形式在 8.5.0 之后不再出现，逐项参数声明自 9.0.0-beta.1 起出现在公开头。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "同步复合接口废弃，改用 asc_brcb 与 asc_sync；include/c_api/composite/vector_compute_composite.h:143,160 的两个逐项参数声明均带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_brcb_sync（废弃）
 
 ## 产品支持情况

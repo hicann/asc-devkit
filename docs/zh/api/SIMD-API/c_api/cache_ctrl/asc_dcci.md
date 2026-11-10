@@ -1,3 +1,40 @@
+---
+okftype: reference.api
+description: "维护标量访问与Global Memory之间的Cache一致性：把DCache中被修改过的脏数据写回GM，并将传入地址所在Cache Line或指定目标域的Cache Line标记为无效，使后续访问重新从GM加载最新数据。"
+tag:
+  - roles: [control]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/scalar_compute/scalar_load/asc_load_dev.md
+    kind: related
+    condition: "使用该接口读GM不经过DCache，无需调用asc_dcci"
+  - path: docs/zh/api/SIMD-API/c_api/scalar_compute/scalar_store/asc_store_dev.md
+    kind: related
+    condition: "使用该接口写GM不经过DCache，无需调用asc_dcci"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: constrained_by
+    condition: "标量读写UB是否经过DCache由CTRL[49]配置，默认1'b0即不经过"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub/asc_copy_gm2ub.md
+    kind: related
+    condition: "DMA搬运UB与GM不经过DCache，不产生本页所述一致性问题"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm/asc_copy_ub2gm.md
+    kind: related
+    condition: "DMA搬运UB与GM不经过DCache，不产生本页所述一致性问题"
+  - path: docs/zh/guide/programming_guide/advanced_programming/memory_model/cache_coherence.md
+    kind: related
+    condition: "DCache与GM缓存一致性成因的正文出处"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.0.0"
+    kind: parameter_changed
+    scope: "param:dst"
+    scope_basis: resolved
+    note: "9.0.0-beta.1 中 asc_dcci_entire_all/asc_dcci_entire_ub/asc_dcci_entire_out/asc_dcci_entire_atomic 的原型为 (__gm__ void* dst)，9.0.0 起改为无参形式；asc_dcci_single 与 asc_ub_dcci_single 仍保留 dst 形参。"
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 起 cache_ctrl.h 复用原子操作头文件的保护宏，包含顺序不当时 asc_dcci_* 声明会被跳过；CANN 9.1.0 Release Notes 记录该问题已修复，修复自 9.1.0 生效。"
+---
 # asc_dcci
 
 ## 产品支持情况

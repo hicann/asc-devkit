@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "按dtype对齐的UB起始地址初始化非对齐寄存器，缓存该地址向低地址对齐后32字节块的数据作为后续非对齐搬入的前置缓存，本身不搬入矢量寄存器。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign.md
+    kind: related
+    condition: "输出的非对齐寄存器作为该接口的前置数据缓存，且两者须使用相同源地址"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadunalign_postupdate.md
+    kind: related
+    condition: "输出的非对齐寄存器作为其连续模式与地址寄存器偏移模式的前置数据缓存"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: related
+    condition: "地址寄存器偏移预处理模式必须先由它生成偏移，b64 时须使用 b32 模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_loadunalign_pre
 
 ## 产品支持情况

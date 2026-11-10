@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "介绍asc_mmad与L0C Buffer搬出接口共用的单元标志机制：以内存块为粒度由硬件标志位指示可读可写以降低同步延迟；说明ENABLE_KEEP保持标志、ENABLE_UPDATE翻转标志时的读写等待行为，给出沿K轴迭代与分多次搬出的配置组合、计算量与搬出量需一致的约束，以及用asc_set_l0c_copy_config重置状态的方法。"
+---
 # UnitFlag
 
 **特性说明：**

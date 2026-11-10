@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "调试用状态查询接口，在asc_icache_preload之后调用，返回ICache预取状态：返回0表示上一次预取已完成、返回1表示预取仍在进行中，供调试与性能分析判断指令预取是否就绪。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_icache_preload.md
+    kind: requires
+    condition: "须在该接口之后调用，返回值才表示该次预取的状态"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.0.0 起 cache_ctrl.h 复用原子操作头文件的保护宏，包含顺序不当时 asc_get_icache_preload_status 等缓存控制声明会被跳过；CANN 9.1.0 Release Notes 记录该问题已修复，修复自 9.1.0 生效。"
+---
 # asc_get_icache_preload_status
 
 ## 产品支持情况

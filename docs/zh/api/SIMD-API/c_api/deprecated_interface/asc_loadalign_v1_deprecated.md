@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "已废弃的无偏移对齐搬入接口，从Unified Buffer对齐搬入并按UNPACKV2、BRCV2、BRCV3三种模式处理数据，需由用户自行更新源地址，共32个按数据类型区分的原型，替代方案为语义命名的新接口。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与地址寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_datablock.md
+    kind: replaced_by
+    condition: "替代BRCV2搬入模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_elem2datablock.md
+    kind: replaced_by
+    condition: "替代BRCV3搬入模式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack4.md
+    kind: replaced_by
+    condition: "替代UNPACKV2搬入模式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "本页 32 个原型在 include/c_api/reg_compute/load/loadalign.h 中按模式分别带 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_loadalign_unpack4)、ASC_DEPRECATED(9.2.0, 2027/09/07, asc_loadalign_brc_datablock)、ASC_DEPRECATED(9.2.0, 2027/09/07, asc_loadalign_brc_elem2datablock) 标记；CANN_9_2_0 Release Notes 第 121 行把 asc_loadalign_brc_v2、brc_v3、unpack_v2 列入废弃替换表；废弃不封可用上限。"
+---
 # asc_loadalign（无偏移，废弃）
 
 ## 产品支持情况

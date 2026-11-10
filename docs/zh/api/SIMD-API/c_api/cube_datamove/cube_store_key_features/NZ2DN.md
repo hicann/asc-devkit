@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明Nz2DN格式转换：将Nz格式矩阵转换为DN格式，给出逐块地址换算伪代码及matrix_num、src_stride、dst_stride、src_nz_fractal_stride等可配置参数，仅Ascend 950PR&950DT系列产品通过搬出接口的enable_nz2dn开启。"
+---
 # NZ2DN
 
 ## 特性说明

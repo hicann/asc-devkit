@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 归约计算
 
 - **[asc_pair_reduce_sum](asc_pair_reduce_sum.md)**

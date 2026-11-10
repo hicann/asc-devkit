@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 类型转换
 
 - **[asc_float2half](asc_float2half.md)**

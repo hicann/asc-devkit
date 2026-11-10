@@ -1,3 +1,19 @@
+---
+okftype: reference.api
+description: "根据比较掩码从两个源矢量中逐元素选择数据的C API接口：掩码位为1取src0、为0取src1，需配合asc_set_cmp_mask使用，提供前n个数据与高维切分两种形式，支持half与float，流水类型为PIPE_V。"
+tag:
+  - roles: [compute]
+  - operations: [selection]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "操作数地址重叠约束见该页通用地址重叠约束节"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_compare/asc_set_cmp_mask.md
+    kind: related
+    condition: "选择规则由该接口设置的比较掩码决定"
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_select
 
 ## 产品支持情况

@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的同步类型转换接口，把 half 数据按 RINT、ROUND、FLOOR、CEIL 或 TRUNC 舍入转换为 int32_t 写入 dst，仅 2201 架构支持，需改用 asc_half2int32 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代本接口原有的同步等待语义"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_convert/asc_half2int32.md
+    kind: replaced_by
+    condition: "替代本接口按舍入模式转换到 int32_t 的能力，需另行插入同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/composite/vector_compute_composite.h 中 asc_half2int32_rna_sync、asc_half2int32_ru_sync、asc_half2int32_rd_sync、asc_half2int32_rn_sync、asc_half2int32_rz_sync（第1317-1369行起）标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_half2int32_* and asc_sync)，正文改用非同步接口加 asc_sync；9.3.0-beta.1 声明仍保留，属废弃而非移除。"
+---
 # asc_half2int32_sync（废弃）
 
 ## 产品支持情况

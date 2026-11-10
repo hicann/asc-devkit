@@ -1,3 +1,23 @@
+---
+okftype: reference.api
+description: "已废弃的 GM 到 UB 非对齐搬运填充值配置接口，设置连续搬运数据块左右两侧需要填补的数据值，替代方案为通用的 asc_set_copy_pad_val。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [fill]
+  - traits: [padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_copy_pad_val.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "接口废弃，改用通用搬运填充值配置接口 asc_set_copy_pad_val；include/c_api/vector_datamove/vector_datamove.h:2513 起的声明带 ASC_DEPRECATED(9.1.0, asc_set_copy_pad_val)，CANN_9_1_0 废弃表第 139 行同源。"
+---
 # asc_set_gm2ub_pad（废弃）
 
 ## 产品支持情况 

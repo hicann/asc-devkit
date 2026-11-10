@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "按掩码对两个源矢量逐元素相乘后累加到目的矢量数据寄存器并写回dst的Reg融合乘加接口，支持有符号、无符号整数、half、bfloat16_t与float，仅在AIV上生效。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束见该页通用约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射说明"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_mula
 
 ## 产品支持情况

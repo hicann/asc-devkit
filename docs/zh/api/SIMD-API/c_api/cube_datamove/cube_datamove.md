@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵计算搬运
 
 - **[概述](overview.md)**

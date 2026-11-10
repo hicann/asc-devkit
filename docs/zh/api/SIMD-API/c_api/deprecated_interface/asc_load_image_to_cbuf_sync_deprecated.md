@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的同步图像搬运接口，将图像数据从Global Memory搬入L1 Buffer并支持顶、底、左、右四个方向的padding，提供int8_t与half两种目的类型重载，替代方案为asc_load_image_to_cbuf配合asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_load_image_to_cbuf.md
+    kind: replaced_by
+    condition: "替代本同步图像搬运接口的非同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间与对齐要求、操作数地址重叠约束见该页对应小节"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: related
+    condition: "与非同步接口配合完成同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "两个目的类型重载均带 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_load_image_to_cbuf and asc_sync) 标记（include/c_api/composite/cube_datamove_composite.h 中对应 @override_id 之前的宏行），替代方案为非同步接口 asc_load_image_to_cbuf 加 asc_sync；本页全部原型均属废弃范围，属整页废弃，不封可用上限。"
+---
 # asc_load_image_to_cbuf_sync（废弃）
 
 ## 产品支持情况

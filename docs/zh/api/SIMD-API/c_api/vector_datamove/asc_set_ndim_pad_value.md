@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "设置asc_ndim_copy_gm2ub常数填充模式填充值的配置接口，支持int8_t到float共9种dtype且须与搬运数据类型一致，仅当padding_mode为true时被取用，最近值填充模式下不生效。"
+tag:
+  - roles: [configuration]
+  - traits: [padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_count.md
+    kind: requires
+    condition: "常数填充模式还需配置loop1至loop4各维填充元素数"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_set_ndim_pad_value
 
 ## 产品支持情况

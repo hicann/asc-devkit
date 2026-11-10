@@ -1,3 +1,14 @@
+---
+okftype: reference.api
+description: "把标量值复制填充到矢量目的地址，提供前n个数据连续计算与非连续高维切分两种模式，覆盖half、bfloat16、float及16与32位整型。"
+tag:
+  - roles: [data_initialization]
+  - operations: [fill]
+  - traits: [scalar_operand]
+dependencies: []
+version: ">=8.5.0"
+version_changes: []
+---
 # asc_duplicate
 
 ## 产品支持情况

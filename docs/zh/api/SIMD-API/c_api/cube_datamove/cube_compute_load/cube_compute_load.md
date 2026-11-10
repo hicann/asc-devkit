@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 矩阵计算的搬入
 
 - **[矩阵搬入总体说明](cube_compute_load_overall_description.md)**

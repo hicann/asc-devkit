@@ -1,3 +1,36 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 无显式位置参数原型说明，把 half 转为 int4x2，支持 rd、rn、rna、ru、rz 舍入与可选 sat 饱和模式，并按 _v2 至 _v4 后缀选择写入索引，应改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_half2int4x2.md
+    kind: replaced_by
+    condition: "使用带显式位置参数的舍入与饱和重载替代位置后缀原型"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "正文据此说明舍入模式与饱和模式"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: constrained_by
+    condition: "开启饱和或非饱和模式时需配置 ctrl 寄存器"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: capability_extended
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "除 FLOOR 外的舍入变体进入公共头：asc_half2int4x2_rn、_rna、_ru、_rz 及其 _sat/_v2 至 _v4 形式在 upstream/9.1.0 的 include/c_api/reg_compute/reg_convert.h 才有公共声明，而 _rd 自 9.0.0-beta.1 已公开；本页函数原型列出这些舍入形式，故登记该扩展。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/reg_compute/reg_convert.h 中 asc_half2int4x2_rd/_rd_sat（第20611-20650行起）及 ru/rn/rna/rz 等无显式位置参数声明标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_half2int4x2_rd / asc_half2int4x2_ru 等)，替代为带位置参数的重载；9.3.0-beta.1 声明仍保留，属废弃而非移除。"
+---
 # asc_half2int4x2（废弃）
 
 ## 产品支持情况

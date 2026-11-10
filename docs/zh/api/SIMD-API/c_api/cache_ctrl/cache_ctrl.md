@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 缓存控制
 
 - **[概述](overview.md)**

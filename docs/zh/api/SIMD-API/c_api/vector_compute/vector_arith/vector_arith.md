@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 基础算术
 
 - **[asc_abs](asc_abs.md)**

@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # 工具接口
 
 - **[概述](overview.md)**

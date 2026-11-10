@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "读取当前饱和控制策略并返回枚举值，常用于临时切换策略前保存原配置或与设置接口做回读校验。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_override_strategy.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_saturation_strategy.md
+    kind: related
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_get_saturation_strategy
 
 ## 产品支持情况

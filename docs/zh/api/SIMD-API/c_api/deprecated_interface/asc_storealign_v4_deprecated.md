@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_storealign_pack_postupdate_v2 以 int32_t offset 压缩搬出 32 位元素低 8 位并在搬出后自动更新目的指针，指针按引用传入且新地址仍需 32 字节对齐，建议改用 asc_storealign_pack_quarter_postupdate。"
+tag:
+  - roles: [data_movement]
+  - operations: [compression, store]
+  - traits: [aligned_transfer, post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/store/asc_storealign_pack_quarter_postupdate.md
+    kind: replaced_by
+    condition: "Release Notes 9.2.0 要求改用该接口表达四分之一宽度的 pack 模式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "Release Notes 9.2.0 废弃表把 asc_storealign_pack_postupdate_v2 列为废弃，替代为 asc_storealign_pack_quarter_postupdate；接口未移除。"
+---
 # asc_storealign_pack_postupdate_v2（废弃）
 
 ## 产品支持情况

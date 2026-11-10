@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "废弃接口页：asc_copy_gm2l1_nd2nz 旧重载及 _sync 形式在 GM 到 L1 Buffer 搬运中把 ND 排布转换为 Nz 分形排布，仅在 Ascend 950PR&950DT 的 AIC 生效，需先配置 Nz 步长，建议改用带 asc_load_l2_cache_mode 的新重载并显式 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, layout_transform]
+  - traits: [aligned_transfer, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_nd2nz_arch_3510.md
+    kind: replaced_by
+    condition: "官方建议改用带 asc_load_l2_cache_mode 参数的新重载并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_nz_para.md
+    kind: requires
+    condition: "调用本接口前需配置 ND2Nz 搬运的目的 Nz 矩阵步长与 ND 矩阵个数"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_wait.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头以 ASC_DEPRECATED(9.2.0) 标记旧常规重载与 _sync 重载，Release Notes 9.2.0 废弃表列出旧参数重载的替代路径为带 asc_load_l2_cache_mode 的重载加 asc_sync；接口仍保留可用，未移除。"
+---
 # asc_copy_gm2l1_nd2nz（NPU架构版本3510，废弃）
 
 ## 产品支持情况

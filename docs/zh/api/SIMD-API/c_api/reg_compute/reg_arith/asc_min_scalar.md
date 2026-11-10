@@ -1,3 +1,35 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器元素与标量 value 比较取较小值，可写入目的寄存器或作为返回值，bfloat16_t 形式自 9.2.0 起提供。"
+tag:
+  - roles: [compute]
+  - operations: [minimum]
+  - traits: [elementwise, scalar_operand]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_min_scalar__Rvbf16_vbf16_bf16_vb"
+    scope_basis: resolved
+    note: "9.2.0 新增 bfloat16_t 引用输出重载（vector_bfloat16_t& dst, vector_bfloat16_t src, bfloat16_t value, vector_bool mask），dtype 集合由 8 种扩到 9 种；Release Notes CANN_9_2_0 明确记录 asc_min_scalar 新增 bfloat16_t 重载。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 同时为 asc_min_scalar 的 9 种 dtype 补充函数返回值形式重载（9.0.0/9.1.0 只有引用输出形式），属 Release Notes 9.2.0「补充函数返回值形式」的覆盖范围。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）。"
+---
 # asc_min_scalar
 
 ## 产品支持情况

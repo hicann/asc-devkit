@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "将 L1 Buffer 数据按连续数据块个数、块长度与源/目间隔搬运到 Unified Buffer，可指定目的 Vector Core，搬运时格式与内容保持不变，仅在 AIC 上执行。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [aligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: requires
+    condition: "与其它指令存在数据依赖时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:sub_blockid"
+    scope_basis: resolved
+    note: "sub_blockid 由 bool 调整为 int8_t，取值 0 选择 AIV0、1 选择 AIV1；该调整仅涉及 Ascend 950PR&950DT 原型，9.1.0 的 bool 形式不再出现在当前 include 声明中。"
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:burst_count"
+    scope_basis: resolved
+    note: "搬运参数名与含义对齐：9.1.0 的 n_burst 改为 burst_count、len_burst 改为 burst_len（单位仍为 32 字节），参数类型与取值范围不变；Release Notes CANN_9_2_0 记录为「其余搬运参数名称同步调整为与功能含义一致的 burst_count 和 burst_len」。"
+---
 # asc_copy_l12ub
 
 ## 产品支持情况

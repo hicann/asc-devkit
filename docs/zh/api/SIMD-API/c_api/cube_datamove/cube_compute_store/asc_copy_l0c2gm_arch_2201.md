@@ -1,3 +1,36 @@
+---
+okftype: reference.api
+description: "在Atlas A3与Atlas A2系列产品上将L0C Buffer中量化处理后的矩阵结果搬出到Global Memory，覆盖9种随路量化模式，可选随路ReLU与F32通道拆分，并按需开启NZ2ND格式转换。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: constrained_by
+    condition: "unit_flag_mode取值需与MMAD类指令的unit_flag设置配合"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12fb_arch_2201.md
+    kind: requires
+    condition: "随路矢量量化时把量化参数搬入Fixpipe Buffer，仅Atlas A3系列产品和Atlas A2系列产品"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: requires
+    condition: "矢量量化时配置量化参数起始地址索引"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_params.md
+    kind: requires
+    condition: "开启NZ2ND时配置矩阵数量与矩阵间隔"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_prequant.md
+    kind: requires
+    condition: "随路scalar量化时设置量化参数"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/NZ2ND.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_key_features/accompanying_quantization.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间与对齐、通用地址重叠约束"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l0c2gm（NPU架构版本2201）
 
 ## 产品支持情况

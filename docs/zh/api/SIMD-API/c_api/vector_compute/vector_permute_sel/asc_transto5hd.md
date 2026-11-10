@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "NCHW到NC1HWC0数据格式转换接口族，也可用于二维矩阵数据块转置，按数据位宽分为b8、b16、b32三种原型，单次Repeat处理512字节即16个DataBlock，流水类型为PIPE_V。"
+tag:
+  - roles: [data_movement]
+  - operations: [layout_transform]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "地址对齐、地址重叠与 repeatStride 说明见该页对应小节"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_permute_sel/asc_set_va_reg.md
+    kind: requires
+    condition: "dst/src 地址寄存器需先用该接口关联地址序列"
+  - path: docs/zh/guide/technical_appendix/concepts_and_terms/neural_networks_and_operators/data_layout.md
+    kind: related
+    condition: "NCHW与NC1HWC0数据格式说明"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "asc_transto5hd_b8、asc_transto5hd_b16、asc_transto5hd_b32 由宏形式转为正式函数声明并加入公共头文件（函数实现移入 impl/c_api/memory_base_impl/vector_permute_sel_intf_impl.h，声明进入最细粒度公共头文件 include/c_api/vector_compute/compute/vector_permute_sel.h）；依据 CANN_9_2_0 Release Notes 第 31 行「正式加入公共头文件」与 upstream/9.2.0 首次出现未注释的函数声明。"
+---
 # asc_transto5hd
 
 ## 产品支持情况

@@ -1,3 +1,66 @@
+---
+okftype: reference.api
+description: "带量化系数的矩阵乘加接口，在AIC上完成 C = (ScaleA⊗A) × (ScaleB⊗B) + C 的计算，A、B矩阵位于L0A、L0B Buffer，量化系数矩阵ScaleA、ScaleB需按固定地址映射预先搬入L0A_MX、L0B_MX Buffer，K方向每32个元素共享一个量化系数。仅Ascend 950PR&950DT系列产品支持。"
+tag:
+  - roles: [compute]
+  - operations: [matrix_multiply_accumulate]
+  - traits: [quantization, saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/aux_cube_fractal_format_details.md
+    kind: related
+    condition: "Bias与Scale矩阵的排布格式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: related
+    condition: "输入矩阵的排布格式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_m.md
+    kind: configures
+    condition: "开启UnitFlag且不涉及Nz2ND随路格式转换与Channel Merge时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_n.md
+    kind: configures
+    condition: "开启UnitFlag且搬出开启Nz2ND随路格式转换或触发B8/B4量化的Channel Merge时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/GEMV.md
+    kind: related
+    condition: "M为1时的GEMV向量布局与使用场景"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: related
+    condition: "UnitFlag同步机制与迭代场景"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/overview/cube_compute_flow.md
+    kind: related
+    condition: "数据准备、矩阵计算与结果搬出的衔接流程"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md
+    kind: requires
+    condition: "使用显式传入Bias起始地址的重载时，需先将Bias数据搬运到BiasTable Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md
+    kind: requires
+    condition: "调用本接口前需将ScaleA矩阵搬入L0A_MX Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md
+    kind: requires
+    condition: "调用本接口前需将ScaleB矩阵搬入L0B_MX Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: related
+    condition: "需要清除UnitFlag产生的残留状态时"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: configures
+    condition: "通过CTRL寄存器的CTRL[48]比特位选择inf/nan的饱和或非饱和计算模式"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: requires
+    condition: "输入矩阵沿K轴分块累加到同一块L0C Buffer且 (m/16)*(n/16) 小于10时，需在相邻两次矩阵乘加之间插入PIPE_M同步"
+  - path: docs/zh/api/appendix/mmad_mx_interface_boundary_value_summary.md
+    kind: related
+    condition: "边界值计算结果汇总"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:unit_flag_mode"
+    scope_basis: resolved
+    note: "UnitFlag 入参由 uint8_t unit_flag 改为强类型枚举 asc_unit_flag_mode unit_flag_mode；Scale 矩阵仍按 a_matrix/b_matrix 起始地址除以16 的固定映射从 L0A_MX/L0B_MX 读取，旧 uint8_t 原型保留为废弃重载（Release Notes CANN_9_2_0.md 废弃表与 upstream/9.2.0 声明一致）"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增显式传入 Bias 起始地址（uint64_t bias）的重载，Bias 支持 float，调用前经 asc_copy_l12bt 搬到 BiasTable Buffer；该重载不含 c_matrix_source 与 c_matrix_init_val，仅 Ascend 950PR&950DT系列产品（3510）支持"
+---
 # asc_mmad_mx
 
 ## 产品支持情况

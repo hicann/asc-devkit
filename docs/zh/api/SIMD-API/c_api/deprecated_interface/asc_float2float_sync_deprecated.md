@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "已废弃的float精度转换同步接口，按RINT、ROUND、FLOOR、CEIL或TRUNC舍入模式对float矢量做精度转换并等待PIPE_V，替代方案为对应的非同步接口配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_convert/asc_float2float.md
+    kind: replaced_by
+    condition: "非同步精度转换接口替代本页同步接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对rn/rd/ru/rna/rz五个同步重载逐条标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_float2float_<mode> and asc_sync)；CANN_9_2_0 Release Notes废弃表覆盖该类*_sync复合接口；接口保留且仅2201可用。"
+---
 # asc_float2float_sync（废弃）
 
 ## 产品支持情况

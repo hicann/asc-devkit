@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "按 src0 乘 dst 加 src1 的公式逐元素计算并写回目的矢量的乘加接口，支持 half 与 float，提供前 n 个元素与高维切分两种计算形式。"
+tag:
+  - roles: [compute]
+  - operations: [fused_multiply_add]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "需遵守通用地址重叠约束"
+version: ">=9.0.0"
+version_changes: []
+---
 
 # asc_mul_add
 

@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明矩阵搬出时的随路ReLU能力：以asc_relu_pre_mode的NONE、NORMAL、SCALAR、VECTOR四种模式描述激活方式并给出系数配置入口；Atlas A3/A2使用整数relu_pre参数，不能直接套用Ascend 950PR&950DT专用的配置重载。"
+---
 # 随路ReLU
 
 ## 特性说明

@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 按位或浮点重载，在掩码 mask 控制下对两个矢量数据寄存器逐位或并将结果写入目的寄存器，支持 half 与 float，仅在 AIV 生效，替代方案为等位宽整数重载。"
+tag:
+  - roles: [compute]
+  - operations: [bitwise_or]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_logic/asc_or.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "浮点类型重载（half、float）废弃，改用相同位宽的整数重载；include/c_api/reg_compute/compute/reg_logic.h:1589,1602 附近的两个声明均带 ASC_DEPRECATED(9.2.0)，CANN_9_2_0 废弃表第 128 行同源。"
+---
 # asc_or（废弃）
 
 ## 产品支持情况

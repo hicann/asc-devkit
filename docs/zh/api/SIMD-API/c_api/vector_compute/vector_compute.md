@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # Memory矢量计算
 
 - **[概述](overview.md)**

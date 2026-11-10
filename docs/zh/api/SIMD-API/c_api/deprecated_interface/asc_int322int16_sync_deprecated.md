@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的同步类型转换接口，把 int32_t 源向量按 count 个元素转换为 int16_t 写入 dst，运行在 PIPE_V 且仅 2201 架构支持，需改用 asc_int322int16 配合 asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代本接口原有的同步等待语义"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_convert/asc_int322int16.md
+    kind: replaced_by
+    condition: "替代本接口的 int32 到 int16 转换能力，需另行插入同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/composite/vector_compute_composite.h:2874 标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_int322int16 and asc_sync)，正文改用非同步接口加 asc_sync；9.3.0-beta.1 声明仍保留，属废弃而非移除，不设版本上限。"
+---
 # asc_int322int16_sync（废弃）
 
 ## 产品支持情况

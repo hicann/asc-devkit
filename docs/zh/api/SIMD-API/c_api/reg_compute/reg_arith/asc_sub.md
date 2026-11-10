@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "按掩码对两个矢量数据寄存器逐元素求差，支持无借位输出与带借位输出两种形式，后者额外把补码加法进位写入目的掩码寄存器。"
+tag:
+  - roles: [compute]
+  - operations: [subtract]
+  - traits: [elementwise, supports_carry_output]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_subc.md
+    kind: related
+    condition: "正文说明输出 carry 的适用场景需参考该带输入借位接口"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "9.2.0 为无借位输出减法补充 9 个函数返回值形式重载（int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/half/bfloat16_t/float），9.0.0/9.1.0 只有引用输出形式；带借位输出减法（vector_bool& carry 在前）没有返回值形式，include 中始终为 int32_t/uint32_t 两条引用输出声明。Release Notes CANN_9_2_0 的清单列出 asc_sub。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_arith.h（9.2.0 起）。"
+---
 # asc_sub
 
 ## 产品支持情况

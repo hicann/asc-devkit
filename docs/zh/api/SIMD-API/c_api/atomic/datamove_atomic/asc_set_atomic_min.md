@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "为后续目的地址为 Global Memory 的数据搬运开启原子比较取小：与 GM 已有数据比较后把最小值写回。提供 int8、int16、int32、float16、bfloat、float 六种无参原型选择数据类型，需与后续搬运一致；开启前 GM 数据不会自动清零，可用 asc_disable_dma_atomic 关闭。"
+tag:
+  - roles: [data_movement_configuration]
+  - operations: [minimum]
+  - traits: [atomic]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/datamove_atomic/asc_disable_dma_atomic.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/atomic/key_features.md
+    kind: related
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: arch_support_extended
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "asc_set_atomic_min_int8、asc_set_atomic_min_int16 与旧名 asc_set_atomic_min_int 自 9.1.0 起在 Ascend 950PR&950DT（3510）可用：upstream/9.1.0 的 impl/c_api/instr_impl/npu_arch_3510/atomic_impl.h 新增三者定义；float、float16、bfloat 取小原型在 3510 自 9.0.0 已可用，Release Notes 9.1.0 增强节未列出 min 族，此处依据 3510 实现侧证据。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 asc_set_atomic_min_int32()，替代 9.2.0 起被标记废弃的 asc_set_atomic_min_int()；Release Notes 9.2.0 新增特性条目同时点名 asc_set_atomic_min_int32，两者均为 int32_t 原子取小。"
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明由 include/c_api/atomic/atomic.h 迁入按模块拆分的 include/c_api/atomic/datamove_atomic.h，正文头文件路径随之更新。"
+---
 # asc_set_atomic_min
 
 ## 产品支持情况

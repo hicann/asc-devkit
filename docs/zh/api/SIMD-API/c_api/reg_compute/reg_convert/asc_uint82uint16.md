@@ -1,3 +1,35 @@
+---
+okftype: reference.api
+description: "根据掩码将源矢量数据寄存器中偶数或奇数索引的uint8_t元素转换为uint16_t，结果写入目的矢量数据寄存器或由函数返回，位置由编译期标签asc_position_mode选择，掩码位为0的目的元素置0，仅在AIV上生效。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_position_mode.md
+    kind: requires
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint16__vu8_vb_icposeven"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载 asc_uint82uint16(src, mask, src_pos)，src_pos 固定为 asc_position_mode::EVEN，返回 vector_uint16_t，读取偶索引 2*i 的元素。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_uint82uint16__vu8_vb_icposodd"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载，src_pos 固定为 asc_position_mode::ODD，读取奇索引 2*i+1 的元素，取代 asc_uint82uint16_v2 的位置后缀写法。"
+  - since: "9.2.0"
+    kind: parameter_added
+    scope: "param:src_pos"
+    scope_basis: resolved
+    note: "引用输出原型新增第四参数 src_pos（std::integral_constant<asc_position_mode, EVEN/ODD>），位置改由编译期标签显式表达；三参数原型 asc_uint82uint16/_v2 自本版本起以 ASC_DEPRECATED(9.2.0) 标记，仅废弃未移除，不设可用上限。"
+---
 # asc_uint82uint16
 
 ## 产品支持情况

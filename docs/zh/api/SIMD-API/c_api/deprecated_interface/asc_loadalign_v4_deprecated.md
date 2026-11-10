@@ -1,3 +1,36 @@
+---
+okftype: reference.api
+description: "已废弃的Post Update对齐搬入接口，从Unified Buffer连续对齐搬入并由硬件自动更新源地址，源地址按引用传递，支持三种搬入模式共32个原型，替代方案为对应的语义命名Post Update接口。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer, datablock_granularity, post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_datablock_postupdate.md
+    kind: replaced_by
+    condition: "替代BRCV2的Post Update形式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_brc_elem2datablock_postupdate.md
+    kind: replaced_by
+    condition: "替代BRCV3的Post Update形式"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/load/asc_loadalign_unpack4_postupdate.md
+    kind: replaced_by
+    condition: "替代UNPACKV2的Post Update形式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "param:src"
+    scope_basis: resolved
+    note: "src 由普通指针改为指针引用：变更前为 asc_loadalign_*_postupdate_v*(..., __ubuf__ <dtype>* src, int32_t offset)（9.0.0 形态），变更后为 (..., __ubuf__ <dtype>*& src, int32_t offset)，使 Post Update 后的地址变化对调用方可见；依据 CANN_9_1_0 Release Notes 第 93 行「将 asc_loadalign_postupdate、asc_loadalign_brc_postupdate(_v2/_v3)、asc_loadalign_unpack_postupdate(_v2) 等中需要自动更新的 UB 源指针参数修正为指针引用」以及 9.0.0 与 9.1.0 声明对比。"
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "本页 32 个 Post Update 原型在 include/c_api/reg_compute/load/loadalign.h 中按模式分别带 ASC_DEPRECATED(9.2.0, 2027/09/07, asc_loadalign_unpack4_postupdate)、asc_loadalign_brc_datablock_postupdate、asc_loadalign_brc_elem2datablock_postupdate 标记；CANN_9_2_0 Release Notes 第 121 行把后缀 Post Update 重载列入废弃替换表；废弃不封可用上限。"
+---
 # asc_loadalign（Post Update，废弃）
 
 ## 产品支持情况

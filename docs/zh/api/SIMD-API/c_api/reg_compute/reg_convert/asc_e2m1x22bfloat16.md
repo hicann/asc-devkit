@@ -1,3 +1,35 @@
+---
+okftype: reference.api
+description: "把fp4x2_e2m1_t矢量按src_quarter_pos标签从索引0、4、8或1、5、9等离散四分之一位置读取并转换为bfloat16_t，结果写入目的寄存器或作为返回值，仅在AIV生效。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "需遵循Reg矢量计算C API通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "源类型别名由vector_f4e2m1x2规范为vector_fp4x2_e2m1_t（与CANN_9_1_0同族类型别名修正同批次）；接口能力本身在9.0.0已存在。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增通过函数返回值返回结果的重载（返回vector_bfloat16_t）；引用参数形式自9.0.0起可用，9.2.0两形式合计8条声明。"
+  - since: "9.3.0-beta.1"
+    kind: parameter_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "读取位置改为显式编译期标签src_quarter_pos（std::integral_constant<asc_position_quarter_mode,...>四个离散位置）；原位置后缀原型自9.2.0起废弃，见deprecated_interface对应页。"
+---
 # asc_e2m1x22bfloat16
 
 ## 产品支持情况

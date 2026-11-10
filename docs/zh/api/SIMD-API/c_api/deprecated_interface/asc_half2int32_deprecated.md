@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 位置后缀原型说明，按接口后缀读取 half 源寄存器的偶数或奇数索引元素，并按 rd、rn、rna、ru 或 rz 舍入转换为 int32 写入目的寄存器，应改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [rounding_mode, widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_half2int32.md
+    kind: replaced_by
+    condition: "使用带显式位置参数的舍入重载替代位置后缀原型"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "正文据此说明各舍入模式含义"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/reg_compute/reg_convert.h 中无位置后缀的 asc_half2int32_rd__Rvi32_vf16_vb（第18811-18818行）与 _v2__Rvi32_vf16_vb（第21406-21428行起）等声明标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_half2int32_rd / asc_half2int32_rn)，替代为带 ASC_POSITION_EVEN/ODD 的重载；9.3.0-beta.1 声明仍保留，属废弃而非移除。"
+---
 # asc_half2int32（废弃）
 
 ## 产品支持情况

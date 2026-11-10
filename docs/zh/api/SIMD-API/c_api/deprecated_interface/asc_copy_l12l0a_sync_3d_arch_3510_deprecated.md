@@ -1,3 +1,34 @@
+---
+okftype: reference.api
+description: "废弃接口页：3510 架构下 asc_copy_l12l0a_sync 的 3D 重载把 NC1HWC0 的 Feature Map 做 Image to Column 展开后按指定数据块搬入 L0A Buffer，也可用于 2D 格式搬运，需预先配置 fmatrix、padding 与 repeat 寄存器，建议改用非同步接口加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [img2col, load, transpose]
+  - traits: [aligned_transfer, high_dimensional]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md
+    kind: replaced_by
+    condition: "建议改用对应的非同步 3D 接口并显式调用 asc_sync"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md
+    kind: requires
+    condition: "3D 搬运前需配置填充值与填充模式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix.md
+    kind: requires
+    condition: "3D img2col 前需配置 Feature Map 的描述与四周 padding"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md
+    kind: requires
+    condition: "必须先配置 dst_stride，使用 repeat 模式时还需配置方向、次数与步长"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_notify.md
+    kind: requires
+    condition: "目的地址与其他指令重叠时需插入同步指令串行化"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include 头在 asc_copy_l12l0a_sync 声明前标注 ASC_DEPRECATED(9.2.0)，替代路径是非同步 3D 接口加 asc_sync；接口未移除。"
+---
 # asc_copy_l12l0a_sync（NPU架构版本3510，3D矩阵搬运，废弃）
 
 ## 产品支持情况

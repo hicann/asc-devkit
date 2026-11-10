@@ -1,3 +1,27 @@
+---
+okftype: reference.api
+description: "已废弃的同步版 UB 到 L1 Buffer 连续搬运接口，搬运完成后执行同步，仅在 AIV 上生效且非 AIV 调用直接返回，替代方案为 asc_copy_ub2l1 加 asc_sync。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "存储单元空间大小与对齐要求"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: replaced_by
+    condition: "替代方案中的同步部分"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2l1.md
+    kind: replaced_by
+    condition: "正文声明的替代非同步接口"
+version: ">=9.1.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "9.2.0 起 include 标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_copy_ub2l1 and asc_sync)，正文同步给出替代方案；声明保留，属 deprecated 而非 removed。"
+---
 # asc_copy_ub2l1_sync（废弃）
 
 ## 产品支持情况

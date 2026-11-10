@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的矢量除法同步接口，对half或float矢量按元素计算src0除以src1并等待PIPE_V完成，替代方案为asc_div配合asc_sync；使用时需注意除0错误与32字节地址对齐。"
+tag:
+  - roles: [compute]
+  - operations: [divide]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_arith/asc_div.md
+    kind: replaced_by
+    condition: "非同步除法接口替代本页同步接口"
+version: ">=8.5.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对half与float两个重载均标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_div and asc_sync)；CANN_9_2_0 Release Notes废弃表列出该类*_sync复合接口；废弃不封闭可用范围，Atlas A2/A3仍可使用。"
+---
 # asc_div_sync（废弃）
 
 ## 产品支持情况

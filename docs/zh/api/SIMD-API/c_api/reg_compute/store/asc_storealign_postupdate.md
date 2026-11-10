@@ -1,3 +1,38 @@
+---
+okftype: reference.api
+description: "把矢量或掩码寄存器数据连续对齐搬出到UB并在搬出后自动累加目的地址指针，矢量场景支持立即数偏移与非连续DataBlock模式，掩码场景按字节偏移更新。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [aligned_transfer, post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "目的指针改为引用传递：CANN 9.1.0 Release Notes 记载 asc_storealign_postupdate 等接口中需要自动更新的 UB 目的指针参数修正为指针引用，确保调用后地址变化对调用方可见（对应正文 __ubuf__ <dtype>*& dst）。"
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增 vector_bool 输出重载：CANN 9.1.0 Release Notes 明确列出 asc_storealign_postupdate 新增 vector_bool 输出重载，对应正文掩码寄存器立即数偏移搬出模式。"
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "page"
+    scope_basis: kind_default
+    note: "UB 目的地址改为引用传递：CANN 9.2.0 Release Notes 再次记载 asc_storealign_postupdate 的 UB 目的地址改为引用传递，确保接口执行后的更新结果可回写调用方。"
+---
 # asc_storealign_postupdate
 
 ## 产品支持情况

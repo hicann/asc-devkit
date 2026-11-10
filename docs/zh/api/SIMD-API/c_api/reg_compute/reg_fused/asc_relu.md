@@ -1,3 +1,37 @@
+---
+okftype: reference.api
+description: "根据掩码对源矢量逐元素执行ReLU的Reg融合激活接口，负值置0，提供写入dst引用与函数返回值两种形式，支持half、int32_t与float，仅在AIV上生效。"
+tag:
+  - roles: [compute]
+  - operations: [relu]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束见该页通用约束节"
+  - path: docs/zh/guide/programming_guide/language_extension/simd_builtin_keywords.md
+    kind: related
+    condition: "产品型号与NPU架构映射说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_relu__vf16_vb"
+    scope_basis: resolved
+    note: "新增 half 数据的函数返回值形式重载 asc_relu(vector_half, vector_bool)，mask 为 0 的元素在返回值中置 0；依据 CANN_9_2_0 Release Notes 第 54 行（该行点名 asc_relu 属补充函数返回值形式重载的 Reg 融合接口）与 upstream/9.2.0 首次出现的该声明。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_relu__vi32_vb"
+    scope_basis: resolved
+    note: "新增 int32_t 数据的函数返回值形式重载 asc_relu(vector_int32_t, vector_bool)，与 half 返回值重载同批加入。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_relu__vf32_vb"
+    scope_basis: resolved
+    note: "新增 float 数据的函数返回值形式重载 asc_relu(vector_float, vector_bool)，与其余返回值重载同批加入。"
+---
 # asc_relu
 
 ## 产品支持情况

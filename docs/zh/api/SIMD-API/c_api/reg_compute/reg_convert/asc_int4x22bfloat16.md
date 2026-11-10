@@ -1,3 +1,57 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的int4x2_t元素转换为bfloat16_t元素，同一 int4x2_t 内两个4bit整数共用 mask 一位，为1时转换为两个。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, split_high_low]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__Rvbf16_vi4x2_vb_icposqfirst"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__Rvbf16_vi4x2_vb_icposqsecond"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__Rvbf16_vi4x2_vb_icposqthird"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__Rvbf16_vi4x2_vb_icposqfourth"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__vi4x2_vb_icposqfirst"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__vi4x2_vb_icposqsecond"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__vi4x2_vb_icposqthird"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_int4x22bfloat16__vi4x2_vb_icposqfourth"
+    scope_basis: resolved
+    note: "新增显式四分之一位置标签重载（asc_position_quarter_mode），9.0.0 仅有位置模式重载；参数与返回值形式保持不变。"
+---
 # asc_int4x22bfloat16
 
 ## 产品支持情况

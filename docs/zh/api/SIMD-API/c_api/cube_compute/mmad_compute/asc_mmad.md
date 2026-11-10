@@ -1,3 +1,77 @@
+---
+okftype: reference.api
+description: "矩阵乘加核心接口，在AIC上完成 C = A×B + C 的计算，A、B、C矩阵分别位于L0A、L0B、L0C Buffer。支持3510与2201两类架构的数据类型组合、分形排布和K方向对齐规则，可通过UnitFlag、GEMV及显式Bias起始地址控制计算与结果搬出。"
+tag:
+  - roles: [compute]
+  - operations: [matrix_multiply_accumulate]
+  - traits: [saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/aux_cube_fractal_format_details.md
+    kind: related
+    condition: "Bias矩阵的排布格式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/cube_compute_fractal_intro/key_fractal_format_details.md
+    kind: related
+    condition: "输入矩阵的排布格式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_disable_hf32.md
+    kind: configures
+    condition: "需要关闭HF32计算模式时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_enable_hf32.md
+    kind: configures
+    condition: "FP32输入需要开启HF32计算模式时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_m.md
+    kind: configures
+    condition: "开启UnitFlag且不涉及Nz2ND随路格式转换与Channel Merge时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_aux_config/asc_set_mmad_direction_n.md
+    kind: configures
+    condition: "开启UnitFlag且搬出开启Nz2ND随路格式转换或触发B8/B4量化的Channel Merge时"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/GEMV.md
+    kind: related
+    condition: "M为1时的GEMV向量布局与使用场景"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/HF32.md
+    kind: related
+    condition: "FP32输入的计算模式及精度说明"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/UnitFlag.md
+    kind: related
+    condition: "UnitFlag同步机制与迭代场景"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/mmad_compute_key_features/k_direction_alignment_constraint.md
+    kind: related
+    condition: "2201架构转置输入场景的K方向对齐约束"
+  - path: docs/zh/api/SIMD-API/c_api/cube_compute/overview/cube_compute_flow.md
+    kind: related
+    condition: "数据准备、矩阵计算与结果搬出的衔接流程"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12bt_arch_3510.md
+    kind: requires
+    condition: "使用显式传入Bias起始地址的重载时，需先将Bias数据搬运到BiasTable Buffer"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_store_aux_config/asc_set_l0c_copy_config.md
+    kind: related
+    condition: "需要清除UnitFlag产生的残留状态时"
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "L0C、L0A、L0B、BiasTable Buffer容量与操作数起始地址的存储单元约束"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: configures
+    condition: "通过CTRL寄存器的CTRL[48]比特位选择inf/nan的饱和或非饱和计算模式"
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_pipe.md
+    kind: requires
+    condition: "输入矩阵沿K轴分块累加到同一块L0C Buffer且 (m/16)*(n/16) 小于10时，需在相邻两次矩阵乘加之间插入PIPE_M同步"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "首次新增 3510（Ascend 950PR&950DT系列产品）原型：upstream/9.1.0 的 include/c_api/cube_compute/cube_compute.h:199 起在 __NPU_ARCH__ == 3510 分支（第 129 行起）声明 asc_mmad，参数集为 m/k/n、uint8_t unit_flag、disable_gemv、c_matrix_source、c_matrix_init_val（无 k_direction_align），实现见 impl/c_api/instr_impl/npu_arch_3510/cube_compute_impl.h:166；upstream/9.0.0 的同一分支只声明 asc_mmad_mx，无 asc_mmad，故 3510 侧自 9.1.0 起可用，数据类型组合含 hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t（与 CANN_9_1_0.md 矩阵计算节一致）。"
+  - since: "9.2.0"
+    kind: parameter_changed
+    scope: "param:unit_flag_mode"
+    scope_basis: resolved
+    note: "UnitFlag 入参由 uint8_t unit_flag 改为强类型枚举 asc_unit_flag_mode unit_flag_mode，2201 与 3510 原型同步调整（参数名同时由 left_height/n_dim/right_width 调整为 m/k/n）；旧 uint8_t（含 feat_offset）原型保留为废弃重载，不再在本页展示（Release Notes CANN_9_2_0.md 废弃表与 upstream/9.2.0 声明一致）"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增显式传入 Bias 起始地址（uint64_t bias）的重载，用 BiasTable Buffer 中的 Bias 矩阵初始化结果矩阵，该重载以 disable_gemv 取代 c_matrix_source 与 c_matrix_init_val，仅 Ascend 950PR&950DT系列产品（3510）支持"
+---
 # asc_mmad
 
 ## 产品支持情况

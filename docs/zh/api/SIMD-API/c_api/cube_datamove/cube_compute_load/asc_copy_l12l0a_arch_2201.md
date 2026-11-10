@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "将L1 Buffer中的512字节分形矩阵搬入L0A Buffer，包含2D高维切分搬运与3D im2col搬运两种模式，支持int4b_t到float多种数据类型。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, img2col]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l12l0a_3d_padding.md
+    kind: requires
+    condition: "3D搬运需先配置填充值与填充模式"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_fmatrix.md
+    kind: requires
+    condition: "3D搬运需先配置Feature Map属性"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_copy_l12l0a（NPU架构版本2201）
 
 ## 产品支持情况

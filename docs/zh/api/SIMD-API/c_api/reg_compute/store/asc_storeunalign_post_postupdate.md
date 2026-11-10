@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "把非对齐寄存器中暂存的尾块写入UB并在写入后自动更新目的地址，用于自动维护地址的连续非对齐搬出收尾。"
+tag:
+  - roles: [data_movement]
+  - operations: [store]
+  - traits: [post_update, unaligned_transfer]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与非对齐寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: related
+    condition: "与其他指令存在数据依赖时插入同步指令串行化"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/store/asc_storeunalign_postupdate.md
+    kind: related
+    condition: "配合其立即数偏移模式完成收尾"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: capability_extended
+    scope: "page"
+    scope_basis: kind_default
+    note: "新增 int4b_t、vector_int4x2_t 数据重载：CANN 9.1.0 Release Notes 明确列出 asc_storeunalign_post_postupdate 新增低精度重载，对应正文 dtype 列表中的 int4b_t。"
+---
 # asc_storeunalign_post_postupdate
 
 ## 产品支持情况

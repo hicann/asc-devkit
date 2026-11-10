@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "同一AI Core内全部AIV组内同步的到达侧接口，与asc_sync_subblock_wait配对实现模式1同步：仅AIV可调用，指定流水前序指令完成后通知调度模块，使各AIV的flag_id计数器加1。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_subblock_wait.md
+    kind: requires
+    condition: "必须与该等待侧成对使用且flag_id完全一致，否则出现未定义行为"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "四种核间同步模式与模式1的总体说明"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_sync_subblock_arrive
 
 ## 产品支持情况

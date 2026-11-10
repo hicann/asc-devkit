@@ -1,3 +1,25 @@
+---
+okftype: reference.api
+description: "单AI Core内AIC与全部AIV核间同步的到达侧接口，与asc_sync_block_wait配对实现模式2同步：指定流水前序指令完成后通知调度模块，使对应flag_id计数器加1，且不阻塞本核流水。"
+tag:
+  - roles: [control]
+  - operations: [synchronization]
+  - traits: [inter_core_synchronization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_block_wait.md
+    kind: requires
+    condition: "必须与该等待侧成对使用且flag_id完全一致，否则出现未定义行为"
+  - path: docs/zh/api/SIMD-API/c_api/sync/system_sync_overview.md
+    kind: related
+    condition: "四种核间同步模式与模式2的总体说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "section:参数说明"
+    scope_basis: resolved
+    note: "由9.0.0的asc_sync_block_arrive(pipe, mode, flagID)调整为asc_sync_block_arrive(pipe, flag_id)：删除mode参数，并把flagID统一命名为flag_id。"
+---
 # asc_sync_block_arrive
 
 ## 产品支持情况

@@ -1,3 +1,42 @@
+---
+okftype: reference.api
+description: "设置标量单元访问Global Memory时的L2 Cache管理策略：传入asc_load_l2_cache_mode配置标量读路径，传入asc_store_l2_cache_mode配置标量写路径，设置后持续生效直至再次调用本接口修改。"
+tag:
+  - roles: [configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/atomic/scalar_atomic/scalar_atomic.md
+    kind: configures
+    condition: "store重载对作用范围内的标量原子操作生效"
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_datacache_preload.md
+    kind: configures
+    condition: "load重载对该预取接口生效"
+  - path: docs/zh/api/SIMD-API/c_api/cache_ctrl/asc_icache_preload.md
+    kind: configures
+    condition: "load重载对该指令预取接口生效"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_load_l2_cache_mode.md
+    kind: related
+    condition: "load重载的入参类型"
+  - path: docs/zh/api/SIMD-API/c_api/defs/enum/asc_store_l2_cache_mode.md
+    kind: related
+    condition: "store重载的入参类型"
+  - path: docs/zh/api/SIMD-API/c_api/scalar_compute/scalar_load/asc_load_dev.md
+    kind: configures
+    condition: "load重载对该标量读接口生效"
+  - path: docs/zh/api/SIMD-API/c_api/scalar_compute/scalar_store/asc_store_dev.md
+    kind: configures
+    condition: "store重载对该标量写接口生效"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md
+    kind: related
+    condition: "该接口入参自带l2_cache_mode，与本接口相互独立"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md
+    kind: related
+    condition: "该接口入参自带l2_cache_mode，与本接口相互独立"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md
+    kind: related
+    condition: "该接口入参自带l2_cache_mode，与本接口相互独立"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_set_scalar_cache_mode
 
 ## 产品支持情况

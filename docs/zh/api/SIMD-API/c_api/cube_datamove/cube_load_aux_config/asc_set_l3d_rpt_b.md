@@ -1,3 +1,18 @@
+---
+okftype: reference.api
+description: "以调用者自行拼装的 64 位配置字设置 3D img2col 搬运右矩阵 repeat 模式的步长、次数、方向与目的位置，供 f_matrix_ctrl 为 true 的 asc_copy_l12l0b 取用。"
+tag:
+  - roles: [data_movement_configuration]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md
+    kind: configures
+    condition: "仅当该 3D 搬运的 f_matrix_ctrl 参数为 true 时取用本配置"
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_rpt_b.md
+    kind: related
+    condition: "正文推荐相同功能改用该参数化接口，示例即使用它配置"
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_set_l3d_rpt_b
 
 ## 产品支持情况

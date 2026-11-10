@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的int16_t反量化同步接口，按asc_set_deq_scale配置的scale与offset把int16_t转为int8_t或uint8_t，并存入每个DataBlock的高半块或低半块，替代方案为对应的非同步接口配合asc_sync。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [datablock_granularity, quantization]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/sync/intra_core_sync/asc_sync.md
+    kind: requires
+    condition: "改用非同步接口后需自行调用asc_sync完成同步"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_deq_int162b8.md
+    kind: replaced_by
+    condition: "h与l两种非同步接口替代本页的同步接口"
+  - path: docs/zh/api/SIMD-API/c_api/vector_compute/vector_fused/asc_set_deq_scale.md
+    kind: requires
+    condition: "调用前需先设置量化scale与offset"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include头对h与l两条同步接口的全部4个重载标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_deq_int162b8_h/l and asc_sync)；CANN_9_2_0 Release Notes废弃表列出该类*_sync复合接口；废弃不封闭可用范围，仍支持Atlas A2与Atlas A3系列产品。"
+---
 # asc_deq_int162b8_sync（废弃）
 
 ## 产品支持情况

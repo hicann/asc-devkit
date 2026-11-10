@@ -1,3 +1,7 @@
+---
+okftype: reference.concept
+description: "说明L0C搬出时目标类型为f32并开启通道拆分后，16×16分形矩阵被拆分为两个16×8小z分形矩阵；Atlas A3/A2用channel_split、Ascend 950PR&950DT用enable_channel_split开启，并要求输入输出均为float、Nz输出到GM且关闭相关转换与unitFlag。"
+---
 # F32 Channel Split
 
 ## 特性说明

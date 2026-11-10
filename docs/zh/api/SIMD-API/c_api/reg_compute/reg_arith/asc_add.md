@@ -1,3 +1,31 @@
+---
+okftype: reference.api
+description: "按mask对两个矢量寄存器逐元素求和，可只输出加法和，也可用双目的形式额外输出每个元素的进位到掩码寄存器，dtype覆盖整数与浮点。"
+tag:
+  - roles: [compute]
+  - operations: [add]
+  - traits: [elementwise, supports_carry_output]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: related
+    condition: "正文据此引用 Reg 矢量计算通用约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_arith/asc_addc.md
+    kind: related
+    condition: "正文引用其功能说明解释 carry 输出的适用场景"
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+    kind: related
+    condition: "带进位输出加法不受该配置影响"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "section:函数原型"
+    scope_basis: resolved
+    note: "新增函数返回值形式重载：CANN 9.2.0 Release Notes 明确列出 asc_add 补充函数返回值形式重载；探测 inline vector_* asc_add 首次出现在 9.2.0 的 reg_base_impl/reg_arith_intf_impl.h:735，对应正文无进位输出加法的 vector_<dtype> asc_add(vector_<dtype> src0, vector_<dtype> src1, vector_bool mask)。"
+---
 # asc_add
 
 ## 产品支持情况

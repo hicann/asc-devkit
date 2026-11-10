@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "已废弃的隐式位置重载，按掩码把 bfloat16_t 源矢量的元素转为 float 写入目的矢量，无后缀读取偶数索引、_v2 读取奇数索引，应改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [widening_result]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_bfloat162float.md
+    kind: replaced_by
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "仅含源、目的、掩码三个参数并通过后缀控制读取位置的原型废弃，迁移为传入 ASC_POSITION_EVEN 或 ASC_POSITION_ODD；include/c_api/reg_compute/reg_convert.h:20208 起两个声明带 ASC_DEPRECATED(9.2.0)。"
+---
 # asc_bfloat162float（废弃）
 
 ## 产品支持情况

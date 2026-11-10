@@ -1,3 +1,16 @@
+---
+okftype: reference.api
+description: "实现带转置的2D数据从L1 Buffer到L0A Buffer的加载，按方块矩阵分次迭代转置并按参数控制源步长与目的分形间隔。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy, transpose]
+  - traits: [datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/cube_datamove/cube_compute_load/cube_compute_input_move_constraint.md
+    kind: constrained_by
+version: ">=9.1.0"
+version_changes: []
+---
 # asc_copy_l12l0a_trans
 
 ## 产品支持情况

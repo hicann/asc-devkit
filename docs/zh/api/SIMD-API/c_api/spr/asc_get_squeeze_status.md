@@ -1,3 +1,21 @@
+---
+okftype: reference.api
+description: "读取squeeze操作保存在AR特殊寄存器中的有效数据长度，配合连续搬出接口获取已搬出的有效数据量。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign.md
+    kind: requires
+    condition: "需先完成数据筛选与搬出"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_finalize.md
+    kind: related
+    condition: "筛选流程结束后搬出尾块"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_permute_sel/asc_squeeze_and_storeunalign_init.md
+    kind: requires
+    condition: "调用前需先清空AR特殊寄存器"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_get_squeeze_status
 
 ## 产品支持情况

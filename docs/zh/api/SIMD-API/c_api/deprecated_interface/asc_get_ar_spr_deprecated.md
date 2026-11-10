@@ -1,3 +1,20 @@
+---
+okftype: reference.api
+description: "已废弃的特殊寄存器读取接口，无入参并返回 int64_t 类型的特殊寄存器数值，运行在 PIPE_S 且仅在 Ascend 950PR&950DT 支持，建议改用 asc_get_squeeze_status。"
+tag:
+  - roles: [query]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_get_squeeze_status.md
+    kind: replaced_by
+    condition: "替代本接口的squeeze状态读取能力"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/spr/spr.h 中声明标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_get_squeeze_status)，CANN 9.2.0 Release Notes 接口废弃表亦列出 asc_get_ar_spr 建议改用 asc_get_squeeze_status；9.3.0-beta.1 声明仍保留，属废弃而非移除。"
+---
 # asc_get_ar_spr（废弃）
 
 ## 产品支持情况

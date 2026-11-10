@@ -1,3 +1,29 @@
+---
+okftype: reference.api
+description: "Reg 矢量收集接口：以 UB 为源、矢量数据寄存器为目的，按 index 矢量寄存器保存的逐元素索引从 UB 读取数据写入 dst，受 mask 掩码控制且未筛选位置写 0，提供引用输出与函数返回值两种形式，仅在 AIV 生效。"
+tag:
+  - roles: [data_movement]
+  - operations: [gather]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: constrained_by
+    condition: "矢量数据寄存器与掩码寄存器的定义按其数据类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束按其概述页"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: overload_added
+    scope: "overload:asc_gather__Rvi16_PUi16_vu32_vb@3510"
+    scope_basis: resolved
+    note: "Release Notes 9.1.0 记录为 int16_t、uint16_t、half、bfloat16_t 新增使用 vector_uint32_t 索引的重载，本事件即覆盖该组 uint32 索引重载"
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "overload:asc_gather__Rvi8_PUi8_vu16_vb@3510"
+    scope_basis: resolved
+    note: "Release Notes 9.2.0 记录 UB 源 asc_gather 新增 int8_t 与 uint8_t 同宽输出重载，并同步把 UB 源与寄存器源两类接口的资料和头文件拆分到 ub_gather.h 与 reg_gather.h"
+---
 # asc_gather
 
 ## 产品支持情况

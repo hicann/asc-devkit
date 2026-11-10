@@ -1,3 +1,28 @@
+---
+okftype: reference.api
+description: "已废弃的 Reg 位置后缀原型说明，把 int32 源寄存器元素按可选 sat 饱和模式转换为 int16 并按后缀写入目的寄存器的偶数或奇数索引，应改用显式位置参数重载。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [saturation_mode]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "正文据此说明矢量数据寄存器与掩码寄存器"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/asc_int322int16.md
+    kind: replaced_by
+    condition: "使用带显式位置参数的饱和/非饱和重载替代位置后缀原型"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "正文据此说明饱和与非饱和模式"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "include/c_api/reg_compute/reg_convert.h:19922 与 19935 起 asc_int322int16、asc_int322int16_sat 及其 _v2 声明标记 ASC_DEPRECATED(9.2.0, \"2027/09/07\", asc_int322int16 / asc_int322int16_sat)，替代为带显式位置参数的重载；9.3.0-beta.1 声明仍保留，属废弃而非移除。"
+---
 # asc_int322int16（废弃）
 
 ## 产品支持情况

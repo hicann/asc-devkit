@@ -1,3 +1,33 @@
+---
+okftype: reference.api
+description: "2倍下采样搬入的Post Update形式：目的为矢量数据寄存器时读取2倍VL并保留偶数下标元素，目的为掩码寄存器时读取VL/4并保留偶数bit，搬运完成后按offset自动更新源UB指针src。"
+tag:
+  - roles: [data_movement]
+  - operations: [compact, load]
+  - traits: [aligned_transfer, post_update]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg矢量计算C API通用约束与UB容量约束"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_sync/asc_mem_bar.md
+    kind: requires
+    condition: "与其他指令存在数据依赖时需插入该同步指令"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.1.0"
+    kind: parameter_changed
+    scope: "param:src"
+    scope_basis: resolved
+    note: "src 由 __ubuf__ <dtype>* src 改为指针引用 __ubuf__ <dtype>*& src（上游 9.1.0 首次出现 vector_int8_t& dst, __ubuf__ int8_t*& src, int32_t offset），保证搬运后的地址更新回写调用方；变更前自动更新只作用于局部指针副本。"
+  - since: "9.2.0"
+    kind: behavior_fixed
+    scope: "param:src"
+    scope_basis: resolved
+    note: "修复 vector_int4x2_t（int4b_t）重载只更新局部源指针副本的问题，使连续调用时源地址更新能够回写调用方并从正确位置继续搬入（Release Notes 9.2.0 Bug修复，与带 block_stride、repeat_stride 的 asc_loadalign_postupdate 重载一并修复）。"
+---
 # asc_loadalign_downsample_postupdate
 
 ## 产品支持情况

@@ -1,3 +1,6 @@
+---
+okftype: reference.index
+---
 # Reg数据搬出
 
 - **[Reg数据搬出概述](reg_store_overview.md)**

@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "把两个矢量数据寄存器或两个掩码寄存器的元素按奇偶索引解交织写入两个目的寄存器，偶数索引进前半部分、奇数索引进后半部分，仅在 AIV 上生效。"
+tag:
+  - roles: [compute]
+  - operations: [deinterleave]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: requires
+    condition: "矢量数据寄存器与掩码寄存器的类型定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/overview.md
+    kind: constrained_by
+    condition: "Reg 矢量计算 C API 通用约束"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: header_reorganized
+    scope: "page"
+    scope_basis: kind_default
+    note: "声明位置由 include/c_api/reg_compute/reg_vector.h（9.1.0 及更早）统一到 include/c_api/reg_compute/compute/reg_permute_sel.h（9.2.0 起），与正文头文件路径一致；本页无函数返回值形式，也没有 9.1.0/9.2.0 的重载增减。"
+---
 # asc_deintlv
 
 ## 产品支持情况

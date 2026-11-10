@@ -1,3 +1,24 @@
+---
+okftype: reference.api
+description: "已废弃的自然指数差接口：把两路矢量按元素相减后取自然指数写入dst，其中half输入的无位置参数原型与asc_exp_sub_v2原型已废弃，替代为asc_exp_sub_half2float或当前asc_exp_sub。"
+tag:
+  - roles: [compute]
+  - operations: [exponential, subtract]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/defs/type/data_type_definition.md
+    kind: related
+    condition: "矢量数据寄存器与掩码寄存器定义"
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_fused/asc_exp_sub.md
+    kind: replaced_by
+    condition: "当前同名接口承接float输入原型，half输入改用asc_exp_sub_half2float"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: deprecated
+    scope: "page"
+    scope_basis: kind_default
+    note: "half输入的无位置参数原型（asc_exp_sub__Rvf32_vf16_vf16_vb）与asc_exp_sub_v2的half、float原型自9.2.0进入废弃期，include头对涉及重载标注ASC_DEPRECATED(9.2.0, 2027/09/07, asc_exp_sub_half2float)；CANN_9_2_0 Release Notes同条说明half转float重载改用asc_exp_sub_half2float；接口保留，未移除。"
+---
 # asc_exp_sub（废弃）
 
 ## 产品支持情况

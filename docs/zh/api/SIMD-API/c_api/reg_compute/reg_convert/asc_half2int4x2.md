@@ -1,3 +1,22 @@
+---
+okftype: reference.api
+description: "按掩码将矢量数据寄存器中的half元素转换为int4x2_t元素，两个连续 half 打包进同一 int4x2_t 存储单元（1Byte），mas。"
+tag:
+  - roles: [compute]
+  - operations: [conversion]
+  - traits: [elementwise, rounding_mode, saturation_mode, split_high_low]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
+    kind: related
+    condition: "舍入与饱和模式说明"
+version: ">=9.0.0"
+version_changes:
+  - since: "9.2.0"
+    kind: overload_added
+    scope: "page"
+    scope_basis: kind_default
+    note: "CANN 9.2.0 Release Notes 第61条为 asc_half2int4x2 新增显式四分之一位置标签重载（asc_position_quarter_mode 四种位置值，与5种舍入模式及饱和/非饱和组合共80条声明，均 archs=3510）；9.0.0 仅有位置模式重载，参数与返回值形式不变。"
+---
 # asc_half2int4x2
 
 ## 产品支持情况

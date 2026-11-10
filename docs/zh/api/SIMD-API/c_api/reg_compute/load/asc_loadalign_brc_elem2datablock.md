@@ -1,3 +1,17 @@
+---
+okftype: reference.api
+description: "从UB连续读取8个元素并把每个元素广播到输出结果对应的一个DataBlock（32字节），提供三种搬入模式。"
+tag:
+  - roles: [data_movement]
+  - operations: [load]
+  - traits: [aligned_transfer, datablock_granularity]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_addr_reg/asc_update_addr_reg.md
+    kind: requires
+    condition: "地址寄存器偏移模式需配合 asc_update_addr_reg"
+version: ">=9.2.0"
+version_changes: []
+---
 # asc_loadalign_brc_elem2datablock
 
 ## 产品支持情况

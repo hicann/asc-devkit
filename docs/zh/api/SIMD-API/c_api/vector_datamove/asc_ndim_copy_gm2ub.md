@@ -1,3 +1,26 @@
+---
+okftype: reference.api
+description: "把GM中的多维数据搬运到UB，最多支持5个维度，各维可单独配置步长并通过配套接口设置Padding，支持常数填充或最近值填充两种方式，需保证总地址范围不超过40位。"
+tag:
+  - roles: [data_movement]
+  - operations: [copy]
+  - traits: [high_dimensional, padding]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_dci.md
+    kind: requires
+    condition: "多核可能读取同一GM地址时需先刷新NDDMA DataCache"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_loop_stride.md
+    kind: requires
+    condition: "各维源/目的步长需预先配置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_count.md
+    kind: requires
+    condition: "loop1至loop4维的左右填充元素数需预先配置"
+  - path: docs/zh/api/SIMD-API/c_api/vector_datamove/asc_set_ndim_pad_value.md
+    kind: requires
+    condition: "常数填充需预先设置填充值"
+version: ">=9.0.0"
+version_changes: []
+---
 # asc_ndim_copy_gm2ub
 
 ## 产品支持情况
