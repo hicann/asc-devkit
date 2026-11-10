@@ -14,8 +14,8 @@
 
 namespace mc2_ops_hccl {
 
-// 每个 repeat 批次最多展开 16 次 Write/LocalCopy/Wait 三阶段流水。
-constexpr uint32_t AG_M2M_UNROLL_NUM = 1;
+// 每个 repeat 批次最多展开 4 次 Write/LocalCopy/Wait 三阶段流水。
+constexpr uint32_t AG_M2M_UNROLL_NUM = 4;
 
 CcuResult CcuKfcAllGatherMesh1DMem2MemKernel(
     ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable outputOffset,

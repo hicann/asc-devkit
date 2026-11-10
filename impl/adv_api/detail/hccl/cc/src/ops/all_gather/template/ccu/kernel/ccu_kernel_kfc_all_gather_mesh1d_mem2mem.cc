@@ -273,6 +273,71 @@ static CcuResult DoRepeatAllGather(KfcAllGatherMesh1DMem2MemContext& ctx, bool u
     return CCU_SUCCESS;
 }
 
+static CcuResult DoParallelAllGatherGroupCopy(KfcAllGatherMesh1DMem2MemContext& ctx)
+{
+    CCU_IF(ctx.isInputOutputEqual == 0)
+    {
+        CCU_IF(ctx.localCopyRepeatNum != UINT64_MAX)
+        {
+            ctx.repeatTimeFlag = 0;
+            CCU_WHILE(ctx.localCopyRepeatNum != UINT64_MAX)
+            {
+                ctx.localCopyRepeatNum += ctx.constVar1;
+                CCU_IF(ctx.repeatTimeFlag != 0)
+                {
+                    ctx.localDst.addr += ctx.outputRepeatStride;
+                    ctx.srcLocCopy.addr += ctx.inputRepeatStride;
+                }
+                CCU_CHK_RET(GroupCopy(ctx, ctx.localDst, ctx.srcLocCopy, ctx.goSize, GetCcuVersion()));
+                ctx.repeatTimeFlag = 1;
+            }
+        }
+    }
+    return CCU_SUCCESS;
+}
+
+static CcuResult DoParallelRepeatAllGather(KfcAllGatherMesh1DMem2MemContext& ctx)
+{
+    CCU_CHK_RET(InitAllGatherAddr(ctx));
+    ctx.waitRepeatNum = ctx.tmpRepeatNum;
+    ctx.localCopyRepeatNum = ctx.tmpRepeatNum;
+
+    // Phase 1: 先下发所有WriteNb（非阻塞，event错开），不包含GroupCopy
+    CCU_IF(ctx.tmpRepeatNum != UINT64_MAX)
+    {
+        ctx.tmpRepeatNum += ctx.constVar1;
+        CCU_CHK_RET(DoAllGatherWrite(ctx, ctx.src, ctx.dst, ctx.normalSliceSize, 0));
+    }
+
+    for (uint32_t i = 1; i < AG_M2M_UNROLL_NUM; i++) {
+        CCU_IF(ctx.tmpRepeatNum != UINT64_MAX)
+        {
+            ctx.tmpRepeatNum += ctx.constVar1;
+            ctx.src.addr += ctx.inputRepeatStride;
+            for (uint32_t rankIdx = 0; rankIdx < ctx.rankSize; rankIdx++) {
+                if (rankIdx != ctx.rankId) {
+                    ctx.dst[rankIdx].addr += ctx.outputRepeatStride;
+                }
+            }
+            CCU_CHK_RET(DoAllGatherWrite(ctx, ctx.src, ctx.dst, ctx.normalSliceSize, i));
+        }
+    }
+
+    // Phase 2: GroupCopy使用CCU_WHILE
+    CCU_CHK_RET(DoParallelAllGatherGroupCopy(ctx));
+
+    // Phase 3: 批量WaitEvent
+    for (uint32_t i = 0; i < AG_M2M_UNROLL_NUM; i++) {
+        CCU_IF(ctx.waitRepeatNum != UINT64_MAX)
+        {
+            ctx.waitRepeatNum += ctx.constVar1;
+            CCU_CHK_RET(DoAllGatherWait(ctx, i));
+        }
+    }
+
+    return CCU_SUCCESS;
+}
+
 static void AddVariableNTimes(ccu::Variable& result, const ccu::Variable& value, uint32_t times)
 {
     result = 0U;
@@ -321,6 +386,12 @@ CcuResult CcuKfcParallelAllGatherMesh1DMem2MemKernel(
     ccu::Variable part1GoSize3, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSizeLevel0,
     uint32_t rankIdxLevel0, uint32_t rankSizeLevel1, uint32_t rankIdxLevel1)
 {
+    // The HCCL sequence emits at most AG_M2M_UNROLL_NUM repeats.
+    // Parallel Mesh stage 1 repeats once per level-1 rank.
+    if (rankSizeLevel1 > AG_M2M_UNROLL_NUM) {
+        HCCL_ERROR("Parallel Mesh level-1 size[%u] exceeds unroll[%u]", rankSizeLevel1, AG_M2M_UNROLL_NUM);
+        return CcuResult::CCU_E_PARA;
+    }
     KfcAllGatherMesh1DMem2MemContext ctx;
     ctx.channels = channels;
     ctx.channelCount = channelCount;
@@ -356,7 +427,7 @@ CcuResult CcuKfcParallelAllGatherMesh1DMem2MemKernel(
         part0GoSize2, part0GoSize3, zero, phase0RepeatNumInv, zero, zero, part0Size, zero));
     CCU_CHK_RET(PreSync(ctx));
     ctx.sliceSize = part0Size;
-    CCU_IF(part0Size != 0) { CCU_CHK_RET(DoRepeatAllGather(ctx, false)); }
+    CCU_IF(part0Size != 0) { CCU_CHK_RET(DoParallelRepeatAllGather(ctx)); }
     CCU_CHK_RET(PostSync(ctx));
 
     // Both missions must finish stage 0 before either reads its stage-0 output.
@@ -373,7 +444,7 @@ CcuResult CcuKfcParallelAllGatherMesh1DMem2MemKernel(
         part1Size, one));
     CCU_CHK_RET(PreSync(ctx));
     ctx.sliceSize = part1Size;
-    CCU_IF(part1Size != 0) { CCU_CHK_RET(DoRepeatAllGather(ctx, false)); }
+    CCU_IF(part1Size != 0) { CCU_CHK_RET(DoParallelRepeatAllGather(ctx)); }
     CCU_CHK_RET(PostSync(ctx));
     return CCU_SUCCESS;
 }

@@ -278,6 +278,102 @@ CcuResult RunNhr(KfcAllGatherNhrContext& ctx)
     return CCU_SUCCESS;
 }
 
+CcuResult RunParallelStep(KfcAllGatherNhrContext& ctx, const KfcNhrStepInfo& stepInfo)
+{
+    const uint32_t toChannelIdx = ctx.rank2ChannelIdx->at(stepInfo.toRank);
+    const uint32_t fromChannelIdx = ctx.rank2ChannelIdx->at(stepInfo.fromRank);
+    const ChannelHandle sendChannel = ctx.channels[toChannelIdx];
+    const ChannelHandle recvChannel = ctx.channels[fromChannelIdx];
+    const uint32_t localIdx = ctx.channelCount;
+
+    CCU_CHK_RET(ccu::NotifyRecord(recvChannel, NHR_CKE_IDX, NHR_STEP_PRE_SYNC_BIT));
+    CCU_CHK_RET(ccu::NotifyWait(sendChannel, NHR_CKE_IDX, NHR_STEP_PRE_SYNC_BIT));
+
+    // Match HCCL: slice outer loop, repeat inner loop, wait after each slice.
+    for (uint32_t sliceIdx : stepInfo.txSliceIdxs) {
+        ccu::LocalAddr src;
+        if (sliceIdx == ctx.rankId) {
+            src.addr = ctx.input;
+            src.addr += ctx.myRankInputSliceOffset;
+        } else {
+            src.addr = ctx.output[localIdx];
+            src.addr += ctx.outputSliceOffset[sliceIdx];
+        }
+        src.token = ctx.token[localIdx];
+        ccu::RemoteAddr dst;
+        dst.addr = ctx.output[toChannelIdx];
+        dst.addr += ctx.outputSliceOffset[sliceIdx];
+        dst.token = ctx.token[toChannelIdx];
+
+        ctx.repeatFlag = 0;
+        ctx.repeatNum = ctx.repeatNumInv;
+        CCU_WHILE(ctx.repeatNum != UINT64_MAX)
+        {
+            ctx.repeatNum += ctx.constVar1;
+            CCU_IF(ctx.repeatFlag == 1)
+            {
+                src.addr += ctx.inputRepeatStride;
+                dst.addr += ctx.outputRepeatStride;
+            }
+            CCU_CHK_RET(WriteSlice(ctx, stepInfo.toRank, src, dst));
+            ctx.repeatFlag = 1U;
+        }
+    }
+    CCU_CHK_RET(ccu::NotifyRecord(sendChannel, NHR_CKE_IDX, NHR_STEP_POST_SYNC_BIT));
+    CCU_CHK_RET(ccu::NotifyWait(recvChannel, NHR_CKE_IDX, NHR_STEP_POST_SYNC_BIT));
+    return CCU_SUCCESS;
+}
+
+CcuResult RunParallelNhr(KfcAllGatherNhrContext& ctx)
+{
+    ccu::Variable sliceOffset;
+    sliceOffset = 0;
+    ctx.myRankInputSliceOffset = 0;
+    for (uint32_t rank = 0; rank < ctx.rankId; ++rank) {
+        ctx.myRankInputSliceOffset += ctx.inputSliceStride;
+    }
+    for (uint32_t rank = 0; rank < ctx.rankSize; ++rank) {
+        ctx.outputSliceOffset[rank] = sliceOffset;
+        sliceOffset += ctx.outputSliceStride;
+    }
+    for (const auto& stepInfo : *ctx.stepInfoVector) {
+        CCU_CHK_RET(RunParallelStep(ctx, stepInfo));
+    }
+
+    const uint32_t localIdx = ctx.channelCount;
+    ccu::LocalAddr src;
+    src.addr = ctx.input;
+    src.addr += ctx.myRankInputSliceOffset;
+    src.token = ctx.token[localIdx];
+    ccu::LocalAddr dst;
+    dst.addr = ctx.output[localIdx];
+    dst.addr += ctx.outputSliceOffset[ctx.rankId];
+    dst.token = ctx.token[localIdx];
+    ctx.repeatFlag = 0;
+    ctx.repeatNum = ctx.repeatNumInv;
+    CCU_WHILE(ctx.repeatNum != UINT64_MAX)
+    {
+        ctx.repeatNum += ctx.constVar1;
+        CCU_IF(ctx.repeatFlag != 0)
+        {
+            src.addr += ctx.inputRepeatStride;
+            dst.addr += ctx.outputRepeatStride;
+        }
+        // WriteSlice 已等待并清除 event；本地 copy 每次也立即等待，复用 bit0。
+        // 不能用 1<<rankId：NHR 子域可以超过 16 rank，而 event mask 只有 16 位。
+        constexpr uint16_t rankMask = 1U;
+        CCU_IF(ctx.isInputOutputEqual == 0)
+        {
+            CCU_CHK_RET(GroupCopy(ctx, dst, src, ctx.goSize, GetCcuVersion()));
+            CCU_CHK_RET(ccu::EventRecord(ctx.event, rankMask));
+        }
+        CCU_ELSE { CCU_CHK_RET(ccu::EventRecord(ctx.event, rankMask)); }
+        CCU_CHK_RET(ccu::EventWait(ctx.event, rankMask));
+        ctx.repeatFlag = 1U;
+    }
+    return CCU_SUCCESS;
+}
+
 CcuResult LoadNhrArgs(
     KfcAllGatherNhrContext& ctx, ccu::Variable input, ccu::Variable output, ccu::Variable token,
     ccu::Variable sliceSize, ccu::Variable sliceSizePerJetty, ccu::Variable lastSliceSizePerJetty,
@@ -392,7 +488,7 @@ CcuResult CcuKfcParallelAllGatherNHR1DMultiJettyMem2MemKernel(
         phase0RepeatNumInv, zero, level1Stride, zero, zero, zero, part1GoSize0, part1GoSize1, part1GoSize2,
         part1GoSize3));
     CCU_CHK_RET(PreSync(ctx));
-    CCU_IF(part1Size != 0) { CCU_CHK_RET(RunNhr(ctx)); }
+    CCU_IF(part1Size != 0) { CCU_CHK_RET(RunParallelNhr(ctx)); }
     CCU_CHK_RET(PostSync(ctx));
 
     CCU_CHK_RET(ccu::Store(nhrPhaseDoneAddr, one));
@@ -406,7 +502,7 @@ CcuResult CcuKfcParallelAllGatherNHR1DMultiJettyMem2MemKernel(
         phase1RepeatNumInv, level1Stride, level1Stride, outputStride, outputStride, one, part0GoSize0, part0GoSize1,
         part0GoSize2, part0GoSize3));
     CCU_CHK_RET(PreSync(ctx));
-    CCU_IF(part0Size != 0) { CCU_CHK_RET(RunNhr(ctx)); }
+    CCU_IF(part0Size != 0) { CCU_CHK_RET(RunParallelNhr(ctx)); }
     CCU_CHK_RET(PostSync(ctx));
     return CCU_SUCCESS;
 }
