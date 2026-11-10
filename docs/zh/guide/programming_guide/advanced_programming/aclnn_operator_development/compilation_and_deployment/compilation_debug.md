@@ -4,14 +4,14 @@
 
 ## 生成代码调试
 
-`npu_op_code_gen`在cmake configure阶段自动生成aclnn调用代码和算子原型定义代码。生成产物位于`ASCEND_AUTOGEN_PATH`目录，默认是`<CMAKE_BINARY_DIR>/autogen`；按本文示例使用`build_out`时，对应目录为`build_out/autogen`。当原型定义有误或生成结果与预期不符时，需要检查这些文件。
+`npu_op_code_gen`在CMake configure阶段自动生成aclnn调用代码和算子原型定义代码。生成产物位于`ASCEND_AUTOGEN_PATH`目录，默认是`<CMAKE_BINARY_DIR>/autogen`；按本文示例使用`build`时，对应目录为`build/autogen`。当原型定义有误或生成结果与预期不符时，需要检查这些文件。
 
 ### 生成产物目录
 
-以AddCustom工程为例，配置完成后`build_out/autogen/`下会生成aclnn调用代码、算子原型定义代码和若干编译配置文件。下方仅列出排查代码生成问题时常用的关键产物；多算子工程会为每个算子生成对应的`aclnn_<op>.cpp`和`aclnn_<op>.h`。
+以AddCustom工程为例，配置完成后`build/autogen/`下会生成aclnn调用代码、算子原型定义代码和若干编译配置文件。下方仅列出排查代码生成问题时常用的关键产物；多算子工程会为每个算子生成对应的`aclnn_<op>.cpp`和`aclnn_<op>.h`。
 
 ```
-build_out/autogen/
+build/autogen/
 ├── aclnn_add_custom.cpp      // aclnn调用代码实现
 ├── aclnn_add_custom.h        // aclnn调用代码头文件
 ├── op_proto.cc               // 算子原型定义代码（入图用）
@@ -30,15 +30,15 @@ build_out/autogen/
 | aclnn接口参数与原型定义不匹配 | 检查`aclnn_<op>.h`中的函数签名，确认输入输出和属性参数是否正确映射。 |
 | 入图场景算子注册信息异常 | 检查`op_proto.cc`中的注册宏，确认OpType、dtype/format是否与Host侧定义一致。 |
 | 某个算子的调用代码未生成 | 检查`npu_op_code_gen`的`SRC`参数是否包含了该算子的Host侧源文件。 |
-| JOIN_OP_DEF相关芯片型号异常 | `JOIN_OP_DEF=True`时算子构建阶段不再显式传入`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`，需结合configure日志、`op_proto.cc`中的AddConfig和CMakePresets.json中的芯片型号确认目标型号是否被覆盖。 |
+| JOIN_OP_DEF相关芯片型号异常 | `JOIN_OP_DEF=True`时算子构建阶段不再显式传入`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`，需结合configure日志、`op_proto.cc`中的AddConfig和CMakeLists.txt、命令行或可选preset中这两个变量的配置确认目标型号是否被覆盖。 |
 
 ### 强制重新生成
 
 修改文件后，如果怀疑历史产物残留导致问题，可以手动清理后重新configure：
 
 ```bash
-rm -rf build_out/autogen
-cmake -S . -B build_out --preset=default
+rm -rf build/autogen
+cmake -S . -B build
 ```
 
 ## Host侧编译调试
@@ -50,14 +50,14 @@ Host侧构建时，默认只输出编译目标的摘要信息，不显示实际�
 在构建命令中指定verbose，打印每条编译和链接命令：
 
 ```bash
-cmake --build build_out --target binary package --verbose -j$(nproc)
+cmake --build build --target binary package --verbose -j$(nproc)
 ```
 
 输出示例：
 
 ```
 [ 30%] Building CXX object op_host/CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o
-cd /data/asc-devkit/AddCustom/build_out/op_host && /usr/bin/c++ -D_FORTIFY_SOURCE=2 -D_GLIBCXX_USE_CXX11_ABI=0 -I/usr/local/Ascend/cann-9.1.0/include -fvisibility=hidden -fPIC -fvisibility-inlines-hidden -O2 -fstack-protector-strong -MD -MT op_host/CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o -MF CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o.d -o CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o -c /data/asc-devkit/AddCustom/build_out/autogen/aclnn_add_custom.cpp
+cd /data/asc-devkit/AddCustom/build/op_host && /usr/bin/c++ -D_FORTIFY_SOURCE=2 -D_GLIBCXX_USE_CXX11_ABI=0 -I/usr/local/Ascend/cann-9.1.0/include -fvisibility=hidden -fPIC -fvisibility-inlines-hidden -O2 -fstack-protector-strong -MD -MT op_host/CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o -MF CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o.d -o CMakeFiles/cust_opapi.dir/__/autogen/aclnn_add_custom.cpp.o -c /data/asc-devkit/AddCustom/build/autogen/aclnn_add_custom.cpp
 ```
 
 
@@ -67,13 +67,13 @@ cd /data/asc-devkit/AddCustom/build_out/op_host && /usr/bin/c++ -D_FORTIFY_SOURC
 - 编译选项（如`-fvisibility=hidden`、`-g`、`-O2`）。
 - 链接库路径（`-L`）和链接库（`-l`）。
 
-### 方式二：cmake配置CMAKE_VERBOSE_MAKEFILE
+### 方式二：CMake配置CMAKE_VERBOSE_MAKEFILE
 
-在cmake configure阶段开启verbose，后续所有make调用都会自动打印完整命令：
+在CMake configure阶段开启verbose，后续所有make调用都会自动打印完整命令：
 
 ```bash
-cmake -S . -B build_out --preset=default -DCMAKE_VERBOSE_MAKEFILE=ON
-cmake --build build_out --target binary package -j$(nproc)
+cmake -S . -B build -DCMAKE_VERBOSE_MAKEFILE=ON
+cmake --build build --target binary package -j$(nproc)
 ```
 
 与方式一效果相同，区别在于设置持久化在CMakeCache.txt中，无需每次构建时重复指定。
@@ -112,7 +112,7 @@ npu_op_kernel_options(ascendc_kernels ALL OPTIONS --save-temp-files -g)
 开启后，编译框架会在构建目录下保留每个核函数（Kernel）编译过程的中间文件。例如本文在ascendxxyy上验证的AddCustom工程中，临时文件位于：
 
 ```
-build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kernel_meta/
+build/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kernel_meta/
 ```
 
 实际目录名会随OpType、芯片型号和核函数（Kernel）名称变化。常见文件包括：
@@ -133,7 +133,7 @@ build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kern
 
 ### 部分芯片编译失败处理
 
-当`ASCEND_SOC_SERIES`或`ASCEND_COMPUTE_UNIT`配置了多个芯片型号时，核函数（Kernel）编译会对每个芯片独立执行一轮。如果某个芯片的核函数（Kernel）编译失败，默认行为是终止整个构建流程。
+当`ASCEND_SOC_SERIES`配置了多个芯片型号时，核函数（Kernel）编译会对每个芯片独立执行一轮。如果某个芯片的核函数（Kernel）编译失败，默认行为是终止整个构建流程。
 
 `ASCEND_SKIP_FAILED_COMPUTE_UNIT`选项允许跳过单个芯片的编译失败，继续编译其余芯片。适用场景：
 
@@ -146,10 +146,10 @@ build_out/op_kernel/AddCustom_ascendxxyy/kernel_*/kernel_meta_<kernel_name>/kern
 set(ASCEND_SKIP_FAILED_COMPUTE_UNIT TRUE)
 ```
 
-或在cmake命令行中传入：
+或在CMake命令行中传入：
 
 ```bash
-cmake -S . -B build_out --preset=default -DASCEND_SKIP_FAILED_COMPUTE_UNIT=TRUE
+cmake -S . -B build -DASCEND_SKIP_FAILED_COMPUTE_UNIT=TRUE
 ```
 
 开启该选项后，部分AI处理器型号对应的算子编译失败时，编译流程可跳过失败项并继续编译其他型号；关闭时，遇到失败会影响其他型号的编译流程。若需要定位被跳过的失败项，建议同时配置[ASCENDC_BUILD_LOG_DIR](#编译日志存盘)保存编译日志。
@@ -163,7 +163,7 @@ cmake -S . -B build_out --preset=default -DASCEND_SKIP_FAILED_COMPUTE_UNIT=TRUE
 与Host侧调试一样，使用VERBOSE机制可以看到实际的打包命令：
 
 ```bash
-cmake --build build_out --target package --verbose -j$(nproc)
+cmake --build build --target package --verbose -j$(nproc)
 ```
 
 输出示例：
@@ -182,7 +182,7 @@ Run CPack packaging tool...
 `TYPE RUN`模式下，原始构建目录中主要检查中间产物：
 
 ```
-build_out/
+build/
 ├── autogen/
 │   ├── aclnn_add_custom.h
 │   └── ...
@@ -203,7 +203,7 @@ build_out/
 执行`package`目标后，CPack staging目录中会出现接近安装后形态的`vendors/<vendor_name>/`目录，可重点检查`op_api/`、`op_impl/`、`op_proto/`：
 
 ```
-build_out/_CPack_Packages/Linux/External/custom_opp_*.run/packages/vendors/<vendor_name>/
+build/_CPack_Packages/Linux/External/custom_opp_*.run/packages/vendors/<vendor_name>/
 ├── op_api/
 │   ├── include/aclnn_<op>.h
 │   └── lib/libcust_opapi.so
@@ -219,8 +219,8 @@ build_out/_CPack_Packages/Linux/External/custom_opp_*.run/packages/vendors/<vend
 `TYPE SHARED`或`TYPE STATIC`安装模式下，产物通常位于`${CMAKE_INSTALL_PREFIX}/include`和`${CMAKE_INSTALL_PREFIX}/lib`。
 
 **检查要点**：
-- `build_out/autogen/`或staging目录的`op_api/include/`下是否生成`aclnn_<op>.h`。
-- `build_out/op_host/`或staging目录的`op_api/lib/`下是否生成`libcust_opapi.so`。
+- `build/autogen/`或staging目录的`op_api/include/`下是否生成`aclnn_<op>.h`。
+- `build/op_host/`或staging目录的`op_api/lib/`下是否生成`libcust_opapi.so`。
 - staging目录或安装目录的`op_impl`下是否包含目标芯片型号的核函数（Kernel）二进制和Tiling动态库。
 - 如果使用SHARED/STATIC模式，`ENABLE_BINARY_PACKAGE`必须为True。
 
@@ -246,7 +246,7 @@ ls <path>/vendors/<vendor_name>/op_proto # 可选
 
 | 问题 | 查看什么 |
 |------|---------|
-| `package`目标失败 | `cmake --build build_out --target package --verbose`输出中cpack的命令和报错信息。 |
+| `package`目标失败 | `cmake --build build --target package --verbose`输出中cpack的命令和报错信息。 |
 | SHARED/STATIC模式下构建或安装报错 | `npu_op_package` CONFIG中`ENABLE_BINARY_PACKAGE`是否为True。 |
 | INSTALL_PATH生成产物位置不对 | `npu_op_package` CONFIG中`INSTALL_PATH`配置是否指向预期目录。 |
 | 安装后算子未被识别 | 指定目录安装时是否执行了`source <path>/vendors/<vendor_name>/bin/set_env.bash`，默认安装时`opp/vendors/config.ini`中优先级配置是否正确。 |
@@ -255,7 +255,7 @@ ls <path>/vendors/<vendor_name>/op_proto # 可选
 
 默认情况下，核函数（Kernel）侧编译过程中的中间日志不会保留到磁盘，编译失败时终端仅打印异常抛出信息。通过设置`ASCENDC_BUILD_LOG_DIR`环境变量，可将每个编译阶段的日志写入指定目录，便于事后回溯。
 
-**开启方法**：在执行cmake或build.sh之前设置环境变量：
+**开启方法**：在执行CMake配置与编译命令之前设置环境变量：
 
 ```bash
 export ASCENDC_BUILD_LOG_DIR=/home/build_log/

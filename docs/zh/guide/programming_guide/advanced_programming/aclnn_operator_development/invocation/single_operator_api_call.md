@@ -28,7 +28,7 @@
     ...
     ```
 
--   对于算子动态库或静态库编译场景，参考[算子动态库和静态库编译](../compilation_and_deployment/dynamic_static_lib_compilation.md)完成算子的编译安装。其中`CMAKE_INSTALL_PREFIX`为开发者在cmake文件中配置的安装路径。
+-   对于算子动态库或静态库编译场景，参考[算子动态库和静态库编译](../compilation_and_deployment/dynamic_static_lib_compilation.md)完成算子的编译安装。其中`CMAKE_INSTALL_PREFIX`为开发者在CMakeLists.txt中配置的安装路径。
     -   动态库路径：`${CMAKE_INSTALL_PREFIX}/lib/libcust_opapi.so`
     -   静态库路径：`${CMAKE_INSTALL_PREFIX}/lib/lib${vendor_name}.a`
     -   头文件路径：`${CMAKE_INSTALL_PREFIX}/include`
@@ -178,7 +178,7 @@ aclnnFinalize();
     ```
     target_include_directories(execute_add_op PRIVATE
         $ENV{ASCEND_HOME_PATH}/include
-        $ENV{ASCEND_OPP_PATH}/vendors/${VENDOR_NAME}/op_api/include
+        $ENV{ASCEND_OPP_PATH}/vendors/$ENV{VENDOR_NAME}/op_api/include
     )
     ```
 
@@ -197,7 +197,7 @@ aclnnFinalize();
     ```
     target_link_directories(execute_add_op PRIVATE
         $ENV{ASCEND_HOME_PATH}/lib64
-        $ENV{ASCEND_OPP_PATH}/vendors/${VENDOR_NAME}/op_api/lib
+        $ENV{ASCEND_OPP_PATH}/vendors/$ENV{VENDOR_NAME}/op_api/lib
     )
     ```
 
@@ -207,7 +207,7 @@ aclnnFinalize();
 
     ```bash
     source /usr/local/Ascend/cann/set_env.sh
-    # <vendor_name>需替换为算子工程CMakePresets.json中的vendor_name
+    # <vendor_name>需替换为算子工程传给`npu_op_package`的厂商名称（快速入门默认为customize）
     export VENDOR_NAME=<vendor_name>
     # 配置自定义算子包环境变量
     # 如果是run包执行
@@ -223,7 +223,7 @@ aclnnFinalize();
         mkdir -p build
         ```
 
-    2.  进入build目录，执行cmake编译命令，生成编译文件。
+    2.  进入build目录，执行CMake编译命令，生成编译文件。
 
         命令示例如下所示：
 
@@ -253,7 +253,7 @@ aclnnFinalize();
 
 **找不到`aclnn_add_custom.h`**
 
-先确认`VENDOR_NAME`是否与算子工程`CMakePresets.json`中的`vendor_name`一致，再确认算子包是否已经安装：
+先确认`VENDOR_NAME`是否与算子工程传给`npu_op_package`的厂商名称（通常由`vendor_name`变量配置）一致，再确认算子包是否已经安装：
 
 ```bash
 ls $ASCEND_OPP_PATH/vendors/${VENDOR_NAME}/op_api/include/aclnn_add_custom.h

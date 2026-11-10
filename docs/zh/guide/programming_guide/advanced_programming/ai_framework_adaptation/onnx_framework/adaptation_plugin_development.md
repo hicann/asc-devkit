@@ -13,30 +13,64 @@
 
 您可以参考本章节进行算子适配插件的开发，将ONNX框架的算子映射成适配AI处理器的算子（下文简称CANN算子），从而完成从ONNX框架调用Ascend C自定义算子的过程。如果只涉及插件开发，也可以不依赖自定义算子工程，参考[LINK](https://gitcode.com/cann/cann-samples/tree/master/Samples/0_Introduction)中的custom_op_in_graph样例生成算子插件so后，通过ASCEND_CUSTOM_OPP_PATH指定so所在路径进行使用。
 
-完成[算子工程创建](../tensorflow_framework.md#li123241091016)后，会在算子工程目录下生成framework/onnx\_plugin目录，用于存放ONNX框架适配插件实现文件。以自定义CANN算子LeakyReluCustom为例，算子工程目录如下：
+按[快速入门](../../aclnn_operator_development/aclnn_quick_start.md#create-project)手工创建算子工程后，在工程根目录执行以下命令，新建ONNX框架插件目录：
 
+```bash
+mkdir -p framework/onnx_plugin
 ```
+
+在该目录创建`leaky_relu_custom_plugin.cc`，按下文编写插件源码，并创建各层CMakeLists.txt。完成后的工程结构如下：
+
+```text
 LeakyReluCustom
-├── build.sh             // 编译入口脚本
-├── cmake 
-├── CMakeLists.txt       // 算子工程的CMakeLists.txt
-├── CMakePresets.json    // 编译配置项
-├── framework            // 框架适配插件实现文件目录
-│   ├── onnx_plugin     //  ONNX框架适配插件实现文件目录
-│   │   ├── CMakeLists.txt    
-│   │   ├── leaky_relu_custom_plugin.cc // ONNX框架适配插件实现文件    
+├── CMakeLists.txt
+├── framework
 │   ├── CMakeLists.txt
-├── op_host                      // host侧实现文件
-├── op_kernel                    // 核函数（Kernel）侧实现文件
-└── scripts                      // 自定义算子工程打包相关脚本所在目录
+│   └── onnx_plugin
+│       ├── CMakeLists.txt
+│       └── leaky_relu_custom_plugin.cc
+├── op_host
+│   ├── CMakeLists.txt
+│   └── ...
+└── op_kernel
+    ├── CMakeLists.txt
+    └── ...
 ```
+
+**1. 接入顶层构建**：保留已有的包声明和Host/Kernel子目录，在工程根目录的CMakeLists.txt中、`npu_op_package`之后添加：
+
+```cmake
+add_subdirectory(framework)
+```
+
+**2. 创建framework/CMakeLists.txt**，保存以下内容：
+
+```cmake
+add_subdirectory(onnx_plugin)
+```
+
+**3. 创建framework/onnx_plugin/CMakeLists.txt**，保存以下内容，编译插件并将其加入与算子相同的包。`vendor_name`沿用快速入门顶层文件中的变量：
+
+```cmake
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} plugin_srcs)
+# 插件源码若使用nlohmann/json（见下文头文件说明），需一并配置其下载与包含，
+# 参考样例framework/onnx_plugin/CMakeLists.txt中的NLOHMANN_JSON配置
+npu_op_library(cust_onnx_parsers ONNX_PLUGIN
+    ${plugin_srcs}
+)
+npu_op_package_add(${vendor_name}
+    LIBRARY cust_onnx_parsers
+)
+```
+
+接口参数见[CMake函数参考](../../aclnn_operator_development/appendix/cmake_function_reference.md#npu_op_library)。框架调用还需要入图原型库，请按[编译与部署基本流程](../../aclnn_operator_development/compilation_and_deployment/basic_process.md#graph-library)在`op_host/CMakeLists.txt`中补充GRAPH库配置，然后重新编译安装算子包。
 
 下文主要讲解ONNX框架适配插件实现文件（leaky\_relu\_custom\_plugin.cc ）的开发流程。
 
 ```
 #include "register/register.h"
 #include "graph/operator.h"
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 namespace domi {
     Status ParseParamByOpFunc(const ge::Operator& op_src, ge::Operator& op_dest) {
         //...
@@ -52,7 +86,7 @@ namespace domi {
 1.  包含所需头文件。
     -   register.h，存储在CANN软件安装后文件存储路径的“include/register/”目录下，包含该头文件，可使用算子注册相关类，调用算子注册相关的接口。
     -   operator.h（可选），存储在CANN软件安装后文件存储路径的“include/graph/”目录下，包含该头文件，可以使用Operator类相关接口，获取算子输入输出及属性等算子信息。
-    -   json.hpp，用于进行ONNX数据定义的解析，将String类型的算子参数定义转换为json格式。若样例工程中未提供“json.hpp”文件，用户可以自行下载，并将“json.hpp”放在工程可以找到的任意路径下，然后包含此头文件即可，下载路径可参见[json.hpp](https://github.com/nlohmann/json/blob/develop/include/nlohmann/json.hpp)。
+    -   json.hpp，用于进行ONNX数据定义的解析，将String类型的算子参数定义转换为json格式。涉及json解析时，nlohmann/json的下载与包含配置请参考[样例的framework/onnx_plugin/CMakeLists.txt](../../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op/framework/onnx_plugin/CMakeLists.txt)。
 
 2.  使用REGISTER\_CUSTOM\_OP宏，完成CANN算子和ONNX框架的算子映射关系注册。使用方法如下：
     -   REGISTER\_CUSTOM\_OP：注册自定义算子，OpType为算子类型名称，需要与[算子原型注册](../../aclnn_operator_development/design_and_implementation/operator_prototype_definition.md)中的OpType保持一致。

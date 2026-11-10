@@ -33,7 +33,7 @@ tiling_data.totalLength: 0 tiling_data.tileNum: 0.
 
 2.  如果上一步骤中打印的TilingData正确，需要排查核函数（Kernel）的参数是否按照正确顺序填写。
 
-    使用msOpGen工具创建算子工程，并基于工程进行核函数（Kernel）侧算子开发时，核函数（Kernel）的定义模板已通过msOpGen工具自动生成，样例如下所示。参数按照“输入、输出、workspace、tiling”的顺序排布。请检查是否调整过参数顺序导致和正确顺序不一致。
+    核函数（Kernel）的入口参数需要按照“输入、输出、workspace、tiling”的顺序排布，样例如下所示。请检查是否调整过参数顺序导致和正确顺序不一致。
 
     ```
     #include "kernel_operator.h"

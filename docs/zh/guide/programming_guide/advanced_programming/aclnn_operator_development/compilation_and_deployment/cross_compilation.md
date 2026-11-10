@@ -30,37 +30,11 @@ aarch64-linux-gnu-g++ --version
 x86_64-linux-gnu-g++ --version
 ```
 
-## CMakePresets.json配置
+## 配置交叉编译
 
-交叉编译需修改算子工程目录下CMakePresets.json的两个配置项：
+交叉编译需配置`ENABLE_CROSS_COMPILE=True`和`CMAKE_CROSS_PLATFORM_COMPILER`；如需覆盖默认的交叉编译库路径，可选配置`CMAKE_CROSS_LIBRARY_PATH`。推荐在CMake配置命令中通过`-D`传入；也可以在顶层CMakeLists.txt中、`find_package(ASC)`之前设置。这些变量不能在ASC加载后才赋值。
 
-### 使能交叉编译
-
-将`ENABLE_CROSS_COMPILE`设置为`True`：
-
-```json
-"ENABLE_CROSS_COMPILE": {
-    "type": "BOOL",
-    "value": "True"
-}
-```
-
-### 指定交叉编译工具路径
-
-使用`which`命令查找交叉编译工具的安装路径：
-
-```bash
-which aarch64-linux-gnu-g++
-```
-
-假设安装在 /usr/bin/ 下，将`CMAKE_CROSS_PLATFORM_COMPILER`设置为交叉编译工具的安装路径：
-
-```json
-"CMAKE_CROSS_PLATFORM_COMPILER": {
-    "type": "PATH",
-    "value": "/usr/bin/aarch64-linux-gnu-g++"
-}
-```
+使用`which aarch64-linux-gnu-g++`或`which x86_64-linux-gnu-g++`确认目标平台交叉编译器的路径。如果选择preset方式，需先按[编译配置](./basic_process.md#cmake-presets)创建`CMakePresets.json`，再将上述变量加入`cacheVariables`。下面的命令不依赖preset文件。
 
 ## 执行交叉编译
 
@@ -84,7 +58,7 @@ source /usr/local/Ascend/cann/set_env.sh
 
 VENDOR_NAME=customize
 
-cmake -S . -B build_native_tiling --preset=default \
+cmake -S . -B build_native_tiling \
     -DENABLE_CROSS_COMPILE=False \
     -DCMAKE_INSTALL_PREFIX=${PWD}/build_native_tiling
 
@@ -103,10 +77,10 @@ file ${HOST_NATIVE_TILING_LIB}
 
 **步骤2：执行交叉编译**
 
-确保`CMakePresets.json`中已将`ENABLE_CROSS_COMPILE`设置为`True`，且`CMAKE_CROSS_PLATFORM_COMPILER`指向目标平台对应的交叉编译器，然后执行：
+在工程根目录执行以下命令，通过`-D`使能交叉编译并指定目标平台编译器。步骤1和步骤2使用各自的构建目录，避免混用缓存：
 
 ```bash
-cmake -S . -B build_out --preset=default \
+cmake -S . -B build_out \
     -DENABLE_CROSS_COMPILE=True \
     -DCMAKE_CROSS_PLATFORM_COMPILER=/usr/bin/x86_64-linux-gnu-g++ \
     -DHOST_NATIVE_TILING_LIB=${HOST_NATIVE_TILING_LIB} \

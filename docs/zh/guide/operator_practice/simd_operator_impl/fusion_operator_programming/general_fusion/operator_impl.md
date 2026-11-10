@@ -2,7 +2,10 @@
 
 在通算融合类算子的实现中，通信操作使用[Hccl高阶API](../../../../../api/SIMD-API/adv_api/HCCL_communication/HCCL_Kernel/HCCL_usage.md)，矩阵乘计算操作使用[Matmul高阶API](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/Matmul_Kernel.md)。关于更多集合通信的内容和相关概念请参考[《HCCL集合通信库》](https://gitcode.com/cann/hccl/blob/master/docs/zh/user_guide/README.md)。通算融合算子的开发过程与一般算子相同，但请注意，当前通算融合算子暂不支持[核函数（Kernel）直调](../../../../programming_guide/appendix/kernel_direct_call_from_sample.md)和[入图（GE图）开发](../../../../programming_guide/advanced_programming/operator_graph_development/overview.md)，仅支持[单算子API调用](../../../../programming_guide/advanced_programming/aclnn_operator_development/invocation/single_operator_api_call.md)。
 
-下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、核函数（Kernel）实现、编译与运行等方面介绍通算融合算子的设计和实现流程。本样例中算子的完整代码请参见[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。该样例仅支持在**Atlas A2系列产品**上运行。
+下文将以AllGatherMatmulCustom算子（简称AllGatherMatmul）的实现为例，从算子分析、数据流分析、创建算子工程、原型定义、Tiling实现、核函数（Kernel）实现、编译与运行等方面介绍通算融合算子的设计和实现流程，本章节以Atlas A2系列产品为例讲解，仅支持`FLOAT16`数据类型。
+
+>[!NOTE]说明
+>[AllGatherMatmulV2样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)是另一个语义相近的通算融合算子，并非本章节教学示例的完整版，二者在算子名、输入输出参数命名（`a`/`b`对应`x1`/`x2`）、支持的数据类型和产品范围上均不相同，不能直接对照阅读。该样例面向生产场景交付，额外支持低精度量化数据类型等能力，并依赖内部公共库组织实现，可作为生产级通算融合算子的参考，具体用法以其自身README为准。
 
 ## 算子分析<a name="zh-cn_topic_0000002400208581_section59611034123213"></a>
 
@@ -137,69 +140,11 @@ AllGatherMatmul算子逻辑分析：
 
 ## 创建算子工程<a name="zh-cn_topic_0000002400208581_section121335271825"></a>
 
-创建通算融合算子的算子工程与一般算子相同，具体请参考[创建算子工程](../../../../programming_guide/advanced_programming/aclnn_operator_development/aclnn_quick_start.md#create-project)章节。本样例基于如下原型定义json文件，使用自定义算子工程生成工具msOpGen，为AllGatherMatmul算子创建算子工程。
+创建通算融合算子的工程目录和CMakeLists.txt与一般算子相同，可按[创建算子工程](../../../../programming_guide/advanced_programming/aclnn_operator_development/aclnn_quick_start.md#create-project)逐步编写。将示例中的AddCustom原型和核函数替换为本章的AllGatherMatmulCustom实现，并在`npu_op_kernel_sources`中设置对应的`OP_TYPE`和实际核函数文件名。
 
-```
-[
-    {
-        "op": "AllGatherMatmulCustom",
-        "input_desc": [
-            {
-                "name": "a",
-                "param_type": "required",
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "float16"
-                ]
-            },
-            {
-                "name": "b",
-                "param_type": "required",
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "float16"
-                ]
-            }
-        ],
-        "output_desc":[
-            {
-                "name": "c",
-                "param_type": "required",
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "float16"
-                ]
-            },
-            {
-                "name": "gather_out",
-                "param_type": "required",
-                "format": [
-                    "ND"
-                ],
-                "type": [
-                    "float16"
-                ]
-            }
-        ],
-        "attr": [
-            {
-                "name": "group",
-                "type": "string",
-                "default_value":"",
-                "param_type":"required"
-            }
-        ]
-    }
-]
-```
+算子的输入、输出和属性直接通过[算子原型定义](#operator-prototype-definition)声明：输入为`a`、`b`，输出为`c`、`gather_out`，必选字符串属性`group`表示通信域名称。Host原型中的`AddConfig`与CMake中的构建目标均应配置为本样例支持的`soc_series`。通算融合所需的其他编译配置和依赖，可参考[AllGatherMatmulV2样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)。
 
-## 算子原型定义<a name="zh-cn_topic_0000002400208581_section7112164101213"></a>
+## 算子原型定义<a id="operator-prototype-definition"></a>
 
 相比于一般算子，通算融合算子在实现[算子原型定义](../../../../programming_guide/advanced_programming/aclnn_operator_development/design_and_implementation/operator_prototype_definition.md)时，有如下约束：
 
@@ -649,35 +594,13 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
 
 ## 编译和运行<a name="zh-cn_topic_0000002400208581_section17516122912424"></a>
 
-下面从编译、安装、运行三个步骤对AllGatherMatmul样例作简要介绍。
+下面从编译、安装、运行三个步骤对本章节的AllGatherMatmulCustom教学示例作简要介绍。
 
 1.  **编译**
 
-    参考[AllGatherMatmul样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)中生成自定义算子工程、编译算子的命令，运行install.sh脚本完成编译。
+    对于按本章手写的工程，先将通信、Tiling和核函数相关源文件与依赖加入CMake配置，再按[编译与部署基本流程](../../../../programming_guide/advanced_programming/aclnn_operator_development/compilation_and_deployment/basic_process.md)编译生成算子安装包。
 
-    样例目录结构如下，AllGatherMatmulCustom目录为必要的算子实现，install.sh脚本使用msOpGen在21\_all\_gather\_matmul\_custom目录下创建一个CustomOp目录，并将算子实现文件复制到对应目录下，再调用msOpGen生成的编译入口脚本build.sh编译算子。
-
-    ```
-    ├── 21_all_gather_matmul_custom
-    │   ├── AclNNInvocation                  // 通过aclnn调用的方式调用AllGatherMatmulCustom算子 
-    │   ├── AllGatherMatmulCustom            // AllGatherMatmulCustom算子工程 
-    │   ├── all_gather_matmul_custom.json    // AllGatherMatmulCustom算子的原型定义json文件 
-    │   ├── all_gather_matmul_demo_def.h     // AllGatherMatmulCustom算子参数配置 
-    │   └── install.sh                       // 脚本，调用msOpGen生成自定义算子工程，并编译
-    ```
-
-    msOpGen生成的CustomOp目录结构如下。
-
-    ```
-    ├── CustomOp                 // msOpGen生成的AllGatherMatmul自定义算子工程 
-    │   ├── cmake 
-    │   ├── op_host             // host侧实现文件 
-    │   ├── op_kernel           // 核函数（Kernel）侧实现文件
-    │   ├── scripts             // 自定义算子工程打包相关脚本所在目录 
-    │   ├── build.sh            // 编译入口脚本 
-    │   ├── CMakeLists.txt      // 算子工程的CMakeLists.txt 
-    │   └── CMakePresets.json   // 编译配置项
-    ```
+    若参考[AllGatherMatmulV2样例](https://gitcode.com/cann/ops-transformer/tree/master/mc2/all_gather_matmul_v2)，请按其README执行工程对应的构建命令，构建入口、依赖、目录组织及产物位置以其自身说明为准。
 
 2.  **安装**
 
@@ -695,7 +618,6 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
     然后执行如下命令，切换目录为编译出的自定义算子安装包所在目录，并安装自定义算子包。
 
     ```
-    cd CustomOp/build_out
     ./custom_opp_<target os>_<target architecture>.run
     ```
 
@@ -703,14 +625,7 @@ extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* a
 
 3.  **运行**
 
-    切换目录为AclNNInvocation目录，执行run.sh脚本运行单算子样例。
-
-    ```
-    cd ../../AclNNInvocation
-    bash run.sh
-    ```
-
-    样例中的AclNNInvocation目录提供了完整的单算子API调用的示例代码。完成前两个步骤自定义算子的编译部署后，会自动生成单算子API，该API可以直接在应用程序中调用。算子API的形式一般为“两段式接口”，形如：
+    运行本章教学示例时，请在独立应用工程中编写单算子API调用代码，`main`函数和`RunOp`函数的关键步骤见本节示例。完成前两个步骤自定义算子的编译部署后，会自动生成单算子API，该API可以直接在应用程序中调用。算子API的形式一般为“两段式接口”，形如：
 
     ```
     // 获取算子使用的workspace空间大小

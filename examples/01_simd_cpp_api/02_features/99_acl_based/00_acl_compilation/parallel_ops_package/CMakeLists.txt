@@ -19,10 +19,10 @@ set(NLOHMANN_JSON_URL
     CACHE STRING "URL or file:// path to nlohmann/json include.zip"
 )
 
-set(ADD_CUSTOM_ASCEND_COMPUTE_UNIT ascend910 ascend310p ascend310b ascend910b ascend950)
-set(LEAKY_RELU_ASCEND_COMPUTE_UNIT ascend910b)
+set(ADD_CUSTOM_ASCEND_SOC_SERIES ascend910 ascend310p ascend310b ascend910b ascend950)
+set(LEAKY_RELU_ASCEND_SOC_SERIES ascend910b)
 
-function(add_parallel_vendor_project target_name source_dir vendor_name compute_units)
+function(add_parallel_vendor_project target_name source_dir vendor_name soc_series)
     set(extra_cmake_args)
     if("${target_name}" STREQUAL "leaky_relu_custom")
         list(APPEND extra_cmake_args "-DNLOHMANN_JSON_URL=${NLOHMANN_JSON_URL}")
@@ -31,7 +31,7 @@ function(add_parallel_vendor_project target_name source_dir vendor_name compute_
     ExternalProject_Add(${target_name}
         SOURCE_DIR ${source_dir}
         CMAKE_CACHE_ARGS
-            -DASCEND_COMPUTE_UNIT:STRING=${compute_units}
+            -DASCEND_SOC_SERIES:STRING=${soc_series}
         CMAKE_ARGS
             -Dvendor_name=${vendor_name}
             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/${target_name}
@@ -48,12 +48,12 @@ add_parallel_vendor_project(
     add_custom
     ${CMAKE_CURRENT_SOURCE_DIR}/add_custom
     add_custom
-    "${ADD_CUSTOM_ASCEND_COMPUTE_UNIT}"
+    "${ADD_CUSTOM_ASCEND_SOC_SERIES}"
 )
 
 add_parallel_vendor_project(
     leaky_relu_custom
     ${CMAKE_CURRENT_SOURCE_DIR}/leaky_relu_custom
     leaky_relu_custom
-    "${LEAKY_RELU_ASCEND_COMPUTE_UNIT}"
+    "${LEAKY_RELU_ASCEND_SOC_SERIES}"
 )

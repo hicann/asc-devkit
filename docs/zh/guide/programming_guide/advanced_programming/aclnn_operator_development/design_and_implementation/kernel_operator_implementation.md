@@ -22,7 +22,7 @@
 
 核函数（Kernel）入口函数可以使用非模板入口或模板化入口。
 
-**非模板入口**使用`extern "C"`指定C语言链接规则，msOpGen生成的基础模板通常采用这种形式。
+**非模板入口**使用`extern "C"`指定C语言链接规则，基础场景通常采用这种形式。
 
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
@@ -63,16 +63,6 @@ extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z
 | `z` | 算子原型中的输出 | 指向输出Tensor的Global Memory地址 |
 | `workspace` | 框架追加 | 指向workspace内存地址 |
 | `tiling` | 框架追加 | 指向Host侧Tiling写入的数据 |
-
-> **说明：输入输出同名场景**
->
-> 如果算子原型中的输入和输出同名，msOpGen生成核函数（Kernel）入口参数时会给输出参数增加`ref`后缀，用于区分输入和输出地址。
->
-> ```cpp
-> extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y,
->                                                   GM_ADDR x_ref, GM_ADDR workspace,
->                                                   GM_ADDR tiling);
-> ```
 
 核函数（Kernel）实现类的内部组织方式由算子计算逻辑和Ascend C编程模式决定。在aclnn工程化算子开发方式中，核函数（Kernel）入口只需要保持框架要求的参数顺序，读取TilingData，并将输入输出地址和Tiling参数传给核函数（Kernel）实现类。
 

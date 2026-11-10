@@ -12,18 +12,20 @@
 
 ## 准备验证代码工程<a name="zh-cn_topic_0000001541959061_section2021523012501"></a>
 
-代码工程目录结构如下，您可以单击[LINK](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/01_acl_invocation/aclop_invocation)，获取样例工程的完整样例：
+代码工程目录结构如下，您可以参考[单算子模型调用样例](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/01_acl_invocation/aclop_invocation)，获取完整的样例工程：
 
 ```
 ├── aclop_invocation
 │   ├── add_custom.json                   // 算子描述文件，用于构造单算子模型文件
 │   ├── CMakeLists.txt
-│   └── main.cpp                          // 将单算子编译为om文件并加载om文件执行
+│   ├── main.cpp                          // 加载并执行单算子om模型，校验计算结果
+│   └── scripts
+│       └── gen_data.py                   // 生成输入数据和精度校验所需的预期结果
 ```
 
 ## 生成单算子离线模型文件<a name="section17164152011141"></a>
 
-1.  构造静态shape单算子描述文件add\_custom\_static\_shape.json，描述算子的输入、输出及属性等信息。
+1.  构造静态shape单算子描述文件add\_custom.json，描述算子的输入、输出及属性等信息。
 
     AddCustom静态shape算子的描述文件示例如下：
 
@@ -60,13 +62,15 @@
     ]
     ```
 
-2.  使用ATC工具，将该算子描述文件编译成单算子模型文件（\*.om文件）
-
-    ATC工具的命令示例如下：
+2.  使用ATC工具，将该算子描述文件编译成单算子模型文件（\*.om文件）。在样例工程根目录执行以下命令，进入build目录后生成数据和om文件，使其与后续编译出的可执行文件位于同一目录。`scripts/gen_data.py`依赖NumPy，执行前请确认Python环境中已安装该依赖。
 
     ```
-    atc --singleop=op_verify/run/out/test_data/config/add_custom_static_shape.json --output=. --soc_version=<soc_version>
+    mkdir -p build && cd build
+    python3 ../scripts/gen_data.py
+    atc --singleop=../add_custom.json --output=. --soc_version=<soc_version>
     ```
+
+    `gen_data.py`在当前build目录下生成`input/input0.bin`、`input/input1.bin`和`output/golden.bin`。前两个文件为算子输入，`golden.bin`为预期的相加结果，验证程序会读取这三个文件进行计算和精度对比。
 
     关键参数解释如下：
 
@@ -145,29 +149,49 @@ aclRet = aclFinalize();
 
         **mkdir -p build**
 
-    2.  进入build目录，执行cmake编译命令，生成编译文件
+    2.  进入build目录，执行CMake编译命令，生成编译文件
 
         命令示例如下所示：
 
         **cd build**
 
-        **cmake ../src -DCMAKE\_SKIP\_RPATH=TRUE**
+        **cmake ..**
 
     3.  执行如下命令，生成可执行文件。
 
         **make**
 
-        会在工程目录的output目录下生成可执行文件**execute\_add\_op**。
+        会在build目录下生成可执行文件**execute\_add\_op**。
 
 3.  执行单算子
-    1.  以运行用户（例如HwHiAiUser）拷贝开发环境中样例工程output下的**execute\_add\_op**到运行环境任一目录。
+    1.  将开发环境中样例工程build目录下的以下文件和目录一起拷贝到运行环境的同一目录：
+
+        ```text
+        ├── execute_add_op
+        ├── *.om
+        ├── input
+        │   ├── input0.bin
+        │   └── input1.bin
+        └── output
+            └── golden.bin
+        ```
 
         说明：若您的开发环境即为运行环境，此拷贝操作可跳过。
 
-    2.  在运行环境中，执行**execute\_add\_op**文件，验证单算子模型文件。
+    2.  以运行用户登录运行环境，配置CANN和自定义算子包的环境变量。以下以CANN默认安装路径和样例的`customize`算子包为例；请根据运行环境修改`INSTALL_DIR`。算子包安装在自定义路径时，将`OPP_INSTALL_DIR`改为安装时`--install-path`指定的目录。
 
-        **chmod +x execute\_add\_op**
+        ```bash
+        INSTALL_DIR=/usr/local/Ascend/cann
+        OPP_INSTALL_DIR=${INSTALL_DIR}/opp
+        source ${INSTALL_DIR}/set_env.sh
+        source ${OPP_INSTALL_DIR}/vendors/customize/bin/set_env.bash
+        ```
 
-        **./execute\_add\_op**
+    3.  切换到存放上述文件和目录的位置，执行验证程序。程序从当前工作目录查找om模型、输入数据和预期结果文件。
+
+        ```bash
+        chmod +x execute_add_op
+        ./execute_add_op
+        ```
 
         如果有test pass，表明执行成功。

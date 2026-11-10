@@ -43,7 +43,7 @@ enum HcclServerType : uint32_t {
 <td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.1.4.1.3 "><p id="p991524490"><a name="p991524490"></a><a name="p991524490"></a><span id="ph19321164217255"><a name="ph19321164217255"></a><a name="ph19321164217255"></a>AI处理器</span>型号。为该型号配置服务端类型。</p>
 <p id="p366542912619"><a name="p366542912619"></a><a name="p366542912619"></a>可选参数，nullptr或者""表示为算子支持的所有型号配置服务端类型。</p>
 <p id="p94761732201220"><a name="p94761732201220"></a><a name="p94761732201220"></a>soc取值需确保在算子支持的<span id="ph3848185012164"><a name="ph3848185012164"></a><a name="ph3848185012164"></a>AI处理器</span>型号范围内，即已经调用<a href="../OpAICoreDef/AddConfig.md">AddConfig</a>接口注册。</p>
-<p id="zh-cn_topic_0000001575929572_p14611945131415"><a name="zh-cn_topic_0000001575929572_p14611945131415"></a><a name="zh-cn_topic_0000001575929572_p14611945131415"></a>填写规则请参考<span>算子工程目录下编译配置项文件CMakePresets.json中的ASCEND_COMPUTE_UNIT字段，该字段取值在使用msOpGen创建工程时自动生成</span>。</p>
+<p id="zh-cn_topic_0000001575929572_p14611945131415"><a name="zh-cn_topic_0000001575929572_p14611945131415"></a><a name="zh-cn_topic_0000001575929572_p14611945131415"></a>填写构建目标标识，可参考<a href="https://www.hiascend.com/document/detail/zh/AscendFAQ/ProduTech/productform/hardwaredesc_0001.html" target="_blank">产品形态说明</a>中的soc_series；配置多个目标时，为各目标分别注册。</p>
 </td>
 </tr>
 </tbody>

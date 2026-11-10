@@ -4,7 +4,7 @@
 
 >[!NOTE]说明 
 >- 基于新版本CANN包（支持Tiling下沉特性）编译生成的Tiling下沉算子，不兼容旧版CANN（不支持Tiling下沉特性）运行环境。
->- 当前仅融合算子（矢量计算和矩阵计算融合）支持进行Tiling下沉。
+>- 本样例的核函数采用`KERNEL_TYPE_AIV_ONLY`，通过`DEVICE_IMPL_OP_OPTILING`注册Device侧Tiling函数，并在图执行时开启Tiling调度优化。
 >- Tiling下沉功能仅支持如下产品型号：
 >    <!-- npu="A3" id1 -->
 >    - Atlas A3系列产品
@@ -18,17 +18,22 @@
 
 自定义算子开启Tiling下沉的步骤如下，完整样例请参考[Tiling下沉算子样例](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)。
 
-Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现文件需单独放在一个cpp文件中，示例中为add\_custom\_tiling\_sink\_tiling.cpp。
+Tiling下沉场景下，算子工程的目录结构如下，Tiling实现文件需单独放在一个cpp文件中，示例中为add\_custom\_tiling\_sink\_tiling.cpp；TilingData结构体（如TilingSinkTilingData）定义在op\_kernel侧的头文件中，供Host侧Tiling实现和核函数（Kernel）侧共同引用。
 
 ```
 ├── op_host
-│   ├── add_custom_tiling_sink.cpp // 算子原型定义、InferShape、InferDataType实现
-│   ├── add_custom_tiling_sink_tiling.cpp // Tiling函数实现
-│   ├── add_custom_tiling_sink_tiling.h // TilingData结构体定义、Tiling函数声明
+│   ├── add_custom_tiling_sink
+│   │   ├── add_custom_tiling_sink.cpp // 算子原型定义、InferShape、InferDataType实现
+│   │   ├── add_custom_tiling_sink_tiling.cpp // Tiling函数实现
+│   │   └── add_custom_tiling_sink_tiling.h // Tiling函数声明
 │   └── CMakeLists.txt
+└── op_kernel
+    └── add_custom_tiling_sink
+        ├── add_custom_tiling_sink_kernel.cpp // 核函数（Kernel）实现
+        └── add_custom_tiling_sink_tiling_struct.h // TilingData结构体定义
 ```
 
-以AddCustom算子为例，讲解关键代码文件的具体实现方法如下：
+以样例中的AddCustomTilingSink算子为例，讲解关键代码文件的具体实现方法如下。
 
 -   在add\_custom\_tiling\_sink\_tiling.h中进行Tiling实现函数的声明
 
@@ -94,7 +99,7 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
     #include "tiling/platform/platform_ascendc.h"
     namespace optiling {
     static constexpr uint32_t NUM_BLOCKS = 8;
-    static constexpr uint32_t TILE_NUM = 3;
+    static constexpr uint32_t TILE_NUM = 6;
     static constexpr size_t MAX_WORKSPACE_SIZE = 32; // 算子所需用户workspace空间最大值，AddCustomTilingSink算子本身逻辑无需用户workspace空间，此处设置为固定值仅作为示例
     static constexpr size_t DEFAULT_WORKSPACE_SIZE = 0;
     ge::graphStatus AddCustomSinkTilingFunc(gert::TilingContext *context)
@@ -121,20 +126,20 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
 
 -   算子核函数（Kernel）实现
 
-    当前Tiling下沉仅支持融合算子，为了模拟融合算子场景，通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)接口强制指定算子在AIC、AIV混合场景运行。
+    通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)接口指定核函数（Kernel）的执行类型。
 
     ```
     extern "C" __global__ __aicore__ void add_custom_tiling_sink(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)
     {
+        constexpr uint32_t STATIC_TILE_LENGTH = 8;
         REGISTER_TILING_DEFAULT(TilingSinkTilingData);
         GET_TILING_DATA(tiling_data, tiling);
-        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIC_1_2); // 将算子强制指定在AIC、AIV混合场景运行，模拟融合算子场景
-        if ASCEND_IS_AIC {
-            return;
-        }
-        AscendC::KernelAdd op;
+        KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_AIV_ONLY);
+        AscendC::InitSocState();
+        KernelAdd<STATIC_TILE_LENGTH> op;
         op.Init(x, y, z, tiling_data.totalLength, tiling_data.tileNum);
         op.Process();
+        AscendC::PipeBarrier<PIPE_ALL>();
     }
     ```
 
@@ -144,5 +149,10 @@ Tiling下沉场景下，算子工程的op\_host目录结构如下，Tiling实现
     npu_op_device_tiling_library(cust_opmaster SHARED  # 任务名称，固定为cust_opmaster
         add_custom_tiling_sink/add_custom_tiling_sink_tiling.cpp  # Tiling函数实现代码源文件
     )
+
+    npu_op_package_add(${package_name}
+        LIBRARY cust_opmaster
+    )
     ```
 
+    `npu_op_device_tiling_library`生成Device侧Tiling库，`npu_op_package_add`将该库加入算子包。Tiling函数实现文件还需参与Host侧Tiling库的构建。完整的源码列表和库配置请参考样例的[op_host/CMakeLists.txt](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op/op_host/CMakeLists.txt)。

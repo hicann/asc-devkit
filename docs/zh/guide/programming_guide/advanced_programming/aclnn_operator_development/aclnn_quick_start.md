@@ -1,6 +1,6 @@
 # Aclnn算子工程化开发快速入门
 
-本文是基础内容，通过一个完整的AddCustom算子示例，帮助您在5分钟内跑通从创建工程、补充算子实现、编译部署到单算子API调用验证的端到端流程。
+本文是基础内容，通过一个完整的AddCustom算子示例，引导您逐步创建工程目录、编写算子实现和CMakeLists.txt，再完成编译部署与单算子API调用验证。
 
 <img src="../../../figures/end_to_end_operator_development_process.png" alt="" width="600px" height="225px">
 
@@ -14,10 +14,8 @@
 |------|-------------|------|
 | CMake | ≥ 3.19 | 构建系统生成器。 |
 | GCC / G++ | ≥ 7.5 | C++编译器。 |
-| Python | ≥ 3.9 | msOpGen工具运行依赖。 |
+| Python | 与所用CANN版本的环境要求一致 | CANN代码生成及算子编译依赖。 |
 | Make | — | 构建执行工具。 |
-
-msOpGen是CANN软件包提供的算子工程生成工具。加载CANN环境变量后，可通过`msopgen --help`验证工具是否可用；如果命令不在`PATH`中，也可使用`${INSTALL_DIR}/python/site-packages/bin/msopgen`调用，其中`${INSTALL_DIR}`为CANN软件安装路径。
 
 可通过以下命令检查工具版本：
 
@@ -42,216 +40,54 @@ source /usr/local/Ascend/cann/set_env.sh
 
 ### 步骤概览
 
-| 步骤 | 内容 | 预计时间 |
-|------|------|----------|
-| 步骤1 | 创建工程 | 1分钟 |
-| 步骤2 | 查看目录结构 | — |
-| 步骤3 | 修改核函数（Kernel）侧代码 | 1分钟 |
-| 步骤4 | 修改Host侧Tiling | 1分钟 |
-| 步骤5 | 编译 | 1分钟 |
-| 步骤6 | 部署 | — |
-| 步骤7 | 调用算子 | 1分钟 |
+| 步骤 | 内容 |
+|------|------|
+| 步骤1 | 算子分析 |
+| 步骤2 | 创建工程目录 |
+| 步骤3 | 编写共享Tiling数据结构 |
+| 步骤4 | 编写核函数（Kernel）侧代码 |
+| 步骤5 | 编写Host侧原型、推导函数和Tiling实现 |
+| 步骤6 | 编写三个CMakeLists.txt |
+| 步骤7 | 编译与部署 |
+| 步骤8 | 创建调用工程并验证算子 |
 
-### 创建工程<a id="create-project"></a>
+### 算子分析
 
-编写算子原型定义文件`add_custom.json`（建议放在全英文路径下），然后使用msOpGen工具生成工程骨架。JSON中每个输入/输出的`format`和`type`列表长度必须一致，保持一一对应关系。
+本示例实现AddCustom算子，对两个形状相同、数据类型为float16的输入张量x和y进行逐元素相加，得到同形状、同数据类型的输出张量z，即z = x + y。
 
-```json
-[
-    {
-        "op": "AddCustom",
-        "input_desc": [
-            {
-                "name": "x",
-                "param_type": "required",
-                "format": ["ND", "ND", "ND"],
-                "type": ["float16", "float", "int32"]
-            },
-            {
-                "name": "y",
-                "param_type": "required",
-                "format": ["ND", "ND", "ND"],
-                "type": ["float16", "float", "int32"]
-            }
-        ],
-        "output_desc": [
-            {
-                "name": "z",
-                "param_type": "required",
-                "format": ["ND", "ND", "ND"],
-                "type": ["float16", "float", "int32"]
-            }
-        ]
-    }
-]
-```
+### 创建工程目录<a id="create-project"></a>
+
+自定义算子工程的目录结构和CMakeLists.txt由开发者直接编写；CANN软件包以CMake modules的形式提供`npu_op_*`系列接口，用于声明算子包、生成aclnn单算子调用代码并编译Host侧库和核函数（Kernel）侧库。
+
+>[!NOTE]说明
+>除了手写CMakeLists.txt外，也可以使用msOpGen工具生成自定义算子工程骨架，具体用法请参考[msOpGen快速入门](https://www.hiascend.com/document/detail/zh/mindstudio/latest/msOT/Operatordevelopmenttools/docs/zh/quick_start/msopgen_quick_start.md)。本文后续步骤均以手写CMakeLists.txt为例。
+
+先创建工程目录：
 
 ```bash
-# 将上面的JSON内容保存为add_custom.json后执行：
-source /usr/local/Ascend/cann/set_env.sh
-msopgen gen -i add_custom.json -c ai_core-ascendxxyy -lan cpp -out AddCustom
+mkdir -p AddCustom/op_host AddCustom/op_kernel
+cd AddCustom
 ```
 
--   -i：指定算子原型定义文件add\_custom_.json所在路径，请根据实际情况修改。
--   -c：`ai_core-ascendxxyy`代表算子在AI Core上执行，ascendxxyy为昇腾AI处理器的型号`soc_version`。JSON中的type/format列表定义算子支持的数据类型和格式组合。msOpGen会基于这些信息生成对应的核函数（Kernel）编译配置。
--   -lan：参数cpp代表算子基于Ascend C编程框架，使用C/C++编程语言开发。
--   -out：生成文件所在路径，可配置为绝对路径或者相对路径，并且工具执行用户对路径具有可读写权限。若不配置，则默认生成在执行命令的当前路径。
-
-将`ascendxxyy`替换为您的AI处理器型号`soc_version`。msOpGen会自动将芯片型号映射为框架统一标识，并写入`CMakePresets.json`的`ASCEND_COMPUTE_UNIT`和原型定义的`AddConfig`中。
-
->[!NOTE]说明 
->其中，AI处理器型号`soc_version`请通过以下方式获取：
-><!-- npu="910b,910,310p,310b" id1 -->
->- 针对如下产品：在安装AI处理器的服务器执行`npu-smi info`命令进行查询，获取Name信息。实际配置值为AscendName，例如Name取值为xxxyy，实际配置值为Ascendxxxyy。<br><br>
->    <!-- npu="910b" id2 -->
->    Atlas A2系列产品  
->    <!-- end id2 -->
->
->    <!-- npu="310b" id3 -->
->    Atlas 200I/500 A2推理产品  
->    <!-- end id3 -->
->
->    <!-- npu="310p" id4 -->
->    Atlas推理系列产品  
->    <!-- end id4 -->
->
->    <!-- npu="910" id5 -->
->    Atlas训练系列产品<br><br> 
->    <!-- end id5 -->
-><!-- end id1 -->
-><!-- npu="A3" id6 -->
->- 针对Atlas A3系列产品，在安装AI处理器的服务器执行`npu-smi info -t board -i <id> -c <chip_id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。其中：<br>`id`：设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。<br>`chip_id`：芯片id，通过`npu-smi info -m`命令查出的Chip ID即为芯片id，命令中表示为`<chip_id>`。<br><br>
-><!-- end id6 -->
-><!-- npu="950" id7 -->
->- 针对Ascend 950PR&950DT系列产品，在安装AI处理器的服务器执行`npu-smi info -t board -i <id>`命令进行查询，获取Chip Name和NPU Name信息，实际配置值为`Chip Name_NPU Name`。例如Chip Name取值为Ascendxxx，NPU Name取值为1234，实际配置值为Ascendxxx_1234。<br>其中：`id`为设备id，通过`npu-smi info -l`命令查出的NPU ID即为设备id，命令中表示为`<id>`。
-><!-- end id7 -->
-
-### 查看目录结构
-
-msOpGen生成的工程目录结构如下：
+此时`op_host`和`op_kernel`均为空目录，下文将逐一创建并编写以下文件，完成后工程结构如下：
 
 ```
 AddCustom
-├── build.sh                  // 编译入口脚本
-├── CMakeLists.txt            // 工程CMakeLists.txt
-├── CMakePresets.json         // 芯片型号等编译预设配置（msOpGen自动生成）
-├── framework                 // AI框架适配插件目录（入图场景使用，初学可忽略）
+├── CMakeLists.txt            // [待创建] 工程CMakeLists.txt
 ├── op_host                   // Host侧实现文件
-│   ├── add_custom.cpp        // [需修改] 算子原型注册、Tiling实现
-│   └── CMakeLists.txt
+│   ├── add_custom.cpp        // [待创建] 算子原型注册、Tiling实现
+│   └── CMakeLists.txt        // [待创建]
 └── op_kernel                 // 核函数（Kernel）侧实现文件
-    ├── add_custom.cpp        // [需修改] 算子代码实现
-    ├── add_custom_tiling.h   // [需修改] Tiling数据结构定义
-    └── CMakeLists.txt
+    ├── add_custom.cpp        // [待创建] 算子代码实现
+    ├── add_custom_tiling.h   // [待创建] Tiling数据结构定义
+    └── CMakeLists.txt        // [待创建]
 ```
 
-需要修改的文件已用`[需修改]`标注，后续步骤将逐一修改这些文件。
+### 编写共享Tiling数据结构<a id="修改tiling与host侧实现"></a>
 
-msOpGen生成的`op_host/add_custom.cpp`已包含`namespace ops`（算子原型注册）和`namespace ge`（InferShape/InferDataType）的框架代码，以及`TilingFunc`函数的空实现。后续只需修改`TilingFunc`的实现，保留框架代码不变。
+Tiling负责将Host侧的调度信息（如数据总量、分块数）传递到核函数（Kernel）侧执行。Tiling数据结构定义放在`op_kernel/add_custom_tiling.h`，供Host和核函数（Kernel）共同引用。
 
-### 修改核函数（Kernel）侧代码<a name="修改kernel侧代码"></a>
-
-编辑`op_kernel/add_custom.cpp`，将自动生成模板中的内容替换为完整的算子计算实现：
-
-```cpp
-#include "kernel_operator.h"
-#include "add_custom_tiling.h"
-
-using namespace AscendC;
-
-class KernelAdd {
-public:
-    __aicore__ inline KernelAdd() {}
-    __aicore__ inline void Init(GM_ADDR x, GM_ADDR y, GM_ADDR z,
-                                uint32_t totalLength, uint32_t tileNum)
-    {
-        this->totalLength = totalLength;
-        this->tileNum = tileNum;
-        xGlobal.SetGlobalBuffer((__gm__ float*)x);
-        yGlobal.SetGlobalBuffer((__gm__ float*)y);
-        zGlobal.SetGlobalBuffer((__gm__ float*)z);
-
-        pipe.InitBuffer(xQueue, 1, totalLength / tileNum * sizeof(float));
-        pipe.InitBuffer(yQueue, 1, totalLength / tileNum * sizeof(float));
-        pipe.InitBuffer(zQueue, 1, totalLength / tileNum * sizeof(float));
-    }
-
-    __aicore__ inline void Process()
-    {
-        uint32_t lengthPerBlock = totalLength / tileNum;
-        uint32_t lengthPerCore = totalLength / GetBlockNum();
-        uint32_t coreOffset = lengthPerCore * GetBlockIdx();
-
-        for (uint32_t i = 0; i < lengthPerCore / lengthPerBlock; i++) {
-            uint32_t offset = coreOffset + i * lengthPerBlock;
-            CopyIn(offset, lengthPerBlock);
-            Compute(lengthPerBlock);
-            CopyOut(offset, lengthPerBlock);
-        }
-    }
-
-private:
-    __aicore__ inline void CopyIn(uint32_t offset, uint32_t length)
-    {
-        LocalTensor<float> xLocal = xQueue.AllocTensor<float>();
-        LocalTensor<float> yLocal = yQueue.AllocTensor<float>();
-        DataCopy(xLocal, xGlobal[offset], length);
-        DataCopy(yLocal, yGlobal[offset], length);
-        xQueue.EnQue(xLocal);
-        yQueue.EnQue(yLocal);
-    }
-
-    __aicore__ inline void Compute(uint32_t length)
-    {
-        LocalTensor<float> xLocal = xQueue.DeQue<float>();
-        LocalTensor<float> yLocal = yQueue.DeQue<float>();
-        LocalTensor<float> zLocal = zQueue.AllocTensor<float>();
-
-        Add(zLocal, xLocal, yLocal, length);
-
-        zQueue.EnQue(zLocal);
-        xQueue.FreeTensor(xLocal);
-        yQueue.FreeTensor(yLocal);
-    }
-
-    __aicore__ inline void CopyOut(uint32_t offset, uint32_t length)
-    {
-        LocalTensor<float> zLocal = zQueue.DeQue<float>();
-        DataCopy(zGlobal[offset], zLocal, length);
-        zQueue.FreeTensor(zLocal);
-    }
-
-    TPipe pipe;
-    TQue<TPosition::VECIN, 1> xQueue;
-    TQue<TPosition::VECIN, 1> yQueue;
-    TQue<TPosition::VECOUT, 1> zQueue;
-    GlobalTensor<float> xGlobal;
-    GlobalTensor<float> yGlobal;
-    GlobalTensor<float> zGlobal;
-    uint32_t totalLength;
-    uint32_t tileNum;
-};
-
-extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z,
-                                                   GM_ADDR workspace, GM_ADDR tiling)
-{
-    REGISTER_TILING_DEFAULT(AddCustomTilingData);  // 注册TilingData结构体类型
-    GET_TILING_DATA(tilingData, tiling);           // 反序列化tiling参数为结构体实例
-    KernelAdd op;
-    op.Init(x, y, z, tilingData.totalLength, tilingData.tileNum);
-    op.Process();
-}
-```
-
-> 以上代码展示了[核函数（Kernel）侧算子实现](./design_and_implementation/kernel_operator_implementation.md)的基本模式。
-
-### 修改Tiling与Host侧实现
-
-Tiling负责将Host侧的调度信息（如数据总量、分块数）传递给核函数（Kernel）侧执行。Tiling数据结构定义放在`op_kernel/add_custom_tiling.h`，供Host和核函数（Kernel）共同引用。
-
-#### 修改Tiling数据结构定义
-
-编辑`op_kernel/add_custom_tiling.h`，使用标准C++语法定义TilingData结构体：
+创建`op_kernel/add_custom_tiling.h`，使用标准C++语法定义TilingData结构体：
 
 ```cpp
 #ifndef ADD_CUSTOM_TILING_H
@@ -265,9 +101,103 @@ struct AddCustomTilingData {
 #endif // ADD_CUSTOM_TILING_H
 ```
 
-#### 修改Host侧实现
+### 编写核函数（Kernel）侧代码<a id="修改kernel侧代码"></a>
 
-编辑`op_host/add_custom.cpp`，自动生成的文件已包含原型注册和TilingFunc框架。找到`TilingFunc`函数，将其修改为以下实现：
+创建`op_kernel/add_custom.cpp`，编写完整的算子计算实现：
+
+```cpp
+#include "kernel_operator.h"
+#include "add_custom_tiling.h"
+
+constexpr int32_t BUFFER_NUM = 2;
+constexpr uint32_t STATIC_TILE_LENGTH = 128;
+
+template <uint32_t tileLength>
+class KernelAdd {
+public:
+    __aicore__ inline KernelAdd() {}
+    __aicore__ inline void Init(
+        __gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z, uint32_t totalLength, uint32_t tileNum)
+    {
+        ascendc_assert(tileNum != 0, "tileNum can not be zero.\n");
+        this->blockLength = totalLength / AscendC::GetBlockNum();
+        this->tileNum = tileNum;
+        uint32_t runtimeTileLength = this->blockLength / tileNum / BUFFER_NUM;
+        ascendc_assert(runtimeTileLength == tileLength, "runtime tileLength must match template tileLength.\n");
+
+        xGm.SetGlobalBuffer((__gm__ DTYPE_X*)x + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
+        yGm.SetGlobalBuffer((__gm__ DTYPE_Y*)y + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
+        zGm.SetGlobalBuffer((__gm__ DTYPE_Z*)z + this->blockLength * AscendC::GetBlockIdx(), this->blockLength);
+    }
+    __aicore__ inline void Process()
+    {
+        int32_t loopCount = this->tileNum * BUFFER_NUM;
+
+        AscendC::LocalMemAllocator<AscendC::Hardware::UB> ubAllocator;
+        AscendC::LocalTensor<DTYPE_X> xLocal = ubAllocator.Alloc<DTYPE_X, tileLength>();
+        AscendC::LocalTensor<DTYPE_Y> yLocal = ubAllocator.Alloc<DTYPE_Y, tileLength>();
+        AscendC::LocalTensor<DTYPE_Z> zLocal = ubAllocator.Alloc<DTYPE_Z, tileLength>();
+
+        AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(EVENT_ID0);
+        AscendC::SetFlag<AscendC::HardEvent::MTE3_V>(EVENT_ID0);
+
+        for (int32_t i = 0; i < loopCount; i++) {
+            AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(EVENT_ID0);
+
+            AscendC::DataCopy(xLocal, xGm[i * tileLength], tileLength);
+            AscendC::DataCopy(yLocal, yGm[i * tileLength], tileLength);
+
+            AscendC::SetFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+            AscendC::WaitFlag<AscendC::HardEvent::MTE2_V>(EVENT_ID0);
+
+            AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(EVENT_ID0);
+
+            AscendC::Add(zLocal, xLocal, yLocal, tileLength);
+
+            AscendC::SetFlag<AscendC::HardEvent::V_MTE2>(EVENT_ID0);
+            AscendC::SetFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
+            AscendC::WaitFlag<AscendC::HardEvent::V_MTE3>(EVENT_ID0);
+
+            AscendC::DataCopy(zGm[i * tileLength], zLocal, tileLength);
+
+            AscendC::SetFlag<AscendC::HardEvent::MTE3_V>(EVENT_ID0);
+        }
+
+        AscendC::WaitFlag<AscendC::HardEvent::V_MTE2>(EVENT_ID0);
+        AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(EVENT_ID0);
+    }
+
+private:
+    AscendC::GlobalTensor<DTYPE_X> xGm;
+    AscendC::GlobalTensor<DTYPE_Y> yGm;
+    AscendC::GlobalTensor<DTYPE_Z> zGm;
+    uint32_t blockLength;
+    uint32_t tileNum;
+};
+
+extern "C" __global__ __aicore__ void add_custom(
+    __gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t* z, __gm__ uint8_t* workspace, __gm__ uint8_t* tiling)
+{
+    AscendC::InitSocState();
+
+    REGISTER_TILING_DEFAULT(AddCustomTilingData);  // 注册TilingData结构体类型
+    GET_TILING_DATA(tilingData, tiling);           // 反序列化tiling参数为结构体实例
+
+    KernelAdd<STATIC_TILE_LENGTH> op;
+    op.Init(x, y, z, tilingData.totalLength, tilingData.tileNum);
+    op.Process();
+
+    AscendC::PipeBarrier<PIPE_ALL>();
+}
+```
+
+以上代码按`BUFFER_NUM`（双缓冲数）和模板参数`STATIC_TILE_LENGTH`（编译期分块长度）手动管理UB内存和搬运/计算之间的流水同步（`SetFlag`/`WaitFlag`），`DTYPE_X`/`DTYPE_Y`/`DTYPE_Z`由构建时根据下文Host原型注册的输入输出数据类型生成。`Init`中的断言要求`totalLength`满足`totalLength / GetBlockNum() / tileNum / BUFFER_NUM == STATIC_TILE_LENGTH`，即数据总量需与Host侧Tiling的`NUM_BLOCKS`、`TILE_NUM`和此处的`BUFFER_NUM`、`STATIC_TILE_LENGTH`配套，调用算子时需按此关系设置数据规模，具体可参考[核函数（Kernel）侧算子实现](./design_and_implementation/kernel_operator_implementation.md)。
+
+### 编写Host侧实现
+
+本示例以Atlas A2系列产品为例；请按[构建目标配置](#target-configuration)将此处的`AddConfig`和CMake配置中的`ascendxxx`替换为实际构建目标。
+
+创建`op_host/add_custom.cpp`，包含三部分内容：`namespace optiling`中的Tiling函数、`namespace ge`中的InferShape/InferDataType实现，以及`namespace ops`中的算子原型注册。
 
 ```cpp
 #include "../op_kernel/add_custom_tiling.h"
@@ -292,41 +222,163 @@ static ge::graphStatus TilingFunc(gert::TilingContext *context)
     return ge::GRAPH_SUCCESS;
 }
 } // namespace optiling
+
+namespace ge {
+static graphStatus InferShape(gert::InferShapeContext *context)
+{
+    const gert::Shape *xShape = context->GetInputShape(0);
+    gert::Shape *zShape = context->GetOutputShape(0);
+    *zShape = *xShape;
+    return GRAPH_SUCCESS;
+}
+
+static graphStatus InferDataType(gert::InferDataTypeContext *context)
+{
+    const auto inputDataType = context->GetInputDataType(0);
+    context->SetOutputDataType(0, inputDataType);
+    return ge::GRAPH_SUCCESS;
+}
+} // namespace ge
+
+namespace ops {
+class AddCustom : public OpDef {
+public:
+    explicit AddCustom(const char *name) : OpDef(name)
+    {
+        this->Input("x").ParamType(REQUIRED).DataType({ge::DT_FLOAT16}).Format({ge::FORMAT_ND});
+        this->Input("y").ParamType(REQUIRED).DataType({ge::DT_FLOAT16}).Format({ge::FORMAT_ND});
+        this->Output("z").ParamType(REQUIRED).DataType({ge::DT_FLOAT16}).Format({ge::FORMAT_ND});
+
+        this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);
+        this->AICore()
+            .SetTiling(optiling::TilingFunc)
+            .AddConfig("ascendxxx");  // ascendxxx请修改为对应的AI处理器系列，与CMake的ASCEND_SOC_SERIES保持一致
+    }
+};
+OP_ADD(AddCustom);
+} // namespace ops
 ```
 
-保留文件末尾自动生成的`namespace ge`（InferShape/InferDataType）和`namespace ops`（[算子原型注册](./design_and_implementation/operator_prototype_definition.md)）代码不变。
+> 以上代码分别展示了[Host侧Tiling实现](./design_and_implementation/host_tiling_implementation.md)中Tiling函数的基本写法，以及[算子原型定义](./design_and_implementation/operator_prototype_definition.md)中`OpDef`的注册方法。
 
-> 以上代码展示了[Host侧Tiling实现](./design_and_implementation/host_tiling_implementation.md)中Tiling函数和TilingData数据结构的基本写法。
+### 编写CMakeLists.txt
+
+#### 配置构建目标<a id="target-configuration"></a>
+
+本示例的CMake和Host原型均使用`ascendxxx`作为构建目标，使用前需将两处替换为实际构建目标；配置多个目标时，Host原型应为各目标分别调用`AddConfig`。具体支持范围以所安装CANN版本为准，各产品对应的取值请参考[产品形态说明](https://www.hiascend.com/document/detail/zh/AscendFAQ/ProduTech/productform/hardwaredesc_0001.html)中的表1。
+
+`ASCEND_SOC_SERIES`用于选择构建目标，支持单个或多个取值，输入不区分大小写。更多配置方式及存量工程使用`ASCEND_COMPUTE_UNIT`的说明见[编译配置](./compilation_and_deployment/basic_process.md#compile-configuration)。
+
+#### 编写顶层文件
+
+在工程根目录创建`CMakeLists.txt`，保存以下完整内容，用于声明算子包并添加`op_host`、`op_kernel`子目录：
+
+```cmake
+cmake_minimum_required(VERSION 3.19.0)
+project(AddCustom)
+
+# 在加载ASC前配置构建目标。CACHE默认值允许用cmake -D或preset覆盖。
+if(NOT DEFINED ASCEND_COMPUTE_UNIT)
+    set(ASCEND_SOC_SERIES "ascendxxx" CACHE STRING "AI processor series")
+endif()
+set(vendor_name "customize" CACHE STRING "Operator package vendor")
+
+# 查找CANN软件包提供的ASC CMake modules
+find_package(ASC REQUIRED)
+
+npu_op_package(${vendor_name}
+    TYPE RUN                           # 编译产物形态：RUN/STATIC/SHARED
+    CONFIG
+        INSTALL_PATH ${CMAKE_BINARY_DIR}/
+)
+
+add_subdirectory(op_host)
+add_subdirectory(op_kernel)
+```
+
+#### 编写Host侧构建文件
+
+在`op_host`目录下创建`CMakeLists.txt`，保存以下完整内容，用于生成aclnn调用代码并编译Host侧库：
+
+```cmake
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} ops_srcs)
+
+npu_op_code_gen(
+    SRC ${ops_srcs}
+    PACKAGE ${vendor_name}
+    OUT_DIR ${ASCEND_AUTOGEN_PATH}
+)
+
+file(GLOB autogen_aclnn_src ${ASCEND_AUTOGEN_PATH}/aclnn_*.cpp)
+set_source_files_properties(${autogen_aclnn_src} PROPERTIES GENERATED TRUE)
+npu_op_library(cust_opapi ACLNN
+    ${autogen_aclnn_src}
+)
+
+file(GLOB fallback_src ${ASCEND_AUTOGEN_PATH}/fallback_*.cpp)
+set_source_files_properties(${fallback_src} PROPERTIES GENERATED TRUE)
+npu_op_library(cust_optiling TILING
+    ${ops_srcs}
+    ${fallback_src}
+)
+
+npu_op_package_add(${vendor_name}
+    LIBRARY
+        cust_optiling
+        cust_opapi
+)
+```
+
+#### 编写核函数侧构建文件
+
+在`op_kernel`目录下创建`CMakeLists.txt`，保存以下完整内容，用于指定核函数源码并配置编译：
+
+```cmake
+npu_op_kernel_sources(ascendc_kernels
+    OP_TYPE AddCustom
+    KERNEL_DIR ./                                  #核函数（Kernel）源码目录，该目录下文件（含头文件）整体打包进算子包
+    KERNEL_FILE add_custom.cpp
+)
+
+npu_op_kernel_library(ascendc_kernels
+    SRC_BASE ${CMAKE_CURRENT_SOURCE_DIR}
+    TILING_LIBRARY cust_optiling
+)
+
+npu_op_package_add(${vendor_name}
+    LIBRARY ascendc_kernels
+)
+```
+
+> 以上三个CMakeLists.txt涉及的`npu_op_*`接口完整参数说明请参考[CMake函数参考](./appendix/cmake_function_reference.md)。
 
 ### 编译
 
-在算子工程根目录下执行编译脚本：
+当前终端仍位于前面创建的`AddCustom`工程根目录。确认所有文件已保存后，执行：
 
 ```bash
-cd AddCustom
-./build.sh
+cmake -S . -B build
+cmake --build build --target binary package --parallel 8
 ```
 
-编译成功后，编译产物输出在`build_out`目录下，其中包含`.run`格式的算子安装包。
+编译成功后，编译产物输出在`build`目录下，其中包含`.run`格式的算子安装包。
 
 > 如需了解编译配置选项、动态库/静态库编译等更多选项，请参考[算子工程编译](./compilation_and_deployment/basic_process.md)。
 
 ### 部署
 
-在算子工程根目录下，将编译产物安装到CANN目录：
+在算子工程根目录，将编译产物安装到CANN目录：
 
 ```bash
-./build_out/custom_opp_*.run
+./build/custom_opp_*.run
 ```
 
 安装完成后，算子库和头文件会被部署到`$ASCEND_OPP_PATH/vendors/customize/`下：
 
 ```
 customize
-├── framework     // AI框架适配插件
 ├── op_api        // 单算子API头文件和动态库（aclnn_*.h、libcust_opapi.so）
 ├── op_impl       // 核函数（Kernel）二进制（.o）和Tiling动态库
-├── op_proto      // 算子原型动态库
 ├── scripts       // 算子包维护脚本
 └── version.info  // 版本信息
 ```
@@ -341,7 +393,14 @@ export LD_LIBRARY_PATH=/usr/local/Ascend/cann/opp/vendors/customize/op_api/lib/:
 
 ### 调用算子
 
-创建一个独立的验证工程来调用已部署的算子，目录结构如下：
+在算子工程的同级目录创建独立的验证工程；下面的命令从`AddCustom`根目录执行：
+
+```bash
+mkdir -p ../AddCustomTest
+cd ../AddCustomTest
+```
+
+在该目录保存后续的`main.cpp`和`CMakeLists.txt`，目录结构如下：
 
 ```
 AddCustomTest
@@ -389,17 +448,20 @@ int main()
     aclrtStream stream = nullptr;
     CHECK_RTL(aclrtCreateStream(&stream));
 
-    // 2. 准备输入数据
-    const int count = 1024;
-    size_t bufferSize = count * sizeof(float);
+    // 2. 准备输入数据。shape需与Kernel侧的NUM_BLOCKS、TILE_NUM、BUFFER_NUM、
+    //    STATIC_TILE_LENGTH配套（本示例为8*8*2*128=16384），数据类型需与算子原型注册的
+    //    DT_FLOAT16一致
+    const std::vector<int64_t> shape = {8, 2048};
+    const int64_t count = shape[0] * shape[1];
+    size_t bufferSize = count * sizeof(aclFloat16);
 
-    std::vector<float> input0Host(count);
-    std::vector<float> input1Host(count);
-    std::vector<float> outputHost(count, 0.0f);
+    std::vector<aclFloat16> input0Host(count);
+    std::vector<aclFloat16> input1Host(count);
+    std::vector<aclFloat16> outputHost(count, aclFloatToFloat16(0.0f));
 
-    for (int i = 0; i < count; i++) {
-        input0Host[i] = static_cast<float>(i);
-        input1Host[i] = static_cast<float>(i);
+    for (int64_t i = 0; i < count; i++) {
+        input0Host[i] = aclFloatToFloat16(static_cast<float>(i % 100));
+        input1Host[i] = aclFloatToFloat16(static_cast<float>(i % 100));
     }
 
     // 3. 申请设备内存
@@ -418,17 +480,14 @@ int main()
                           bufferSize, ACL_MEMCPY_HOST_TO_DEVICE));
 
     // 5. 创建Tensor描述
-    int64_t shape[] = {count};
-    uint64_t shapeNum = 1;
-
     // aclCreateTensor参数：viewDims, viewDimsNum, dataType, stride(nullptr表示默认连续排布),
     //     offset, format, storageDims, storageDimsNum, tensorData
-    aclTensor *input0 = aclCreateTensor(shape, shapeNum, ACL_FLOAT, nullptr, 0,
-                                        ACL_FORMAT_ND, shape, shapeNum, input0DeviceMem);
-    aclTensor *input1 = aclCreateTensor(shape, shapeNum, ACL_FLOAT, nullptr, 0,
-                                        ACL_FORMAT_ND, shape, shapeNum, input1DeviceMem);
-    aclTensor *output = aclCreateTensor(shape, shapeNum, ACL_FLOAT, nullptr, 0,
-                                        ACL_FORMAT_ND, shape, shapeNum, outputDeviceMem);
+    aclTensor *input0 = aclCreateTensor(shape.data(), shape.size(), ACL_FLOAT16, nullptr, 0,
+                                        ACL_FORMAT_ND, shape.data(), shape.size(), input0DeviceMem);
+    aclTensor *input1 = aclCreateTensor(shape.data(), shape.size(), ACL_FLOAT16, nullptr, 0,
+                                        ACL_FORMAT_ND, shape.data(), shape.size(), input1DeviceMem);
+    aclTensor *output = aclCreateTensor(shape.data(), shape.size(), ACL_FLOAT16, nullptr, 0,
+                                        ACL_FORMAT_ND, shape.data(), shape.size(), outputDeviceMem);
 
     // 6. 计算workspace大小并申请内存
     uint64_t workspaceSize = 0;
@@ -454,11 +513,12 @@ int main()
 
     // 10. 验证结果
     bool pass = true;
-    for (int i = 0; i < count; i++) {
-        float expected = input0Host[i] + input1Host[i];
-        if (outputHost[i] != expected) {
-            printf("Error at index %d: expected %f, got %f\n",
-                   i, expected, outputHost[i]);
+    for (int64_t i = 0; i < count; i++) {
+        float expected = aclFloat16ToFloat(input0Host[i]) + aclFloat16ToFloat(input1Host[i]);
+        float actual = aclFloat16ToFloat(outputHost[i]);
+        if (actual != expected) {
+            printf("Error at index %lld: expected %f, got %f\n",
+                   static_cast<long long>(i), expected, actual);
             pass = false;
             break;
         }
@@ -556,7 +616,7 @@ test pass
 如果输出`test failed`、ACL Error或动态库`not found`类错误，请检查：
 1. CANN环境变量是否已加载（`source /usr/local/Ascend/cann/set_env.sh`）。
 2. 算子是否已按照[部署](#部署)步骤正确部署。
-3. 核函数（Kernel）侧和Host侧代码是否按[核函数（Kernel）代码](#修改kernel侧代码)、[Host代码](#修改tiling与host侧实现)正确修改。
+3. 核函数（Kernel）侧和Host侧代码是否按[核函数（Kernel）代码](#修改kernel侧代码)、[Host代码](#编写host侧实现)正确编写。
 
 ## 下一步指引
 

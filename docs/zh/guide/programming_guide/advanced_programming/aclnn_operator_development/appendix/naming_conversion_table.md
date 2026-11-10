@@ -76,7 +76,7 @@ Reduce -> reduce
 | 核函数（Kernel）源码文件名 | 建议使用小写下划线，可由CMake显式指定 | `add_custom.cpp` |
 | 核函数（Kernel）入口函数名 | 默认使用小写下划线，需与`opInterface.value`一致 | `add_custom` |
 
-使用msOpGen创建算子工程时，工具通常会按上述规则生成初始文件名和核函数（Kernel）入口名。构建后可以通过生成的`ops-info.ini`和aclnn头文件确认实际转换结果，应用程序也应以这些构建产物为准。
+编写核函数（Kernel）侧代码时，建议按上述规则命名文件和核函数（Kernel）入口，这样无需在`npu_op_kernel_sources`中额外指定`KERNEL_FILE`。构建后可以通过生成的`ops-info.ini`和aclnn头文件确认实际转换结果，应用程序也应以这些构建产物为准。
 
 如果修改了aclnn工程名前缀或直调接口前缀，生成文件和接口的前缀也会变化。重命名Host或核函数（Kernel）源文件后，还需要同步修改CMake中的源文件列表。
 

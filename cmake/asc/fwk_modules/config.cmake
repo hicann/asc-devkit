@@ -82,6 +82,12 @@ foreach(soc_version ${ASCEND_COMPUTE_UNIT})
     endif()
 endforeach()
 
+# Record the build target state as resolved here, so that _asc_ensure_build_target()
+# can tell whether the project set ASCEND_SOC_SERIES after find_package(ASC) and
+# resolve it on first use instead of silently ignoring it.
+set_property(GLOBAL PROPERTY _ASC_SOC_SERIES_AT_LOAD "${ASCEND_SOC_SERIES}")
+set_property(GLOBAL PROPERTY _ASC_COMPUTE_UNIT_AT_LOAD "${ASCEND_COMPUTE_UNIT}")
+
 if (NOT DEFINED ENABLE_TEST)
     set(ENABLE_TEST FALSE CACHE BOOL "")
 endif()

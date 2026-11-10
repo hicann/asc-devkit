@@ -15,14 +15,9 @@
 
     完成`--npu-arch`配置后，迁移过程中还可根据算子实现、目标架构和编译场景按需配置其他内置编译宏开关。相关开关的适用范围、使用约束和配置方式请参考[内置编译宏开关](../../../programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#section57020345148)。
 
-- 对于使用msOpGen工具生成的标准自定义算子工程的情况，会自动在算子工程目录下生成编译配置项文件CMakePresets.json中，并自动填充ASCEND\_COMPUTE\_UNIT字段。开发者需要在进行算子原型定义时，通过AddConfig接口注册算子支持的AI处理器型号以及相关的配置信息。AddConfig接口原型如下：soc参数表示AI处理器型号，aicore\_config表示其他配置信息。
+- 对于自定义算子工程的情况，开发者在CMakeLists.txt（或CMakePresets.json）中配置ASCEND\_SOC\_SERIES字段；存量工程使用ASCEND\_COMPUTE\_UNIT的方式同样有效，但两者不能同时配置。开发者需要在进行算子原型定义时，通过[AddConfig](../../../../api/Utils-API/prototype_register_management/OpAICoreDef/AddConfig.md)接口注册算子支持的AI处理器型号以及相关的配置信息。
 
-    ```
-    void AddConfig(const char *soc);
-    void AddConfig(const char *soc, OpAICoreConfig &aicore_config);
-    ```
-
-    通过该接口注册AI处理器型号的样例如下，ascendxxx填写规则请参考算子工程目录下编译配置项文件CMakePresets.json中的ASCEND\_COMPUTE\_UNIT字段，该字段取值在使用msOpGen创建工程时自动生成。
+    通过该接口注册AI处理器型号的样例如下，ascendxxx应填写构建目标标识，可参考[产品形态说明](https://www.hiascend.com/document/detail/zh/AscendFAQ/ProduTech/productform/hardwaredesc_0001.html)中的soc_series。
 
     ```
     ...

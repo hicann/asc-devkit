@@ -14,11 +14,7 @@
 1.  环境准备。
     1.  CANN软件安装请参考[环境准备](../../../getting_started/environment_setup.md)。
     2.  安装框架插件包，请参考[TensorFlow模型迁移](https://www.hiascend.com/document/detail/zh/TensorFlowCommunity/latest/index/index.html)中《TensorFlow 1.15模型迁移》或《TensorFlow 2.6.5模型迁移》的环境准备 \> 安装框架插件包章节，获取框架插件包详细的安装步骤。
-    3.  <a name="li123241091016"></a>[创建算子工程](../aclnn_operator_development/aclnn_quick_start.md#create-project)。使用msOpGen工具创建算子开发工程。TensorFlow框架算子适配场景下，需要通过framework参数指定具体的框架为tf或者tensorflow，工具会自动生成框架适配代码。以自定义CANN算子AddCustom为例，使用msOpGen工具创建算子开发工程的具体命令如下：
-
-        ```
-        ${INSTALL_DIR}/python/site-packages/bin/msopgen gen -i $HOME/sample/add_custom.json -f tf -c ai_core-<soc_version> -lan cpp -out $HOME/sample/AddCustom
-        ```
+    3.  <a name="li123241091016"></a>[创建算子工程](../aclnn_operator_development/aclnn_quick_start.md#create-project)。在手写算子工程的基础上，按[适配插件开发](#section1820291291414)创建插件目录、编写插件源码并补充CMake配置。
 
 2.  算子实现。
     -   [算子原型定义](../aclnn_operator_development/design_and_implementation/operator_prototype_definition.md)。通过原型定义来描述算子输入输出、属性等信息以及算子在AI处理器上相关实现信息，并关联tiling实现等函数。
@@ -26,28 +22,60 @@
 
 3.  [算子入图（GE图）开发](../operator_graph_development/basic_development_flow.md)。算子入图场景下，需要提供shape推导等算子入图适配函数的实现。
 4.  TensorFlow框架适配插件开发。详细说明见[适配插件开发](#section1820291291414)。
-5.  编译部署。通过工程编译脚本完成算子的编译部署，分为[算子包编译](../aclnn_operator_development/compilation_and_deployment/basic_process.md)和[算子动态库编译](../aclnn_operator_development/compilation_and_deployment/dynamic_static_lib_compilation.md)两种方式。
+5.  编译部署。通过CMake完成算子的编译部署，分为[算子包编译](../aclnn_operator_development/compilation_and_deployment/basic_process.md)和[算子动态库编译](../aclnn_operator_development/compilation_and_deployment/dynamic_static_lib_compilation.md)两种方式。
 6.  TensorFlow框架算子调用。详细说明见[TensorFlow原生算子映射到CANN算子](#section6342138121512)和[TensorFlow自定义算子开发并映射到CANN算子](#section18276103563719)。完整样例请参考[LINK](../../../../../../examples/01_simd_cpp_api/02_features/00_framework/01_tensorflow)。
 
 ## 适配插件开发<a name="section1820291291414"></a>
 
-完成[算子工程创建](#li123241091016)后，会在算子工程目录下生成framework/tf\_plugin目录，用于存放TensorFlow框架适配插件实现文件。以自定义CANN算子AddCustom为例，算子工程目录如下：
+完成[算子工程创建](#li123241091016)后，在工程根目录执行以下命令，新建TensorFlow框架插件目录：
 
+```bash
+mkdir -p framework/tf_plugin
 ```
+
+在该目录创建`tensorflow_add_custom_plugin.cc`，按下文编写插件源码，并创建各层CMakeLists.txt。完成后的工程结构如下（完整样例可参考[AddCustom完整样例](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)，其`framework/tf_plugin`与本节写法一致）：
+
+```text
 AddCustom
-├── build.sh             // 编译入口脚本
-├── cmake 
-├── CMakeLists.txt       // 算子工程的CMakeLists.txt
-├── CMakePresets.json    // 编译配置项
-├── framework            // 框架适配插件实现文件目录
-│   ├── tf_plugin     //  TensorFlow框架适配插件实现文件目录
-│   │   ├── CMakeLists.txt    
-│   │   ├── tensorflow_add_custom_plugin.cc  // TensorFlow框架适配插件实现文件    
+├── CMakeLists.txt
+├── framework
 │   ├── CMakeLists.txt
-├── op_host                      // host侧实现文件
-├── op_kernel                    // 核函数（Kernel）侧实现文件
-└── scripts                      // 自定义算子工程打包相关脚本所在目录
+│   └── tf_plugin
+│       ├── CMakeLists.txt
+│       └── tensorflow_add_custom_plugin.cc
+├── op_host
+│   ├── CMakeLists.txt
+│   └── ...
+└── op_kernel
+    ├── CMakeLists.txt
+    └── ...
 ```
+
+**1. 接入顶层构建**：保留已有的包声明和Host/Kernel子目录，在工程根目录的CMakeLists.txt中、`npu_op_package`之后添加：
+
+```cmake
+add_subdirectory(framework)
+```
+
+**2. 创建framework/CMakeLists.txt**，保存以下内容：
+
+```cmake
+add_subdirectory(tf_plugin)
+```
+
+**3. 创建framework/tf_plugin/CMakeLists.txt**，保存以下内容，编译插件并将其加入与算子相同的包。`vendor_name`沿用快速入门顶层文件中的变量：
+
+```cmake
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} plugin_srcs)
+npu_op_library(cust_tf_parsers TF_PLUGIN
+    ${plugin_srcs}
+)
+npu_op_package_add(${vendor_name}
+    LIBRARY cust_tf_parsers
+)
+```
+
+接口参数见[CMake函数参考](../aclnn_operator_development/appendix/cmake_function_reference.md#npu_op_library)。框架调用还需要入图原型库，请按[编译与部署基本流程](../aclnn_operator_development/compilation_and_deployment/basic_process.md#graph-library)在`op_host/CMakeLists.txt`中补充GRAPH库配置，然后重新编译安装算子包。
 
 当TensorFlow算子与CANN算子原型定义一致时，TensorFlow框架适配插件实现代码如下：
 
@@ -217,7 +245,7 @@ REGISTER_CUSTOM_OP("AddCustom")   // 当前Ascend C自定义算子名
       explicit AddCustomOp(OpKernelConstruction* context) : OpKernel(context) {}
     
       void Compute(OpKernelContext* context) override {
-        OP_REQUIRES_OK(context, errors::Unimplemented("AddCustomOp is not supported on CPU")); 
+        OP_REQUIRES(context, false, errors::Unimplemented("AddCustomOp is not supported on CPU")); 
       }
     };
     

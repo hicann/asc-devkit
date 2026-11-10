@@ -9,6 +9,41 @@
 # ----------------------------------------------------------------------------------------------------------
 include(ExternalProject)
 
+# config.cmake resolves ASCEND_SOC_SERIES into ASCEND_COMPUTE_UNIT while
+# find_package(ASC) is being processed. A project that sets ASCEND_SOC_SERIES
+# after that point would otherwise be ignored and silently fall back to the
+# default build target, so resolve it here on first use instead.
+#
+# Defined as a macro on purpose: it assigns ASCEND_COMPUTE_UNIT in the caller's
+# scope, which keeps every existing ${ASCEND_COMPUTE_UNIT} read site unchanged.
+macro(_asc_ensure_build_target)
+  get_property(_asc_soc_series_at_load GLOBAL PROPERTY _ASC_SOC_SERIES_AT_LOAD)
+  if(NOT "${ASCEND_SOC_SERIES}" STREQUAL "${_asc_soc_series_at_load}")
+    get_property(_asc_compute_unit_at_load GLOBAL PROPERTY _ASC_COMPUTE_UNIT_AT_LOAD)
+    if(NOT "${ASCEND_COMPUTE_UNIT}" STREQUAL "${_asc_compute_unit_at_load}")
+      message(FATAL_ERROR "ASCEND_SOC_SERIES and ASCEND_COMPUTE_UNIT cannot be set at the same time")
+    endif()
+    if("${ASCEND_SOC_SERIES}" STREQUAL "")
+      message(FATAL_ERROR "ASCEND_SOC_SERIES cannot be empty")
+    endif()
+    # Assign the whole list at once; clearing it first would expose the cached
+    # default again and append to it.
+    set(_asc_resolved_compute_unit)
+    foreach(_asc_soc_series ${ASCEND_SOC_SERIES})
+      string(TOLOWER "${_asc_soc_series}" _asc_soc_series_lower)
+      list(FIND ASC_VALID_SOC_LIST "${_asc_soc_series_lower}" _asc_soc_index)
+      if(_asc_soc_index EQUAL -1)
+        message(FATAL_ERROR
+          "SOC_SERIES ${_asc_soc_series} does not support, the support list is ${ASC_VALID_SOC_LIST}")
+      endif()
+      list(APPEND _asc_resolved_compute_unit "${_asc_soc_series_lower}")
+    endforeach()
+    set(ASCEND_COMPUTE_UNIT "${_asc_resolved_compute_unit}")
+    set_property(GLOBAL PROPERTY _ASC_SOC_SERIES_AT_LOAD "${ASCEND_SOC_SERIES}")
+    set_property(GLOBAL PROPERTY _ASC_COMPUTE_UNIT_AT_LOAD "${ASCEND_COMPUTE_UNIT}")
+  endif()
+endmacro()
+
 function(_ascendc_encode_soc_series output_var)
   set(encoded_soc_series)
   foreach(soc_series ${ARGN})
@@ -489,6 +524,7 @@ function(_ascendc_kernel_spec_json_string output_var value)
 endfunction()
 
 function(_ascendc_add_kernel_spec_target package_name kernel_target)
+  _asc_ensure_build_target()
   set(spec_target "${package_name}_kernel_spec")
   set(prepare_target "${package_name}_kernel_spec_prepare")
   get_property(spec_work GLOBAL PROPERTY _ASC_PKG_${package_name}_KERNEL_SPEC_BUILD_DIR)
@@ -875,6 +911,7 @@ function(npu_op_package target_package_name)
 endfunction()
 
 function(npu_op_code_gen)
+  _asc_ensure_build_target()
   message(STATUS "Opbuild generating sources")
   cmake_parse_arguments(OPBUILD "" "OUT_DIR;PROJECT_NAME;ACCESS_PREFIX;ENABLE_SOURCE;JOBS;PACKAGE;JOIN_OP_DEF" "SRC;COMPILE_OPTIONS;LINK_OPTIONS;OPTIONS" ${ARGN})
   if(NOT DEFINED OPBUILD_SRC)
@@ -1186,6 +1223,7 @@ function(get_current_pack_target sub_target output_var)
 endfunction()
 
 function(npu_op_package_add target_package_name)
+  _asc_ensure_build_target()
   cmake_parse_arguments(ADD_TARGET "" "PACKAGE_PATH" "TYPE;LIBRARY;FILES" ${ARGN})
   if(DEFINED ADD_TARGET_LIBRARY AND DEFINED ADD_TARGET_FILES)
     message(FATAL_ERROR
