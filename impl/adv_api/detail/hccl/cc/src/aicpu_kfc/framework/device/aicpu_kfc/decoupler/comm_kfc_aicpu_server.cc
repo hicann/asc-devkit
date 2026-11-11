@@ -74,22 +74,22 @@ HcclResult IsDevice950(bool& isDevice950)
 // 仅消费 ABI 头和 compatThreadHandle 偏移，资源字段保持不透明。
 struct ThreadEntityV0 {
     CommAbiHeader abiHeader;
-    uint8_t resourceFields[64]; // devInfo、notify、SQ 等资源字段，MC2 不解包。
+    uint8_t resourceFields[72]; // engine、threadType、devInfo、notify、SQ 等资源字段，MC2 不解包。
     ThreadHandle compatThreadHandle;
-    uint8_t reserved[168];
+    uint8_t reserved[160];
 };
 static constexpr uint32_t THREAD_ENTITY_VERSION = 0U;
 static constexpr uint32_t THREAD_ENTITY_MAGIC_WORD = 0x0fcf0f6fU;
 static_assert(sizeof(CommAbiHeader) == 16, "thread entity ABI header layout mismatch");
-static_assert(offsetof(ThreadEntityV0, compatThreadHandle) == 80, "thread entity compat handle offset mismatch");
+static_assert(offsetof(ThreadEntityV0, compatThreadHandle) == 88, "thread entity compat handle offset mismatch");
 static_assert(sizeof(ThreadEntityV0) == 256, "thread entity size mismatch");
 
-// device 侧把 HCOMM 发布的 ThreadEntity 句柄还原为 AICPU Thread 对象地址；version/magic 均不匹配才视为旧句柄。
+// device 侧把 HCOMM 发布的 ThreadEntity 句柄还原为 AICPU Thread 对象地址；magic 不匹配即视为旧句柄。
 HcclResult UnwrapThreadHandle(ThreadHandle& handle)
 {
     CHK_PRT_RET(handle == 0U, HCCL_ERROR("Main thread handle is null."), HCCL_E_PTR);
     const auto* entity = reinterpret_cast<const ThreadEntityV0*>(handle);
-    if (entity->abiHeader.magicWord != THREAD_ENTITY_MAGIC_WORD && entity->abiHeader.version != THREAD_ENTITY_VERSION) {
+    if (entity->abiHeader.magicWord != THREAD_ENTITY_MAGIC_WORD) {
         return HCCL_SUCCESS; // 旧句柄即 Thread 对象地址，无需解包。
     }
     CHK_PRT_RET(
