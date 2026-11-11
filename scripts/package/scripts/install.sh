@@ -763,6 +763,9 @@ uninstall_run() {
     fi
     if [ "$1" = "uninstall" ]; then
         chmod_start "$upgrade_default_dir"
+        if ! protect_hccl_header_from_legacy_filelist "$upgrade_default_dir"; then
+            exit_uninstall_log 1
+        fi
         new_echo "INFO" "uninstall ${asc_devkit_install_path_param} ${asc_devkit_install_type}"
         log "INFO" "uninstall ${asc_devkit_install_path_param} ${asc_devkit_install_type}"
         sh "$upgrade_default_dir/script/run_asc-devkit_uninstall.sh" "uninstall" "${asc_devkit_input_install_path}" "${asc_devkit_install_type}" "${is_quiet}" \
@@ -862,7 +865,10 @@ uninstall_none_multi_version() {
             local path_version="$install_path/version.info"
             local path_install="$install_path/ascend_install.info"
             if [ -f "$path_version" ] && [ -f "$path_install" ] && [ -f "$install_path/script/uninstall.sh" ]; then
-                $install_path/script/uninstall.sh
+                if ! protect_hccl_header_from_legacy_filelist "$install_path"; then
+                    exit_uninstall_log 1
+                fi
+                "$install_path/script/uninstall.sh"
             fi
         fi
     fi

@@ -3,7 +3,6 @@
     <dir_info install_mod="550">
         <path value="$(TARGET_ENV)/lib64"/>
         <path value="$(TARGET_ENV)/include" install_type="devel"/>
-        <path value="$(TARGET_ENV)/include/hccl" install_type="devel"/>
         <path value="$(TARGET_ENV)/include/version" install_type="devel"/>
         <path value="opp"/>
         <path value="opp/built-in"/>
@@ -12,7 +11,8 @@
         <path value="opp/built-in/op_impl/aicpu/kernel"/>
         <path value="opp/built-in/op_impl/aicpu/config"/>
     </dir_info>
-    <file_info value="include" copy_type="delivery" src_path="$(TARGET_ENV)/include/hccl" dst_path="include/hccl" install_path="$(TARGET_ENV)/include/hccl" install_type="devel" install_mod="440" optional="true">
+    <!-- Hidden payload is excluded by copy_all (cp -af *). NA also excludes manifest-based installation. -->
+    <file_info value="hccl_header_repair" copy_type="delivery" src_path=".asc-devkit-compatibility/hccl" dst_path=".asc-devkit-compatibility/hccl" pkg_only="true" install_path=".asc-devkit-compatibility/hccl" install_type="NA">
         <file value="hccl.h"/>
     </file_info>
     <file_info value="lib64" copy_type="delivery" src_path="$(TARGET_ENV)/lib64" dst_path="lib64" install_path="$(TARGET_ENV)/lib64" install_type="all" install_mod="440" optional="true">

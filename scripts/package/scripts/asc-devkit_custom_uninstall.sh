@@ -143,6 +143,8 @@ custom_uninstall() {
         exit 1
     fi
 
+    remove_hccl_header_without_hccl "$common_parse_dir" "$arch_linux_path" "$hetero_arch" || return 1
+
     if [ "$hetero_arch" != "y" ]; then
         chmod +w -R "${WHL_INSTALL_DIR_PATH}/asc_op_compile_base" 2> /dev/null
         chmod +w -R "${WHL_INSTALL_DIR_PATH}/asc_op_compile_base-0.1.0.dist-info" 2> /dev/null

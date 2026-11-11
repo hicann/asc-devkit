@@ -108,7 +108,7 @@ else()
     if(PRODUCT_SIDE STREQUAL "host")
         install(FILES
             ${HCCL_CC_INCLUDE_DIR}/hccl.h
-            DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/include/hccl
+            DESTINATION .asc-devkit-compatibility/hccl
             COMPONENT asc-devkit
         )
     endif()

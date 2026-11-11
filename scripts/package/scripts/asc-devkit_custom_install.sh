@@ -138,6 +138,9 @@ custom_install() {
         install_whl_package "${PYTHON_ASC_OPC_TOOL_WHL_PATH}" "${PYTHON_ASC_OPC_TOOL_NAME}" "${WHL_INSTALL_DIR_PATH}"
     fi
 
+    repair_missing_hccl_header "$common_parse_dir" "$sourcedir/.asc-devkit-compatibility/hccl/hccl.h" \
+        "$arch_linux_path" "$hetero_arch" || return 1
+
     # create softlinks for stub libs in devlib/linux/${ARCH}
     create_stub_softlink "$common_parse_dir"
     if [ $? -ne 0 ]; then
