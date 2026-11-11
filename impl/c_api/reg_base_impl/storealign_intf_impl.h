@@ -22,23 +22,9 @@
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/reg_base_impl/npu_arch_3510/storealign_intf_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+#include "impl/c_api/reg_base_impl/npu_arch_9201/storealign_intf_impl.h"
 #endif
-
-union asc_store_align_config {
-    int32_t config;
-    struct {
-        uint32_t repeat_stride : 16;
-        uint32_t block_stride : 16;
-    };
-};
-
-union asc_store_align_config_post {
-    int32_t config;
-    struct {
-        uint32_t repeat_stride : 16;
-        uint32_t block_stride : 16;
-    };
-};
 
 __simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst, int32_t offset)
 {
@@ -1504,6 +1490,15 @@ __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ int8_t*& dst,
 }
 
 __simd_callee__ inline void asc_storealign_1st_postupdate(__ubuf__ uint8_t*& dst, vector_uint8_t src, int32_t offset)
+{
+    if ASC_IS_AIV {
+        vector_bool mask;
+        vsts(src, dst, offset, ONEPT_B8, mask, POST_UPDATE);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_1st_postupdate(
+    __ubuf__ fp8_e8m0_t*& dst, vector_fp8_e8m0_t src, int32_t offset)
 {
     if ASC_IS_AIV {
         vector_bool mask;

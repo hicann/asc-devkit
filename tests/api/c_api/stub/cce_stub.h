@@ -13,6 +13,157 @@
 #include "stub_fun.h"
 #include "c_api/defs/enum.h"
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+struct E6m2VectorDatamoveStubState {
+    uint32_t load_count = 0;
+    uint32_t store_count = 0;
+    uint32_t scatter_count = 0;
+};
+
+inline E6m2VectorDatamoveStubState g_e6m2_vector_datamove_stub_state;
+
+inline void reset_e6m2_vector_datamove_stub_state() { g_e6m2_vector_datamove_stub_state = {}; }
+
+inline void vlds(vector_f8e6m2& dst, __ubuf__ fp8_e6m2_t* src, int32_t offset, Literal mode)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vlds(vector_f8e6m2& dst0, vector_f8e6m2& dst1, __ubuf__ fp8_e6m2_t* src, int32_t offset, Literal mode)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vld(vector_f8e6m2& dst, __ubuf__ fp8_e6m2_t* src, vector_address offset, Literal mode)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vld(vector_f8e6m2& dst0, vector_f8e6m2& dst1, __ubuf__ fp8_e6m2_t* src, vector_address offset, Literal mode)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vsldb(vector_f8e6m2& dst, __ubuf__ fp8_e6m2_t* src, int32_t config, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vsldb(vector_f8e6m2& dst, __ubuf__ fp8_e6m2_t*& src, int32_t config, vector_bool mask, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vlds(vector_f8e6m2& dst, __ubuf__ fp8_e6m2_t*& src, int32_t offset, Literal mode, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vlds(
+    vector_f8e6m2& dst0, vector_f8e6m2& dst1, __ubuf__ fp8_e6m2_t*& src, int32_t offset, Literal mode, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vldus(vector_f8e6m2& dst, vector_align& align, __ubuf__ fp8_e6m2_t* src)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vldus(vector_f8e6m2& dst, vector_align& align, __ubuf__ fp8_e6m2_t*& src, uint32_t count, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vldu(
+    vector_f8e6m2& dst, vector_align& align, vector_address& offset, __ubuf__ fp8_e6m2_t* src, uint32_t count)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vldas(vector_align& dst, __ubuf__ fp8_e6m2_t* src) { ++g_e6m2_vector_datamove_stub_state.load_count; }
+
+inline void vlda(vector_align& dst, __ubuf__ fp8_e6m2_t* src, vector_address offset)
+{
+    ++g_e6m2_vector_datamove_stub_state.load_count;
+}
+
+inline void vsts(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, int32_t offset, Literal mode, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vsts(
+    vector_f8e6m2 src, __ubuf__ fp8_e6m2_t*& dst, int32_t offset, Literal mode, vector_bool mask, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vsts(
+    vector_f8e6m2 src0, vector_f8e6m2 src1, __ubuf__ fp8_e6m2_t* dst, int32_t offset, Literal mode, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vst(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, vector_address offset, Literal mode, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vst(
+    vector_f8e6m2 src0, vector_f8e6m2 src1, __ubuf__ fp8_e6m2_t* dst, vector_address offset, Literal mode,
+    vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vsstb(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, int32_t config, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vsstb(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t*& dst, int32_t config, vector_bool mask, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vstus(vector_align& align, uint32_t count, vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vstus(vector_align& align, uint32_t count, vector_f8e6m2 src, __ubuf__ fp8_e6m2_t*& dst, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vstu(vector_align& align, vector_address& count, vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vstas(vector_align align, __ubuf__ fp8_e6m2_t* dst, int32_t offset)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vstas(vector_align align, __ubuf__ fp8_e6m2_t*& dst, int32_t offset, Literal post)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vsta(vector_align align, __ubuf__ fp8_e6m2_t* dst, vector_address offset)
+{
+    ++g_e6m2_vector_datamove_stub_state.store_count;
+}
+
+inline void vscatter(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, vector_u16 index, vector_bool mask)
+{
+    ++g_e6m2_vector_datamove_stub_state.scatter_count;
+}
+
+#endif
+
 using hif4x2_t = hifloat4x2_t;
 
 inline void vcvt(
@@ -237,6 +388,13 @@ void vsts(
     vector_f8e4m3 data, __ubuf__ fp8_e4m3fn_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);
 void vsts(vector_f8e5m2 data, __ubuf__ fp8_e5m2_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);
 void vsts(vector_f8e8m0 data, __ubuf__ fp8_e8m0_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);
+inline uint32_t g_vsts_fp8_e8m0_postupdate_calls = 0;
+inline void vsts(
+    vector_f8e8m0 data, __ubuf__ fp8_e8m0_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode)
+{
+    ++g_vsts_fp8_e8m0_postupdate_calls;
+}
+
 void vsts(
     vector_f4e2m1x2 data, __ubuf__ fp4x2_e2m1_t* base, int32_t offset, Literal dist, vector_bool mask, Literal mode);
 void vsts(

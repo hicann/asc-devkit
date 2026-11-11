@@ -96,6 +96,22 @@ union asc_gm2ub_loop_stride_config {
     };
 };
 
+union asc_store_align_config {
+    int32_t config;
+    struct {
+        uint32_t repeat_stride : 16;
+        uint32_t block_stride : 16;
+    };
+};
+
+union asc_store_align_config_post {
+    int32_t config;
+    struct {
+        uint32_t repeat_stride : 16;
+        uint32_t block_stride : 16;
+    };
+};
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

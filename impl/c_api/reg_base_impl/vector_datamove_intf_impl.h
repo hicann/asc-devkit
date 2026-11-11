@@ -291,6 +291,20 @@ __aicore__ inline void asc_set_copy_pad_val(float pad_value)
     }
 }
 
+__aicore__ inline void asc_set_copy_pad_val(int64_t pad_value)
+{
+    if ASC_IS_AIV {
+        set_mov_pad_val(*reinterpret_cast<uint64_t*>(&pad_value));
+    }
+}
+
+__aicore__ inline void asc_set_copy_pad_val(uint64_t pad_value)
+{
+    if ASC_IS_AIV {
+        set_mov_pad_val(*reinterpret_cast<uint64_t*>(&pad_value));
+    }
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)

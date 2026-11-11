@@ -29,7 +29,7 @@
 
 #include "c_api/composite/vector_compute_composite.h"
 
-//===========asc_set_copy_pad_val(int8/uint8/int16/uint16/half/bfloat16/int32/uint32/float)===========
+//===========asc_set_copy_pad_val(int8/uint8/int16/uint16/half/bfloat16/int32/uint32/float/int64_t/uint64_t)===========
 /**
  * @ingroup simd_c_api.vector_datamove
  * @brief Sets the int8_t value used to pad the left and right sides of consecutive data blocks by asc_copy_gm2ub_align
@@ -137,6 +137,8 @@ __aicore__ inline void asc_set_copy_pad_val(uint32_t pad_value);
  * write is performed only on AIV and the value is taken from the low 32 bits of the register.
  */
 __aicore__ inline void asc_set_copy_pad_val(float pad_value);
+__aicore__ inline void asc_set_copy_pad_val(int64_t pad_value);
+__aicore__ inline void asc_set_copy_pad_val(uint64_t pad_value);
 
 /**
  * @ingroup simd_c_api.vector_datamove
@@ -2716,6 +2718,21 @@ __aicore__ inline void asc_copy_ub2l1(
  * @param [in] size Number of bytes to copy; range [32, 4095 x 32] and a multiple of 32.
  */
 __aicore__ inline void asc_copy_ub2l1(__cbuf__ void* dst, __ubuf__ void* src, uint32_t size);
+
+#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+__aicore__ inline void asc_copy_gm2ub_align(
+    __ubuf__ fp8_e6m2_t* dst, __gm__ fp8_e6m2_t* src, uint32_t burst_count, uint32_t burst_len,
+    uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode,
+    uint64_t src_stride, uint32_t dst_stride);
+
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e6m2_t* dst, __gm__ fp8_e6m2_t* src, uint32_t size);
+
+__aicore__ inline void asc_copy_ub2gm_align(
+    __gm__ fp8_e6m2_t* dst, __ubuf__ fp8_e6m2_t* src, uint32_t burst_count, uint32_t burst_len,
+    asc_store_l2_cache_mode l2_cache_mode, uint64_t dst_stride, uint32_t src_stride);
+
+__aicore__ inline void asc_copy_ub2gm_align(__gm__ fp8_e6m2_t* dst, __ubuf__ fp8_e6m2_t* src, uint32_t size);
+#endif
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_load_l2_cache_mode)
 __aicore__ inline void asc_copy_gm2ub_align(

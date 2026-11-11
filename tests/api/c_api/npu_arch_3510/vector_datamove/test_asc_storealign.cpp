@@ -164,6 +164,15 @@ TEST_VECTOR_DATAMOVE_STOREALIGN_ONEPT_OFFSET_POSTUPDATE_INSTR(
     Vsts_1st_offset_postupdate, asc_storealign_1st_postupdate, vsts, float, 1);
 TEST_VECTOR_DATAMOVE_STOREALIGN_ONEPT_OFFSET_POSTUPDATE_INSTR(
     Vsts_1st_offset_postupdate, asc_storealign_1st_postupdate, vsts, bfloat16_t, 1);
+TEST(TestStorealignFp8E8m0, OnePointPostupdate)
+{
+    auto* dst = reinterpret_cast<__ubuf__ fp8_e8m0_t*>(32);
+    vector_fp8_e8m0_t src{};
+    g_vsts_fp8_e8m0_postupdate_calls = 0;
+    asc_storealign_1st_postupdate(dst, src, 1);
+    EXPECT_EQ(g_vsts_fp8_e8m0_postupdate_calls, 1U);
+    GlobalMockObject::verify();
+}
 TEST_VECTOR_DATAMOVE_STOREALIGN_OFFSET_POSTUPDATE_INSTR(
     Vsts_pack_offset_postupdate, asc_storealign_pack_postupdate, vsts, int16_t, 2);
 TEST_VECTOR_DATAMOVE_STOREALIGN_OFFSET_POSTUPDATE_INSTR(

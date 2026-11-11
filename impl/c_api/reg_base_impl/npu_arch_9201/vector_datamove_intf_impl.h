@@ -529,6 +529,40 @@ __aicore__ inline void asc_copy_gm2ub_align(
     }
 }
 
+__aicore__ inline void asc_copy_gm2ub_align(
+    __ubuf__ fp8_e8m0_t* dst, __gm__ fp8_e8m0_t* src, uint32_t burst_count, uint32_t burst_len,
+    uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode,
+    uint64_t src_stride, uint32_t dst_stride)
+{
+    if ASC_IS_AIV {
+        copy_gm_to_ubuf_align_v2(
+            dst, src, 0, burst_count, burst_len, left_padding_num, right_padding_num, enable_constant_pad, false,
+            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride, false);
+    }
+}
+
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e8m0_t* dst, __gm__ fp8_e8m0_t* src, uint32_t size)
+{
+    asc_copy_gm2ub_align(dst, src, 1, size, 0, 0, false, static_cast<asc_load_l2_cache_mode>(0), 0, 0);
+}
+
+__aicore__ inline void asc_copy_gm2ub_align(
+    __ubuf__ fp8_e6m2_t* dst, __gm__ fp8_e6m2_t* src, uint32_t burst_count, uint32_t burst_len,
+    uint8_t left_padding_num, uint8_t right_padding_num, bool enable_constant_pad, asc_load_l2_cache_mode l2_cache_mode,
+    uint64_t src_stride, uint32_t dst_stride)
+{
+    if ASC_IS_AIV {
+        copy_gm_to_ubuf_align_v2(
+            dst, src, 0, burst_count, burst_len, left_padding_num, right_padding_num, enable_constant_pad, false,
+            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride, false);
+    }
+}
+
+__aicore__ inline void asc_copy_gm2ub_align(__ubuf__ fp8_e6m2_t* dst, __gm__ fp8_e6m2_t* src, uint32_t size)
+{
+    asc_copy_gm2ub_align(dst, src, 1, size, 0, 0, false, static_cast<asc_load_l2_cache_mode>(0), 0, 0);
+}
+
 __aicore__ inline void asc_copy_ub2gm_align(
     __gm__ uint8_t* dst, __ubuf__ uint8_t* src, uint32_t burst_count, uint32_t burst_len,
     asc_store_l2_cache_mode l2_cache_mode, uint64_t dst_stride, uint32_t src_stride)
@@ -1533,6 +1567,38 @@ __aicore__ inline void asc_remote_copy_ub2gm(
 {
     asc_remote_copy_ub2gm(
         dst, src, 1, size, enable_rsw_ctrl, enable_rsw_packet_ctrl, rsw_buffset_size, 0, 0, enable_retry);
+}
+
+__aicore__ inline void asc_copy_ub2gm_align(
+    __gm__ fp8_e8m0_t* dst, __ubuf__ fp8_e8m0_t* src, uint32_t burst_count, uint32_t burst_len,
+    asc_store_l2_cache_mode l2_cache_mode, uint64_t dst_stride, uint32_t src_stride)
+{
+    if ASC_IS_AIV {
+        copy_ubuf_to_gm_align_v2(
+            (__gm__ void*)dst, (__ubuf__ void*)src, 0, burst_count, burst_len, false, false, 0,
+            static_cast<uint8_t>(l2_cache_mode), dst_stride, src_stride, false);
+    }
+}
+
+__aicore__ inline void asc_copy_ub2gm_align(__gm__ fp8_e8m0_t* dst, __ubuf__ fp8_e8m0_t* src, uint32_t size)
+{
+    asc_copy_ub2gm_align(dst, src, 1, size, static_cast<asc_store_l2_cache_mode>(0), 0, 0);
+}
+
+__aicore__ inline void asc_copy_ub2gm_align(
+    __gm__ fp8_e6m2_t* dst, __ubuf__ fp8_e6m2_t* src, uint32_t burst_count, uint32_t burst_len,
+    asc_store_l2_cache_mode l2_cache_mode, uint64_t dst_stride, uint32_t src_stride)
+{
+    if ASC_IS_AIV {
+        copy_ubuf_to_gm_align_v2(
+            (__gm__ void*)dst, (__ubuf__ void*)src, 0, burst_count, burst_len, false, false, 0,
+            static_cast<uint8_t>(l2_cache_mode), dst_stride, src_stride, false);
+    }
+}
+
+__aicore__ inline void asc_copy_ub2gm_align(__gm__ fp8_e6m2_t* dst, __ubuf__ fp8_e6m2_t* src, uint32_t size)
+{
+    asc_copy_ub2gm_align(dst, src, 1, size, static_cast<asc_store_l2_cache_mode>(0), 0, 0);
 }
 
 #endif

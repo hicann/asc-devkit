@@ -1527,6 +1527,17 @@ __simd_callee__ inline void asc_loadunalign_postupdate(
 __simd_callee__ inline void asc_loadunalign_postupdate(
     vector_fp8_e8m0_t& dst, vector_load_unalign& src0, __ubuf__ fp8_e8m0_t* src1, addr_reg& offset, uint32_t inc);
 
+#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+__simd_callee__ inline void asc_loadunalign_pre(vector_load_unalign& dst, __ubuf__ fp8_e6m2_t* src);
+__simd_callee__ inline void asc_loadunalign_pre(vector_load_unalign& dst, __ubuf__ fp8_e6m2_t* src, addr_reg offset);
+__simd_callee__ inline void asc_loadunalign(
+    vector_fp8_e6m2_t& dst, vector_load_unalign& src0, __ubuf__ fp8_e6m2_t* src1);
+__simd_callee__ inline void asc_loadunalign_postupdate(
+    vector_fp8_e6m2_t& dst, vector_load_unalign& src0, __ubuf__ fp8_e6m2_t*& src1, uint32_t count);
+__simd_callee__ inline void asc_loadunalign_postupdate(
+    vector_fp8_e6m2_t& dst, vector_load_unalign& src0, __ubuf__ fp8_e6m2_t* src1, addr_reg& offset, uint32_t inc);
+#endif
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_REG_COMPUTE_LOAD_LOADUNALIGN_H)

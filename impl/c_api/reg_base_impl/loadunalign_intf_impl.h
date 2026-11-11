@@ -20,6 +20,10 @@
 
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+#include "impl/c_api/reg_base_impl/npu_arch_9201/loadunalign_intf_impl.h"
+#endif
+
 __simd_callee__ inline void asc_loadunalign_pre(vector_load_unalign& dst, __ubuf__ int8_t* src)
 {
     if ASC_IS_AIV {

@@ -22,6 +22,8 @@
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/c_api/reg_base_impl/npu_arch_3510/ub_scatter_intf_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+#include "impl/c_api/reg_base_impl/npu_arch_9201/ub_scatter_intf_impl.h"
 #endif
 
 __simd_callee__ inline void asc_scatter(
@@ -88,6 +90,14 @@ __simd_callee__ inline void asc_scatter(__ubuf__ half* dst, vector_half src, vec
 }
 
 __simd_callee__ inline void asc_scatter(__ubuf__ float* dst, vector_float src, vector_uint32_t index, vector_bool mask)
+{
+    if ASC_IS_AIV {
+        vscatter(src, dst, index, mask);
+    }
+}
+
+__simd_callee__ inline void asc_scatter(
+    __ubuf__ fp8_e8m0_t* dst, vector_fp8_e8m0_t src, vector_uint16_t index, vector_bool mask)
 {
     if ASC_IS_AIV {
         vscatter(src, dst, index, mask);

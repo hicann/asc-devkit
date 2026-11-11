@@ -1392,6 +1392,8 @@ __simd_callee__ inline void asc_storealign_1st(__ubuf__ fp8_e5m2_t* dst, vector_
  * between calls.
  */
 __simd_callee__ inline void asc_storealign_1st(__ubuf__ fp8_e8m0_t* dst, vector_fp8_e8m0_t src, int32_t offset);
+__simd_callee__ inline void asc_storealign_1st_postupdate(
+    __ubuf__ fp8_e8m0_t*& dst, vector_fp8_e8m0_t src, int32_t offset);
 
 /**
  * @ingroup simd_c_api.reg_compute.store
@@ -4611,6 +4613,31 @@ __simd_callee__ inline void asc_storealign_squeeze_status(__ubuf__ uint32_t* dst
  * @param [in] offset Destination address update amount of type int32_t, in bytes.
  */
 __simd_callee__ inline void asc_storealign_squeeze_status_postupdate(__ubuf__ uint32_t*& dst, int32_t offset);
+
+#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+__simd_callee__ inline void asc_storealign(__ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, vector_bool mask);
+__simd_callee__ inline void asc_storealign(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, int32_t offset, vector_bool mask);
+__simd_callee__ inline void asc_storealign(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, addr_reg offset, vector_bool mask);
+__simd_callee__ inline void asc_storealign(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask);
+__simd_callee__ inline void asc_storealign_postupdate(
+    __ubuf__ fp8_e6m2_t*& dst, vector_fp8_e6m2_t src, uint16_t block_stride, uint16_t repeat_stride, vector_bool mask);
+
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src);
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, int32_t offset);
+__simd_callee__ inline void asc_storealign_1st(__ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src, addr_reg offset);
+__simd_callee__ inline void asc_storealign_1st_postupdate(
+    __ubuf__ fp8_e6m2_t*& dst, vector_fp8_e6m2_t src, int32_t offset);
+
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1);
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1, int32_t offset);
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ fp8_e6m2_t* dst, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1, addr_reg offset);
+#endif
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_storealign_pack_quarter)
 /**
