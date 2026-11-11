@@ -111,18 +111,17 @@ __simd_callee__ inline vector_int32_t asc_shiftleft(vector_int32_t src0, vector_
 }
 
 __simd_callee__ inline void asc_shiftleft_scalar(
-    vector_uint8_t& dst, vector_uint8_t src, uint16_t shift, vector_bool mask)
+    vector_uint8_t& dst, vector_uint8_t src, uint8_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, shift, mask, MODE_ZEROING);
+        vshls(dst, src, static_cast<uint16_t>(shift), mask, MODE_ZEROING);
     }
 }
 
-__simd_callee__ inline void asc_shiftleft_scalar(
-    vector_int8_t& dst, vector_int8_t src, uint16_t shift, vector_bool mask)
+__simd_callee__ inline void asc_shiftleft_scalar(vector_int8_t& dst, vector_int8_t src, uint8_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshls(dst, src, shift, mask, MODE_ZEROING);
+        vshls(dst, src, static_cast<uint16_t>(shift), mask, MODE_ZEROING);
     }
 }
 
@@ -158,14 +157,14 @@ __simd_callee__ inline void asc_shiftleft_scalar(
     }
 }
 
-__simd_callee__ inline vector_uint8_t asc_shiftleft_scalar(vector_uint8_t src, uint16_t shift, vector_bool mask)
+__simd_callee__ inline vector_uint8_t asc_shiftleft_scalar(vector_uint8_t src, uint8_t shift, vector_bool mask)
 {
     vector_uint8_t dst;
     asc_shiftleft_scalar(dst, src, shift, mask);
     return dst;
 }
 
-__simd_callee__ inline vector_int8_t asc_shiftleft_scalar(vector_int8_t src, uint16_t shift, vector_bool mask)
+__simd_callee__ inline vector_int8_t asc_shiftleft_scalar(vector_int8_t src, uint8_t shift, vector_bool mask)
 {
     vector_int8_t dst;
     asc_shiftleft_scalar(dst, src, shift, mask);
@@ -291,18 +290,18 @@ __simd_callee__ inline vector_int32_t asc_shiftright(vector_int32_t src0, vector
 }
 
 __simd_callee__ inline void asc_shiftright_scalar(
-    vector_uint8_t& dst, vector_uint8_t src, uint16_t shift, vector_bool mask)
+    vector_uint8_t& dst, vector_uint8_t src, uint8_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshrs(dst, src, shift, mask, MODE_ZEROING);
+        vshrs(dst, src, static_cast<uint16_t>(shift), mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftright_scalar(
-    vector_int8_t& dst, vector_int8_t src, uint16_t shift, vector_bool mask)
+    vector_int8_t& dst, vector_int8_t src, uint8_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshrs(dst, src, shift, mask, MODE_ZEROING);
+        vshrs(dst, src, static_cast<uint16_t>(shift), mask, MODE_ZEROING);
     }
 }
 
@@ -338,14 +337,14 @@ __simd_callee__ inline void asc_shiftright_scalar(
     }
 }
 
-__simd_callee__ inline vector_uint8_t asc_shiftright_scalar(vector_uint8_t src, uint16_t shift, vector_bool mask)
+__simd_callee__ inline vector_uint8_t asc_shiftright_scalar(vector_uint8_t src, uint8_t shift, vector_bool mask)
 {
     vector_uint8_t dst;
     asc_shiftright_scalar(dst, src, shift, mask);
     return dst;
 }
 
-__simd_callee__ inline vector_int8_t asc_shiftright_scalar(vector_int8_t src, uint16_t shift, vector_bool mask)
+__simd_callee__ inline vector_int8_t asc_shiftright_scalar(vector_int8_t src, uint8_t shift, vector_bool mask)
 {
     vector_int8_t dst;
     asc_shiftright_scalar(dst, src, shift, mask);

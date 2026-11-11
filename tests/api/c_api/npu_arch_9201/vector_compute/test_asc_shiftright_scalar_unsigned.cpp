@@ -13,75 +13,75 @@
 #include "tests/api/c_api/stub/cce_stub.h"
 #include "c_api/asc_simd.h"
 
-#define TEST_SCALAR_SHIFTRIGHT_INSTR(data_type, scalar_type)                              \
-                                                                                          \
-    class TestScalarShiftRight##data_type##_##scalar_type##_CApi : public testing::Test { \
-    protected:                                                                            \
-        void SetUp() {}                                                                   \
-        void TearDown() {}                                                                \
-    };                                                                                    \
-                                                                                          \
-    namespace {                                                                           \
-    void vshrs##_##data_type##_##scalar_type##_UnsignedStub(                              \
-        data_type& dst, data_type src, scalar_type shift, vector_bool mask, Literal mode) \
-    {}                                                                                    \
-    }                                                                                     \
-                                                                                          \
-    TEST_F(                                                                               \
-        TestScalarShiftRight##data_type##_##scalar_type##_CApi,                           \
-        asc_shiftright_scalar_##data_type##_##scalar_type##_Succ)                         \
-    {                                                                                     \
-        data_type dst;                                                                    \
-        data_type src;                                                                    \
-        scalar_type shift;                                                                \
-        vector_bool mask;                                                                 \
-                                                                                          \
-        MOCKER_CPP(vshrs, void(data_type&, data_type, scalar_type, vector_bool, Literal)) \
-            .times(1)                                                                     \
-            .will(invoke(vshrs##_##data_type##_##scalar_type##_UnsignedStub));            \
-                                                                                          \
-        asc_shiftright_scalar(dst, src, shift, mask);                                     \
-        GlobalMockObject::verify();                                                       \
+#define TEST_SCALAR_SHIFTRIGHT_INSTR(data_type, api_scalar_type, instr_scalar_type)             \
+                                                                                                \
+    class TestScalarShiftRight##data_type##_##api_scalar_type##_CApi : public testing::Test {   \
+    protected:                                                                                  \
+        void SetUp() {}                                                                         \
+        void TearDown() {}                                                                      \
+    };                                                                                          \
+                                                                                                \
+    namespace {                                                                                 \
+    void vshrs##_##data_type##_##api_scalar_type##_UnsignedStub(                                \
+        data_type& dst, data_type src, instr_scalar_type shift, vector_bool mask, Literal mode) \
+    {}                                                                                          \
+    }                                                                                           \
+                                                                                                \
+    TEST_F(                                                                                     \
+        TestScalarShiftRight##data_type##_##api_scalar_type##_CApi,                             \
+        asc_shiftright_scalar_##data_type##_##api_scalar_type##_Succ)                           \
+    {                                                                                           \
+        data_type dst;                                                                          \
+        data_type src;                                                                          \
+        api_scalar_type shift;                                                                  \
+        vector_bool mask;                                                                       \
+                                                                                                \
+        MOCKER_CPP(vshrs, void(data_type&, data_type, instr_scalar_type, vector_bool, Literal)) \
+            .times(1)                                                                           \
+            .will(invoke(vshrs##_##data_type##_##api_scalar_type##_UnsignedStub));              \
+                                                                                                \
+        asc_shiftright_scalar(dst, src, shift, mask);                                           \
+        GlobalMockObject::verify();                                                             \
     }
 
-#define TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(data_type, scalar_type)                       \
-                                                                                          \
-    namespace {                                                                           \
-    void vshrs##_##data_type##_##scalar_type##_UnsignedRetStub(                           \
-        data_type& dst, data_type src, scalar_type shift, vector_bool mask, Literal mode) \
-    {}                                                                                    \
-    }                                                                                     \
-                                                                                          \
-    TEST(                                                                                 \
-        TestScalarShiftRightReturn##data_type##_##scalar_type##_CApi,                     \
-        asc_shiftright_scalar_##data_type##_##scalar_type##_RetSucc)                      \
-    {                                                                                     \
-        data_type src;                                                                    \
-        scalar_type shift;                                                                \
-        vector_bool mask;                                                                 \
-                                                                                          \
-        MOCKER_CPP(vshrs, void(data_type&, data_type, scalar_type, vector_bool, Literal)) \
-            .times(1)                                                                     \
-            .will(invoke(vshrs##_##data_type##_##scalar_type##_UnsignedRetStub));         \
-                                                                                          \
-        data_type result = asc_shiftright_scalar(src, shift, mask);                       \
-        (void)result;                                                                     \
-        GlobalMockObject::verify();                                                       \
+#define TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(data_type, api_scalar_type, instr_scalar_type)      \
+                                                                                                \
+    namespace {                                                                                 \
+    void vshrs##_##data_type##_##api_scalar_type##_UnsignedRetStub(                             \
+        data_type& dst, data_type src, instr_scalar_type shift, vector_bool mask, Literal mode) \
+    {}                                                                                          \
+    }                                                                                           \
+                                                                                                \
+    TEST(                                                                                       \
+        TestScalarShiftRightReturn##data_type##_##api_scalar_type##_CApi,                       \
+        asc_shiftright_scalar_##data_type##_##api_scalar_type##_RetSucc)                        \
+    {                                                                                           \
+        data_type src;                                                                          \
+        api_scalar_type shift;                                                                  \
+        vector_bool mask;                                                                       \
+                                                                                                \
+        MOCKER_CPP(vshrs, void(data_type&, data_type, instr_scalar_type, vector_bool, Literal)) \
+            .times(1)                                                                           \
+            .will(invoke(vshrs##_##data_type##_##api_scalar_type##_UnsignedRetStub));           \
+                                                                                                \
+        data_type result = asc_shiftright_scalar(src, shift, mask);                             \
+        (void)result;                                                                           \
+        GlobalMockObject::verify();                                                             \
     }
 
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint8_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int8_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint16_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int16_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint32_t, uint32_t);
-TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int32_t, uint32_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint8_t, uint8_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int8_t, uint8_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint16_t, uint16_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int16_t, uint16_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_uint32_t, uint32_t, uint32_t);
+TEST_SCALAR_SHIFTRIGHT_INSTR(vector_int32_t, uint32_t, uint32_t);
 
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint8_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int8_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint16_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int16_t, uint16_t);
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint32_t, uint32_t);
-TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int32_t, uint32_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint8_t, uint8_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int8_t, uint8_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint16_t, uint16_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int16_t, uint16_t, uint16_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_uint32_t, uint32_t, uint32_t);
+TEST_SCALAR_SHIFTRIGHT_RETURN_INSTR(vector_int32_t, uint32_t, uint32_t);
 
 TEST(TestScalarShiftRightLiteralCApi, asc_shiftright_scalar_vector_uint16_t_literal_Succ)
 {
