@@ -1211,7 +1211,7 @@ __aicore__ inline void DataCopy(
     const Hardware srcHWPos = GetPhyType((TPosition)src.GetPosition());
     const Hardware dstHWPos = GetPhyType((TPosition)dst.GetPosition());
     if (srcHWPos == Hardware::L1 && dstHWPos == Hardware::UB) {
-        DataCopyL12UBNZ2NDImpl((__gm__ T*)dst.GetPhyAddr(), (__cbuf__ T*)src.GetPhyAddr(), intriParams);
+        DataCopyL12UBNZ2NDImpl((__ubuf__ T*)dst.GetPhyAddr(), (__cbuf__ T*)src.GetPhyAddr(), intriParams);
         return;
     }
     ASCENDC_CHECK_TPOSITION(
@@ -1249,7 +1249,7 @@ __aicore__ inline void DataCopy(
     const Hardware srcHWPos = GetPhyType((TPosition)src.GetPosition());
     const Hardware dstHWPos = GetPhyType((TPosition)dst.GetPosition());
     if (srcHWPos == Hardware::L1 && dstHWPos == Hardware::UB) {
-        DataCopyL12UBNZ2DNImpl((__gm__ T*)dst.GetPhyAddr(), (__cbuf__ T*)src.GetPhyAddr(), intriParams);
+        DataCopyL12UBNZ2DNImpl((__ubuf__ T*)dst.GetPhyAddr(), (__cbuf__ T*)src.GetPhyAddr(), intriParams);
         return;
     }
     ASCENDC_CHECK_TPOSITION(
