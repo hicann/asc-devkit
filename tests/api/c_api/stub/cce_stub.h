@@ -1302,6 +1302,20 @@ inline void copy_gm_to_ubuf_align_v2(
 {
     record_copy_gm_to_ubuf_align_v2(reserved, l2_cache_ctl, burst_src_stride, burst_dst_stride, reserved2);
 }
+inline void copy_gm_to_ubuf_align_v2(
+    __ubuf__ fp8_e8m0_t* dst_addr, __gm__ fp8_e8m0_t* src_addr, uint8_t sid, uint32_t burst_num, uint32_t burst_len,
+    uint8_t left_padding_count, uint8_t right_padding_count, bool constant_padding_ctl, bool reserved,
+    uint8_t l2_cache_ctl, uint64_t burst_src_stride, uint32_t burst_dst_stride, bool reserved2)
+{
+    record_copy_gm_to_ubuf_align_v2(reserved, l2_cache_ctl, burst_src_stride, burst_dst_stride, reserved2);
+}
+inline void copy_gm_to_ubuf_align_v2(
+    __ubuf__ fp8_e6m2_t* dst_addr, __gm__ fp8_e6m2_t* src_addr, uint8_t sid, uint32_t burst_num, uint32_t burst_len,
+    uint8_t left_padding_count, uint8_t right_padding_count, bool constant_padding_ctl, bool reserved,
+    uint8_t l2_cache_ctl, uint64_t burst_src_stride, uint32_t burst_dst_stride, bool reserved2)
+{
+    record_copy_gm_to_ubuf_align_v2(reserved, l2_cache_ctl, burst_src_stride, burst_dst_stride, reserved2);
+}
 inline void copy_gm_to_cbuf_multi_dn2nz(
     __cbuf__ fp8_e5m2_t* dst_addr, __gm__ fp8_e5m2_t* src_addr, uint8_t sid, uint64_t loop1_src_stride,
     uint8_t l2_cache_ctl, uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en, bool reserved)
@@ -1559,6 +1573,24 @@ inline int32_t g_coreType = 2;
 
 // ==========9201 v2 instruction stubs==========
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+inline void nddma_out_to_ub_b8(
+    __ubuf__ void* dst, __gm__ void* src, uint8_t sid, uint32_t loop0_size, uint32_t loop1_size, uint32_t loop2_size,
+    uint32_t loop3_size, uint32_t loop4_size, uint8_t loop0_lp_count, uint8_t loop0_rp_count, bool padding_mode,
+    bool enable_pre_load_ignore_sync, uint8_t l2_cache_ctl)
+{}
+
+inline void nddma_out_to_ub_b16(
+    __ubuf__ void* dst, __gm__ void* src, uint8_t sid, uint32_t loop0_size, uint32_t loop1_size, uint32_t loop2_size,
+    uint32_t loop3_size, uint32_t loop4_size, uint8_t loop0_lp_count, uint8_t loop0_rp_count, bool padding_mode,
+    bool enable_pre_load_ignore_sync, uint8_t l2_cache_ctl)
+{}
+
+inline void nddma_out_to_ub_b32(
+    __ubuf__ void* dst, __gm__ void* src, uint8_t sid, uint32_t loop0_size, uint32_t loop1_size, uint32_t loop2_size,
+    uint32_t loop3_size, uint32_t loop4_size, uint8_t loop0_lp_count, uint8_t loop0_rp_count, bool padding_mode,
+    bool enable_pre_load_ignore_sync, uint8_t l2_cache_ctl)
+{}
+
 inline void vfma(vector_f16& dst, vector_f16 src0, vector_f16 src1, vector_bool mask, Literal mode) {}
 inline void vfma(vector_bf16& dst, vector_bf16 src0, vector_bf16 src1, vector_bool mask, Literal mode) {}
 inline void vfma(vector_f32& dst, vector_f32 src0, vector_f32 src1, vector_bool mask, Literal mode) {}

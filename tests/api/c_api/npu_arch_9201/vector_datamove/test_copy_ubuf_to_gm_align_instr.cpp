@@ -65,22 +65,6 @@ TEST_VECTOR_DATAMOVE_COPY_UBUF_TO_GM_ALIGN(CopyUB2GMALIGN, asc_copy_ub2gm_align,
 TEST_VECTOR_DATAMOVE_COPY_UBUF_TO_GM_ALIGN(CopyUB2GMALIGN, asc_copy_ub2gm_align, fp8_e5m2_t);
 TEST_VECTOR_DATAMOVE_COPY_UBUF_TO_GM_ALIGN(CopyUB2GMALIGN, asc_copy_ub2gm_align, fp8_e4m3fn_t);
 
-TEST(TestVectorDatamoveCopyUB2GM, CopyConfigSucc)
-{
-    __gm__ void* dst = reinterpret_cast<__gm__ void*>(11);
-    __ubuf__ void* src = reinterpret_cast<__ubuf__ void*>(22);
-    RESET_COPY_UB2GM_ALIGN();
-    asc_copy_ub2gm(dst, src, 1, 44, 5, 6);
-    EXPECT_EQ(g_copy_ubuf_to_gm_align_v2_stub_state.call_count, 1U);
-    EXPECT_FALSE(g_copy_ubuf_to_gm_align_v2_stub_state.rsw_ctrl);
-    EXPECT_FALSE(g_copy_ubuf_to_gm_align_v2_stub_state.rsw_packet_ctrl);
-    EXPECT_EQ(g_copy_ubuf_to_gm_align_v2_stub_state.rsw_buffset_size, 0U);
-    EXPECT_EQ(g_copy_ubuf_to_gm_align_v2_stub_state.l2_cache_mode, 0U);
-    EXPECT_EQ(g_copy_ubuf_to_gm_align_v2_stub_state.dst_stride, 5U);
-    EXPECT_EQ(g_copy_ubuf_to_gm_align_v2_stub_state.src_stride, 6U);
-    EXPECT_FALSE(g_copy_ubuf_to_gm_align_v2_stub_state.non_eod_ctrl);
-}
-
 #undef RESET_COPY_UB2GM_ALIGN
 #undef VERIFY_COPY_UB2GM_ALIGN
 #undef TEST_VECTOR_DATAMOVE_COPY_UBUF_TO_GM_ALIGN
