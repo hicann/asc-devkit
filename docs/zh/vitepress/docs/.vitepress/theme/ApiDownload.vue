@@ -11,6 +11,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vitepress'
+import { stripFrontMatter } from './frontmatter.mjs'
 
 const route = useRoute()
 const loading = ref(false)
@@ -186,7 +187,7 @@ async function handleDownload() {
     let processed = 0
 
     for (const [relPath, content] of entries) {
-      const filtered = filterContentByVersion(content, version)
+      const filtered = stripFrontMatter(filterContentByVersion(content, version))
       zip.file(relPath, filtered)
       processed++
       if (processed % 100 === 0) {

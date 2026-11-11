@@ -197,6 +197,25 @@ def _escape_lone_tildes(md_text: str) -> str:
     return "\n".join(result)
 
 
+_FRONT_MATTER_RE = re.compile(
+    r"\A\ufeff?[ \t]*---[ \t]*\r?\n"
+    r"(?=[A-Za-z_][A-Za-z0-9_.-]*[ \t]*:)"
+    r"[\s\S]*?"
+    r"^(?:---|\.\.\.)[ \t]*(?:\r?\n|\Z)",
+    re.MULTILINE,
+)
+
+
+def _strip_front_matter(md_text: str) -> str:
+    """Remove a leading YAML front matter block before Markdown conversion.
+
+    The documentation sources use front matter for OKF metadata. cmark-gfm does
+    not understand it and would render the opening ``---`` as a horizontal rule
+    and the metadata as headings, so strip it before conversion.
+    """
+    return _FRONT_MATTER_RE.sub("", md_text, count=1)
+
+
 _MATH_BLOCK_RE = re.compile(r"(?<!\\)\$\$[\s\S]*?(?<!\\)\$\$")
 
 _MATH_INLINE_RE = re.compile(r"(?<!\\)(?<!\$)\$(?![\${])[^\n$]+?(?<!\\)\$(?!\$)")
@@ -673,6 +692,7 @@ def _highlight_code(html: str) -> str:
 
 
 def parse_string(text: str, gfm: bool = True, source_path=None) -> str:
+    text = _strip_front_matter(text)
     text = _convert_cann_filter(text)
     text = _escape_lone_tildes(text)
     text, math_blocks = _extract_math_blocks(text)
