@@ -18,6 +18,7 @@
 #include "include/adv_api/hccl/hccl_common.h"
 #include "securec.h"
 #include "../../detail/host_log.h"
+#include "../../detail/hccl/cc/src/ops/op_common/external_alg/external_alg_parser.h"
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "include/adv_api/hccl/internal/hccl_tiling_msg.h"
 #include "tiling/platform/platform_ascendc.h"
@@ -54,15 +55,21 @@ uint8_t ResolveDevType(const std::string& socVersion)
     }
     return UINT8_MAX;
 }
-
-bool IsCcuNewFrameworkEnabled(uint8_t commEngine, uint8_t devType)
+bool IsCcuAlgorithmRegistered(const std::string& algConfig, uint8_t commEngine)
 {
-    constexpr uint8_t COMM_ENGINE_CCU_MS = 5U;
-    constexpr uint8_t COMM_ENGINE_CCU_SCHED = 6U;
-    if (commEngine != COMM_ENGINE_CCU_MS && commEngine != COMM_ENGINE_CCU_SCHED) {
+    if (commEngine != 5U && commEngine != 6U) {
         return false;
     }
-    return devType == DEV_TYPE_A5 || devType == DEV_TYPE_A6;
+    if (algConfig.find('[') == std::string::npos) {
+        return false;
+    }
+    mc2_ops_hccl::ExternalAlgSpec spec;
+    std::string errMsg;
+    if (!mc2_ops_hccl::ParseExternalAlg(algConfig, spec, errMsg)) {
+        TILING_LOG_WARNING("external algConfig[%s] parse failed, reason[%s].", algConfig.c_str(), errMsg.c_str());
+        return false;
+    }
+    return true;
 }
 
 void PrintMc2InitTiling(const Mc2InitTilingInner& tiling)
@@ -113,8 +120,8 @@ uint32_t SetDevType(Mc2InitTilingInner* tilingInner)
     auto getSocVerFunc = HcclSymbolLoader::GetInstance().Load<int32_t (*)(char*, uint32_t)>(
         "libruntime.so", "rtGetSocVersion", pathName);
     ASCENDC_HOST_ASSERT(getSocVerFunc != nullptr, return EXIT_FAILURE, "Failed to get soc version.");
-    char socVersion[50] = {0};
-    (void)getSocVerFunc(socVersion, sizeof(socVersion));
+    char socVersion[50];
+    getSocVerFunc(socVersion, sizeof(socVersion));
     std::string devType = std::string(socVersion);
     tilingInner->devType = ResolveDevType(socVersion);
     return EXIT_SUCCESS;
@@ -181,10 +188,10 @@ uint32_t Mc2CcTilingConfig::GetTiling(::Mc2InitTiling& tiling)
     for (uint32_t i = 0; i < MAX_CC_TILING_NUM; i++) {
         tilingInner->offset[i] = 0;
     }
-    ASCENDC_HOST_ASSERT(SetDevType(tilingInner) == EXIT_SUCCESS, return EXIT_FAILURE, "SetDevType failed.");
-    if (IsCcuNewFrameworkEnabled(impl_.commEngine_, tilingInner->devType)) {
+    if (IsCcuAlgorithmRegistered(impl_.algConfig_, impl_.commEngine_)) {
         tilingInner->version = INIT_TILING_CCU_NEW_VERSION;
     }
+    ASCENDC_HOST_ASSERT(SetDevType(tilingInner) == EXIT_SUCCESS, return EXIT_FAILURE, "SetDevType failed.");
 
     TILING_LOG_DEBUG("Mc2InitTiling addr %#lx", impl_.initTilingAddr_);
     PrintMc2InitTiling(*tilingInner);

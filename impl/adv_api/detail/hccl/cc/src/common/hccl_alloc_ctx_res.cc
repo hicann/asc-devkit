@@ -165,10 +165,8 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
         HCCL_ERROR("Invalid CCU KFC tiling version %u, expected %u.", initTiling->version, INIT_TILING_CCU_NEW_VERSION);
         return HCCL_E_NOT_SUPPORT;
     }
-    if (tilingNum != 1U || tilingNum != initTiling->mc2HcommCnt) {
-        HCCL_ERROR(
-            "CCU KFC currently supports only one cc tiling, but got tilingNum %u, init tiling number %u.", tilingNum,
-            initTiling->mc2HcommCnt);
+    if (tilingNum == 0U || tilingNum > MAX_CC_TILING_NUM || tilingNum != initTiling->mc2HcommCnt) {
+        HCCL_ERROR("Invalid CCU KFC tiling number %u, init tiling number %u.", tilingNum, initTiling->mc2HcommCnt);
         return HCCL_E_NOT_SUPPORT;
     }
     uint32_t expectedOpType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID);
