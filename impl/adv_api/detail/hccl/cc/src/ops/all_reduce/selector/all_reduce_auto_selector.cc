@@ -302,8 +302,9 @@ SelectorStatus AllReduceAutoSelector::SelectMeshAlgoAicpu(
     return SelectorStatus::MATCH;
 }
 
-// 对齐 hccl AllReduceAutoSelector::SelectCcuScheduleAlgo 分支框架：已注册算法（当前仅
-// CcuSchedAllReduceSoleMesh）MATCH；未注册算法设名后 NOT_MATCH（由框架回退 CCU_FAIL/AICPU）。
+// 对齐 hccl AllReduceAutoSelector::SelectCcuScheduleAlgo 分支框架：已注册算法（当前
+// CcuSchedAllReduceSoleMesh / CcuSchedAllReduceSoleNHR）MATCH；未注册算法设名后 NOT_MATCH（由框架回退
+// CCU_FAIL/AICPU）。
 // hccl 侧 IsNeedStrictModeForOrderPreserved（保序模式回退 AICPU）asc-devkit 无对应机制，未移植。
 SelectorStatus AllReduceAutoSelector::SelectCcuScheduleAlgo(
     const TopoInfoWithNetLayerDetails* topoInfo, const OpParam& opParam,
@@ -346,22 +347,18 @@ SelectorStatus AllReduceAutoSelector::SelectCcuScheduleAlgo(
                 SelectorStatus::NOT_MATCH);
             // Level1Nhr 已在拓扑形状计算中设置（GCD==1 时为 true）
             if (topoInfo->Level1Nhr) {
-                // 对齐 hccl：Level1Nhr 选 SoleNHR（asc-devkit 未注册）
+                // 对齐 hccl：Level1Nhr 选 SoleNHR（asc-devkit 已注册）
                 selectAlgName = "CcuSchedAllReduceSoleNHR";
-                HCCL_WARNING(
-                    "[AllReduceAutoSelector][%s] algo[%s] not registered, not supported.", __func__,
-                    selectAlgName.c_str());
-                return SelectorStatus::NOT_MATCH;
+                HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
+                return SelectorStatus::MATCH;
             }
             // 与基类 IsTwoLevelNetLayer/IsLayerAllConnetedWithTopo 判空契约一致：层信息缺失时跳过单实例分支
             if (!topoInfo->netLayerDetails.localNetInsSizeOfLayer.empty() &&
                 topoInfo->netLayerDetails.localNetInsSizeOfLayer[0] == 1) {
-                // 对齐 hccl：机内单实例选 SoleNHR（asc-devkit 未注册）
+                // 对齐 hccl：机内单实例选 SoleNHR（asc-devkit 已注册）
                 selectAlgName = "CcuSchedAllReduceSoleNHR";
-                HCCL_WARNING(
-                    "[AllReduceAutoSelector][%s] algo[%s] not registered, not supported.", __func__,
-                    selectAlgName.c_str());
-                return SelectorStatus::NOT_MATCH;
+                HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
+                return SelectorStatus::MATCH;
             }
             if (topoInfo->is2DieFullMesh) {
                 HCCL_DEBUG("[AllReduceAutoSelector] 2DieFullMesh is not supported yet for ccu schedule mode.");
@@ -421,12 +418,10 @@ SelectorStatus AllReduceAutoSelector::SelectCcuScheduleAlgo(
         }
         if (topoInfo->level0Topo == Level0Shape::CLOS && (!IsInputOutputOverlap(opParam))) {
             if (dataSize < AR_CCU_CLOS_1D_SMALL_DATA_SIZE) {
-                // 对齐 hccl：两层 CLOS 小数据选 SoleNHR（asc-devkit 未注册）
+                // 对齐 hccl：两层 CLOS 小数据选 SoleNHR（asc-devkit 已注册）
                 selectAlgName = "CcuSchedAllReduceSoleNHR";
-                HCCL_WARNING(
-                    "[AllReduceAutoSelector][%s] algo[%s] not registered, not supported.", __func__,
-                    selectAlgName.c_str());
-                return SelectorStatus::NOT_MATCH;
+                HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
+                return SelectorStatus::MATCH;
             }
             return SelectorStatus::NOT_MATCH;
         }
@@ -475,11 +470,10 @@ SelectorStatus AllReduceAutoSelector::SelectCcuScheduleLevel0Algo(
             return SelectorStatus::NOT_MATCH;
         }
         if (dataSize < AR_CCU_CLOS_1D_SMALL_DATA_SIZE) {
-            // 对齐 hccl：单层 CLOS 小数据选 SoleNHR（asc-devkit 未注册）
+            // 对齐 hccl：单层 CLOS 小数据选 SoleNHR（asc-devkit 已注册）
             selectAlgName = "CcuSchedAllReduceSoleNHR";
-            HCCL_WARNING(
-                "[AllReduceAutoSelector][%s] algo[%s] not registered, not supported.", __func__, selectAlgName.c_str());
-            return SelectorStatus::NOT_MATCH;
+            HCCL_INFO("[AllReduceAutoSelector][%s] Algo match [%s]", __func__, selectAlgName.c_str());
+            return SelectorStatus::MATCH;
         }
         return SelectorStatus::NOT_MATCH;
     }

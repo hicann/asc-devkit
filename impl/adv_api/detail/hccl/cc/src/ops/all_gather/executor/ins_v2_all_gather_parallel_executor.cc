@@ -587,12 +587,6 @@ REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHR, AlgEngine::AICPU, "parallel[mesh,nhr]", COND_NONE,
     FLAG_MULTI_LEVEL, 0);
 REGISTER_EXECUTOR_BY_TWO_TEMPS(
-    HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRUBX, InsV2AllGatherParallelExecutor, TopoMatchUBX,
-    InsTempAllGatherMesh1D, InsTempAllGatherNHR);
-REGISTER_ALG_META(
-    HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRUBX, AlgEngine::AICPU, "parallel[mesh,nhr]",
-    COND_NONE, FLAG_UBX, 0);
-REGISTER_EXECUTOR_BY_TWO_TEMPS(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherParallelMesh1DNHRMultiJetty, InsV2AllGatherParallelExecutor,
     TopoMatchUBX, InsTempAllGatherMesh1D, InsTempAllGatherNHR);
 REGISTER_ALG_META(

@@ -27,6 +27,7 @@ static_assert(
 static_assert(
     KFC_RS_SOLE_NHR_2DIE_PARAM_NUM <= CCU_USED_XN_NUM, "Sole NHR 2Die ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_AG_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "SoleNHR AllGather parameters exceed XN capacity");
+static_assert(KFC_AR_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "SoleNHR AllReduce parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllToAll parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_RS_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_PARALLEL_AG_STORAGE_NUM <= CCU_USED_XN_NUM, "Parallel AllGather parameters exceed XN capacity");
@@ -268,6 +269,70 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
     KERNEL_LOG(
         KERNEL_INFO, "AR chunk debug: mySlice=0x%llx, chunk=0x%llx, full=0x%llx, tail=0x%llx, loop=0x%llx\n",
         mySliceSize, chunkSize, fullChunkCount, tailSize, xnData_[17]);
+}
+
+// SoleNHR（CcuSchedAllReduceSoleNHR）的 AIV prepare：
+// 将 hccl CcuTempAllReduceNHRMem2Mem1D::KernelRun 的 host 侧参数计算搬到设备侧
+// （SplitDataFor2Dies + CalcSlice）。D4 双 die：按 dieSplitRatioPermille（res[1]，注册期
+// GetChannelBwCoeff 带宽比）切分 die0/die1 尺寸并 128B 对齐（hccl CcuAlignDown 口径），
+// 双 mission 共享同一参数帧、kernelArg.axisId 区分实例；单 die（permille=1000）不切分。
+// 分片尺寸口径与 hccl CalcSlice 一致：unit = dataSize / dtypeSize / rankNum，
+// 末片 = dataSize - (rankNum-1) * unit * dtypeSize。
+// 布局见 KfcAllReduceSoleNhrParamIndex，与 KFC dispatch、kernel 形参逐槽一致。
+// TopoMatch1D 生成全域单层（sub-rank == 全局 rank），ccuParam_.rankId 口径与 kernel rankId 一致。
+template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForAllReduceSoleNhrM2M(
+    __gm__ CommonPrepareParamCcu* commParam)
+{
+    constexpr uint64_t dieSplitAlign = 128U;
+    constexpr uint64_t smallDataRankMultiplier = 4U;
+    const uint64_t dataTypeSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t sliceSize = commParam->count * dataTypeSize; // 每 rank 全量数据（AllReduce）
+    const uint64_t repeatOffset = sliceSize * ccuParam_.repeatIndex;
+    const uint64_t inputBase = reinterpret_cast<uint64_t>(commParam->sendBuf) + repeatOffset;
+    const uint64_t outputBase = reinterpret_cast<uint64_t>(commParam->recvBuf) + repeatOffset;
+    const uint64_t rankNum = ccuParam_.rankNum;
+    const uint64_t sliceCount = sliceSize / dataTypeSize;
+
+    // hccl SplitDataFor2Dies 口径：permille ∈ (0,1000) 且非小数据（>rankNum*4 元素）才切分；
+    // die0Size 按 128 字节向下对齐，对齐后为 0 则退化为不切分
+    uint64_t die0Size = sliceSize;
+    uint64_t die1Size = 0;
+    if (ccuParam_.dieSplitRatioPermille > 0U && ccuParam_.dieSplitRatioPermille < 1000U &&
+        sliceCount > rankNum * smallDataRankMultiplier) {
+        die0Size = sliceCount * ccuParam_.dieSplitRatioPermille / 1000U * dataTypeSize;
+        die0Size = die0Size / dieSplitAlign * dieSplitAlign;
+        if (die0Size == 0U) {
+            die0Size = sliceSize;
+        } else {
+            die1Size = sliceSize - die0Size;
+        }
+    }
+
+    // CalcSlice(die0Size) / CalcSlice(die1Size)：切 rankNum 份，最后一份含尾块
+    const uint64_t die0Unit = die0Size / dataTypeSize / rankNum;
+    const uint64_t die0SliceSize = die0Unit * dataTypeSize;
+    const uint64_t die0LastSliceSize = die0Size - (rankNum - 1U) * die0SliceSize;
+    const uint64_t die1Unit = die1Size / dataTypeSize / rankNum;
+    const uint64_t die1SliceSize = die1Unit * dataTypeSize;
+    const uint64_t die1LastSliceSize = die1Size - (rankNum - 1U) * die1SliceSize;
+    const uint64_t isInputOutputEqual = (inputBase == outputBase) ? 1U : 0U;
+
+    xnData_[KFC_AR_SOLE_NHR_INPUT] = inputBase;
+    xnData_[KFC_AR_SOLE_NHR_OUTPUT] = outputBase;
+    xnData_[KFC_AR_SOLE_NHR_DIE0_SIZE] = die0Size;
+    xnData_[KFC_AR_SOLE_NHR_DIE1_SIZE] = die1Size;
+    xnData_[KFC_AR_SOLE_NHR_DIE0_SLICE_SIZE] = die0SliceSize;
+    xnData_[KFC_AR_SOLE_NHR_DIE1_SLICE_SIZE] = die1SliceSize;
+    xnData_[KFC_AR_SOLE_NHR_DIE0_LAST_SLICE_SIZE] = die0LastSliceSize;
+    xnData_[KFC_AR_SOLE_NHR_DIE1_LAST_SLICE_SIZE] = die1LastSliceSize;
+    xnData_[KFC_AR_SOLE_NHR_IS_INPUT_OUTPUT_EQUAL] = isInputOutputEqual;
+    KERNEL_LOG(
+        KERNEL_INFO,
+        "AR sole-NHR prepare: slice=0x%llx, die0=0x%llx, die1=0x%llx, d0Slice=0x%llx, d1Slice=0x%llx, "
+        "d0Last=0x%llx, d1Last=0x%llx, eq=%llu\n",
+        sliceSize, die0Size, die1Size, die0SliceSize, die1SliceSize, die0LastSliceSize, die1LastSliceSize,
+        isInputOutputEqual);
 }
 
 template <const auto& config>

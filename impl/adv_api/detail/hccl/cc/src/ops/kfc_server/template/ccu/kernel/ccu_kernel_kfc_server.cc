@@ -14,6 +14,7 @@
 #include "../../../../all_gather/template/ccu/kernel/ccu_kernel_kfc_all_gather_nhr1d_mem2mem.h"
 #include "../../../../all_gather/template/ccu/kernel/ccu_kernel_kfc_all_gather_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.h"
+#include "../../../../all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_nhr1d_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_2die_mem2mem.h"
@@ -40,6 +41,9 @@ static_assert(
 static_assert(
     KFC_AG_SOLE_NHR_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
     "SoleNHR AllGather parameters exceed the KFC server load width");
+static_assert(
+    KFC_AR_SOLE_NHR_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
+    "SoleNHR AllReduce parameters exceed the KFC server load width");
 static_assert(
     KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
     "Concurrent AllToAll parameters exceed the KFC server load width");
@@ -379,16 +383,30 @@ static void DispatchKfcSubKernel(
                 ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType);
         }
     } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLREDUCE) {
-        CcuKfcAllReduceMesh1DMem2MemKernel(
-            param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], ctx.token, param[HBM_PARAM_IDX_3], param[HBM_PARAM_IDX_4],
-            param[HBM_PARAM_IDX_5], param[HBM_PARAM_IDX_6], param[HBM_PARAM_IDX_7], param[HBM_PARAM_IDX_8],
-            param[HBM_PARAM_IDX_9], param[HBM_PARAM_IDX_10], param[HBM_PARAM_IDX_11], param[HBM_PARAM_IDX_12],
-            param[HBM_PARAM_IDX_13], param[HBM_PARAM_IDX_14], param[HBM_PARAM_IDX_15], param[HBM_PARAM_IDX_16],
-            param[HBM_PARAM_IDX_17], param[HBM_PARAM_IDX_18], param[HBM_PARAM_IDX_19], param[HBM_PARAM_IDX_20],
-            param[HBM_PARAM_IDX_21], param[HBM_PARAM_IDX_22], param[HBM_PARAM_IDX_23], param[HBM_PARAM_IDX_24],
-            param[HBM_PARAM_IDX_25], ctx.arg->channels, ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize),
-            ctx.arg->rankId, ctx.arg->opParam.DataDes.dataType, ctx.arg->opParam.DataDes.outputType,
-            ctx.arg->opParam.reduceType);
+        if (ctx.arg->role == KfcServerRole::ALL_REDUCE_SOLE_NHR) {
+            // SoleNHR（CcuSchedAllReduceSoleNHR）单帧布局见 KfcAllReduceSoleNhrParamIndex
+            // （[0]=INPUT 兼作哨兵；die 切分/分片尺寸/末片尺寸由 AIV prepare 写入；token 走 ctx.token）。
+            CcuKernelKfcAllReduceNHR1DMem2MemKernel(
+                param[KFC_AR_SOLE_NHR_INPUT], param[KFC_AR_SOLE_NHR_OUTPUT], ctx.token,
+                param[KFC_AR_SOLE_NHR_IS_INPUT_OUTPUT_EQUAL], param[KFC_AR_SOLE_NHR_DIE0_SIZE],
+                param[KFC_AR_SOLE_NHR_DIE1_SIZE], param[KFC_AR_SOLE_NHR_DIE0_SLICE_SIZE],
+                param[KFC_AR_SOLE_NHR_DIE1_SLICE_SIZE], param[KFC_AR_SOLE_NHR_DIE0_LAST_SLICE_SIZE],
+                param[KFC_AR_SOLE_NHR_DIE1_LAST_SLICE_SIZE], ctx.arg->channels, ctx.arg->channelCount,
+                static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->axisId, ctx.arg->axisSize,
+                ctx.arg->opParam.DataDes.dataType, ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType,
+                ctx.arg->nhrStepInfoVector, ctx.arg->nhrRank2ChannelIdx);
+        } else {
+            CcuKfcAllReduceMesh1DMem2MemKernel(
+                param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], ctx.token, param[HBM_PARAM_IDX_3],
+                param[HBM_PARAM_IDX_4], param[HBM_PARAM_IDX_5], param[HBM_PARAM_IDX_6], param[HBM_PARAM_IDX_7],
+                param[HBM_PARAM_IDX_8], param[HBM_PARAM_IDX_9], param[HBM_PARAM_IDX_10], param[HBM_PARAM_IDX_11],
+                param[HBM_PARAM_IDX_12], param[HBM_PARAM_IDX_13], param[HBM_PARAM_IDX_14], param[HBM_PARAM_IDX_15],
+                param[HBM_PARAM_IDX_16], param[HBM_PARAM_IDX_17], param[HBM_PARAM_IDX_18], param[HBM_PARAM_IDX_19],
+                param[HBM_PARAM_IDX_20], param[HBM_PARAM_IDX_21], param[HBM_PARAM_IDX_22], param[HBM_PARAM_IDX_23],
+                param[HBM_PARAM_IDX_24], param[HBM_PARAM_IDX_25], ctx.arg->channels, ctx.arg->channelCount,
+                static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, ctx.arg->opParam.DataDes.dataType,
+                ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType);
+        }
     } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLTOALLV) {
         CcuAlltoAllVMesh1DKernel(
             param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], ctx.token, param[HBM_PARAM_IDX_3], param[HBM_PARAM_IDX_4],

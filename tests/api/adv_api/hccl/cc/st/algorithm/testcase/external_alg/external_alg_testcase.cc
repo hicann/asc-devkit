@@ -183,7 +183,7 @@ const HcclCMDType COLL_CMDS[] = {
 
 // 不变量：V2 注册表 ↔ AlgMetaRegistry 双向满射。本目标全量编译所有注册现场
 // （15 个 executor 文件，-DMC2_CLIENT_ENABLE_CCU=1 且无 AICPU_COMPILE 守卫裁剪），可见全部
-// 55 行 sidecar——按 cmd 分布：AG 16 / RS 18 / AR 9 / A2A 7 / A2AV 5。
+// 55 行 sidecar——按 cmd 分布：AG 15 / RS 18 / AR 10 / A2A 7 / A2AV 5。
 TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
 {
     for (HcclCMDType cmd : COLL_CMDS) {
@@ -198,10 +198,10 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
         std::sort(metaNames.begin(), metaNames.end());
         EXPECT_EQ(v2Tags, metaNames) << "cmd=" << static_cast<u32>(cmd);
     }
-    // 各 cmd 精确分布锚（AG 16 / RS 18 / AR 9 / A2A 7 / A2AV 4 = 55），失败时定位更直接
-    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER).size(), 16U);
+    // 各 cmd 精确分布锚（AG 15 / RS 18 / AR 10 / A2A 7 / A2AV 5 = 55），失败时定位更直接
+    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLGATHER).size(), 15U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_REDUCE_SCATTER).size(), 18U);
-    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 9U);
+    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 10U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALL).size(), 7U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALLV).size(), 5U);
     // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：55 行精确锚
@@ -637,11 +637,9 @@ TEST(ExtAlgResolver, GoldenAllEngines)
         // CCU·RS·sole[mesh]：UT 无真实 comm，COND_PEER_ONLY 保守不命中 -> 裸名兜底
         {HcclCMDType::HCCL_CMD_REDUCE_SCATTER, "sole[mesh]", &flat, CommEngine::COMM_ENGINE_CCU,
          "CcuSchedReduceScatterSoleMesh"},
-        // AICPU·AG·parallel[mesh,nhr] 三 flag 互斥分流
+        // AICPU·AG·parallel[mesh,nhr] 两 flag 互斥分流（UBX 走 MultiJetty 的 parallel[mesh,nhr.multi_channel]）
         {HcclCMDType::HCCL_CMD_ALLGATHER, "parallel[mesh,nhr]", &multi, CommEngine::COMM_ENGINE_AICPU_TS,
          "InsAllGatherParallelMesh1DNHR"},
-        {HcclCMDType::HCCL_CMD_ALLGATHER, "parallel[mesh,nhr]", &ubx, CommEngine::COMM_ENGINE_AICPU_TS,
-         "InsAllGatherParallelMesh1DNHRUBX"},
         {HcclCMDType::HCCL_CMD_ALLGATHER, "parallel[mesh,nhr]", &pcie, CommEngine::COMM_ENGINE_AICPU_TS,
          "InsAllGatherParallelMesh1DNHRPcie"},
         // AICPU·RS·parallel[mesh,nhr]
@@ -799,7 +797,7 @@ TEST(ExtAlgResolver, CandidateTableIsDeterministic)
         comboCount += engines.size();
     }
     EXPECT_EQ(keyCount, 34U);
-    EXPECT_EQ(comboCount, 44U);
+    EXPECT_EQ(comboCount, 45U);
 }
 
 TEST(ExtAlgResolver, SpecificityOrdering)

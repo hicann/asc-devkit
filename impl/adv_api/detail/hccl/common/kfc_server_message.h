@@ -222,6 +222,25 @@ enum KfcAllGatherSoleNhrParamIndex : uint32_t {
     KFC_AG_SOLE_NHR_PARAM_NUM = 13,
 };
 
+// SoleNHR（CcuSchedAllReduceSoleNHR）单帧 xnData 布局（die 切分 + reduce-scatter/all-gather 分片尺寸，9 槽）：
+//  [0]=INPUT 兼作轮次有效哨兵（kernel 不接收 opId，真实地址必不等于 INVALID_U64）。
+//  die0/die1 尺寸、每 rank 分片尺寸与末片尺寸由 AIV prepare（CcuPrepareForAllReduceSoleNhrM2M）运行期计算，
+//  isInputOutputEqual 显式占用一槽（hccl AllReduce NHR kernel 依赖该值决定是否做本地拷贝）。
+//  双 die 时两个 mission 共享同一参数帧、kernelArg.axisId 区分实例；单 die 时 die1Size/末片均为 0。
+// AIV prepare 写入、KFC dispatch 逐槽转发、kernel 形参三处索引必须一致。
+enum KfcAllReduceSoleNhrParamIndex : uint32_t {
+    KFC_AR_SOLE_NHR_INPUT = 0,
+    KFC_AR_SOLE_NHR_OUTPUT = 1,
+    KFC_AR_SOLE_NHR_DIE0_SIZE = 2,
+    KFC_AR_SOLE_NHR_DIE1_SIZE = 3,
+    KFC_AR_SOLE_NHR_DIE0_SLICE_SIZE = 4,
+    KFC_AR_SOLE_NHR_DIE1_SLICE_SIZE = 5,
+    KFC_AR_SOLE_NHR_DIE0_LAST_SLICE_SIZE = 6,
+    KFC_AR_SOLE_NHR_DIE1_LAST_SLICE_SIZE = 7,
+    KFC_AR_SOLE_NHR_IS_INPUT_OUTPUT_EQUAL = 8,
+    KFC_AR_SOLE_NHR_PARAM_NUM = 9,
+};
+
 // ReduceScatter 并发(Mesh+NHR)单帧 xnData 布局：mission0 读 Mesh 区间，mission1 读 NHR 区间。
 enum KfcConcurrentReduceScatterParamIndex : uint32_t {
     KFC_CONCURRENT_RS_OP_ID = 0,

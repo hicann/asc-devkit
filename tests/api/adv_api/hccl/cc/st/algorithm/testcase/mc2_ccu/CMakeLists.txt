@@ -66,6 +66,8 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/executor/ins_v2_all_reduce_sole_executor.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/ccu_temp_kfc_all_reduce_mesh_1D_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_mesh1d_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/ccu_temp_kfc_all_reduce_nhr_1d_mem2mem.cc
+    ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/ccu/kernel/ccu_kernel_kfc_all_reduce_nhr1d_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_mesh_1D_two_shot.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_mesh_1D_one_shot.cc
     ${HCCL_CC_SRC_DIR}/ops/all_reduce/template/aicpu/ins_temp_all_reduce_aicpu_reduce_nhr.cc

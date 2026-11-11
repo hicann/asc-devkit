@@ -9,7 +9,7 @@
  */
 
 // AllReduce CCU selector 行为用例：对齐 hccl SelectCcuScheduleAlgo 分支框架。
-// 已注册算法（当前仅 CcuSchedAllReduceSoleMesh）MATCH；未注册算法设名后 NOT_MATCH，
+// 已注册算法（CcuSchedAllReduceSoleMesh / CcuSchedAllReduceSoleNHR）MATCH；未注册算法设名后 NOT_MATCH，
 // CCU 上下文（KFC）无法运行 AICPU 算法，选不到直接失败，不降级。不依赖 SimWorld 设备仿真。
 
 #include "all_reduce_auto_selector.h"
@@ -87,11 +87,12 @@ TopoInfoWithNetLayerDetails MakeUbxTopo(u32 rankSize, u32 meshRankNum, u32 closR
 class CcuStAllReduceSelector : public ::testing::Test {
 protected:
     // CCU 选择命中已注册算法：状态保持 CCU_SCHED
-    void ExpectCcuMatch(OpParam& param, TopoInfoWithNetLayerDetails& topo)
+    void ExpectCcuMatch(
+        OpParam& param, TopoInfoWithNetLayerDetails& topo, const std::string& expectedAlg = "CcuSchedAllReduceSoleMesh")
     {
         std::string algName;
         EXPECT_EQ(selector_.Select(param, &topo, algName), SelectorStatus::MATCH);
-        EXPECT_EQ(algName, "CcuSchedAllReduceSoleMesh");
+        EXPECT_EQ(algName, expectedAlg);
         EXPECT_EQ(param.opExecuteConfig, OpExecuteConfig::CCU_SCHED);
     }
 
@@ -172,12 +173,12 @@ TEST_F(CcuStAllReduceSelector, Selector_TwoDieRegular_Unregistered2Die_Decline)
     ExpectCcuDecline(param, topo);
 }
 
-TEST_F(CcuStAllReduceSelector, Selector_Level1Nhr_UnregisteredSoleNHR_Decline)
+TEST_F(CcuStAllReduceSelector, Selector_Level1Nhr_MatchSoleNHR)
 {
     TopoInfoWithNetLayerDetails topo = MakeMultiLevelMesh1DTopo(16U);
     topo.Level1Nhr = true;
     OpParam param = MakeCcuSchedParam(FOUR_KB / 4U);
-    ExpectCcuDecline(param, topo);
+    ExpectCcuMatch(param, topo, "CcuSchedAllReduceSoleNHR");
 }
 
 TEST_F(CcuStAllReduceSelector, Selector_MultiLevel_SequenceData_Unregistered_Decline)
@@ -261,12 +262,12 @@ TEST_F(CcuStAllReduceSelector, Selector_UbxRectangular_LargeData_Unregistered_No
     ExpectCcuNotMatch(param, topo);
 }
 
-TEST_F(CcuStAllReduceSelector, Selector_SingleLevelClos_UnregisteredSoleNHR_NotMatch)
+TEST_F(CcuStAllReduceSelector, Selector_SingleLevelClos_MatchSoleNHR)
 {
     TopoInfoWithNetLayerDetails topo = MakeSingleLevelMesh1DTopo(4U);
     topo.level0Topo = Level0Shape::CLOS;
     OpParam param = MakeCcuSchedParam(FOUR_KB / 4U);
-    ExpectCcuNotMatch(param, topo);
+    ExpectCcuMatch(param, topo, "CcuSchedAllReduceSoleNHR");
 }
 
 } // namespace CcuSt

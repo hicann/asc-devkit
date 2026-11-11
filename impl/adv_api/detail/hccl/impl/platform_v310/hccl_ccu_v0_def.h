@@ -44,7 +44,9 @@ enum class AlgorithmType : uint8_t {
     CcuSchedAllToAllMesh1DMultiJetty = 157,
     // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（158，两级拓扑 L1 NHR 中继 RS）
     CcuSchedReduceScatterSoleNHR = 158,
-    CcuSchedAllGatherSoleNHR = 159
+    CcuSchedAllGatherSoleNHR = 159,
+    // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（160，AllReduce NHR 1D Mem2Mem）
+    CcuSchedAllReduceSoleNHR = 160
 };
 
 template <const auto& config>
@@ -153,6 +155,7 @@ private:
     __aicore__ inline void CcuPrepareForReduceScatterSoleNhrM2M(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForReduceScatterSoleNhr2DieM2M(__gm__ CommonPrepareParamCcu* commParam);
     __aicore__ inline void CcuPrepareForAllGatherSoleNhrM2M(__gm__ CommonPrepareParamCcu* commParam);
+    __aicore__ inline void CcuPrepareForAllReduceSoleNhrM2M(__gm__ CommonPrepareParamCcu* commParam);
 
 private:
     __gm__ HcclCombineOpParam* hcclContext_;
