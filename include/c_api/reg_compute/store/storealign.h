@@ -722,6 +722,22 @@ __simd_callee__ inline void asc_storealign_intlv(__ubuf__ int32_t* dst, vector_i
 
 /**
  * @ingroup simd_c_api.reg_compute.store
+ * @brief Interleaves the elements of two float vector data registers and stores the 512-byte result at the 32-byte
+ * aligned UB address dst.
+ *
+ * @override_id asc_storealign_intlv__PUf32_vf32_vf32
+ * @archs 3510
+ * @param [out] dst Start address in Unified Buffer of the interleaved destination, which holds float elements, four
+ * bytes each; it must be 32-byte aligned and stay inside the UB address space.
+ * @param [in] src0 First source vector_float register of float elements, supplying the even-position elements of
+ * the interleaved result; its dtype must match dst.
+ * @param [in] src1 Second source vector_float register of float elements, supplying the odd-position elements of
+ * the interleaved result; its dtype must match dst.
+ */
+__simd_callee__ inline void asc_storealign_intlv(__ubuf__ float* dst, vector_float src0, vector_float src1);
+
+/**
+ * @ingroup simd_c_api.reg_compute.store
  * @brief Interleaves the elements of two uint32_t vector data registers and stores the 512-byte result at the 32-byte
  * aligned UB address dst.
  *
@@ -1707,6 +1723,25 @@ __simd_callee__ inline void asc_storealign_intlv(
  */
 __simd_callee__ inline void asc_storealign_intlv(
     __ubuf__ int32_t* dst, vector_int32_t src0, vector_int32_t src1, int32_t offset);
+
+/**
+ * @ingroup simd_c_api.reg_compute.store
+ * @brief Interleaves the elements of two float vector data registers and stores the 512-byte result at dst plus an
+ * element-unit int32_t offset.
+ *
+ * @override_id asc_storealign_intlv__PUf32_vf32_vf32_i32
+ * @archs 3510
+ * @param [out] dst Start address in Unified Buffer of the interleaved destination, which holds float elements, four
+ * bytes each; it must be 32-byte aligned and stay inside the UB address space.
+ * @param [in] src0 First source vector_float register of float elements, supplying the even-position elements of
+ * the interleaved result; its dtype must match dst.
+ * @param [in] src1 Second source vector_float register of float elements, supplying the odd-position elements of
+ * the interleaved result; its dtype must match dst.
+ * @param [in] offset Element offset added to dst before this store; the caller may advance either this offset or dst
+ * between calls.
+ */
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ float* dst, vector_float src0, vector_float src1, int32_t offset);
 
 /**
  * @ingroup simd_c_api.reg_compute.store
@@ -3231,6 +3266,25 @@ __simd_callee__ inline void asc_storealign_intlv(
  */
 __simd_callee__ inline void asc_storealign_intlv(
     __ubuf__ int32_t* dst, vector_int32_t src0, vector_int32_t src1, addr_reg offset);
+
+/**
+ * @ingroup simd_c_api.reg_compute.store
+ * @brief Interleaves the elements of two float vector data registers and stores the 512-byte result at dst plus an
+ * addr_reg offset.
+ *
+ * @override_id asc_storealign_intlv__PUf32_vf32_vf32_ar
+ * @archs 3510
+ * @param [out] dst Start address in Unified Buffer of the interleaved destination, which holds float elements, four
+ * bytes each; it must be 32-byte aligned and stay inside the UB address space.
+ * @param [in] src0 First source vector_float register of float elements, supplying the even-position elements of
+ * the interleaved result; its dtype must match dst.
+ * @param [in] src1 Second source vector_float register of float elements, supplying the odd-position elements of
+ * the interleaved result; its dtype must match dst.
+ * @param [in] offset Offset carried by an addr_reg previously built with the address-register construction interface
+ * (asc_update_addr_reg), applied relative to dst.
+ */
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ float* dst, vector_float src0, vector_float src1, addr_reg offset);
 
 /**
  * @ingroup simd_c_api.reg_compute.store

@@ -402,6 +402,16 @@ __simd_callee__ inline void asc_storealign_intlv(__ubuf__ half* dst, vector_half
     }
 }
 
+__simd_callee__ inline void asc_storealign_intlv(__ubuf__ float* dst, vector_float src0, vector_float src1)
+{
+    if ASC_IS_AIV {
+        vector_bool mask;
+        vsts(
+            reinterpret_cast<vector_uint32_t&>(src0), reinterpret_cast<vector_uint32_t&>(src1),
+            reinterpret_cast<__ubuf__ uint32_t*>(dst), 0, INTLV_B32, mask);
+    }
+}
+
 __simd_callee__ inline void asc_storealign_intlv(
     __ubuf__ bfloat16_t* dst, vector_bfloat16_t src0, vector_bfloat16_t src1)
 {
@@ -869,6 +879,16 @@ __simd_callee__ inline void asc_storealign_intlv(
 }
 
 __simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ float* dst, vector_float src0, vector_float src1, addr_reg offset)
+{
+    if ASC_IS_AIV {
+        vector_bool mask;
+        vst(reinterpret_cast<vector_uint32_t&>(src0), reinterpret_cast<vector_uint32_t&>(src1),
+            reinterpret_cast<__ubuf__ uint32_t*>(dst), offset, INTLV_B32, mask);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_intlv(
     __ubuf__ bfloat16_t* dst, vector_bfloat16_t src0, vector_bfloat16_t src1, addr_reg offset)
 {
     if ASC_IS_AIV {
@@ -1327,6 +1347,17 @@ __simd_callee__ inline void asc_storealign_intlv(__ubuf__ half* dst, vector_half
     if ASC_IS_AIV {
         vector_bool mask;
         vsts(src0, src1, dst, offset, INTLV_B16, mask);
+    }
+}
+
+__simd_callee__ inline void asc_storealign_intlv(
+    __ubuf__ float* dst, vector_float src0, vector_float src1, int32_t offset)
+{
+    if ASC_IS_AIV {
+        vector_bool mask;
+        vsts(
+            reinterpret_cast<vector_uint32_t&>(src0), reinterpret_cast<vector_uint32_t&>(src1),
+            reinterpret_cast<__ubuf__ uint32_t*>(dst), offset, INTLV_B32, mask);
     }
 }
 
