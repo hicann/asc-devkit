@@ -214,11 +214,15 @@ TEST_F(ST_ALL_GATHER_AICPU_TEST, concurrent_executor_calculates_resources_with_h
 
     AlgResourceRequest request;
     ASSERT_EQ(executor->CalcRes(nullptr, param, &topo, hierarchy, request), HCCL_SUCCESS);
-    EXPECT_EQ(request.slaveThreadNum, 4U);
-    EXPECT_EQ(request.notifyNumOnMainThread, 3U);
-    EXPECT_EQ(request.notifyNumPerThread, std::vector<u32>({1U, 1U, 2U, 2U}));
+    // 两轴均为Mesh模板：0号主流只做本卡拷贝，每个peer/channel一条从流。
+    // Mesh轴每peer 1条通道（3条从流），CLOS轴每peer 4条jetty（12条从流），另加两轴之间的1条同步流。
+    EXPECT_EQ(request.slaveThreadNum, 16U);
+    EXPECT_EQ(request.notifyNumOnMainThread, 4U);
+    EXPECT_EQ(
+        request.notifyNumPerThread,
+        std::vector<u32>({1U, 1U, 1U, 13U, 1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U, 1U}));
     ASSERT_EQ(request.channels.size(), 1U);
-    EXPECT_EQ(request.channels[0].size(), 6U);
+    EXPECT_EQ(request.channels[0].size(), 15U);
 }
 
 TEST_F(ST_ALL_GATHER_AICPU_TEST, multijetty_selector_uses_algorithm_for_uneven_mesh_clos_topology)

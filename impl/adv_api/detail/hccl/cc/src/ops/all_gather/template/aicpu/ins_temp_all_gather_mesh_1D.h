@@ -37,10 +37,13 @@ public:
     HcclResult CalcRes(
         HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
         AlgResourceRequest& resourceRequest) override;
-    virtual HcclResult GetRes(AlgResourceRequest& resourceRequest) const;
+    HcclResult GetRes(AlgResourceRequest& resourceRequest) const override;
+
+    // 设置Concurrent模板的物理通信轴，决定建链方式与对端读取接口。
+    void SetConcurrentTopo(CommTopo topo) { concurrentTopo_ = topo; }
 
     u64 CalcScratchMultiple(BufferType inBuffType, BufferType outBuffType) override;
-    virtual u64 GetThreadNum() const;
+    u64 GetThreadNum() const override;
     HcclResult CalcDataSplitByPortGroup(
         const u64 totalDataCount, const u64 dataTypeSize, const std::vector<ChannelInfo>& channels,
         std::vector<u64>& elemCountOut, std::vector<u64>& sizeOut, std::vector<u64>& elemOffset) override;
@@ -51,14 +54,28 @@ public:
 protected:
     virtual HcclResult RunAllGatherMesh(
         const std::vector<ThreadHandle>& threads, const std::map<u32, std::vector<ChannelInfo>>& channels);
+    HcclResult RunAllGatherMeshOnChannel(
+        const ThreadHandle& thread, const ChannelInfo& linkRemote, void* remoteInputAddr, void* remoteCclBuffAddr,
+        const u32 connectedRank, const u32 connectedAlgRank, const u32 channelIdx);
+    // 非Concurrent模板的前置拷贝：本卡分片写入输出与CCL暂存区。
     virtual HcclResult LocalDataCopy(const std::vector<ThreadHandle>& threads);
+    // Concurrent模板的分阶段拷贝：outputOnly=false仅暂存CCL，true仅生成本卡输出。
+    HcclResult LocalDataCopyConcurrent(const std::vector<ThreadHandle>& threads, bool outputOnly);
     HcclResult PostLocalCopy(const std::vector<ThreadHandle>& threads);
     TemplateDataParams tempAlgParams_;
     u64 inputOffset_{0};
     u64 outputOffset_{0};
     void* inputSymWindow_{nullptr};
     void* outputSymWindow_{nullptr};
-    u32 channelsPerRank_{1};
+    u32 maxChannelsPerRank_{1};
+    // 单peer数据按port group切分后的分片信息
+    std::vector<u64> chanElemCount_;
+    std::vector<u64> chanSize_;
+    std::vector<u64> chanElemOffset_;
+
+private:
+    bool isConcurrent_{false};                  // 启用Concurrent的独立主流和分阶段拷贝。
+    CommTopo concurrentTopo_{COMM_TOPO_1DMESH}; // 当前模板使用的物理通信轴。
 };
 
 } // namespace mc2_ops_hccl
