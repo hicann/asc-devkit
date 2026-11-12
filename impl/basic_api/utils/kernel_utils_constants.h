@@ -730,7 +730,7 @@ using uint2b_t = IntegerSubType<INT2_BIT_NUM, false>;
 using fp8_e8m0_t = float8_e8m0_t;
 #endif
 
-using hif4_scale = hif4_scale;
+using hif4_scale = ::hif4_scale;
 
 using mx_fp8_e5m2_t = struct {};
 using mx_fp8_e4m3_t = struct {};
