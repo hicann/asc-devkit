@@ -15,10 +15,10 @@
 
 namespace mc2_ops_hccl {
 
-// 大禹纯 CLOS 双 die 机型 CCU 建链固定使用的 die：12 出口 = DIE0×8 + DIE1×4，
-// 任一 peer 接 12/16 交换芯片 ⇒ 与我 DIE0 的 8 颗至少共享 4 颗 ⇒ DIE0 全 peer 可达
-// （DIE1 下界 4+12−16=0，存在不可达 peer）。DIE1 出口闲置是 CCU 上线的代价。
-constexpr u32 PURE_CLOS_CCU_DIE_ID = 0;
+// 大禹纯 CLOS 双 die 机型 CCU 建链固定使用的 die：12 出口 = DIE0×4 + DIE1×8，
+// 任一 peer 接 12/16 交换芯片 ⇒ 与我 DIE1 的 8 颗至少共享 4 颗 ⇒ DIE1 全 peer 可达
+// （DIE0 下界 4+12−16=0，存在不可达 peer）。DIE0 出口闲置是 CCU 上线的代价。
+constexpr u32 PURE_CLOS_CCU_DIE_ID = 1;
 
 CcuTempAlltoAllVMesh1D::CcuTempAlltoAllVMesh1D(
     const OpParam& param, u32 rankId, const std::vector<std::vector<u32>>& subCommRanks)
@@ -59,8 +59,8 @@ HcclResult CcuTempAlltoAllVMesh1D::CalcRes(
     if (topoInfo->level0Topo == Level0Shape::CLOS) {
         // 大禹纯 CLOS：CCU 单 kernel 全 channel 必须同 die（hcomm CheckChannelsDie），
         // CalcChannelRequestMesh1D 的 per peer 首条协议匹配链是 die 盲选，双 die 下必炸。
-        // DIE0 对全部 peer 可达（12 口 = DIE0×8 + DIE1×4，任一 peer 的交换芯片必与我 DIE0 共享），
-        // 故固定 DIE0-only 建链；AICPU 侧通道按 engine 分槽隔离，不受影响。
+        // DIE1 对全部 peer 可达（12 口 = DIE0×4 + DIE1×8，任一 peer 的交换芯片必与我 DIE1 共享），
+        // 故固定 DIE1-only 建链；AICPU 侧通道按 engine 分槽隔离，不受影响。
         CHK_RET(
             CalcChannelRequestMesh1DOnDie(comm, param, topoInfo, subCommRanks_, channelDescs, PURE_CLOS_CCU_DIE_ID));
     } else if (topoInfo->level0Topo != Level0Shape::MESH_1D_CLOS) {

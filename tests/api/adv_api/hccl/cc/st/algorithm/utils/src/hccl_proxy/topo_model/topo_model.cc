@@ -726,9 +726,9 @@ void TopoModel::Create910DLinks(uint32_t srcRank, uint32_t dstRank)
     uint32_t srcPhyId = rankId2PhyId_[srcRank];
     uint32_t dstPhyId = rankId2PhyId_[dstRank];
 
-    // 大禹纯 CLOS：每对 rank 生成 die0/die1 各一条 UBC_CTP 链路（模拟 12 出口 = DIE0×8 + DIE1×4，
+    // 大禹纯 CLOS：每对 rank 生成 die0/die1 各一条 UBC_CTP 链路（模拟 12 出口 = DIE0×4 + DIE1×8，
     // 每个 die 对全部 peer 可达；stub 端 HcclRankGraphGetEndpointInfo 按 devPhyId>=4 判 die1）。
-    // CCU 侧 CalcChannelRequestMesh1DOnDie 只取 die0 → 通道集同 die；die1 链路留给 AICPU 盲选散布。
+    // CCU 侧 CalcChannelRequestMesh1DOnDie 只取 die1 → 通道集同 die；die0 链路留给 AICPU 盲选散布。
     if (isPureClosTopo_) {
         CommLink die0Link = link;
         die0Link.srcEndpointDesc.loc.device.devPhyId = srcPhyId % 4U;
