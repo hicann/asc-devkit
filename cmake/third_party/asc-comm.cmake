@@ -117,11 +117,10 @@ endif()
 # CCU 源码归属 asc-comm，跨 SO 依赖通过已安装 CANN pkg_inc 和 POD ABI 解决。
 set(ASC_COMM_CCU_CMAKE_DIR ${ASC_COMM_SOURCE_PATH}/src/ccu)
 if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
-    # The CANN package delivers the compiler-facing runtime together with the
-    # asc-comm CCU library.  Enable the real HComm backend for packaged builds;
-    # the default backend is only a compile-time unavailable stub.
-    set(ASCCOMM_BUILD_CCU_RUNTIME ON)
-    set(ASCCOMM_BUILD_CCU_RUNTIME_HCOMM_BACKEND ON)
+    # The compiler-facing runtime is delivered as a static archive by
+    # asc-devkit.  Disable asc-comm's separate DSO target; the archive below
+    # compiles the same sources with the real HComm backend.
+    set(ASCCOMM_BUILD_CCU_RUNTIME OFF CACHE BOOL "" FORCE)
     if(NOT TARGET asccomm_ccu)
         add_subdirectory(${ASC_COMM_CCU_CMAKE_DIR} ${CMAKE_BINARY_DIR}/asccomm_ccu)
     endif()
@@ -144,12 +143,67 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
 
     # ccu_runtime 是 asc-comm 的编译器侧 CCU runtime；作为 asc-devkit 子目录构建时，
     # asc-comm/experimental 下的独立 install 规则不会生效，因此由 asc-devkit 统一接管交付。
-    if(TARGET ccu_runtime)
-        if(NOT TARGET ccu_runtime_build)
-            add_custom_target(ccu_runtime_build ALL DEPENDS ccu_runtime)
+    # The compiler-facing runtime is delivered as a static archive so generated
+    # CCU launch stubs are resolved into the final host image instead of requiring
+    # a separate libccu_runtime DSO at runtime.
+    # Runtime launch ABI headers live in the workspace runtime source tree
+    # during the CANN superbuild and in the installed package for standalone builds.
+    get_filename_component(_ASCCOMM_RUNTIME_SOURCE_PATH
+        "${ASC_COMM_SOURCE_PATH}/../../runtime" REALPATH BASE_DIR "${ASC_COMM_SOURCE_PATH}")
+
+    if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime.cpp")
+        if(NOT TARGET ccu_runtime_static)
+            add_library(ccu_runtime_static STATIC)
+            target_sources(ccu_runtime_static PRIVATE
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime.cpp
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime_backend.cpp
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_aot_adapter.cpp
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime_hcomm_backend.cpp)
+            target_compile_features(ccu_runtime_static PRIVATE cxx_std_17)
+            target_compile_options(ccu_runtime_static PRIVATE -Wall -Wextra -Werror)
+            target_compile_definitions(ccu_runtime_static PRIVATE
+                CCU_TRANSLATOR_HAS_HCOMM_BACKEND
+                ASCCOMM_CCU_LOCAL_LOGGING)
+            target_include_directories(ccu_runtime_static PRIVATE
+                ${ASC_COMM_SOURCE_PATH}/include
+                ${ASC_COMM_SOURCE_PATH}/pkg_inc
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental)
+            if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|arm")
+                set(_ASCCOMM_CANN_ARCH "aarch64-linux")
+            else()
+                set(_ASCCOMM_CANN_ARCH "x86_64-linux")
+            endif()
+            set(_ASCCOMM_CANN_ARCH_DIR
+                "${ASCEND_CANN_PACKAGE_PATH}/${_ASCCOMM_CANN_ARCH}")
+            target_include_directories(ccu_runtime_static SYSTEM PRIVATE
+                ${ASCEND_CANN_PACKAGE_PATH}/include
+                ${ASCEND_CANN_PACKAGE_PATH}/runtime/include
+                ${ASCEND_CANN_PACKAGE_PATH}/pkg_inc
+                ${_ASCCOMM_RUNTIME_SOURCE_PATH}/pkg_inc
+                ${_ASCCOMM_CANN_ARCH_DIR}/include
+                ${_ASCCOMM_CANN_ARCH_DIR}/asc/include/comm_api
+                ${_ASCCOMM_CANN_ARCH_DIR}/pkg_inc)
+            # Static archives do not link their dependencies into the archive.
+            # Keep the dependency surface PUBLIC for in-tree consumers and
+            # deliver ccu_runtime.pc so external link lines retain it.
+            target_link_libraries(ccu_runtime_static PUBLIC
+                acl_rt runtime c_sec pthread)
+            set_target_properties(ccu_runtime_static PROPERTIES
+                OUTPUT_NAME ccu_runtime
+                POSITION_INDEPENDENT_CODE ON)
+            configure_file(
+                "${CMAKE_CURRENT_LIST_DIR}/ccu_runtime.pc.in"
+                "${CMAKE_BINARY_DIR}/ccu_runtime.pc"
+                @ONLY)
         endif()
-        install(TARGETS ccu_runtime
-            LIBRARY DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64
+        if(NOT TARGET ccu_runtime_build)
+            add_custom_target(ccu_runtime_build ALL DEPENDS ccu_runtime_static)
+        endif()
+        install(TARGETS ccu_runtime_static
+            ARCHIVE DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64
+            COMPONENT asc-devkit)
+        install(FILES "${CMAKE_BINARY_DIR}/ccu_runtime.pc"
+            DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64/pkgconfig
             COMPONENT asc-devkit)
     endif()
 else()

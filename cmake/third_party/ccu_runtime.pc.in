@@ -1,0 +1,6 @@
+libdir=${pcfiledir}/..
+
+Name: CCU Runtime
+Description: Compiler-facing CCU runtime for AscendC CCU kernels
+Version: 1.0.0
+Libs: -L${libdir} -lccu_runtime -lacl_rt -lruntime -lc_sec -lpthread
