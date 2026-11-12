@@ -857,7 +857,7 @@ def generate_launch_kernel_code(mode: CodeMode, func_key: int, block_num: str, s
     }
 """)
     else:
-        raise ("[ERROR]: mode do not support!")
+        raise ValueError("[ERROR]: mode do not support!")
 
     buff.write("    uint32_t ret = LaunchAscendKernel(")
     buff.write(f"{kernel_handle}, func_key, {block_num}, args, size, {stream});\n")
