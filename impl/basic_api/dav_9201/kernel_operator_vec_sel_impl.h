@@ -31,6 +31,25 @@ constexpr uint32_t maskBitToByte = 8;
 /* ***************************************************************************************
  * *************************************** Select ****************************************
  * ************************************************************************************** */
+template <typename T>
+__simd_callee__ inline void SelectWithoutMaskData(
+    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, Reg::RegTensor<T>& srcReg0, Reg::RegTensor<T>& srcReg1,
+    Reg::RegTensor<T>& dstReg, Reg::MaskReg& maskReg, Reg::MaskReg& selMask, uint16_t index,
+    const BinaryRepeatParams& repeatParams)
+{
+    constexpr uint32_t blockElm = GetDataBlockSizeInBytes() / sizeof(T);
+    Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+        srcReg0, src0 + index * blockElm * repeatParams.src0RepStride,
+        static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
+    Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+        srcReg1, src1 + index * blockElm * repeatParams.src1RepStride,
+        static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
+    Reg::Select(dstReg, srcReg0, srcReg1, selMask);
+    Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+        dst + index * blockElm * repeatParams.dstRepStride, dstReg, static_cast<uint32_t>(repeatParams.dstBlkStride),
+        maskReg);
+}
+
 template <typename T, bool isCounterMode>
 __simd_vf__ inline void SelectWithoutMaskMode0ImplVF(
     __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, __ubuf__ uint64_t* tempBuf, int32_t repeat,
@@ -43,7 +62,6 @@ __simd_vf__ inline void SelectWithoutMaskMode0ImplVF(
     uint16_t newRepeatTimes = repeat;
     uint32_t sreg;
     constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
-    constexpr uint32_t blockElm = GetDataBlockSizeInBytes() / sizeof(T);
     if constexpr (sizeof(T) == 2) {
         Reg::LoadAlign<uint32_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint32_t*)tempBuf);
     } else if constexpr (sizeof(T) == 4) {
@@ -64,16 +82,7 @@ __simd_vf__ inline void SelectWithoutMaskMode0ImplVF(
         if constexpr (isCounterMode) {
             maskReg = Reg::UpdateMask<T>(sreg);
         }
-        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            srcReg0, src0 + i * blockElm * repeatParams.src0RepStride,
-            static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
-        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            srcReg1, src1 + i * blockElm * repeatParams.src1RepStride,
-            static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
-        Reg::Select(dstReg, srcReg0, srcReg1, selMask);
-        Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            dst + i * blockElm * repeatParams.dstRepStride, dstReg, static_cast<uint32_t>(repeatParams.dstBlkStride),
-            maskReg);
+        SelectWithoutMaskData(dst, src0, src1, srcReg0, srcReg1, dstReg, maskReg, selMask, i, repeatParams);
     }
 }
 
@@ -89,7 +98,6 @@ __simd_vf__ inline void SelectWithoutMaskMode2ImplVF(
     uint16_t newRepeatTimes = repeat;
     constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
     constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
-    constexpr uint32_t blockElm = GetDataBlockSizeInBytes() / sizeof(T);
     uint32_t sreg;
     if constexpr (isCounterMode) {
         maskReg = Reg::MoveMask<uint16_t>();
@@ -111,16 +119,7 @@ __simd_vf__ inline void SelectWithoutMaskMode2ImplVF(
             Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)selAddr + i * selOffset);
             Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
         }
-        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            srcReg0, src0 + i * blockElm * repeatParams.src0RepStride,
-            static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
-        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            srcReg1, src1 + i * blockElm * repeatParams.src1RepStride,
-            static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
-        Reg::Select(dstReg, srcReg0, srcReg1, selMask);
-        Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-            dst + i * blockElm * repeatParams.dstRepStride, dstReg, static_cast<uint32_t>(repeatParams.dstBlkStride),
-            maskReg);
+        SelectWithoutMaskData(dst, src0, src1, srcReg0, srcReg1, dstReg, maskReg, selMask, i, repeatParams);
     }
 }
 
@@ -385,6 +384,27 @@ __simd_vf__ inline void SelectMode2Level0(
     }
 }
 
+template <typename T, typename U, bool isBitMap>
+__aicore__ inline void VselMode0Level0Cal(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, __ubuf__ T* src1, SELMODE selMode, uint64_t mask,
+    uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
+{
+    bool isCounterMode = Internal::IsCounterMode();
+    if (isCounterMode) {
+        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
+            SelectMode0Level0<T, U, isBitMap, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
+            SelectMode2Level0<T, U, isBitMap, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        }
+    } else {
+        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
+            SelectMode0Level0<T, U, isBitMap, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
+            SelectMode2Level0<T, U, isBitMap, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        }
+    }
+}
+
 template <typename T, typename U>
 __aicore__ inline void VselImpl(
     __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, __ubuf__ T* src1, SELMODE selMode, const uint64_t mask,
@@ -394,20 +414,7 @@ __aicore__ inline void VselImpl(
         SupportType<T, half, int16_t, uint16_t, int32_t, uint32_t, float, bfloat16_t>(),
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
-            SelectMode0Level0<T, U, false, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
-            SelectMode2Level0<T, U, false, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        }
-    } else {
-        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
-            SelectMode0Level0<T, U, false, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
-            SelectMode2Level0<T, U, false, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        }
-    }
+    VselMode0Level0Cal<T, U, false>(dst, sel, src0, src1, selMode, mask, repeatTime, repeatParams);
 }
 
 template <typename T, typename U>
@@ -420,20 +427,7 @@ __aicore__ inline void VselImpl(
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
     SetVectorMask<T>(mask[1], mask[0]);
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
-            SelectMode0Level0<T, U, true, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
-            SelectMode2Level0<T, U, true, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        }
-    } else {
-        if (selMode == SELMODE::VSEL_CMPMASK_SPR) {
-            SelectMode0Level0<T, U, true, false>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
-            SelectMode2Level0<T, U, true, false>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        }
-    }
+    VselMode0Level0Cal<T, U, true>(dst, sel, src0, src1, selMode, mask[0], repeatTime, repeatParams);
 }
 // ============ select mode: 1 ============
 // ================Level0====================
@@ -543,6 +537,18 @@ __simd_vf__ inline void SelectMode1Level0(
     }
 }
 
+template <typename T, typename U, bool isBitMap>
+__aicore__ inline void VselMode1Level0Cal(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, T src1, uint64_t mask, uint8_t repeatTime,
+    const BinaryRepeatParams& repeatParams)
+{
+    if (Internal::IsCounterMode()) {
+        SelectMode1Level0<T, U, isBitMap, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+    } else {
+        SelectMode1Level0<T, U, isBitMap, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+    }
+}
+
 template <typename T, typename U>
 __aicore__ inline void VselImpl(
     __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, T src1, SELMODE selMode, const uint64_t mask,
@@ -552,12 +558,7 @@ __aicore__ inline void VselImpl(
         SupportType<T, half, int16_t, uint16_t, int32_t, uint32_t, float, bfloat16_t>(),
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        SelectMode1Level0<T, U, false, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-    } else {
-        SelectMode1Level0<T, U, false, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-    }
+    VselMode1Level0Cal<T, U, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
 }
 
 template <typename T, typename U>
@@ -570,12 +571,7 @@ __aicore__ inline void VselImpl(
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
     SetVectorMask<T>(mask[1], mask[0]);
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        SelectMode1Level0<T, U, true, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-    } else {
-        SelectMode1Level0<T, U, true, false>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-    }
+    VselMode1Level0Cal<T, U, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
 }
 // ===============  Src0 Scalar =====================
 template <typename T, typename U, bool isBitMap, bool isCounterMode>
@@ -671,6 +667,18 @@ __simd_vf__ inline void SelectSrc0ScalarMode1Level0(
     }
 }
 
+template <typename T, typename U, bool isBitMap>
+__aicore__ inline void VselSrc0ScalarMode1Level0Cal(
+    __ubuf__ T* dst, __ubuf__ U* sel, T src0, __ubuf__ T* src1, uint64_t mask, uint8_t repeatTime,
+    const BinaryRepeatParams& repeatParams)
+{
+    if (Internal::IsCounterMode()) {
+        SelectSrc0ScalarMode1Level0<T, U, isBitMap, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+    } else {
+        SelectSrc0ScalarMode1Level0<T, U, isBitMap, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
+    }
+}
+
 template <typename T, typename U>
 __aicore__ inline void VselImpl(
     __ubuf__ T* dst, __ubuf__ U* sel, T src0, __ubuf__ T* src1, SELMODE selMode, const uint64_t mask,
@@ -680,12 +688,7 @@ __aicore__ inline void VselImpl(
         SupportType<T, half, int16_t, uint16_t, int32_t, uint32_t, float, bfloat16_t>(),
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        SelectSrc0ScalarMode1Level0<T, U, false, true>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-    } else {
-        SelectSrc0ScalarMode1Level0<T, U, false, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
-    }
+    VselSrc0ScalarMode1Level0Cal<T, U, false>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
 }
 
 template <typename T, typename U>
@@ -698,12 +701,7 @@ __aicore__ inline void VselImpl(
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
     SetVectorMask<T>(mask[1], mask[0]);
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        SelectSrc0ScalarMode1Level0<T, U, true, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-    } else {
-        SelectSrc0ScalarMode1Level0<T, U, true, false>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-    }
+    VselSrc0ScalarMode1Level0Cal<T, U, true>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
 }
 
 // both src0 / src1 are tensor
@@ -871,6 +869,31 @@ __simd_vf__ inline void SelectBothTensorMode1Level0(
     }
 }
 
+template <typename T, typename U, bool isBitMap, uint8_t scalarIdx>
+__aicore__ inline void VselBothTensorMode1Level0Cal(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, __ubuf__ T* src1, uint64_t mask, uint8_t repeatTime,
+    const BinaryRepeatParams& repeatParams)
+{
+    bool isCounterMode = Internal::IsCounterMode();
+    if (isCounterMode) {
+        if constexpr (sizeof(T) == 2) {
+            SelectBothTensorMode1Level0<T, U, isBitMap, scalarIdx, Reg::LoadDist::DIST_BRC_B16, true>(
+                dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        } else if constexpr (sizeof(T) == 4) {
+            SelectBothTensorMode1Level0<T, U, isBitMap, scalarIdx, Reg::LoadDist::DIST_BRC_B32, true>(
+                dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        }
+    } else {
+        if constexpr (sizeof(T) == 2) {
+            SelectBothTensorMode1Level0<T, U, isBitMap, scalarIdx, Reg::LoadDist::DIST_BRC_B16, false>(
+                dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        } else if constexpr (sizeof(T) == 4) {
+            SelectBothTensorMode1Level0<T, U, isBitMap, scalarIdx, Reg::LoadDist::DIST_BRC_B32, false>(
+                dst, sel, src0, src1, mask, repeatTime, repeatParams);
+        }
+    }
+}
+
 template <typename T, typename U, uint8_t scalarIdx>
 __aicore__ inline void VselImpl(
     __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, __ubuf__ T* src1, SELMODE selMode, const uint64_t mask,
@@ -880,24 +903,7 @@ __aicore__ inline void VselImpl(
         SupportType<T, half, int16_t, uint16_t, int32_t, uint32_t, float, bfloat16_t>(),
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        if constexpr (sizeof(T) == 2) {
-            SelectBothTensorMode1Level0<T, U, false, scalarIdx, Reg::LoadDist::DIST_BRC_B16, true>(
-                dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        } else if constexpr (sizeof(T) == 4) {
-            SelectBothTensorMode1Level0<T, U, false, scalarIdx, Reg::LoadDist::DIST_BRC_B32, true>(
-                dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        }
-    } else {
-        if constexpr (sizeof(T) == 2) {
-            SelectBothTensorMode1Level0<T, U, false, scalarIdx, Reg::LoadDist::DIST_BRC_B16, false>(
-                dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        } else if constexpr (sizeof(T) == 4) {
-            SelectBothTensorMode1Level0<T, U, false, scalarIdx, Reg::LoadDist::DIST_BRC_B32, false>(
-                dst, sel, src0, src1, mask, repeatTime, repeatParams);
-        }
-    }
+    VselBothTensorMode1Level0Cal<T, U, false, scalarIdx>(dst, sel, src0, src1, mask, repeatTime, repeatParams);
 }
 
 template <typename T, typename U, uint8_t scalarIdx>
@@ -910,24 +916,7 @@ __aicore__ inline void VselImpl(
         "current data type is not supported!");
     static_assert(SupportType<U, uint8_t, uint16_t, uint32_t, uint64_t>(), "current data type is not supported!");
     SetVectorMask<T>(mask[1], mask[0]);
-    bool isCounterMode = Internal::IsCounterMode();
-    if (isCounterMode) {
-        if constexpr (sizeof(T) == 2) {
-            SelectBothTensorMode1Level0<T, U, true, scalarIdx, Reg::LoadDist::DIST_BRC_B16, true>(
-                dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        } else if constexpr (sizeof(T) == 4) {
-            SelectBothTensorMode1Level0<T, U, true, scalarIdx, Reg::LoadDist::DIST_BRC_B32, true>(
-                dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        }
-    } else {
-        if constexpr (sizeof(T) == 2) {
-            SelectBothTensorMode1Level0<T, U, true, scalarIdx, Reg::LoadDist::DIST_BRC_B16, false>(
-                dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        } else if constexpr (sizeof(T) == 4) {
-            SelectBothTensorMode1Level0<T, U, true, scalarIdx, Reg::LoadDist::DIST_BRC_B32, false>(
-                dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
-        }
-    }
+    VselBothTensorMode1Level0Cal<T, U, true, scalarIdx>(dst, sel, src0, src1, mask[0], repeatTime, repeatParams);
 }
 
 // ============ select mode: 0/2 ============

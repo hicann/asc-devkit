@@ -24,6 +24,7 @@
 #include "kernel_operator_vec_template_impl.h"
 #include "kernel_operator_vec_binary_scalar_impl.h"
 #include "../../../include/basic_api/kernel_operator_swap_mem_intf.h"
+#include <type_traits>
 #include <utility>
 
 namespace AscendC {
@@ -335,6 +336,25 @@ __aicore__ inline void DataCopyGM2L1Impl(
     }
 }
 
+template <typename T, typename Params>
+__aicore__ inline void SetMte2NzPara(const Params& intriParams)
+{
+    // loop2_dst_stride = dst_nz_n_stride; loop3_dst_stride = dst_nz_c0_stride
+    // loop4_dst_stride: dst_nz_matrix_stride * size_of_dst_type / C0_size
+    uint16_t loop4DstStride = static_cast<uint16_t>(intriParams.dstNzMatrixStride * sizeof(T) / ONE_BLK_SIZE);
+    uint16_t matrixNum;
+    if constexpr (std::is_same_v<Params, Nd2NzParams>) {
+        matrixNum = intriParams.ndNum;
+    } else {
+        matrixNum = intriParams.dnNum;
+    }
+    uint64_t mte2NzPara = static_cast<uint64_t>(loop4DstStride) << 48;    // MTE2_NZ_PARA[63:48]
+    mte2NzPara |= static_cast<uint64_t>(intriParams.dstNzC0Stride) << 32; // MTE2_NZ_PARA[47:32]
+    mte2NzPara |= static_cast<uint64_t>(intriParams.dstNzNStride) << 16;  // MTE2_NZ_PARA[31:16]
+    mte2NzPara |= static_cast<uint64_t>(matrixNum);                       // MTE2_NZ_PARA[15:0]
+    set_mte2_nz_para(mte2NzPara); // CCE: store parameters for ND2NZ/DN2NZ DMA instructions
+}
+
 template <typename T, bool enableSmallC0 = false>
 __aicore__ inline void DataCopyGM2L1ND2NZImplBase(
     __cbuf__ T* dst, __gm__ T* src, const Nd2NzParams& intriParams, const uint8_t cacheMode = 0,
@@ -348,16 +368,7 @@ __aicore__ inline void DataCopyGM2L1ND2NZImplBase(
             AscendCUtils::CheckGmMemOverflowNd2Nz(src, workSpace, true, intriParams);
         }
 
-        uint16_t loop2DstStride = intriParams.dstNzNStride;  // loop2_dst_stride = dst_nz_n_stride
-        uint16_t loop3DstStride = intriParams.dstNzC0Stride; // loop3_dst_stride = dst_nz_c0_Stride
-        // loop4_dst_stride: dst_nz_matrix_stride * size_of_dst_type / C0_size
-        uint16_t loop4DstStride = static_cast<uint16_t>(intriParams.dstNzMatrixStride * sizeof(T) / ONE_BLK_SIZE);
-
-        uint64_t mte2NzPara = static_cast<uint64_t>(loop4DstStride) << 48; // MTE2_NZ_PARA[63:48]
-        mte2NzPara |= static_cast<uint64_t>(loop3DstStride) << 32;         // MTE2_NZ_PARA[47:32]
-        mte2NzPara |= static_cast<uint64_t>(loop2DstStride) << 16;         // MTE2_NZ_PARA[31:16]
-        mte2NzPara |= static_cast<uint64_t>(intriParams.ndNum);            // MTE2_NZ_PARA[15:0]
-        set_mte2_nz_para(mte2NzPara); // CCE: store parameters for ND2NZ DMA instructions
+        SetMte2NzPara<T>(intriParams);
 
         // input params: srcDValue, srcNdMatrixStride                        unit of element nums
         // expected params for ISA: loop1_src_stride, loop4_src_stride       uint of bytes
@@ -422,16 +433,7 @@ __aicore__ inline void DataCopyGM2L1DN2NZImplBase(
             AscendCUtils::CheckGmMemOverflowDn2Nz(src, workSpace, true, intriParams);
         }
 
-        uint16_t loop2DstStride = intriParams.dstNzNStride;  // loop2_dst_stride = dst_nz_n_stride
-        uint16_t loop3DstStride = intriParams.dstNzC0Stride; // loop3_dst_stride = dst_nz_c0_Stride
-        // loop4_dst_stride: dst_nz_matrix_stride * size_of_dst_type / C0_size
-        uint16_t loop4DstStride = static_cast<uint16_t>(intriParams.dstNzMatrixStride * sizeof(T) / ONE_BLK_SIZE);
-
-        uint64_t mte2NzPara = static_cast<uint64_t>(loop4DstStride) << 48; // MTE2_NZ_PARA[63:48]
-        mte2NzPara |= static_cast<uint64_t>(loop3DstStride) << 32;         // MTE2_NZ_PARA[47:32]
-        mte2NzPara |= static_cast<uint64_t>(loop2DstStride) << 16;         // MTE2_NZ_PARA[31:16]
-        mte2NzPara |= static_cast<uint64_t>(intriParams.dnNum);            // MTE2_NZ_PARA[15:0]
-        set_mte2_nz_para(mte2NzPara); // CCE: store parameters for DN2NZ DMA instructions
+        SetMte2NzPara<T>(intriParams);
 
         // input params: srcDValue, srcDnMatrixStride                        unit of element nums
         // expected params for ISA: loop1_src_stride, loop4_src_stride       uint of bytes

@@ -127,8 +127,14 @@ __simd_callee__ inline void ReduceSumB64Impl(T& dstReg, T srcReg, MaskReg mask)
         (RegTensor<uint16_t>&)midReg);
 }
 
-template <typename T = DefaultType, auto mode = MaskMergeMode::ZEROING, typename U>
-__simd_callee__ inline void ReduceMaxImpl(U& dstReg, U srcReg, MaskReg mask)
+template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
+__simd_callee__ inline void ReduceMaxB64Impl(T& dstReg, T srcReg, MaskReg mask);
+
+template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
+__simd_callee__ inline void ReduceMinB64Impl(T& dstReg, T srcReg, MaskReg mask);
+
+template <bool isMax, typename T, auto mode, typename U>
+__simd_callee__ inline void ReduceMaxMinImpl(U& dstReg, U srcReg, MaskReg mask)
 {
     using ActualT = typename U::ActualT;
     static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
@@ -137,20 +143,40 @@ __simd_callee__ inline void ReduceMaxImpl(U& dstReg, U srcReg, MaskReg mask)
             IsSameType<decltype(mode), const ReduceSpecificMode*>::value,
         "mode type must be either MaskMergeMode or const ReduceSpecificMode* ");
     constexpr ReduceSpecificMode sprMode = Internal::GetReduceSpecificMode(mode);
-    static_assert(
-        SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
-        "current ReduceMax api only supported Mode ZEROING on current device!");
+    if constexpr (isMax) {
+        static_assert(
+            SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
+            "current ReduceMax api only supported Mode ZEROING on current device!");
+    } else {
+        static_assert(
+            SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
+            "current ReduceMin api only supported Mode ZEROING on current device!");
+    }
     constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
     if constexpr (sprMode.pos == DistributionPos::CONTINUOUS) {
-        static_assert(
-            (SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half, uint64_t, int64_t>()),
-            "ReduceMax unsupport this datatype on current device");
+        if constexpr (isMax) {
+            static_assert(
+                SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half, uint64_t, int64_t>(),
+                "ReduceMax unsupport this datatype on current device");
+        } else {
+            static_assert(
+                SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half, uint64_t, int64_t>(),
+                "ReduceMin unsupport this datatype on current device");
+        }
         if constexpr (sizeof(ActualT) != 8) {
-            vcmax(dstReg, srcReg, mask, modeValue);
+            if constexpr (isMax) {
+                vcmax(dstReg, srcReg, mask, modeValue);
+            } else {
+                vcmin(dstReg, srcReg, mask, modeValue);
+            }
         } else {
             if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
                 U dstTemp;
-                ReduceMaxB64Impl(dstTemp, srcReg, mask);
+                if constexpr (isMax) {
+                    ReduceMaxB64Impl(dstTemp, srcReg, mask);
+                } else {
+                    ReduceMinB64Impl(dstTemp, srcReg, mask);
+                }
                 dstReg = dstTemp;
             } else if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
                 MaskReg maskTrait2;
@@ -160,19 +186,36 @@ __simd_callee__ inline void ReduceMaxImpl(U& dstReg, U srcReg, MaskReg mask)
                 DeInterleave(
                     (RegTensor<uint32_t>&)traitTwoSrcReg0.reg[0], (RegTensor<uint32_t>&)traitTwoSrcReg0.reg[1],
                     (RegTensor<uint32_t>&)srcReg, (RegTensor<uint32_t>&)srcReg);
-                ReduceMaxB64Impl(traitTwoDstReg, traitTwoSrcReg0, maskTrait2);
+                if constexpr (isMax) {
+                    ReduceMaxB64Impl(traitTwoDstReg, traitTwoSrcReg0, maskTrait2);
+                } else {
+                    ReduceMinB64Impl(traitTwoDstReg, traitTwoSrcReg0, maskTrait2);
+                }
                 B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
             }
         }
     } else if constexpr (sprMode.pos == DistributionPos::DATABLOCK_DISCRETE) {
-        static_assert(
-            (SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
-            "ReduceMax unsupport this datatype on current device");
-        vcmaxv2(dstReg, srcReg);
+        if constexpr (isMax) {
+            static_assert(
+                SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half>(),
+                "ReduceMax unsupport this datatype on current device");
+            vcmaxv2(dstReg, srcReg);
+        } else {
+            static_assert(
+                SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half>(),
+                "ReduceMin unsupport this datatype on current device");
+            vcminv2(dstReg, srcReg);
+        }
     }
 }
 
-template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
+template <typename T = DefaultType, auto mode = MaskMergeMode::ZEROING, typename U>
+__simd_callee__ inline void ReduceMaxImpl(U& dstReg, U srcReg, MaskReg mask)
+{
+    ReduceMaxMinImpl<true, T, mode>(dstReg, srcReg, mask);
+}
+
+template <MaskMergeMode mode, typename T>
 __simd_callee__ inline void ReduceMaxB64Impl(T& dstReg, T srcReg, MaskReg mask)
 {
     using ActualT = typename T::ActualT;
@@ -213,49 +256,10 @@ __simd_callee__ inline void ReduceMaxB64Impl(T& dstReg, T srcReg, MaskReg mask)
 template <typename T = DefaultType, auto mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void ReduceMinImpl(U& dstReg, U srcReg, MaskReg mask)
 {
-    using ActualT = typename U::ActualT;
-    static_assert(std::is_same_v<T, DefaultType> || std::is_same_v<T, ActualT>, "T type is not correct!");
-    static_assert(
-        IsSameType<decltype(mode), MaskMergeMode>::value ||
-            IsSameType<decltype(mode), const ReduceSpecificMode*>::value,
-        "mode type must be either MaskMergeMode or const ReduceSpecificMode* ");
-    constexpr ReduceSpecificMode sprMode = Internal::GetReduceSpecificMode(mode);
-    static_assert(
-        SupportEnum<sprMode.mrgMode, MaskMergeMode::ZEROING>(),
-        "current ReduceMin api only supported Mode ZEROING on current device!");
-    constexpr auto modeValue = GetMaskMergeMode<sprMode.mrgMode>();
-    if constexpr (sprMode.pos == DistributionPos::CONTINUOUS) {
-        static_assert(
-            (SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half, uint64_t, int64_t>()),
-            "ReduceMin unsupport this datatype on current device");
-        if constexpr (sizeof(ActualT) != 8) {
-            vcmin(dstReg, srcReg, mask, modeValue);
-        } else if constexpr (sizeof(ActualT) == 8) {
-            if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-                U dstTemp;
-                ReduceMinB64Impl(dstTemp, srcReg, mask);
-                dstReg = dstTemp;
-            } else if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
-                MaskReg maskTrait2;
-                MaskPack(maskTrait2, mask);
-                RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg0;
-                RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-                DeInterleave(
-                    (RegTensor<uint32_t>&)traitTwoSrcReg0.reg[0], (RegTensor<uint32_t>&)traitTwoSrcReg0.reg[1],
-                    (RegTensor<uint32_t>&)srcReg, (RegTensor<uint32_t>&)srcReg);
-                ReduceMinB64Impl(traitTwoDstReg, traitTwoSrcReg0, maskTrait2);
-                B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-            }
-        }
-    } else if constexpr (sprMode.pos == DistributionPos::DATABLOCK_DISCRETE) {
-        static_assert(
-            (SupportType<ActualT, uint16_t, int16_t, uint32_t, int32_t, float, half>()),
-            "ReduceMin unsupport this datatype on current device");
-        vcminv2(dstReg, srcReg);
-    }
+    ReduceMaxMinImpl<false, T, mode>(dstReg, srcReg, mask);
 }
 
-template <MaskMergeMode mode = MaskMergeMode::ZEROING, typename T>
+template <MaskMergeMode mode, typename T>
 __simd_callee__ inline void ReduceMinB64Impl(T& dstReg, T srcReg, MaskReg mask)
 {
     using ActualT = typename T::ActualT;

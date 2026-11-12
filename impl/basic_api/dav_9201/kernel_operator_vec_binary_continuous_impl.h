@@ -403,6 +403,31 @@ __aicore__ inline void ShiftRightImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf_
 /* **************************************************************************************************
  * FusedMulAdd                                             *
  * ************************************************************************************************* */
+template <typename T, bool withRelu>
+__simd_callee__ inline void FusedMulAddB64Loop(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, int32_t calCount)
+{
+    constexpr uint32_t sregLower = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT * 2);
+    const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
+    uint32_t sreg = static_cast<uint32_t>(calCount);
+    Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg0;
+    Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg1;
+    Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg0;
+    Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg1;
+    Reg::MaskReg mask;
+    for (uint16_t i = 0; i < repeatTime; ++i) {
+        mask = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
+        Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
+        Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
+        Reg::LoadAlign(vDstReg0, dst + i * sregLower);
+        Reg::Mul(vDstReg1, vSrcReg0, vDstReg0, mask);
+        Reg::Add(vDstReg0, vDstReg1, vSrcReg1, mask);
+        if constexpr (withRelu) {
+            Reg::Maxs(vDstReg0, vDstReg0, static_cast<T>(0), mask);
+        }
+        Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
+    }
+}
+
 template <typename T, bool isSetMask = true>
 __simd_vf__ inline void FusedMulAddImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src1, const int32_t calCount)
 {
@@ -412,22 +437,7 @@ __simd_vf__ inline void FusedMulAddImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubu
         "current api support dtype combination is src and dst both: half / float / bfloat16_t / uint64_t / int64_t.");
     uint32_t sreg = static_cast<uint32_t>(calCount);
     if constexpr (sizeof(T) == 8) {
-        constexpr uint32_t sregLower = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT * 2);
-        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg0;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg1;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg0;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg1;
-        Reg::MaskReg mask;
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            mask = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
-            Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
-            Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
-            Reg::LoadAlign(vDstReg0, dst + i * sregLower);
-            Reg::Mul(vDstReg1, vSrcReg0, vDstReg0, mask);
-            Reg::Add(vDstReg0, vDstReg1, vSrcReg1, mask);
-            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
-        }
+        FusedMulAddB64Loop<T, false>(dst, src0, src1, calCount);
     } else {
         constexpr uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T));
         const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));
@@ -460,23 +470,7 @@ __simd_vf__ inline void FusedMulAddReluImpl(__ubuf__ T* dst, __ubuf__ T* src0, _
     const T scalarValue = 0;
     uint32_t sreg = static_cast<uint32_t>(calCount);
     if constexpr (sizeof(T) == 8) {
-        constexpr uint32_t sregLower = static_cast<uint32_t>(B64_DATA_NUM_PER_REPEAT * 2);
-        const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, sregLower));
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg0;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vDstReg1;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg0;
-        Reg::RegTensor<T, Reg::RegTraitNumTwo> vSrcReg1;
-        Reg::MaskReg mask;
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            mask = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
-            Reg::LoadAlign(vSrcReg0, src0 + i * sregLower);
-            Reg::LoadAlign(vSrcReg1, src1 + i * sregLower);
-            Reg::LoadAlign(vDstReg0, dst + i * sregLower);
-            Reg::Mul(vDstReg1, vSrcReg0, vDstReg0, mask);
-            Reg::Add(vDstReg0, vDstReg1, vSrcReg1, mask);
-            Reg::Maxs(vDstReg0, vDstReg0, scalarValue, mask);
-            Reg::StoreAlign(dst + i * sregLower, vDstReg0, mask);
-        }
+        FusedMulAddB64Loop<T, true>(dst, src0, src1, calCount);
     } else {
         const uint32_t repeatStride = static_cast<uint32_t>(GetVecLen() / sizeof(T));
         const uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(calCount, repeatStride));

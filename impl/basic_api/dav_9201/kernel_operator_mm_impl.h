@@ -121,12 +121,18 @@ __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const
  * LoadData 2dv2                                             *
  * ************************************************************************************************* */
 template <typename T>
+__aicore__ constexpr bool IsLoadData2DV2Type()
+{
+    return SupportType<
+        T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
+        half, bfloat16_t, float, int32_t, uint32_t>();
+}
+
+template <typename T>
 __aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const Load2DBitModeParam& loadDataParam)
 {
     static_assert(
-        SupportType<
-            T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
-            half, bfloat16_t, float, int32_t, uint32_t>(),
+        IsLoadData2DV2Type<T>(),
         "LoadData 2dv2 only support int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, \
          fp8_e4m3fn_t, half, bfloat16_t, float, int32_t, uint32_t on current device!");
     if ASCEND_IS_AIC {
@@ -166,9 +172,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const Load2DBitModeParam& loadDataParam)
 {
     static_assert(
-        SupportType<
-            T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
-            half, bfloat16_t, float, int32_t, uint32_t>(),
+        IsLoadData2DV2Type<T>(),
         "LoadData 2dv2 only support int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, \
          fp8_e4m3fn_t, half, bfloat16_t, float, int32_t, uint32_t on current device!");
     if ASCEND_IS_AIC {
@@ -470,23 +474,28 @@ __aicore__ inline void LoadData2DL12L0ATransposeCal(
 /* **************************************************************************************************
  * Mmad                                             *
  * ************************************************************************************************* */
+template <typename DstT, typename Src0T, typename Src1T>
+__aicore__ constexpr bool IsMmadMxType()
+{
+    return SupportType<
+        Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>, Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>,
+        Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>,
+        Tuple<float, hifloat4x2_t, hifloat4x2_t>, Tuple<float, mx_fp8_e4m3_t, hifloat4x2_t>,
+        Tuple<float, mx_fp8_e4m3_t, mx_fp8_e4m3_t>, Tuple<float, mx_fp8_e4m3_t, mx_fp8_e5m2_t>,
+        Tuple<float, mx_fp8_e5m2_t, mx_fp8_e4m3_t>, Tuple<float, mx_fp8_e5m2_t, mx_fp8_e5m2_t>,
+        Tuple<float, mx_fp8_e4m3_t, fp4x2_e2m1_t>, Tuple<float, mx_fp8_e4m3_t, fp4x2_e1m2_t>,
+        Tuple<float, mx_fp8_e5m2_t, fp4x2_e2m1_t>, Tuple<float, mx_fp8_e5m2_t, fp4x2_e1m2_t>,
+        Tuple<float, half, hifloat4x2_t>, Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>,
+        Tuple<float, half, fp4x2_e2m1_t>, Tuple<float, bfloat16_t, fp4x2_e1m2_t>,
+        Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+}
 
 template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadCal(__cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, const MmadParams& mmadParams)
 {
     if ASCEND_IS_AIC {
         bool cmatrixInitVal = mmadParams.cmatrixInitVal && (!mmadParams.isBias);
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, mx_fp8_e4m3_t, hifloat4x2_t>, Tuple<float, mx_fp8_e4m3_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e4m3_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e5m2_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e5m2_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e4m3_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e4m3_t, fp4x2_e1m2_t>, Tuple<float, mx_fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxType<DstT, Src0T, Src1T>();
         if constexpr (isMx) {
             constexpr uint32_t MX_BUFFER_SCALE = 8; // mx buffer size is 8KB
             using AType = typename GetDstType<Src0T>::Type;
@@ -524,17 +533,7 @@ __aicore__ inline void MmadCal(
 {
     if ASCEND_IS_AIC {
         bool cmatrixInitVal = mmadParams.cmatrixInitVal && (!mmadParams.isBias);
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, mx_fp8_e4m3_t, hifloat4x2_t>, Tuple<float, mx_fp8_e4m3_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e4m3_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e5m2_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e5m2_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e4m3_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e4m3_t, fp4x2_e1m2_t>, Tuple<float, mx_fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxType<DstT, Src0T, Src1T>();
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         if constexpr (isMx) {
             using AType = typename GetDstType<Src0T>::Type;
@@ -584,17 +583,7 @@ template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadCal(__cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, const MmadBitModeParams& mmadParams)
 {
     if ASCEND_IS_AIC {
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, mx_fp8_e4m3_t, hifloat4x2_t>, Tuple<float, mx_fp8_e4m3_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e4m3_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e5m2_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e5m2_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e4m3_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e4m3_t, fp4x2_e1m2_t>, Tuple<float, mx_fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxType<DstT, Src0T, Src1T>();
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         if constexpr (isMx) {
             constexpr uint32_t MX_BUFFER_SCALE = 8; // mx buffer size is 8KB
@@ -656,17 +645,7 @@ __aicore__ inline void MmadCal(
 {
     if ASCEND_IS_AIC {
         mmadParams.SetCmatrixInitVal(false);
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, mx_fp8_e4m3_t, hifloat4x2_t>, Tuple<float, mx_fp8_e4m3_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e4m3_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e5m2_t, mx_fp8_e4m3_t>,
-            Tuple<float, mx_fp8_e5m2_t, mx_fp8_e5m2_t>, Tuple<float, mx_fp8_e4m3_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e4m3_t, fp4x2_e1m2_t>, Tuple<float, mx_fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, mx_fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxType<DstT, Src0T, Src1T>();
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         if constexpr (isMx) {
             using AType = typename GetDstType<Src0T>::Type;
@@ -711,21 +690,27 @@ __aicore__ inline void MmadCal(
  * MmadMx                                                                                           *
  * **************************************************************************************************/
 template <typename DstT, typename Src0T, typename Src1T>
+__aicore__ constexpr bool IsMmadMxCalType()
+{
+    return SupportType<
+        Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>, Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>,
+        Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>,
+        Tuple<float, hifloat4x2_t, hifloat4x2_t>, Tuple<float, fp8_e4m3fn_t, hifloat4x2_t>,
+        Tuple<float, fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<float, fp8_e4m3fn_t, fp8_e5m2_t>,
+        Tuple<float, fp8_e5m2_t, fp8_e4m3fn_t>, Tuple<float, fp8_e5m2_t, fp8_e5m2_t>,
+        Tuple<float, fp8_e4m3fn_t, fp4x2_e2m1_t>, Tuple<float, fp8_e4m3fn_t, fp4x2_e1m2_t>,
+        Tuple<float, fp8_e5m2_t, fp4x2_e2m1_t>, Tuple<float, fp8_e5m2_t, fp4x2_e1m2_t>,
+        Tuple<float, half, hifloat4x2_t>, Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>,
+        Tuple<float, half, fp4x2_e2m1_t>, Tuple<float, bfloat16_t, fp4x2_e1m2_t>,
+        Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+}
+
+template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadMxCal(__cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, const MmadParams& mmadParams)
 {
     if ASCEND_IS_AIC {
         bool cmatrixInitVal = mmadParams.cmatrixInitVal && (!mmadParams.isBias);
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, fp8_e4m3fn_t, hifloat4x2_t>, Tuple<float, fp8_e4m3fn_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e4m3fn_t, fp8_e5m2_t>, Tuple<float, fp8_e5m2_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e5m2_t, fp8_e5m2_t>, Tuple<float, fp8_e4m3fn_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e4m3fn_t, fp4x2_e1m2_t>, Tuple<float, fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxCalType<DstT, Src0T, Src1T>();
         static_assert(isMx, "MmadMx not support data type on current device!");
         constexpr uint32_t MX_BUFFER_SCALE = 8; // mx buffer size is 8KB
         uint64_t l0aMxBufferStartAddr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(a)) / MX_BUFFER_SCALE;
@@ -741,17 +726,7 @@ __aicore__ inline void MmadMxCal(
     __cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, uint64_t bias, const MmadParams& mmadParams, bool cmatrixSource)
 {
     if ASCEND_IS_AIC {
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, fp8_e4m3fn_t, hifloat4x2_t>, Tuple<float, fp8_e4m3fn_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e4m3fn_t, fp8_e5m2_t>, Tuple<float, fp8_e5m2_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e5m2_t, fp8_e5m2_t>, Tuple<float, fp8_e4m3fn_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e4m3fn_t, fp4x2_e1m2_t>, Tuple<float, fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxCalType<DstT, Src0T, Src1T>();
         static_assert(isMx, "MmadMx not support data type on current device!");
         bool cmatrixInitVal = mmadParams.cmatrixInitVal && (!mmadParams.isBias);
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
@@ -773,17 +748,7 @@ template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadMxCal(__cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, MmadBitModeParams& mmadParams)
 {
     if ASCEND_IS_AIC {
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, fp8_e4m3fn_t, hifloat4x2_t>, Tuple<float, fp8_e4m3fn_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e4m3fn_t, fp8_e5m2_t>, Tuple<float, fp8_e5m2_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e5m2_t, fp8_e5m2_t>, Tuple<float, fp8_e4m3fn_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e4m3fn_t, fp4x2_e1m2_t>, Tuple<float, fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxCalType<DstT, Src0T, Src1T>();
         static_assert(isMx, "MmadMx not support data type on current device!");
         constexpr uint32_t MX_BUFFER_SCALE = 8; // mx buffer size is 8KB
         uint64_t l0aMxBufferStartAddr = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(a)) / MX_BUFFER_SCALE;
@@ -800,17 +765,7 @@ __aicore__ inline void MmadMxCal(
     __cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, uint64_t bias, MmadBitModeParams& mmadParams)
 {
     if ASCEND_IS_AIC {
-        constexpr bool isMx = SupportType<
-            Tuple<DstT, Src0T, Src1T>, Tuple<float, fp4x2_e1m2_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e1m2_t, fp4x2_e2m1_t>, Tuple<float, fp4x2_e2m1_t, fp4x2_e1m2_t>,
-            Tuple<float, fp4x2_e2m1_t, fp4x2_e2m1_t>, Tuple<float, hifloat4x2_t, hifloat4x2_t>,
-            Tuple<float, fp8_e4m3fn_t, hifloat4x2_t>, Tuple<float, fp8_e4m3fn_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e4m3fn_t, fp8_e5m2_t>, Tuple<float, fp8_e5m2_t, fp8_e4m3fn_t>,
-            Tuple<float, fp8_e5m2_t, fp8_e5m2_t>, Tuple<float, fp8_e4m3fn_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e4m3fn_t, fp4x2_e1m2_t>, Tuple<float, fp8_e5m2_t, fp4x2_e2m1_t>,
-            Tuple<float, fp8_e5m2_t, fp4x2_e1m2_t>, Tuple<float, half, hifloat4x2_t>,
-            Tuple<float, bfloat16_t, hifloat4x2_t>, Tuple<float, half, fp4x2_e1m2_t>, Tuple<float, half, fp4x2_e2m1_t>,
-            Tuple<float, bfloat16_t, fp4x2_e1m2_t>, Tuple<float, bfloat16_t, fp4x2_e2m1_t>>();
+        constexpr bool isMx = IsMmadMxCalType<DstT, Src0T, Src1T>();
         static_assert(isMx, "MmadMx not support data type on current device!");
         mmadParams.SetCmatrixInitVal(false);
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1

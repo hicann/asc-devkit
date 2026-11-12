@@ -275,32 +275,12 @@ template <typename T>
 __aicore__ inline void __ReleaseMessage(T* handle)
 {
     if ASCEND_IS_AIC {
-        if (handle->aivWork + 1 >= handle->aivNumForCurAic) { // to next loop, which starts from aiv0
-            uint8_t lineCnt = handle->msgPos / handle->aivPerAic;
-            handle->msgPos = (lineCnt == MAX_MSG_PER_AIV - 1) ?
-                                 0 :
-                                 handle->msgPos + (handle->aivPerAic - handle->aivNumForCurAic) + 1;
-            handle->aivWork = 0;
-        } else {
-            handle->msgPos += 1;
-            handle->aivWork += 1;
-        }
-        handle->msgCurrent = handle->msgHead + handle->msgPos;
+        handle->__AicUpdateMsgCurrent();
         if (handle->aivWorkState == 0) { // if all aiv end service, aic quit
             return;
         }
         while (!(handle->aivWorkState & (static_cast<uint64_t>(1) << handle->aivWork))) {
-            if (handle->aivWork + 1 >= handle->aivNumForCurAic) {
-                uint8_t lineCnt = handle->msgPos / handle->aivPerAic;
-                handle->msgPos = (lineCnt == MAX_MSG_PER_AIV - 1) ?
-                                     0 :
-                                     handle->msgPos + (handle->aivPerAic - handle->aivNumForCurAic) + 1;
-                handle->aivWork = 0;
-            } else {
-                handle->msgPos += 1;
-                handle->aivWork += 1;
-            }
-            handle->msgCurrent = handle->msgHead + handle->msgPos;
+            handle->__AicUpdateMsgCurrent();
         }
     }
 }

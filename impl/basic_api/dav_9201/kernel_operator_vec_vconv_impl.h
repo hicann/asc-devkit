@@ -1587,12 +1587,31 @@ __simd_callee__ inline void GenStoreL0(
 }
 
 template <typename DST_TYPE, typename SRC_TYPE, RoundMode roundMode>
+__simd_callee__ inline void CastRegL0(
+    Reg::RegTensor<DST_TYPE>& dstVreg, Reg::RegTensor<SRC_TYPE>& srcVreg, Reg::RegTensor<float>& tmpVreg,
+    Reg::MaskReg& exPreg, const half scale)
+{
+    static constexpr Reg::CastTrait castTrait = {
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, roundMode};
+    if constexpr (AscendC::Std::is_same<SRC_TYPE, int32_t>::value && AscendC::Std::is_same<DST_TYPE, half>::value) {
+        Reg::Cast<float, SRC_TYPE, CastParam::s322floatCastTrait>(tmpVreg, srcVreg, exPreg);
+        Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_RIGHT_17_BIT, exPreg);
+        Reg::Muls(tmpVreg, tmpVreg, static_cast<float>(scale), exPreg);
+        Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_LEFT_17_BIT, exPreg);
+        Reg::Cast<DST_TYPE, float, CastParam::f322F16CastTrait>(dstVreg, tmpVreg, exPreg);
+    } else if constexpr (
+        AscendC::Std::is_same<SRC_TYPE, float>::value && AscendC::Std::is_same<DST_TYPE, float>::value) {
+        Reg::Truncate<DST_TYPE, roundMode>(dstVreg, srcVreg, exPreg);
+    } else {
+        Reg::Cast<DST_TYPE, SRC_TYPE, castTrait>(dstVreg, srcVreg, exPreg);
+    }
+}
+
+template <typename DST_TYPE, typename SRC_TYPE, RoundMode roundMode>
 __simd_vf__ inline void CastIntrinsicsImplVF2(
     __ubuf__ DST_TYPE* dst, __ubuf__ SRC_TYPE* src, const BasicAPIMaskStruct maskArrayStruct, uint8_t repeatTime,
     const UnaryRepeatParams repeatParams, const half scale)
 {
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, roundMode};
     Reg::MaskReg ldPreg;
     Reg::MaskReg exPreg;
     Reg::MaskReg stPreg;
@@ -1630,18 +1649,7 @@ __simd_vf__ inline void CastIntrinsicsImplVF2(
     }
     for (uint16_t i = 0; i < repeatTime; ++i) {
         GenLoadL0<DST_TYPE, SRC_TYPE>(srcVreg, src, ldPreg, repeatParams, i);
-        if constexpr (AscendC::Std::is_same<SRC_TYPE, int32_t>::value && AscendC::Std::is_same<DST_TYPE, half>::value) {
-            Reg::Cast<float, SRC_TYPE, CastParam::s322floatCastTrait>(tmpVreg, srcVreg, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_RIGHT_17_BIT, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, static_cast<float>(scale), exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_LEFT_17_BIT, exPreg);
-            Reg::Cast<DST_TYPE, float, CastParam::f322F16CastTrait>(dstVreg, tmpVreg, exPreg);
-        } else if constexpr (
-            AscendC::Std::is_same<SRC_TYPE, float>::value && AscendC::Std::is_same<DST_TYPE, float>::value) {
-            Reg::Truncate<DST_TYPE, roundMode>(dstVreg, srcVreg, exPreg);
-        } else {
-            Reg::Cast<DST_TYPE, SRC_TYPE, castTrait>(dstVreg, srcVreg, exPreg);
-        }
+        CastRegL0<DST_TYPE, SRC_TYPE, roundMode>(dstVreg, srcVreg, tmpVreg, exPreg, scale);
         GenStoreL0<DST_TYPE, SRC_TYPE>(dst, dstVreg, stPreg, repeatParams, i);
     }
 }
@@ -1712,8 +1720,6 @@ __simd_vf__ inline void CastIntrinsicsImplCounterVF(
     __ubuf__ DST_TYPE* dst, __ubuf__ SRC_TYPE* src, const uint64_t mask, __ubuf__ uint64_t* maskBuf, uint8_t repeatTime,
     const UnaryRepeatParams repeatParams, const half scale)
 {
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, roundMode};
     Reg::MaskReg ldPreg;
     Reg::MaskReg exPreg;
     Reg::MaskReg stPreg;
@@ -1765,18 +1771,7 @@ __simd_vf__ inline void CastIntrinsicsImplCounterVF(
             }
         }
         GenLoadL0<DST_TYPE, SRC_TYPE>(srcVreg, src, ldPreg, repeatParams, i);
-        if constexpr (AscendC::Std::is_same<SRC_TYPE, int32_t>::value && AscendC::Std::is_same<DST_TYPE, half>::value) {
-            Reg::Cast<float, SRC_TYPE, CastParam::s322floatCastTrait>(tmpVreg, srcVreg, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_RIGHT_17_BIT, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, static_cast<float>(scale), exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_LEFT_17_BIT, exPreg);
-            Reg::Cast<DST_TYPE, float, CastParam::f322F16CastTrait>(dstVreg, tmpVreg, exPreg);
-        } else if constexpr (
-            AscendC::Std::is_same<SRC_TYPE, float>::value && AscendC::Std::is_same<DST_TYPE, float>::value) {
-            Reg::Truncate<DST_TYPE, roundMode>(dstVreg, srcVreg, exPreg);
-        } else {
-            Reg::Cast<DST_TYPE, SRC_TYPE, castTrait>(dstVreg, srcVreg, exPreg);
-        }
+        CastRegL0<DST_TYPE, SRC_TYPE, roundMode>(dstVreg, srcVreg, tmpVreg, exPreg, scale);
         GenStoreL0<DST_TYPE, SRC_TYPE>(dst, dstVreg, stPreg, repeatParams, i);
     }
 }
@@ -2024,8 +2019,6 @@ __simd_vf__ inline void CastIntrinsicsImplVF1(
     __ubuf__ DST_TYPE* dst, __ubuf__ SRC_TYPE* src, const uint64_t mask, uint8_t repeatTime,
     const UnaryRepeatParams repeatParams, const half scale)
 {
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, roundMode};
     uint32_t sreg = static_cast<uint32_t>(mask);
     Reg::MaskReg ldPreg;
     Reg::MaskReg exPreg;
@@ -2076,18 +2069,7 @@ __simd_vf__ inline void CastIntrinsicsImplVF1(
     }
     for (uint16_t i = 0; i < repeatTime; ++i) {
         GenLoadL0<DST_TYPE, SRC_TYPE>(srcVreg, src, ldPreg, repeatParams, i);
-        if constexpr (AscendC::Std::is_same<SRC_TYPE, int32_t>::value && AscendC::Std::is_same<DST_TYPE, half>::value) {
-            Reg::Cast<float, SRC_TYPE, CastParam::s322floatCastTrait>(tmpVreg, srcVreg, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_RIGHT_17_BIT, exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, static_cast<float>(scale), exPreg);
-            Reg::Muls(tmpVreg, tmpVreg, DEQ_SHIFT_LEFT_17_BIT, exPreg);
-            Reg::Cast<DST_TYPE, float, CastParam::f322F16CastTrait>(dstVreg, tmpVreg, exPreg);
-        } else if constexpr (
-            AscendC::Std::is_same<SRC_TYPE, float>::value && AscendC::Std::is_same<DST_TYPE, float>::value) {
-            Reg::Truncate<DST_TYPE, roundMode>(dstVreg, srcVreg, exPreg);
-        } else {
-            Reg::Cast<DST_TYPE, SRC_TYPE, castTrait>(dstVreg, srcVreg, exPreg);
-        }
+        CastRegL0<DST_TYPE, SRC_TYPE, roundMode>(dstVreg, srcVreg, tmpVreg, exPreg, scale);
         GenStoreL0<DST_TYPE, SRC_TYPE>(dst, dstVreg, stPreg, repeatParams, i);
     }
 }

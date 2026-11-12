@@ -62,8 +62,8 @@ __simd_callee__ inline void DuplicateB64Impl(U& dstReg, T scalarValue)
     }
 }
 
-template <typename T = DefaultType, typename U, typename S>
-__simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue)
+template <typename T, typename U, typename S>
+__simd_callee__ inline void CheckDuplicateType()
 {
     using ActualT = typename S::ActualT;
     static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
@@ -74,6 +74,13 @@ __simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue)
             complex64>()),
         "current data type is not supported on current device!");
     static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
+}
+
+template <typename T = DefaultType, typename U, typename S>
+__simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue)
+{
+    using ActualT = typename S::ActualT;
+    CheckDuplicateType<T, U, S>();
 
     if constexpr (IsSameType<ActualT, bool>::value) {
         vbr((RegTensor<int8_t>&)dstReg, (int8_t)scalarValue);
@@ -143,14 +150,7 @@ template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING,
 __simd_callee__ inline void DuplicateImpl(S& dstReg, U scalarValue, MaskReg& mask)
 {
     using ActualT = typename S::ActualT;
-    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
-    static_assert(
-        (SupportType<
-            ActualT, bool, int8_t, uint8_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t,
-            fp8_e8m0_t, uint16_t, int16_t, bfloat16_t, uint32_t, int32_t, float, half, uint64_t, int64_t, complex32,
-            complex64>()),
-        "current data type is not supported on current device!");
-    static_assert(Std::is_convertible<U, ActualT>(), "scalarValue data type could be converted to RegTensor data type");
+    CheckDuplicateType<T, U, S>();
     ASCENDC_ASSERT((mode != MaskMergeMode::UNKNOWN), {
         KERNEL_LOG(KERNEL_ERROR, "The MergeMode only support: MODE_MERGING, MODE_ZEROING.");
     });

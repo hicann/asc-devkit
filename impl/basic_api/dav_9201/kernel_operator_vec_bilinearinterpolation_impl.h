@@ -27,40 +27,8 @@
 
 namespace AscendC {
 namespace Internal {
-template <bool isMaskBitMode, typename T>
-__simd_vf__ inline void BilinearInterpolationRepeatModeLevel0VFImpl(
-    __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ uint32_t* src0Offset, __ubuf__ T* src1,
-    const BasicAPIMaskStruct maskArrayStruct, const uint64_t maskCount, const uint8_t hRepeat, const uint8_t vRepeat,
-    uint16_t dstBlkStride, uint16_t vROffset, __ubuf__ uint64_t* maskBuf)
-{
-    uint32_t count = VecMicroGetCount<true, true, isMaskBitMode>(maskArrayStruct.maskArray, maskCount, maskBuf);
-    Reg::MaskReg maskFull = Reg::CreateMask<T>();
-    ;
-    Reg::MaskReg maskReg = VecMicroGetMaskReg<T, true, true, isMaskBitMode>(maskBuf, count);
-    Reg::RegTensor<T> dstReg;
-    Reg::RegTensor<T> srcReg0;
-    Reg::RegTensor<T> srcReg1;
-    Reg::RegTensor<T> tmpReg;
-    Reg::RegTensor<uint32_t> indexReg;
-
-    for (uint16_t i = 0; i < static_cast<uint16_t>(vRepeat); ++i) {
-        Reg::Duplicate(dstReg, static_cast<T>(0), maskFull);
-        for (uint16_t j = 0; j < static_cast<uint16_t>(hRepeat); ++j) {
-            Reg::LoadAlign(indexReg, src0Offset + i * hRepeat * DEFAULT_REPEAT_STRIDE + j * DEFAULT_REPEAT_STRIDE);
-            Reg::GatherB(srcReg0, src0, indexReg, maskFull);
-
-            Reg::LoadAlign<T, Reg::LoadDist::DIST_E2B_B16>(
-                srcReg1, src1 + i * hRepeat * DEFAULT_BLK_NUM + j * DEFAULT_BLK_NUM);
-
-            Reg::Mul(tmpReg, srcReg0, srcReg1, maskReg);
-            Reg::Add(dstReg, tmpReg, dstReg, maskReg);
-        }
-        Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(dst + i * vROffset, dstReg, dstBlkStride, maskReg);
-    }
-}
-
-template <bool isMaskBitMode, typename T>
-__simd_vf__ inline void BilinearInterpolationNoRepeatModeLevel0VFImpl(
+template <bool isMaskBitMode, bool repeatMode, typename T>
+__simd_vf__ inline void BilinearInterpolationLevel0VFImpl(
     __ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ uint32_t* src0Offset, __ubuf__ T* src1,
     const BasicAPIMaskStruct maskArrayStruct, const uint64_t maskCount, const uint8_t hRepeat, const uint8_t vRepeat,
     uint16_t dstBlkStride, uint16_t vROffset, __ubuf__ uint64_t* maskBuf)
@@ -80,7 +48,13 @@ __simd_vf__ inline void BilinearInterpolationNoRepeatModeLevel0VFImpl(
             Reg::LoadAlign(indexReg, src0Offset + i * hRepeat * DEFAULT_REPEAT_STRIDE + j * DEFAULT_REPEAT_STRIDE);
             Reg::GatherB(srcReg0, src0, indexReg, maskFull);
 
-            Reg::LoadAlign<T, Reg::LoadDist::DIST_BRC_B16>(srcReg1, src1 + i * hRepeat + j);
+            if constexpr (repeatMode) {
+                Reg::LoadAlign<T, Reg::LoadDist::DIST_E2B_B16>(
+                    srcReg1, src1 + i * hRepeat * DEFAULT_BLK_NUM + j * DEFAULT_BLK_NUM);
+            } else {
+                Reg::LoadAlign<T, Reg::LoadDist::DIST_BRC_B16>(srcReg1, src1 + i * hRepeat + j);
+            }
+
             Reg::Mul(tmpReg, srcReg0, srcReg1, maskReg);
             Reg::Add(dstReg, tmpReg, dstReg, maskReg);
         }
@@ -109,10 +83,10 @@ __aicore__ inline void VecBilinearInterpolationLevel0Template(
         SetVectorMask<T>(maskArray[1], maskArray[0]); // set mask to SPR.MASK, movp in VF
     }
     if (!repeatMode) {
-        BilinearInterpolationNoRepeatModeLevel0VFImpl<isMaskBitMode, T>(
+        BilinearInterpolationLevel0VFImpl<isMaskBitMode, false>(
             dst, src0, src0Offset, src1, maskArrayStruct, maskCount, hRepeat, vRepeat, dstBlkStride, vROffset, nullptr);
     } else {
-        BilinearInterpolationRepeatModeLevel0VFImpl<isMaskBitMode, T>(
+        BilinearInterpolationLevel0VFImpl<isMaskBitMode, true>(
             dst, src0, src0Offset, src1, maskArrayStruct, maskCount, hRepeat, vRepeat, dstBlkStride, vROffset, nullptr);
     }
 }

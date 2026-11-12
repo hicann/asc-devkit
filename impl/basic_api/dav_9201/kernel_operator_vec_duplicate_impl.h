@@ -445,6 +445,15 @@ __aicore__ inline void InterleaveImpl(
     }
 }
 
+template <typename T, typename RegT>
+__simd_callee__ inline void LoadDeInterleave(
+    RegT& dst0Reg, RegT& dst1Reg, RegT& src0Reg, RegT& src1Reg, __ubuf__ T* src, uint32_t offset, uint32_t repeatStride)
+{
+    Reg::LoadAlign(src0Reg, src + offset);
+    Reg::LoadAlign(src1Reg, src + offset + repeatStride);
+    Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+}
+
 template <typename T, bool hasUnalign = true, bool hasSrc1 = true>
 __simd_vf__ inline void DeInterleaveImplNormal(
     __ubuf__ T* dst0Local, __ubuf__ T* dst1Local, __ubuf__ T* src0Local, __ubuf__ T* src1Local, const int32_t calCount)
@@ -458,9 +467,7 @@ __simd_vf__ inline void DeInterleaveImplNormal(
     uint32_t sreg = halfCount;
     // first process src0Local
     for (uint16_t i = 0; i < repeatTime; ++i) {
-        Reg::LoadAlign(src0Reg, src0Local + i * 2 * sregLower);
-        Reg::LoadAlign(src1Reg, src0Local + i * 2 * sregLower + sregLower);
-        Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+        LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src0Local, i * 2 * sregLower, sregLower);
         preg = Reg::UpdateMask<T>(sreg);
         Reg::StoreAlign(dst0Local + i * sregLower, dst0Reg, preg);
         Reg::StoreAlign(dst1Local + i * sregLower, dst1Reg, preg);
@@ -472,9 +479,7 @@ __simd_vf__ inline void DeInterleaveImplNormal(
     if constexpr (!hasUnalign) {
         sreg = halfCount;
         for (uint16_t i = 0; i < repeatTime; ++i) {
-            Reg::LoadAlign(src0Reg, src1Local + i * 2 * sregLower);
-            Reg::LoadAlign(src1Reg, src1Local + i * 2 * sregLower + sregLower);
-            Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+            LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src1Local, i * 2 * sregLower, sregLower);
             preg = Reg::UpdateMask<T>(sreg);
             Reg::StoreAlign(dst0Local + halfCount + i * sregLower, dst0Reg, preg);
             Reg::StoreAlign(dst1Local + halfCount + i * sregLower, dst1Reg, preg);
@@ -483,9 +488,7 @@ __simd_vf__ inline void DeInterleaveImplNormal(
         Reg::UnalignReg ureg;
         // split main and tail, because dst copy element is different with main block
         for (uint16_t i = 0; i < repeatTime - 1; ++i) {
-            Reg::LoadAlign(src0Reg, src1Local + i * 2 * sregLower);
-            Reg::LoadAlign(src1Reg, src1Local + i * 2 * sregLower + sregLower);
-            Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+            LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src1Local, i * 2 * sregLower, sregLower);
             __ubuf__ T* dst0LocalTmp = dst0Local + halfCount + i * sregLower;
             __ubuf__ T* dst1LocalTmp = dst1Local + halfCount + i * sregLower;
             // unalign process, copy element is sregLower
@@ -494,9 +497,7 @@ __simd_vf__ inline void DeInterleaveImplNormal(
             Reg::StoreUnAlign(dst1LocalTmp, dst1Reg, ureg, sregLower);
             Reg::StoreUnAlignPost(dst1LocalTmp, ureg, 0);
         }
-        Reg::LoadAlign(src0Reg, src1Local + (repeatTime - 1) * 2 * sregLower);
-        Reg::LoadAlign(src1Reg, src1Local + (repeatTime - 1) * 2 * sregLower + sregLower);
-        Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+        LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src1Local, (repeatTime - 1) * 2 * sregLower, sregLower);
         // cal tail num
         uint32_t tailNum = halfCount - (repeatTime - 1) * sregLower;
         __ubuf__ T* dst0LocalTmp = dst0Local + halfCount + (repeatTime - 1) * sregLower;
@@ -521,9 +522,7 @@ __simd_vf__ inline void DeInterleaveImplB64(
     // first process src0Local
     uint32_t sreg = halfCount;
     for (uint16_t i = 0; i < repeatTime; ++i) {
-        Reg::LoadAlign(src0Reg, src0Local + i * 2 * sregLower);
-        Reg::LoadAlign(src1Reg, src0Local + i * 2 * sregLower + sregLower);
-        Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+        LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src0Local, i * 2 * sregLower, sregLower);
         b64Preg = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
         Reg::StoreAlign(dst0Local + i * sregLower, dst0Reg, b64Preg);
         Reg::StoreAlign(dst1Local + i * sregLower, dst1Reg, b64Preg);
@@ -535,9 +534,7 @@ __simd_vf__ inline void DeInterleaveImplB64(
     if constexpr (!hasUnalign) {
         sreg = halfCount;
         for (uint16_t i = 0; i < repeatTime; ++i) {
-            Reg::LoadAlign(src0Reg, src1Local + i * 2 * sregLower);
-            Reg::LoadAlign(src1Reg, src1Local + i * 2 * sregLower + sregLower);
-            Reg::DeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg);
+            LoadDeInterleave(dst0Reg, dst1Reg, src0Reg, src1Reg, src1Local, i * 2 * sregLower, sregLower);
             b64Preg = Reg::UpdateMask<T, Reg::RegTraitNumTwo>(sreg);
             Reg::StoreAlign(dst0Local + halfCount + i * sregLower, dst0Reg, b64Preg);
             Reg::StoreAlign(dst1Local + halfCount + i * sregLower, dst1Reg, b64Preg);

@@ -29,6 +29,22 @@ namespace AscendC {
 namespace Internal {
 __aicore__ inline bool IsCounterMode();
 
+template <bool isMaskBitMode>
+__aicore__ inline BasicAPIMaskStruct GetVecMaskArrayStruct(const uint64_t maskArray[], uint64_t maskCount)
+{
+    BasicAPIMaskStruct maskArrayStruct;
+    if constexpr (isMaskBitMode) {
+        ASCENDC_ASSERT(
+            maskCount == 0, { KERNEL_LOG(KERNEL_ERROR, "maskCount must be 0 when isMaskBitMode is true."); });
+        maskArrayStruct = *(reinterpret_cast<const BasicAPIMaskStruct*>(maskArray));
+    } else {
+        ASCENDC_ASSERT(maskArray == nullptr, {
+            KERNEL_LOG(KERNEL_ERROR, "maskArray must be nullptr when isMaskBitMode is false.");
+        });
+    }
+    return maskArrayStruct;
+}
+
 template <bool isSetMask = true, bool isNormalMode = true, bool isMaskBitMode = true>
 __simd_callee__ inline uint32_t VecMicroGetCount(
     const uint64_t maskArray[], const uint64_t maskCount, __ubuf__ uint64_t* maskBuf);
@@ -217,16 +233,7 @@ __aicore__ inline void VecBinaryImplTemplate(
 {
     constexpr bool TUCompare = sizeof(T) > sizeof(U);
     using TT = typename Conditional<TUCompare, T, U>::type;
-    BasicAPIMaskStruct maskArrayStruct;
-    if constexpr (isMaskBitMode) {
-        ASCENDC_ASSERT(
-            maskCount == 0, { KERNEL_LOG(KERNEL_ERROR, "maskCount must be 0 when isMaskBitMode is true."); });
-        maskArrayStruct = *(reinterpret_cast<const BasicAPIMaskStruct*>(maskArray));
-    } else {
-        ASCENDC_ASSERT(maskArray == nullptr, {
-            KERNEL_LOG(KERNEL_ERROR, "maskArray must be nullptr when isMaskBitMode is false.");
-        });
-    }
+    BasicAPIMaskStruct maskArrayStruct = GetVecMaskArrayStruct<isMaskBitMode>(maskArray, maskCount);
     __ubuf__ uint64_t* maskBuf = nullptr;
 
     if (Internal::IsCounterMode()) {

@@ -54,6 +54,22 @@ namespace ConstantsInternal {
 const uint32_t FULL_MASK_B32 = 0xffffffff;
 } // namespace ConstantsInternal
 
+template <TPosition src, TPosition dst, bool isEnque, typename Ptr, typename Addr>
+__aicore__ inline void TraceQueBuffer(Ptr* ptr, Addr absAddr)
+{
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+    if constexpr (isEnque) {
+        AscendCBufEnque(
+            static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
+            reinterpret_cast<uint64_t>(absAddr + ptr->address));
+    } else {
+        AscendCBufDeque(
+            static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
+            (uint64_t)(absAddr + ptr->address));
+    }
+#endif
+}
+
 template <typename T>
 __aicore__ inline __in_pipe__(V) void NopInPipeV(const T& tensor)
 {
@@ -307,9 +323,7 @@ __aicore__ inline bool TQueBind<src, dst, depth, mask>::EnQue(TBufHandle buf)
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     constexpr Hardware bufferType = GetBufferPos(src, dst);
     auto absAddr = GetTPipePtr()->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint8_t>(bufferType)].absAddr;
-    AscendCBufEnque(
-        static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
-        reinterpret_cast<uint64_t>(absAddr + ptr->address));
+    TraceQueBuffer<src, dst, true>(ptr, absAddr);
 #endif // ASCENDC_CPU_DEBUG
     return true;
 }
@@ -418,9 +432,7 @@ __aicore__ inline bool TQueBind<src, dst, depth, mask>::EnQue(TBufHandle buf)
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         constexpr Hardware bufferType = GetBufferPos(src, dst);
         auto absAddr = GetTPipePtr()->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint8_t>(bufferType)].absAddr;
-        AscendCBufEnque(
-            static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
-            reinterpret_cast<uint64_t>(absAddr + ptr->address));
+        TraceQueBuffer<src, dst, true>(ptr, absAddr);
 #endif // ASCENDC_CPU_DEBUG
         return true;
     }
@@ -552,9 +564,7 @@ __aicore__ inline TBufHandle TQueBind<src, dst, depth, mask>::DeQue()
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
         constexpr Hardware bufferType = GetBufferPos(src, dst);
         auto absAddr = GetTPipePtr()->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint8_t>(bufferType)].absAddr;
-        AscendCBufDeque(
-            static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
-            (uint64_t)(absAddr + ptr->address));
+        TraceQueBuffer<src, dst, false>(ptr, absAddr);
 #endif // ASCENDC_CPU_DEBUG
         return reinterpret_cast<TBufHandle>(buf);
     }
@@ -593,9 +603,7 @@ __aicore__ inline void TQueBind<src, dst, depth, mask>::DeQue(LocalTensor<T>& te
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     constexpr Hardware bufferType = GetBufferPos(src, dst);
     auto absAddr = GetTPipePtr()->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint8_t>(bufferType)].absAddr;
-    AscendCBufDeque(
-        static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
-        (uint64_t)(absAddr + ptr->address));
+    TraceQueBuffer<src, dst, false>(ptr, absAddr);
 #endif // ASCENDC_CPU_DEBUG
 
     if constexpr (GetPhyType(src) == Hardware::UB || GetPhyType(dst) == Hardware::UB) {
@@ -659,9 +667,7 @@ __aicore__ inline TBufHandle TQueBind<src, dst, depth, mask>::DeQue()
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     constexpr Hardware bufferType = GetBufferPos(src, dst);
     auto absAddr = GetTPipePtr()->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint8_t>(bufferType)].absAddr;
-    AscendCBufDeque(
-        static_cast<uint8_t>(src), static_cast<uint8_t>(dst), static_cast<uint8_t>(GetPosition(src, dst)),
-        (uint64_t)(absAddr + ptr->address));
+    TraceQueBuffer<src, dst, false>(ptr, absAddr);
 #endif // ASCENDC_CPU_DEBUG
     return reinterpret_cast<TBufHandle>(buf);
 }

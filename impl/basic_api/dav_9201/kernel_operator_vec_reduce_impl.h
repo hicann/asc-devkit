@@ -159,6 +159,17 @@ __simd_vf__ inline void WholeReduceUnalignCall(
     }
 }
 
+template <bool isSetMask>
+__aicore__ inline __ubuf__ uint64_t* GetReduceCounterMaskBuffer(bool isCounterMode)
+{
+    if constexpr (!isSetMask) {
+        if (isCounterMode) {
+            return AscendCUtils::GetTemporaryBufferAddr<uint64_t>(GetRuntimeUBSize(), 2);
+        }
+    }
+    return nullptr;
+}
+
 template <bool isSetMask, bool isBitMask, auto func, typename T>
 __aicore__ inline void PairReduceTemplate(
     __ubuf__ T* dst, __ubuf__ T* src, int32_t repeat, int32_t dstRepStride, uint32_t oneRepOffset, int32_t srcBlkStride,
@@ -174,11 +185,8 @@ __aicore__ inline void PairReduceTemplate(
         newRepeat = 1;
     }
     bool isCounterMode = Internal::IsCounterMode();
-    __ubuf__ uint64_t* maskBuf = nullptr;
+    __ubuf__ uint64_t* maskBuf = GetReduceCounterMaskBuffer<isSetMask>(isCounterMode);
     if (isCounterMode) {
-        if constexpr (!isSetMask) {
-            maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(GetRuntimeUBSize(), 2);
-        }
         ReduceAlignCall<isSetMask, isBitMask, true, func, T>(
             dst, newSrc, newRepeat, dstRepOffset, srcBlkStride, srcRepStride, maskReg, maskBuf);
         if constexpr (!isSetMask) {
@@ -197,11 +205,8 @@ __aicore__ inline void ReduceTemplate(
 {
     constexpr uint32_t ONE_BLK_ELEMENT_NUM = GetDataBlockSizeInBytes() / sizeof(T);
     bool isCounterMode = Internal::IsCounterMode();
-    __ubuf__ uint64_t* maskBuf = nullptr;
+    __ubuf__ uint64_t* maskBuf = GetReduceCounterMaskBuffer<isSetMask>(isCounterMode);
     if (isCounterMode) {
-        if constexpr (!isSetMask) {
-            maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(GetRuntimeUBSize(), 2);
-        }
         if (dstRepStride == 0 && repeat > 0) {
             uint32_t srcStrideOffset = srcRepStride * ONE_BLK_ELEMENT_NUM;
             __ubuf__ T* newSrc = src + srcStrideOffset * (repeat - 1);
@@ -242,11 +247,8 @@ __aicore__ inline void ReduceTemplate(
 {
     constexpr uint32_t ONE_BLK_ELEMENT_NUM = GetDataBlockSizeInBytes() / sizeof(T);
     bool isCounterMode = Internal::IsCounterMode();
-    __ubuf__ uint64_t* maskBuf = nullptr;
+    __ubuf__ uint64_t* maskBuf = GetReduceCounterMaskBuffer<isSetMask>(isCounterMode);
     if (isCounterMode) {
-        if constexpr (!isSetMask) {
-            maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(GetRuntimeUBSize(), 2);
-        }
         if (dstRepStride == 0 && repeat > 0) {
             uint32_t srcStrideOffset = srcRepStride * ONE_BLK_ELEMENT_NUM;
             __ubuf__ T* newSrc = src + srcStrideOffset * (repeat - 1);

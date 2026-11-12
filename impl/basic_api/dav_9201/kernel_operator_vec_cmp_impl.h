@@ -30,6 +30,22 @@ namespace AscendC {
 namespace CmpInternal {
 constexpr uint32_t maskBitToByte = 8;
 }
+
+template <typename T>
+__aicore__ inline void StoreCmpMaskAndFree(__ubuf__ uint64_t* tempBuf)
+{
+    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
+    SetFlag<HardEvent::V_S>(eventIdVToS);
+    WaitFlag<HardEvent::V_S>(eventIdVToS);
+    if constexpr (sizeof(T) == 2) {
+        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
+        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];
+    } else if constexpr (sizeof(T) == 4) {
+        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
+        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);
+    }
+    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf);
+}
 /* ***************************************************************************************
  * ************************************** Compare ****************************************
  * ************************************************************************************** */
@@ -170,17 +186,7 @@ __aicore__ inline void VcmpImpl(
                 break;
         }
     }
-    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-    SetFlag<HardEvent::V_S>(eventIdVToS);
-    WaitFlag<HardEvent::V_S>(eventIdVToS);
-    if constexpr (sizeof(T) == 2) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];
-    } else if constexpr (sizeof(T) == 4) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf);
+    StoreCmpMaskAndFree<T>(tempBuf);
 }
 
 template <typename T, bool isSetMask = true>
@@ -258,17 +264,7 @@ __aicore__ inline void VcmpImpl(
                 break;
         }
     }
-    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-    SetFlag<HardEvent::V_S>(eventIdVToS);
-    WaitFlag<HardEvent::V_S>(eventIdVToS);
-    if constexpr (sizeof(T) == 2) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];
-    } else if constexpr (sizeof(T) == 4) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf);
+    StoreCmpMaskAndFree<T>(tempBuf);
 }
 
 // Compare::Level 0 - bit mode / Continuous mode support b16/b32

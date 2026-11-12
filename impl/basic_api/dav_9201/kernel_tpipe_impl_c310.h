@@ -838,10 +838,8 @@ __aicore__ inline void TPipe::Reset()
 }
 
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
-template <typename T>
-[[deprecated("NOTICE: GetAbsAddr has been deprecated and will be removed in the next version. "
-             "Please do not use it!")]] inline uint64_t
-TPipe::GetAbsAddr(const LocalTensor<T>& tensor)
+template <typename T, typename Pool>
+inline uint64_t GetAbsAddrImpl(const LocalTensor<T>& tensor, Pool& pool)
 {
     // Translates the CPU address to the actual physical address.
     // Currently, only L1 or UB address translation is supported.
@@ -855,7 +853,7 @@ TPipe::GetAbsAddr(const LocalTensor<T>& tensor)
         KERNEL_LOG(KERNEL_ERROR, "illegal hardType %d ", static_cast<int32_t>(hardType));
     });
     uint8_t* phyAddr = reinterpret_cast<uint8_t*>(tensor.GetPhyAddr());
-    uint8_t* baseAddr = static_cast<uint8_t*>(g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint32_t>(hardType)].absAddr);
+    uint8_t* baseAddr = static_cast<uint8_t*>(pool.bufPoolBaseAddr_[static_cast<uint32_t>(hardType)].absAddr);
     ASCENDC_ASSERT((phyAddr >= baseAddr), {
         KERNEL_LOG(
             KERNEL_ERROR, "phyAddr is %p, baseAddr is %p, phyAddr should be larger than baseAddr", phyAddr, baseAddr);
@@ -873,39 +871,19 @@ TPipe::GetAbsAddr(const LocalTensor<T>& tensor)
     return delta;
 }
 
+template <typename T>
+[[deprecated("NOTICE: GetAbsAddr has been deprecated and will be removed in the next version. "
+             "Please do not use it!")]] inline uint64_t
+TPipe::GetAbsAddr(const LocalTensor<T>& tensor)
+{
+    return GetAbsAddrImpl(tensor, g_tpipeImpl);
+}
+
 // NOTICE: GetAbsAddr has been deprecated and will be removed in the next version. Please do not use it!
 template <typename T>
 inline uint64_t GetAbsAddr(TPipe* tpipe, const LocalTensor<T>& tensor)
 {
-    // Translates the CPU address to the actual physical address.
-    // Currently, only L1 or UB address translation is supported.
-    int8_t logicPos = tensor.GetPosition();
-    auto positionHardMap = ConstDefiner::Instance().positionHardMap;
-    ASCENDC_ASSERT((positionHardMap.find((TPosition)logicPos) != positionHardMap.end()), {
-        KERNEL_LOG(KERNEL_ERROR, "illegal logicPos %d ", static_cast<int32_t>(logicPos));
-    });
-    Hardware hardType = positionHardMap.at((TPosition)logicPos);
-    ASCENDC_ASSERT(((hardType == Hardware::UB) || (hardType == Hardware::L1)), {
-        KERNEL_LOG(KERNEL_ERROR, "illegal hardType %d ", static_cast<int32_t>(hardType));
-    });
-    uint8_t* phyAddr = reinterpret_cast<uint8_t*>(tensor.GetPhyAddr());
-    uint8_t* baseAddr =
-        static_cast<uint8_t*>(tpipe->g_tpipeImpl.bufPoolBaseAddr_[static_cast<uint32_t>(hardType)].absAddr);
-    ASCENDC_ASSERT((phyAddr >= baseAddr), {
-        KERNEL_LOG(
-            KERNEL_ERROR, "phyAddr is %p, baseAddr is %p, phyAddr should be larger than baseAddr", phyAddr, baseAddr);
-    });
-    uint64_t delta = phyAddr - baseAddr;
-    if (hardType == Hardware::UB) {
-        ASCENDC_ASSERT((delta < TMP_UB_OFFSET), {
-            KERNEL_LOG(KERNEL_ERROR, "addr %lu exceed ub limits %lu ", delta, TMP_UB_OFFSET);
-        });
-    } else {
-        ASCENDC_ASSERT((delta < TOTAL_L1_SIZE), {
-            KERNEL_LOG(KERNEL_ERROR, "addr %lu exceed l1 limits %lu", delta, TOTAL_L1_SIZE);
-        });
-    }
-    return delta;
+    return GetAbsAddrImpl(tensor, tpipe->g_tpipeImpl);
 }
 
 inline uint8_t* TPipe::GetBaseAddr(int8_t logicPos)

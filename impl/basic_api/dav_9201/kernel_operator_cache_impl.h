@@ -108,8 +108,8 @@ __aicore__ inline void PrefetchAlignV2Impl(__gm__ T* src, const PrefetchParams& 
     }
 }
 
-template <typename T>
-__aicore__ inline void PrefetchND2NZImpl(__gm__ T* src, const PrefetchToNZParams<PrefetchLayout::ROW_MAJOR>& params)
+template <typename T, PrefetchLayout layout>
+__aicore__ inline void PrefetchToNZImpl(__gm__ T* src, const PrefetchToNZParams<layout>& params)
 {
     if ASCEND_IS_AIC {
         constexpr uint8_t l2CacheCtl = PREFETCH_L2_CACHE_CTL;
@@ -123,49 +123,49 @@ __aicore__ inline void PrefetchND2NZImpl(__gm__ T* src, const PrefetchToNZParams
 
         constexpr bool preAllocation = false;
         if constexpr (sizeof(T) == 1) {
-            copy_gm_to_cbuf_multi_nd2nz(
-                (__cbuf__ int8_t*)0, (__gm__ int8_t*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
+            if constexpr (layout == PrefetchLayout::ROW_MAJOR) {
+                copy_gm_to_cbuf_multi_nd2nz(
+                    (__cbuf__ int8_t*)0, (__gm__ int8_t*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue,
+                    params.dValue, loop4SrcStride, false, preAllocation);
+            } else {
+                copy_gm_to_cbuf_multi_dn2nz(
+                    (__cbuf__ int8_t*)0, (__gm__ int8_t*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue,
+                    params.dValue, loop4SrcStride, false, preAllocation);
+            }
         } else if constexpr (sizeof(T) == 2) {
-            copy_gm_to_cbuf_multi_nd2nz(
-                (__cbuf__ half*)0, (__gm__ half*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
+            if constexpr (layout == PrefetchLayout::ROW_MAJOR) {
+                copy_gm_to_cbuf_multi_nd2nz(
+                    (__cbuf__ half*)0, (__gm__ half*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
+                    loop4SrcStride, false, preAllocation);
+            } else {
+                copy_gm_to_cbuf_multi_dn2nz(
+                    (__cbuf__ half*)0, (__gm__ half*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
+                    loop4SrcStride, false, preAllocation);
+            }
         } else if constexpr (sizeof(T) == 4) {
-            copy_gm_to_cbuf_multi_nd2nz(
-                (__cbuf__ float*)0, (__gm__ float*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
+            if constexpr (layout == PrefetchLayout::ROW_MAJOR) {
+                copy_gm_to_cbuf_multi_nd2nz(
+                    (__cbuf__ float*)0, (__gm__ float*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
+                    loop4SrcStride, false, preAllocation);
+            } else {
+                copy_gm_to_cbuf_multi_dn2nz(
+                    (__cbuf__ float*)0, (__gm__ float*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
+                    loop4SrcStride, false, preAllocation);
+            }
         }
     }
 }
 
 template <typename T>
+__aicore__ inline void PrefetchND2NZImpl(__gm__ T* src, const PrefetchToNZParams<PrefetchLayout::ROW_MAJOR>& params)
+{
+    PrefetchToNZImpl<T, PrefetchLayout::ROW_MAJOR>(src, params);
+}
+
+template <typename T>
 __aicore__ inline void PrefetchDN2NZImpl(__gm__ T* src, const PrefetchToNZParams<PrefetchLayout::COLUMN_MAJOR>& params)
 {
-    if ASCEND_IS_AIC {
-        constexpr uint8_t l2CacheCtl = PREFETCH_L2_CACHE_CTL;
-
-        uint64_t mte2NzPara = static_cast<uint64_t>(0) << 48 | static_cast<uint64_t>(0) << 32 |
-                              static_cast<uint64_t>(0) << 16 | static_cast<uint64_t>(params.matrixNum);
-        set_mte2_nz_para(mte2NzPara);
-
-        const uint64_t loop1SrcStride = static_cast<uint64_t>(params.srcDValue) * sizeof(T);
-        const uint64_t loop4SrcStride = static_cast<uint64_t>(params.srcMatrixStride) * sizeof(T);
-
-        constexpr bool preAllocation = false;
-        if constexpr (sizeof(T) == 1) {
-            copy_gm_to_cbuf_multi_dn2nz(
-                (__cbuf__ int8_t*)0, (__gm__ int8_t*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
-        } else if constexpr (sizeof(T) == 2) {
-            copy_gm_to_cbuf_multi_dn2nz(
-                (__cbuf__ half*)0, (__gm__ half*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
-        } else if constexpr (sizeof(T) == 4) {
-            copy_gm_to_cbuf_multi_dn2nz(
-                (__cbuf__ float*)0, (__gm__ float*)src, 0, loop1SrcStride, l2CacheCtl, params.nValue, params.dValue,
-                loop4SrcStride, false, preAllocation);
-        }
-    }
+    PrefetchToNZImpl<T, PrefetchLayout::COLUMN_MAJOR>(src, params);
 }
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_CACHE_IMPL_H

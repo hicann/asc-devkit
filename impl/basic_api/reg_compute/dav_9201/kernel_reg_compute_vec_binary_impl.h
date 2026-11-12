@@ -551,6 +551,28 @@ __simd_callee__ inline void F32PreProcess(T& vTmp4, U& vTmp3, S& vTmp2, MaskReg&
     vadds(vTmp4, (RegTensor<uint32_t>&)vTmp3, divF32Bias, mask);
 }
 
+__simd_callee__ inline void Div64Reciprocal(
+    RegTensor<int64_t, RegTraitNumTwo>& divisor, RegTensor<int64_t, RegTraitNumTwo>& tmp5,
+    RegTensor<float, RegTraitNumOne>& tmp2, RegTensor<float, RegTraitNumOne>& tmp3,
+    RegTensor<uint32_t, RegTraitNumOne>& tmp4, RegTensor<uint64_t, RegTraitNumTwo>& one,
+    RegTensor<uint64_t, RegTraitNumTwo>& tmp6, RegTensor<uint64_t, RegTraitNumTwo>& tmp7, MaskReg& mask)
+{
+    VcvtS642F32(tmp2, divisor);
+    F32PreProcess(tmp4, tmp3, tmp2, mask);
+    VcvtF322S64(tmp5, tmp4);
+    VmulUsingU32(tmp6, divisor, tmp5, mask);
+    VnotInPlace(tmp6, mask);
+    AddB64Impl(tmp6, tmp6, one, mask);
+    vbr(tmp4, 0);
+    B128Calc(tmp5, tmp6, tmp4, mask);
+    VaddUsingU32(tmp7, tmp5, tmp6, mask);
+    VmulUsingU32(tmp6, divisor, tmp7, mask);
+    VnotInPlace(tmp6, mask);
+    AddB64Impl(tmp6, tmp6, one, mask);
+    B128Calc(tmp7, tmp6, tmp4, mask);
+    VaddUsingU32(tmp6, tmp7, tmp6, mask);
+}
+
 template <typename T>
 __simd_callee__ inline void DivS64Impl(T& dstReg, T& srcReg0, T& srcReg1, MaskReg& mask)
 {
@@ -573,20 +595,7 @@ __simd_callee__ inline void DivS64Impl(T& dstReg, T& srcReg0, T& srcReg1, MaskRe
     pnot(nonOneMask, oneMask, mask);
     oriMask = mask;
     pand(mask, nonOneMask, nonZeroMask, mask);
-    VcvtS642F32(vTmp2, vAbsSrc1);
-    F32PreProcess(vTmp4, vTmp3, vTmp2, mask);
-    VcvtF322S64(vTmp5, vTmp4);
-    VmulUsingU32(vTmp6, vAbsSrc1, vTmp5, mask);
-    VnotInPlace(vTmp6, mask);
-    AddB64Impl(vTmp6, vTmp6, vConstDup1, mask);
-    vbr(vTmp4, 0);
-    B128Calc(vTmp5, vTmp6, vTmp4, mask);
-    VaddUsingU32(vTmp7, vTmp5, vTmp6, mask);
-    VmulUsingU32(vTmp6, vAbsSrc1, vTmp7, mask);
-    VnotInPlace(vTmp6, mask);
-    AddB64Impl(vTmp6, vTmp6, vConstDup1, mask);
-    B128Calc(vTmp7, vTmp6, vTmp4, mask);
-    VaddUsingU32(vTmp6, vTmp7, vTmp6, mask);
+    Div64Reciprocal(vAbsSrc1, vTmp5, vTmp2, vTmp3, vTmp4, vConstDup1, vTmp6, vTmp7, mask);
     B128Calc(vAbsSrc0, vTmp6, vTmp4, mask);
     VmulUsingU32(vTmp7, vTmp6, vAbsSrc1, mask);
     VsubUsingU32(vTmp7, vAbsSrc0, vTmp7, mask);
@@ -642,20 +651,7 @@ __simd_callee__ inline void DivU64Impl(T& dstReg, T& srcReg0, T& srcReg1, MaskRe
     VcmpEqUsingU32(oneMask, vAbsSrc1, vConstDup1, mask);
     pnot(nonOneMask, oneMask, mask);
     pand(mask, nonOneMask, nonZeroMask, mask);
-    VcvtS642F32(vTmp2, vAbsSrc1);
-    F32PreProcess(vTmp4, vTmp3, vTmp2, mask);
-    VcvtF322S64(vTmp5, vTmp4);
-    VmulUsingU32(vTmp6, vAbsSrc1, vTmp5, mask);
-    VnotInPlace(vTmp6, mask);
-    AddB64Impl(vTmp6, vTmp6, vConstDup1, mask);
-    vbr(vTmp4, 0);
-    B128Calc(vTmp5, vTmp6, vTmp4, mask);
-    VaddUsingU32(vTmp7, vTmp5, vTmp6, mask);
-    VmulUsingU32(vTmp6, vAbsSrc1, vTmp7, mask);
-    VnotInPlace(vTmp6, mask);
-    AddB64Impl(vTmp6, vTmp6, vConstDup1, mask);
-    B128Calc(vTmp7, vTmp6, vTmp4, mask);
-    VaddUsingU32(vTmp6, vTmp7, vTmp6, mask);
+    Div64Reciprocal(vAbsSrc1, vTmp5, vTmp2, vTmp3, vTmp4, vConstDup1, vTmp6, vTmp7, mask);
     B128Calc(vAbsSrc0, vTmp6, vTmp4, mask);
     VmulUsingU32(vTmp7, vTmp6, vAbsSrc1, mask);
     VsubUsingU32(vTmp7, vAbsSrc0, vTmp7, mask);
@@ -1564,14 +1560,18 @@ __simd_callee__ inline void DivImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
     }
 }
 
-template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
-__simd_callee__ inline void MaxOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+template <bool isMax, MaskMergeMode mode, typename U>
+__simd_callee__ inline void MaxMinOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
     using ActualT = typename U::ActualT;
     constexpr auto modeValue = GetMaskMergeMode<mode>();
     if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
         if constexpr (sizeof(ActualT) < 8) {
-            vmax(dstReg, srcReg0, srcReg1, mask, modeValue);
+            if constexpr (isMax) {
+                vmax(dstReg, srcReg0, srcReg1, mask, modeValue);
+            } else {
+                vmin(dstReg, srcReg0, srcReg1, mask, modeValue);
+            }
         } else if constexpr (sizeof(ActualT) == 8) {
             MaskReg maskTrait2;
             MaskPack(maskTrait2, mask);
@@ -1582,7 +1582,11 @@ __simd_callee__ inline void MaxOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskR
             B64TraitOneToTraitTwo(traitTwoSrcReg0, srcReg0);
             B64TraitOneToTraitTwo(traitTwoSrcReg1, srcReg1);
             MaskReg selMask;
-            Compare<ActualT, CMPMODE::GT>(selMask, traitTwoSrcReg0, traitTwoSrcReg1, maskTrait2);
+            if constexpr (isMax) {
+                Compare<ActualT, CMPMODE::GT>(selMask, traitTwoSrcReg0, traitTwoSrcReg1, maskTrait2);
+            } else {
+                Compare<ActualT, CMPMODE::LT>(selMask, traitTwoSrcReg0, traitTwoSrcReg1, maskTrait2);
+            }
             Select(traitTwoDstReg, traitTwoSrcReg0, traitTwoSrcReg1, selMask);
             Duplicate(traitTwoTmpReg, static_cast<ActualT>(0));
             Select(traitTwoDstReg, traitTwoDstReg, traitTwoTmpReg, maskTrait2);
@@ -1591,11 +1595,21 @@ __simd_callee__ inline void MaxOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskR
     } else if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
         U tmpReg;
         MaskReg selMask;
-        Compare<ActualT, CMPMODE::GT>(selMask, srcReg0, srcReg1, mask);
+        if constexpr (isMax) {
+            Compare<ActualT, CMPMODE::GT>(selMask, srcReg0, srcReg1, mask);
+        } else {
+            Compare<ActualT, CMPMODE::LT>(selMask, srcReg0, srcReg1, mask);
+        }
         Select(dstReg, srcReg0, srcReg1, selMask);
         Duplicate(tmpReg, static_cast<ActualT>(0));
         Select(dstReg, dstReg, tmpReg, mask);
     }
+}
+
+template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
+__simd_callee__ inline void MaxOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
+{
+    MaxMinOperator<true, mode>(dstReg, srcReg0, srcReg1, mask);
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
@@ -1617,35 +1631,7 @@ __simd_callee__ inline void MaxImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void MinOperator(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
-    using ActualT = typename U::ActualT;
-    constexpr auto modeValue = GetMaskMergeMode<mode>();
-    if constexpr (CheckRegTrait<U, RegTraitNumOne>()) {
-        if constexpr (sizeof(ActualT) < 8) {
-            vmin(dstReg, srcReg0, srcReg1, mask, modeValue);
-        } else if constexpr (sizeof(ActualT) == 8) {
-            MaskReg maskTrait2;
-            MaskPack(maskTrait2, mask);
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg0;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoSrcReg1;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoDstReg;
-            RegTensor<ActualT, RegTraitNumTwo> traitTwoTmpReg;
-            B64TraitOneToTraitTwo(traitTwoSrcReg0, srcReg0);
-            B64TraitOneToTraitTwo(traitTwoSrcReg1, srcReg1);
-            MaskReg selMask;
-            Compare<ActualT, CMPMODE::LT>(selMask, traitTwoSrcReg0, traitTwoSrcReg1, maskTrait2);
-            Select(traitTwoDstReg, traitTwoSrcReg0, traitTwoSrcReg1, selMask);
-            Duplicate(traitTwoTmpReg, static_cast<ActualT>(0));
-            Select(traitTwoDstReg, traitTwoDstReg, traitTwoTmpReg, maskTrait2);
-            B64TraitTwoToTraitOne(dstReg, traitTwoDstReg);
-        }
-    } else if constexpr (CheckRegTrait<U, RegTraitNumTwo>()) {
-        U tmpReg;
-        MaskReg selMask;
-        Compare<ActualT, CMPMODE::LT>(selMask, srcReg0, srcReg1, mask);
-        Select(dstReg, srcReg0, srcReg1, selMask);
-        Duplicate(tmpReg, static_cast<ActualT>(0));
-        Select(dstReg, dstReg, tmpReg, mask);
-    }
+    MaxMinOperator<false, mode>(dstReg, srcReg0, srcReg1, mask);
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
@@ -1698,10 +1684,8 @@ __simd_callee__ inline void ShiftLeftB64Impl(T& dstReg, T& srcReg0, U& srcReg1, 
     }
 }
 
-template <
-    typename T = DefaultType, typename U = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename S,
-    typename V>
-__simd_callee__ inline void ShiftLeftImpl(S& dstReg, S& srcReg0, V& srcReg1, MaskReg& mask)
+template <typename T, typename U, typename S, typename V>
+__simd_callee__ inline void CheckShiftType()
 {
     using ActualT = typename S::ActualT;
     using ActualU = typename V::ActualT;
@@ -1713,6 +1697,16 @@ __simd_callee__ inline void ShiftLeftImpl(S& dstReg, S& srcReg0, V& srcReg1, Mas
     static_assert(
         SupportType<ActualU, int8_t, int16_t, int32_t, int64_t>(),
         "current src1 data type is not supported on current device!");
+}
+
+template <
+    typename T = DefaultType, typename U = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename S,
+    typename V>
+__simd_callee__ inline void ShiftLeftImpl(S& dstReg, S& srcReg0, V& srcReg1, MaskReg& mask)
+{
+    using ActualT = typename S::ActualT;
+    using ActualU = typename V::ActualT;
+    CheckShiftType<T, U, S, V>();
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(),
         "current ShiftLeft api only supported Mode ZEROING on current device!");
@@ -1781,14 +1775,7 @@ __simd_callee__ inline void ShiftRightImpl(S& dstReg, S& srcReg0, V& srcReg1, Ma
 {
     using ActualT = typename S::ActualT;
     using ActualU = typename V::ActualT;
-    static_assert(Std::is_same_v<T, DefaultType> || Std::is_same_v<T, ActualT>, "T type is not correct!");
-    static_assert(Std::is_same_v<U, DefaultType> || Std::is_same_v<U, ActualU>, "T type is not correct!");
-    static_assert(
-        SupportType<ActualT, uint8_t, int8_t, uint16_t, int16_t, uint32_t, int32_t, uint64_t, int64_t>(),
-        "current data type is not supported on current device!");
-    static_assert(
-        SupportType<ActualU, int8_t, int16_t, int32_t, int64_t>(),
-        "current src1 data type is not supported on current device!");
+    CheckShiftType<T, U, S, V>();
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING>(),
         "current ShiftRight api only supported Mode ZEROING on current device!");

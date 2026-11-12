@@ -84,18 +84,7 @@ __aicore__ inline void GetArchVersionImpl(uint32_t& coreVersion)
     coreVersion = static_cast<uint32_t>((static_cast<uint64_t>(get_arch_ver()) >> coreVersionOffset) & 0xFFFFF);
 }
 
-__aicore__ inline int64_t GetSubBlockNumImpl()
-{
-    if ASCEND_IS_AIC {
-        return 1;
-    } else {
-#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
-        return g_taskRation;
-#else
-        return get_subblockdim();
-#endif
-    }
-}
+__aicore__ inline int64_t GetSubBlockNumImpl() { return GetTaskRationImpl(); }
 
 __aicore__ inline int64_t GetProgramCounterImpl()
 {

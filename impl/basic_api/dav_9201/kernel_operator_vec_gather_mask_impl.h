@@ -57,6 +57,17 @@ __aicore__ inline void GatherMaskAllNormal(
 }
 
 template <typename T>
+__simd_callee__ inline void GatherMaskStoreReg(Reg::RegTensor<T>& dstReg, Reg::RegTensor<T>& srcReg, Reg::MaskReg& mask)
+{
+    if constexpr (SupportType<T, bfloat16_t>()) {
+        Reg::GatherMask<uint16_t, Reg::GatherMaskMode::STORE_REG>(
+            (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint16_t>&)srcReg, mask);
+    } else {
+        Reg::GatherMask<T, Reg::GatherMaskMode::STORE_REG>(dstReg, srcReg, mask);
+    }
+}
+
+template <typename T>
 __simd_vf__ inline void GatherMaskAllReduceElePerVec(
     __ubuf__ T* dst, __ubuf__ T* src0, const uint32_t mask, const GatherMaskParams reducev2Params,
     uint16_t innerRepeatTimes, uint8_t ElePerBlkT)
@@ -76,12 +87,7 @@ __simd_vf__ inline void GatherMaskAllReduceElePerVec(
                 src0 + i * reducev2Params.src0RepeatStride * ElePerBlkT +
                     j * 8 * reducev2Params.src0BlockStride * ElePerBlkT,
                 reducev2Params.src0BlockStride, loadMask);
-            if constexpr (SupportType<T, bfloat16_t>()) {
-                Reg::GatherMask<uint16_t, Reg::GatherMaskMode::STORE_REG>(
-                    (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint16_t>&)srcReg, loadMask);
-            } else {
-                Reg::GatherMask<T, Reg::GatherMaskMode::STORE_REG>(dstReg, srcReg, loadMask);
-            }
+            GatherMaskStoreReg(dstReg, srcReg, loadMask);
             Reg::StoreUnAlign(dst, dstReg, ureg);
         }
     }
@@ -135,12 +141,7 @@ __simd_vf__ inline void GatherMaskSqueezeNormalTmpBuffer(
     for (uint16_t i = 0; i < reducev2Params.repeatTimes; ++i) {
         Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
             srcReg, src0, reducev2Params.src0BlockStride, reducev2Params.src0RepeatStride, loadMask);
-        if constexpr (SupportType<T, bfloat16_t>()) {
-            Reg::GatherMask<uint16_t, Reg::GatherMaskMode::STORE_REG>(
-                (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint16_t>&)srcReg, patternMask);
-        } else {
-            Reg::GatherMask<T, Reg::GatherMaskMode::STORE_REG>(dstReg, srcReg, patternMask);
-        }
+        GatherMaskStoreReg(dstReg, srcReg, patternMask);
         Reg::StoreUnAlign(dst, dstReg, ureg);
     }
     Reg::StoreUnAlignPost(dst, ureg);
@@ -350,12 +351,7 @@ __simd_vf__ inline void GatherMaskReduceElePerVec(
                 Reg::MaskGenWithRegTensor<U, 0>(patternMask, patternReg);
             }
             Reg::MaskAnd(patternMask, patternMask, loadMask, loadMask);
-            if constexpr (SupportType<T, bfloat16_t>()) {
-                Reg::GatherMask<uint16_t, Reg::GatherMaskMode::STORE_REG>(
-                    (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint16_t>&)srcReg, patternMask);
-            } else {
-                Reg::GatherMask<T, Reg::GatherMaskMode::STORE_REG>(dstReg, srcReg, patternMask);
-            }
+            GatherMaskStoreReg(dstReg, srcReg, patternMask);
             Reg::StoreUnAlign(dst, dstReg, ureg);
         }
     }
@@ -400,12 +396,7 @@ __simd_vf__ inline void GatherMaskCalOneRepMask(
             Reg::MaskGenWithRegTensor<U, 0>(patternMask, patternReg);
         }
         Reg::MaskAnd(patternMask, patternMask, loadMask, loadMask);
-        if constexpr (SupportType<T, bfloat16_t>()) {
-            Reg::GatherMask<uint16_t, Reg::GatherMaskMode::STORE_REG>(
-                (Reg::RegTensor<uint16_t>&)dstReg, (Reg::RegTensor<uint16_t>&)srcReg, patternMask);
-        } else {
-            Reg::GatherMask<T, Reg::GatherMaskMode::STORE_REG>(dstReg, srcReg, patternMask);
-        }
+        GatherMaskStoreReg(dstReg, srcReg, patternMask);
         Reg::StoreUnAlign(dst, dstReg, ureg);
     }
     Reg::StoreUnAlignPost(dst, ureg);
