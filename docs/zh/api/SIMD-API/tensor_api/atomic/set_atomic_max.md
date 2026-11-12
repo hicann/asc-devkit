@@ -58,7 +58,7 @@ __aicore__ inline void set_atomic_max()
 - 支持的数据通路为UB/L0C Buffer->GM。
 - 开启后对后续所有目的地址为GM的搬运指令生效，可以调用[`disable_dma_atomic`](disable_dma_atomic.md)关闭。
 - 本接口执行前不会自动将GM上已有数据置零。若期望原子取大前GM上的原始数据为零，需手动清零。
-- 本接口仅对后续通过MTE1/MTE2/MTE3单元搬运且目的地址为GM的搬运指令生效，对标量写GM指令不生效。
+- 本接口仅对后续通过MTE3、Fixpipe单元搬运且目的地址为GM的搬运指令生效，对标量写GM指令不生效。
 - 后续搬运指令的操作数据类型必须与`T`一致。
 - 本接口不能保证后续搬运指令的执行顺序。
 

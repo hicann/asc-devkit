@@ -1,6 +1,6 @@
 ---
 okftype: reference.api
-description: "为后续目的地址为 Global Memory 的数据搬运开启原子比较取大：与 GM 已有数据比较后把最大值写回。提供 int8、int16、int32、float16、bfloat、float 六种无参原型选择数据类型，需与后续搬运一致；仅对 MTE1/MTE2/MTE3 搬运生效，可用 asc_disable_dma_atomic 关闭。"
+description: "为后续目的地址为 Global Memory 的数据搬运开启原子比较取大：与 GM 已有数据比较后把最大值写回。提供 int8、int16、int32、float16、bfloat、float 六种无参原型选择数据类型，需与后续搬运一致；仅对 MTE3、Fixpipe 搬运生效，可用 asc_disable_dma_atomic 关闭。"
 tag:
   - roles: [data_movement_configuration]
   - operations: [maximum]
@@ -99,7 +99,7 @@ PIPE_S
     <!-- end id9 -->
 - 本接口调用后会对后续所有目的地址为GM的搬运指令开启原子操作，可以调用[asc_disable_dma_atomic](asc_disable_dma_atomic.md)接口关闭原子操作。
 - 该接口执行前不会自动将GM上已有数据置零。若开发者期望在原子取大前GM上的原始数据为零，则需手动清零。
-- 本接口仅对后续目的地址为GM的搬运指令（通过MTE1/MTE2/MTE3单元搬运）生效，对于标量写GM的指令（例如[asc_store_dev](../../scalar_compute/scalar_store/asc_store_dev.md)）不生效。
+- 本接口仅对后续目的地址为GM的搬运指令（通过MTE3、Fixpipe单元搬运）生效，对于标量写GM的指令（例如[asc_store_dev](../../scalar_compute/scalar_store/asc_store_dev.md)）不生效。
 - 本接口与紧邻的后续搬运指令之间的同步由硬件保证，因此以下示例中插入的多流水同步是不必要的：
 
     ```c

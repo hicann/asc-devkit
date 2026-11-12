@@ -42,7 +42,7 @@ ASC_HOST_CHECK_CONDITION(condition, violation_message)
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| condition | 输入 | 待检查的Host侧条件。条件为`true`时检查通过；条件为`false`时输出诊断信息，并调用C++标准库`<cassert>`中的`assert`宏。 |
+| condition | 输入 | 待检查的Host侧条件。条件为`true`时检查通过；条件为`false`时输出自定义错误信息，并调用C++标准库`<cassert>`中的`assert`宏。 |
 | violation_message | 输入 | 条件不成立时输出的自定义错误信息。传入`nullptr`时，输出默认信息`No violation message provided.`。 |
 
 ## 返回值说明
@@ -52,7 +52,22 @@ ASC_HOST_CHECK_CONDITION(condition, violation_message)
 ## 约束说明
 
 - 仅支持在Host侧代码中调用，不支持在Device侧代码中调用。
-- 在CMake工程的Release模式下，默认定义`NDEBUG`。此时`assert`不会检查条件，接口输出诊断信息后返回，调用方后续代码会继续执行。
+- `NDEBUG`宏用于控制接口内部`assert`断言的行为，可通过以下方式定义或取消定义：
+    - 可通过编译选项`-DNDEBUG`或在包含`utils/debug/check_condition.h`之前增加`#define NDEBUG`定义`NDEBUG`。
+
+        ```bash
+        bisheng example.asc -o main --npu-arch=dav-2201 -DNDEBUG && ./main
+        ```
+
+    - 不设置`NDEBUG`相关编译选项且未在源代码中定义`NDEBUG`时，默认未定义`NDEBUG`。
+
+        ```bash
+        bisheng example.asc -o main --npu-arch=dav-2201 && ./main
+        ```
+
+- 当输入条件为`false`时，接口的行为与是否定义`NDEBUG`相关：
+  - 定义了`NDEBUG`时，接口输出自定义错误信息后返回，后续代码会继续执行。此时多次调用`ASC_HOST_CHECK_CONDITION`（输入条件均为`false`）时，会依次输出多条自定义错误信息。在CMake工程的Release模式下，默认定义`NDEBUG`。
+  - 未定义`NDEBUG`时，断言失败会导致程序异常终止。此时多次调用`ASC_HOST_CHECK_CONDITION`（输入条件均为`false`）时，只会输出首次调用对应的自定义错误信息。
 - 接口内部使用已经求值的条件触发断言，条件表达式只求值一次。
 
 <!-- npu="A3,910b" id8 -->
