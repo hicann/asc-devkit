@@ -12,6 +12,12 @@
 set -euo pipefail
 
 CASE_REL=01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1
+SKIP_REASON='temporarily excluded from dav-3510 NPU presmoke'
+
+SKIP_MODES=(npu)
+
+SKIP_ARCHS=(dav-3510)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"

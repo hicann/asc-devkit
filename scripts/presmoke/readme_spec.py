@@ -187,14 +187,13 @@ def _is_runnable_block(block: str) -> bool:
         return False
     if text.startswith("pip3 install") or text.startswith("pip install"):
         return False
-    # 只有「整块都是环境设置」才拒绝。原先的判断是「块里出现 set_env.sh 就拒绝」，而
-    # cube_buffer_dump 这类 README 把 source set_env.sh 和编译运行命令写在同一个块里，
-    # 整块被丢掉后会**静默**退化成 convention_commands 的通用五件套 —— 用例照样是绿的，
-    # 但跑的已经不是 README 写的东西（verify_result.py 少传 4 个参数都发现不了）。
+    # 只有「整块都是环境设置」才拒绝，按 part 判（不是整行），否则混排 source 的块会被误拒。
     payload = [
-        line.strip()
+        part
         for line in text.splitlines()
-        if line.strip() and not line.strip().startswith("#") and not _is_set_env_line(line)
+        if line.strip() and not line.strip().startswith("#")
+        for part in (p.strip() for p in _split_shell_line(line.strip()))
+        if part and not _is_set_env_line(part)
     ]
     if not payload:
         return False
@@ -208,14 +207,13 @@ def split_commands(block: str) -> List[Command]:
         line = _strip_comment(original).strip()
         if not line:
             continue
-        # presmoke 自己已经 source 过 CANN 环境，README 里的 source ${install_path}/... 原样
-        # 搬过来只会因为 ${install_path} 未定义而失败。export 行不在此列，由
-        # merge_export_commands_into_run 另行处理。
-        if _is_set_env_line(line):
-            continue
         for part in _split_shell_line(line):
             part = part.strip()
             if not part:
+                continue
+            # 丢掉 source set_env.sh（export 另由 merge_export_commands_into_run 处理）；
+            # 按 part 判、不按整行判，否则会连带丢掉同行的其他命令。
+            if _is_set_env_line(part):
                 continue
             assignments, rest = _consume_assignments(part)
             env.update(assignments)

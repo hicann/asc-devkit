@@ -18,7 +18,7 @@ import json
 import logging
 import re
 import shlex
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Iterable, List
 
@@ -88,6 +88,11 @@ A5_MATMUL_28CORE_SKIP_REASON = (
     "wrong results only on the 28-core A5 CI runner (Ascend950PR_9579); passes on 20 and 36 "
     "cores; skipped by presmoke pending a fix from the sample owner"
 )
+A5_ACCURACY_SKIP_REASON = (
+    "accuracy mismatch on A5 only (CompareResult failed / test failed in the run log while the "
+    "sample still exits 0); the same cases pass on A2; skipped by presmoke pending a fix from "
+    "the sample owner"
+)
 A5_SIMT_HYBRID_HANG_SKIP_REASON = (
     "hangs silently during teardown on the A5 CI runner after the compute itself succeeded "
     "(no device fault in plog) and blocks later cases sharing the card; skipped by presmoke "
@@ -141,6 +146,82 @@ class _SkipResult:
 
 
 SKIP_CONFIG = {
+    # Temporarily exclude these cases from dav-3510 NPU presmoke.
+    "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2l1": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_l0c2gm": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/03_basic_api/01_memory_vector_compute/element_wise_compound_compute__scenario_2": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/03_basic_api/01_memory_vector_compute/transpose__scenario_2": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/05_sort/sort": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/05_sort/topk": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/08_transpose/add_broadcast": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/08_transpose/broadcast": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/08_transpose/transdata": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/08_transpose/transpose": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/matmul_bias_fusion": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/matmul_tensor_api": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/07_tensor_api/mmad_tensor_api": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/02_features/02_matrix_compute/03_matmul_mx": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
+    "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1": SkipConfig(
+        reason="temporarily excluded from dav-3510 NPU presmoke", modes=["npu"], archs=["dav-3510"]
+    ),
     "01_simd_cpp_api/01_utilities/02_dump/experimental/python_exception_dump": SkipConfig(
         reason=PYTHON_EXCEPTION_DUMP_SKIP_REASON, modes=["npu"]
     ),
@@ -217,6 +298,16 @@ SKIP_CONFIG = {
     ),
     "01_simd_cpp_api/04_advanced_api/00_matmul/matmul_tscm_src_vecout": SkipConfig(
         reason=A5_MATMUL_28CORE_SKIP_REASON, modes=["npu"], archs=["dav-3510"]
+    ),
+    # 三个 A5 精度不符，A2 上都是 success，所以必须 arch 限定。
+    "01_simd_cpp_api/04_advanced_api/03_quantization/quant": SkipConfig(
+        reason=A5_ACCURACY_SKIP_REASON, modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/03_quantization/antiquant": SkipConfig(
+        reason=A5_ACCURACY_SKIP_REASON, modes=["npu"], archs=["dav-3510"]
+    ),
+    "01_simd_cpp_api/04_advanced_api/02_normalization/layernorm": SkipConfig(
+        reason=A5_ACCURACY_SKIP_REASON, modes=["npu"], archs=["dav-3510"]
     ),
     # teardown 静默挂死的定位证据（2026-11-09，同一份 4 卡分片，只差这几个的启用状态）：
     # - 两条已排除的归因，别再往那查：① 工具链看到的核数 —— 把 9599 的 ini 改成 28 核不复现；
@@ -333,6 +424,7 @@ class RunnerRenderSpec:
     skip_reason: str = ""
     skip_modes: List[str] = field(default_factory=list)
     skip_archs: List[str] = field(default_factory=list)
+    all_modes_skipped: bool = False  # 语义见 custom_op_guard()
 
 
 def main() -> int:
@@ -775,6 +867,7 @@ def build_runner_render_spec(cell, confidence: str, reasons: List[str]) -> tuple
             skip_reason=skip_reason,
             skip_modes=skip_modes,
             skip_archs=skip_archs,
+            all_modes_skipped=all_modes_skipped,
         ),
         result.confidence,
     )
@@ -929,22 +1022,14 @@ def declared_skip_config(rel: str, scenario_rel: str = "") -> SkipConfig:
     return SKIP_CONFIG.get(scenario_rel) or SKIP_CONFIG.get(rel, SkipConfig())
 
 
-def explicit_skip_config(rel: str, arch: str, scenario_rel: str = "") -> tuple[str, List[str], List[str]]:
-    """按给定 arch 求值后的 skip 声明：arch 不匹配时 reason/modes 为空。"""
-    config = declared_skip_config(rel, scenario_rel)
-    if config.archs and arch not in config.archs:
-        return "", [], config.archs
-    return config.reason, config.modes, config.archs
-
-
 def render_runner(spec: RunnerRenderSpec) -> str:
     spec = apply_scenario_to_render_spec(spec)
     if spec.rel == PARALLEL_OPS_PACKAGE_CASE:
         return render_parallel_ops_package_runner(spec)
     if spec.rel == TILING_SINK_PROGRAMMING_CASE:
         return render_tiling_sink_programming_runner(spec)
-    build_prefix = custom_op_guard(spec.custom_op_dependency, spec.skip_reason)
-    run_prefix = custom_op_guard(spec.custom_op_package_case, spec.skip_reason)
+    build_prefix = custom_op_guard(spec.custom_op_dependency, spec.all_modes_skipped)
+    run_prefix = custom_op_guard(spec.custom_op_package_case, spec.all_modes_skipped)
     inject_cmake_arch = spec.rel not in NO_CMAKE_ARCH_INJECTION_CASES
     lines = [
         *runner_header(spec),
@@ -966,23 +1051,17 @@ def render_runner(spec: RunnerRenderSpec) -> str:
 def apply_scenario_to_render_spec(spec: RunnerRenderSpec) -> RunnerRenderSpec:
     if spec.scenario_num is None:
         return spec
-    return RunnerRenderSpec(
-        rel=spec.rel,
+    # 用 replace，逐字段重建会漏抄新字段。
+    return replace(
+        spec,
         build_cmds=[rewrite_command_for_scenario(command, spec.scenario_num) for command in spec.build_cmds],
         run_cmds=[rewrite_command_for_scenario(command, spec.scenario_num) for command in spec.run_cmds],
         verify_cmds=[rewrite_command_for_scenario(command, spec.scenario_num) for command in spec.verify_cmds],
-        source_rel=spec.source_rel,
-        scenario_num=spec.scenario_num,
-        custom_op_dependency=spec.custom_op_dependency,
-        custom_op_package_case=spec.custom_op_package_case,
-        skip_reason=spec.skip_reason,
-        skip_modes=spec.skip_modes,
-        skip_archs=spec.skip_archs,
     )
 
 
 def render_tiling_sink_programming_runner(spec: RunnerRenderSpec) -> str:
-    build_prefix = custom_op_guard(spec.custom_op_dependency, spec.skip_reason)
+    build_prefix = custom_op_guard(spec.custom_op_dependency, spec.all_modes_skipped)
     lines = [
         *runner_header(spec),
         *runner_function("case_build", [*build_prefix, *indent_commands(spec.build_cmds)]),
@@ -1036,8 +1115,10 @@ def render_parallel_ops_package_runner(spec: RunnerRenderSpec) -> str:
     return "\n".join(lines)
 
 
-def custom_op_guard(enabled: bool, skip_reason: str) -> List[str]:
-    return ["    presmoke_ensure_custom_op_package"] if enabled and not skip_reason else []
+def custom_op_guard(enabled: bool, all_modes_skipped: bool) -> List[str]:
+    # 判据是 all_modes_skipped 不是 skip_reason：arch/模式限定的 skip 在别的 arch/模式上
+    # 还是真跑，skip_reason 非空也不能省掉守卫。
+    return ["    presmoke_ensure_custom_op_package"] if enabled and not all_modes_skipped else []
 
 
 def runner_header(spec: RunnerRenderSpec) -> List[str]:

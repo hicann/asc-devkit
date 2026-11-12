@@ -17,7 +17,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from presmoke.readme_spec import parse_readme, split_commands
+from presmoke.readme_spec import _is_runnable_block, parse_readme, split_commands
 
 
 README = """# sample
@@ -47,6 +47,22 @@ README = """# sample
 
 
 class ReadmeSpecTest(unittest.TestCase):
+    def test_set_env_is_dropped_per_segment_not_per_line(self) -> None:
+        # set_env.sh 和真正要跑的命令写在同一行是 README 里的常见写法。SET_ENV_RE 只锚定
+        # 行首，所以按整行判会把 cd/make/./demo 一起丢掉 —— 而 _is_runnable_block 现在
+        # 放行这种混排块，于是 case_run 变空、用例照样返回 0。失败形态是静默假绿，不会
+        # 有人发现，所以这里钉住：只丢 source 那一段。
+        block = "source /opt/cann/set_env.sh && cd build && ./demo"
+        self.assertTrue(_is_runnable_block(block), "混排块不该被整块拒掉")
+        commands = split_commands(block)
+        self.assertEqual([c.raw for c in commands], ["cd build", "./demo"])
+        self.assertEqual([c.kind for c in commands], ["shell", "run"])
+        # 分号形式同理
+        commands = split_commands(". /opt/cann/set_env.sh; make -j")
+        self.assertEqual([c.raw for c in commands], ["make -j"])
+        # 整行只有 set_env 时照旧整条丢掉
+        self.assertEqual(split_commands("source /opt/cann/set_env.sh"), [])
+
     def test_split_commands_keeps_env_and_classifies(self) -> None:
         commands = split_commands("SCENARIO=0\ncmake ..; make -j && ./demo")
         self.assertEqual([c.kind for c in commands], ["cmake", "make", "run"])

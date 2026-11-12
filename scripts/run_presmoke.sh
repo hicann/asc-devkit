@@ -272,13 +272,17 @@ resolve_multi_card_shard_parallel() {
         shard_jobs=16
     fi
     shard_jobs="$(resolve_shard_parallel_value "$JOBS" "$shard_jobs")"
+    # JOBS 可能是 0/非数字，下面拿它做除数，不兜住会在 set -e 下炸掉整个 presmoke。
+    if ! [[ "$shard_jobs" =~ ^[0-9]+$ ]] || (( shard_jobs < 1 )); then
+        shard_jobs=1
+    fi
     shard_make_jobs=$(( per_card_cpus / shard_jobs ))
     if (( shard_make_jobs < 1 )); then
         shard_make_jobs=1
     fi
     shard_cpu_run_slots="$per_card_cpus"
     printf '%s\t%s\t%s\t%s\n' \
-        "$(resolve_shard_parallel_value "$JOBS" "$shard_jobs")" \
+        "$shard_jobs" \
         "$(resolve_shard_parallel_value "$MAKE_JOBS" "$shard_make_jobs")" \
         "$(resolve_shard_parallel_value "$CPU_RUN_SLOTS" "$shard_cpu_run_slots")" \
         "$per_card_cpus"

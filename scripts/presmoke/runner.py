@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import os
 import queue
+import re
 import shutil
 import signal
 import subprocess
@@ -22,7 +23,7 @@ import concurrent.futures
 import threading
 import time
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Iterable, Iterator, List, Optional, Union
 
@@ -31,7 +32,7 @@ from .model import Cell, Command, NpuStats, RunCellsResult, RunResult, StepResul
 
 _worker_device = threading.local()
 
-NpuGate = Callable[[Callable[[], int]], tuple[int, float]]
+NpuGate = Callable[[Callable[[], "CommandOutcome"]], "tuple[CommandOutcome, float]"]
 
 PRESERVE_BUILD_ARTIFACT_CASES = {"01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op"}
 PARALLEL_OPS_PACKAGE_CASE = "01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/parallel_ops_package"
@@ -52,6 +53,28 @@ BUILD_AFTER_CASES = {
 }
 CPU_RUN_TIMEOUT = 300
 
+# rc=0 不可信（样例普遍丢弃 ACL 返回值），所以额外按输出判一次；标记集已在健康日志上验证零误报，
+# 加新标记前请照样验证。
+FATAL_LOG_MARKERS = (
+    "EE1003",
+    "EE1018",
+    "No valid context is bound",
+    "ret 107002",
+    "Get kernel function failure",
+    "test failed",
+)
+
+# 真实输出带 golden 文件名，子串匹配命中不上，所以用正则。
+FATAL_LOG_PATTERNS = (re.compile(r"CompareResult \S+ failed"),)
+
+
+def first_fatal_log_marker(output: str) -> Optional[str]:
+    for pattern in FATAL_LOG_PATTERNS:
+        match = pattern.search(output)
+        if match:
+            return match.group(0)
+    return next((marker for marker in FATAL_LOG_MARKERS if marker in output), None)
+
 
 class NpuSlotPool:
     def __init__(self, slots: int) -> None:
@@ -59,7 +82,7 @@ class NpuSlotPool:
             raise ValueError("npu slots must be positive")
         self._sem = threading.BoundedSemaphore(slots)
 
-    def gate(self, fn: Callable[[], int]) -> tuple[int, float]:
+    def gate(self, fn: Callable[[], CommandOutcome]) -> tuple[CommandOutcome, float]:
         started = time.monotonic()
         with self._sem:
             wait_s = time.monotonic() - started
@@ -89,12 +112,19 @@ class PipelineOptions:
 
 
 @dataclass(frozen=True)
+class CommandOutcome:
+    rc: int
+    fatal_log_marker: Optional[str] = None
+
+
+@dataclass(frozen=True)
 class StepRecord:
     command: Command
     rc: int
     duration_s: float
     wait_s: float
     uses_npu: bool
+    fatal_log_marker: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -186,17 +216,25 @@ def execute_single_cell_commands(
         for command in cell.commands:
             if not command.raw or command.kind == "skip":
                 continue
-            step = run_single_command_stage(command, cell, options, state, log)
+            step, marker = run_single_command_stage(command, cell, options, state, log)
             steps.append(step)
-            if step.rc != 0:
-                reason = "timeout" if step.rc == 124 else "nonzero rc"
-                return "FAIL", reason, command.raw, step.rc, steps
+            if step.rc != 0 or marker:
+                reason = failure_reason(step.rc, marker)
+                return "FAIL", reason, command.raw, step.rc or 1, steps
     return "PASS", "", None, 0, steps
+
+
+def failure_reason(rc: int, marker: Optional[str]) -> str:
+    if rc == 124:
+        return "timeout"
+    if rc != 0:
+        return "nonzero rc"
+    return f"fatal log marker: {marker}"
 
 
 def run_single_command_stage(
     command: Command, cell: Cell, options: RunOptions, state: SingleCellRunState, log
-) -> StepResult:
+) -> tuple[StepResult, Optional[str]]:
     stage_name = stage_name_for_command(command)
     stage_log_file = state.stage_log_dir / f"{safe_log_name(cell.example.rel_path)}__{cell.mode}__{stage_name}.log"
     with open_stage_log(stage_log_file, cell, state.run_dir, stage_name) as stage_log:
@@ -207,7 +245,7 @@ def run_single_command_stage(
         record = execute_command_step(command, CommandContext(cell, state.run_dir, log, stage_log), options)
         step = step_result_from_record(record)
         write_step_result(record, log, stage_log)
-    return step
+    return step, record.fatal_log_marker
 
 
 def step_result_from_record(step: StepRecord) -> StepResult:
@@ -275,8 +313,8 @@ def cleanup_run_artifacts(cells: Iterable[Cell], log_dir: Path, keep_artifacts: 
         with log_file.open("a", encoding="utf-8", errors="replace") as log:
             for command in cleanup_commands:
                 log.write(f"\n[CLEANUP] $ {command.raw}\n")
-                rc = _run_command(command, cell.example.path, log, timeout=60)
-                log.write(f"[CLEANUP] rc={rc}\n")
+                outcome = _run_command(command, cell.example.path, log, timeout=60)
+                log.write(f"[CLEANUP] rc={outcome.rc}\n")
 
 
 class _PipelineExecutor:
@@ -631,17 +669,17 @@ def run_commands(
                 ),
             )
             if step.uses_npu and pending_npu_wait_s:
-                step = StepRecord(
-                    step.command, step.rc, step.duration_s, step.wait_s + pending_npu_wait_s, step.uses_npu
-                )
+                # 用 replace，逐字段重建会漏抄 fatal_log_marker。
+                step = replace(step, wait_s=step.wait_s + pending_npu_wait_s)
                 pending_npu_wait_s = 0.0
             step_rc = step.rc
+            marker = step.fatal_log_marker
             append_step_result(result.steps, step, context.log, stage_log)
-        if step_rc != 0:
+        if step_rc != 0 or marker:
             result.status = "FAIL"
-            result.reason = "timeout" if step_rc == 124 else "nonzero rc"
+            result.reason = failure_reason(step_rc, marker)
             result.failing_step = command.raw
-            result.rc = step_rc
+            result.rc = step_rc or 1
             return
 
 
@@ -753,18 +791,23 @@ def execute_command_step(command: Command, context: CommandContext, options: Run
     uses_npu = command_uses_npu(context.cell, command)
     step_timeout = select_timeout(context.cell, command, uses_npu, options.timeout, options.cpu_run_timeout)
     if uses_npu and options.npu_gate:
-        step_rc, wait_s = options.npu_gate(
+        outcome, wait_s = options.npu_gate(
             lambda: _run_command(command, context.run_dir, _TeeLog(context.log, context.stage_log), step_timeout)
         )
     else:
-        step_rc = _run_command(command, context.run_dir, _TeeLog(context.log, context.stage_log), step_timeout)
+        outcome = _run_command(command, context.run_dir, _TeeLog(context.log, context.stage_log), step_timeout)
         wait_s = 0.0
     return StepRecord(
-        command=command, rc=step_rc, duration_s=time.monotonic() - command_started, wait_s=wait_s, uses_npu=uses_npu
+        command=command,
+        rc=outcome.rc,
+        duration_s=time.monotonic() - command_started,
+        wait_s=wait_s,
+        uses_npu=uses_npu,
+        fatal_log_marker=outcome.fatal_log_marker,
     )
 
 
-def _run_command(command: Command, cwd: Path, log, timeout: Optional[int]) -> int:
+def _run_command(command: Command, cwd: Path, log, timeout: Optional[int]) -> CommandOutcome:
     env = os.environ.copy()
     env.update(command.env)
     card = getattr(_worker_device, "card", None)
@@ -790,13 +833,16 @@ def _run_command(command: Command, cwd: Path, log, timeout: Optional[int]) -> in
             log.write(stdout or "")
             log.write(f"\n[TIMEOUT] after {timeout}s\n")
             log.flush()
-            return 124
+            return CommandOutcome(124)
     except OSError as exc:
         log.write(f"[ERROR] failed to start command: {exc}\n")
-        return 127
+        return CommandOutcome(127)
     log.write(stdout or "")
+    marker = first_fatal_log_marker(stdout or "")
+    if marker and proc.returncode == 0:
+        log.write(f"\n[FATAL LOG] rc=0 但输出命中 {marker!r}，按失败处理\n")
     log.flush()
-    return proc.returncode
+    return CommandOutcome(proc.returncode, marker)
 
 
 def append_step_result(steps: List[StepResult], step: StepRecord, log, stage_log) -> None:

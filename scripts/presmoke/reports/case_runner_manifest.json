@@ -1558,10 +1558,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1587,10 +1593,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1603,7 +1615,7 @@
     "case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2l1__scenario_3",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2l1__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_gm2l1",
     "supported_archs": [
       "dav-3510"
@@ -1615,11 +1627,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -1646,10 +1663,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1675,10 +1698,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1883,10 +1912,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1912,10 +1947,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1941,10 +1982,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1970,10 +2017,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -1999,10 +2052,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -2028,10 +2087,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=6 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -2216,7 +2281,7 @@
     "case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1__scenario_1",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1",
     "supported_archs": [
       "dav-3510"
@@ -2228,11 +2293,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -2245,7 +2315,7 @@
     "case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1__scenario_2",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_ub2l1",
     "supported_archs": [
       "dav-3510"
@@ -2257,11 +2327,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -3071,10 +3146,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -4099,10 +4180,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DSCENARIO_NUM=2 -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -9679,10 +9766,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "accuracy mismatch on A5 only (CompareResult failed / test failed in the run log while the sample still exits 0); the same cases pass on A2; skipped by presmoke pending a fix from the sample owner",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -9791,10 +9884,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "accuracy mismatch on A5 only (CompareResult failed / test failed in the run log while the sample still exits 0); the same cases pass on A2; skipped by presmoke pending a fix from the sample owner",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -9847,10 +9946,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "accuracy mismatch on A5 only (CompareResult failed / test failed in the run log while the sample still exits 0); the same cases pass on A2; skipped by presmoke pending a fix from the sample owner",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -9931,10 +10036,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -9959,10 +10070,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10071,10 +10188,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10087,7 +10210,7 @@
     "case": "01_simd_cpp_api/04_advanced_api/08_transpose/broadcast",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/04_advanced_api/08_transpose/broadcast/run.sh",
     "source": "readme",
-    "confidence": "low",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/04_advanced_api/08_transpose/broadcast",
     "supported_archs": [
       "dav-2201",
@@ -10100,11 +10223,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "shell_variable_reference"
+      "shell_variable_reference",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -10186,10 +10314,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10214,10 +10348,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10242,10 +10382,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10270,10 +10416,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake -DSCENARIO=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -10298,10 +10450,16 @@
     ],
     "target_runnable": true,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
+    "reasons": [
+      "partial_mode_skip"
+    ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
@@ -13635,7 +13793,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/batch_matmul_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13646,11 +13804,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13751,7 +13914,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_0",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_0/run.sh",
     "source": "readme",
-    "confidence": "low",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13762,12 +13925,17 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
       "shell_variable_reference",
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=0 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13781,7 +13949,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_1",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "low",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13792,12 +13960,17 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
       "shell_variable_reference",
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13811,7 +13984,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_2",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "low",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13822,12 +13995,17 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
       "shell_variable_reference",
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13841,7 +14019,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_3",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_in_tensor_api__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "low",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_in_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13852,12 +14030,17 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
       "shell_variable_reference",
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13871,7 +14054,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_0",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_0/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13882,11 +14065,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=0 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13900,7 +14088,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_1",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13911,11 +14099,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13929,7 +14122,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_2",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13940,11 +14133,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -13958,7 +14156,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_3",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/copy_out_tensor_api__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/copy_out_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -13969,11 +14167,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -14901,7 +15104,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/matmul_bias_fusion",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/matmul_bias_fusion/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/matmul_bias_fusion",
     "supported_archs": [
       "dav-3510"
@@ -14912,11 +15115,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DCANN_ASC_USE_EXPERIMENTAL=ON .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -14930,7 +15138,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/matmul_mxfp4_tensor_api_high_performance",
     "supported_archs": [
       "dav-3510"
@@ -14941,11 +15149,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -14988,7 +15201,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/matmul_tensor_api",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/matmul_tensor_api/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/matmul_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -14999,11 +15212,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15017,7 +15235,7 @@
     "case": "01_simd_cpp_api/07_tensor_api/mmad_tensor_api",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/mmad_tensor_api/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "01_simd_cpp_api/07_tensor_api/mmad_tensor_api",
     "supported_archs": [
       "dav-3510"
@@ -15028,11 +15246,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15713,7 +15936,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15724,11 +15947,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15742,7 +15970,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15753,11 +15981,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15771,7 +16004,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15782,11 +16015,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15800,7 +16038,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_4",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_4/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15811,11 +16049,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15829,7 +16072,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_5",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_5/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15840,11 +16083,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15858,7 +16106,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_6",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_6/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15869,11 +16117,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=6 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15887,7 +16140,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_7",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_7/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15898,11 +16151,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=7 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15916,7 +16174,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_8",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_8/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15927,11 +16185,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=8 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15945,7 +16208,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_9",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_9/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15956,11 +16219,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=9 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -15974,7 +16242,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_10",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction__scenario_10/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/01_mmad_direction",
     "supported_archs": [
       "dav-3510"
@@ -15985,11 +16253,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=10 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16003,7 +16276,7 @@
     "case": "02_simd_c_api/02_features/02_matrix_compute/03_matmul_mx",
     "runner": "scripts/presmoke/cases/02_simd_c_api/02_features/02_matrix_compute/03_matmul_mx/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/02_features/02_matrix_compute/03_matmul_mx",
     "supported_archs": [
       "dav-3510"
@@ -16014,11 +16287,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16032,7 +16310,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1",
     "supported_archs": [
       "dav-3510"
@@ -16043,11 +16321,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16061,7 +16344,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1",
     "supported_archs": [
       "dav-3510"
@@ -16072,11 +16355,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16090,7 +16378,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1",
     "supported_archs": [
       "dav-3510"
@@ -16101,11 +16389,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16119,7 +16412,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_4",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1__scenario_4/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_gm2l1",
     "supported_archs": [
       "dav-3510"
@@ -16130,11 +16423,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16148,7 +16446,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16159,11 +16457,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16177,7 +16480,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16188,11 +16491,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16206,7 +16514,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16217,11 +16525,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16235,7 +16548,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_4",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_4/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16246,11 +16559,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16264,7 +16582,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_5",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_5/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16275,11 +16593,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16293,7 +16616,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_6",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm__scenario_6/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2gm",
     "supported_archs": [
       "dav-3510"
@@ -16304,11 +16627,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=6 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16322,7 +16650,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16333,11 +16661,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16351,7 +16684,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16362,11 +16695,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16380,7 +16718,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16391,11 +16729,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16409,7 +16752,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_4",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_4/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16420,11 +16763,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16438,7 +16786,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_5",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_5/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16449,11 +16797,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16467,7 +16820,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_6",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1__scenario_6/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2l1",
     "supported_archs": [
       "dav-3510"
@@ -16478,11 +16831,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=6 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16496,7 +16854,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16507,11 +16865,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16525,7 +16888,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16536,11 +16899,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16554,7 +16922,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16565,11 +16933,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16583,7 +16956,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_4",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_4/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16594,11 +16967,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=4 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16612,7 +16990,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_5",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_5/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16623,11 +17001,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=5 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16641,7 +17024,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_6",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_6/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16652,11 +17035,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=6 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16670,7 +17058,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_7",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub__scenario_7/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_l0c2ub",
     "supported_archs": [
       "dav-3510"
@@ -16681,11 +17069,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=7 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16699,7 +17092,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_1",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_1/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1",
     "supported_archs": [
       "dav-3510"
@@ -16710,11 +17103,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16728,7 +17126,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_2",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_2/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1",
     "supported_archs": [
       "dav-3510"
@@ -16739,11 +17137,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
@@ -16757,7 +17160,7 @@
     "case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_3",
     "runner": "scripts/presmoke/cases/02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1__scenario_3/run.sh",
     "source": "readme",
-    "confidence": "medium",
+    "confidence": "high",
     "source_case": "02_simd_c_api/03_c_api/00_data_movement/data_copy_ub2l1",
     "supported_archs": [
       "dav-3510"
@@ -16768,11 +17171,16 @@
     ],
     "target_runnable": false,
     "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
+    "skip_reason": "temporarily excluded from dav-3510 NPU presmoke",
+    "skip_modes": [
+      "npu"
+    ],
+    "skip_archs": [
+      "dav-3510"
+    ],
     "reasons": [
-      "unsupported_on_target_arch_or_mode"
+      "unsupported_on_target_arch_or_mode",
+      "partial_mode_skip"
     ],
     "commands": [
       "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",

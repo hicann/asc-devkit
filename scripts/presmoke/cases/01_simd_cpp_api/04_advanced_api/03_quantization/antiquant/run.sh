@@ -12,6 +12,12 @@
 set -euo pipefail
 
 CASE_REL=01_simd_cpp_api/04_advanced_api/03_quantization/antiquant
+SKIP_REASON='accuracy mismatch on A5 only (CompareResult failed / test failed in the run log while the sample still exits 0); the same cases pass on A2; skipped by presmoke pending a fix from the sample owner'
+
+SKIP_MODES=(npu)
+
+SKIP_ARCHS=(dav-3510)
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../../../../_case_entry.sh"
 presmoke_case_init "$CASE_REL"

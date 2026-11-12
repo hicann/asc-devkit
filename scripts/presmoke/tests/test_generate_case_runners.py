@@ -18,16 +18,19 @@ import re
 import unittest
 import subprocess
 import tempfile
+from dataclasses import fields
 from pathlib import Path
 
 from presmoke.generate_case_runners import (
+    CUSTOM_OP_PACKAGE_DEPENDENTS,
     NO_CMAKE_ARCH_INJECTION_CASES,
     MS_SANITIZER_SKIP_REASON,
+    TILING_SINK_PROGRAMMING_CASE,
+    apply_scenario_to_render_spec,
     cell_for_spec,
     command_env_prefix,
     command_workdir,
     declared_skip_config,
-    explicit_skip_config,
     expand_scenario_cells,
     is_atc_prerequisite_command,
     merge_export_commands_into_run,
@@ -40,8 +43,20 @@ from presmoke.generate_case_runners import (
     RunnerRenderSpec,
     supported_archs_for_scenario,
 )
+from presmoke.case_runners import CaseRunnerOptions, build_case_runner_cells_with_skips
 from presmoke.model import Command, ExampleSpec
 from presmoke.readme_spec import parse_readme
+
+
+def _declared(rel: str, scenario_rel: str = "") -> tuple[str, list[str], list[str]]:
+    """把 SKIP_CONFIG 的原始声明摊成 (reason, modes, archs)，方便断言。
+
+    注意这里**不按 arch 过滤** —— manifest 本来就带完整声明，arch 是选型层
+    (case_runners.skip_applies_to_arch) 的事。生成器侧曾有一个按 arch 求值的
+    explicit_skip_config()，但生产代码从不调用它，测试在验一条不存在的路径，已删。
+    """
+    config = declared_skip_config(rel, scenario_rel)
+    return config.reason, config.modes, config.archs
 
 
 def render_runner_from_parts(
@@ -421,20 +436,14 @@ presmoke_verify_tiling_sink_task_log_for_pid 222 '{marker}'
         self.assertTrue(
             requires_custom_op_package("01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_custom")
         )
-        reason, modes, _archs = explicit_skip_config(
-            "01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_custom", "dav-2201"
-        )
+        reason, modes, _archs = _declared("01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_custom")
         self.assertIn("tfplugin", reason)
         self.assertEqual(modes, ["npu"])
-        reason, modes, _archs = explicit_skip_config(
-            "01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_builtin", "dav-2201"
-        )
+        reason, modes, _archs = _declared("01_simd_cpp_api/02_features/00_framework/01_tensorflow/tensorflow_builtin")
         self.assertEqual(modes, ["npu"])
 
     def test_matmul_l2cache_skip_config(self) -> None:
-        reason, modes, _archs = explicit_skip_config(
-            "01_simd_cpp_api/04_advanced_api/00_matmul/matmul_l2cache", "dav-2201"
-        )
+        reason, modes, _archs = _declared("01_simd_cpp_api/04_advanced_api/00_matmul/matmul_l2cache")
         self.assertIn("308M", reason)
         self.assertEqual(modes, ["cpu"])
 
@@ -444,18 +453,18 @@ presmoke_verify_tiling_sink_task_log_for_pid 222 '{marker}'
         # teardown 挂死被连带关掉的，理由完全不同，不能串成一个。
         sample = "05_simd_simt_hybrid/01_trouble_shooting/simd_simt_ub_usage_limit"
         for scenario in (10, 12, 13, 14):
-            reason, modes, _ = explicit_skip_config(sample, "dav-3510", f"{sample}__scenario_{scenario}")
+            reason, modes, _ = _declared(sample, f"{sample}__scenario_{scenario}")
             self.assertIn("fails by design", reason, f"scenario_{scenario} 应被 skip")
             self.assertEqual(modes, ["npu", "sim"])
         for scenario in (2, 3, 5, 11):
-            reason, _modes, _ = explicit_skip_config(sample, "dav-3510", f"{sample}__scenario_{scenario}")
+            reason, _modes, _ = _declared(sample, f"{sample}__scenario_{scenario}")
             self.assertIn("collateral", reason, f"scenario_{scenario} 应按连带受害者 skip")
             self.assertNotIn("fails by design", reason, f"scenario_{scenario} 不是 README 反例")
         for scenario in (0, 1, 4, 6, 7, 8, 9):
-            reason, _modes, _ = explicit_skip_config(sample, "dav-3510", f"{sample}__scenario_{scenario}")
+            reason, _modes, _ = _declared(sample, f"{sample}__scenario_{scenario}")
             self.assertEqual(reason, "", f"scenario_{scenario} 不该被 skip")
         # 不带 scenario_rel 时退回样例路径，样例本身没有 SkipConfig
-        self.assertEqual(explicit_skip_config(sample, "dav-3510")[0], "")
+        self.assertEqual(_declared(sample)[0], "")
 
     def test_matmul_fp8_is_950_only(self) -> None:
         project_root = Path(__file__).resolve().parents[3]
@@ -788,12 +797,15 @@ class A5DefectSkipTest(unittest.TestCase):
 
     def test_hang_cases_are_skipped_with_a_reason_that_names_the_defect(self) -> None:
         for rel in self.HANG_PRIMARIES:
-            reason, modes, archs = explicit_skip_config(rel, "dav-3510", rel)
+            reason, modes, archs = _declared(rel, rel)
             self.assertIn("teardown", reason, rel)
             self.assertEqual(modes, ["npu", "sim"], rel)
-            self.assertEqual(archs, [], f"{rel}: archs 必须留空，arch 限定进不了单 arch 的 manifest")
+            # 这里留空不是因为「不能写 archs」—— 本次改动起 arch 限定是带进 manifest、由
+            # load_runner_info 按真实 arch 求值的。是因为 05_simd_simt_hybrid 只在 A5 存在
+            # （A2 清单里这 9 条一条都没有），没有需要区分的第二个 arch。
+            self.assertEqual(archs, [], f"{rel}: 该样例只在 A5 存在，无需 arch 限定")
         for rel in self.HANG_COLLATERAL:
-            reason, modes, archs = explicit_skip_config(rel, "dav-3510", rel)
+            reason, modes, archs = _declared(rel, rel)
             self.assertIn("collateral", reason, rel)
             self.assertEqual(modes, ["npu", "sim"], rel)
             self.assertEqual(archs, [], rel)
@@ -801,14 +813,14 @@ class A5DefectSkipTest(unittest.TestCase):
     def test_28core_matmul_skips_npu_only_and_keeps_the_other_modes(self) -> None:
         # 28 核算错是 NPU 执行层面的，cpu/sim 模式不该被一起关掉。
         rel = "01_simd_cpp_api/04_advanced_api/00_matmul/matmul_tscm_src_vecout"
-        reason, modes, _ = explicit_skip_config(rel, "dav-3510", rel)
+        reason, modes, _ = _declared(rel, rel)
         self.assertIn("28-core", reason)
         self.assertEqual(modes, ["npu"])
 
     def test_negative_scenarios_keep_their_own_reason(self) -> None:
         # 连带受害者和 README 反例同在 ub_usage_limit 下，理由不能串台。
         rel = "05_simd_simt_hybrid/01_trouble_shooting/simd_simt_ub_usage_limit__scenario_12"
-        reason, _modes, _ = explicit_skip_config(rel, "dav-3510", rel)
+        reason, _modes, _ = _declared(rel, rel)
         self.assertIn("fails by design", reason)
         self.assertNotIn("collateral", reason)
 
@@ -890,13 +902,19 @@ class ArchScopedSkipTest(unittest.TestCase):
             self.assertEqual(declared.modes, ["npu"])
             self.assertEqual(declared.archs, ["dav-3510"])
 
-    def test_explicit_config_still_evaluates_the_arch(self) -> None:
-        reason, modes, archs = explicit_skip_config(self.MATMUL, "dav-3510", self.MATMUL)
-        self.assertIn("28-core", reason)
-        self.assertEqual(modes, ["npu"])
-        reason, modes, archs = explicit_skip_config(self.MATMUL, "dav-2201", self.MATMUL)
-        self.assertEqual((reason, modes), ("", []))
-        self.assertEqual(archs, ["dav-3510"], "archs 本身要透出来，供生成 SKIP_ARCHS")
+    def test_arch_scoped_skip_is_evaluated_by_the_selection_layer(self) -> None:
+        # 求值 archs 的是选型层而不是生成器，所以直接验生产路径：同一份 manifest 下，
+        # matmul_format_nd_align 在 A5 被 skip、在 A2 照常执行。曾经因为
+        # load_runner_info 不读 skip_archs，它在 A2 上被连带跳过（A2 实跑少 2 个）。
+        project_root = Path(__file__).resolve().parents[3]
+        for arch, should_skip in (("dav-3510", True), ("dav-2201", False)):
+            cells, _suggestions, skips = build_case_runner_cells_with_skips(
+                project_root, CaseRunnerOptions(arch=arch, modes=["npu"], includes=[self.MATMUL], excludes=[])
+            )
+            executed = {cell.example.rel_path for cell in cells}
+            skipped = {result.example for result in skips}
+            self.assertEqual(self.MATMUL in skipped, should_skip, f"{arch}: skip 状态不符")
+            self.assertEqual(self.MATMUL in executed, not should_skip, f"{arch}: 执行状态不符")
 
     def test_arch_scoped_skip_keeps_the_real_commands(self) -> None:
         # no-op 改写会把命令删掉，而一个 run.sh 服务所有 arch —— arch 限定的不能走那条路，
@@ -926,6 +944,55 @@ class ArchScopedSkipTest(unittest.TestCase):
             skip_archs=[],
         )
         self.assertNotIn("SKIP_ARCHS", render_runner(spec))
+
+    def test_tiling_sink_runner_keeps_the_custom_op_guard_for_arch_scoped_skip(self) -> None:
+        # tiling-sink 走的是自己的渲染函数，是 custom_op_guard 的第三个调用点。它一度还在
+        # 传 skip_reason（字符串，非空即真），于是 arch 限定的 skip 会把前置包守卫摘掉 ——
+        # 而命令并没有被 no-op 改写，另一个 arch 上照样真跑，缺包就直接失败。
+        self.assertIn(TILING_SINK_PROGRAMMING_CASE, CUSTOM_OP_PACKAGE_DEPENDENTS)
+        # 两个分支的 skip_reason 都非空，差别只在命令是否已被 no-op 改写 —— 这正是
+        # 「不能拿 skip_reason 当判据」的最小复现。
+        for all_modes_skipped, skip_archs, guarded in ((False, ["dav-3510"], True), (True, [], False)):
+            spec = RunnerRenderSpec(
+                rel=TILING_SINK_PROGRAMMING_CASE,
+                build_cmds=[Command("cmake ..", "build")],
+                run_cmds=[Command("./a.out", "run")],
+                verify_cmds=[Command("true", "verify")],
+                custom_op_dependency=True,
+                skip_reason="only broken on A5 CI",
+                skip_modes=["npu"],
+                skip_archs=skip_archs,
+                all_modes_skipped=all_modes_skipped,
+            )
+            text = render_runner(spec)
+            self.assertEqual(
+                "presmoke_ensure_custom_op_package" in text,
+                guarded,
+                f"all_modes_skipped={all_modes_skipped}: 前置包守卫的去留不对",
+            )
+
+    def test_scenario_rewrite_preserves_every_non_command_field(self) -> None:
+        # apply_scenario_to_render_spec 原来逐字段重建 spec，漏抄一个新字段就会静默退回
+        # 默认值；偏偏 render_runner 是先调它、再读这些字段的。这条钉住「除三个命令列表
+        # 之外的字段一个都不许丢」，这样以后给 RunnerRenderSpec 加字段不会再踩。
+        spec = RunnerRenderSpec(
+            rel="some/case",
+            build_cmds=[Command("cmake -DSCENARIO_NUM=0 ..", "build")],
+            run_cmds=[Command("./a.out", "run")],
+            verify_cmds=[Command("true", "verify")],
+            source_rel="some/source",
+            scenario_num=3,
+            custom_op_dependency=True,
+            custom_op_package_case=True,
+            skip_reason="only broken on A5 CI",
+            skip_modes=["npu"],
+            skip_archs=["dav-3510"],
+            all_modes_skipped=True,
+        )
+        applied = apply_scenario_to_render_spec(spec)
+        command_fields = {"build_cmds", "run_cmds", "verify_cmds"}
+        for name in (f.name for f in fields(RunnerRenderSpec) if f.name not in command_fields):
+            self.assertEqual(getattr(applied, name), getattr(spec, name), f"字段 {name} 在场景重写时丢了")
 
     def test_selection_layer_gates_the_skip_on_arch(self) -> None:
         from presmoke.case_runners import CaseRunnerContext, RunnerInfo, mode_supported
