@@ -59,7 +59,7 @@ __simd_callee__ inline reg_pair<T> deinterleave(reg_tensor<T> src0, reg_tensor<T
 
 ## 返回值说明
 
-返回 `reg_pair<T>`，由两个 `reg_tensor<T>` 组成，存放交织后的两个结果值。返回值的 `mask` 是和数据类型T相关的满mask。
+返回 `reg_pair<T>`，由两个 `reg_tensor<T>` 组成，分别存放解交织后的两个结果值。返回值的 `mask` 是和数据类型T相关的满mask。
 
 ## 约束说明
 

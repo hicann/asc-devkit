@@ -37,7 +37,7 @@
 ```cpp
 template <gather_mode mode = gather_mode::element,
           typename Tensor, typename Coord, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor,
     const Coord& coord,
     const reg_tensor<Index> index,
@@ -45,7 +45,7 @@ __simd_callee__ inline decltype(auto) load_gather(
 
 template <gather_mode mode = gather_mode::element,
           typename Tensor, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor,
     const reg_tensor<Index> index,
     const reg_tensor<bool>& gather_mask)
@@ -107,7 +107,7 @@ __simd_callee__ inline decltype(auto) load_gather(
 
 ## 返回值说明
 
-通常返回`reg_tensor<typename Tensor::data_type>`；当Tensor元素类型为`int4b_t`时，返回`reg_tensor<int4x2_t>`。返回对象的`reg`成员保存收集结果，`mask`成员与输入参数`gather_mask.reg`一致。
+接口按值返回`reg_tensor<typename Tensor::data_type>`；当Tensor元素类型为`int4b_t`时，返回`reg_tensor<int4x2_t>`。返回对象的`reg`成员保存收集结果，`mask`成员与输入参数`gather_mask.reg`一致。
 
 ## 约束说明
 

@@ -34,11 +34,15 @@ struct store_to_ptr_impl<store_sideband_mode::direct> {
     template <typename Pointer, typename RegDataType>
     __simd_callee__ static inline void run(Pointer dst, const reg_tensor<RegDataType>& src)
     {
-        static_assert(
-            is_b4_type_v<RegDataType> || is_b8_type_v<RegDataType> || is_b16_type_v<RegDataType> ||
-                is_b32_type_v<RegDataType>,
-            "store direct supports b4, b8, b16, and b32 element types only");
-        asc_storealign(dst, src.reg, src.mask);
+        if constexpr (Std::is_same_v<RegDataType, bool>) {
+            asc_storealign(dst, src.reg);
+        } else {
+            static_assert(
+                is_b4_type_v<RegDataType> || is_b8_type_v<RegDataType> || is_b16_type_v<RegDataType> ||
+                    is_b32_type_v<RegDataType>,
+                "store direct supports b4, b8, b16, and b32 element types only");
+            asc_storealign(dst, src.reg, src.mask);
+        }
     }
 };
 
@@ -60,10 +64,14 @@ struct store_to_ptr_impl<store_sideband_mode::pack> {
     template <typename Pointer, typename RegDataType>
     __simd_callee__ static inline void run(Pointer dst, const reg_tensor<RegDataType>& src)
     {
-        static_assert(
-            is_b16_type_v<RegDataType> || is_b32_type_v<RegDataType> || is_b64_type_v<RegDataType>,
-            "store pack supports b16, b32, and b64 element types only");
-        asc_storealign_pack(dst, src.reg, src.mask);
+        if constexpr (Std::is_same_v<RegDataType, bool>) {
+            asc_storealign_pack(dst, src.reg);
+        } else {
+            static_assert(
+                is_b16_type_v<RegDataType> || is_b32_type_v<RegDataType> || is_b64_type_v<RegDataType>,
+                "store pack supports b16, b32, and b64 element types only");
+            asc_storealign_pack(dst, src.reg, src.mask);
+        }
     }
 };
 
@@ -116,8 +124,10 @@ __simd_callee__ inline void store(Tensor& tensor, const Coord& coord, const reg_
     static_assert(
         Std::is_same_v<get_mem_location<engine_type>, location::ub>, "store only supports tensors located in UB");
     static_assert(
-        Std::is_same_v<detail::get_reg_data_type<data_type>, RegDataType>,
-        "store requires matching tensor and register element types (int4b_t tensors require int4x2_t registers)");
+        Std::is_same_v<detail::get_reg_data_type<data_type>, RegDataType> ||
+            (Std::is_same_v<RegDataType, bool> && Std::is_one_of_v<data_type, uint8_t, uint16_t, uint32_t>),
+        "store requires matching tensor and register element types (int4b_t tensors require int4x2_t registers); "
+        "mask registers require uint8_t, uint16_t, or uint32_t tensors");
     TENSOR_API_DEBUG_CHECK(debug_check_coord, tensor.layout(), coord, "store");
 
     auto dst_engine = tensor.engine() + tensor.layout()(coord);
@@ -132,8 +142,10 @@ __simd_callee__ inline void store(Tensor& tensor, const reg_tensor<RegDataType>&
     static_assert(
         Std::is_same_v<get_mem_location<engine_type>, location::ub>, "store only supports tensors located in UB");
     static_assert(
-        Std::is_same_v<detail::get_reg_data_type<data_type>, RegDataType>,
-        "store requires matching tensor and register element types (int4b_t tensors require int4x2_t registers)");
+        Std::is_same_v<detail::get_reg_data_type<data_type>, RegDataType> ||
+            (Std::is_same_v<RegDataType, bool> && Std::is_one_of_v<data_type, uint8_t, uint16_t, uint32_t>),
+        "store requires matching tensor and register element types (int4b_t tensors require int4x2_t registers); "
+        "mask registers require uint8_t, uint16_t, or uint32_t tensors");
 
     detail::store_to_ptr<sideband_mode>(tensor.engine().begin().get(), src);
 }

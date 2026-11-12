@@ -31,6 +31,6 @@ This directory contains samples that directly include `tensor_api/tensor.h` and 
 | [histograms](./experimental/reg_vector_compute/histograms) | Implements cumulative histogram statistics over the upper half region using the Tensor API | Ascend 950PR&950DT products |
 | [mull](./experimental/reg_vector_compute/mull) | Implements element-wise multiplication that outputs the high and low 32 bits of each product using the Tensor API | Ascend 950PR&950DT products |
 | [reduction_compute](./experimental/reg_vector_compute/reduction_compute) | Implements reduce_sum/reduce_max/reduce_min reduction computations using the Tensor API | Ascend 950PR&950DT products |
-| [reg_load_store_unalign](./experimental/reg_vector_compute/reg_load_store_unalign) | Implements unaligned loads and stores between UB and registers using the Tensor API, demonstrating unaligned copying and block-wise maximum reduction | Ascend 950PR&950DT products |
+| [reg_load_store](./experimental/reg_vector_compute/reg_load_store) | Demonstrates unaligned copying, block-wise maximum reduction, and aligned mask register transfers using the Tensor API | Ascend 950PR&950DT products |
 | [shift_left](./experimental/reg_vector_compute/shift_left) | Implements element-wise left shift with a Tensor of shift amounts using the Tensor API | Ascend 950PR&950DT products |
 | [trunc](./experimental/reg_vector_compute/trunc) | Implements element-wise truncation toward zero on floating-point inputs using the Tensor API | Ascend 950PR&950DT products |

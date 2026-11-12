@@ -34,7 +34,9 @@ namespace experimental {
  * @override_id
  * te_experimental_store__Tensor_R_const_Coord_R_const_reg_tensor_RegDataType_R__template_sideband_mode_Tensor_Coord_RegDataType
  * @archs 3510
- * @note The tensor and register element types must match.
+ * @note For vector data registers, the tensor and register element types must match, except that an int4b_t
+ * tensor requires an int4x2_t register. Mask registers (reg_tensor<bool>) support only store_sideband_mode::direct
+ * and store_sideband_mode::pack, and only to uint8_t, uint16_t, or uint32_t tensors. Both modes ignore src.mask.
  * @param [out] tensor Destination tensor located in UB.
  * @param [in] coord Coordinate of the first destination element.
  * @param [in] src Source register tensor.
@@ -51,7 +53,9 @@ __simd_callee__ inline void store(Tensor& tensor, const Coord& coord, const reg_
  * @override_id
  * te_experimental_store__Tensor_R_const_reg_tensor_RegDataType_R__template_sideband_mode_Tensor_RegDataType
  * @archs 3510
- * @note The tensor and register element types must match.
+ * @note For vector data registers, the tensor and register element types must match, except that an int4b_t
+ * tensor requires an int4x2_t register. Mask registers (reg_tensor<bool>) support only store_sideband_mode::direct
+ * and store_sideband_mode::pack, and only to uint8_t, uint16_t, or uint32_t tensors. Both modes ignore src.mask.
  * @param [out] tensor Destination tensor located in UB.
  * @param [in] src Source register tensor.
  */

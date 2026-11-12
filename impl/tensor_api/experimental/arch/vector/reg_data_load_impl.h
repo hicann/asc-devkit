@@ -26,11 +26,24 @@ namespace te {
 namespace experimental {
 namespace detail {
 
-template <load_sideband_mode sideband_mode>
-struct load_from_ptr_impl;
+template <load_sideband_mode sideband_mode, typename RegDataType = void>
+struct load_from_ptr_impl {
+    template <typename DataType, typename Pointer>
+    __simd_callee__ static inline reg_tensor<bool> run(Pointer src)
+    {
+        static_assert(
+            Std::is_same_v<RegDataType, void> || Std::is_same_v<RegDataType, bool>,
+            "load with an explicit register type only supports bool");
+        static_assert(
+            sideband_mode == load_sideband_mode::direct || sideband_mode == load_sideband_mode::upsample ||
+                sideband_mode == load_sideband_mode::downsample,
+            "load mask only supports direct, upsample, and downsample modes");
+        return {};
+    }
+};
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::direct> {
+struct load_from_ptr_impl<load_sideband_mode::direct, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_tensor<DataType> run(Pointer src)
     {
@@ -45,7 +58,7 @@ struct load_from_ptr_impl<load_sideband_mode::direct> {
 };
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::downsample> {
+struct load_from_ptr_impl<load_sideband_mode::downsample, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_tensor<DataType> run(Pointer src)
     {
@@ -59,7 +72,7 @@ struct load_from_ptr_impl<load_sideband_mode::downsample> {
 };
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::unpack> {
+struct load_from_ptr_impl<load_sideband_mode::unpack, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_tensor<DataType> run(Pointer src)
     {
@@ -73,7 +86,7 @@ struct load_from_ptr_impl<load_sideband_mode::unpack> {
 };
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::unpack4> {
+struct load_from_ptr_impl<load_sideband_mode::unpack4, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_tensor<DataType> run(Pointer src)
     {
@@ -86,7 +99,7 @@ struct load_from_ptr_impl<load_sideband_mode::unpack4> {
 };
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::upsample> {
+struct load_from_ptr_impl<load_sideband_mode::upsample, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_tensor<DataType> run(Pointer src)
     {
@@ -100,7 +113,7 @@ struct load_from_ptr_impl<load_sideband_mode::upsample> {
 };
 
 template <>
-struct load_from_ptr_impl<load_sideband_mode::deintlv> {
+struct load_from_ptr_impl<load_sideband_mode::deintlv, void> {
     template <typename DataType, typename Pointer>
     __simd_callee__ static inline reg_pair<DataType> run(Pointer src)
     {
@@ -113,10 +126,46 @@ struct load_from_ptr_impl<load_sideband_mode::deintlv> {
     }
 };
 
-template <load_sideband_mode sideband_mode, typename DataType, typename Pointer>
-__simd_callee__ inline decltype(auto) load_from_ptr(Pointer src)
+template <>
+struct load_from_ptr_impl<load_sideband_mode::direct, bool> {
+    template <typename DataType, typename Pointer>
+    __simd_callee__ static inline reg_tensor<bool> run(Pointer src)
+    {
+        static_assert(Std::is_same_v<DataType, uint32_t>, "load mask only supports uint32_t source tensors");
+        reg_tensor<bool> dst;
+        dst.reg = asc_loadalign_mask(src);
+        return dst;
+    }
+};
+
+template <>
+struct load_from_ptr_impl<load_sideband_mode::upsample, bool> {
+    template <typename DataType, typename Pointer>
+    __simd_callee__ static inline reg_tensor<bool> run(Pointer src)
+    {
+        static_assert(Std::is_same_v<DataType, uint32_t>, "load mask only supports uint32_t source tensors");
+        reg_tensor<bool> dst;
+        dst.reg = asc_loadalign_mask_upsample(src);
+        return dst;
+    }
+};
+
+template <>
+struct load_from_ptr_impl<load_sideband_mode::downsample, bool> {
+    template <typename DataType, typename Pointer>
+    __simd_callee__ static inline reg_tensor<bool> run(Pointer src)
+    {
+        static_assert(Std::is_same_v<DataType, uint32_t>, "load mask only supports uint32_t source tensors");
+        reg_tensor<bool> dst;
+        dst.reg = asc_loadalign_mask_downsample(src);
+        return dst;
+    }
+};
+
+template <load_sideband_mode sideband_mode, typename DataType, typename RegDataType = void, typename Pointer>
+__simd_callee__ inline auto load_from_ptr(Pointer src)
 {
-    return load_from_ptr_impl<sideband_mode>::template run<get_reg_data_type<DataType>>(src);
+    return load_from_ptr_impl<sideband_mode, RegDataType>::template run<get_reg_data_type<DataType>>(src);
 }
 
 template <broadcast_mode brc_mode>
@@ -170,10 +219,8 @@ __simd_callee__ inline reg_tensor<get_reg_data_type<DataType>> load_broadcast_fr
     return load_broadcast_from_ptr_impl<brc_mode>::template run<get_reg_data_type<DataType>>(src);
 }
 
-} // namespace detail
-
-template <load_sideband_mode sideband_mode, typename Tensor, typename Coord>
-__simd_callee__ inline decltype(auto) load(const Tensor& tensor, const Coord& coord)
+template <typename RegDataType, load_sideband_mode sideband_mode, typename Tensor, typename Coord>
+__simd_callee__ inline auto load_impl(const Tensor& tensor, const Coord& coord)
 {
     using engine_type = typename Tensor::engine_type;
     using data_type = typename Tensor::data_type;
@@ -182,22 +229,50 @@ __simd_callee__ inline decltype(auto) load(const Tensor& tensor, const Coord& co
     TENSOR_API_DEBUG_CHECK(debug_check_coord, tensor.layout(), coord, "load");
 
     auto src_engine = tensor.engine() + tensor.layout()(coord);
-    return detail::load_from_ptr<sideband_mode, data_type>(src_engine.begin().get());
+    return load_from_ptr<sideband_mode, data_type, RegDataType>(src_engine.begin().get());
 }
 
-template <load_sideband_mode sideband_mode, typename Tensor>
-__simd_callee__ inline decltype(auto) load(const Tensor& tensor)
+template <typename RegDataType, load_sideband_mode sideband_mode, typename Tensor>
+__simd_callee__ inline auto load_impl(const Tensor& tensor)
 {
     using engine_type = typename Tensor::engine_type;
     using data_type = typename Tensor::data_type;
     static_assert(
         Std::is_same_v<get_mem_location<engine_type>, location::ub>, "load only supports tensors located in UB");
 
-    return detail::load_from_ptr<sideband_mode, data_type>(tensor.engine().begin().get());
+    return load_from_ptr<sideband_mode, data_type, RegDataType>(tensor.engine().begin().get());
+}
+
+} // namespace detail
+
+template <load_sideband_mode sideband_mode, typename Tensor, typename Coord>
+__simd_callee__ inline auto load(const Tensor& tensor, const Coord& coord)
+{
+    return detail::load_impl<void, sideband_mode>(tensor, coord);
+}
+
+template <load_sideband_mode sideband_mode, typename Tensor>
+__simd_callee__ inline auto load(const Tensor& tensor)
+{
+    return detail::load_impl<void, sideband_mode>(tensor);
+}
+
+template <typename RegDataType, load_sideband_mode sideband_mode, typename Tensor, typename Coord>
+__simd_callee__ inline auto load(const Tensor& tensor, const Coord& coord)
+{
+    static_assert(Std::is_same_v<RegDataType, bool>, "load with an explicit register type only supports bool");
+    return detail::load_impl<RegDataType, sideband_mode>(tensor, coord);
+}
+
+template <typename RegDataType, load_sideband_mode sideband_mode, typename Tensor>
+__simd_callee__ inline auto load(const Tensor& tensor)
+{
+    static_assert(Std::is_same_v<RegDataType, bool>, "load with an explicit register type only supports bool");
+    return detail::load_impl<RegDataType, sideband_mode>(tensor);
 }
 
 template <broadcast_mode brc_mode, typename Tensor, typename Coord>
-__simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor, const Coord& coord)
+__simd_callee__ inline auto load_broadcast(const Tensor& tensor, const Coord& coord)
 {
     using engine_type = typename Tensor::engine_type;
     using data_type = typename Tensor::data_type;
@@ -211,7 +286,7 @@ __simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor, const
 }
 
 template <broadcast_mode brc_mode, typename Tensor>
-__simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor)
+__simd_callee__ inline auto load_broadcast(const Tensor& tensor)
 {
     using engine_type = typename Tensor::engine_type;
     using data_type = typename Tensor::data_type;
@@ -223,7 +298,7 @@ __simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor)
 }
 
 template <gather_mode mode, typename Tensor, typename Coord, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor, const Coord& coord, const reg_tensor<Index> index, const reg_tensor<bool>& gather_mask)
 {
     using engine_type = typename Tensor::engine_type;
@@ -245,7 +320,7 @@ __simd_callee__ inline decltype(auto) load_gather(
 }
 
 template <gather_mode mode, typename Tensor, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor, const reg_tensor<Index> index, const reg_tensor<bool>& gather_mask)
 {
     using engine_type = typename Tensor::engine_type;

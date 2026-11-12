@@ -9,6 +9,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
 
 #include "tensor_api/stub/cce_stub.h"
 #include "tensor_api/experimental/vector_ops.h"
@@ -344,6 +345,182 @@ TEST(tensor_api_reg_tensor_3510, holds_register_and_mask)
     (void)compile_reg_mask_data_reorder_b8;
     (void)compile_reg_mask_data_reorder_b16;
     (void)compile_reg_mask_data_reorder_b32;
+}
+
+class tensor_api_reg_data_move_3510 : public testing::Test {
+protected:
+    void SetUp() override { g_coreType = AscendC::AIV_TYPE; }
+
+    void TearDown() override
+    {
+        g_coreType = previous_core_type;
+        GlobalMockObject::reset();
+    }
+
+private:
+    int32_t previous_core_type = g_coreType;
+};
+
+struct reg_move_expectation {
+    const void* address;
+    Literal mode;
+    vector_bool predicate;
+};
+
+reg_move_expectation expected_reg_move{};
+
+void check_reg_move_args(const void* address, int32_t offset, Literal mode)
+{
+    EXPECT_EQ(address, expected_reg_move.address);
+    EXPECT_EQ(offset, 0);
+    EXPECT_EQ(mode, expected_reg_move.mode);
+}
+
+void load_mask_stub(vector_bool& dst, __ubuf__ uint32_t* src, int32_t offset, Literal mode)
+{
+    check_reg_move_args(src, offset, mode);
+    dst = expected_reg_move.predicate;
+}
+
+void expect_mask_load(__ubuf__ uint32_t* src, Literal mode)
+{
+    expected_reg_move = {src, mode, static_cast<vector_bool>(*src)};
+    MOCKER(static_cast<void (*)(vector_bool&, __ubuf__ uint32_t*, int32_t, Literal)>(plds))
+        .expects(once())
+        .will(invoke(load_mask_stub));
+}
+
+template <asc::te::experimental::load_sideband_mode SidebandMode>
+void check_reg_mask_load(Literal mode)
+{
+    alignas(32) uint32_t data[32]{};
+    constexpr int32_t coord = 32 / sizeof(uint32_t);
+    data[0] = 1;
+    data[coord] = 2;
+    auto layout = asc::te::make_layout(asc::te::make_shape(32));
+    auto tensor = asc::te::make_tensor(asc::te::make_mem_ptr<asc::te::location::ub>(data), layout);
+
+    expect_mask_load(data, mode);
+    auto src = asc::te::experimental::load<bool, SidebandMode>(tensor);
+    static_assert(AscendC::Std::is_same_v<decltype(src), asc::te::experimental::reg_tensor<bool>>);
+    EXPECT_EQ(src.reg, data[0]);
+    GlobalMockObject::verify();
+
+    expect_mask_load(data + coord, mode);
+    auto src_at = asc::te::experimental::load<bool, SidebandMode>(tensor, asc::te::make_coord(coord));
+    static_assert(AscendC::Std::is_same_v<decltype(src_at), asc::te::experimental::reg_tensor<bool>>);
+    EXPECT_EQ(src_at.reg, data[coord]);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_reg_data_move_3510, load_mask_direct)
+{
+    check_reg_mask_load<asc::te::experimental::load_sideband_mode::direct>(Literal::NORM);
+}
+
+TEST_F(tensor_api_reg_data_move_3510, load_mask_upsample)
+{
+    check_reg_mask_load<asc::te::experimental::load_sideband_mode::upsample>(Literal::US);
+}
+
+TEST_F(tensor_api_reg_data_move_3510, load_mask_downsample)
+{
+    check_reg_mask_load<asc::te::experimental::load_sideband_mode::downsample>(Literal::DS);
+}
+
+void store_mask_stub(vector_bool src, __ubuf__ uint32_t* dst, int32_t offset, Literal mode)
+{
+    check_reg_move_args(dst, offset, mode);
+    EXPECT_EQ(src, expected_reg_move.predicate);
+}
+
+void expect_mask_store(vector_bool src, __ubuf__ uint32_t* dst, Literal mode)
+{
+    expected_reg_move = {dst, mode, src};
+    MOCKER(static_cast<void (*)(vector_bool, __ubuf__ uint32_t*, int32_t, Literal)>(psts))
+        .expects(once())
+        .will(invoke(store_mask_stub));
+}
+
+template <typename DataType, asc::te::experimental::store_sideband_mode SidebandMode>
+void check_reg_mask_store(Literal mode)
+{
+    constexpr int32_t coord = 32 / sizeof(DataType);
+    alignas(32) DataType data[2 * coord]{};
+    auto layout = asc::te::make_layout(asc::te::make_shape(2 * coord));
+    auto tensor = asc::te::make_tensor(asc::te::make_mem_ptr<asc::te::location::ub>(data), layout);
+    asc::te::experimental::reg_tensor<bool> src{};
+    src.reg = vector_bool{1};
+    src.mask = vector_bool{0};
+
+    expect_mask_store(src.reg, reinterpret_cast<uint32_t*>(data), mode);
+    asc::te::experimental::store<SidebandMode>(tensor, src);
+    GlobalMockObject::verify();
+
+    expect_mask_store(src.reg, reinterpret_cast<uint32_t*>(data + coord), mode);
+    asc::te::experimental::store<SidebandMode>(tensor, asc::te::make_coord(coord), src);
+    GlobalMockObject::verify();
+}
+
+#define TENSOR_API_REG_MASK_STORE_TEST(DataType, SidebandMode, Mode)                                    \
+    TEST_F(tensor_api_reg_data_move_3510, store_mask_##SidebandMode##_##DataType)                       \
+    {                                                                                                   \
+        check_reg_mask_store<DataType, asc::te::experimental::store_sideband_mode::SidebandMode>(Mode); \
+    }
+
+TENSOR_API_REG_MASK_STORE_TEST(uint8_t, direct, Literal::NORM)
+TENSOR_API_REG_MASK_STORE_TEST(uint16_t, direct, Literal::NORM)
+TENSOR_API_REG_MASK_STORE_TEST(uint32_t, direct, Literal::NORM)
+TENSOR_API_REG_MASK_STORE_TEST(uint8_t, pack, Literal::PK)
+TENSOR_API_REG_MASK_STORE_TEST(uint16_t, pack, Literal::PK)
+TENSOR_API_REG_MASK_STORE_TEST(uint32_t, pack, Literal::PK)
+
+#undef TENSOR_API_REG_MASK_STORE_TEST
+
+void load_vector_stub(vector_uint16_t& dst, __ubuf__ uint16_t* src, int32_t offset, Literal mode)
+{
+    check_reg_move_args(src, offset, mode);
+    dst = {};
+}
+
+void store_vector_stub(vector_uint16_t, __ubuf__ uint16_t* dst, int32_t offset, Literal mode, vector_bool mask)
+{
+    check_reg_move_args(dst, offset, mode);
+    EXPECT_EQ(mask, expected_reg_move.predicate);
+}
+
+void expect_vector_store(__ubuf__ uint16_t* dst, Literal mode, vector_bool mask)
+{
+    expected_reg_move = {dst, mode, mask};
+    MOCKER(static_cast<void (*)(vector_uint16_t, __ubuf__ uint16_t*, int32_t, Literal, vector_bool)>(vsts))
+        .expects(once())
+        .will(invoke(store_vector_stub));
+}
+
+TEST_F(tensor_api_reg_data_move_3510, load_and_store_vector)
+{
+    alignas(32) uint16_t data[128]{};
+    auto layout = asc::te::make_layout(asc::te::make_shape(128));
+    auto tensor = asc::te::make_tensor(asc::te::make_mem_ptr<asc::te::location::ub>(data), layout);
+
+    expected_reg_move = {data, Literal::NORM, {}};
+    MOCKER(static_cast<void (*)(vector_uint16_t&, __ubuf__ uint16_t*, int32_t, Literal)>(vlds))
+        .expects(exactly(2))
+        .will(invoke(load_vector_stub));
+    auto src = asc::te::experimental::load(tensor);
+    auto src_at = asc::te::experimental::load(tensor, asc::te::make_coord(0));
+    GlobalMockObject::verify();
+
+    src.mask = vector_bool{1};
+    src_at.mask = vector_bool{2};
+
+    expect_vector_store(data, Literal::NORM_B16, src.mask);
+    asc::te::experimental::store(tensor, src);
+    GlobalMockObject::verify();
+
+    expect_vector_store(data, Literal::PK_B16, src_at.mask);
+    asc::te::experimental::store<asc::te::experimental::store_sideband_mode::pack>(tensor, src_at);
+    GlobalMockObject::verify();
 }
 
 #define TENSOR_API_REG_GATHER_TEST(DataType, IndexType)             \

@@ -1,8 +1,8 @@
-# Unaligned Register Load and Store Sample
+# Register Load and Store Sample
 
 ## Overview
 
-This sample demonstrates unaligned transfers between UB and registers using the experimental Tensor APIs `asc::te::experimental::unalign_load` and `unalign_store`. Scenario 1 performs an unaligned copy, while scenario 2 performs unaligned loading, reduction, and storing. Neither scenario directly calls unaligned C APIs. GM/UB transfers use Tensor API `copy`, register zeroing and reduction use experimental Tensor APIs, and pipeline synchronization uses the Tensor API `asc::te::mutex`.
+This sample demonstrates transfers between UB and registers using experimental Tensor APIs. Scenarios 1 and 2 use `unalign_load` and `unalign_store` for unaligned copying and reduction. Scenario 3 uses `load<bool>` and `store` for aligned mask register transfers. GM/UB transfers use `copy`, and pipeline synchronization uses `asc::te::mutex`.
 
 Select a scenario with `SCENARIO_NUM`:
 
@@ -10,6 +10,7 @@ Select a scenario with `SCENARIO_NUM`:
 | --- | --- | --- | --- |
 | 1 | `float [1024]` | `float [1024]` | Copy two registers (128 elements) starting at element 1. All other output elements remain zero. |
 | 2 | `uint16_t [14, 255]` | `uint16_t [14, 16]` | Four cores process up to four rows each; the last core processes two rows. Reduce every 16 elements by maximum, with 15 valid elements in the last datablock. |
+| 3 | `uint32_t [16]` | `uint32_t [32]` | Load masks directly or with upsampling or downsampling, and store them directly or in packed form. |
 
 ## Supported Products and CANN Versions
 
@@ -17,7 +18,7 @@ Select a scenario with `SCENARIO_NUM`:
 | --- | --- |
 | Ascend 950PR&950DT products | >= CANN 9.3.0 |
 
-The CANN installation must provide the experimental Tensor APIs `unalign_load/unalign_store` used by both scenarios. CMake loads the package headers, not the repository headers. If the package lacks these APIs, update the corresponding headers before building this sample.
+The CANN installation must provide `unalign_load` and `unalign_store` for scenarios 1 and 2, and the three `load<bool>` modes and `store` support for `reg_tensor<bool>` for scenario 3. CMake uses the installed headers by default.
 
 ## Directory Structure
 
@@ -26,7 +27,7 @@ The CANN installation must provide the experimental Tensor APIs `unalign_load/un
 ├── data_utils.h                   // Local sample utility header
 ├── README.md                      // Chinese documentation
 ├── README_en.md                   // English documentation
-└── reg_load_store_unalign.asc     // Kernels, input generation, and verification
+└── reg_load_store.asc             // Kernels, input generation, and verification
 ```
 
 ## Implementation
@@ -61,9 +62,23 @@ storer.flush(dst_stream, static_cast<int32_t>(repeat_time * elements_per_registe
 
 **Interface usage:** Scenario 1 calls `prepare` once before the loop for the source view, while scenario 2 calls `prepare` once before the loop for each row. Both scenarios advance the source coordinate by one register per iteration; this sequential loading pattern should not be generalized to arbitrary address jumps with the same prepared state. Loads read a full register and take no `count` argument. Scenario 2 uses `with_mask(mask)` to select valid elements for reduction. Stores write `count` elements without using the Reg Tensor mask. Call `flush` once after each contiguous store stream, passing the first destination view and the end-of-stream element offset relative to that view. Both scenarios construct views using `slice` in the kernel rather than inside the VF.
 
+### Scenario 3: Aligned Mask Register Transfers
+
+Copy 64 bytes from GM to UB. Load mask bits from the `uint32_t` source tensor, then store the `reg` member of each `reg_tensor<bool>` without reading its `mask` member. The offsets below are zero-based `uint32_t` element offsets.
+
+| Output Offset | Size | Operation |
+| --- | --- | --- |
+| 0 | 32 bytes | Load from the start of the input and store unchanged. |
+| 8 | 32 bytes | Load 16 bytes from input offset 4, repeat each bit twice, and store. |
+| 16 | 32 bytes | Load from the start of the input, retain the even-indexed bits of all 64 bytes, and store. |
+| 24 | 16 bytes | Pack and store the even-indexed bits of the direct load. |
+| 28 | 16 bytes | Pack the upsampled mask to recover the 16 bytes at input offset 4. |
+
+Direct and downsample loads and direct stores use 32-byte-aligned addresses. Upsample loads and packed stores use 16-byte-aligned addresses.
+
 ### Verification
 
-The host generates deterministic input and computes golden results without Python or external files. Scenario 1 checks all 1024 outputs, including zeros outside the copied range. Scenario 2 checks all 224 results, including each row's tail datablock and the last core. ACL errors or mismatches cause a nonzero exit status.
+The host generates deterministic input and computes golden results without Python or external files. Scenario 1 checks all 1024 outputs, including zeros outside the copied range. Scenario 2 checks all 224 results, including each row's tail datablock and the last core. Scenario 3 computes the expected result bit by bit and checks all 32 output words. ACL errors or mismatches cause a nonzero exit status.
 
 ## Build and Run
 
@@ -84,7 +99,7 @@ cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 ..;make -j;
 ./demo
 ```
 
-For scenario 2, reconfigure and rebuild from the build directory:
+For scenario 2, reconfigure and rebuild from the build directory. To run scenario 3, pass `-DSCENARIO_NUM=3` instead:
 
 ```bash
 cmake -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM=2 ..;make -j;
@@ -98,7 +113,7 @@ cmake -DCMAKE_ASC_RUN_MODE=sim -DCMAKE_ASC_ARCHITECTURES=dav-3510 -DSCENARIO_NUM
 ./demo
 ```
 
-Use `-DSCENARIO_NUM=2` for scenario 2. Input and golden results are generated by the host program; no data generation script is needed.
+Use `-DSCENARIO_NUM=2` or `-DSCENARIO_NUM=3` to simulate the corresponding scenario. Input and golden results are generated by the host program; no data generation script is needed.
 
 **Note:** Before switching run modes, remove the CMake cache with `rm CMakeCache.txt` in the build directory and reconfigure. Scenario selection is cached; explicitly pass `-DSCENARIO_NUM=1` to switch back to scenario 1.
 
@@ -108,11 +123,12 @@ After updating CANN package headers, run `make clean` followed by `make -j`, or 
 | --- | --- | --- |
 | `CMAKE_ASC_RUN_MODE` | `npu` (default), `sim` | NPU execution or simulation |
 | `CMAKE_ASC_ARCHITECTURES` | `dav-3510` | Ascend 950PR/Ascend 950DT |
-| `SCENARIO_NUM` | `1` (default), `2` | Unaligned copy or datablock maximum reduction |
+| `SCENARIO_NUM` | `1` (default), `2`, `3` | Unaligned copy, datablock maximum reduction, or mask register transfers |
 
 Successful verification prints the corresponding line:
 
 ```text
 scenario 1: test pass!
 scenario 2: test pass!
+scenario 3: test pass!
 ```

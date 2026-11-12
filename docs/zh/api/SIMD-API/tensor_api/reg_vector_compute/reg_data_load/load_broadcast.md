@@ -40,7 +40,7 @@
     template <broadcast_mode brc_mode = broadcast_mode::elem,
               typename Tensor,
               typename Coord>
-    __simd_callee__ inline decltype(auto) load_broadcast(
+    __simd_callee__ inline auto load_broadcast(
         const Tensor& tensor, const Coord& coord)
     ```
 
@@ -49,7 +49,7 @@
     ```cpp
     template <broadcast_mode brc_mode = broadcast_mode::elem,
               typename Tensor>
-    __simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor)
+    __simd_callee__ inline auto load_broadcast(const Tensor& tensor)
     ```
 
 ## 参数说明
@@ -90,14 +90,14 @@
 
 ## 返回值说明
 
-通常返回`reg_tensor<typename Tensor::data_type>`；当源Tensor元素类型为`int4b_t`时，返回`reg_tensor<int4x2_t>`。其`reg`成员保存广播结果。
+接口按值返回与源Tensor元素类型对应的`reg_tensor`；当源Tensor元素类型为`int4b_t`时，返回`reg_tensor<int4x2_t>`。其`reg`成员保存广播结果，`mask`成员未初始化。
 
 ## 约束说明
 
 - 仅支持位于UB的Tensor。
 - 搬入起始地址必须满足[表3](#表3-broadcast_mode参数说明)中的对齐约束。
 - 传入`coord`时，坐标维数必须与Tensor布局匹配，且坐标不能越界。
-- 接口只初始化返回对象的`reg`成员，不初始化`mask`成员。将结果用于读取`mask`的寄存器计算或`store`模式前，必须调用`with_mask`绑定有效mask。
+- 将广播结果用于读取`mask`的寄存器计算，或用于[store](../reg_data_store/store.md)的`direct`、`pack`、`pack_quarter`模式前，必须调用`with_mask`绑定有效掩码。`store_1st`和`intlv`模式不读取源寄存器的`mask`。
 - 寄存器数据搬入应在`__simd_vf__`函数或`__simd_callee__`函数中完成。
 
 ## 调用示例

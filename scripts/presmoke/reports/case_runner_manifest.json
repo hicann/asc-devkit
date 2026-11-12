@@ -1,5 +1,80 @@
 [
   {
+    "case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_1",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_1/run.sh",
+    "source": "readme",
+    "confidence": "high",
+    "source_case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store",
+    "supported_archs": [
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu",
+      "sim"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [],
+    "commands": [
+      "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-3510",
+      "make -j",
+      "./demo"
+    ]
+  },
+  {
+    "case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_2",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_2/run.sh",
+    "source": "readme",
+    "confidence": "high",
+    "source_case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store",
+    "supported_archs": [
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu",
+      "sim"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [],
+    "commands": [
+      "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-3510",
+      "make -j",
+      "./demo"
+    ]
+  },
+  {
+    "case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_3",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store__scenario_3/run.sh",
+    "source": "readme",
+    "confidence": "high",
+    "source_case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store",
+    "supported_archs": [
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu",
+      "sim"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [],
+    "commands": [
+      "cmake -DSCENARIO_NUM=3 .. -DCMAKE_ASC_ARCHITECTURES=dav-3510",
+      "make -j",
+      "./demo"
+    ]
+  },
+  {
     "case": "01_simd_cpp_api/00_introduction/00_quickstart/hello_world",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/00_introduction/00_quickstart/hello_world/run.sh",
     "source": "readme",
@@ -14681,60 +14756,6 @@
       "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
       "make -j",
       "python3 ../scripts/gen_data.py",
-      "./demo"
-    ]
-  },
-  {
-    "case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign__scenario_1",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign__scenario_1/run.sh",
-    "source": "readme",
-    "confidence": "medium",
-    "source_case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign",
-    "supported_archs": [
-      "dav-3510"
-    ],
-    "supported_modes": [
-      "npu",
-      "sim"
-    ],
-    "target_runnable": false,
-    "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [
-      "unsupported_on_target_arch_or_mode"
-    ],
-    "commands": [
-      "cmake -DSCENARIO_NUM=1 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
-      "make -j",
-      "./demo"
-    ]
-  },
-  {
-    "case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign__scenario_2",
-    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign__scenario_2/run.sh",
-    "source": "readme",
-    "confidence": "medium",
-    "source_case": "01_simd_cpp_api/07_tensor_api/experimental/reg_vector_compute/reg_load_store_unalign",
-    "supported_archs": [
-      "dav-3510"
-    ],
-    "supported_modes": [
-      "npu",
-      "sim"
-    ],
-    "target_runnable": false,
-    "skip": false,
-    "skip_reason": "",
-    "skip_modes": [],
-    "skip_archs": [],
-    "reasons": [
-      "unsupported_on_target_arch_or_mode"
-    ],
-    "commands": [
-      "cmake -DSCENARIO_NUM=2 .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
-      "make -j",
       "./demo"
     ]
   },
