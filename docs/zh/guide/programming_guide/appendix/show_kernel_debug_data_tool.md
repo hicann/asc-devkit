@@ -84,7 +84,7 @@
 
     ```
     from show_kernel_debug_data import show_kernel_debug_data
-    show_kernel_debug_data(./input/dump_workspace.bin)
+    show_kernel_debug_data("./input/dump_workspace.bin")
     ```
 
 ## 产物说明
