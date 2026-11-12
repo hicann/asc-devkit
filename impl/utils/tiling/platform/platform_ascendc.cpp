@@ -92,8 +92,10 @@ uint32_t PlatformAscendC::GetVecRegLen(void) const
     std::string sizeStr;
     bool ret = this->GetPlatFormInfo()->GetPlatformResWithLock("AICoreSpec", "vector_reg_width", sizeStr);
     if (!ret) {
-        PF_LOGE("platform do not support get vector_reg_width size !");
-        return 0u;
+        if (!this->GetPlatFormInfo()->GetPlatformResWithLock("AICoreSpec", "vec_calc_size", sizeStr)) {
+            PF_LOGE("platform do not support get vector_reg_width size !");
+            return 0u;
+        }
     }
     bool isDecimalNumber = !sizeStr.empty() && std::all_of(sizeStr.begin(), sizeStr.end(), [](unsigned char ch) {
         return std::isdigit(ch);
@@ -107,7 +109,7 @@ uint32_t PlatformAscendC::GetVecRegLen(void) const
         if (size == 0) {
             PF_LOGE("The bit width equals zero!");
         }
-        return static_cast<uint32_t>(size);
+        return ret ? static_cast<uint32_t>(size) : 2 * static_cast<uint32_t>(size);
     } else {
         PF_LOGE("The sizeStr is invalid.");
         return 0u;
