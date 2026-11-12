@@ -141,7 +141,7 @@ HcclResult TopoMatchTwoLevel::MatchTopo(
 // 依据：InsReduceScatterParallelExecutor 家族全部注册为 Mesh1D + NHR 双模板两级形态，
 // AICPU_TS 引擎（GCD=1 / d0=1 的 HOSTCPU 豁免分支不触发，语义与 hccl AICPU 注册一致）。
 HcclResult TopoMatchTwoLevel::MatchTopo(
-    const HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo)
+    const void* comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo)
 {
     (void)comm;
     AlgAttrs algAttrs;

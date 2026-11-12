@@ -104,7 +104,7 @@ HcclResult InsTempAllGatherOmniPipeMesh1D::RunMeshPeer(
         "localRank[%u], remoteRank[%u], remoteAlgRank[%u].",
         myRank_, connectedRank, connectedAlgRank);
     CHK_PRT_RET(
-        threadIdx >= threads.size() || !channels.count(connectedRank) || channels.at(connectedRank).empty(),
+        threadIdx >= threads.size() || (channels.count(connectedRank) == 0) || channels.at(connectedRank).empty(),
         HCCL_ERROR(
             "[InsTempAllGatherOmniPipeMesh1D][RunAllGatherMesh] thread or channel resource is "
             "missing, localRank[%u], remoteRank[%u], threadIdx[%u], threadNum[%zu], "
@@ -125,7 +125,7 @@ HcclResult InsTempAllGatherOmniPipeMesh1D::RunMeshPeer(
     return ExchangeMeshSlices(linkRemote, threads[threadIdx], connectedRank, threadIdx, slices);
 }
 
-HcclResult InsTempAllGatherOmniPipeMesh1D::GetPeerSymmetricPointers(u32 connectedRank, void*& remoteOut)
+HcclResult InsTempAllGatherOmniPipeMesh1D::GetPeerSymmetricPointers(u32 connectedRank, void*& remoteOut) const
 {
     HcclResult ret = GetSymWinRemoteMem(outputSymWindow_, outputOffset_, connectedRank, &remoteOut);
     CHK_PRT_RET(
@@ -143,7 +143,8 @@ HcclResult InsTempAllGatherOmniPipeMesh1D::GetPeerSymmetricPointers(u32 connecte
 }
 
 void InsTempAllGatherOmniPipeMesh1D::BuildSymmetricSlices(
-    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, void* remoteOut, MeshPeerSlices& slices)
+    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, void* const remoteOut,
+    MeshPeerSlices& slices)
 {
     for (u32 rpt = 0; rpt < tempAlgParams_.stepSliceInfo.inputOmniPipeSliceStride[myAlgRank].size(); ++rpt) {
         const u64 txBaseOff = tempAlgParams_.buffInfo.inBuffBaseOff +
@@ -183,7 +184,8 @@ void InsTempAllGatherOmniPipeMesh1D::BuildScratchSlices(
 }
 
 void InsTempAllGatherOmniPipeMesh1D::BuildScratchWriteSlice(
-    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 rpt, void* remoteCclBuffAddr, MeshPeerSlices& slices)
+    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 rpt, void* const remoteCclBuffAddr,
+    MeshPeerSlices& slices)
 {
     const u64 txBaseOff =
         tempAlgParams_.buffInfo.inBuffBaseOff + tempAlgParams_.stepSliceInfo.inputOmniPipeSliceStride[myAlgRank][rpt];
@@ -202,7 +204,7 @@ void InsTempAllGatherOmniPipeMesh1D::BuildScratchWriteSlice(
 }
 
 void InsTempAllGatherOmniPipeMesh1D::BuildScratchReadSlice(
-    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, u32 rpt, void* remoteCclBuffAddr,
+    u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, u32 rpt, void* const remoteCclBuffAddr,
     MeshPeerSlices& slices)
 {
     const u64 txScratchBase =
@@ -246,7 +248,7 @@ void InsTempAllGatherOmniPipeMesh1D::AppendMeshSlices(
 }
 
 void InsTempAllGatherOmniPipeMesh1D::LogMeshSlice(
-    const char* sliceName, const char* mode, u32 connectedRank, const MeshSliceInfo& slice)
+    const char* sliceName, const char* mode, u32 connectedRank, const MeshSliceInfo& slice) const
 {
     HCCL_DEBUG(
         "[InsTempAllGatherOmniPipeMesh1D][RunAllGatherMesh] build %s slice, "
@@ -256,7 +258,7 @@ void InsTempAllGatherOmniPipeMesh1D::LogMeshSlice(
 
 HcclResult InsTempAllGatherOmniPipeMesh1D::ExchangeMeshSlices(
     const ChannelInfo& linkRemote, const ThreadHandle& thread, u32 connectedRank, u32 threadIdx,
-    const MeshPeerSlices& slices)
+    const MeshPeerSlices& slices) const
 {
     const TxRxSlicesList sendRecvSlicesList(
         {slices.txSrcSlices_, slices.txDstSlices_}, {slices.rxSrcSlices_, slices.rxDstSlices_});

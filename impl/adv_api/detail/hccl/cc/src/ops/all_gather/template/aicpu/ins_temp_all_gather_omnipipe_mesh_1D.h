@@ -52,26 +52,26 @@ private:
     HcclResult RunMeshPeer(
         const std::vector<ThreadHandle>& threads, const std::map<u32, std::vector<ChannelInfo>>& channels,
         u32 myAlgRank, u32 threadIdx, u32 dataTypeSize);
-    HcclResult GetPeerSymmetricPointers(u32 connectedRank, void*& remoteOut);
+    HcclResult GetPeerSymmetricPointers(u32 connectedRank, void*& remoteOut) const;
     void BuildSymmetricSlices(
-        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, void* remoteOut,
+        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, void* const remoteOut,
         MeshPeerSlices& slices);
     void BuildScratchSlices(
         u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, void* remoteCclBuffAddr,
         MeshPeerSlices& slices);
     void BuildScratchWriteSlice(
-        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 rpt, void* remoteCclBuffAddr,
+        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 rpt, void* const remoteCclBuffAddr,
         MeshPeerSlices& slices);
     void BuildScratchReadSlice(
-        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, u32 rpt, void* remoteCclBuffAddr,
-        MeshPeerSlices& slices);
+        u32 myAlgRank, u32 connectedAlgRank, u32 connectedRank, u32 dataTypeSize, u32 rpt,
+        void* const remoteCclBuffAddr, MeshPeerSlices& slices);
     void AppendMeshSlices(
         const MeshSliceInfo& txSrc, const MeshSliceInfo& txDst, const MeshSliceInfo& rxSrc, const MeshSliceInfo& rxDst,
         const char* mode, u32 connectedRank, MeshPeerSlices& slices);
-    void LogMeshSlice(const char* sliceName, const char* mode, u32 connectedRank, const MeshSliceInfo& slice);
+    void LogMeshSlice(const char* sliceName, const char* mode, u32 connectedRank, const MeshSliceInfo& slice) const;
     HcclResult ExchangeMeshSlices(
         const ChannelInfo& linkRemote, const ThreadHandle& thread, u32 connectedRank, u32 threadIdx,
-        const MeshPeerSlices& slices);
+        const MeshPeerSlices& slices) const;
     bool omniLastStepRead_ = false;
     u64 inputOffset_{0};
     u64 outputOffset_{0};

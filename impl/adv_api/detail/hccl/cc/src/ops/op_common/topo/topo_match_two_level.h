@@ -33,7 +33,7 @@ public:
     // 本重载内置本算法家族固化的 AlgAttrs（AICPU_TS + {MESH, NHR}，即
     // InsReduceScatterParallelExecutor 全部注册的双模板形态），转发到 V2 MatchTopo。
     HcclResult MatchTopo(
-        const HcclComm comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo);
+        const void* comm, TopoInfoWithNetLayerDetails* topoInfo, AlgHierarchyInfoForAllLevel& algHierarchyInfo);
 };
 
 } // namespace mc2_ops_hccl

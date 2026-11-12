@@ -967,12 +967,12 @@ uint16_t Fp32DenormToFp16(uint32_t sign, uint32_t mantissa, int32_t fp16Exp)
     mantissa |= 0x800000; // 将隐含1放入mantissa高位
     int32_t totalShift = 14 - fp16Exp;
     // round-to-nearest-even舍入: 取guard bit和sticky bit
-    uint32_t roundBit = (mantissa >> (totalShift - 1)) & 0x1;
+    bool roundBit = ((mantissa >> (totalShift - 1)) & 0x1) != 0;
     uint32_t truncated = mantissa & ((1U << (totalShift - 1)) - 1);
-    uint32_t sticky = (truncated != 0) ? 1 : 0;
+    bool sticky = truncated != 0;
     uint16_t fp16Mant = static_cast<uint16_t>(mantissa >> totalShift);
     fp16Mant += roundBit && (sticky || (fp16Mant & 0x1));
-    if (fp16Mant & 0x400) {
+    if ((fp16Mant & 0x400) != 0) {
         // 舍入进位后尾数溢出，升级为FP16最小规格化数（exponent=1, mantissa=0）
         return static_cast<uint16_t>((sign << 15) | (1 << 10));
     }
@@ -1017,8 +1017,8 @@ uint16_t Fp32ToFp16(float value)
     // 正常规格化数: 截断23位尾数到10位，做round-to-nearest-even舍入
     uint32_t discarded = mantissa & 0x1FFF; // 被丢弃的低13位
     uint16_t fp16Mant = static_cast<uint16_t>(mantissa >> 13);
-    uint32_t roundBit = (discarded >> 12) & 0x1;   // guard bit: 被丢弃的最高位
-    uint32_t sticky = (discarded & 0xFFF) ? 1 : 0; // sticky bit: 被丢弃的其余位是否有1
+    bool roundBit = ((discarded >> 12) & 0x1) != 0; // guard bit: 被丢弃的最高位
+    bool sticky = (discarded & 0xFFF) != 0;         // sticky bit: 被丢弃的其余位是否有1
     fp16Mant += roundBit && (sticky || (fp16Mant & 0x1));
     if (fp16Mant == 0x400) {
         // 舍入进位导致10位尾数溢出，指数+1，尾数归零
@@ -1029,7 +1029,7 @@ uint16_t Fp32ToFp16(float value)
         // 进位后指数溢出，饱和到±Inf
         return static_cast<uint16_t>((sign << 15) | 0x7C00);
     }
-    return static_cast<uint16_t>((sign << 15) | (fp16Exp << 10) | fp16Mant);
+    return static_cast<uint16_t>((static_cast<uint32_t>(sign) << 15) | (fp16Exp << 10) | fp16Mant);
 }
 
 HcclResult AicpuReduceFp16(u8* dst, u8* src, u64 size, const HcclReduceOp reduceOp)
