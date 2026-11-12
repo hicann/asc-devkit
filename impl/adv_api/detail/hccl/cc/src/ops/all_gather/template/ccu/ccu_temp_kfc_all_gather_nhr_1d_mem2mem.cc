@@ -118,8 +118,8 @@ HcclResult CcuTempKfcAllGatherNHR1DMem2Mem::CalcRes(
 // 按 step 序列逐个选 from/to 的 channel（单 die 用 enableDieId 的链路；双 die 加两个 die 的
 // 链路，供跨框 die0 连 die1 场景两条链路并存）——RS 2die ProcessNHRStepInfo 同构。
 HcclResult CcuTempKfcAllGatherNHR1DMem2Mem::ProcessNHRStepInfo(
-    const HcclComm comm, std::vector<KfcNhrStepInfo>& stepInfoVector, std::map<u32, u32>& rank2ChannelIdx,
-    u32 enableDieNum, u32 enableDieId, std::vector<std::vector<HcclChannelDesc>>& channelsPerDie) const
+    HcclComm comm, std::vector<KfcNhrStepInfo>& stepInfoVector, std::map<u32, u32>& rank2ChannelIdx, u32 enableDieNum,
+    u32 enableDieId, std::vector<std::vector<HcclChannelDesc>>& channelsPerDie) const
 {
     u32 stepNum = 0;
     for (u32 ranks = tempRankSize_ - 1U; ranks != 0U; ranks >>= 1U) {

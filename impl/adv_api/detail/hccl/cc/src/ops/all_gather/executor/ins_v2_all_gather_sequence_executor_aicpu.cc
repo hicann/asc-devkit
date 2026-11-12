@@ -313,7 +313,7 @@ HcclResult InsV2AllGatherSequenceExecutorAicpu<AlgTopoMatch, InsAlgTemplate0, In
 
 template <typename AlgTopoMatch, typename InsAlgTemplate0, typename InsAlgTemplate1>
 HcclResult InsV2AllGatherSequenceExecutorAicpu<AlgTopoMatch, InsAlgTemplate0, InsAlgTemplate1>::SplitData(
-    const u64 dataCount, const u64 rankSize, TemplateDataParams& tempAlgParams)
+    const u64 dataCount, const u64 rankSize, TemplateDataParams& tempAlgParams) const
 {
     u32 sliceNum = rankSize;
     tempAlgParams.allRankSliceSize.clear();

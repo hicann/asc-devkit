@@ -44,7 +44,7 @@ private:
     HcclResult OrchestrateLoop(
         const OpParam& param, const AlgResourceCtxSerializable& resCtx, InsAlgTemplate0& intraTempAlg,
         InsAlgTemplate1& interTempAlg);
-    HcclResult SplitData(const u64 dataCount, const u64 rankSize, TemplateDataParams& tempAlgParams);
+    HcclResult SplitData(const u64 dataCount, const u64 rankSize, TemplateDataParams& tempAlgParams) const;
     template <typename InsAlgTemplate>
     HcclResult GenTempResource(
         const AlgResourceCtxSerializable& resCtx, const u32 channelLevelIdx, const InsAlgTemplate& algTemplate,
