@@ -273,6 +273,37 @@ __aicore__ inline void FixpipeL0cToUB(
     bool nz2dnEn = false;
     GetFixpipeLoopOffset<DstT, config>(intriParams, fixpipeTiling, nIterIndex, srcOffset, dstOffset, nz2ndEn, nz2dnEn);
     // LOC -> UB only n direction need fixpipeTiling, m no need fixpipeTiling
+    if (IsCompatibleTo3510()) {
+        bool blockId = get_block_idx() % 2 == 1;
+        if (intriParams.dualDstCtl == 1) {
+            srcOffset += blockId ? BLOCK_CUBE * intriParams.mSize / 2 : 0;
+            return copy_matrix_cc_to_ub(
+                (__ubuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize, intriParams.mSize / 2,
+                intriParams.dstStride, intriParams.srcStride, 0, 0, 0, 0, intriParams.unitFlag,
+                static_cast<uint64_t>(intriParams.quantPre), static_cast<uint8_t>(intriParams.reluEn), false, nz2ndEn,
+                static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
+                nz2dnEn);
+        } else if (intriParams.dualDstCtl == 2) {
+            srcOffset += blockId ? calNSize / 2 * intriParams.srcStride : 0;
+            return copy_matrix_cc_to_ub(
+                (__ubuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize / 2, intriParams.mSize,
+                intriParams.dstStride, intriParams.srcStride, 0, 0, 0, 0, intriParams.unitFlag,
+                static_cast<uint64_t>(intriParams.quantPre), static_cast<uint8_t>(intriParams.reluEn), false, nz2ndEn,
+                static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
+                nz2dnEn);
+        } else {
+            if (blockId == intriParams.subBlockId) {
+                return copy_matrix_cc_to_ub(
+                    (__ubuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize, intriParams.mSize,
+                    intriParams.dstStride, intriParams.srcStride, intriParams.dualDstCtl, intriParams.subBlockId, 0, 0,
+                    intriParams.unitFlag, static_cast<uint64_t>(intriParams.quantPre),
+                    static_cast<uint8_t>(intriParams.reluEn), false, nz2ndEn,
+                    static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false,
+                    false, nz2dnEn);
+            }
+            return;
+        }
+    }
     return copy_matrix_cc_to_ub(
         (__ubuf__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), calNSize, intriParams.mSize,
         intriParams.dstStride, intriParams.srcStride, intriParams.dualDstCtl, intriParams.subBlockId, 0, 0,

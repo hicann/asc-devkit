@@ -26,6 +26,7 @@
 #include "../../../include/basic_api/kernel_operator_swap_mem_intf.h"
 #include <type_traits>
 #include <utility>
+#include "../../utils/base/compat_utils.h"
 
 namespace AscendC {
 
@@ -209,6 +210,135 @@ __aicore__ inline void CopyUbufToUbuf(
     }
 }
 
+template <typename T, pipe_t pipe>
+__aicore__ inline void DrainCopyMessageQueueImpl()
+{
+    ASCENDC_ASSERT((g_sysCV11CompatCV12WorkSpace != nullptr), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Compatible Workspace pointer is nullptr! Try set environment variable "
+                          "ASCEND_OP_COMPATIBILITY_MODE=1 and retry");
+    });
+
+    if ASCEND_IS_AIV {
+        return;
+    }
+
+    if ASCEND_IS_AIC {
+        // core info
+        uint8_t streamId = get_acsqid();
+        uint8_t onlyCoreId = get_only_coreid();
+
+        // read own only-coreid indexed task queue
+        __gm__ CompatibleMetaDataMessage* metaBase = reinterpret_cast<__gm__ CompatibleMetaDataMessage*>(
+            g_sysCV11CompatCV12WorkSpace + COMPATIBLE_METADATA_QUEUE_REGION_OFFSET +
+            onlyCoreId * COMPATIBLE_METADATA_QUEUE_DEPTH * COMPATIBLE_METADATA_MSG_STRUCT_SIZE);
+        __gm__ uint32_t* headSlot = reinterpret_cast<__gm__ uint32_t*>(
+            g_sysCV11CompatCV12WorkSpace + COMPATIBLE_METADATA_HEADTAIL_REGION_OFFSET +
+            onlyCoreId * COMPATIBLE_METADATA_HEADTAIL_SLOT_SIZE);
+        __gm__ uint32_t* tailSlot = headSlot + 1;
+        uint32_t head = ld_dev(headSlot, 0);
+        uint32_t tail = ld_dev(tailSlot, 0);
+        uint32_t taskLimit = 0;
+
+        // task endure
+        if (head == tail) {
+            return;
+        } else if (head < tail) {
+            taskLimit = tail;
+        } else {
+            taskLimit = tail + COMPATIBLE_METADATA_QUEUE_DEPTH;
+        }
+
+        for (uint32_t slotIdx = head; slotIdx < taskLimit; ++slotIdx) {
+            uint32_t usedSlotIdx = slotIdx % COMPATIBLE_METADATA_QUEUE_DEPTH;
+            __gm__ CompatibleMetaDataMessage* metaSlot = metaBase + usedSlotIdx;
+            __gm__ T* srcGm = reinterpret_cast<__gm__ T*>(ld_dev(&(metaSlot->srcGmAddr), 0));
+            __cbuf__ T* dstL1 = reinterpret_cast<__cbuf__ T*>(ld_dev(&(metaSlot->dstL1Addr), 0));
+            uint32_t blockCount = ld_dev(&(metaSlot->blockCount), 0);
+            uint32_t blockLen = ld_dev(&(metaSlot->blockLen), 0);
+            uint32_t dstGap = ld_dev(&(metaSlot->dstGap), 0);
+            CopyGmToCbufAlignV2(dstL1, srcGm, blockCount, blockLen, 0, 0, dstGap, dstGap, false, 0, false);
+        }
+
+        // refresh head
+        dcci(reinterpret_cast<__gm__ int64_t*>(headSlot), cache_line_t::SINGLE_CACHE_LINE, dcci_dst_t::CACHELINE_OUT);
+        dsb((mem_dsb_t)AscendC::MemDsbT::DDR);
+        st_dev(tail, headSlot, 0);
+
+        // sync
+        set_flag(PIPE_MTE2, pipe, EVENT_ID5);
+        wait_flag(PIPE_MTE2, pipe, EVENT_ID5);
+    }
+}
+
+// compatible soft impl
+template <typename T>
+__aicore__ inline void CopyUbufToCbufCompatibleImpl(
+    __cbuf__ T* dst, __ubuf__ T* src, const uint16_t blockCount, const uint16_t blockLen, const uint16_t srcStride,
+    const uint16_t dstStride)
+{
+    ASCENDC_ASSERT((g_sysCV11CompatCV12WorkSpace != nullptr), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Compatible Workspace pointer is nullptr! Try set environment variable "
+                          "ASCEND_OP_COMPATIBILITY_MODE=1 and retry");
+    });
+
+    ASCENDC_ASSERT((dst != nullptr), { KERNEL_LOG(KERNEL_ERROR, "dst ptr can not be nullptr"); });
+    ASCENDC_ASSERT((src != nullptr), { KERNEL_LOG(KERNEL_ERROR, "dst ptr can not be nullptr"); });
+
+    // core id info
+    uint8_t blockIdx = get_block_idx();
+    uint8_t streamId = get_acsqid();
+    uint8_t oppositeBlockId = blockIdx % 2 == 0 ? blockIdx + 1 : blockIdx - 1;
+    uint8_t oppositeOnlyCoreId = ld_dev(
+        g_sysCV11CompatCV12WorkSpace + COMPATIBLE_COREID_MAP_REGION_OFFSET +
+            COMPATIBLE_COREID_MAP_SLOT_SIZE * streamId + oppositeBlockId * sizeof(CompatibleCoreIdInfo),
+        0);
+
+    // tail ptr info
+    __gm__ uint32_t* tailSlot = reinterpret_cast<__gm__ uint32_t*>(
+                                    g_sysCV11CompatCV12WorkSpace + COMPATIBLE_METADATA_HEADTAIL_REGION_OFFSET +
+                                    oppositeOnlyCoreId * COMPATIBLE_METADATA_HEADTAIL_SLOT_SIZE) +
+                                1;
+    uint32_t tail = ld_dev(tailSlot, 0);
+
+    // payload offset and meta info slot
+    __gm__ T* payloadSlot = reinterpret_cast<__gm__ T*>(
+        g_sysCV11CompatCV12WorkSpace + COMPATIBLE_L1_REGION_OFFSET + oppositeOnlyCoreId * COMPATIBLE_L1_SLOT_SIZE +
+        reinterpret_cast<uint64_t>(dst));
+    __gm__ CompatibleMetaDataMessage* metaSlot = reinterpret_cast<__gm__ CompatibleMetaDataMessage*>(
+        g_sysCV11CompatCV12WorkSpace + COMPATIBLE_METADATA_QUEUE_REGION_OFFSET +
+        oppositeOnlyCoreId * COMPATIBLE_METADATA_QUEUE_DEPTH * COMPATIBLE_METADATA_MSG_STRUCT_SIZE +
+        tail * COMPATIBLE_METADATA_MSG_STRUCT_SIZE);
+
+    // copy data
+    set_flag(PIPE_S, PIPE_MTE3, EVENT_ID5);
+    wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID5);
+    copy_ubuf_to_cbuf((__cbuf__ void*)dst, (__ubuf__ void*)src, (uint8_t)0, blockCount, blockLen, srcStride, dstStride);
+    CopyUbufToGmAlignV2(payloadSlot, src, blockCount, blockLen, srcStride, dstStride, false, 0);
+    set_flag(PIPE_MTE3, PIPE_S, EVENT_ID5);
+    wait_flag(PIPE_MTE3, PIPE_S, EVENT_ID5);
+
+    // write metadata info
+    dcci(reinterpret_cast<__gm__ int64_t*>(metaSlot), cache_line_t::SINGLE_CACHE_LINE, dcci_dst_t::CACHELINE_OUT);
+    dsb((mem_dsb_t)AscendC::MemDsbT::DDR);
+
+    st_dev(reinterpret_cast<uint64_t>(payloadSlot), &(metaSlot->srcGmAddr), 0);
+    st_dev(reinterpret_cast<uint64_t>(dst), &(metaSlot->dstL1Addr), 0);
+    st_dev(static_cast<uint32_t>(blockIdx), &(metaSlot->srcBlockId), 0);
+    st_dev(static_cast<uint32_t>(oppositeBlockId), &(metaSlot->dstBlockId), 0);
+    st_dev(blockCount, &(metaSlot->blockCount), 0);
+    st_dev(blockLen, &(metaSlot->blockLen), 0);
+    st_dev(srcStride, &(metaSlot->srcGap), 0);
+    st_dev(dstStride, &(metaSlot->dstGap), 0);
+    st_dev(1u, &(metaSlot->flag), 0);
+
+    dcci(reinterpret_cast<__gm__ int64_t*>(tailSlot - 1), cache_line_t::SINGLE_CACHE_LINE, dcci_dst_t::CACHELINE_OUT);
+    dsb((mem_dsb_t)AscendC::MemDsbT::DDR);
+    st_dev((tail + 1) % COMPATIBLE_METADATA_QUEUE_DEPTH, tailSlot, 0);
+    dsb((mem_dsb_t)AscendC::MemDsbT::DDR);
+}
+
 // only support VecCore   PIPE_MTE3
 // UB -> L1: copy_ubuf_to_cbuf:  Note: burstLen + stride is unit of 32B
 template <typename T>
@@ -217,8 +347,12 @@ __aicore__ inline void CopyUbufToCbuf(
     const uint16_t dstStride)
 {
     if ASCEND_IS_AIV {
-        copy_ubuf_to_cbuf(
-            (__cbuf__ void*)dst, (__ubuf__ void*)src, (uint8_t)0, blockCount, blockLen, srcStride, dstStride);
+        if (IsCompatibleTo3510()) {
+            CopyUbufToCbufCompatibleImpl<T>(dst, src, blockCount, blockLen, srcStride, dstStride);
+        } else {
+            copy_ubuf_to_cbuf(
+                (__cbuf__ void*)dst, (__ubuf__ void*)src, (uint8_t)0, blockCount, blockLen, srcStride, dstStride);
+        }
     }
 }
 // only support CubeCore   PIPE_MTE1
@@ -229,6 +363,9 @@ __aicore__ inline void CopyCbufToUbuf(
     const uint16_t dstStride)
 {
     if ASCEND_IS_AIC {
+        if (IsCompatibleTo3510()) {
+            DrainCopyMessageQueueImpl<T, PIPE_MTE1>();
+        }
         copy_cbuf_to_ubuf((__ubuf__ void*)dst, (__cbuf__ void*)src, 0, blockCount, blockLen, srcStride, dstStride);
     }
 }
@@ -250,6 +387,9 @@ __aicore__ inline void CopyCbufToBt(
                     KERNEL_LOG_INTERNAL(
                         KERNEL_ERROR,
                         "For float or int32_t types, blockLen must be even when DataCopy from L1 to BIAS."));
+            }
+            if (IsCompatibleTo3510()) {
+                DrainCopyMessageQueueImpl<T, PIPE_MTE1>();
             }
             copy_cbuf_to_bt(dst, src, static_cast<bool>(convControl), blockCount, blockLen, srcStride, dstStride);
         }
@@ -1486,6 +1626,9 @@ __aicore__ inline __in_pipe__(FIX)
 {
     constexpr uint16_t unitCoeff = 2;
     if ASCEND_IS_AIC {
+        if (IsCompatibleTo3510()) {
+            DrainCopyMessageQueueImpl<T, PIPE_FIX>();
+        }
         copy_cbuf_to_fbuf(
             (__fbuf__ void*)dst, (__cbuf__ void*)src, intriParams.blockCount, intriParams.blockLen * unitCoeff,
             intriParams.srcStride, intriParams.dstStride * unitCoeff);

@@ -78,6 +78,15 @@ def compile_pre_process(op_info: OpInfo, compile_options: list):
     global_var_storage.set_variable(
         "ascendc_enable_aicore_exception_restart", "-DAICORE_EXCEPTION_RESTART" in compile_options
     )
+    global_var_storage.set_variable(
+        "ascendc_op_compatibility_mode", "-DASCEND_OP_COMPATIBILITY_MODE=1" in compile_options
+    )
+    if global_var_storage.get_variable("ascendc_op_compatibility_mode") and not CommonUtility.is_920r1():
+        raise Exception(
+            "ASCEND_OP_COMPATIBILITY_MODE only support NPU_ARCH=9201, current soc version: {} is not supported".format(
+                global_var_storage.get_variable("ascendc_short_soc_version")
+            )
+        )
     if global_var_storage.get_variable("ascendc_enable_coverage"):
         compile_options.append("-g")
     global_ascendc_kernel_feature_manager.init_available_and_enable_features()

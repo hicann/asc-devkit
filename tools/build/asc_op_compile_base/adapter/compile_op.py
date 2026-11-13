@@ -384,6 +384,12 @@ def gen_meta_info_section(compile_info, op_info):
     section_var += '((used, section (".ascend.meta"))) = '
     section_var += f" {{{{B_TYPE_OPTIONAL_PARAM, 4}}, {optional_input_mode}, {optional_output_mode}}};\n"
 
+    if global_var_storage.get_variable("ascendc_op_compatibility_mode") is True:
+        section_var += "static const struct BinaryMetaCompatibilityMode "
+        section_var += f"{kernel_name}_kernel_metainfo_compatibility_section __attribute__ "
+        section_var += '((used, section (".ascend.meta"))) = '
+        section_var += " {{B_TYPE_RUNTIME_IMPLICIT_INFO, 4}, 0x07};\n"
+
     global_var_storage.set_variable("ascendc_meta_info", section_var)
 
 

@@ -49,6 +49,17 @@
 
 inline __gm__ void* g_sysFftsAddr = nullptr;
 namespace AscendC {
+
+__aicore__ inline bool IsCompatibleTo3510()
+{
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201) && defined(ASCEND_OP_COMPATIBILITY_MODE) && \
+    ASCEND_OP_COMPATIBILITY_MODE == 1
+    return true;
+#else
+    return false;
+#endif
+}
+
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162) || \
                               (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
 namespace Internal {

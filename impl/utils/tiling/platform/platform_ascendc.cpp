@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
  * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
- * CANN Open Software License Agreement Version 2.0 (the "License").
+ * CANN Open Software License Agreement Version 2.0 (the License).
  * Please refer to the License for details. You may not use this file except in compliance with the License.
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
@@ -13,6 +13,7 @@
  * \brief
  */
 
+#include <cstdint>
 #include <mutex>
 #include <dlfcn.h>
 #include <csignal>
@@ -33,6 +34,7 @@ const static uint32_t WORK_SPACE_SIZE_950 = 16 * 1024 * 1024;
 const static uint32_t WORK_SPACE_SIZE_960DT = 16 * 1024 * 1024;
 const static uint32_t WORK_SPACE_SIZE = 2 * 1024 * 1024;
 const static uint32_t MIX_AIC_AIV_RATION_910B1 = 2;
+const static uint32_t COMPATIBLE_MODE_AIC_NUM_RATIO = 2;
 const static uint32_t CUBE_GROUP_WORK_SPACE_SIZE_910B = 1 * 1024 * 1024;
 const static uint32_t GROUP_BARRIER_WORK_SPACE_SIZE_910B = 1 * 1024 * 1024;
 const static std::string LABEL_VERSION = "version";
@@ -150,6 +152,11 @@ uint32_t PlatformAscendC::GetCoreNumVector(void) const
         return vecCoreNum;
     }
     return 0;
+}
+
+uint32_t PlatformAscendC::GetCoreNumAicCompatMode(void) const
+{
+    return GetCoreNumByType(this->GetPlatFormInfo(), false) / COMPATIBLE_MODE_AIC_NUM_RATIO;
 }
 
 uint32_t PlatformAscendC::GetCoreNumAic(void) const { return GetCoreNumByType(this->GetPlatFormInfo(), false); }

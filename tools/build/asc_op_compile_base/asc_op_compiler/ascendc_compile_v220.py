@@ -855,6 +855,18 @@ def get_ktype_section_head(variable_name: str):
     return section_var_head
 
 
+def check_9201_compile_mode(kernel_meta_type: KernelMetaType):
+    if CommonUtility.is_920r1():
+        if kernel_meta_type == KernelMetaType.KERNEL_TYPE_MIX_AIC_1_2:
+            if not global_var_storage.get_variable("ascendc_op_compatibility_mode"):
+                raise Exception(
+                    "mix(1,2) type kernel must be compiled with -DASCEND_OP_COMPATIBILITY_MODE=1 on current device!"
+                )
+        else:
+            if global_var_storage.get_variable("ascendc_op_compatibility_mode"):
+                raise Exception("-DASCEND_OP_COMPATIBILITY_MODE=1 compile option only support mix(1,2) type kernel!")
+
+
 def get_ktype_section_variable(variable_name: str, section_func_name: str, kernel_meta_type: KernelMetaType):
     section_var = ""
     if kernel_meta_type == KernelMetaType.KERNEL_TYPE_AIV_ONLY:
@@ -896,8 +908,12 @@ def get_ktype_section_variable(variable_name: str, section_func_name: str, kerne
         section_var += get_ktype_section_head(variable_name)
         section_var += f"static const struct FunLevelMixCoreType {variable_name} __attribute__ "
         section_var += f'((used, section (".ascend.meta.{section_func_name}"))) = '
-        section_var += "{ {{F_TYPE_KTYPE, sizeof(unsigned int)}, K_TYPE_MIX_AIC_MAIN},\
-    {{F_TYPE_MIX_TASK_RATION, sizeof(unsigned int)}, 1, 2} };\n"
+        if CommonUtility.is_920r1() and global_var_storage.get_variable("ascendc_op_compatibility_mode"):
+            section_var += "{ {{F_TYPE_KTYPE, sizeof(unsigned int)}, K_TYPE_MIX_AIC_MAIN},\
+        {{F_TYPE_MIX_TASK_RATION, sizeof(unsigned int)}, 1, 1} };\n"
+        else:
+            section_var += "{ {{F_TYPE_KTYPE, sizeof(unsigned int)}, K_TYPE_MIX_AIC_MAIN},\
+        {{F_TYPE_MIX_TASK_RATION, sizeof(unsigned int)}, 1, 2} };\n"
         section_var += "#endif\n"
     else:
         raise Exception(f"invalid kernel meta type: {kernel_meta_type}")

@@ -63,6 +63,7 @@ class GlobalStorageSingleton:
         self.ascendc_sk_double_compile = False
         self.ascendc_sk_sub_combine_norm_workflow = False
         self.ascendc_tiling_const_propagation = False
+        self.ascendc_op_compatibility_mode = False
 
     def global_storage_reset(self):
         self.ascendc_short_soc_version = get_soc_spec("SHORT_SOC_VERSION")
@@ -99,6 +100,7 @@ class GlobalStorageSingleton:
         self.ascendc_sk_double_compile = False
         self.ascendc_sk_sub_combine_norm_workflow = False
         self.ascendc_tiling_const_propagation = False
+        self.ascendc_op_compatibility_mode = False
 
     def set_variable(self, name, value):
         if hasattr(self, name):

@@ -28,6 +28,7 @@
 #endif
 #include "kernel_operator_block_sync_intf.h"
 #include "../../../include/basic_api/kernel_common.h"
+#include "../../utils/base/compat_utils.h"
 
 namespace AscendC {
 __aicore__ inline void ClcSyncCount(
@@ -741,21 +742,143 @@ __aicore__ inline void SuperKernelAutoSyncAllComplementImpl()
 }
 #endif
 
+// in Mode 4 cube core only notify corresponding vector core using hard path
+// vector core have to notify corresponding cube core and opposite cube core at same time
 template <uint8_t modeId, pipe_t pipe>
-__aicore__ inline void NotifyEventImpl(uint16_t flagId)
+__aicore__ inline void NotifyEventCompatibleMode4Impl(uint16_t flagId)
 {
+    uint8_t streamId = get_acsqid();
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            // notify corresponding cube core
+            set_intra_block(pipe, flagId);
+
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(pipe, PIPE_S, EVENT_ID5);
+                wait_flag(pipe, PIPE_S, EVENT_ID5);
+            }
+
+            // notify opposite cube core
+            uint8_t oppositeBlockId = get_block_idx() % 2 == 0 ? get_block_idx() + 1 : get_block_idx() - 1;
+            uint8_t oppositeWriteCoreId = ld_dev(
+                g_sysCV11CompatCV12WorkSpace + COMPATIBLE_COREID_MAP_REGION_OFFSET +
+                    COMPATIBLE_COREID_MAP_SLOT_SIZE * streamId + oppositeBlockId * sizeof(CompatibleCoreIdInfo),
+                0);
+
+            __gm__ uint8_t* oppositeSyncCounterAddr = g_sysCV11CompatCV12WorkSpace +
+                                                      COMPATIBLE_SYNC_MODE4_COUNTER_REGION_OFFSET +
+                                                      oppositeWriteCoreId * COMPATIBLE_SYNC_SLOT_SIZE +
+                                                      flagId * sizeof(uint64_t); // first half represent cube counter
+            atomicAdd((__gm__ uint32_t*)oppositeSyncCounterAddr, (uint32_t)(1));
+        }
+    }
+    if constexpr (IsSplitCubePipe<pipe>()) {
+        if ASCEND_IS_AIC {
+            // notify corresponding vec core
+            if ((flagId <= 15 && get_block_idx() % 2 == 0) || (flagId > 15 && get_block_idx() % 2 == 1)) {
+                set_intra_block(pipe, flagId % 16);
+            }
+        }
+    }
+}
+
+// in Mode 2 cube core only notify corresponding vector core
+// because data flow into vector core only comes from corresponding cube core
+// vector core have to notify corresponding cube core and opposite cube core at same time
+// can't use hard path here since it's full core sync
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void NotifyEventCompatibleMode2Impl(uint16_t flagId)
+{
+    uint8_t streamId = get_acsqid();
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(pipe, PIPE_S, EVENT_ID5);
+                wait_flag(pipe, PIPE_S, EVENT_ID5);
+            }
+
+            // write two cube core sync counter
+            uint8_t oppositeBlockId = get_block_idx() % 2 == 0 ? get_block_idx() + 1 : get_block_idx() - 1;
+            uint8_t oppositeWriteCoreId = ld_dev(
+                g_sysCV11CompatCV12WorkSpace + COMPATIBLE_COREID_MAP_REGION_OFFSET +
+                    COMPATIBLE_COREID_MAP_SLOT_SIZE * streamId + oppositeBlockId * sizeof(CompatibleCoreIdInfo),
+                0);
+
+            __gm__ uint8_t* syncCounterAddr = g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                              get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE + flagId * sizeof(uint64_t);
+            __gm__ uint8_t* oppositeSyncCounterAddr = g_sysCV11CompatCV12WorkSpace +
+                                                      COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                                      oppositeWriteCoreId * COMPATIBLE_SYNC_SLOT_SIZE +
+                                                      flagId * sizeof(uint64_t); // first half represent cube counter
+            atomicAdd((__gm__ uint32_t*)syncCounterAddr, (uint32_t)(1));
+            atomicAdd((__gm__ uint32_t*)oppositeSyncCounterAddr, (uint32_t)(1));
+        }
+    }
+    if constexpr (IsSplitCubePipe<pipe>()) {
+        if ASCEND_IS_AIC {
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(pipe, PIPE_S, EVENT_ID5);
+                wait_flag(pipe, PIPE_S, EVENT_ID5);
+            }
+
+            // write corresponding vector sync counter
+            __gm__ uint8_t* syncCounterAddr = g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                              get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE +
+                                              flagId * sizeof(uint64_t) + sizeof(uint32_t);
+            atomicAdd((__gm__ uint32_t*)syncCounterAddr, (uint32_t)(1));
+        }
+    }
+}
+
+// in Mode 1 there is only AIV core sync
+// AIV write opposite AIV core sync counter
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void NotifyEventCompatibleMode1Impl(uint16_t flagId)
+{
+    uint8_t streamId = get_acsqid();
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(pipe, PIPE_S, EVENT_ID5);
+                wait_flag(pipe, PIPE_S, EVENT_ID5);
+            }
+
+            // write opposite vector sync counter
+            uint8_t oppositeBlockId = get_block_idx() % 2 == 0 ? get_block_idx() + 1 : get_block_idx() - 1;
+            uint8_t oppositeWriteCoreId = ld_dev(
+                g_sysCV11CompatCV12WorkSpace + COMPATIBLE_COREID_MAP_REGION_OFFSET +
+                    COMPATIBLE_COREID_MAP_SLOT_SIZE * streamId + oppositeBlockId * sizeof(CompatibleCoreIdInfo) +
+                    sizeof(uint8_t),
+                0);
+
+            __gm__ uint8_t* oppositeSyncCounterAddr =
+                g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                oppositeWriteCoreId * COMPATIBLE_SYNC_SLOT_SIZE + flagId * sizeof(uint64_t) +
+                sizeof(uint32_t); // later half represent vector counter
+            atomicAdd((__gm__ uint32_t*)oppositeSyncCounterAddr, (uint32_t)(1));
+        }
+    }
+}
+
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void NotifyEventCompatibleImpl(uint16_t flagId)
+{
+    ASCENDC_ASSERT((g_sysCV11CompatCV12WorkSpace != nullptr), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Compatible Workspace pointer is nullptr! Try set environment variable "
+                          "ASCEND_OP_COMPATIBILITY_MODE=1 and retry");
+    });
     if constexpr (modeId == 4) {
-        if constexpr (IsSplitVectorPipe<pipe>()) {
-            if ASCEND_IS_AIV {
-                set_intra_block(pipe, flagId);
-            }
-        }
-        if constexpr (IsSplitCubePipe<pipe>()) {
-            if ASCEND_IS_AIC {
-                set_intra_block(pipe, flagId);
-            }
-        }
-    } else {
+        NotifyEventCompatibleMode4Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 2) {
+        NotifyEventCompatibleMode2Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 1) {
+        NotifyEventCompatibleMode1Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 0) {
         if constexpr (IsSplitVectorPipe<pipe>()) {
             if ASCEND_IS_AIV {
                 ffts_cross_core_sync(pipe, GetffstMsg(modeId, flagId));
@@ -770,28 +893,198 @@ __aicore__ inline void NotifyEventImpl(uint16_t flagId)
 }
 
 template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void NotifyEventImpl(uint16_t flagId)
+{
+    if (IsCompatibleTo3510()) {
+        NotifyEventCompatibleImpl<modeId, pipe>(flagId);
+    } else {
+        if constexpr (modeId == 4) {
+            if constexpr (IsSplitVectorPipe<pipe>()) {
+                if ASCEND_IS_AIV {
+                    set_intra_block(pipe, flagId);
+                }
+            }
+            if constexpr (IsSplitCubePipe<pipe>()) {
+                if ASCEND_IS_AIC {
+                    set_intra_block(pipe, flagId);
+                }
+            }
+        } else {
+            if constexpr (IsSplitVectorPipe<pipe>()) {
+                if ASCEND_IS_AIV {
+                    ffts_cross_core_sync(pipe, GetffstMsg(modeId, flagId));
+                }
+            }
+            if constexpr (IsSplitCubePipe<pipe>()) {
+                if ASCEND_IS_AIC {
+                    ffts_cross_core_sync(pipe, GetffstMsg(modeId, flagId));
+                }
+            }
+        }
+    }
+}
+
+// in Mode 4 vec core wait would use hard path
+// cube core would use hard path to accept corresponding vector notify
+// and soft gm to accept opposite vector notify
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void WaitEventCompatibleMode4Impl(uint16_t flagId)
+{
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            wait_intra_block(pipe, flagId);
+        }
+    }
+    if constexpr (IsSplitCubePipe<pipe>()) {
+        if ASCEND_IS_AIC {
+            if ((flagId <= 15 && get_block_idx() % 2 == 0) || (flagId > 15 && get_block_idx() % 2 == 1)) {
+                wait_intra_block(pipe, flagId % 16);
+            } else {
+                // read own cube sync counter
+                __gm__ uint8_t* syncCounterAddr =
+                    g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_MODE4_COUNTER_REGION_OFFSET +
+                    get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE + (flagId % 16) * sizeof(uint64_t);
+                uint32_t counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+                while (counterValue == 0) {
+                    counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+                }
+                atomicAdd((__gm__ int32_t*)syncCounterAddr, (int32_t)(-1));
+
+                // stall pipe
+                if constexpr (pipe != PIPE_S) {
+                    set_flag(PIPE_S, pipe, EVENT_ID5);
+                    wait_flag(PIPE_S, pipe, EVENT_ID5);
+                }
+            }
+        }
+    }
+}
+
+// in Mode 2 vector would read own sync counter
+// cube core have to accept two notify to end loop
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void WaitEventCompatibleMode2Impl(uint16_t flagId)
+{
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            // read own vector sync counter
+            __gm__ uint8_t* syncCounterAddr = g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                              get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE +
+                                              flagId * sizeof(uint64_t) + sizeof(uint32_t);
+            uint32_t counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            while (counterValue == 0) {
+                counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            }
+            atomicAdd((__gm__ int32_t*)syncCounterAddr, (int32_t)(-1));
+
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(PIPE_S, pipe, EVENT_ID5);
+                wait_flag(PIPE_S, pipe, EVENT_ID5);
+            }
+        }
+    }
+    if constexpr (IsSplitCubePipe<pipe>()) {
+        if ASCEND_IS_AIC {
+            // read own cube sync counter
+            __gm__ uint8_t* syncCounterAddr = g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                              get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE + flagId * sizeof(uint64_t);
+            uint32_t counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            while (counterValue < 2) {
+                counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            }
+            atomicAdd((__gm__ int32_t*)syncCounterAddr, (int32_t)(-2));
+
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(PIPE_S, pipe, EVENT_ID5);
+                wait_flag(PIPE_S, pipe, EVENT_ID5);
+            }
+        }
+    }
+}
+
+// in Mode 1 there is only AIV core sync
+// read own sync counter
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void WaitEventCompatibleMode1Impl(uint16_t flagId)
+{
+    if constexpr (IsSplitVectorPipe<pipe>()) {
+        if ASCEND_IS_AIV {
+            // read own vector sync counter
+            __gm__ uint8_t* syncCounterAddr = g_sysCV11CompatCV12WorkSpace + COMPATIBLE_SYNC_COUNTER_REGION_OFFSET +
+                                              get_only_coreid() * COMPATIBLE_SYNC_SLOT_SIZE +
+                                              flagId * sizeof(uint64_t) + sizeof(uint32_t);
+            uint32_t counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            while (counterValue == 0) {
+                counterValue = ld_dev((__gm__ uint32_t*)syncCounterAddr, 0);
+            }
+            atomicAdd((__gm__ int32_t*)syncCounterAddr, (int32_t)(-1));
+
+            // stall pipe
+            if constexpr (pipe != PIPE_S) {
+                set_flag(PIPE_S, pipe, EVENT_ID5);
+                wait_flag(PIPE_S, pipe, EVENT_ID5);
+            }
+        }
+    }
+}
+
+template <uint8_t modeId, pipe_t pipe>
+__aicore__ inline void WaitEventCompatibleImpl(uint16_t flagId)
+{
+    ASCENDC_ASSERT((g_sysCV11CompatCV12WorkSpace != nullptr), {
+        KERNEL_LOG(
+            KERNEL_ERROR, "Compatible Workspace pointer is nullptr! Try set environment variable "
+                          "ASCEND_OP_COMPATIBILITY_MODE=1 and retry");
+    });
+    if constexpr (modeId == 4) {
+        WaitEventCompatibleMode4Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 2) {
+        WaitEventCompatibleMode2Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 1) {
+        WaitEventCompatibleMode1Impl<modeId, pipe>(flagId);
+    } else if constexpr (modeId == 0) {
+        if constexpr (IsSplitVectorPipe<pipe>()) {
+            if ASCEND_IS_AIV {
+                wait_flag_dev(pipe, flagId);
+            }
+        }
+        if constexpr (IsSplitCubePipe<pipe>()) {
+            if ASCEND_IS_AIC {
+                wait_flag_dev(pipe, flagId);
+            }
+        }
+    }
+}
+
+template <uint8_t modeId, pipe_t pipe>
 __aicore__ inline void WaitEventImpl(uint16_t flagId)
 {
-    if constexpr (modeId == 4) {
-        if constexpr (IsSplitVectorPipe<pipe>()) {
-            if ASCEND_IS_AIV {
-                wait_intra_block(pipe, flagId);
-            }
-        }
-        if constexpr (IsSplitCubePipe<pipe>()) {
-            if ASCEND_IS_AIC {
-                wait_intra_block(pipe, flagId);
-            }
-        }
+    if (IsCompatibleTo3510()) {
+        WaitEventCompatibleImpl<modeId, pipe>(flagId);
     } else {
-        if constexpr (IsSplitVectorPipe<pipe>()) {
-            if ASCEND_IS_AIV {
-                wait_flag_dev(pipe, flagId);
+        if constexpr (modeId == 4) {
+            if constexpr (IsSplitVectorPipe<pipe>()) {
+                if ASCEND_IS_AIV {
+                    wait_intra_block(pipe, flagId);
+                }
             }
-        }
-        if constexpr (IsSplitCubePipe<pipe>()) {
-            if ASCEND_IS_AIC {
-                wait_flag_dev(pipe, flagId);
+            if constexpr (IsSplitCubePipe<pipe>()) {
+                if ASCEND_IS_AIC {
+                    wait_intra_block(pipe, flagId);
+                }
+            }
+        } else {
+            if constexpr (IsSplitVectorPipe<pipe>()) {
+                if ASCEND_IS_AIV {
+                    wait_flag_dev(pipe, flagId);
+                }
+            }
+            if constexpr (IsSplitCubePipe<pipe>()) {
+                if ASCEND_IS_AIC {
+                    wait_flag_dev(pipe, flagId);
+                }
             }
         }
     }

@@ -103,7 +103,13 @@ public:
      * Get Core Number AiCore
      * @return ai_core_num
      */
+#if defined(ASCEND_OP_COMPATIBILITY_MODE) && ASCEND_OP_COMPATIBILITY_MODE == 1
+    inline uint32_t GetCoreNumAic(void) const {
+        return GetCoreNumAicCompatMode();
+    }
+#else
     uint32_t GetCoreNumAic(void) const;
+#endif
     /**
      * Get Core Number VectorCore
      * @return vector_core_num
@@ -154,6 +160,7 @@ private:
     fe::PlatFormInfos* platformInfo_;
     fe::PlatFormInfos* GetPlatFormInfo(void) const;
     uint32_t reservedMemSize_ = 0;
+    uint32_t GetCoreNumAicCompatMode(void) const;
 };
 
 class PlatformAscendCManager {

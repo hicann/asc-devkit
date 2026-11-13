@@ -94,6 +94,7 @@ enum BinaryMetaType { // function level TLV type
     B_TYPE_DEBUG_INFO = 1,
     B_TYPE_DYNAMIC_PARAM = 2,
     B_TYPE_OPTIONAL_PARAM = 3,
+    B_TYPE_RUNTIME_IMPLICIT_INFO = 4,
     B_TYPE_SK_INFO = 5,
     B_TYPE_SPECIALIZATION_RESOURCE_ID = 6,
     B_TYPE_ICACHE_PRELOAD_FLAG = 7,
@@ -138,6 +139,11 @@ struct BinaryMetaOptionalParam {
     uint16_t optionalOutputMode; // For optional inputs, placeholder publication is required.
 };
 
+struct BinaryMetaCompatibilityMode {
+    BaseTlv head;               // B_TYPE_RUNTIME_IMPLICIT_INFO = 4
+    uint32_t compatibilityMode; // compatibility mode info
+};
+
 struct BinaryMetaAscFeature {
     BaseTlv head;
     uint32_t feature; // PRINT = 1, FFTS = 2, L2CACHE = 3
@@ -159,6 +165,7 @@ enum FuncMetaType {                       // function level TLV type
     F_TYPE_DETERMINISTIC_INFO = 13,
     F_TYPE_FUNCTION_ENTRY_INFO = 14,
     F_TYPE_BLOCK_NUM_INFO = 15,
+    F_TYPE_COMPAT_MODE = 21,
     F_TYPE_MAX
 };
 
@@ -176,6 +183,15 @@ struct FuncMetaFunctionEntry {
 struct FuncMetaNumBlocks {
     BaseTlv head;
     uint32_t numBlocks; // numBlocks
+};
+
+enum FuncCompatMode { // function level TLV compat mode value
+    M_TYPE_COMPAT = 1,
+};
+
+struct FuncMetaCompatibilityMode {
+    BaseTlv head;
+    uint32_t compatMode;
 };
 
 enum CrossCoreSyncType { // function level TLV type

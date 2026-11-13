@@ -81,6 +81,7 @@ class FuncMetaType(enum.Enum):
     F_TYPE_L0_EXCEPTION_DFX_IS_TIK = 6  # DFX tlv mark for TIK
     F_TYPE_PARAM_SUMMARY = 16  # Runtime parameter summary
     F_TYPE_PARAM_INFO = 17  # Runtime parameter layout
+    F_TYPE_COMPAT_MODE = 21  # compat mode tlv
     F_TYPE_MAX = -1
 
 
@@ -362,6 +363,12 @@ class DFXSectionGenerator:
         section_var += f"{kernel_name}_kernel_metainfo_functionentry_section __attribute__ "
         section_var += f'((used, section (".ascend.meta.{kernel_name}"))) = '
         section_var += f"{{{{F_TYPE_FUNCTION_ENTRY_INFO, 12}}, 0, {tiling_key}UL}};\n"
+
+        if global_var_storage.get_variable("ascendc_op_compatibility_mode") is True:
+            section_var += "static const struct FuncMetaCompatibilityMode "
+            section_var += f"{kernel_name}_kernel_metainfo_compat_mode_section __attribute__ "
+            section_var += f'((used, section (".ascend.meta.{kernel_name}"))) = '
+            section_var += "{{F_TYPE_COMPAT_MODE, 4}, M_TYPE_COMPAT};\n"
 
         return section_var
 

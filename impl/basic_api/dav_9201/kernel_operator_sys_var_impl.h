@@ -25,17 +25,29 @@
 #include <cstdint>
 #include "../kernel_log.h"
 #include "../kernel_macros.h"
+#include "../kernel_utils.h"
 
 namespace AscendC {
+
+constexpr int64_t COMPATIBLE_MODE_TASK_RATIO = 2;
 
 __aicore__ inline int64_t GetSubBlockIdxImpl()
 {
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     if ASCEND_IS_AIV {
-        return sub_block_idx;
+        if (IsCompatibleTo3510()) {
+            return block_idx % 2;
+        } else {
+            return sub_block_idx;
+        }
     }
     return 0;
 #else
+    if ASCEND_IS_AIV {
+        if (IsCompatibleTo3510()) {
+            return get_block_idx() % 2;
+        }
+    }
     return get_subblockid();
 #endif
 }
@@ -46,9 +58,17 @@ __aicore__ inline int64_t GetTaskRationImpl()
         return 1;
     } else {
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
-        return g_taskRation;
+        if (IsCompatibleTo3510()) {
+            return COMPATIBLE_MODE_TASK_RATIO;
+        } else {
+            return g_taskRation;
+        }
 #else
-        return get_subblockdim();
+        if (IsCompatibleTo3510()) {
+            return COMPATIBLE_MODE_TASK_RATIO;
+        } else {
+            return get_subblockdim();
+        }
 #endif
     }
 }
@@ -56,9 +76,17 @@ __aicore__ inline int64_t GetTaskRationImpl()
 __aicore__ inline int64_t TscmGetTaskRation()
 {
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
-    return g_taskRation;
+    if (IsCompatibleTo3510()) {
+        return COMPATIBLE_MODE_TASK_RATIO;
+    } else {
+        return g_taskRation;
+    }
 #else
-    return get_subblockdim();
+    if (IsCompatibleTo3510()) {
+        return COMPATIBLE_MODE_TASK_RATIO;
+    } else {
+        return get_subblockdim();
+    }
 #endif
 }
 
@@ -67,13 +95,22 @@ __aicore__ inline int64_t GetBlockIdxImpl()
 #if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
     if ASCEND_IS_AIV {
         return block_idx * g_taskRation + sub_block_idx;
+    } else {
+        if (IsCompatibleTo3510()) {
+            return block_idx / 2;
+        } else {
+            return block_idx;
+        }
     }
-    return block_idx;
 #else
     if ASCEND_IS_AIV {
         return get_block_idx() * get_subblockdim() + get_subblockid();
     } else {
-        return get_block_idx();
+        if (IsCompatibleTo3510()) {
+            return get_block_idx() / 2;
+        } else {
+            return get_block_idx();
+        }
     }
 #endif
 }
