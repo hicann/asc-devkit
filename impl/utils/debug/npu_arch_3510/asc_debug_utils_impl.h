@@ -18,6 +18,33 @@
 #include "impl/utils/sys_macros_impl.h"
 #include "impl/utils/debug/asc_simd_vf_utils.h"
 
+namespace AscDebug3510Internal {
+// Shared by the AICore and SIMD VF wrappers without a cross-domain call.
+template <typename T, typename DumpTensorDataType>
+struct DumpType {
+    static constexpr DumpTensorDataType value =
+        std::is_same<T, bool>::value            ? DumpTensorDataType::ACL_BOOL :
+        std::is_same<T, uint8_t>::value         ? DumpTensorDataType::ACL_UINT8 :
+        std::is_same<T, int8_t>::value          ? DumpTensorDataType::ACL_INT8 :
+        std::is_same<T, int16_t>::value         ? DumpTensorDataType::ACL_INT16 :
+        std::is_same<T, uint16_t>::value        ? DumpTensorDataType::ACL_UINT16 :
+        std::is_same<T, int32_t>::value         ? DumpTensorDataType::ACL_INT32 :
+        std::is_same<T, uint32_t>::value        ? DumpTensorDataType::ACL_UINT32 :
+        std::is_same<T, uint64_t>::value        ? DumpTensorDataType::ACL_UINT64 :
+        std::is_same<T, int64_t>::value         ? DumpTensorDataType::ACL_INT64 :
+        std::is_same<T, float>::value           ? DumpTensorDataType::ACL_FLOAT :
+        std::is_same<T, half>::value            ? DumpTensorDataType::ACL_FLOAT16 :
+        std::is_same<T, bfloat16_t>::value      ? DumpTensorDataType::ACL_BF16 :
+        std::is_same<T, hifloat8_t>::value      ? DumpTensorDataType::ACL_HIFLOAT8 :
+        std::is_same<T, float8_e5m2_t>::value   ? DumpTensorDataType::ACL_FLOAT8_E5M2 :
+        std::is_same<T, float8_e4m3_t>::value   ? DumpTensorDataType::ACL_FLOAT8_E4M3FN :
+        std::is_same<T, float8_e8m0_t>::value   ? DumpTensorDataType::ACL_FLOAT8_E8M0 :
+        std::is_same<T, float4_e2m1x2_t>::value ? DumpTensorDataType::ACL_FLOAT4_E2M1 :
+        std::is_same<T, float4_e1m2x2_t>::value ? DumpTensorDataType::ACL_FLOAT4_E1M2 :
+                                                  DumpTensorDataType::ACL_MAX;
+};
+} // namespace AscDebug3510Internal
+
 namespace __asc_simd_vf {
 template <typename T, typename U, typename... Args>
 __simd_callee__ constexpr bool is_same_in_list()
@@ -201,45 +228,7 @@ __aicore__ inline void sync_all_impl() { pipe_barrier(PIPE_ALL); }
 template <typename T>
 __aicore__ constexpr inline DumpTensorDataType get_dump_datatype_impl()
 {
-    if constexpr (std::is_same<T, bool>::value) {
-        return DumpTensorDataType::ACL_BOOL;
-    } else if (std::is_same<T, uint8_t>::value) {
-        return DumpTensorDataType::ACL_UINT8;
-    } else if (std::is_same<T, int8_t>::value) {
-        return DumpTensorDataType::ACL_INT8;
-    } else if (std::is_same<T, int16_t>::value) {
-        return DumpTensorDataType::ACL_INT16;
-    } else if (std::is_same<T, uint16_t>::value) {
-        return DumpTensorDataType::ACL_UINT16;
-    } else if (std::is_same<T, int32_t>::value) {
-        return DumpTensorDataType::ACL_INT32;
-    } else if (std::is_same<T, uint32_t>::value) {
-        return DumpTensorDataType::ACL_UINT32;
-    } else if (std::is_same<T, uint64_t>::value) {
-        return DumpTensorDataType::ACL_UINT64;
-    } else if (std::is_same<T, int64_t>::value) {
-        return DumpTensorDataType::ACL_INT64;
-    } else if (std::is_same<T, float>::value) {
-        return DumpTensorDataType::ACL_FLOAT;
-    } else if (std::is_same<T, half>::value) {
-        return DumpTensorDataType::ACL_FLOAT16;
-    } else if (std::is_same<T, bfloat16_t>::value) {
-        return DumpTensorDataType::ACL_BF16;
-    } else if (std::is_same<T, hifloat8_t>::value) {
-        return DumpTensorDataType::ACL_HIFLOAT8;
-    } else if (std::is_same<T, float8_e5m2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E5M2;
-    } else if (std::is_same<T, float8_e4m3_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E4M3FN;
-    } else if (std::is_same<T, float8_e8m0_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E8M0;
-    } else if (std::is_same<T, float4_e2m1x2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT4_E2M1;
-    } else if (std::is_same<T, float4_e1m2x2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT4_E1M2;
-    } else {
-        return DumpTensorDataType::ACL_MAX;
-    }
+    return AscDebug3510Internal::DumpType<T, DumpTensorDataType>::value;
 }
 
 __aicore__ __ubuf__ inline BlockVFBufInfo* get_printf_ubuf_addr_aicore(uint64_t addr, uint16_t blockIdx = 0)
@@ -395,45 +384,7 @@ namespace __asc_simd_vf {
 template <typename T>
 __simd_callee__ constexpr inline DumpTensorDataType get_dump_datatype_impl()
 {
-    if constexpr (std::is_same<T, bool>::value) {
-        return DumpTensorDataType::ACL_BOOL;
-    } else if (std::is_same<T, uint8_t>::value) {
-        return DumpTensorDataType::ACL_UINT8;
-    } else if (std::is_same<T, int8_t>::value) {
-        return DumpTensorDataType::ACL_INT8;
-    } else if (std::is_same<T, int16_t>::value) {
-        return DumpTensorDataType::ACL_INT16;
-    } else if (std::is_same<T, uint16_t>::value) {
-        return DumpTensorDataType::ACL_UINT16;
-    } else if (std::is_same<T, int32_t>::value) {
-        return DumpTensorDataType::ACL_INT32;
-    } else if (std::is_same<T, uint32_t>::value) {
-        return DumpTensorDataType::ACL_UINT32;
-    } else if (std::is_same<T, uint64_t>::value) {
-        return DumpTensorDataType::ACL_UINT64;
-    } else if (std::is_same<T, int64_t>::value) {
-        return DumpTensorDataType::ACL_INT64;
-    } else if (std::is_same<T, float>::value) {
-        return DumpTensorDataType::ACL_FLOAT;
-    } else if (std::is_same<T, half>::value) {
-        return DumpTensorDataType::ACL_FLOAT16;
-    } else if (std::is_same<T, bfloat16_t>::value) {
-        return DumpTensorDataType::ACL_BF16;
-    } else if (std::is_same<T, hifloat8_t>::value) {
-        return DumpTensorDataType::ACL_HIFLOAT8;
-    } else if (std::is_same<T, float8_e5m2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E5M2;
-    } else if (std::is_same<T, float8_e4m3_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E4M3FN;
-    } else if (std::is_same<T, float8_e8m0_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT8_E8M0;
-    } else if (std::is_same<T, float4_e2m1x2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT4_E2M1;
-    } else if (std::is_same<T, float4_e1m2x2_t>::value) {
-        return DumpTensorDataType::ACL_FLOAT4_E1M2;
-    } else {
-        return DumpTensorDataType::ACL_MAX;
-    }
+    return AscDebug3510Internal::DumpType<T, DumpTensorDataType>::value;
 }
 } // namespace __asc_simd_vf
 

@@ -495,6 +495,20 @@ __aicore__ inline void DataCopyGM2UBND2NZImpl(
     }
 }
 
+namespace Internal {
+__aicore__ inline uint64_t PackDataCopyLoopSize(const LoopModeParams& params)
+{
+    constexpr uint32_t innerSizeBits = 21;
+    return (static_cast<uint64_t>(params.loop2Size) << innerSizeBits) | static_cast<uint64_t>(params.loop1Size);
+}
+
+__aicore__ inline uint64_t PackDataCopyLoopStride(uint64_t narrowStride, uint64_t wideStride)
+{
+    constexpr uint32_t wideStrideBits = 40;
+    return (narrowStride << wideStrideBits) | wideStride;
+}
+} // namespace Internal
+
 __aicore__ inline void SetLoopModeOutParaImpl(const LoopModeParams& loopParams)
 {
     ASCENDC_ASSERT((loopParams.loop2Size < (1ul << 22)), {
@@ -515,21 +529,18 @@ __aicore__ inline void SetLoopModeOutParaImpl(const LoopModeParams& loopParams)
     ASCENDC_ASSERT((loopParams.loop2SrcStride < (1ul << 40)), {
         KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2SrcStride is too big and needs to be less than 2^40");
     });
-    uint64_t loopSizePara = static_cast<uint64_t>(loopParams.loop2Size) << 21; // LOOP_SIZE_OUTTOUB[42:21]
-    loopSizePara |= static_cast<uint64_t>(loopParams.loop1Size);               // LOOP_SIZE_OUTTOUB[20:0]
+    uint64_t loopSizePara = Internal::PackDataCopyLoopSize(loopParams);
 
     // LOOP1_STRIDE_OUTTOUB[60:40], must be 32B aligned
     ASCENDC_ASSERT((loopParams.loop1DstStride % GetDataBlockSizeInBytes() == 0), {
         KERNEL_LOG(KERNEL_ERROR, "loop1DstStride must be 32B aligned");
     });
-    uint64_t loop1StridePara = (loopParams.loop1DstStride) << 40; // loop1DstStride must be 32B aligned
-    loop1StridePara |= loopParams.loop1SrcStride;                 // LOOP1_STRIDE_OUTTOUB[39:0]
+    uint64_t loop1StridePara = Internal::PackDataCopyLoopStride(loopParams.loop1DstStride, loopParams.loop1SrcStride);
     // LOOP2_STRIDE_OUTTOUB[60:40], must be 32B aligned
     ASCENDC_ASSERT((loopParams.loop2DstStride % GetDataBlockSizeInBytes() == 0), {
         KERNEL_LOG(KERNEL_ERROR, "loop2DstStride must be 32B aligned");
     });
-    uint64_t loop2StridePara = (loopParams.loop2DstStride) << 40; // loop2DstStride must be 32B aligned
-    loop2StridePara |= loopParams.loop2SrcStride;                 // LOOP2_STRIDE_OUTTOUB[39:0]
+    uint64_t loop2StridePara = Internal::PackDataCopyLoopStride(loopParams.loop2DstStride, loopParams.loop2SrcStride);
 
     set_loop_size_outtoub(loopSizePara);
     set_loop1_stride_outtoub(loop1StridePara);
@@ -556,21 +567,18 @@ __aicore__ inline void SetLoopModeUBParaImpl(const LoopModeParams& loopParams)
     ASCENDC_ASSERT((loopParams.loop2DstStride < (1ul << 40)), {
         KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2DstStride is too big and needs to be less than 2^40");
     });
-    uint64_t loopSizePara = static_cast<uint64_t>(loopParams.loop2Size) << 21; // LOOP_SIZE_UBTOOUT[42:21]
-    loopSizePara |= static_cast<uint64_t>(loopParams.loop1Size);               // LOOP_SIZE_UBTOOUT[20:0]
+    uint64_t loopSizePara = Internal::PackDataCopyLoopSize(loopParams);
 
     // LOOP1_STRIDE_UBTOOUT[60:40], must be 32B aligned
     ASCENDC_ASSERT((loopParams.loop1SrcStride % GetDataBlockSizeInBytes() == 0), {
         KERNEL_LOG(KERNEL_ERROR, "loop1SrcStride must be 32B aligned");
     });
-    uint64_t loop1StridePara = (loopParams.loop1SrcStride) << 40; // loop1SrcStride must be 32B aligned
-    loop1StridePara |= loopParams.loop1DstStride;                 // LOOP1_STRIDE_UBTOOUT[39:0]
+    uint64_t loop1StridePara = Internal::PackDataCopyLoopStride(loopParams.loop1SrcStride, loopParams.loop1DstStride);
     // LOOP2_STRIDE_UBTOOUT[60:40], must be 32B aligned
     ASCENDC_ASSERT((loopParams.loop2SrcStride % GetDataBlockSizeInBytes() == 0), {
         KERNEL_LOG(KERNEL_ERROR, "loop2SrcStride must be 32B aligned");
     });
-    uint64_t loop2StridePara = (loopParams.loop2SrcStride) << 40; // loop2SrcStride must be 32B aligned
-    loop2StridePara |= loopParams.loop2DstStride;                 // LOOP2_STRIDE_UBTOOUT[39:0]
+    uint64_t loop2StridePara = Internal::PackDataCopyLoopStride(loopParams.loop2SrcStride, loopParams.loop2DstStride);
 
     set_loop_size_ubtoout(loopSizePara);
     set_loop1_stride_ubtoout(loop1StridePara);
@@ -598,21 +606,20 @@ __aicore__ inline void SetLoopModeOutToL1ParaImpl(const LoopModeParams& loopPara
         ASCENDC_ASSERT((loopParams.loop2SrcStride < (1ul << 40)), {
             KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2SrcStride is too big and needs to be less than 2^40");
         });
-        uint64_t loopSizePara = static_cast<uint64_t>(loopParams.loop2Size) << 21; // LOOP_SIZE_OUTTOL1[42:21]
-        loopSizePara |= static_cast<uint64_t>(loopParams.loop1Size);               // LOOP_SIZE_OUTTOL1[20:0]
+        uint64_t loopSizePara = Internal::PackDataCopyLoopSize(loopParams);
 
         // LOOP1_STRIDE_OUTTOL1[60:40], must be 32B aligned
         ASCENDC_ASSERT((loopParams.loop1DstStride % GetDataBlockSizeInBytes() == 0), {
             KERNEL_LOG(KERNEL_ERROR, "loop1DstStride must be 32B aligned");
         });
-        uint64_t loop1StridePara = (loopParams.loop1DstStride) << 40;
-        loop1StridePara |= loopParams.loop1SrcStride; // LOOP1_STRIDE_OUTTOL1[39:0]
+        uint64_t loop1StridePara =
+            Internal::PackDataCopyLoopStride(loopParams.loop1DstStride, loopParams.loop1SrcStride);
         // LOOP2_STRIDE_OUTTOL1[60:40], must be 32B aligned
         ASCENDC_ASSERT((loopParams.loop2DstStride % GetDataBlockSizeInBytes() == 0), {
             KERNEL_LOG(KERNEL_ERROR, "loop2DstStride must be 32B aligned");
         });
-        uint64_t loop2StridePara = (loopParams.loop2DstStride) << 40;
-        loop2StridePara |= loopParams.loop2SrcStride; // LOOP2_STRIDE_OUTTOL1[39:0]
+        uint64_t loop2StridePara =
+            Internal::PackDataCopyLoopStride(loopParams.loop2DstStride, loopParams.loop2SrcStride);
 
         set_loop_size_outtol1(loopSizePara);
         set_loop1_stride_outtol1(loop1StridePara);

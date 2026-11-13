@@ -27,6 +27,263 @@
 #include "../../../../../include/adv_api/quantization/ascend_quant_utils.h"
 #include "../../common/check.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_QUANT_ROW_SCALE_AND_CAST(                                                                       \
+    para, scaleT, config, dstT, srcT, scaleUb, offsetUb, srcUb, TransRegForHif8, dstUb)                          \
+    uint16_t rowNum = para.calCount / para.n;                                                                    \
+    uint32_t vecLen = GetVecLen() / sizeof(scaleT);                                                              \
+    uint16_t repeat = CeilDivision(para.n, vecLen);                                                              \
+    static constexpr Reg::CastTrait castTrait = {                                                                \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                 \
+    Reg::MaskReg preg;                                                                                           \
+    Reg::RegTensor<scaleT> srcVreg;                                                                              \
+    Reg::RegTensor<dstT> dstVreg;                                                                                \
+    Reg::RegTensor<scaleT> scaleVreg;                                                                            \
+    Reg::RegTensor<scaleT> offsetVreg;                                                                           \
+    Reg::RegTensor<srcT> tempVreg;                                                                               \
+    for (uint16_t i = 0; i < rowNum; ++i) {                                                                      \
+        GetPerTokenScaleAndOffset<scaleT, config>(scaleUb + i, offsetUb + i, scaleVreg, offsetVreg);             \
+        uint32_t sreg = para.n;                                                                                  \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                  \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                                \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {               \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen); \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);                                    \
+            } else {                                                                                             \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);        \
+            }                                                                                                    \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                    \
+            if constexpr (config.hasOffset) {                                                                    \
+                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);               \
+            }                                                                                                    \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                    \
+            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);                              \
+        }                                                                                                        \
+    }
+
+#define ASC_3510_QUANT_SCALE_FP8_REGISTER(                                                                   \
+    SupportType, srcT, srcVreg, srcUb, i, para, j, vecLen, layoutZMrgZ, f32Vreg, preg, f32ScaleVreg, config, \
+    fp32_offset, dstT, castTrait, b8Vreg, dstUb)                                                             \
+    if constexpr (SupportType<srcT, half, bfloat16_t>()) {                                                   \
+        Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(srcVreg, srcUb + i * para.n + j * vecLen);      \
+        Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);                                         \
+    } else {                                                                                                 \
+        Reg::LoadAlign<float, Reg::LoadDist::DIST_NORM>(f32Vreg, srcUb + i * para.n + j * vecLen);           \
+    }                                                                                                        \
+    Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);                      \
+    if constexpr (config.hasOffset) {                                                                        \
+        Reg::Adds<float, float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, fp32_offset, preg);           \
+    }                                                                                                        \
+    TransRegForFp8<dstT, float, castTrait>(f32Vreg, b8Vreg, preg);                                           \
+    Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK4_B32>(dstUb + i * para.n + j * vecLen, b8Vreg, preg)
+
+#define ASC_3510_QUANT_ROW_WITH_SCALAR_OFFSET(                                                                   \
+    para, scaleT, config, dstT, srcT, scaleUb, srcUb, offset, TransRegForHif8, dstUb)                            \
+    uint16_t rowNum = para.calCount / para.n;                                                                    \
+    uint32_t vecLen = GetVecLen() / sizeof(scaleT);                                                              \
+    uint16_t repeat = CeilDivision(para.n, vecLen);                                                              \
+    static constexpr Reg::CastTrait castTrait = {                                                                \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                 \
+    Reg::MaskReg preg;                                                                                           \
+    Reg::RegTensor<scaleT> srcVreg;                                                                              \
+    Reg::RegTensor<dstT> dstVreg;                                                                                \
+    Reg::RegTensor<scaleT> scaleVreg;                                                                            \
+    Reg::RegTensor<srcT> tempVreg;                                                                               \
+    for (uint16_t i = 0; i < rowNum; ++i) {                                                                      \
+        GetPerTokenScale<scaleT>(scaleUb + i, scaleVreg);                                                        \
+        uint32_t sreg = para.n;                                                                                  \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                  \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                                \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {               \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen); \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);                                    \
+            } else {                                                                                             \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);        \
+            }                                                                                                    \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                    \
+            if constexpr (config.hasOffset) {                                                                    \
+                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(                                          \
+                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);                                        \
+            }                                                                                                    \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                    \
+            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);                              \
+        }                                                                                                        \
+    }
+
+#define ASC_3510_QUANT_GROUP_SCALE_AND_CAST_WITH_OFFSET(                                                            \
+    para, scaleT, config, dstT, srcT, tempSrcVreg, scaleUb, offsetUb, srcUb, TransRegForHif8, dstUb)                \
+    uint16_t rowNum = para.calCount / para.n;                                                                       \
+    uint32_t vecLen = GetVecLen() / sizeof(scaleT);                                                                 \
+    uint16_t repeat = CeilDivision(para.n, vecLen);                                                                 \
+    uint16_t scaleK = CeilDivision(para.n, para.groupSize);                                                         \
+    static constexpr Reg::CastTrait castTrait = {                                                                   \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                    \
+    Reg::MaskReg preg;                                                                                              \
+    Reg::RegTensor<scaleT> srcVreg;                                                                                 \
+    Reg::RegTensor<dstT> dstVreg;                                                                                   \
+    Reg::RegTensor<scaleT> scaleVreg;                                                                               \
+    Reg::RegTensor<scaleT> offsetVreg;                                                                              \
+    Reg::RegTensor<srcT> tempSrcVreg;                                                                               \
+    for (uint16_t i = 0; i < rowNum; ++i) {                                                                         \
+        uint32_t sreg = para.n;                                                                                     \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                     \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                                   \
+            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);                            \
+            if constexpr (config.hasOffset) {                                                                       \
+                GetPerGroupOffset(offsetUb + i * scaleK, j * vecLen, para, config, offsetVreg);                     \
+            }                                                                                                       \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {                  \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempSrcVreg, srcUb + i * para.n + j * vecLen); \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVreg, preg);                                    \
+            } else {                                                                                                \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);           \
+            }                                                                                                       \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                       \
+            if constexpr (config.hasOffset) {                                                                       \
+                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);                  \
+            }                                                                                                       \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                       \
+            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);                                 \
+        }                                                                                                           \
+    }
+
+#define ASC_3510_QUANT_GROUP_SCALE_AND_CAST(                                                                        \
+    para, scaleT, config, dstT, srcT, tempSrcVreg, scaleUb, srcUb, offset, TransRegForHif8, dstUb)                  \
+    uint16_t rowNum = para.calCount / para.n;                                                                       \
+    uint32_t vecLen = GetVecLen() / sizeof(scaleT);                                                                 \
+    uint16_t repeat = CeilDivision(para.n, vecLen);                                                                 \
+    uint16_t scaleK = CeilDivision(para.n, para.groupSize);                                                         \
+    static constexpr Reg::CastTrait castTrait = {                                                                   \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                    \
+    Reg::MaskReg preg;                                                                                              \
+    Reg::RegTensor<scaleT> srcVreg;                                                                                 \
+    Reg::RegTensor<dstT> dstVreg;                                                                                   \
+    Reg::RegTensor<scaleT> scaleVreg;                                                                               \
+    Reg::RegTensor<srcT> tempSrcVreg;                                                                               \
+    for (uint16_t i = 0; i < rowNum; ++i) {                                                                         \
+        uint32_t sreg = para.n;                                                                                     \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                     \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                                   \
+            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);                            \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {                  \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempSrcVreg, srcUb + i * para.n + j * vecLen); \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVreg, preg);                                    \
+            } else {                                                                                                \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);           \
+            }                                                                                                       \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                       \
+            if constexpr (config.hasOffset) {                                                                       \
+                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(                                             \
+                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);                                           \
+            }                                                                                                       \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                       \
+            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);                                 \
+        }                                                                                                           \
+    }
+
+#define ASC_3510_QUANT_FINAL_ROW_GROUP(                                                                          \
+    srcTVariant, tempSrcVregVariant, config, tailRow, n, repeat, scaleT, scaleVreg, scaleUb, vecLen, offsetVreg, \
+    offsetUb, preg, srcT, tempSrcVregVariantValue, srcUb, srcVreg, TransRegForHif8, dstT, dstVreg, dstUb)        \
+    Reg::RegTensor<srcTVariant> tempSrcVregVariant;                                                              \
+    static constexpr Reg::CastTrait castTrait = {                                                                \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                 \
+    for (uint16_t i = 0; i < tailRow; ++i) {                                                                     \
+        uint32_t sreg = n;                                                                                       \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                  \
+            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);                   \
+            if constexpr (config.hasOffset) {                                                                    \
+                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(offsetVreg, offsetUb + j * vecLen);             \
+            }                                                                                                    \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                                \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {               \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(                                            \
+                    tempSrcVregVariantValue, srcUb + i * n + j * vecLen);                                        \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVregVariantValue, preg);                     \
+            } else {                                                                                             \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);             \
+            }                                                                                                    \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                    \
+            if constexpr (config.hasOffset) {                                                                    \
+                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);               \
+            }                                                                                                    \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                    \
+            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);                                   \
+        }                                                                                                        \
+    }
+
+#define ASC_3510_QUANT_INIT_ROW_GROUP_MASKS(                                                     \
+    rowNum, para, scaleT, config, offsetVreg, scaleTVariant, scaleVreg, dstT, dstVreg)           \
+    uint16_t mainRowGroup = rowNum / para.groupSize;                                             \
+    uint32_t vecLen = GetVecLen() / sizeof(scaleT);                                              \
+    uint16_t repeat = CeilDivision(para.n, vecLen);                                              \
+    static constexpr Reg::CastTrait castTrait = {                                                \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode}; \
+    Reg::MaskReg preg;                                                                           \
+    Reg::RegTensor<scaleT> offsetVreg;                                                           \
+    Reg::RegTensor<scaleTVariant> scaleVreg;                                                     \
+    Reg::RegTensor<dstT> dstVreg
+
+#define ASC_3510_QUANT_ROW_TAIL_BODY(                                                                           \
+    scaleTVariant, srcVregVariant, srcTVariant, tempVregVariant, config, tailRow, n, repeat, scaleT, scaleVreg, \
+    scaleUb, vecLen, preg, srcT, srcUb, offset, TransRegForHif8, dstT, dstVreg, dstUb)                          \
+    Reg::RegTensor<scaleTVariant> srcVregVariant;                                                               \
+    Reg::RegTensor<srcTVariant> tempVregVariant;                                                                \
+    static constexpr Reg::CastTrait castTrait = {                                                               \
+        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};                \
+    for (uint16_t i = 0; i < tailRow; ++i) {                                                                    \
+        uint32_t sreg = n;                                                                                      \
+        for (uint16_t j = 0; j < repeat; ++j) {                                                                 \
+            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);                  \
+            preg = Reg::UpdateMask<scaleT>(sreg);                                                               \
+            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {              \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * n + j * vecLen);     \
+                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);                                   \
+            } else {                                                                                            \
+                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);            \
+            }                                                                                                   \
+            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                   \
+            if constexpr (config.hasOffset) {                                                                   \
+                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(                                         \
+                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);                                       \
+            }                                                                                                   \
+            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                   \
+            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);                                  \
+        }                                                                                                       \
+    }
+
+#define ASC_3510_QUANT_ROW_GROUP_BODY(                                                                               \
+    srcTVariant, tempVregVariant, mainRowGroup, para, repeat, scaleT, scaleVreg, scaleUb, vecLen, preg, srcT, srcUb, \
+    srcVreg, config, offset, TransRegForHif8, dstT, castTrait, dstVreg, dstUb, QuantPerGroupForKRowHif8TailBlock,    \
+    tailRow)                                                                                                         \
+    Reg::RegTensor<srcTVariant> tempVregVariant;                                                                     \
+    for (uint16_t i = 0; i < mainRowGroup; ++i) {                                                                    \
+        for (uint16_t j = 0; j < static_cast<uint16_t>(para.groupSize); ++j) {                                       \
+            uint32_t sreg = para.n;                                                                                  \
+            for (uint16_t k = 0; k < repeat; ++k) {                                                                  \
+                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + i * para.n + k * vecLen);      \
+                preg = Reg::UpdateMask<scaleT>(sreg);                                                                \
+                if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {               \
+                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(                                            \
+                        tempVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);                           \
+                    Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);                                    \
+                } else {                                                                                             \
+                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(                                                  \
+                        srcVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);                            \
+                }                                                                                                    \
+                Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);                    \
+                if constexpr (config.hasOffset) {                                                                    \
+                    Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(                                          \
+                        srcVreg, srcVreg, static_cast<scaleT>(offset), preg);                                        \
+                }                                                                                                    \
+                TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);                                    \
+                StoreRes<dstT, scaleT>(dstUb + (i * para.groupSize + j) * para.n + k * vecLen, dstVreg, preg);       \
+            }                                                                                                        \
+        }                                                                                                            \
+    }                                                                                                                \
+    QuantPerGroupForKRowHif8TailBlock<dstT, srcT, scaleT, config>(                                                   \
+        dstUb + mainRowGroup * para.groupSize * para.n, srcUb + mainRowGroup * para.groupSize * para.n,              \
+        scaleUb + mainRowGroup * para.n, offset, repeat, tailRow, para.n, vecLen)
+
 namespace AscendC {
 constexpr uint32_t ASCENDC_QUANT_PER_GROUP_B32_VF_LEN = GetVecLen() / sizeof(uint32_t);
 
@@ -94,37 +351,8 @@ __simd_vf__ inline void QuantPerTokenForHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        GetPerTokenScaleAndOffset<scaleT, config>(scaleUb + i, offsetUb + i, scaleVreg, offsetVreg);
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_SCALE_AND_CAST(
+        para, scaleT, config, dstT, srcT, scaleUb, offsetUb, srcUb, TransRegForHif8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -144,37 +372,7 @@ __simd_vf__ inline void QuantPerTokenForS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        GetPerTokenScaleAndOffset<scaleT, config>(scaleUb + i, offsetUb + i, scaleVreg, offsetVreg);
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_SCALE_AND_CAST(para, scaleT, config, dstT, srcT, scaleUb, offsetUb, srcUb, TransRegForS8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -218,18 +416,9 @@ __simd_vf__ inline void QuantPerTokenForFp8VF(
         uint32_t sreg = para.n;
         for (uint16_t j = 0; j < repeat; ++j) {
             preg = Reg::UpdateMask<uint32_t>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(srcVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);
-            } else {
-                Reg::LoadAlign<float, Reg::LoadDist::DIST_NORM>(f32Vreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<float, float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, fp32_offset, preg);
-            }
-            TransRegForFp8<dstT, float, castTrait>(f32Vreg, b8Vreg, preg);
-            Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK4_B32>(dstUb + i * para.n + j * vecLen, b8Vreg, preg);
+            ASC_3510_QUANT_SCALE_FP8_REGISTER(
+                SupportType, srcT, srcVreg, srcUb, i, para, j, vecLen, layoutZMrgZ, f32Vreg, preg, f32ScaleVreg, config,
+                fp32_offset, dstT, castTrait, b8Vreg, dstUb);
         }
     }
 }
@@ -250,37 +439,8 @@ __simd_vf__ inline void QuantPerTokenForHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        GetPerTokenScale<scaleT>(scaleUb + i, scaleVreg);
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_WITH_SCALAR_OFFSET(
+        para, scaleT, config, dstT, srcT, scaleUb, srcUb, offset, TransRegForHif8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -299,37 +459,8 @@ __simd_vf__ inline void QuantPerTokenForS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        GetPerTokenScale<scaleT>(scaleUb + i, scaleVreg);
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_WITH_SCALAR_OFFSET(
+        para, scaleT, config, dstT, srcT, scaleUb, srcUb, offset, TransRegForS8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -446,41 +577,8 @@ __simd_vf__ inline void QuantPerGroupForKColHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint16_t scaleK = CeilDivision(para.n, para.groupSize);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<srcT> tempSrcVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);
-            if constexpr (config.hasOffset) {
-                GetPerGroupOffset(offsetUb + i * scaleK, j * vecLen, para, config, offsetVreg);
-            }
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempSrcVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_GROUP_SCALE_AND_CAST_WITH_OFFSET(
+        para, scaleT, config, dstT, srcT, tempSrcVreg, scaleUb, offsetUb, srcUb, TransRegForHif8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -500,41 +598,8 @@ __simd_vf__ inline void QuantPerGroupForKColS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint16_t scaleK = CeilDivision(para.n, para.groupSize);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);
-            if constexpr (config.hasOffset) {
-                GetPerGroupOffset(offsetUb + i * scaleK, j * vecLen, para, config, offsetVreg);
-            }
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_GROUP_SCALE_AND_CAST_WITH_OFFSET(
+        para, scaleT, config, dstT, srcT, tempVreg, scaleUb, offsetUb, srcUb, TransRegForS8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -574,18 +639,9 @@ __simd_vf__ inline void QuantPerGroupForKColFp8VF(
         for (uint16_t j = 0; j < repeat; ++j) {
             preg = Reg::UpdateMask<uint32_t>(sreg);
             GetPerGroupScaleEntry<scaleT, config>(scaleUb + i * scaleK, para, j * vecLen, preg, f32ScaleVreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(srcVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);
-            } else {
-                Reg::LoadAlign<float, Reg::LoadDist::DIST_NORM>(f32Vreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<float, float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, fp32_offset, preg);
-            }
-            TransRegForFp8<dstT, float, castTrait>(f32Vreg, b8Vreg, preg);
-            Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK4_B32>(dstUb + i * para.n + j * vecLen, b8Vreg, preg);
+            ASC_3510_QUANT_SCALE_FP8_REGISTER(
+                SupportType, srcT, srcVreg, srcUb, i, para, j, vecLen, layoutZMrgZ, f32Vreg, preg, f32ScaleVreg, config,
+                fp32_offset, dstT, castTrait, b8Vreg, dstUb);
         }
     }
 }
@@ -606,38 +662,8 @@ __simd_vf__ inline void QuantPerGroupForKColHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint16_t scaleK = CeilDivision(para.n, para.groupSize);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempSrcVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempSrcVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_GROUP_SCALE_AND_CAST(
+        para, scaleT, config, dstT, srcT, tempSrcVreg, scaleUb, srcUb, offset, TransRegForHif8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -656,38 +682,8 @@ __simd_vf__ inline void QuantPerGroupForKColS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint16_t scaleK = CeilDivision(para.n, para.groupSize);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < rowNum; ++i) {
-        uint32_t sreg = para.n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            GetPerGroupScale(scaleUb + i * scaleK, j * vecLen, para, config, scaleVreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * para.n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * para.n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * para.n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_GROUP_SCALE_AND_CAST(
+        para, scaleT, config, dstT, srcT, tempVreg, scaleUb, srcUb, offset, TransRegForS8, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -873,31 +869,9 @@ __simd_callee__ inline void QuantPerGroupForKRowHif8TailBlock(
     Reg::RegTensor<scaleT> scaleVreg;
     Reg::RegTensor<dstT> dstVreg;
     Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<srcT> tempSrcVreg;
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-    for (uint16_t i = 0; i < tailRow; ++i) {
-        uint32_t sreg = n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);
-            if constexpr (config.hasOffset) {
-                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(offsetVreg, offsetUb + j * vecLen);
-            }
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempSrcVreg, srcUb + i * n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempSrcVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_FINAL_ROW_GROUP(
+        srcT, tempSrcVreg, config, tailRow, n, repeat, scaleT, scaleVreg, scaleUb, vecLen, offsetVreg, offsetUb, preg,
+        srcT, tempSrcVreg, srcUb, srcVreg, TransRegForHif8, dstT, dstVreg, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -905,16 +879,7 @@ __simd_vf__ inline void QuantPerGroupForKRowHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para, uint16_t rowNum, uint16_t tailRow)
 {
-    uint16_t mainRowGroup = rowNum / para.groupSize;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<dstT> dstVreg;
+    ASC_3510_QUANT_INIT_ROW_GROUP_MASKS(rowNum, para, scaleT, config, offsetVreg, scaleT, scaleVreg, dstT, dstVreg);
     Reg::RegTensor<scaleT> srcVreg;
     Reg::RegTensor<srcT> tempSrcVreg;
     for (uint16_t i = 0; i < mainRowGroup; ++i) {
@@ -970,31 +935,9 @@ __simd_callee__ inline void QuantPerGroupForKRowS8TailBlock(
     Reg::RegTensor<scaleT> scaleVreg;
     Reg::RegTensor<srcT> tempVreg;
     Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> srcVreg;
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-    for (uint16_t i = 0; i < tailRow; ++i) {
-        uint32_t sreg = n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);
-            if constexpr (config.hasOffset) {
-                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(offsetVreg, offsetUb + j * vecLen);
-            }
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Add<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, offsetVreg, preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_FINAL_ROW_GROUP(
+        scaleT, srcVreg, config, tailRow, n, repeat, scaleT, scaleVreg, scaleUb, vecLen, offsetVreg, offsetUb, preg,
+        srcT, tempVreg, srcUb, srcVreg, TransRegForS8, dstT, dstVreg, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -1002,16 +945,7 @@ __simd_vf__ inline void QuantPerGroupForKRowS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendQuantParam para, uint16_t rowNum, uint16_t tailRow)
 {
-    uint16_t mainRowGroup = rowNum / para.groupSize;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempVreg;
+    ASC_3510_QUANT_INIT_ROW_GROUP_MASKS(rowNum, para, scaleT, config, offsetVreg, scaleT, scaleVreg, srcT, tempVreg);
     Reg::RegTensor<dstT> dstVreg;
     Reg::RegTensor<scaleT> srcVreg;
     for (uint16_t i = 0; i < mainRowGroup; ++i) {
@@ -1161,30 +1095,9 @@ __simd_callee__ inline void QuantPerGroupForKRowHif8TailBlock(
     Reg::MaskReg preg;
     Reg::RegTensor<scaleT> scaleVreg;
     Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-    for (uint16_t i = 0; i < tailRow; ++i) {
-        uint32_t sreg = n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_TAIL_BODY(
+        scaleT, srcVreg, srcT, tempVreg, config, tailRow, n, repeat, scaleT, scaleVreg, scaleUb, vecLen, preg, srcT,
+        srcUb, offset, TransRegForHif8, dstT, dstVreg, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -1192,44 +1105,10 @@ __simd_vf__ inline void QuantPerGroupForKRowHif8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para, uint16_t rowNum, uint16_t tailRow)
 {
-    uint16_t mainRowGroup = rowNum / para.groupSize;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> srcVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    for (uint16_t i = 0; i < mainRowGroup; ++i) {
-        for (uint16_t j = 0; j < static_cast<uint16_t>(para.groupSize); ++j) {
-            uint32_t sreg = para.n;
-            for (uint16_t k = 0; k < repeat; ++k) {
-                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + i * para.n + k * vecLen);
-                preg = Reg::UpdateMask<scaleT>(sreg);
-                if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(
-                        tempVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);
-                    Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-                } else {
-                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(
-                        srcVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);
-                }
-                Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-                if constexpr (config.hasOffset) {
-                    Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                        srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-                }
-                TransRegForHif8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-                StoreRes<dstT, scaleT>(dstUb + (i * para.groupSize + j) * para.n + k * vecLen, dstVreg, preg);
-            }
-        }
-    }
-    QuantPerGroupForKRowHif8TailBlock<dstT, srcT, scaleT, config>(
-        dstUb + mainRowGroup * para.groupSize * para.n, srcUb + mainRowGroup * para.groupSize * para.n,
-        scaleUb + mainRowGroup * para.n, offset, repeat, tailRow, para.n, vecLen);
+    ASC_3510_QUANT_INIT_ROW_GROUP_MASKS(rowNum, para, scaleT, config, scaleVreg, dstT, dstVreg, scaleT, srcVreg);
+    ASC_3510_QUANT_ROW_GROUP_BODY(
+        srcT, tempVreg, mainRowGroup, para, repeat, scaleT, scaleVreg, scaleUb, vecLen, preg, srcT, srcUb, srcVreg,
+        config, offset, TransRegForHif8, dstT, castTrait, dstVreg, dstUb, QuantPerGroupForKRowHif8TailBlock, tailRow);
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -1253,30 +1132,9 @@ __simd_callee__ inline void QuantPerGroupForKRowS8TailBlock(
     Reg::MaskReg preg;
     Reg::RegTensor<scaleT> scaleVreg;
     Reg::RegTensor<srcT> tempVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> srcVreg;
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-    for (uint16_t i = 0; i < tailRow; ++i) {
-        uint32_t sreg = n;
-        for (uint16_t j = 0; j < repeat; ++j) {
-            Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + j * vecLen);
-            preg = Reg::UpdateMask<scaleT>(sreg);
-            if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(tempVreg, srcUb + i * n + j * vecLen);
-                Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-            } else {
-                Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(srcVreg, srcUb + i * n + j * vecLen);
-            }
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-            if constexpr (config.hasOffset) {
-                Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                    srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-            }
-            TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-            StoreRes<dstT, scaleT>(dstUb + i * n + j * vecLen, dstVreg, preg);
-        }
-    }
+    ASC_3510_QUANT_ROW_TAIL_BODY(
+        dstT, dstVreg, scaleT, srcVreg, config, tailRow, n, repeat, scaleT, scaleVreg, scaleUb, vecLen, preg, srcT,
+        srcUb, offset, TransRegForS8, dstT, dstVreg, dstUb)
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -1284,44 +1142,10 @@ __simd_vf__ inline void QuantPerGroupForKRowS8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, const scaleT offset,
     const AscendQuantParam para, uint16_t rowNum, uint16_t tailRow)
 {
-    uint16_t mainRowGroup = rowNum / para.groupSize;
-    uint32_t vecLen = GetVecLen() / sizeof(scaleT);
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    static constexpr Reg::CastTrait castTrait = {
-        Reg::RegLayout::ZERO, Reg::SatMode::SAT, Reg::MaskMergeMode::ZEROING, config.roundMode};
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> tempVreg;
-    Reg::RegTensor<dstT> dstVreg;
-    Reg::RegTensor<scaleT> srcVreg;
-    for (uint16_t i = 0; i < mainRowGroup; ++i) {
-        for (uint16_t j = 0; j < static_cast<uint16_t>(para.groupSize); ++j) {
-            uint32_t sreg = para.n;
-            for (uint16_t k = 0; k < repeat; ++k) {
-                Reg::LoadAlign<scaleT, Reg::LoadDist::DIST_NORM>(scaleVreg, scaleUb + i * para.n + k * vecLen);
-                preg = Reg::UpdateMask<scaleT>(sreg);
-                if constexpr (SupportType<srcT, half, bfloat16_t>() && SupportType<scaleT, float>()) {
-                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK_B16>(
-                        tempVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);
-                    Reg::Cast<float, srcT, layoutZMrgZ>(srcVreg, tempVreg, preg);
-                } else {
-                    Reg::LoadAlign<srcT, Reg::LoadDist::DIST_NORM>(
-                        srcVreg, srcUb + (i * para.groupSize + j) * para.n + k * vecLen);
-                }
-                Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(srcVreg, srcVreg, scaleVreg, preg);
-                if constexpr (config.hasOffset) {
-                    Reg::Adds<scaleT, scaleT, Reg::MaskMergeMode::ZEROING>(
-                        srcVreg, srcVreg, static_cast<scaleT>(offset), preg);
-                }
-                TransRegForS8<dstT, scaleT, castTrait>(srcVreg, dstVreg, preg);
-                StoreRes<dstT, scaleT>(dstUb + (i * para.groupSize + j) * para.n + k * vecLen, dstVreg, preg);
-            }
-        }
-    }
-    QuantPerGroupForKRowS8TailBlock<dstT, srcT, scaleT, config>(
-        dstUb + mainRowGroup * para.groupSize * para.n, srcUb + mainRowGroup * para.groupSize * para.n,
-        scaleUb + mainRowGroup * para.n, offset, repeat, tailRow, para.n, vecLen);
+    ASC_3510_QUANT_INIT_ROW_GROUP_MASKS(rowNum, para, scaleT, config, scaleVreg, srcT, tempVreg, dstT, dstVreg);
+    ASC_3510_QUANT_ROW_GROUP_BODY(
+        scaleT, srcVreg, mainRowGroup, para, repeat, scaleT, scaleVreg, scaleUb, vecLen, preg, srcT, srcUb, srcVreg,
+        config, offset, TransRegForS8, dstT, castTrait, dstVreg, dstUb, QuantPerGroupForKRowS8TailBlock, tailRow);
 }
 
 template <typename dstT, typename srcT, typename scaleT, const AscendQuantConfig& config>
@@ -1560,3 +1384,13 @@ __aicore__ inline void AscendQuantImpl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_QUANTIZATION_QUANT_ASCEND_QUANT_PER_GROUP_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_QUANT_ROW_GROUP_BODY
+#undef ASC_3510_QUANT_ROW_TAIL_BODY
+#undef ASC_3510_QUANT_INIT_ROW_GROUP_MASKS
+#undef ASC_3510_QUANT_FINAL_ROW_GROUP
+#undef ASC_3510_QUANT_GROUP_SCALE_AND_CAST
+#undef ASC_3510_QUANT_GROUP_SCALE_AND_CAST_WITH_OFFSET
+#undef ASC_3510_QUANT_ROW_WITH_SCALAR_OFFSET
+#undef ASC_3510_QUANT_SCALE_FP8_REGISTER
+#undef ASC_3510_QUANT_ROW_SCALE_AND_CAST

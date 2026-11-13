@@ -23,6 +23,102 @@
 #include "reduce_common_util_impl.h"
 #include "reduce_common_util_3510_impl.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_REDUCE_HANDLE_REUSE_AND_TAIL(                                                                   \
+    mainR, dimA, T, isReuseSource, Trait, loopANum, copyA, tailR, srcAddr, vlSize, tmpAddr, vregMain, vregTail)  \
+    uint32_t aTailOffset = mainR * dimA;                                                                         \
+    __ubuf__ T* addr;                                                                                            \
+    if constexpr (!isReuseSource) {                                                                              \
+        Reg::RegTensor<T, Trait> vregTmp;                                                                        \
+        Reg::MaskReg mask;                                                                                       \
+        for (uint16_t loopA = 0; loopA < loopANum; loopA++) {                                                    \
+            mask = Reg::UpdateMask<T, Trait>(copyA);                                                             \
+            /* 0 to tailR will be merge later, no need to move */                                                \
+            for (uint16_t loopR = static_cast<uint16_t>(tailR); loopR < static_cast<uint16_t>(mainR); loopR++) { \
+                Reg::LoadAlign(vregTmp, srcAddr + loopA * vlSize + loopR * dimA);                                \
+                Reg::StoreAlign(tmpAddr + loopA * vlSize + loopR * dimA, vregTmp, mask);                         \
+            }                                                                                                    \
+        }                                                                                                        \
+        addr = tmpAddr;                                                                                          \
+    } else {                                                                                                     \
+        addr = srcAddr;                                                                                          \
+    }                                                                                                            \
+    Reg::RegTensor<T, Trait> vregMain;                                                                           \
+    Reg::RegTensor<T, Trait> vregTail;                                                                           \
+    Reg::MaskReg mask
+
+#define ASC_3510_REDUCE_DECLARE_SIXTEEN_REGS(T, Trait) \
+    Reg::RegTensor<T, Trait> vreg0;                    \
+    Reg::RegTensor<T, Trait> vreg1;                    \
+    Reg::RegTensor<T, Trait> vreg2;                    \
+    Reg::RegTensor<T, Trait> vreg3;                    \
+    Reg::RegTensor<T, Trait> vreg4;                    \
+    Reg::RegTensor<T, Trait> vreg5;                    \
+    Reg::RegTensor<T, Trait> vreg6;                    \
+    Reg::RegTensor<T, Trait> vreg7;                    \
+    Reg::RegTensor<T, Trait> vreg8;                    \
+    Reg::RegTensor<T, Trait> vreg9;                    \
+    Reg::RegTensor<T, Trait> vreg10;                   \
+    Reg::RegTensor<T, Trait> vreg11;                   \
+    Reg::RegTensor<T, Trait> vreg12;                   \
+    Reg::RegTensor<T, Trait> vreg13;                   \
+    Reg::RegTensor<T, Trait> vreg14;                   \
+    Reg::RegTensor<T, Trait> vreg15
+
+#define ASC_3510_REDUCE_FOLD_SIXTEEN(                                                                                \
+    Binaryfunc, vreg0, vreg8, mask, vreg1, vreg9, vreg2, vreg10, vreg3, vreg11, vreg4, vreg12, vreg5, vreg13, vreg6, \
+    vreg14, vreg7, vreg15)                                                                                           \
+    Binaryfunc(vreg0, vreg0, vreg8, mask);                                                                           \
+    Binaryfunc(vreg1, vreg1, vreg9, mask);                                                                           \
+    Binaryfunc(vreg2, vreg2, vreg10, mask);                                                                          \
+    Binaryfunc(vreg3, vreg3, vreg11, mask);                                                                          \
+    Binaryfunc(vreg4, vreg4, vreg12, mask);                                                                          \
+    Binaryfunc(vreg5, vreg5, vreg13, mask);                                                                          \
+    Binaryfunc(vreg6, vreg6, vreg14, mask);                                                                          \
+    Binaryfunc(vreg7, vreg7, vreg15, mask);                                                                          \
+    /* L2 */                                                                                                         \
+    Binaryfunc(vreg0, vreg0, vreg4, mask);                                                                           \
+    Binaryfunc(vreg1, vreg1, vreg5, mask);                                                                           \
+    Binaryfunc(vreg2, vreg2, vreg6, mask);                                                                           \
+    Binaryfunc(vreg3, vreg3, vreg7, mask);                                                                           \
+    /* L3 */                                                                                                         \
+    Binaryfunc(vreg0, vreg0, vreg2, mask);                                                                           \
+    Binaryfunc(vreg1, vreg1, vreg3, mask);                                                                           \
+    /* L4 */                                                                                                         \
+    Binaryfunc(vreg0, vreg0, vreg1, mask)
+
+#define ASC_3510_REDUCE_COPY_OR_REUSE_INPUT(                                                                \
+    isReuseSource, T, Trait, copyNum, vlSize, srcAddr, tailNum, tmpAddr, addr, needInplaceAdd, aTailOffset, \
+    Binaryfunc)                                                                                             \
+    Reg::MaskReg counterMask;                                                                               \
+    if constexpr (!isReuseSource) {                                                                         \
+        Reg::RegTensor<T, Trait> vregTmp;                                                                   \
+        uint16_t mainRepeat = CeilDivision(copyNum, vlSize);                                                \
+        /* 0 to tailR will be merge later, no need to move */                                               \
+        for (uint16_t loopMain = 0; loopMain < mainRepeat; loopMain++) {                                    \
+            counterMask = Reg::UpdateMask<T, Trait>(copyNum);                                               \
+            Reg::LoadAlign(vregTmp, srcAddr + tailNum + loopMain * vlSize);                                 \
+            Reg::StoreAlign(tmpAddr + tailNum + loopMain * vlSize, vregTmp, counterMask);                   \
+        }                                                                                                   \
+        addr = tmpAddr;                                                                                     \
+    } else {                                                                                                \
+        addr = srcAddr;                                                                                     \
+    }                                                                                                       \
+    Reg::RegTensor<T, Trait> vregMain;                                                                      \
+    Reg::RegTensor<T, Trait> vregTail;                                                                      \
+    /* Process mainR and tailR */                                                                           \
+    for (uint16_t i = 0; i < needInplaceAdd; i++) {                                                         \
+        uint16_t tailRepeat = CeilDivision(tailNum, vlSize);                                                \
+        for (uint16_t loopTail = 0; loopTail < tailRepeat; loopTail++) {                                    \
+            counterMask = Reg::UpdateMask<T, Trait>(tailNum);                                               \
+            Reg::LoadAlign(vregMain, srcAddr + loopTail * vlSize);                                          \
+            Reg::LoadAlign(vregTail, srcAddr + aTailOffset + loopTail * vlSize);                            \
+            Binaryfunc(vregMain, vregMain, vregTail, counterMask);                                          \
+            Reg::StoreAlign(addr + loopTail * vlSize, vregMain, counterMask);                               \
+        }                                                                                                   \
+        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();                                \
+    }
+
 namespace AscendC {
 template <class T, const Reg::RegTrait& Trait, auto Binaryfunc, bool isReuseSource>
 __simd_vf__ inline void ReduceRAOverVLVFImpl(
@@ -40,27 +136,8 @@ __simd_vf__ inline void ReduceRAOverVLVFImpl(
     uint32_t tailA = dimA;
     uint32_t copyA = dimA;
     uint32_t dtypeSize = sizeof(T);
-    uint32_t aTailOffset = mainR * dimA;
-
-    __ubuf__ T* addr;
-    if constexpr (!isReuseSource) {
-        Reg::RegTensor<T, Trait> vregTmp;
-        Reg::MaskReg mask;
-        for (uint16_t loopA = 0; loopA < loopANum; loopA++) {
-            mask = Reg::UpdateMask<T, Trait>(copyA);
-            // 0 to tailR will be merge later, no need to move
-            for (uint16_t loopR = static_cast<uint16_t>(tailR); loopR < static_cast<uint16_t>(mainR); loopR++) {
-                Reg::LoadAlign(vregTmp, srcAddr + loopA * vlSize + loopR * dimA);
-                Reg::StoreAlign(tmpAddr + loopA * vlSize + loopR * dimA, vregTmp, mask);
-            }
-        }
-        addr = tmpAddr;
-    } else {
-        addr = srcAddr;
-    }
-    Reg::RegTensor<T, Trait> vregMain;
-    Reg::RegTensor<T, Trait> vregTail;
-    Reg::MaskReg mask;
+    ASC_3510_REDUCE_HANDLE_REUSE_AND_TAIL(
+        mainR, dimA, T, isReuseSource, Trait, loopANum, copyA, tailR, srcAddr, vlSize, tmpAddr, vregMain, vregTail);
     for (uint16_t i = 0; i < noNeedCopy; i++) {
         for (uint16_t loopA = 0; loopA < loopANum; loopA++) {
             mask = Reg::UpdateMask<T, Trait>(inplaceA);
@@ -86,22 +163,7 @@ __simd_vf__ inline void ReduceRAOverVLVFImpl(
     }
 
     // MainFolds need 16 register
-    Reg::RegTensor<T, Trait> vreg0;
-    Reg::RegTensor<T, Trait> vreg1;
-    Reg::RegTensor<T, Trait> vreg2;
-    Reg::RegTensor<T, Trait> vreg3;
-    Reg::RegTensor<T, Trait> vreg4;
-    Reg::RegTensor<T, Trait> vreg5;
-    Reg::RegTensor<T, Trait> vreg6;
-    Reg::RegTensor<T, Trait> vreg7;
-    Reg::RegTensor<T, Trait> vreg8;
-    Reg::RegTensor<T, Trait> vreg9;
-    Reg::RegTensor<T, Trait> vreg10;
-    Reg::RegTensor<T, Trait> vreg11;
-    Reg::RegTensor<T, Trait> vreg12;
-    Reg::RegTensor<T, Trait> vreg13;
-    Reg::RegTensor<T, Trait> vreg14;
-    Reg::RegTensor<T, Trait> vreg15;
+    ASC_3510_REDUCE_DECLARE_SIXTEEN_REGS(T, Trait);
 
     // Process main folds
     uint16_t loopRNum = mainR;
@@ -130,24 +192,9 @@ __simd_vf__ inline void ReduceRAOverVLVFImpl(
                 Reg::LoadAlign(vreg14, addr + 14 * offsetR + loopA * vlSize + loopR * dimA);
                 Reg::LoadAlign(vreg15, addr + 15 * offsetR + loopA * vlSize + loopR * dimA);
                 // L1
-                Binaryfunc(vreg0, vreg0, vreg8, mask);
-                Binaryfunc(vreg1, vreg1, vreg9, mask);
-                Binaryfunc(vreg2, vreg2, vreg10, mask);
-                Binaryfunc(vreg3, vreg3, vreg11, mask);
-                Binaryfunc(vreg4, vreg4, vreg12, mask);
-                Binaryfunc(vreg5, vreg5, vreg13, mask);
-                Binaryfunc(vreg6, vreg6, vreg14, mask);
-                Binaryfunc(vreg7, vreg7, vreg15, mask);
-                // L2
-                Binaryfunc(vreg0, vreg0, vreg4, mask);
-                Binaryfunc(vreg1, vreg1, vreg5, mask);
-                Binaryfunc(vreg2, vreg2, vreg6, mask);
-                Binaryfunc(vreg3, vreg3, vreg7, mask);
-                // L3
-                Binaryfunc(vreg0, vreg0, vreg2, mask);
-                Binaryfunc(vreg1, vreg1, vreg3, mask);
-                // L4
-                Binaryfunc(vreg0, vreg0, vreg1, mask);
+                ASC_3510_REDUCE_FOLD_SIXTEEN(
+                    Binaryfunc, vreg0, vreg8, mask, vreg1, vreg9, vreg2, vreg10, vreg3, vreg11, vreg4, vreg12, vreg5,
+                    vreg13, vreg6, vreg14, vreg7, vreg15);
                 Reg::StoreAlign(addr + loopA * vlSize + loopR * dimA, vreg0, mask);
             }
         }
@@ -286,54 +333,12 @@ __simd_vf__ inline void ReduceRALessThanVLVFImpl(
     __ubuf__ T* addr;
     Reg::MaskReg mask;
     mask = Reg::UpdateMask<T, Trait>(processA);
-    Reg::MaskReg counterMask;
-
-    if constexpr (!isReuseSource) {
-        Reg::RegTensor<T, Trait> vregTmp;
-        uint16_t mainRepeat = CeilDivision(copyNum, vlSize);
-        // 0 to tailR will be merge later, no need to move
-        for (uint16_t loopMain = 0; loopMain < mainRepeat; loopMain++) {
-            counterMask = Reg::UpdateMask<T, Trait>(copyNum);
-            Reg::LoadAlign(vregTmp, srcAddr + tailNum + loopMain * vlSize);
-            Reg::StoreAlign(tmpAddr + tailNum + loopMain * vlSize, vregTmp, counterMask);
-        }
-        addr = tmpAddr;
-    } else {
-        addr = srcAddr;
-    }
-
-    Reg::RegTensor<T, Trait> vregMain;
-    Reg::RegTensor<T, Trait> vregTail;
-    // Process mainR and tailR
-    for (uint16_t i = 0; i < needInplaceAdd; i++) {
-        uint16_t tailRepeat = CeilDivision(tailNum, vlSize);
-        for (uint16_t loopTail = 0; loopTail < tailRepeat; loopTail++) {
-            counterMask = Reg::UpdateMask<T, Trait>(tailNum);
-            Reg::LoadAlign(vregMain, srcAddr + loopTail * vlSize);
-            Reg::LoadAlign(vregTail, srcAddr + aTailOffset + loopTail * vlSize);
-            Binaryfunc(vregMain, vregMain, vregTail, counterMask);
-            Reg::StoreAlign(addr + loopTail * vlSize, vregMain, counterMask);
-        }
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-    }
+    ASC_3510_REDUCE_COPY_OR_REUSE_INPUT(
+        isReuseSource, T, Trait, copyNum, vlSize, srcAddr, tailNum, tmpAddr, addr, needInplaceAdd, aTailOffset,
+        Binaryfunc)
 
     // MainFolds need 16 register
-    Reg::RegTensor<T, Trait> vreg0;
-    Reg::RegTensor<T, Trait> vreg1;
-    Reg::RegTensor<T, Trait> vreg2;
-    Reg::RegTensor<T, Trait> vreg3;
-    Reg::RegTensor<T, Trait> vreg4;
-    Reg::RegTensor<T, Trait> vreg5;
-    Reg::RegTensor<T, Trait> vreg6;
-    Reg::RegTensor<T, Trait> vreg7;
-    Reg::RegTensor<T, Trait> vreg8;
-    Reg::RegTensor<T, Trait> vreg9;
-    Reg::RegTensor<T, Trait> vreg10;
-    Reg::RegTensor<T, Trait> vreg11;
-    Reg::RegTensor<T, Trait> vreg12;
-    Reg::RegTensor<T, Trait> vreg13;
-    Reg::RegTensor<T, Trait> vreg14;
-    Reg::RegTensor<T, Trait> vreg15;
+    ASC_3510_REDUCE_DECLARE_SIXTEEN_REGS(T, Trait);
 
     // Process main folds
     for (uint16_t loopMain = 0; loopMain < mainTimes; loopMain++) {
@@ -358,24 +363,9 @@ __simd_vf__ inline void ReduceRALessThanVLVFImpl(
             Reg::LoadAlign<T, Reg::PostLiteral::POST_MODE_UPDATE>(vreg14, tmpSrcAddr, dimA);
             Reg::LoadAlign<T, Reg::PostLiteral::POST_MODE_UPDATE>(vreg15, tmpSrcAddr, dimA);
             // L1
-            Binaryfunc(vreg0, vreg0, vreg8, mask);
-            Binaryfunc(vreg1, vreg1, vreg9, mask);
-            Binaryfunc(vreg2, vreg2, vreg10, mask);
-            Binaryfunc(vreg3, vreg3, vreg11, mask);
-            Binaryfunc(vreg4, vreg4, vreg12, mask);
-            Binaryfunc(vreg5, vreg5, vreg13, mask);
-            Binaryfunc(vreg6, vreg6, vreg14, mask);
-            Binaryfunc(vreg7, vreg7, vreg15, mask);
-            // L2
-            Binaryfunc(vreg0, vreg0, vreg4, mask);
-            Binaryfunc(vreg1, vreg1, vreg5, mask);
-            Binaryfunc(vreg2, vreg2, vreg6, mask);
-            Binaryfunc(vreg3, vreg3, vreg7, mask);
-            // L3
-            Binaryfunc(vreg0, vreg0, vreg2, mask);
-            Binaryfunc(vreg1, vreg1, vreg3, mask);
-            // L4
-            Binaryfunc(vreg0, vreg0, vreg1, mask);
+            ASC_3510_REDUCE_FOLD_SIXTEEN(
+                Binaryfunc, vreg0, vreg8, mask, vreg1, vreg9, vreg2, vreg10, vreg3, vreg11, vreg4, vreg12, vreg5,
+                vreg13, vreg6, vreg14, vreg7, vreg15);
             Reg::StoreAlign(addr + loopR * dimA, vreg0, mask);
         }
         Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
@@ -509,36 +499,9 @@ __simd_vf__ inline void ReduceRAConcatVFImpl(
     __ubuf__ T* addr;
     Reg::MaskReg fullMask;
     fullMask = Reg::CreateMask<T, Reg::MaskPattern::ALL, Trait>();
-    Reg::MaskReg counterMask;
-
-    if constexpr (!isReuseSource) {
-        Reg::RegTensor<T, Trait> vregTmp;
-        uint16_t mainRepeat = CeilDivision(copyNum, vlSize);
-        // 0 to tailR will be merge later, no need to move
-        for (uint16_t loopMain = 0; loopMain < mainRepeat; loopMain++) {
-            counterMask = Reg::UpdateMask<T, Trait>(copyNum);
-            Reg::LoadAlign(vregTmp, srcAddr + tailNum + loopMain * vlSize);
-            Reg::StoreAlign(tmpAddr + tailNum + loopMain * vlSize, vregTmp, counterMask);
-        }
-        addr = tmpAddr;
-    } else {
-        addr = srcAddr;
-    }
-
-    Reg::RegTensor<T, Trait> vregMain;
-    Reg::RegTensor<T, Trait> vregTail;
-    // Process mainR and tailR
-    for (uint16_t i = 0; i < needInplaceAdd; i++) {
-        uint16_t tailRepeat = CeilDivision(tailNum, vlSize);
-        for (uint16_t loopTail = 0; loopTail < tailRepeat; loopTail++) {
-            counterMask = Reg::UpdateMask<T, Trait>(tailNum);
-            Reg::LoadAlign(vregMain, srcAddr + loopTail * vlSize);
-            Reg::LoadAlign(vregTail, srcAddr + aTailOffset + loopTail * vlSize);
-            Binaryfunc(vregMain, vregMain, vregTail, counterMask);
-            Reg::StoreAlign(addr + loopTail * vlSize, vregMain, counterMask);
-        }
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
-    }
+    ASC_3510_REDUCE_COPY_OR_REUSE_INPUT(
+        isReuseSource, T, Trait, copyNum, vlSize, srcAddr, tailNum, tmpAddr, addr, needInplaceAdd, aTailOffset,
+        Binaryfunc)
 
     for (uint16_t fold = 0; fold < foldTime; fold++) {
         mainR = mainR >> 1;
@@ -621,26 +584,9 @@ __simd_vf__ inline void ReduceRAB64ReuseSourceVF(
     uint32_t processA = dimA;
     uint32_t tailA = dimA;
     uint32_t copyA = dimA;
-    uint32_t aTailOffset = mainR * dimA;
-
-    __ubuf__ T* addr;
-    if constexpr (!isReuseSource) {
-        Reg::RegTensor<T, Trait> vregTmp;
-        Reg::MaskReg mask;
-        for (uint16_t loopA = 0; loopA < loopANum; loopA++) {
-            mask = Reg::UpdateMask<T, Trait>(copyA);
-            for (uint16_t loopR = static_cast<uint16_t>(tailR); loopR < static_cast<uint16_t>(mainR); loopR++) {
-                Reg::LoadAlign(vregTmp, srcAddr + loopA * vlSize + loopR * dimA);
-                Reg::StoreAlign(tmpAddr + loopA * vlSize + loopR * dimA, vregTmp, mask);
-            }
-        }
-        addr = tmpAddr;
-    } else {
-        addr = srcAddr;
-    }
-    Reg::RegTensor<T, Trait> b64VregMain;
-    Reg::RegTensor<T, Trait> b64VregTail;
-    Reg::MaskReg mask;
+    ASC_3510_REDUCE_HANDLE_REUSE_AND_TAIL(
+        mainR, dimA, T, isReuseSource, Trait, loopANum, copyA, tailR, srcAddr, vlSize, tmpAddr, b64VregMain,
+        b64VregTail);
     // Add mainR and tailR
     for (uint16_t i = 0; i < needInplaceAdd; i++) {
         for (uint16_t loopA = 0; loopA < loopANum; loopA++) {
@@ -781,3 +727,8 @@ __aicore__ inline void ReduceRAB64ReuseSource(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_REDUCE_REDUCE_COMMON_RA_REUSE_ALIGN_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_REDUCE_COPY_OR_REUSE_INPUT
+#undef ASC_3510_REDUCE_FOLD_SIXTEEN
+#undef ASC_3510_REDUCE_DECLARE_SIXTEEN_REGS
+#undef ASC_3510_REDUCE_HANDLE_REUSE_AND_TAIL

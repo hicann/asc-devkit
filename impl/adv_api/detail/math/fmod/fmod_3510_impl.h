@@ -23,6 +23,7 @@
 #define IMPL_MATH_FMOD_FMOD_C310_IMPL_H
 #include "../../../../../include/basic_api/kernel_tensor.h"
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
+#include "../../common/float_register_io_3510.h"
 #include "../../common/check.h"
 
 namespace AscendC {
@@ -60,26 +61,14 @@ template <typename T>
 __simd_callee__ inline void LoadDataWithT(
     __ubuf__ T* src, Reg::RegTensor<float>& dstReg, Reg::MaskReg& mask, uint32_t offset)
 {
-    if constexpr (IsSameType<T, half>::value) {
-        Reg::RegTensor<T> srcOrigin;
-        Reg::LoadAlign<T, Reg::LoadDist::DIST_UNPACK_B16>(srcOrigin, src + offset);
-        Cast<float, T, layoutZMrgZ>(dstReg, srcOrigin, mask);
-    } else {
-        Reg::LoadAlign(dstReg, src + offset);
-    }
+    FloatRegisterIO3510::LoadDataWithT(src, dstReg, mask, offset);
 }
 
 template <typename T>
 __simd_callee__ inline void SaveDataWithT(
     __ubuf__ T* dst, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask, uint32_t offset)
 {
-    if constexpr (IsSameType<T, half>::value) {
-        Reg::RegTensor<T> regT;
-        Reg::Cast<T, float, LayoutZMrgZRndRSatNS>(regT, srcReg, mask);
-        Reg::StoreAlign<T, Reg::StoreDist::DIST_PACK_B32>(dst + offset, regT, mask);
-    } else {
-        Reg::StoreAlign(dst + offset, srcReg, mask);
-    }
+    FloatRegisterIO3510::SaveDataWithT(dst, srcReg, mask, offset);
 }
 
 __simd_callee__ inline void GetSignBit(Reg::RegTensor<float>& dstReg, Reg::RegTensor<float>& srcReg, Reg::MaskReg& mask)

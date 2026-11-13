@@ -28,275 +28,45 @@ constexpr uint8_t ELTWISE_OP_DEFAULT = 0;
 
 constexpr uint64_t QUANT_POST_DEFAULT = 0;
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
+// Generate the existing concrete overloads for each intrinsic and signature.
+#define ASC_DEFINE_3510_COPY_L0C2GM_1(Type1, Type2)                                                                  \
+    ASC_DEPRECATED(                                                                                                  \
+        9.2.0, "2027/09/07",                                                                                         \
+        asc_copy_l0c2gm(                                                                                             \
+            __gm__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,             \
+            uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,           \
+            asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split,               \
+            bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre))                                        \
+    __aicore__ inline void asc_copy_l0c2gm(                                                                          \
+        __gm__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,                 \
+        uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,            \
+        uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,                \
+        uint64_t quant_post, uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en,       \
+        bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)                                                        \
+    {                                                                                                                \
+        if ASC_IS_AIC {                                                                                              \
+            copy_matrix_cc_to_gm(                                                                                    \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre,            \
+                unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split,       \
+                enable_nz2nd, static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, \
+                eltwise_antq_en, false, c0_pad_en, false, broadcast_en, enable_nz2dn);                               \
+        }                                                                                                            \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-        asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
+ASC_DEFINE_3510_COPY_L0C2GM_1(bfloat16_t, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(half, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(fp8_e4m3fn_t, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(hifloat8_t, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(int8_t, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(uint8_t, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(float, float)
+ASC_DEFINE_3510_COPY_L0C2GM_1(bfloat16_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2GM_1(half, int32_t)
+ASC_DEFINE_3510_COPY_L0C2GM_1(int8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2GM_1(uint8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2GM_1(int32_t, int32_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2gm(
-        __gm__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t l2_cache_mode, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, l2_cache_mode, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_L0C2GM_1
 
 ASC_DEPRECATED(
     9.2.0, "2027/09/07",
@@ -343,281 +113,44 @@ __aicore__ inline void asc_copy_l0c2gm(
     }
 }
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
+#define ASC_DEFINE_3510_COPY_L0C2UB_1(Type1, Type2)                                                                    \
+    ASC_DEPRECATED(                                                                                                    \
+        9.2.0, "2027/09/07",                                                                                           \
+        asc_copy_l0c2ub(                                                                                               \
+            __ubuf__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,             \
+            uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl,                                  \
+            asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode,         \
+            bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre))               \
+    __aicore__ inline void asc_copy_l0c2ub(                                                                            \
+        __ubuf__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,                 \
+        uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre,                    \
+        uint8_t unit_flag_mode, uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split,             \
+        bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op,            \
+        bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en, bool enable_nz2dn)                                    \
+    {                                                                                                                  \
+        if ASC_IS_AIC {                                                                                                \
+            copy_matrix_cc_to_ub(                                                                                      \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre, \
+                unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split,         \
+                enable_nz2nd, static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op,   \
+                eltwise_antq_en, false, c0_pad_en, false, broadcast_en, enable_nz2dn);                                 \
+        }                                                                                                              \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
+ASC_DEFINE_3510_COPY_L0C2UB_1(bfloat16_t, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(half, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(fp8_e4m3fn_t, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(hifloat8_t, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(int8_t, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(uint8_t, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(float, float)
+ASC_DEFINE_3510_COPY_L0C2UB_1(bfloat16_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2UB_1(half, int32_t)
+ASC_DEFINE_3510_COPY_L0C2UB_1(int8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2UB_1(uint8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2UB_1(int32_t, int32_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2ub(
-        __ubuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-        bool enable_nz2dn, bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t dual_dst_ctrl, bool sub_blockid, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode,
-    uint64_t quant_pre_mode, uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post,
-    uint8_t relu_post, bool clip_relu_post, uint8_t eltwise_op, bool eltwise_antq_en, bool c0_pad_en, bool broadcast_en,
-    bool enable_nz2dn)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, dual_dst_ctrl, sub_blockid, enable_clip_relu_pre,
-            unit_flag_mode, static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, broadcast_en, enable_nz2dn);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_L0C2UB_1
 
 ASC_DEPRECATED(
     9.2.0, "2027/09/07",
@@ -665,203 +198,40 @@ __aicore__ inline void asc_copy_l0c2ub(
     }
 }
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode, uint8_t relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, bool clip_relu_post,
-    uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
+#define ASC_DEFINE_3510_COPY_L0C2L1_1(Type1, Type2)                                                                  \
+    ASC_DEPRECATED(                                                                                                  \
+        9.2.0, "2027/09/07",                                                                                         \
+        asc_copy_l0c2l1(                                                                                             \
+            __cbuf__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,           \
+            uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,                   \
+            asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,        \
+            bool enable_clip_relu_pre))                                                                              \
+    __aicore__ inline void asc_copy_l0c2l1(                                                                          \
+        __cbuf__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,               \
+        uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,          \
+        uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, \
+        bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)                            \
+    {                                                                                                                \
+        if ASC_IS_AIC {                                                                                              \
+            copy_matrix_cc_to_cbuf(                                                                                  \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,        \
+                static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,         \
+                static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op,               \
+                eltwise_antq_en, false, c0_pad_en, false, false, false);                                             \
+        }                                                                                                            \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
+ASC_DEFINE_3510_COPY_L0C2L1_1(half, float)
+ASC_DEFINE_3510_COPY_L0C2L1_1(bfloat16_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_1(int8_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_1(uint8_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_1(float, float)
+ASC_DEFINE_3510_COPY_L0C2L1_1(half, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_1(int8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_1(uint8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_1(int32_t, int32_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode, uint8_t relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, bool clip_relu_post,
-    uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode, uint8_t relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, bool clip_relu_post,
-    uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode, uint8_t relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post, bool clip_relu_post,
-    uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_l0c2l1(
-        __cbuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-        bool enable_clip_relu_pre))
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, uint8_t enable_clip_relu_pre, uint8_t unit_flag_mode, uint64_t quant_pre_mode,
-    uint8_t relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, uint64_t quant_post, uint8_t relu_post,
-    bool clip_relu_post, uint8_t eltwise_op, uint8_t eltwise_antq_en, bool c0_pad_en)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, enable_clip_relu_pre, unit_flag_mode,
-            static_cast<QuantMode_t>(quant_pre_mode), relu_pre_mode, enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(quant_post), relu_post, clip_relu_post, false, eltwise_op, eltwise_antq_en,
-            false, c0_pad_en, false, false, false);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_L0C2L1_1
 
 ASC_DEPRECATED(
     9.2.0, "2027/09/07",
@@ -954,197 +324,37 @@ __aicore__ inline void asc_copy_l0c2l1(
     }
 }
 
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
+#define ASC_DEFINE_L0C_TO_GM_3510(DstType, SrcType)                                                                   \
+    __aicore__ inline void asc_copy_l0c2gm(                                                                           \
+        __gm__ DstType* dst, __cc__ SrcType* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,              \
+        uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,                \
+        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, \
+        bool enable_nz2dn, bool enable_clip_relu_pre)                                                                 \
+    {                                                                                                                 \
+        if ASC_IS_AIC {                                                                                               \
+            copy_matrix_cc_to_gm(                                                                                     \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),             \
+                static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,     \
+                static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,                              \
+                static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,    \
+                ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);                                 \
+        }                                                                                                             \
     }
-}
 
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
+ASC_DEFINE_L0C_TO_GM_3510(bfloat16_t, float)
+ASC_DEFINE_L0C_TO_GM_3510(half, float)
+ASC_DEFINE_L0C_TO_GM_3510(fp8_e4m3fn_t, float)
+ASC_DEFINE_L0C_TO_GM_3510(hifloat8_t, float)
+ASC_DEFINE_L0C_TO_GM_3510(int8_t, float)
+ASC_DEFINE_L0C_TO_GM_3510(uint8_t, float)
+ASC_DEFINE_L0C_TO_GM_3510(float, float)
+ASC_DEFINE_L0C_TO_GM_3510(bfloat16_t, int32_t)
+ASC_DEFINE_L0C_TO_GM_3510(half, int32_t)
+ASC_DEFINE_L0C_TO_GM_3510(int8_t, int32_t)
+ASC_DEFINE_L0C_TO_GM_3510(uint8_t, int32_t)
+ASC_DEFINE_L0C_TO_GM_3510(int32_t, int32_t)
 
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2gm(
-    __gm__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_store_l2_cache_mode l2_cache_mode, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_gm(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(l2_cache_mode),
-            static_cast<uint8_t>(enable_clip_relu_pre), static_cast<uint8_t>(unit_flag_mode), quant_pre_mode,
-            static_cast<uint8_t>(relu_pre_mode), enable_channel_split, enable_nz2nd,
-            static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false,
-            ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
+#undef ASC_DEFINE_L0C_TO_GM_3510
 
 __aicore__ inline void asc_copy_l0c2gm(
     __gm__ int4b_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
@@ -1178,181 +388,36 @@ __aicore__ inline void asc_copy_l0c2gm(
     }
 }
 
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
+#define ASC_DEFINE_3510_COPY_L0C2L1_2(Type1, Type2)                                                                 \
+    __aicore__ inline void asc_copy_l0c2l1(                                                                         \
+        __cbuf__ Type1* dst, __cc__ Type2* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,              \
+        uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,                      \
+        asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,           \
+        bool enable_clip_relu_pre)                                                                                  \
+    {                                                                                                               \
+        if ASC_IS_AIC {                                                                                             \
+            copy_matrix_cc_to_cbuf(                                                                                 \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre), \
+                static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),          \
+                enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT),                \
+                RELU_POST_DEFAULT, false, false, false, false, false, false, false, false, enable_nz2dn);           \
+        }                                                                                                           \
     }
-}
 
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
+ASC_DEFINE_3510_COPY_L0C2L1_2(half, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(bfloat16_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(int8_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(uint8_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(float, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(hifloat8_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(fp8_e4m3fn_t, float)
+ASC_DEFINE_3510_COPY_L0C2L1_2(half, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_2(bfloat16_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_2(int8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_2(uint8_t, int32_t)
+ASC_DEFINE_3510_COPY_L0C2L1_2(int32_t, int32_t)
 
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode,
-    bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2l1(
-    __cbuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, asc_unit_flag_mode unit_flag_mode, asc_quant_mode quant_pre_mode,
-    asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, bool enable_nz2dn,
-    bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_cbuf(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, 0, static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            false, false, false, false, false, false, false, false, enable_nz2dn);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_L0C2L1_2
 
 __aicore__ inline void asc_copy_l0c2l1(
     __cbuf__ int4b_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
@@ -1386,197 +451,38 @@ __aicore__ inline void asc_copy_l0c2l1(
     }
 }
 
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ bfloat16_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
+#define ASC_DEFINE_L0C_TO_UB_3510(DstType, SrcType)                                                                   \
+    __aicore__ inline void asc_copy_l0c2ub(                                                                           \
+        __ubuf__ DstType* dst, __cc__ SrcType* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,            \
+        uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,  \
+        asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd, \
+        bool enable_nz2dn, bool enable_clip_relu_pre)                                                                 \
+    {                                                                                                                 \
+        if ASC_IS_AIC {                                                                                               \
+            copy_matrix_cc_to_ub(                                                                                     \
+                dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),             \
+                static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),                           \
+                static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),            \
+                enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT),                  \
+                RELU_POST_DEFAULT, CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false,     \
+                false, enable_nz2dn);                                                                                 \
+        }                                                                                                             \
     }
-}
 
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ half* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
+ASC_DEFINE_L0C_TO_UB_3510(bfloat16_t, float)
+ASC_DEFINE_L0C_TO_UB_3510(half, float)
+ASC_DEFINE_L0C_TO_UB_3510(fp8_e4m3fn_t, float)
+ASC_DEFINE_L0C_TO_UB_3510(hifloat8_t, float)
+ASC_DEFINE_L0C_TO_UB_3510(int8_t, float)
+ASC_DEFINE_L0C_TO_UB_3510(uint8_t, float)
+ASC_DEFINE_L0C_TO_UB_3510(float, float)
+ASC_DEFINE_L0C_TO_UB_3510(bfloat16_t, int32_t)
+ASC_DEFINE_L0C_TO_UB_3510(half, int32_t)
+ASC_DEFINE_L0C_TO_UB_3510(int8_t, int32_t)
+ASC_DEFINE_L0C_TO_UB_3510(uint8_t, int32_t)
+ASC_DEFINE_L0C_TO_UB_3510(int32_t, int32_t)
 
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ fp8_e4m3fn_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ hifloat8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ uint8_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ float* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ bfloat16_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ half* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride, uint16_t src_stride,
-    int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ uint8_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
-
-__aicore__ inline void asc_copy_l0c2ub(
-    __ubuf__ int32_t* dst, __cc__ int32_t* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
-    uint16_t src_stride, int8_t sub_blockid, asc_dual_dst_mode dual_dst_ctrl, asc_unit_flag_mode unit_flag_mode,
-    asc_quant_mode quant_pre_mode, asc_relu_pre_mode relu_pre_mode, bool enable_channel_split, bool enable_nz2nd,
-    bool enable_nz2dn, bool enable_clip_relu_pre)
-{
-    if ASC_IS_AIC {
-        copy_matrix_cc_to_ub(
-            dst, src, 0, n_size, m_size, dst_stride, src_stride, static_cast<uint8_t>(dual_dst_ctrl),
-            static_cast<bool>(sub_blockid), static_cast<uint8_t>(enable_clip_relu_pre),
-            static_cast<uint8_t>(unit_flag_mode), quant_pre_mode, static_cast<uint8_t>(relu_pre_mode),
-            enable_channel_split, enable_nz2nd, static_cast<QuantMode_post>(QUANT_POST_DEFAULT), RELU_POST_DEFAULT,
-            CLIP_RELU_POST_DEFAULT, false, ELTWISE_OP_DEFAULT, false, false, false, false, false, enable_nz2dn);
-    }
-}
+#undef ASC_DEFINE_L0C_TO_UB_3510
 
 __aicore__ inline void asc_copy_l0c2ub(
     __ubuf__ int4b_t* dst, __cc__ float* src, uint16_t n_size, uint16_t m_size, uint32_t dst_stride,
@@ -1610,389 +516,85 @@ __aicore__ inline void asc_copy_l0c2ub(
     }
 }
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(Type1)                                                                     \
+    __aicore__ inline void asc_copy_gm2l1_align(                                                                      \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count, \
+        uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode,                   \
+        uint64_t src_stride, uint32_t dst_stride)                                                                     \
+    {                                                                                                                 \
+        if ASC_IS_AIC {                                                                                               \
+            copy_gm_to_cbuf_align_v2(                                                                                 \
+                dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,     \
+                static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);                                         \
+        }                                                                                                             \
     }
-}
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t burst_count, uint32_t burst_len,
-    uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-    asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(uint8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(half)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(float)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1(uint32_t)
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ half* dst, __gm__ half* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_ALIGN_1
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ float* dst, __gm__ float* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(Type1)                                                                      \
+    __aicore__ inline void asc_copy_gm2l1_dn2nz(                                                                       \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,            \
+        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)                       \
+    {                                                                                                                  \
+        if ASC_IS_AIC {                                                                                                \
+            copy_gm_to_cbuf_multi_dn2nz(                                                                               \
+                dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride, \
+                enable_small_c0);                                                                                      \
+        }                                                                                                              \
     }
-}
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t burst_count, uint32_t burst_len,
-    uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-    asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(half)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(float)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1(uint8_t)
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_1
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(Type1)                                                                      \
+    __aicore__ inline void asc_copy_gm2l1_nd2nz(                                                                       \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,            \
+        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)                       \
+    {                                                                                                                  \
+        if ASC_IS_AIC {                                                                                                \
+            copy_gm_to_cbuf_multi_nd2nz(                                                                               \
+                dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride, \
+                enable_small_c0);                                                                                      \
+        }                                                                                                              \
     }
-}
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(half)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(float)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1(uint8_t)
 
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-    uint32_t dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, burst_count, burst_len, left_padding_count, right_padding_count, enable_data_select,
-            static_cast<uint8_t>(l2_cache_mode), src_stride, dst_stride);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ half* dst, __gm__ half* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode, uint16_t n_value,
-    uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ float* dst, __gm__ float* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ half* dst, __gm__ half* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode, uint16_t n_value,
-    uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ float* dst, __gm__ float* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-    uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, src_d_value, static_cast<uint8_t>(l2_cache_mode), n_value, d_value, src_nd_matrix_stride,
-            enable_small_c0);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_1
 
 __aicore__ inline void asc_copy_gm2l1(
     __cbuf__ void* dst, __gm__ void* src, uint32_t n_burst, uint32_t len_burst, asc_channel_pad_mode pad_mode,
@@ -2003,137 +605,32 @@ __aicore__ inline void asc_copy_gm2l1(
     }
 }
 
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
+#define ASC_DEFINE_3510_COPY_GM2L1_1(Type1)                                                                      \
+    __aicore__ inline void asc_copy_gm2l1(                                                                       \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t m_start_position, uint32_t k_start_position,            \
+        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)             \
+    {                                                                                                            \
+        if ASC_IS_AIC {                                                                                          \
+            load_gm_to_cbuf_2dv2(                                                                                \
+                dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT, \
+                ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));                             \
+        }                                                                                                        \
     }
-}
 
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ float* dst, __gm__ float* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(float)
+ASC_DEFINE_3510_COPY_GM2L1_1(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(half)
+ASC_DEFINE_3510_COPY_GM2L1_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_1(uint8_t)
 
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ half* dst, __gm__ half* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
-
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, ASC_GM2L1_SID_DEFAULT,
-            ASC_GM2L1_DECOMP_MODE_DEFAULT, static_cast<uint8_t>(l2_cache_mode));
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_1
 
 __aicore__ inline void asc_copy_gm2l1(
     __cbuf__ fp4x2_e1m2_t* dst, __gm__ fp4x2_e1m2_t* src, uint32_t m_start_position, uint32_t k_start_position,
@@ -2168,547 +665,99 @@ __aicore__ inline void asc_copy_gm2l1(
     }
 }
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(Type1)                                                                 \
+    ASC_DEPRECATED(                                                                                               \
+        9.2.0, "2027/09/07",                                                                                      \
+        asc_copy_gm2l1_align(                                                                                     \
+            __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t burst_count, uint32_t burst_len,                     \
+            uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,                     \
+            asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))                      \
+    __aicore__ inline void asc_copy_gm2l1_align(                                                                  \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count, \
+        uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,       \
+        uint32_t burst_dst_stride)                                                                                \
+    {                                                                                                             \
+        if ASC_IS_AIC {                                                                                           \
+            copy_gm_to_cbuf_align_v2(                                                                             \
+                dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit,        \
+                l2_cache_ctl, burst_src_stride, burst_dst_stride);                                                \
+        }                                                                                                         \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ half* dst, __gm__ half* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-        uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-        uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ half* dst, __gm__ half* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(half)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(float)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2(uint8_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ float* dst, __gm__ float* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-        uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-        uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ float* dst, __gm__ float* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_ALIGN_2
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(Type1)                                                                  \
+    ASC_DEPRECATED(                                                                                                \
+        9.2.0, "2027/09/07",                                                                                       \
+        asc_copy_gm2l1_dn2nz(                                                                                      \
+            __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,    \
+            uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))              \
+    __aicore__ inline void asc_copy_gm2l1_dn2nz(                                                                   \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value, \
+        uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)                                              \
+    {                                                                                                              \
+        if ASC_IS_AIC {                                                                                            \
+            copy_gm_to_cbuf_multi_dn2nz(                                                                           \
+                dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);      \
+        }                                                                                                          \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(half)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(float)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2(uint8_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_DN2NZ_2
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_count,
-        uint8_t right_padding_count, bool enable_data_select, asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride,
-        uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
+#define ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(Type1)                                                                  \
+    ASC_DEPRECATED(                                                                                                \
+        9.2.0, "2027/09/07",                                                                                       \
+        asc_copy_gm2l1_nd2nz(                                                                                      \
+            __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,    \
+            uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))              \
+    __aicore__ inline void asc_copy_gm2l1_nd2nz(                                                                   \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value, \
+        uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)                                              \
+    {                                                                                                              \
+        if ASC_IS_AIC {                                                                                            \
+            copy_gm_to_cbuf_multi_nd2nz(                                                                           \
+                dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);      \
+        }                                                                                                          \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(half)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(float)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2(uint8_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_align(
-        __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t burst_count, uint32_t burst_len,
-        uint8_t left_padding_count, uint8_t right_padding_count, bool enable_data_select,
-        asc_load_l2_cache_mode l2_cache_mode, uint64_t src_stride, uint32_t dst_stride))
-__aicore__ inline void asc_copy_gm2l1_align(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t n_burst, uint32_t len_burst, uint8_t left_padding_count,
-    uint8_t right_padding_count, bool data_select_bit, uint8_t l2_cache_ctl, uint64_t burst_src_stride,
-    uint32_t burst_dst_stride)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_align_v2(
-            dst, src, 0, n_burst, len_burst, left_padding_count, right_padding_count, data_select_bit, l2_cache_ctl,
-            burst_src_stride, burst_dst_stride);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t src_d_value,
-        asc_load_l2_cache_mode l2_cache_mode, uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride,
-        bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl,
-    uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ half* dst, __gm__ half* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ half* dst, __gm__ half* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ float* dst, __gm__ float* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ float* dst, __gm__ float* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_dn2nz(
-        __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_dn2nz(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_dn2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t src_d_value,
-        asc_load_l2_cache_mode l2_cache_mode, uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride,
-        bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl,
-    uint16_t n_value, uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ half* dst, __gm__ half* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ half* dst, __gm__ half* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ float* dst, __gm__ float* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ float* dst, __gm__ float* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1_nd2nz(
-        __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t src_d_value, asc_load_l2_cache_mode l2_cache_mode,
-        uint16_t n_value, uint32_t d_value, uint64_t src_nd_matrix_stride, bool enable_small_c0))
-__aicore__ inline void asc_copy_gm2l1_nd2nz(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint64_t loop1_src_stride, uint8_t l2_cache_ctl, uint16_t n_value,
-    uint32_t d_value, uint64_t loop4_src_stride, bool smallc0_en)
-{
-    if ASC_IS_AIC {
-        copy_gm_to_cbuf_multi_nd2nz(
-            dst, src, 0, loop1_src_stride, l2_cache_ctl, n_value, d_value, loop4_src_stride, smallc0_en);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_ND2NZ_2
 
 ASC_DEPRECATED(
     9.2.0, "2027/09/07",
@@ -2724,185 +773,37 @@ __aicore__ inline void asc_copy_gm2l1(
     }
 }
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
+#define ASC_DEFINE_3510_COPY_GM2L1_2(Type1)                                                               \
+    ASC_DEPRECATED(                                                                                       \
+        9.2.0, "2027/09/07",                                                                              \
+        asc_copy_gm2l1(                                                                                   \
+            __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t m_start_position, uint32_t k_start_position, \
+            uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode)) \
+    __aicore__ inline void asc_copy_gm2l1(                                                                \
+        __cbuf__ Type1* dst, __gm__ Type1* src, uint32_t m_start_position, uint32_t k_start_position,     \
+        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl) \
+    {                                                                                                     \
+        if ASC_IS_AIC {                                                                                   \
+            load_gm_to_cbuf_2dv2(                                                                         \
+                dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, \
+                l2_cache_ctl);                                                                            \
+        }                                                                                                 \
     }
-}
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ float* dst, __gm__ float* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ float* dst, __gm__ float* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
+ASC_DEFINE_3510_COPY_GM2L1_2(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(float)
+ASC_DEFINE_3510_COPY_GM2L1_2(fp8_e4m3fn_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(half)
+ASC_DEFINE_3510_COPY_GM2L1_2(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(int16_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(int32_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(int8_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(uint16_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(uint32_t)
+ASC_DEFINE_3510_COPY_GM2L1_2(uint8_t)
 
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ half* dst, __gm__ half* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-        uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ half* dst, __gm__ half* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int16_t* dst, __gm__ int16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int32_t* dst, __gm__ int32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ int8_t* dst, __gm__ int8_t* src, uint32_t m_start_position, uint32_t k_start_position, uint16_t dst_stride,
-    uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
-
-ASC_DEPRECATED(
-    9.2.0, "2027/09/07",
-    asc_copy_gm2l1(
-        __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-        uint16_t dst_stride, uint16_t m_step, uint16_t k_step, asc_load_l2_cache_mode l2_cache_mode))
-__aicore__ inline void asc_copy_gm2l1(
-    __cbuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t m_start_position, uint32_t k_start_position,
-    uint16_t dst_stride, uint16_t m_step, uint16_t k_step, uint8_t decomp_mode, uint8_t l2_cache_ctl)
-{
-    if ASC_IS_AIC {
-        load_gm_to_cbuf_2dv2(
-            dst, src, m_start_position, k_start_position, dst_stride, m_step, k_step, 0, decomp_mode, l2_cache_ctl);
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2L1_2
 
 ASC_DEPRECATED(
     9.2.0, "2027/09/07",

@@ -191,6 +191,35 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float SinPoly(float x)
     return FmaImpl(z, m, x); // * x^3 + x
 }
 
+// Both functions use the same reduction and polynomials, with different odd-quadrant results.
+template <bool cosine, typename T>
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline T ReducedSinOrCos(T x)
+{
+    static_assert(SupportTypeSimtInternel<T, float>, "Input type of input only supports float.");
+    constexpr float reductionThreshold = 71476.0625f;
+    constexpr int negativeQuadrantsBit = 2;
+    constexpr int oddQuadrantsBit = 1;
+    int quadrant;
+    float y = TrigRadianReduction(x, reductionThreshold, &quadrant);
+    float c = CosPoly(y);
+    float s = SinPoly(y);
+    if (quadrant & negativeQuadrantsBit) {
+        s = -s;
+        c = -c;
+    }
+    if constexpr (cosine) {
+        if (quadrant & oddQuadrantsBit) {
+            c = -s;
+        }
+        return c;
+    } else {
+        if (quadrant & oddQuadrantsBit) {
+            s = c;
+        }
+        return s;
+    }
+}
+
 /**
  * Computes the cosine of an angle using trigonometric identities and polynomial approximations.
  * Handles angles in the full range by reducing them to [-pi/2, pi/2] and applying identities.
@@ -204,27 +233,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float SinPoly(float x)
 template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T CosImpl(T x)
 {
-    static_assert(SupportTypeSimtInternel<T, float>, "Input type of input only supports float.");
-
-    // Step 1: Reduce the angle to the range [0, pi/2) and determine the quadrant
-    int quadrant;
-    float y = TrigRadianReduction(x, 71476.0625f, &quadrant); // 71476.0625f: Threshold for reduction algorithm
-
-    // Step 2: Compute cosine and sine of the reduced angle using polynomial approximations
-    float c = CosPoly(y);
-    float s = SinPoly(y);
-
-    // Step 3: Adjust the cosine value based on the quadrant
-    if (quadrant & 2) { // Quadrants 2 and 3: cos(pi + x) = -cos(x)
-        s = -s;
-        c = -c;
-    }
-    if (quadrant & 1) { // Quadrants 1 and 3: cos(pi/2 + x) = -sin(x)
-        c = -s;
-    }
-
-    // Return the final cosine value
-    return c;
+    return ReducedSinOrCos<true>(x);
 }
 
 /**
@@ -240,26 +249,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline T CosImpl(T x)
 template <typename T>
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline T SinImpl(T x)
 {
-    static_assert(SupportTypeSimtInternel<T, float>, "Input type of input only supports float.");
-
-    // Step 1: Reduce the angle to the range [0, pi/2) and determine the quadrant
-    int quadrant;
-    float y = TrigRadianReduction(x, 71476.0625f, &quadrant); // 71476.0625f: Threshold for reduction algorithm
-
-    // Step 2: Compute cosine and sine of the reduced angle using polynomial approximations
-    float c = CosPoly(y);
-    float s = SinPoly(y);
-
-    // Step 3: Adjust the sine value based on the quadrant
-    if (quadrant & 2) { // Quadrants 2 and 3: sin(pi + x) = -sin(x)
-        s = -s;
-        c = -c;
-    }
-    if (quadrant & 1) { // Quadrants 1 and 3: sin(pi/2 + x) = cos(x)
-        s = c;
-    }
-
-    return s;
+    return ReducedSinOrCos<false>(x);
 }
 
 /**

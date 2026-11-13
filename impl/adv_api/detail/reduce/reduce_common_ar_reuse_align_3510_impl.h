@@ -24,6 +24,33 @@
 #include "reduce_common_util_3510_impl.h"
 #include "reduce_common_ar_reuse_align_less_than_vl_3510_impl.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_REDUCE_ALIGN_FOLD_SETUP_AND_COPY(dimR, vlSize, isReuseSource, T) \
+    uint32_t mainR = ReduceOpInternal::CalculateMainR(dimR, true, vlSize);        \
+    uint32_t tailR = dimR - mainR;                                                \
+    /* A is at least 8 Bytes, dimRAxis will not over b16 max */                   \
+    /* use b16 dimR to accelerate load store address */                           \
+    uint16_t dimRAxis = static_cast<uint16_t>(dimR);                              \
+    if constexpr (!isReuseSource) {                                               \
+        mainR = tailR > 0 ? mainR : mainR / 2;                                    \
+        tailR = tailR > 0 ? tailR : mainR;                                        \
+    }                                                                             \
+    uint16_t inplaceRepeats = 0;                                                  \
+    uint32_t inplaceTail = 0;                                                     \
+    uint16_t needInplaceAdd = 0;                                                  \
+    if constexpr (isReuseSource) {                                                \
+        inplaceRepeats = CeilDivision(tailR, vlSize);                             \
+        needInplaceAdd = tailR > 0 ? 1 : 0;                                       \
+    } else {                                                                      \
+        inplaceRepeats = tailR / vlSize;                                          \
+        inplaceTail = tailR % vlSize;                                             \
+        needInplaceAdd = inplaceTail == 0 ? 0 : 1;                                \
+    }                                                                             \
+    uint32_t dtypeSize = sizeof(T);                                               \
+    uint16_t copyRepeats = CeilDivision(mainR, vlSize);                           \
+    uint16_t base = mainR / vlSize;                                               \
+    uint16_t folds = ReduceOpInternal::CalculateFolds(base)
+
 namespace AscendC {
 template <
     class T, class U, const Reg::RegTrait& Trait, const Reg::CastTrait& CastTraitUppper,
@@ -229,33 +256,7 @@ template <
 __aicore__ inline void ReduceARB64OverVL(
     __ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ubuf__ T* tmpAddr, uint32_t dimA, uint32_t dimR)
 {
-    uint32_t mainR = ReduceOpInternal::CalculateMainR(dimR, true, vlSize);
-    uint32_t tailR = dimR - mainR;
-    // A is at least 8 Bytes, dimRAxis will not over b16 max
-    // use b16 dimR to accelerate load store address
-    uint16_t dimRAxis = static_cast<uint16_t>(dimR);
-    if constexpr (!isReuseSource) {
-        mainR = tailR > 0 ? mainR : mainR / 2;
-        tailR = tailR > 0 ? tailR : mainR;
-    }
-
-    uint16_t inplaceRepeats = 0;
-    uint32_t inplaceTail = 0;
-    uint16_t needInplaceAdd = 0;
-    if constexpr (isReuseSource) {
-        inplaceRepeats = CeilDivision(tailR, vlSize);
-        needInplaceAdd = tailR > 0 ? 1 : 0;
-    } else {
-        inplaceRepeats = tailR / vlSize;
-        inplaceTail = tailR % vlSize;
-        needInplaceAdd = inplaceTail == 0 ? 0 : 1;
-    }
-
-    uint32_t dtypeSize = sizeof(T);
-    uint16_t copyRepeats = CeilDivision(mainR, vlSize);
-
-    uint16_t base = mainR / vlSize;
-    uint16_t folds = ReduceOpInternal::CalculateFolds(base);
+    ASC_3510_REDUCE_ALIGN_FOLD_SETUP_AND_COPY(dimR, vlSize, isReuseSource, T);
     uint16_t avgFolds = ReduceOpInternal::BASE_FOLD_B64;
     uint16_t mainTimes = folds / avgFolds;
     uint16_t tailFolds = folds % avgFolds;
@@ -486,33 +487,7 @@ template <
 __aicore__ inline void ReduceAROverVLImpl(
     __ubuf__ T* dstAddr, __ubuf__ T* srcAddr, __ubuf__ T* tmpAddr, uint32_t dimA, uint32_t dimR)
 {
-    uint32_t mainR = ReduceOpInternal::CalculateMainR(dimR, true, vlSize);
-    uint32_t tailR = dimR - mainR;
-    // A is at least 8 Bytes, dimRAxis will not over b16 max
-    // use b16 dimR to accelerate load store address
-    uint16_t dimRAxis = static_cast<uint16_t>(dimR);
-    if constexpr (!isReuseSource) {
-        mainR = tailR > 0 ? mainR : mainR / 2;
-        tailR = tailR > 0 ? tailR : mainR;
-    }
-
-    uint16_t inplaceRepeats = 0;
-    uint32_t inplaceTail = 0;
-    uint16_t needInplaceAdd = 0;
-    if constexpr (isReuseSource) {
-        inplaceRepeats = CeilDivision(tailR, vlSize);
-        needInplaceAdd = tailR > 0 ? 1 : 0;
-    } else {
-        inplaceRepeats = tailR / vlSize;
-        inplaceTail = tailR % vlSize;
-        needInplaceAdd = inplaceTail == 0 ? 0 : 1;
-    }
-
-    uint32_t dtypeSize = sizeof(T);
-    uint16_t copyRepeats = CeilDivision(mainR, vlSize);
-
-    uint16_t base = mainR / vlSize;
-    uint16_t folds = ReduceOpInternal::CalculateFolds(base);
+    ASC_3510_REDUCE_ALIGN_FOLD_SETUP_AND_COPY(dimR, vlSize, isReuseSource, T);
     uint16_t avgFolds = ReduceOpInternal::BASE_FOLD;
     uint16_t mainTimes = folds / avgFolds;
     uint16_t tailFolds = folds % avgFolds;
@@ -553,3 +528,5 @@ __aicore__ inline void ReduceARImpl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_REDUCE_REDUCE_COMMON_AR_REUSE_ALIGN_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_REDUCE_ALIGN_FOLD_SETUP_AND_COPY

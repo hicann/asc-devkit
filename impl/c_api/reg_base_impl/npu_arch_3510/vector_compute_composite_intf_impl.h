@@ -121,293 +121,62 @@ __aicore__ inline void asc_transto5hd_b32_sync(
     }
 }
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
+// Generate the existing concrete overloads for each intrinsic and signature.
+#define ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(Type1)                                                                \
+    ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)                                            \
+    __aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ Type1* dst, __gm__ Type1* src, uint32_t size)           \
+    {                                                                                                                 \
+        if ASC_IS_AIV {                                                                                               \
+            copy_gm_to_ubuf_align_v2(                                                                                 \
+                dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false, \
+                static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),               \
+                static_cast<uint32_t>(0));                                                                            \
+            asc_sync_post_process();                                                                                  \
+        }                                                                                                             \
     }
-}
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int8_t* dst, __gm__ int8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(uint8_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(int8_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(uint16_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(int16_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(uint32_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(int32_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(half)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(float)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1(fp8_e4m3fn_t)
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint16_t* dst, __gm__ uint16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
+#undef ASC_DEFINE_3510_COPY_GM2UB_ALIGN_SYNC_1
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int16_t* dst, __gm__ int16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
+#define ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(Type1)                                                      \
+    ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)                                  \
+    __aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ Type1* dst, __ubuf__ Type1* src, uint32_t size) \
+    {                                                                                                       \
+        if ASC_IS_AIV {                                                                                     \
+            copy_ubuf_to_gm_align_v2(                                                                       \
+                (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,                  \
+                static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),    \
+                static_cast<uint32_t>(0));                                                                  \
+            asc_sync_post_process();                                                                        \
+        }                                                                                                   \
     }
-}
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ uint32_t* dst, __gm__ uint32_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(uint8_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(int8_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(uint16_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(int16_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(uint32_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(int32_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(half)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(float)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(hifloat8_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(bfloat16_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(fp8_e5m2_t)
+ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1(fp8_e4m3fn_t)
 
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ int32_t* dst, __gm__ int32_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ half* dst, __gm__ half* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ float* dst, __gm__ float* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ hifloat8_t* dst, __gm__ hifloat8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ bfloat16_t* dst, __gm__ bfloat16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e5m2_t* dst, __gm__ fp8_e5m2_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_gm2ub_align and asc_sync)
-__aicore__ inline void asc_copy_gm2ub_align_sync(__ubuf__ fp8_e4m3fn_t* dst, __gm__ fp8_e4m3fn_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_gm_to_ubuf_align_v2(
-            dst, src, 0, static_cast<uint32_t>(1), size, static_cast<uint8_t>(0), static_cast<uint8_t>(0), false,
-            static_cast<uint8_t>(static_cast<asc_load_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint8_t* dst, __ubuf__ uint8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int8_t* dst, __ubuf__ int8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint16_t* dst, __ubuf__ uint16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int16_t* dst, __ubuf__ int16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ uint32_t* dst, __ubuf__ uint32_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ int32_t* dst, __ubuf__ int32_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ half* dst, __ubuf__ half* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ float* dst, __ubuf__ float* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ hifloat8_t* dst, __ubuf__ hifloat8_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ bfloat16_t* dst, __ubuf__ bfloat16_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ fp8_e5m2_t* dst, __ubuf__ fp8_e5m2_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
-
-ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2gm_align and asc_sync)
-__aicore__ inline void asc_copy_ub2gm_align_sync(__gm__ fp8_e4m3fn_t* dst, __ubuf__ fp8_e4m3fn_t* src, uint32_t size)
-{
-    if ASC_IS_AIV {
-        copy_ubuf_to_gm_align_v2(
-            (__gm__ void*)dst, (__ubuf__ void*)src, 0, static_cast<uint32_t>(1), size,
-            static_cast<uint8_t>(static_cast<asc_store_l2_cache_mode>(0)), static_cast<uint64_t>(0),
-            static_cast<uint32_t>(0));
-        asc_sync_post_process();
-    }
-}
+#undef ASC_DEFINE_3510_COPY_UB2GM_ALIGN_SYNC_1
 
 ASC_DEPRECATED(9.2.0, "2027/09/07", asc_copy_ub2l1 and asc_sync)
 __aicore__ inline void asc_copy_ub2l1_sync(__cbuf__ void* dst, __ubuf__ void* src, uint32_t size)

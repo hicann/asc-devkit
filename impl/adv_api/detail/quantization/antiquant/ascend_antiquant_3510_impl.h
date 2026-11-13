@@ -30,6 +30,50 @@
 #include "../../quantization/quant/ascend_quant_3510_impl.h"
 #include "../../common/check.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_ANTIQUANT_SCALE_AND_STORE(                                                                        \
+    scaleT, srcT, srcUb, i, para, j, vecLen, srcVreg, vreg, preg, config, offsetVreg, scaleVreg, dstT, dstUb)      \
+    LoadSrc<scaleT, srcT>((srcUb + i * para.n + j * vecLen), srcVreg);                                             \
+    ConvertSrc<scaleT, srcT>(vreg, srcVreg, preg);                                                                 \
+    AddOffsetIfExist<scaleT, config>(vreg, offsetVreg, preg);                                                      \
+    Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(vreg, vreg, scaleVreg, preg);                                    \
+    if constexpr (SupportType<scaleT, half, bfloat16_t>()) {                                                       \
+        Reg::StoreAlign<dstT, Reg::StoreDist::DIST_NORM_B16>(dstUb + i * para.n + j * vecLen, vreg, preg);         \
+    } else {                                                                                                       \
+        if constexpr (SupportType<dstT, float>()) {                                                                \
+            Reg::StoreAlign<float, Reg::StoreDist::DIST_NORM_B32>(dstUb + i * para.n + j * vecLen, vreg, preg);    \
+        } else {                                                                                                   \
+            Reg::RegTensor<dstT> tempVreg;                                                                         \
+            Reg::Cast<dstT, float, LayoutZMrgZRndRSatS>(tempVreg, vreg, preg);                                     \
+            Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK_B32>(dstUb + i * para.n + j * vecLen, tempVreg, preg); \
+        }                                                                                                          \
+    }
+
+#define ASC_3510_ANTIQUANT_INIT_B32_GROUP(para, scaleT, srcT) \
+    uint16_t rowNum = para.calCount / para.n;                 \
+    uint32_t vecLen = ASCENDC_QUANT_B32_VF_LEN;               \
+    uint16_t repeat = CeilDivision(para.n, vecLen);           \
+    uint32_t sreg = para.n;                                   \
+    Reg::MaskReg preg;                                        \
+    Reg::RegTensor<scaleT> offsetVreg;                        \
+    Reg::RegTensor<scaleT> scaleVreg;                         \
+    Reg::RegTensor<srcT> srcVreg;                             \
+    Reg::RegTensor<float> f32Vreg;                            \
+    Reg::RegTensor<float> f32ScaleVreg;                       \
+    Reg::RegTensor<float> f32OffsetVreg
+
+#define ASC_3510_ANTIQUANT_SCALE_B8_AS_F32(                                                                   \
+    srcT, f32Vreg, srcVreg, preg, scaleT, config, offsetVreg, scaleVreg, f32ScaleVreg, f32OffsetVreg)         \
+    Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);                                              \
+    if constexpr (SupportType<scaleT, float>()) {                                                             \
+        AddOffsetIfExist<float, config>(f32Vreg, offsetVreg, preg);                                           \
+        Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, scaleVreg, preg);                      \
+    } else {                                                                                                  \
+        ConvertToF32ScaleAndOffset<scaleT, config>(scaleVreg, offsetVreg, preg, f32ScaleVreg, f32OffsetVreg); \
+        AddOffsetIfExist<float, config>(f32Vreg, f32OffsetVreg, preg);                                        \
+        Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);                   \
+    }
+
 namespace AscendC {
 constexpr uint32_t ANTIQUANT_B16_VF_LEN = GetVecLen() / sizeof(uint16_t);
 constexpr uint32_t ANTIQUANT_B32_VF_LEN = GetVecLen() / sizeof(uint32_t);
@@ -1474,22 +1518,9 @@ __simd_vf__ inline void AntiQuantPerTokenForB8VF(
         sreg = para.n;
         for (uint16_t j = 0; j < repeat; ++j) {
             preg = Reg::UpdateMask<scaleT>(sreg);
-            LoadSrc<scaleT, srcT>((srcUb + i * para.n + j * vecLen), srcVreg);
-            ConvertSrc<scaleT, srcT>(vreg, srcVreg, preg);
-            AddOffsetIfExist<scaleT, config>(vreg, offsetVreg, preg);
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(vreg, vreg, scaleVreg, preg);
-            if constexpr (SupportType<scaleT, half, bfloat16_t>()) {
-                Reg::StoreAlign<dstT, Reg::StoreDist::DIST_NORM_B16>(dstUb + i * para.n + j * vecLen, vreg, preg);
-            } else {
-                if constexpr (SupportType<dstT, float>()) {
-                    Reg::StoreAlign<float, Reg::StoreDist::DIST_NORM_B32>(dstUb + i * para.n + j * vecLen, vreg, preg);
-                } else {
-                    Reg::RegTensor<dstT> tempVreg;
-                    Reg::Cast<dstT, float, LayoutZMrgZRndRSatS>(tempVreg, vreg, preg);
-                    Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK_B32>(
-                        dstUb + i * para.n + j * vecLen, tempVreg, preg);
-                }
-            }
+            ASC_3510_ANTIQUANT_SCALE_AND_STORE(
+                scaleT, srcT, srcUb, i, para, j, vecLen, srcVreg, vreg, preg, config, offsetVreg, scaleVreg, dstT,
+                dstUb)
         }
     }
 }
@@ -1527,22 +1558,9 @@ __simd_vf__ inline void AntiQuantPerTokenTransposeForB8VF(
             preg = Reg::UpdateMask<scaleT>(sreg);
             LoadPerTokenTransposeScaleAndOffset<scaleT, config>(
                 scaleUb + j * vecLen, offsetUb + j * vecLen, scaleVreg, offsetVreg);
-            LoadSrc<scaleT, srcT>((srcUb + i * para.n + j * vecLen), srcVreg);
-            ConvertSrc<scaleT, srcT>(vreg, srcVreg, preg);
-            AddOffsetIfExist<scaleT, config>(vreg, offsetVreg, preg);
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(vreg, vreg, scaleVreg, preg);
-            if constexpr (SupportType<scaleT, half, bfloat16_t>()) {
-                Reg::StoreAlign<dstT, Reg::StoreDist::DIST_NORM_B16>(dstUb + i * para.n + j * vecLen, vreg, preg);
-            } else {
-                if constexpr (SupportType<dstT, float>()) {
-                    Reg::StoreAlign<float, Reg::StoreDist::DIST_NORM_B32>(dstUb + i * para.n + j * vecLen, vreg, preg);
-                } else {
-                    Reg::RegTensor<dstT> tempVreg;
-                    Reg::Cast<dstT, float, LayoutZMrgZRndRSatS>(tempVreg, vreg, preg);
-                    Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK_B32>(
-                        dstUb + i * para.n + j * vecLen, tempVreg, preg);
-                }
-            }
+            ASC_3510_ANTIQUANT_SCALE_AND_STORE(
+                scaleT, srcT, srcUb, i, para, j, vecLen, srcVreg, vreg, preg, config, offsetVreg, scaleVreg, dstT,
+                dstUb)
         }
     }
 }
@@ -1564,33 +1582,15 @@ __simd_vf__ inline void AntiQuantPerTokenForFp8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendAntiQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = ASCENDC_QUANT_B32_VF_LEN;
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint32_t sreg = para.n;
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> srcVreg;
-    Reg::RegTensor<float> f32Vreg;
-    Reg::RegTensor<float> f32ScaleVreg;
-    Reg::RegTensor<float> f32OffsetVreg;
+    ASC_3510_ANTIQUANT_INIT_B32_GROUP(para, scaleT, srcT);
     for (uint16_t i = 0; i < rowNum; ++i) {
         LoadPerTokenScaleAndOffset<scaleT, config>(scaleUb + i, offsetUb + i, scaleVreg, offsetVreg);
         sreg = para.n;
         for (uint16_t j = 0; j < repeat; ++j) {
             preg = Reg::UpdateMask<uint32_t>(sreg);
             Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK4_B8>(srcVreg, srcUb + i * para.n + j * vecLen);
-            Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);
-            if constexpr (SupportType<scaleT, float>()) {
-                AddOffsetIfExist<float, config>(f32Vreg, offsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, scaleVreg, preg);
-            } else {
-                ConvertToF32ScaleAndOffset<scaleT, config>(scaleVreg, offsetVreg, preg, f32ScaleVreg, f32OffsetVreg);
-                AddOffsetIfExist<float, config>(f32Vreg, f32OffsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);
-            }
+            ASC_3510_ANTIQUANT_SCALE_B8_AS_F32(
+                srcT, f32Vreg, srcVreg, preg, scaleT, config, offsetVreg, scaleVreg, f32ScaleVreg, f32OffsetVreg)
             StoreF32Res<dstT>((dstUb + i * para.n + j * vecLen), f32Vreg, preg);
         }
     }
@@ -1613,18 +1613,7 @@ __simd_vf__ inline void AntiQuantPerTokenTransposeForFp8VF(
     __ubuf__ dstT* dstUb, __ubuf__ srcT* srcUb, __ubuf__ scaleT* scaleUb, __ubuf__ scaleT* offsetUb,
     const AscendAntiQuantParam para)
 {
-    uint16_t rowNum = para.calCount / para.n;
-    uint32_t vecLen = ASCENDC_QUANT_B32_VF_LEN;
-    uint16_t repeat = CeilDivision(para.n, vecLen);
-    uint32_t sreg = para.n;
-
-    Reg::MaskReg preg;
-    Reg::RegTensor<scaleT> offsetVreg;
-    Reg::RegTensor<scaleT> scaleVreg;
-    Reg::RegTensor<srcT> srcVreg;
-    Reg::RegTensor<float> f32Vreg;
-    Reg::RegTensor<float> f32ScaleVreg;
-    Reg::RegTensor<float> f32OffsetVreg;
+    ASC_3510_ANTIQUANT_INIT_B32_GROUP(para, scaleT, srcT);
     for (uint16_t i = 0; i < rowNum; ++i) {
         sreg = para.n;
         for (uint16_t j = 0; j < repeat; ++j) {
@@ -1632,15 +1621,8 @@ __simd_vf__ inline void AntiQuantPerTokenTransposeForFp8VF(
             LoadPerTokenTransposeScaleAndOffset<scaleT, config>(
                 scaleUb + j * vecLen, offsetUb + j * vecLen, scaleVreg, offsetVreg);
             Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK4_B8>(srcVreg, srcUb + i * para.n + j * vecLen);
-            Reg::Cast<float, srcT, layoutZMrgZ>(f32Vreg, srcVreg, preg);
-            if constexpr (SupportType<scaleT, float>()) {
-                AddOffsetIfExist<float, config>(f32Vreg, offsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, scaleVreg, preg);
-            } else {
-                ConvertToF32ScaleAndOffset<scaleT, config>(scaleVreg, offsetVreg, preg, f32ScaleVreg, f32OffsetVreg);
-                AddOffsetIfExist<float, config>(f32Vreg, f32OffsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32Vreg, f32Vreg, f32ScaleVreg, preg);
-            }
+            ASC_3510_ANTIQUANT_SCALE_B8_AS_F32(
+                srcT, f32Vreg, srcVreg, preg, scaleT, config, offsetVreg, scaleVreg, f32ScaleVreg, f32OffsetVreg)
             StoreF32Res<dstT>((dstUb + i * para.n + j * vecLen), f32Vreg, preg);
         }
     }
@@ -1688,22 +1670,9 @@ __simd_vf__ inline void AntiQuantPerGroupForColB8VF(
             preg = Reg::UpdateMask<scaleT>(sreg);
             GetPerGroupScaleAndOffset<scaleT, config>(
                 scaleUb + i * scaleK, offsetUb + i * scaleK, j * vecLen, para, scaleVreg, offsetVreg);
-            LoadSrc<scaleT, srcT>((srcUb + i * para.n + j * vecLen), srcVreg);
-            ConvertSrc<scaleT, srcT>(vreg, srcVreg, preg);
-            AddOffsetIfExist<scaleT, config>(vreg, offsetVreg, preg);
-            Reg::Mul<scaleT, Reg::MaskMergeMode::ZEROING>(vreg, vreg, scaleVreg, preg);
-            if constexpr (SupportType<scaleT, half, bfloat16_t>()) {
-                Reg::StoreAlign<dstT, Reg::StoreDist::DIST_NORM_B16>(dstUb + i * para.n + j * vecLen, vreg, preg);
-            } else {
-                if constexpr (SupportType<dstT, float>()) {
-                    Reg::StoreAlign<float, Reg::StoreDist::DIST_NORM_B32>(dstUb + i * para.n + j * vecLen, vreg, preg);
-                } else {
-                    Reg::RegTensor<dstT> tempVreg;
-                    Reg::Cast<dstT, float, LayoutZMrgZRndRSatS>(tempVreg, vreg, preg);
-                    Reg::StoreAlign<dstT, Reg::StoreDist::DIST_PACK_B32>(
-                        dstUb + i * para.n + j * vecLen, tempVreg, preg);
-                }
-            }
+            ASC_3510_ANTIQUANT_SCALE_AND_STORE(
+                scaleT, srcT, srcUb, i, para, j, vecLen, srcVreg, vreg, preg, config, offsetVreg, scaleVreg, dstT,
+                dstUb)
         }
     }
 }
@@ -2041,15 +2010,8 @@ __simd_callee__ inline void AntiQuantPerGroupForRowFp8TailBlock(
                 (scaleUb + j * vecLen), (offsetUb + j * vecLen), scaleVreg, offsetVreg);
             preg = Reg::UpdateMask<uint32_t>(sreg);
             Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK4_B8>(srcVreg, srcUb + i * n + j * vecLen);
-            Reg::Cast<float, srcT, layoutZMrgZ>(f32SrcVreg, srcVreg, preg);
-            if constexpr (SupportType<scaleT, float>()) {
-                AddOffsetIfExist<float, config>(f32SrcVreg, offsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32SrcVreg, f32SrcVreg, scaleVreg, preg);
-            } else {
-                ConvertToF32ScaleAndOffset<scaleT, config>(scaleVreg, offsetVreg, preg, f32ScaleVreg, f32OffsetVreg);
-                AddOffsetIfExist<float, config>(f32SrcVreg, f32OffsetVreg, preg);
-                Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32SrcVreg, f32SrcVreg, f32ScaleVreg, preg);
-            }
+            ASC_3510_ANTIQUANT_SCALE_B8_AS_F32(
+                srcT, f32SrcVreg, srcVreg, preg, scaleT, config, offsetVreg, scaleVreg, f32ScaleVreg, f32OffsetVreg)
             StoreF32Res<dstT>((dstUb + i * n + j * vecLen), f32SrcVreg, preg);
         }
     }
@@ -2080,15 +2042,8 @@ __simd_vf__ inline void AntiQuantPerGroupForRowFp8VF(
                     (scaleUb + i * para.n + k * vecLen), (offsetUb + i * para.n + k * vecLen), scaleVreg, offsetVreg);
                 Reg::LoadAlign<srcT, Reg::LoadDist::DIST_UNPACK4_B8>(
                     srcVreg, (srcUb + (i * para.groupSize + j) * para.n + k * vecLen));
-                Reg::Cast<float, srcT, layoutZMrgZ>(f32SrcVreg, srcVreg, preg);
-                if constexpr (SupportType<scaleT, float>()) {
-                    AddOffsetIfExist<float, config>(f32SrcVreg, offsetVreg, preg);
-                    Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32SrcVreg, f32SrcVreg, scaleVreg, preg);
-                } else {
-                    ConvertToF32ScaleAndOffset<scaleT, config>(scaleVreg, offsetVreg, preg, f32Svreg, f32Ovreg);
-                    AddOffsetIfExist<float, config>(f32SrcVreg, f32Ovreg, preg);
-                    Reg::Mul<float, Reg::MaskMergeMode::ZEROING>(f32SrcVreg, f32SrcVreg, f32Svreg, preg);
-                }
+                ASC_3510_ANTIQUANT_SCALE_B8_AS_F32(
+                    srcT, f32SrcVreg, srcVreg, preg, scaleT, config, offsetVreg, scaleVreg, f32Svreg, f32Ovreg)
                 StoreF32Res<dstT>((dstUb + (i * para.groupSize + j) * para.n + k * vecLen), f32SrcVreg, preg);
             }
         }
@@ -2250,3 +2205,7 @@ __aicore__ inline void AscendAntiQuantImplCommon(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_QUANTIZATION_ANTIQUANT_ASCEND_ANTIQUANT_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_ANTIQUANT_SCALE_B8_AS_F32
+#undef ASC_3510_ANTIQUANT_INIT_B32_GROUP
+#undef ASC_3510_ANTIQUANT_SCALE_AND_STORE

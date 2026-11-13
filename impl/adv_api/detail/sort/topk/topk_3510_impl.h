@@ -33,6 +33,102 @@
 #include "../sort/sort_impl.h"
 #include "../sort_common_utils.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_TOPK_LAYOUT_TEMP_INDICES(tempBuffer, tmpSrcData, T, alignCount, tmpSrcIndex, tmpHistData) \
+    __ubuf__ uint8_t* tmp = (__ubuf__ uint8_t*)tempBuffer.GetPhyAddr();                                    \
+    tmpSrcData = (__ubuf__ T*)tmp;                                                                         \
+    if constexpr (sizeof(T) == 8) {                                                                        \
+        uint32_t srcOffset = 0;                                                                            \
+        if (alignCount < LOAD_NUMS_PER_ROUND) {                                                            \
+            srcOffset += sizeof(T) * LOAD_NUMS_PER_ROUND;                                                  \
+        } else {                                                                                           \
+            srcOffset += sizeof(T) * alignCount;                                                           \
+        }                                                                                                  \
+        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + srcOffset);                      \
+    } else {                                                                                               \
+        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + sizeof(T) * alignCount);         \
+    }                                                                                                      \
+    tmpHistData = (__ubuf__ uint16_t*)(tmpSrcIndex)
+
+#define ASC_3510_TOPK_LAYOUT_WORK_DATA(isReuseSrc, alignCount, realWorkData, T, tmpSrcIndex, sortTmpBuffer) \
+    if constexpr (!isReuseSrc) {                                                                            \
+        uint32_t indexSpace = alignCount * sizeof(int32_t);                                                 \
+        if (indexSpace < BUCKET_BYTES) {                                                                    \
+            indexSpace = BUCKET_BYTES;                                                                      \
+        }                                                                                                   \
+        realWorkData = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + indexSpace);                          \
+        sortTmpBuffer = realWorkData;                                                                       \
+    } else {                                                                                                \
+        sortTmpBuffer = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + sizeof(int32_t) * alignCount);       \
+    }
+
+#define ASC_3510_TOPK_COUNT_SPLIT_WORD(                                                  \
+    u32Src, i, eleCountPerVL, lowMask, highMask, MaskReg, highValue, halfMask, lowValue) \
+    RegTensor<uint32_t> in32Data;                                                        \
+    Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);                                \
+    RegTensor<uint32_t> highPart, lowPart;                                               \
+    GatherMask(lowPart, in32Data, lowMask);                                              \
+    GatherMask(highPart, in32Data, highMask);                                            \
+    MaskReg highGTMask, highEQMask, lowPartMask;                                         \
+    CompareScalar<uint32_t, CMPMODE::GT>(highGTMask, highPart, highValue, halfMask);     \
+    CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);     \
+    CompareScalar<uint32_t, CMPMODE::GT>(lowPartMask, lowPart, lowValue, halfMask);      \
+    MaskReg cmpMask;                                                                     \
+    MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask);                                 \
+    MaskOr(cmpMask, highGTMask, cmpMask, halfMask)
+
+#define ASC_3510_TOPK_COUNT_REMAINING_WORD(                                                                          \
+    RegTensor, u32Src, i, eleCountPerVL, lowPart, lowMask, highMask, MaskReg, lowPartMask, CompareScalar, highValue, \
+    halfMask, lowValue)                                                                                              \
+    RegTensor<uint32_t> in32Data;                                                                                    \
+    Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);                                                            \
+    RegTensor<uint32_t> highPart, lowPart;                                                                           \
+    GatherMask(lowPart, in32Data, lowMask);                                                                          \
+    GatherMask(highPart, in32Data, highMask);                                                                        \
+    MaskReg highEQMask, lowPartMask;                                                                                 \
+    CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);                                 \
+    CompareScalar<uint32_t, CMPMODE::EQ>(lowPartMask, lowPart, lowValue, halfMask);                                  \
+    MaskReg cmpMask;                                                                                                 \
+    MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask)
+
+#define ASC_3510_TOPK_SCATTER_B16_INDICES(                                                                   \
+    MaskReg, out16Mask, RegTensor, inputIndex, i, u16EleCountPerVL, u32EleCountPerVL, dstIndex, unalignReg1) \
+    MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();                                          \
+    MaskReg out32Mask0, out32Mask1;                                                                          \
+    MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask, zero16Mask);                                 \
+    RegTensor<int32_t> index0, index1;                                                                       \
+    Reg::LoadAlign(index0, inputIndex + i * u16EleCountPerVL);                                               \
+    Reg::LoadAlign(index1, inputIndex + i * u16EleCountPerVL + u32EleCountPerVL);                            \
+    RegTensor<int32_t> outIndex0, outIndex1;                                                                 \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);                           \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg1);             \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);                           \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg1)
+
+#define ASC_3510_TOPK_SCATTER_B8_INDICES(                                                       \
+    MaskReg, out8Mask, RegTensor, inputIndex, i, u32EleCountPerVL, dstIndex, unalignReg)        \
+    MaskReg zero8Mask = CreateMask<uint8_t, MaskPattern::ALLF>();                               \
+    MaskReg out16Mask0, out16Mask1;                                                             \
+    MaskInterleave<uint8_t>(out16Mask0, out16Mask1, out8Mask, zero8Mask);                       \
+    MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();                             \
+    MaskReg out32Mask0, out32Mask1, out32Mask2, out32Mask3;                                     \
+    MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask0, zero16Mask);                   \
+    MaskInterleave<uint16_t>(out32Mask2, out32Mask3, out16Mask1, zero16Mask);                   \
+    RegTensor<int32_t> index0, index1, index2, index3;                                          \
+    Reg::LoadAlign(index0, inputIndex + i * GetVecLen());                                       \
+    Reg::LoadAlign(index1, inputIndex + i * GetVecLen() + u32EleCountPerVL);                    \
+    Reg::LoadAlign(index2, inputIndex + i * GetVecLen() + u32EleCountPerVL * 2);                \
+    Reg::LoadAlign(index3, inputIndex + i * GetVecLen() + u32EleCountPerVL * 3);                \
+    RegTensor<int32_t> outIndex0, outIndex1, outIndex2, outIndex3;                              \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);              \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg); \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);              \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg); \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex2, index2, out32Mask2);              \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex2, unalignReg); \
+    GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex3, index3, out32Mask3);              \
+    Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex3, unalignReg)
+
 namespace AscendC {
 #if ASCENDC_CPU_DEBUG
 template <
@@ -217,35 +313,10 @@ __aicore__ inline void InitializeTempBuffer(
     __ubuf__ int32_t*& tmpSrcIndex, __ubuf__ uint16_t*& tmpHistData, __ubuf__ T*& realWorkData,
     __ubuf__ T*& sortTmpBuffer)
 {
-    __ubuf__ uint8_t* tmp = (__ubuf__ uint8_t*)tempBuffer.GetPhyAddr();
-    tmpSrcData = (__ubuf__ T*)tmp;
-
-    if constexpr (sizeof(T) == 8) {
-        uint32_t srcOffset = 0;
-        if (alignCount < LOAD_NUMS_PER_ROUND) {
-            srcOffset += sizeof(T) * LOAD_NUMS_PER_ROUND;
-        } else {
-            srcOffset += sizeof(T) * alignCount;
-        }
-
-        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + srcOffset);
-    } else {
-        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + sizeof(T) * alignCount);
-    }
-
-    tmpHistData = (__ubuf__ uint16_t*)(tmpSrcIndex);
+    ASC_3510_TOPK_LAYOUT_TEMP_INDICES(tempBuffer, tmpSrcData, T, alignCount, tmpSrcIndex, tmpHistData);
 
     if constexpr (NeedPreProcess<T, isLargest>()) {
-        if constexpr (!isReuseSrc) {
-            uint32_t indexSpace = alignCount * sizeof(int32_t);
-            if (indexSpace < BUCKET_BYTES) {
-                indexSpace = BUCKET_BYTES;
-            }
-            realWorkData = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + indexSpace);
-            sortTmpBuffer = realWorkData;
-        } else {
-            sortTmpBuffer = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + sizeof(int32_t) * alignCount);
-        }
+        ASC_3510_TOPK_LAYOUT_WORK_DATA(isReuseSrc, alignCount, realWorkData, T, tmpSrcIndex, sortTmpBuffer)
     } else {
         sortTmpBuffer = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + sizeof(int32_t) * alignCount);
     }
@@ -257,34 +328,10 @@ __aicore__ inline void InitializeTempBuffer(
     __ubuf__ int32_t*& tmpSrcIndex, __ubuf__ uint16_t*& tmpHistData, __ubuf__ T*& realWorkData,
     __ubuf__ T*& sortTmpBuffer)
 {
-    __ubuf__ uint8_t* tmp = (__ubuf__ uint8_t*)tempBuffer.GetPhyAddr();
-    tmpSrcData = (__ubuf__ T*)tmp;
-
-    if constexpr (sizeof(T) == 8) {
-        uint32_t srcOffset = 0;
-        if (alignCount < LOAD_NUMS_PER_ROUND) {
-            srcOffset += sizeof(T) * LOAD_NUMS_PER_ROUND;
-        } else {
-            srcOffset += sizeof(T) * alignCount;
-        }
-        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + srcOffset);
-    } else {
-        tmpSrcIndex = (__ubuf__ int32_t*)((__ubuf__ uint8_t*)tmpSrcData + sizeof(T) * alignCount);
-    }
-
-    tmpHistData = (__ubuf__ uint16_t*)(tmpSrcIndex);
+    ASC_3510_TOPK_LAYOUT_TEMP_INDICES(tempBuffer, tmpSrcData, T, alignCount, tmpSrcIndex, tmpHistData);
 
     if (NeedPreProcess<T>(isLargest)) {
-        if constexpr (!isReuseSrc) {
-            uint32_t indexSpace = alignCount * sizeof(int32_t);
-            if (indexSpace < BUCKET_BYTES) {
-                indexSpace = BUCKET_BYTES;
-            }
-            realWorkData = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + indexSpace);
-            sortTmpBuffer = realWorkData;
-        } else {
-            sortTmpBuffer = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + sizeof(int32_t) * alignCount);
-        }
+        ASC_3510_TOPK_LAYOUT_WORK_DATA(isReuseSrc, alignCount, realWorkData, T, tmpSrcIndex, sortTmpBuffer)
     } else {
         sortTmpBuffer = (__ubuf__ T*)((__ubuf__ uint8_t*)tmpSrcIndex + sizeof(int32_t) * alignCount);
     }
@@ -605,21 +652,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKData(
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         MaskReg maskReg = UpdateMask<uint32_t>(firstCount);
 
-        RegTensor<uint32_t> in32Data;
-        Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);
-
-        RegTensor<uint32_t> highPart, lowPart;
-        GatherMask(lowPart, in32Data, lowMask);
-        GatherMask(highPart, in32Data, highMask);
-
-        MaskReg highGTMask, highEQMask, lowPartMask;
-        CompareScalar<uint32_t, CMPMODE::GT>(highGTMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::GT>(lowPartMask, lowPart, lowValue, halfMask);
-
-        MaskReg cmpMask;
-        MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask);
-        MaskOr(cmpMask, highGTMask, cmpMask, halfMask);
+        ASC_3510_TOPK_COUNT_SPLIT_WORD(
+            u32Src, i, eleCountPerVL, lowMask, highMask, MaskReg, highValue, halfMask, lowValue);
 
         MaskReg cmpResMask0, cmpResMask1;
         MaskInterleave<uint32_t>(cmpResMask0, cmpResMask1, cmpMask, cmpMask);
@@ -633,19 +667,9 @@ __simd_vf__ inline void GatherGreaterAndEqualKData(
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         MaskReg maskReg = UpdateMask<uint32_t>(secondCount);
 
-        RegTensor<uint32_t> in32Data;
-        Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);
-
-        RegTensor<uint32_t> highPart, lowPart;
-        GatherMask(lowPart, in32Data, lowMask);
-        GatherMask(highPart, in32Data, highMask);
-
-        MaskReg highEQMask, lowPartMask;
-        CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::EQ>(lowPartMask, lowPart, lowValue, halfMask);
-
-        MaskReg cmpMask;
-        MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask);
+        ASC_3510_TOPK_COUNT_REMAINING_WORD(
+            RegTensor, u32Src, i, eleCountPerVL, lowPart, lowMask, highMask, MaskReg, lowPartMask, CompareScalar,
+            highValue, halfMask, lowValue);
 
         MaskReg cmpResMask0, cmpResMask1;
         MaskInterleave<uint32_t>(cmpResMask0, cmpResMask1, cmpMask, cmpMask);
@@ -819,21 +843,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg indexMask, tmpMask;
         MaskDeInterleave<uint32_t>(indexMask, tmpMask, maskReg, zeroMask);
 
-        RegTensor<uint32_t> in32Data;
-        Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);
-
-        RegTensor<uint32_t> highPart, lowPart;
-        GatherMask(lowPart, in32Data, lowMask);
-        GatherMask(highPart, in32Data, highMask);
-
-        MaskReg highGTMask, highEQMask, lowPartMask;
-        CompareScalar<uint32_t, CMPMODE::GT>(highGTMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::GT>(lowPartMask, lowPart, lowValue, halfMask);
-
-        MaskReg cmpMask;
-        MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask);
-        MaskOr(cmpMask, highGTMask, cmpMask, halfMask);
+        ASC_3510_TOPK_COUNT_SPLIT_WORD(
+            u32Src, i, eleCountPerVL, lowMask, highMask, MaskReg, highValue, halfMask, lowValue);
         MaskAnd(cmpMask, cmpMask, indexMask, indexMask);
 
         RegTensor<int32_t> index;
@@ -849,19 +860,9 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg indexMask, tmpMask;
         MaskDeInterleave<uint32_t>(indexMask, tmpMask, maskReg, zeroMask);
 
-        RegTensor<uint32_t> in32Data;
-        Reg::LoadAlign(in32Data, u32Src + i * eleCountPerVL);
-
-        RegTensor<uint32_t> highPart, lowPart;
-        GatherMask(lowPart, in32Data, lowMask);
-        GatherMask(highPart, in32Data, highMask);
-
-        MaskReg highEQMask, lowPartMask;
-        CompareScalar<uint32_t, CMPMODE::EQ>(highEQMask, highPart, highValue, halfMask);
-        CompareScalar<uint32_t, CMPMODE::EQ>(lowPartMask, lowPart, lowValue, halfMask);
-
-        MaskReg cmpMask;
-        MaskAnd(cmpMask, highEQMask, lowPartMask, halfMask);
+        ASC_3510_TOPK_COUNT_REMAINING_WORD(
+            RegTensor, u32Src, i, eleCountPerVL, lowPart, lowMask, highMask, MaskReg, lowPartMask, CompareScalar,
+            highValue, halfMask, lowValue);
         MaskAnd(cmpMask, cmpMask, indexMask, indexMask);
 
         RegTensor<int32_t> index;
@@ -944,19 +945,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg out16Mask;
         CompareScalar<uint16_t, CMPMODE::GT>(out16Mask, in16Data, value, maskReg);
 
-        MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();
-        MaskReg out32Mask0, out32Mask1;
-        MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask, zero16Mask);
-
-        RegTensor<int32_t> index0, index1;
-        Reg::LoadAlign(index0, inputIndex + i * u16EleCountPerVL);
-        Reg::LoadAlign(index1, inputIndex + i * u16EleCountPerVL + u32EleCountPerVL);
-
-        RegTensor<int32_t> outIndex0, outIndex1;
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg1);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg1);
+        ASC_3510_TOPK_SCATTER_B16_INDICES(
+            MaskReg, out16Mask, RegTensor, inputIndex, i, u16EleCountPerVL, u32EleCountPerVL, dstIndex, unalignReg1);
     }
 
     for (uint16_t i = 0; i < dataRepeatTimes; ++i) {
@@ -967,19 +957,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg out16Mask;
         CompareScalar<uint16_t, CMPMODE::EQ>(out16Mask, in16Data, value, maskReg);
 
-        MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();
-        MaskReg out32Mask0, out32Mask1;
-        MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask, zero16Mask);
-
-        RegTensor<int32_t> index0, index1;
-        Reg::LoadAlign(index0, inputIndex + i * u16EleCountPerVL);
-        Reg::LoadAlign(index1, inputIndex + i * u16EleCountPerVL + u32EleCountPerVL);
-
-        RegTensor<int32_t> outIndex0, outIndex1;
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg1);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg1);
+        ASC_3510_TOPK_SCATTER_B16_INDICES(
+            MaskReg, out16Mask, RegTensor, inputIndex, i, u16EleCountPerVL, u32EleCountPerVL, dstIndex, unalignReg1);
     }
 
     Reg::StoreUnAlignPost(dstIndex, unalignReg1);
@@ -1008,30 +987,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg out8Mask;
         CompareScalar<uint8_t, CMPMODE::GT>(out8Mask, in8Data, value, maskReg);
 
-        MaskReg zero8Mask = CreateMask<uint8_t, MaskPattern::ALLF>();
-        MaskReg out16Mask0, out16Mask1;
-        MaskInterleave<uint8_t>(out16Mask0, out16Mask1, out8Mask, zero8Mask);
-
-        MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();
-        MaskReg out32Mask0, out32Mask1, out32Mask2, out32Mask3;
-        MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask0, zero16Mask);
-        MaskInterleave<uint16_t>(out32Mask2, out32Mask3, out16Mask1, zero16Mask);
-
-        RegTensor<int32_t> index0, index1, index2, index3;
-        Reg::LoadAlign(index0, inputIndex + i * GetVecLen());
-        Reg::LoadAlign(index1, inputIndex + i * GetVecLen() + u32EleCountPerVL);
-        Reg::LoadAlign(index2, inputIndex + i * GetVecLen() + u32EleCountPerVL * 2);
-        Reg::LoadAlign(index3, inputIndex + i * GetVecLen() + u32EleCountPerVL * 3);
-
-        RegTensor<int32_t> outIndex0, outIndex1, outIndex2, outIndex3;
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex2, index2, out32Mask2);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex2, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex3, index3, out32Mask3);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex3, unalignReg);
+        ASC_3510_TOPK_SCATTER_B8_INDICES(
+            MaskReg, out8Mask, RegTensor, inputIndex, i, u32EleCountPerVL, dstIndex, unalignReg);
     }
 
     for (uint16_t i = 0; i < dataRepeatTimes; ++i) {
@@ -1042,30 +999,8 @@ __simd_vf__ inline void GatherGreaterAndEqualKIndex(
         MaskReg out8Mask;
         CompareScalar<uint8_t, CMPMODE::EQ>(out8Mask, in8Data, value, maskReg);
 
-        MaskReg zero8Mask = CreateMask<uint8_t, MaskPattern::ALLF>();
-        MaskReg out16Mask0, out16Mask1;
-        MaskInterleave<uint8_t>(out16Mask0, out16Mask1, out8Mask, zero8Mask);
-
-        MaskReg zero16Mask = CreateMask<uint16_t, MaskPattern::ALLF>();
-        MaskReg out32Mask0, out32Mask1, out32Mask2, out32Mask3;
-        MaskInterleave<uint16_t>(out32Mask0, out32Mask1, out16Mask0, zero16Mask);
-        MaskInterleave<uint16_t>(out32Mask2, out32Mask3, out16Mask1, zero16Mask);
-
-        RegTensor<int32_t> index0, index1, index2, index3;
-        Reg::LoadAlign(index0, inputIndex + i * GetVecLen());
-        Reg::LoadAlign(index1, inputIndex + i * GetVecLen() + u32EleCountPerVL);
-        Reg::LoadAlign(index2, inputIndex + i * GetVecLen() + u32EleCountPerVL * 2);
-        Reg::LoadAlign(index3, inputIndex + i * GetVecLen() + u32EleCountPerVL * 3);
-
-        RegTensor<int32_t> outIndex0, outIndex1, outIndex2, outIndex3;
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex0, index0, out32Mask0);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex0, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex1, index1, out32Mask1);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex1, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex2, index2, out32Mask2);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex2, unalignReg);
-        GatherMask<int32_t, GatherMaskMode::STORE_REG>(outIndex3, index3, out32Mask3);
-        Reg::StoreUnAlign<int32_t, PostLiteral::POST_MODE_UPDATE>(dstIndex, outIndex3, unalignReg);
+        ASC_3510_TOPK_SCATTER_B8_INDICES(
+            MaskReg, out8Mask, RegTensor, inputIndex, i, u32EleCountPerVL, dstIndex, unalignReg);
     }
 
     Reg::StoreUnAlignPost(dstIndex, unalignReg);
@@ -1411,3 +1346,10 @@ __aicore__ inline void TopKNSmall(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_SORT_TOPK_TOPK_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_TOPK_SCATTER_B8_INDICES
+#undef ASC_3510_TOPK_SCATTER_B16_INDICES
+#undef ASC_3510_TOPK_COUNT_REMAINING_WORD
+#undef ASC_3510_TOPK_COUNT_SPLIT_WORD
+#undef ASC_3510_TOPK_LAYOUT_WORK_DATA
+#undef ASC_3510_TOPK_LAYOUT_TEMP_INDICES

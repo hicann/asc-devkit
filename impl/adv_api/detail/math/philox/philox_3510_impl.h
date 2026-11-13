@@ -24,6 +24,66 @@
 #include <cstdint>
 #include "../../../../../include/basic_api/kernel_basic_intf.h"
 #include "../../../../../include/adv_api/math/philox_utils.h"
+
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_PHILOX_SEED_AND_ROUND4(                                                                              \
+    reorderIndex, pg, mainIter, tmpCtr0, ctr0, tmpCtr1, ctr1, tmpCtr2, ctr2, tmpCtr3, ctr3, key0, key1, cMul0, cMul1, \
+    DstUnalign, dstUbT, vEleStrideB32OneRow, dstUb)                                                                   \
+    Muls(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_COUNTER_NUM, pg);                                    \
+    for (uint16_t i = 0; i < mainIter; i++) {                                                                         \
+        tmpCtr0 = ctr0;                                                                                               \
+        tmpCtr1 = ctr1;                                                                                               \
+        tmpCtr2 = ctr2;                                                                                               \
+        tmpCtr3 = ctr3;                                                                                               \
+        Reg::RegTensor<uint32_t> tmpKey0 = key0;                                                                      \
+        Reg::RegTensor<uint32_t> tmpKey1 = key1;                                                                      \
+        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;                                                          \
+        ASC_PHILOX_3510_ROUND(                                                                                        \
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);      \
+        ASC_PHILOX_3510_ROUND(                                                                                        \
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);      \
+        ASC_PHILOX_3510_ROUND(                                                                                        \
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);      \
+        ASC_PHILOX_3510_ROUND(                                                                                        \
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);      \
+        PhiloxUnrollStoreTmpCtrl<DstUnalign>(dstUbT, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);                         \
+        AddWith128Bits(ctr0, ctr1, ctr2, ctr3, vEleStrideB32OneRow, pg);                                              \
+    }                                                                                                                 \
+    dstUbT = dstUb;                                                                                                   \
+    __ubuf__ uint32_t* dstUbTT0 = dstUbT;                                                                             \
+    __ubuf__ uint32_t* dstUbTT1 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE;                                          \
+    __ubuf__ uint32_t* dstUbTT2 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 2;                                      \
+    __ubuf__ uint32_t* dstUbTT3 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 3;                                      \
+    Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>()
+
+#define ASC_3510_PHILOX_ADVANCE_KEY_AND_ROUND4(                                                  \
+    tmpKey0, pg, tmpKey1, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, cMul0, cMul1) \
+    Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);                                 \
+    Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);                                 \
+    Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);                                 \
+    Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);                                 \
+    Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);                                 \
+    Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);                                 \
+    Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);                                 \
+    Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);                                 \
+    Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;                                         \
+    ASC_PHILOX_3510_ROUND(                                                                       \
+        tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg)
+
+#define ASC_3510_PHILOX_CONVERT_AND_REORDER(                                                                      \
+    tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg, T, dstUb, \
+    reorderIndex)                                                                                                 \
+    ASC_PHILOX_3510_MIX(                                                                                          \
+        tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);      \
+    if constexpr (std::is_same_v<T, float>) {                                                                     \
+        UInt2Float(tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);                                                       \
+    }                                                                                                             \
+    Reg::Scatter(dstUb, tmpCtr0, reorderIndex, pg);                                                               \
+    Reg::Scatter(dstUb + 1, tmpCtr1, reorderIndex, pg);                                                           \
+    Reg::Scatter(dstUb + 2, tmpCtr2, reorderIndex, pg);                                                           \
+    Reg::Scatter(dstUb + 3, tmpCtr3, reorderIndex, pg);                                                           \
+    Adds(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_REPEAT_NUM, pg)
+
 namespace AscendC {
 namespace PhiloxInternal {
 // philox algorithm constant
@@ -88,6 +148,25 @@ __simd_callee__ inline void UInt2Float(
     Adds((Reg::RegTensor<float>&)tmpCtr3, (Reg::RegTensor<float>&)tmpCtr3, -1.0f, pg);
 }
 
+// Share a round while keeping the hand-unrolled instruction sequence at each call site.
+#define ASC_PHILOX_3510_MIX(                                                                            \
+    tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg) \
+    Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);                                                             \
+    Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);                                                             \
+    Xor(tmpH1, tmpH1, tmpCtr1, pg);                                                                     \
+    Xor(tmpCtr0, tmpH1, tmpKey0, pg);                                                                   \
+    Xor(tmpH0, tmpH0, tmpCtr3, pg);                                                                     \
+    Xor(tmpCtr2, tmpH0, tmpKey1, pg);                                                                   \
+    tmpCtr1 = tmpL1;                                                                                    \
+    tmpCtr3 = tmpL0
+
+#define ASC_PHILOX_3510_ROUND(                                                                               \
+    tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg)      \
+    ASC_PHILOX_3510_MIX(                                                                                     \
+        tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg); \
+    Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);                                             \
+    Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg)
+
 template <uint16_t Rounds>
 __simd_callee__ inline void SpNetworkKernel(
     Reg::RegTensor<uint32_t>& tmpL0, Reg::RegTensor<uint32_t>& tmpH0, Reg::RegTensor<uint32_t>& tmpL1,
@@ -100,16 +179,8 @@ __simd_callee__ inline void SpNetworkKernel(
     // when count=16384, round 10, cycles(6904 vs 5549), vex(6822 vs 4260), ipc(0.988 vs 0.768)
     // #pragma unroll  // ccec may have a bug: https://codehub-y.huawei.com/c00564736/D_Compile_Issue/issues/172
     for (uint16_t j = 0; j < Rounds; j++) {
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_PHILOX_3510_ROUND(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);
     }
 }
 
@@ -238,71 +309,9 @@ __simd_callee__ inline void PhiloxRound10MainBlockUnroll442(
 
     Reg::RegTensor<uint32_t> reorderIndex;
     Arange((Reg::RegTensor<int32_t>&)reorderIndex, 0);
-    Muls(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_COUNTER_NUM, pg);
-
-    for (uint16_t i = 0; i < mainIter; i++) {
-        tmpCtr0 = ctr0;
-        tmpCtr1 = ctr1;
-        tmpCtr2 = ctr2;
-        tmpCtr3 = ctr3;
-        Reg::RegTensor<uint32_t> tmpKey0 = key0;
-        Reg::RegTensor<uint32_t> tmpKey1 = key1;
-        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        PhiloxUnrollStoreTmpCtrl<DstUnalign>(dstUbT, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);
-        AddWith128Bits(ctr0, ctr1, ctr2, ctr3, vEleStrideB32OneRow, pg);
-    }
-
-    dstUbT = dstUb;
-    __ubuf__ uint32_t* dstUbTT0 = dstUbT;
-    __ubuf__ uint32_t* dstUbTT1 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE;
-    __ubuf__ uint32_t* dstUbTT2 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 2;
-    __ubuf__ uint32_t* dstUbTT3 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 3;
-    Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
+    ASC_3510_PHILOX_SEED_AND_ROUND4(
+        reorderIndex, pg, mainIter, tmpCtr0, ctr0, tmpCtr1, ctr1, tmpCtr2, ctr2, tmpCtr3, ctr3, key0, key1, cMul0,
+        cMul1, DstUnalign, dstUbT, vEleStrideB32OneRow, dstUb);
 
     for (uint16_t i = 0; i < mainIter; i++) {
         PhiloxUnrollLoadTmpCtrl<DstUnalign>(dstUbTT0, dstUbTT1, dstUbTT2, dstUbTT3, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3);
@@ -310,63 +319,17 @@ __simd_callee__ inline void PhiloxRound10MainBlockUnroll442(
         Reg::RegTensor<uint32_t> tmpKey0 = key0;
         Reg::RegTensor<uint32_t> tmpKey1 = key1;
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_3510_PHILOX_ADVANCE_KEY_AND_ROUND4(
+            tmpKey0, pg, tmpKey1, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, cMul0, cMul1);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_PHILOX_3510_ROUND(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_PHILOX_3510_ROUND(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_PHILOX_3510_ROUND(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);
 
         PhiloxUnrollStoreTmpCtrl<DstUnalign>(dstUbT, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);
     }
@@ -396,49 +359,12 @@ __simd_callee__ inline void PhiloxRound10MainBlockUnroll442(
         Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
         Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_3510_PHILOX_ADVANCE_KEY_AND_ROUND4(
+            tmpKey0, pg, tmpKey1, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, cMul0, cMul1);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-
-        if constexpr (std::is_same_v<T, float>) {
-            UInt2Float(tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);
-        }
-
-        Reg::Scatter(dstUb, tmpCtr0, reorderIndex, pg);
-        Reg::Scatter(dstUb + 1, tmpCtr1, reorderIndex, pg);
-        Reg::Scatter(dstUb + 2, tmpCtr2, reorderIndex, pg);
-        Reg::Scatter(dstUb + 3, tmpCtr3, reorderIndex, pg);
-        Adds(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_REPEAT_NUM, pg);
+        ASC_3510_PHILOX_CONVERT_AND_REORDER(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg, T,
+            dstUb, reorderIndex);
     }
 }
 
@@ -454,71 +380,9 @@ __simd_callee__ inline void PhiloxRound7MainBlockUnroll43(
 
     Reg::RegTensor<uint32_t> reorderIndex;
     Reg::Arange((Reg::RegTensor<int32_t>&)reorderIndex, 0);
-    Muls(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_COUNTER_NUM, pg);
-
-    for (uint16_t i = 0; i < mainIter; i++) {
-        tmpCtr0 = ctr0;
-        tmpCtr1 = ctr1;
-        tmpCtr2 = ctr2;
-        tmpCtr3 = ctr3;
-        Reg::RegTensor<uint32_t> tmpKey0 = key0;
-        Reg::RegTensor<uint32_t> tmpKey1 = key1;
-        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        PhiloxUnrollStoreTmpCtrl<DstUnalign>(dstUbT, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);
-        AddWith128Bits(ctr0, ctr1, ctr2, ctr3, vEleStrideB32OneRow, pg);
-    }
-
-    dstUbT = dstUb;
-    __ubuf__ uint32_t* dstUbTT0 = dstUbT;
-    __ubuf__ uint32_t* dstUbTT1 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE;
-    __ubuf__ uint32_t* dstUbTT2 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 2;
-    __ubuf__ uint32_t* dstUbTT3 = dstUbT + PhiloxInternal::ELE_CNT_B32_ONCE * 3;
-    Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::VEC_LOAD>();
+    ASC_3510_PHILOX_SEED_AND_ROUND4(
+        reorderIndex, pg, mainIter, tmpCtr0, ctr0, tmpCtr1, ctr1, tmpCtr2, ctr2, tmpCtr3, ctr3, key0, key1, cMul0,
+        cMul1, DstUnalign, dstUbT, vEleStrideB32OneRow, dstUb);
 
     for (uint16_t i = 0; i < mainIter; i++) {
         PhiloxUnrollLoadTmpCtrl<DstUnalign>(dstUbTT0, dstUbTT1, dstUbTT2, dstUbTT3, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3);
@@ -526,62 +390,20 @@ __simd_callee__ inline void PhiloxRound7MainBlockUnroll43(
         Reg::RegTensor<uint32_t> tmpKey0 = key0;
         Reg::RegTensor<uint32_t> tmpKey1 = key1;
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_3510_PHILOX_ADVANCE_KEY_AND_ROUND4(
+            tmpKey0, pg, tmpKey1, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, cMul0, cMul1);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
+        ASC_PHILOX_3510_ROUND(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg);
 
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Reg::RegTensor<uint32_t> tmpL0, tmpH0, tmpL1, tmpH1;
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-        Adds(tmpKey0, tmpKey0, PhiloxInternal::CONST_KEY_ADD_0, pg);
-        Adds(tmpKey1, tmpKey1, PhiloxInternal::CONST_KEY_ADD_1, pg);
-
-        Mull(tmpL0, tmpH0, tmpCtr0, cMul0, pg);
-        Mull(tmpL1, tmpH1, tmpCtr2, cMul1, pg);
-        Xor(tmpH1, tmpH1, tmpCtr1, pg);
-        Xor(tmpCtr0, tmpH1, tmpKey0, pg);
-        Xor(tmpH0, tmpH0, tmpCtr3, pg);
-        Xor(tmpCtr2, tmpH0, tmpKey1, pg);
-        tmpCtr1 = tmpL1;
-        tmpCtr3 = tmpL0;
-
-        if constexpr (std::is_same_v<T, float>) {
-            UInt2Float(tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, pg);
-        }
-
-        Reg::Scatter(dstUb, tmpCtr0, reorderIndex, pg);
-        Reg::Scatter(dstUb + 1, tmpCtr1, reorderIndex, pg);
-        Reg::Scatter(dstUb + 2, tmpCtr2, reorderIndex, pg);
-        Reg::Scatter(dstUb + 3, tmpCtr3, reorderIndex, pg);
-        Adds(reorderIndex, reorderIndex, PhiloxInternal::PHILOX_ONCE_REPEAT_NUM, pg);
+        ASC_3510_PHILOX_CONVERT_AND_REORDER(
+            tmpL0, tmpH0, tmpL1, tmpH1, tmpCtr0, tmpCtr1, tmpCtr2, tmpCtr3, tmpKey0, tmpKey1, cMul0, cMul1, pg, T,
+            dstUb, reorderIndex);
     }
 }
+
+#undef ASC_PHILOX_3510_ROUND
+#undef ASC_PHILOX_3510_MIX
 
 template <uint16_t Rounds = 7, typename T, bool DstUnalign = false>
 __simd_callee__ inline void PhiloxRoundMainBlockUnroll(
@@ -878,3 +700,7 @@ __aicore__ inline void PhiloxRandomImpl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_MATH_PHILOX_PHILOX_C310_IMPL_H__
 #endif
+
+#undef ASC_3510_PHILOX_CONVERT_AND_REORDER
+#undef ASC_3510_PHILOX_ADVANCE_KEY_AND_ROUND4
+#undef ASC_3510_PHILOX_SEED_AND_ROUND4

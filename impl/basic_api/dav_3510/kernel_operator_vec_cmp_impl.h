@@ -26,6 +26,48 @@
 #include "kernel_operator_vec_template_impl.h"
 #include "../../../include/basic_api/reg_compute/kernel_reg_compute_intf.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_3510_COMPARE_PUBLISH_MASK(SetFlag, WaitFlag, T, tempBuf)                         \
+    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S)); \
+    SetFlag<HardEvent::V_S>(eventIdVToS);                                                    \
+    WaitFlag<HardEvent::V_S>(eventIdVToS);                                                   \
+    if constexpr (sizeof(T) == 2) {                                                          \
+        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];                                       \
+        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];                                      \
+    } else if constexpr (sizeof(T) == 4) {                                                   \
+        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];                                       \
+        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);                                  \
+    }                                                                                        \
+    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf)
+
+#define ASC_3510_COMPARE_INIT_UNALIGNED_MASKS(isBitMapMode, maskReg, T, isSetMask, mask) \
+    Reg::MaskReg dstReg;                                                                 \
+    Reg::UnalignReg uReg;                                                                \
+    if constexpr (isBitMapMode) {                                                        \
+        maskReg = Reg::MoveMask<T>();                                                    \
+    } else {                                                                             \
+        if constexpr (isSetMask) {                                                       \
+            uint32_t sreg = static_cast<uint32_t>(mask);                                 \
+            maskReg = Reg::UpdateMask<T>(sreg);                                          \
+        } else {                                                                         \
+            maskReg = Reg::MoveMask<T>();                                                \
+        }                                                                                \
+    }
+
+#define ASC_3510_COMPARE_LOAD_VECTOR_AND_SCALAR(                                                   \
+    scalarIdx, T, src1Reg, src1, repeatParams, maskReg, src0Reg, src0, cmpMode, dstReg, dst, uReg) \
+    if constexpr (scalarIdx == 0) {                                                                \
+        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>( \
+            src1Reg, src1, static_cast<uint32_t>(repeatParams.srcBlkStride),                       \
+            static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);                            \
+    } else {                                                                                       \
+        Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>( \
+            src0Reg, src0, static_cast<uint32_t>(repeatParams.srcBlkStride),                       \
+            static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);                            \
+    }                                                                                              \
+    Reg::Compare<T, cmpMode>(dstReg, src0Reg, src1Reg, maskReg);                                   \
+    Reg::StoreUnAlign((__ubuf__ T*&)dst, dstReg, uReg)
+
 namespace AscendC {
 namespace CmpInternal {
 constexpr uint32_t maskBitToByte = 8;
@@ -170,17 +212,7 @@ __aicore__ inline void VcmpImpl(
                 break;
         }
     }
-    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-    SetFlag<HardEvent::V_S>(eventIdVToS);
-    WaitFlag<HardEvent::V_S>(eventIdVToS);
-    if constexpr (sizeof(T) == 2) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];
-    } else if constexpr (sizeof(T) == 4) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf);
+    ASC_3510_COMPARE_PUBLISH_MASK(SetFlag, WaitFlag, T, tempBuf);
 }
 
 template <typename T, bool isSetMask = true>
@@ -258,17 +290,7 @@ __aicore__ inline void VcmpImpl(
                 break;
         }
     }
-    event_t eventIdVToS = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::V_S));
-    SetFlag<HardEvent::V_S>(eventIdVToS);
-    WaitFlag<HardEvent::V_S>(eventIdVToS);
-    if constexpr (sizeof(T) == 2) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = (uint64_t)tempBuf[1];
-    } else if constexpr (sizeof(T) == 4) {
-        Internal::g_cmpMaskLow = (uint64_t)tempBuf[0];
-        Internal::g_cmpMaskHigh = static_cast<uint64_t>(0);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint64_t>(tempBuf);
+    ASC_3510_COMPARE_PUBLISH_MASK(SetFlag, WaitFlag, T, tempBuf);
 }
 
 // Compare::Level 0 - bit mode / Continuous mode support b16/b32
@@ -511,18 +533,7 @@ __simd_vf__ inline void CompareScalarLevel0NormalMode(
 {
     Reg::MaskReg maskReg;
     Reg::RegTensor<T> src0Reg;
-    Reg::MaskReg dstReg;
-    Reg::UnalignReg uReg;
-    if constexpr (isBitMapMode) {
-        maskReg = Reg::MoveMask<T>();
-    } else {
-        if constexpr (isSetMask) {
-            uint32_t sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        } else {
-            maskReg = Reg::MoveMask<T>();
-        }
-    }
+    ASC_3510_COMPARE_INIT_UNALIGNED_MASKS(isBitMapMode, maskReg, T, isSetMask, mask)
     for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
         Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
             src0Reg, src0, static_cast<uint32_t>(repeatParams.srcBlkStride),
@@ -839,18 +850,7 @@ __simd_vf__ inline void CompareSrc0ScalarLevel0NormalMode(
 {
     Reg::MaskReg maskReg;
     Reg::RegTensor<T> src0Reg, src1Reg;
-    Reg::MaskReg dstReg;
-    Reg::UnalignReg uReg;
-    if constexpr (isBitMapMode) {
-        maskReg = Reg::MoveMask<T>();
-    } else {
-        if constexpr (isSetMask) {
-            uint32_t sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        } else {
-            maskReg = Reg::MoveMask<T>();
-        }
-    }
+    ASC_3510_COMPARE_INIT_UNALIGNED_MASKS(isBitMapMode, maskReg, T, isSetMask, mask)
     Reg::Duplicate(src0Reg, src0);
     for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
         Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
@@ -1382,17 +1382,8 @@ __simd_vf__ inline void CompareScalarBothTensorLevel0CounterMode(
     }
     for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
         maskReg = Reg::UpdateMask<T>(countSreg);
-        if constexpr (scalarIdx == 0) {
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
-                src1Reg, src1, static_cast<uint32_t>(repeatParams.srcBlkStride),
-                static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);
-        } else {
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
-                src0Reg, src0, static_cast<uint32_t>(repeatParams.srcBlkStride),
-                static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);
-        }
-        Reg::Compare<T, cmpMode>(dstReg, src0Reg, src1Reg, maskReg);
-        Reg::StoreUnAlign((__ubuf__ T*&)dst, dstReg, uReg);
+        ASC_3510_COMPARE_LOAD_VECTOR_AND_SCALAR(
+            scalarIdx, T, src1Reg, src1, repeatParams, maskReg, src0Reg, src0, cmpMode, dstReg, dst, uReg);
     }
     Reg::StoreUnAlignPost<U, Reg::PostLiteral::POST_MODE_NORMAL>(dst, uReg, 0);
 }
@@ -1406,35 +1397,15 @@ __simd_vf__ inline void CompareScalarBothTensorLevel0NormalMode(
 {
     Reg::MaskReg maskReg;
     Reg::RegTensor<T> src0Reg, src1Reg;
-    Reg::MaskReg dstReg;
-    Reg::UnalignReg uReg;
-    if constexpr (isBitMapMode) {
-        maskReg = Reg::MoveMask<T>();
-    } else {
-        if constexpr (isSetMask) {
-            uint32_t sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        } else {
-            maskReg = Reg::MoveMask<T>();
-        }
-    }
+    ASC_3510_COMPARE_INIT_UNALIGNED_MASKS(isBitMapMode, maskReg, T, isSetMask, mask)
     if constexpr (scalarIdx == 0) {
         Reg::LoadAlign<T, pattern>(src0Reg, src0);
     } else {
         Reg::LoadAlign<T, pattern>(src1Reg, src1);
     }
     for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-        if constexpr (scalarIdx == 0) {
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
-                src1Reg, src1, static_cast<uint32_t>(repeatParams.srcBlkStride),
-                static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);
-        } else {
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY, Reg::PostLiteral::POST_MODE_UPDATE>(
-                src0Reg, src0, static_cast<uint32_t>(repeatParams.srcBlkStride),
-                static_cast<uint32_t>(repeatParams.srcRepStride), maskReg);
-        }
-        Reg::Compare<T, cmpMode>(dstReg, src0Reg, src1Reg, maskReg);
-        Reg::StoreUnAlign((__ubuf__ T*&)dst, dstReg, uReg);
+        ASC_3510_COMPARE_LOAD_VECTOR_AND_SCALAR(
+            scalarIdx, T, src1Reg, src1, repeatParams, maskReg, src0Reg, src0, cmpMode, dstReg, dst, uReg);
     }
     Reg::StoreUnAlignPost<U, Reg::PostLiteral::POST_MODE_NORMAL>(dst, uReg, 0);
 }
@@ -1589,3 +1560,7 @@ __aicore__ inline void SetCmpMaskImpl(__ubuf__ T* src)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_CMP_IMPL_H__
 #endif
+
+#undef ASC_3510_COMPARE_LOAD_VECTOR_AND_SCALAR
+#undef ASC_3510_COMPARE_INIT_UNALIGNED_MASKS
+#undef ASC_3510_COMPARE_PUBLISH_MASK
