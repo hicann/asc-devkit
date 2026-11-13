@@ -13,7 +13,7 @@
 >    - Atlas A2系列产品
 >    <!-- end id2 -->
 >    <!-- npu="950" id3 -->
->    - Ascend 950PR&950DT系列产品，暂不支持
+>    - Ascend 950PR&950DT系列产品
 >    <!-- end id3 -->
 
 自定义算子开启Tiling下沉的步骤如下，完整样例请参考[Tiling下沉算子样例](../../../../../../examples/01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op)。
