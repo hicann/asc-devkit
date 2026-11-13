@@ -124,7 +124,7 @@ __aicore__ inline LocalTensor&lt;T&gt;(uint32_t addr)</pre>
 </td>
 <td class="cellrowborder" valign="top" width="10.4%" headers="mcps1.2.4.1.2 "><p id="p183281112316"><a name="p183281112316"></a><a name="p183281112316"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="73.07000000000001%" headers="mcps1.2.4.1.3 "><p id="p20832711172314"><a name="p20832711172314"></a><a name="p20832711172314"></a>LocalTensor的元素个数，addr和tileSize（转换成所占字节数）之和不应超出对应物理内存的范围。</p>
+<td class="cellrowborder" valign="top" width="73.07000000000001%" headers="mcps1.2.4.1.3 "><p id="p20832711172314"><a name="p20832711172314"></a><a name="p20832711172314"></a>LocalTensor的元素个数，必须大于0，所占字节数须为32的整数倍。对于half、float等按整字节存储的数据类型，须满足<code>(tileSize * sizeof(T)) % 32 == 0</code>。addr和tileSize（转换成所占字节数）之和不应超出对应物理内存的范围。</p>
 </td>
 </tr>
 </tbody>
@@ -136,7 +136,13 @@ __aicore__ inline LocalTensor&lt;T&gt;(uint32_t addr)</pre>
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-无
+以下约束适用于静态Tensor编程中指定地址的构造函数。
+
+- 起始地址addr和LocalTensor所占字节数均须按32字节对齐。仅保证起始地址对齐，不能保证长度满足要求；构造函数不会自动补齐长度。使用TensorTrait时，长度由其布局确定的元素个数和元素类型换算得到。
+- 对于half类型，tileSize须为16的整数倍；对于float类型，tileSize须为8的整数倍。例如，350个float元素占用1400字节，不满足要求；可将tileSize向上补齐为352，对应1408字节，并保证addr与补齐后的字节数之和不超出物理内存范围。
+- CPU调试模式下，内部CreateTensor会校验字节长度是否按32字节对齐，不满足要求时触发断言。通过[LocalMemAllocator::Alloc](../../resource_management/LocalMemAllocator/Alloc.md)创建LocalTensor时，也须满足该长度要求。
+
+补齐后的容量与有效数据量应分别管理，实际搬运和计算应遵循所用API的约束，避免访问Global Memory中的无效数据或将未初始化的补齐区域参与计算。
 
 ## 调用示例<a name="section17531157161314"></a>
 

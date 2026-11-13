@@ -78,7 +78,7 @@
 </tr>
 <tr id="row187531218114513"><td class="cellrowborder" valign="top" width="17.43%" headers="mcps1.2.3.1.1 "><p id="p18753151854519"><a name="p18753151854519"></a><a name="p18753151854519"></a>tileSize</p>
 </td>
-<td class="cellrowborder" valign="top" width="82.57%" headers="mcps1.2.3.1.2 "><p id="p16753518194519"><a name="p16753518194519"></a><a name="p16753518194519"></a>LocalTensor的元素个数，其数量不应超过当前物理位置剩余的内存空间。</p>
+<td class="cellrowborder" valign="top" width="82.57%" headers="mcps1.2.3.1.2 "><p id="p16753518194519"><a name="p16753518194519"></a><a name="p16753518194519"></a>LocalTensor的元素个数，必须大于0，所占字节数须为32的整数倍，且不应超过当前物理位置剩余的内存空间。对于half、float等按整字节存储的数据类型，须满足<code>(tileSize * sizeof(DataType)) % 32 == 0</code>。</p>
 </td>
 </tr>
 </tbody>
@@ -99,7 +99,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="15.340000000000002%" headers="mcps1.2.4.1.2 "><p id="p1591812481240"><a name="p1591812481240"></a><a name="p1591812481240"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p191810481240"><a name="p191810481240"></a><a name="p191810481240"></a>LocalTensor的元素个数，其数量不应超过当前物理位置剩余的内存空间。</p>
+<td class="cellrowborder" valign="top" width="67.44%" headers="mcps1.2.4.1.3 "><p id="p191810481240"><a name="p191810481240"></a><a name="p191810481240"></a>LocalTensor的元素个数，必须大于0，所占字节数须为32的整数倍，且不应超过当前物理位置剩余的内存空间。对于half、float等按整字节存储的数据类型，须满足<code>(tileSize * sizeof(DataType)) % 32 == 0</code>。</p>
 <p id="p3875183944919"><a name="p3875183944919"></a><a name="p3875183944919"></a><span>剩余的内存空间可以通过物理内存最大值与当前可用内存地址（</span><a href="GetCurAddr.md">GetCurAddr</a><span>返回值）的差值来计算。</span></p>
 </td>
 </tr>
@@ -129,12 +129,16 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
+- LocalTensor所占字节数须为32的整数倍，Alloc不会自动将tileSize向上补齐。该要求同时适用于tileSize为模板参数和接口入参的原型；使用TensorTrait时，由其布局确定的元素个数与元素类型换算得到的字节数也须满足此要求。
+- 分配长度不满足对齐要求时，构造LocalTensor的内部校验会在CPU调试模式下触发断言；相关构造约束请参见[LocalTensor构造函数](../../data_structures/LocalTensor/LocalTensor_constructor.md)。
 <!-- npu="950" id8 -->
 - 针对Ascend 950PR&950DT系列产品，对Unified Buffer（UB）的内存分配，会基于静态内存的基础上进行分配，即动态内存初始位置，参考[内存层级](../../../../../guide/programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/memory_hierarchy.md)。
 <!-- end id8 -->
 - 当前暂不支持与L1 Buffer, L0A Buffer, L0B Buffer, L0C Buffer, BiasTable静态数组混用。
 
 ## 调用示例<a name="zh-cn_topic_0000002078486173_zh-cn_topic_0000001576727153_zh-cn_topic_0000001389787297_section320753512363"></a>
+
+例如，需要容纳350个有效元素时，half和float类型均可将tileSize向上补齐为352，分别占用704字节和1408字节，均为32字节的整数倍；350个元素对应的700字节和1400字节均不满足要求。half类型的tileSize应为16的整数倍，float类型应为8的整数倍。补齐后的分配容量须在剩余内存范围内；实际搬运和计算仍应按有效数据量及所用API的约束处理，避免访问Global Memory中的无效数据或将未初始化的补齐区域参与计算。
 
 ```cpp
 template <uint32_t v>
