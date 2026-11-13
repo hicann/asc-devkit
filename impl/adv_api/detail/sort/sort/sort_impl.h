@@ -27,6 +27,10 @@
 #include "../sort_common_utils.h"
 #include "../../../../../include/adv_api/sort/sort_utils.h"
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+#include "sort_5162_impl.h"
+#endif
+
 namespace AscendC {
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
 constexpr auto singleSortElementCount = singleSortElementCountL300;
@@ -38,6 +42,7 @@ constexpr auto singleSortElementCount = singleSortElementCountArch3510;
 
 namespace Reg {
 namespace internal {
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162))
 __simd_callee__ inline void ConvertRegToWithShift(
     __ubuf__ uint32_t*& input, RegTensor<uint8_t>& dst, const int16_t offset)
 {
@@ -176,6 +181,7 @@ __simd_vf__ inline void GetExclusiveSum(
     Reg::StoreAlign<uint16_t, PostLiteral::POST_MODE_UPDATE>(
         exclusiveSum, exclusiveSumP1, GetVecLen() / sizeof(uint16_t), b16FullMask);
 }
+#endif
 
 __simd_vf__ inline void EightBitsSort(
     __ubuf__ uint8_t* srcValueU8, __ubuf__ uint8_t* srcValueU8Back, __ubuf__ uint8_t* inputIndexAddr,
@@ -305,6 +311,7 @@ __simd_vf__ inline void EightBitsSort(
     }
 }
 
+#if !(defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162))
 __simd_vf__ inline void LocalSort(
     __ubuf__ uint8_t* srcU8, __ubuf__ uint16_t* tmpIndexU16, __ubuf__ uint16_t* exclusiveSumOrigin,
     __ubuf__ uint32_t* sortedLocalIndex, uint32_t count)
@@ -423,6 +430,7 @@ __simd_vf__ inline void LocalSort(
         Add(bucketOffset1, bucketOffset1, distributionHist1, fullMaskB16);
     }
 }
+#endif
 
 // Gather B64 elements based on uint32_t offset and store at the corresponding memory.
 __simd_callee__ inline void GatherAndStoreB64Elements(
@@ -486,15 +494,15 @@ __simd_vf__ inline void UpdateValueAndIndexByLocalIndex(
                 (__ubuf__ uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset1, maskHighP0, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + 2 * i * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
             GatherAndStoreB64Elements(
                 localOffset2, maskLowP1, (__ubuf__ uint32_t*)prevSortedIndex,
                 (__ubuf__ uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset3, maskHighP1, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + (2 * i + 1) * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
         } else {
             RegTensor<uint32_t> vecIndex0;
             RegTensor<uint32_t> vecIndex1;
@@ -546,8 +554,8 @@ __simd_vf__ inline void UpdateValueAndIndexByLocalIndex(
                 (__ubuf__ uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t)));
             GatherAndStoreB64Elements(
                 localOffset1, maskHigh, (__ubuf__ uint32_t*)prevSortedIndex,
-                (__ubuf__
-                     uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t) + GetVecLen() / sizeof(uint32_t)));
+                (__ubuf__ uint32_t*)(currSortedIndex + i * GetVecLen() / sizeof(uint16_t) +
+                                     GetVecLen() / sizeof(uint32_t)));
         } else {
             RegTensor<uint32_t> indexU32P0;
             RegTensor<uint32_t> indexU32P1;
@@ -1357,7 +1365,7 @@ __aicore__ inline void SortImpl(
 }
 } // namespace internal
 } // namespace Reg
-};     // namespace AscendC
+}; // namespace AscendC
 #endif // IMPL_SORT_SORT_SORT_IMPL_H
 
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_SORT_SORT_SORT_IMPL_H__)

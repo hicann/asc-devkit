@@ -150,7 +150,24 @@ enum class IndexOrder { INCREASE_ORDER, DECREASE_ORDER };
 
 enum class MaskMergeMode { UNKNOWN, MERGING, ZEROING };
 
-enum class HistogramsBinType { BIN0 = 0, BIN1, BIN2, BIN3, BIN4, BIN5, BIN6, BIN7 };
+enum class HistogramsBinType {
+    BIN0 = 0,
+    BIN1,
+    BIN2,
+    BIN3,
+    BIN4,
+    BIN5,
+    BIN6,
+    BIN7,
+    BIN8,
+    BIN9,
+    BIN10,
+    BIN11,
+    BIN12,
+    BIN13,
+    BIN14,
+    BIN15
+};
 
 enum class HistogramsType { FREQUENCY = 0, ACCUMULATE };
 
