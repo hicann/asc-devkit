@@ -111,6 +111,16 @@ struct Nz2DnParams {
     uint16_t srcNzC0Stride = 0;     // loop0SrcStride
 };
 
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1 && defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+namespace Internal {
+inline Nz2DnParams& GetFixpipeNz2dnParams()
+{
+    static thread_local Nz2DnParams params;
+    return params;
+}
+} // namespace Internal
+#endif
+
 template <typename T = int32_t>
 struct FixpipeParams {
     __aicore__ FixpipeParams()

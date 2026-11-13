@@ -1488,11 +1488,35 @@ __aicore__ inline void DataCopy(
 {
     CheckTensorPos<U>(
         src, Hardware::L0C, "src", "CO1", "DataCopy from LocalTensor to LocalTensor with DataCopyCO12DstParams");
+    ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyTensorSizeOverflow(dst, src, intriParams)));
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+    if (GetPhyType((TPosition)dst.GetPosition()) == Hardware::L1) {
+        if constexpr (SupportType<
+                          Tuple<PrimT<U>, PrimT<T>>, Tuple<float, fp8_e4m3fn_t>, Tuple<float, hifloat8_t>,
+                          Tuple<int32_t, bfloat16_t>>()) {
+            ASCENDC_ASSERT(
+                false, { KERNEL_LOG(KERNEL_ERROR, "DataCopy dtype is supported only for UB destination."); });
+        } else {
+            DataCopyL0C2L1Impl((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cc__ PrimT<U>*)src.GetPhyAddr(), intriParams);
+        }
+    } else if (GetPhyType((TPosition)dst.GetPosition()) == Hardware::UB) {
+        if constexpr (Std::is_same<PrimT<T>, int16_t>::value) {
+            ASCENDC_ASSERT(
+                false, { KERNEL_LOG(KERNEL_ERROR, "DataCopy to UB does not support int16_t destination."); });
+        } else {
+            DataCopyL0C2UBImpl((__ubuf__ PrimT<T>*)dst.GetPhyAddr(), (__cc__ PrimT<U>*)src.GetPhyAddr(), intriParams);
+        }
+    } else {
+        ASCENDC_CHECK_TPOSITION(
+            false, "dst", "L1 Buffer(A1)/UB(VECIN/VECOUT/VECCALC)",
+            "DataCopy from LocalTensor to LocalTensor with DataCopyCO12DstParams",
+            GetPositionDisplay(static_cast<TPosition>(dst.GetPosition())));
+    }
+#else
     CheckTensorPos<T>(
         dst, Hardware::L1, "dst", "A1", "DataCopy from LocalTensor to LocalTensor with DataCopyCO12DstParams");
-    ASCENDC_REPORT_OVERFLOW_MEM((CheckDataCopyTensorSizeOverflow(dst, src, intriParams)));
-    // l0c -> l1
     DataCopyL0C2L1Impl((__cbuf__ PrimT<T>*)dst.GetPhyAddr(), (__cc__ PrimT<U>*)src.GetPhyAddr(), intriParams);
+#endif
 }
 
 template <typename T, typename U>

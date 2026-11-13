@@ -406,6 +406,50 @@ inline void CalculateDataCopyMaxOffset(
 
     uint16_t cburstNum = (intriParams.nSize + c0 - 1) / c0;
     uint64_t ndPara = g_fixpipeNdNzParam;
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+    if (srcPos == Hardware::L0C && dstPos == Hardware::UB) {
+        if (intriParams.nz2dnEn) {
+            const auto& params = Internal::GetFixpipeNz2dnParams();
+            if (params.dnNum == 0 || intriParams.nSize == 0 || intriParams.mSize == 0) {
+                srcMaxOffset = 0;
+                dstMaxOffset = 0;
+                return;
+            }
+            uint64_t lastN = intriParams.nSize - 1;
+            srcMaxOffset = (lastN / c0 * intriParams.srcStride * c0 +
+                            static_cast<uint64_t>(intriParams.mSize - 1) * params.srcNzC0Stride * c0 + lastN % c0 + 1) *
+                           sizeof(T);
+            dstMaxOffset = (lastN * intriParams.dstStride + intriParams.mSize) * sizeof(U);
+            srcMaxOffset += static_cast<uint64_t>(params.dnNum - 1) * params.srcNzMatrixStride * c0 * sizeof(T);
+            dstMaxOffset += static_cast<uint64_t>(params.dnNum - 1) * params.dstDnMatrixStride * sizeof(U);
+            return;
+        }
+        srcMaxOffset =
+            (static_cast<uint64_t>(intriParams.mSize) + static_cast<uint64_t>(cburstNum - 1) * intriParams.srcStride) *
+            c0 * sizeof(T);
+        uint32_t dstRows = intriParams.mSize;
+        uint32_t dstCols = intriParams.nSize;
+        if (intriParams.dualDstCtl == 0b01) {
+            dstRows /= HALF_FACTOR;
+        } else if (intriParams.dualDstCtl == 0b10) {
+            dstCols /= HALF_FACTOR;
+        }
+        if (intriParams.nz2ndEn) {
+            dstMaxOffset = (static_cast<uint64_t>(dstRows - 1) * intriParams.dstStride + dstCols) * sizeof(U);
+            uint16_t matrixCount = ndPara & 0xFFFF;
+            if (matrixCount > 1) {
+                srcMaxOffset += (matrixCount - 1) * ((ndPara >> 16) & 0xFFFF) * c0 * sizeof(T);
+                dstMaxOffset += (matrixCount - 1) * (ndPara >> 32) * sizeof(U);
+            }
+        } else {
+            uint32_t dstC0 = sizeof(U) == 1 ? ONE_BLK_SIZE : BLOCK_CUBE;
+            uint32_t dstBurstCount = (dstCols + dstC0 - 1) / dstC0;
+            dstMaxOffset = static_cast<uint64_t>(dstRows) * dstC0 * sizeof(U) +
+                           static_cast<uint64_t>(dstBurstCount - 1) * intriParams.dstStride * ONE_BLK_SIZE;
+        }
+        return;
+    }
+#endif
     uint16_t ndNum = ndPara & 0xFFFF;                          // ND_PARA[15:0]
     uint16_t loop3SrcStride = (ndPara & 0xFFFF0000) >> 16;     // ND_PARA[31:16] in unit of fractal size
     uint16_t loop3DstStride = (ndPara & 0xFFFF00000000) >> 32; // ND_PARA[47:32] in unit of elements

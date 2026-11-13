@@ -69,6 +69,11 @@ __aicore__ inline void SetFixpipeNz2ndFlag(uint16_t ndNum, uint16_t srcNdStride,
 
 __aicore__ inline void SetFixpipePreQuantFlag(uint64_t config);
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+__aicore__ inline void SetFixpipeNz2dnFlag(
+    uint16_t dnNum, uint16_t srcNzMatrixStride, uint32_t dstDnMatrixStride, uint16_t srcNzC0Stride);
+#endif
+
 __aicore__ inline void SetFixPipeClipRelu(uint64_t config);
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)

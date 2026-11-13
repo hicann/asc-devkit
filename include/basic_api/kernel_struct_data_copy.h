@@ -175,7 +175,8 @@ struct DataCopyCO12DstParams {
 
     __aicore__ DataCopyCO12DstParams(
         const uint16_t nSizeIn, const uint16_t mSizeIn, const uint32_t dstStrideIn, const uint16_t srcStrideIn,
-        const QuantMode_t quantPreIn, const uint8_t reluPreIn, const bool channelSplitIn, const bool nz2ndEnIn)
+        const QuantMode_t quantPreIn, const uint8_t reluPreIn, const bool channelSplitIn, const bool nz2ndEnIn,
+        const uint8_t dualDstCtlIn = 0, const bool subBlockIdIn = false, const bool nz2dnEnIn = false)
         : nSize(nSizeIn),
           mSize(mSizeIn),
           dstStride(dstStrideIn),
@@ -183,7 +184,10 @@ struct DataCopyCO12DstParams {
           quantPre(quantPreIn),
           reluPre(reluPreIn),
           channelSplit(channelSplitIn),
-          nz2ndEn(nz2ndEnIn)
+          nz2ndEn(nz2ndEnIn),
+          dualDstCtl(dualDstCtlIn),
+          subBlockId(subBlockIdIn),
+          nz2dnEn(nz2dnEnIn)
     {}
 
     uint8_t sid = 0;
@@ -198,6 +202,9 @@ struct DataCopyCO12DstParams {
     uint8_t reluPre = 0;
     bool channelSplit = false;
     bool nz2ndEn = false;
+    uint8_t dualDstCtl = 0;
+    bool subBlockId = false;
+    bool nz2dnEn = false;
 };
 
 struct DataCopyPadParams {

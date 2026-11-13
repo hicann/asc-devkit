@@ -14,6 +14,10 @@
 #include "kernel_operator_fixpipe_intf.h"
 #endif
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+extern "C" __global__ __aicore__ void KernelTestSetFixpipeNz2dnFlag() { AscendC::SetFixpipeNz2dnFlag(2, 240, 2880, 2); }
+#endif
+
 // __aicore__ inline void SetFixPipeConfig(const LocalTensor<T> &reluPre, const LocalTensor<T> &quantPre, bool
 // isUnitFlag = false);
 extern "C" __global__ __aicore__ void KernelTestSetFixPipeConfig1()

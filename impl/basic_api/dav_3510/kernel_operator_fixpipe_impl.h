@@ -88,6 +88,21 @@ __aicore__ inline void SetFixpipePreQuantFlagImpl(uint64_t config)
         set_quant_pre(config);
     }
 }
+
+__aicore__ inline void SetFixpipeNz2dnFlagImpl(
+    uint16_t dnNum, uint16_t srcNzMatrixStride, uint32_t dstDnMatrixStride, uint16_t srcNzC0Stride)
+{
+    if ASCEND_IS_AIC {
+        ASCENDC_ASSERT((srcNzC0Stride > 0), {
+            KERNEL_LOG(KERNEL_ERROR, "srcNzC0Stride must be greater than 0 in SetFixpipeNz2dnFlag.");
+        });
+        SetFixpipeNz2ndFlagImpl(dnNum, srcNzMatrixStride, dstDnMatrixStride);
+        set_channel_para(static_cast<uint64_t>(srcNzC0Stride) << 48);
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        Internal::GetFixpipeNz2dnParams() = Nz2DnParams(dnNum, srcNzMatrixStride, dstDnMatrixStride, srcNzC0Stride);
+#endif
+    }
+}
 /* **************************************************************************************************
  * Fixpipe                                             *
  * ************************************************************************************************* */

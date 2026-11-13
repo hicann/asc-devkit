@@ -1424,6 +1424,82 @@ __aicore__ inline void DataCopyL0C2L1Impl(__cbuf__ T* dst, __cc__ U* src, const 
 }
 
 template <typename T, typename U>
+__aicore__ inline void DataCopyL0C2UBImpl(__ubuf__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams)
+{
+    if ASCEND_IS_AIC {
+        static_assert(
+            (SupportType<
+                Tuple<U, T>, Tuple<float, float>, Tuple<float, half>, Tuple<float, bfloat16_t>, Tuple<float, int8_t>,
+                Tuple<float, uint8_t>, Tuple<int32_t, int32_t>, Tuple<int32_t, int8_t>, Tuple<int32_t, uint8_t>,
+                Tuple<int32_t, half>, Tuple<int32_t, bfloat16_t>, Tuple<float, fp8_e4m3fn_t>,
+                Tuple<float, hifloat8_t>>()),
+            "Failed to check dtype in "
+            "DataCopy from L0C Buffer(CO1) to UB, current api support dtype combination is "
+            "src: float, dst: half / bfloat16_t / float / int8_t / uint8_t / fp8_e4m3fn_t / hifloat8_t; "
+            "src: int32_t, dst: half / bfloat16_t / int32_t / int8_t / uint8_t.");
+        ASCENDC_ASSERT(!(intriParams.channelSplit), {
+            KERNEL_LOG(KERNEL_ERROR, "channelSplit must be false in DataCopy from L0C Buffer(CO1) to UB.");
+        });
+        ASCENDC_ASSERT((intriParams.dualDstCtl <= 2), {
+            KERNEL_LOG(KERNEL_ERROR, "dualDstCtl must be 0, 1 or 2 in DataCopy from L0C Buffer(CO1) to UB.");
+        });
+        ASCENDC_ASSERT(!(intriParams.nz2ndEn && intriParams.nz2dnEn), {
+            KERNEL_LOG(KERNEL_ERROR, "NZ2ND and NZ2DN cannot be enabled together in DataCopy from L0C to UB.");
+        });
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        if (intriParams.nz2dnEn) {
+            const auto& params = Internal::GetFixpipeNz2dnParams();
+            ASCENDC_ASSERT((params.srcNzC0Stride > 0), {
+                KERNEL_LOG(KERNEL_ERROR, "SetFixpipeNz2dnFlag must be called before DataCopy with NZ2DN enabled.");
+            });
+            ASCENDC_ASSERT((params.srcNzC0Stride == 1 || intriParams.unitFlag == 0), {
+                KERNEL_LOG(KERNEL_ERROR, "NZ2DN with srcNzC0Stride != 1 cannot enable unitFlag.");
+            });
+        }
+#endif
+        ASCENDC_ASSERT(
+            !(intriParams.dualDstCtl != 0 &&
+              (intriParams.nz2dnEn || intriParams.quantPre != QuantMode_t::NoQuant || intriParams.reluPre != 0)),
+            {
+                KERNEL_LOG(
+                    KERNEL_ERROR,
+                    "Dual destination mode can be enabled only when normal DMA or NZ2ND is enabled with other DataCopy "
+                    "functions bypassed.");
+            });
+        ASCENDC_ASSERT(!(intriParams.dualDstCtl == 0b01 && intriParams.mSize % 2 != 0), {
+            KERNEL_LOG(KERNEL_ERROR, "dual destination mode, split in M dimension, M must be a multiple of 2.");
+        });
+        ASCENDC_ASSERT(!(intriParams.dualDstCtl == 0b10 && intriParams.nSize % 32 != 0), {
+            KERNEL_LOG(KERNEL_ERROR, "dual destination mode, split in N dimension, N must be a multiple of 32.");
+        });
+        if (IsSupportQuantMode(intriParams.quantPre) || intriParams.quantPre == QuantMode_t::QF322F16_PRE ||
+            intriParams.quantPre == QuantMode_t::VQF322F16_PRE || intriParams.quantPre == QuantMode_t::QF322BF16_PRE ||
+            intriParams.quantPre == QuantMode_t::VQF322BF16_PRE || intriParams.quantPre == QuantMode_t::QF322FP8_PRE ||
+            intriParams.quantPre == QuantMode_t::VQF322FP8_PRE || intriParams.quantPre == QuantMode_t::QF322HIF8_PRE ||
+            intriParams.quantPre == QuantMode_t::VQF322HIF8_PRE ||
+            intriParams.quantPre == QuantMode_t::QF322HIF8_PRE_HYBRID ||
+            intriParams.quantPre == QuantMode_t::VQF322HIF8_PRE_HYBRID ||
+            intriParams.quantPre == QuantMode_t::QS322BF16_PRE || intriParams.quantPre == QuantMode_t::VQS322BF16_PRE ||
+            intriParams.quantPre == QuantMode_t::QF322F32_PRE || intriParams.quantPre == QuantMode_t::VQF322F32_PRE) {
+            uint32_t dstStride = intriParams.dstStride;
+            if (!intriParams.nz2ndEn && !intriParams.nz2dnEn) {
+                dstStride = dstStride * ONE_BLK_SIZE / sizeof(T);
+            }
+            return copy_matrix_cc_to_ub(
+                dst, src, intriParams.sid, intriParams.nSize, intriParams.mSize, dstStride, intriParams.srcStride,
+                intriParams.dualDstCtl, intriParams.subBlockId, 0, intriParams.unitFlag,
+                static_cast<uint64_t>(intriParams.quantPre), intriParams.reluPre, false, intriParams.nz2ndEn,
+                static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
+                intriParams.nz2dnEn);
+        } else {
+            ASCENDC_ASSERT(false, {
+                KERNEL_LOG(KERNEL_ERROR, "Failed to check quantPre value in DataCopy from L0C Buffer(CO1) to UB.");
+            });
+        }
+    }
+}
+
+template <typename T, typename U>
 __aicore__ inline void DataCopyL0C2GMImpl(
     __gm__ T* dst, __cc__ U* src, const DataCopyCO12DstParams& intriParams, uint8_t cacheMode)
 {

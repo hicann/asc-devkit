@@ -14,6 +14,16 @@
 #include "kernel_operator_data_copy_intf.h"
 #endif
 
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+extern "C" __global__ __aicore__ void KernelTestDataCopyL0C2UBNz2Dn()
+{
+    AscendC::LocalTensor<float> dst(AscendC::TPosition::VECCALC, 0, 512);
+    AscendC::LocalTensor<float> src(AscendC::TPosition::CO1, 0, 512);
+    AscendC::DataCopyCO12DstParams params(32, 16, 16, 16, QuantMode_t::NoQuant, 0, false, false, 0, false, true);
+    AscendC::DataCopy(dst, src, params);
+}
+#endif
+
 // __aicore__ inline __inout_pipe__(MTE2) void DataCopy(const LocalTensor<T>& dst, const GlobalTensor<T>& src, const
 // Nd2NzParams& intriParams);
 extern "C" __global__ __aicore__ void KernelTestDataCopy1()
