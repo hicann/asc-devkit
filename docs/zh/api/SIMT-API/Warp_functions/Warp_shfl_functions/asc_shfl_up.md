@@ -99,7 +99,7 @@ Warp内指定线程的var值。
 
 完整样例请参考[Sobel边缘检测样例](../../../../../../examples/03_simt_api/02_features/01_api_features/03_warp_instruction/sobel_warp_shfl/README.md)。
 
-以下示例包含两类用法：示例1使用asc\_shfl\_up获取Warp分组内相对当前线程向前偏移delta的线程的输入值；示例2使用asc\_shfl\_up在每个Warp内进行归约求和。
+以下示例包含三类用法：示例1使用asc\_shfl\_up获取Warp分组内相对当前线程向前偏移delta的线程的输入值；示例2使用asc\_shfl\_up在每个Warp内进行归约求和；示例3使用asc\_shfl\_up在每个Warp内进行前缀和（inclusive scan）计算。
 
 -   示例1：
 
@@ -183,6 +183,55 @@ Warp内指定线程的var值。
     }
     ```
 
+-   示例3：
+
+    SIMT编程场景：
+
+    ```cpp
+    #include "simt_api/device_warp_functions.h"
+
+    __global__ __launch_bounds__(1024) void KernelShflUpScan(int32_t* dst)
+    {
+         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+         int32_t laneId = idx % 32;
+         int32_t value = laneId;
+
+         // 前缀和（inclusive scan）：offset 由 1 递增到 16，并用越界保护避免低 lane 反复自加
+         for (int32_t offset = 1; offset < 32; offset <<= 1) {
+              int32_t n = asc_shfl_up(value, offset, 32);
+              if (laneId >= offset) {
+                   value += n;
+              }
+         }
+
+         dst[idx] = value; // 每个线程得到本Warp内laneId 0~laneId 的前缀和
+    }
+    ```
+
+    SIMD与SIMT混合编程场景：
+
+    ```cpp
+    #include "simt_api/device_warp_functions.h"
+
+    __simt_vf__ __launch_bounds__(1024) inline void KernelShflUpScan(__gm__ int32_t* dst)
+    {
+         // asc_vf_call参数：dim3{1024, 1, 1}
+         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+         int32_t laneId = idx % 32;
+         int32_t value = laneId;
+
+         // 前缀和（inclusive scan）：offset 由 1 递增到 16，并用越界保护避免低 lane 反复自加
+         for (int32_t offset = 1; offset < 32; offset <<= 1) {
+              int32_t n = asc_shfl_up(value, offset, 32);
+              if (laneId >= offset) {
+                   value += n;
+              }
+         }
+
+         dst[idx] = value; // 每个线程得到本Warp内laneId 0~laneId 的前缀和
+    }
+    ```
+
 输入输出示例如下：
 
 - 调用示例1：
@@ -196,4 +245,11 @@ Warp内指定线程的var值。
 
     ```text
     dst: 0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256, 272, 288, 304, 320, 336, 352, 368, 384, 400, 416, 432, 448, 464, 480, 496
+    ```
+
+- 调用示例3：
+
+    ```text
+    x: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+    dst: 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406, 435, 465, 496
     ```

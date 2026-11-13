@@ -15,7 +15,7 @@ __global__ void kernel_name(uint32_t* param1, float* param2, ...);
 核函数（Kernel）定义有以下几个约束：
 
 -   返回值类型必须是void；
--   入参支持基础数据类型和基础数据类型的指针类型，如int32\_t、float、int32\_t\*、float\*等。
+-   入参支持基础数据类型和基础数据类型的指针类型，如int32\_t、float、int32\_t\*、float\*等。该约束仅描述Kernel入参的类型，不影响核函数使用模板参数，模板参数的实参类型同样需满足此约束，模板核函数用法可参考[gather\_2d样例](../../../../../../examples/03_simt_api/00_introduction/01_gather/basic_gather/gather_2d/gather_2d.asc)。
 -   指针参数必须是指向Global Memory上的内存地址。
 
 ## \_\_launch\_bounds\_\_\(N\)
