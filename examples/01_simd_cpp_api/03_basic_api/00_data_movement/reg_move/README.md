@@ -74,7 +74,7 @@
 
 - 样例实现：  
   1. 调用LoadAlign加载选择操作数x、y到RegTensor
-  2. 调用LoadUnAlignPre/LoadUnAlign加载掩码操作数mask到RegTensor，每次迭代加载2个元素，即8字节64bit数据
+  2. 调用LoadUnalignPre/LoadUnalign加载掩码操作数mask到RegTensor，每次迭代加载2个元素，即8字节64bit数据
   3. 调用MaskGenWithRegTensor从mReg的前8字节提取64bit数据，按下采样模式填充到256bit MaskReg：每4个mask bit对应1个src bit，处理示意如图：  
   <img src="figures/move_reg_1.png">
   4. 调用Select接口，根据maskReg逐元素选择xReg或yReg中的元素，写入zReg中，如下图所示  

@@ -9,11 +9,11 @@
 	 	</tr>
 	 	<tr>
 	 		<td>1</td>
-	 		<td>单核非对齐数据搬运：使用LoadUnAlign和StoreUnAlign进行非对齐地址的数据搬运</td>
+            <td>单核非对齐数据搬运：使用LoadUnalign和StoreUnalign进行非对齐地址的数据搬运</td>
 	 	</tr>
 	 	<tr>
 	 		<td>2</td>
-	 		<td>多核非对齐场景计算及搬运：使用LoadUnAlign处理非对齐输入(uint16_t)，ReduceDataBlock(MAX)进行块内求最大值</td>
+            <td>多核非对齐场景计算及搬运：使用LoadUnalign处理非对齐输入(uint16_t)，ReduceDataBlock(MAX)进行块内求最大值</td>
 	 	</tr>
 	 </table>
 
@@ -54,7 +54,7 @@
 
 ### 场景2：多核地址非对齐、数据量不对齐场景搬运
 - 样例功能：  
-  输入shape为[14, 255]的uint16_t类型矩阵，展示LoadUnAlign处理非对齐输入的自然使用场景。使用ReduceDataBlock对每个DataBlock（16个uint16_t元素）求最大值，4核并行处理，StoreUnAlign连续存储结果。
+  输入shape为[14, 255]的uint16_t类型矩阵，展示LoadUnalign处理非对齐输入的自然使用场景。使用ReduceDataBlock对每个DataBlock（16个uint16_t元素）求最大值，4核并行处理，StoreUnalign连续存储结果。
 - 样例规格：
   <table>
   <tr><td rowspan="1" align="center">样例类型(OpType)</td><td colspan="3" align="center">AIV样例</td></tr>
@@ -70,19 +70,19 @@
      - UB紧密排列，每行间隔255个元素
      - 行1-3起始地址非32B对齐（510字节、1020字节、1530字节）
 
-  2. **LoadUnAlign自然使用**：
-     - 所有行统一使用LoadUnAlignPre + LoadUnAlign处理对齐地址（行0）和非对齐地址（行1-3）
+  2. **LoadUnalign自然使用**：
+     - 所有行统一使用LoadUnalignPre + LoadUnalign处理对齐地址（行0）和非对齐地址（行1-3）
      - 对齐地址也可使用StoreAlign接口，当前仅为保证代码格式统一，用作样例演示，不作为极致性能参考
 
   3. **ReduceDataBlock计算**：
      - 每行255元素分2个VL块处理（128 + 127）
      - 每个VL块产生8个结果（每DataBlock求最大值）
 
-  4. **StoreUnAlign连续存储**：
-     - 使用带postUpdateStride的StoreUnAlign版本
+  4. **StoreUnalign连续存储**：
+     - 使用带postUpdateStride的StoreUnalign版本
      - 每次存储偏移8个元素（resultsPerRepeat=8）
      - 循环2次后自动偏移到dstAddr+16
-     - StoreUnAlignPost处理最后的边界数据
+     - StoreUnalignPost处理最后的边界数据
 
   5. **输出布局**：
      - 每行16个结果，数据连续排列

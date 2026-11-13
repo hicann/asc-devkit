@@ -4,7 +4,7 @@
 
 -   **[非连续对齐搬入（LoadAlign）](LoadAlign_noncontinuous.md)**  
 
--   **[连续非对齐搬入（LoadUnAlign）](LoadUnAlign_continuous.md)**  
+-   **[连续非对齐搬入（LoadUnalign）](LoadUnalign_continuous.md)**
 
 -   **[MaskReg搬入（LoadAlign）](LoadAlign_MaskReg.md)**  
 

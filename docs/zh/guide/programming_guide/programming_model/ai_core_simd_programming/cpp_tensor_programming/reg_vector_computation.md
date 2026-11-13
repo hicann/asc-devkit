@@ -29,7 +29,7 @@ Reg矢量编程的硬件原理、内存层级、VF函数执行域、流水线同
 | 维度 | 基础API（C++模板） | C API（语言扩展） |
 | --- | --- | --- |
 | 命名空间/前缀 | `AscendC::Reg::*` | `asc_*` |
-| 命名风格 | `LoadAlign`、`StoreUnAlignPost` | `asc_loadalign`、`asc_storeunalign_post` |
+| 命名风格 | `LoadAlign`、`StoreUnalignPost` | `asc_loadalign`、`asc_storeunalign_post` |
 | 矢量数据寄存器 | `RegTensor<T>` | `vector_float`、`vector_half`、`vector_int32_t`等 |
 | 掩码寄存器 | `MaskReg` | `vector_bool` |
 | 地址寄存器 | `AddrReg` | `addr_reg` |
@@ -47,8 +47,8 @@ Reg矢量编程的硬件原理、内存层级、VF函数执行域、流水线同
 | 创建地址寄存器 | `CreateAddrReg<T>(...)` | `asc_update_addr_reg_b*()` |
 | 通用搬入/搬出 | `Load` / `Store` | `asc_load` / `asc_store` |
 | 对齐搬入/搬出 | `LoadAlign` / `StoreAlign` | `asc_loadalign` / `asc_storealign` |
-| 非对齐搬入 | `LoadUnAlignPre` + `LoadUnAlign` | `asc_loadunalign_pre` + `asc_loadunalign` |
-| 非对齐搬出 | `StoreUnAlign` + `StoreUnAlignPost` | `asc_storeunalign` + `asc_storeunalign_post` |
+| 非对齐搬入 | `LoadUnalignPre` + `LoadUnalign` | `asc_loadunalign_pre` + `asc_loadunalign` |
+| 非对齐搬出 | `StoreUnalign` + `StoreUnalignPost` | `asc_storeunalign` + `asc_storeunalign_post` |
 | 流水线同步 | `LocalMemBar<src, dst>()` | `asc_mem_bar(...)` |
 
 ## 模板参数体系<a name="section_part3"></a>
@@ -58,7 +58,7 @@ Reg矢量编程的硬件原理、内存层级、VF函数执行域、流水线同
 | 模板参数 | 作用 | 典型取值/类型 | 常见接口 |
 | --- | --- | --- | --- |
 | `T` | 数据类型 | `float`、`half`、`int32_t`等 | `RegTensor<T>`、`LoadAlign<T>`、`Add<T>` |
-| `PostLiteral` | 搬运后是否更新UB地址 | `POST_MODE_NORMAL`、`POST_MODE_UPDATE` | `LoadAlign`、`StoreAlign`、`LoadUnAlign`、`StoreUnAlign` |
+| `PostLiteral` | 搬运后是否更新UB地址 | `POST_MODE_NORMAL`、`POST_MODE_UPDATE` | `LoadAlign`、`StoreAlign`、`LoadUnalign`、`StoreUnalign` |
 | `LoadDist` | 搬入模式 | `DIST_NORM`、broadcast类取值等 | `LoadAlign` |
 | `StoreDist` | 搬出模式 | 正常搬出、首元素搬出、pack类取值等 | `StoreAlign` |
 | `MaskMergeMode` | mask未选中元素处理方式 | `ZEROING`、`MERGING` | 部分计算接口，例如Add |
@@ -202,20 +202,20 @@ AscendC::Reg::StoreAlign(dstAddr, dstReg, mask);
 
 #### 非对齐搬运
 
-连续非对齐搬入由[`LoadUnAlignPre`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md)和[`LoadUnAlign`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md)组合使用；连续非对齐搬出由[`StoreUnAlign`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_store/StoreUnAlign_continuous.md)和[`StoreUnAlignPost`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_store/StoreUnAlign_continuous.md)组合使用。
+连续非对齐搬入由[`LoadUnalignPre`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnalign_continuous.md)和[`LoadUnalign`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnalign_continuous.md)组合使用；连续非对齐搬出由[`StoreUnalign`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_store/StoreUnalign_continuous.md)和[`StoreUnalignPost`](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_store/StoreUnalign_continuous.md)组合使用。
 
 ```cpp
 AscendC::Reg::UnalignRegForLoad loadUreg;
 AscendC::Reg::UnalignRegForStore storeUreg;
 
-AscendC::Reg::LoadUnAlignPre(loadUreg, srcAddr);
+AscendC::Reg::LoadUnalignPre(loadUreg, srcAddr);
 for (uint16_t i = 0; i < repeatTimes; ++i) {
-    AscendC::Reg::LoadUnAlign(srcReg, loadUreg, srcAddr, postUpdateStride);
+    AscendC::Reg::LoadUnalign(srcReg, loadUreg, srcAddr, postUpdateStride);
     // Reg计算
     ...
-    AscendC::Reg::StoreUnAlign(dstAddr, dstReg, storeUreg, postUpdateStride);
+    AscendC::Reg::StoreUnalign(dstAddr, dstReg, storeUreg, postUpdateStride);
 }
-AscendC::Reg::StoreUnAlignPost(dstAddr, storeUreg, 0);
+AscendC::Reg::StoreUnalignPost(dstAddr, storeUreg, 0);
 ```
 
 ### 矢量计算类

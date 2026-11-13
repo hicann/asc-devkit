@@ -1,4 +1,4 @@
-# MaskReg非对齐搬出（StoreUnAlign）<a name="ZH-CN_TOPIC_0000002554449396"></a>
+# MaskReg非对齐搬出（StoreUnalign）<a name="ZH-CN_TOPIC_0000002554449396"></a>
 
 ## 产品支持情况
 
@@ -50,9 +50,24 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h"`。
 
-StoreUnAlign能够实现数据从[MaskReg](../register_data_types/MaskReg.md)连续搬运至非对齐Unified Buffer（UB），利用非对齐寄存器UnalignRegForStore作为临时缓存区，暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。
+>[!NOTE]说明
+>StoreUnalign、StoreUnalignPost接口分别与StoreUnAlign、StoreUnAlignPost接口的功能、模板参数、函数参数、支持的数据类型和约束保持一致。推荐使用StoreUnalign、StoreUnalignPost。
+
+StoreUnalign能够实现数据从[MaskReg](../register_data_types/MaskReg.md)连续搬运至非对齐Unified Buffer（UB），利用非对齐寄存器UnalignRegForStore作为临时缓存区，暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。
 
 ## 函数原型
+
+推荐接口（新名称）：
+
+```cpp
+template <typename T>
+__simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg)
+
+template <typename T, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE>
+__simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride)
+```
+
+原接口（兼容保留）：
 
 ```cpp
 template <typename T>
@@ -111,7 +126,7 @@ __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegFor
 
 ```cpp
 template <typename T>
-__simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t count, uint16_t oneRepeatSize, uint16_t offset, uint16_t repeatTimes)
+__simd_vf__ inline void StoreUnalignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t count, uint16_t oneRepeatSize, uint16_t offset, uint16_t repeatTimes)
 {
     AscendC::Reg::MaskReg mask;
     AscendC::Reg::UnalignRegForStore ureg;
@@ -120,8 +135,8 @@ __simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr,
         // MaskReg非对齐搬出会自动进行地址偏移
         // 数据类型为b16时，32字节打包成16字节，偏移为16字节。
         // 数据类型为b32时，32字节打包成8字节，偏移为8字节。
-        AscendC::Reg::StoreUnAlign(dstAddr, mask, ureg);
+        AscendC::Reg::StoreUnalign(dstAddr, mask, ureg);
     }
-    AscendC::Reg::StoreUnAlignPost(dstAddr, ureg, 0);
+    AscendC::Reg::StoreUnalignPost(dstAddr, ureg, 0);
 }
 ```

@@ -44,7 +44,7 @@
 
 该接口用于对指定的特殊目的寄存器（SpecialPurposeReg）进行清零操作。通过模板参数spr指定目标特殊寄存器，调用后该寄存器的值被置为0，当前支持的特殊寄存器见[表 SpecialPurposeReg模板参数说明](#table2)。
 
-AR特殊寄存器通常配合[Squeeze](../compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_data_store/StoreUnAlign_continuous.md)的场景3（无需显式传入偏移量）接口使用。当Squeeze的模板参数`store`取值为`GatherMaskMode::STORE_REG`时，有效元素的总字节数会存入AR寄存器，并作为连续非对齐搬出时的地址偏移量。在首次调用连续非对齐搬出操作前，需调用本接口将AR寄存器清零。
+AR特殊寄存器通常配合[Squeeze](../compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_data_store/StoreUnalign_continuous.md)的场景3（无需显式传入偏移量）接口使用。当Squeeze的模板参数`store`取值为`GatherMaskMode::STORE_REG`时，有效元素的总字节数会存入AR寄存器，并作为连续非对齐搬出时的地址偏移量。在首次调用连续非对齐搬出操作前，需调用本接口将AR寄存器清零。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -92,8 +92,8 @@ __simd_vf__ inline void SqueezeVF(__ubuf__ T* xAddr, __ubuf__ T* yAddr, uint32_t
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         AscendC::Reg::LoadAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(xReg, xAddr, oneRepeatSize);
         AscendC::Reg::Squeeze<T, AscendC::Reg::GatherMaskMode::STORE_REG>(yReg, xReg, mask);
-        AscendC::Reg::StoreUnAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(yAddr, yReg, ureg);
+        AscendC::Reg::StoreUnalign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(yAddr, yReg, ureg);
     }
-    AscendC::Reg::StoreUnAlignPost(yAddr, ureg);
+    AscendC::Reg::StoreUnalignPost(yAddr, ureg);
 }
 ```

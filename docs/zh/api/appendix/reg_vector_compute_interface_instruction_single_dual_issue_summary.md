@@ -14,8 +14,8 @@ Ascend 950PR&950DT系列产品
 | 寄存器数据类型 | PSET | CreateMask |
 | 寄存器数据类型 | PLT | UpdateMask |
 | Reg数据搬入 | VLDS/VLD | 连续对齐搬入（LoadAlign）：<br>单搬入模式（除了DIST_DS_B8、DIST_DS_B16分布模式） |
-| Reg数据搬入 | VLDAS/VLDA | 连续非对齐搬入初始化（LoadUnAlignPre） |
-| Reg数据搬入 | VLDUS/VLDU | 连续非对齐搬入（LoadUnAlign） |
+| Reg数据搬入 | VLDAS/VLDA | 连续非对齐搬入初始化（LoadUnalignPre） |
+| Reg数据搬入 | VLDUS/VLDU | 连续非对齐搬入（LoadUnalign） |
 | Reg数据搬入 | PLDS/PLD | MaskReg搬入（LoadAlign） |
 | Reg数据搬入 | VMOV | Move（Reg数据搬入） |
 | MaskReg计算 | PMOV | Move（MaskReg计算）|
@@ -76,10 +76,10 @@ Ascend 950PR&950DT系列产品
 | Reg数据搬入 | VGATHERB | GatherB |
 | Reg数据搬出 | VSSTB | 非连续对齐搬出（StoreAlign）|
 | Reg数据搬出 | VSTS/VST | 连续对齐搬出（StoreAlign） |
-| Reg数据搬出 | VSTUS/VSTU/VSTUR | 连续非对齐搬出（StoreUnAlign） |
-| Reg数据搬出 | VSTAS/VSTA/VSTAR | 连续非对齐搬出后处理（StoreUnAlignPost） |
+| Reg数据搬出 | VSTUS/VSTU/VSTUR | 连续非对齐搬出（StoreUnalign） |
+| Reg数据搬出 | VSTAS/VSTA/VSTAR | 连续非对齐搬出后处理（StoreUnalignPost） |
 | Reg数据搬出 | PSTS/PST | MaskReg搬出（StoreAlign） |
-| Reg数据搬出 | PSTU | MaskReg非对齐搬出（StoreUnAlign） |
+| Reg数据搬出 | PSTU | MaskReg非对齐搬出（StoreUnalign） |
 | Reg数据搬出 | VSCATTER | Scatter |
 | MaskReg计算 | PINTLV | Interleave |
 | MaskReg计算 | PDINTLV | DeInterleave |

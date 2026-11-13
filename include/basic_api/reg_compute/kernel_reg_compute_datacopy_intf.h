@@ -87,12 +87,22 @@ __simd_callee__ inline void StoreAlign(
 template <typename T>
 __simd_callee__ inline void LoadUnAlignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
 
+template <typename T>
+__simd_callee__ inline void LoadUnalignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
+
 template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
 __simd_callee__ inline void LoadUnAlign(
     U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, uint32_t postUpdateStride);
 
+template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+__simd_callee__ inline void LoadUnalign(
+    U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, uint32_t postUpdateStride);
+
 template <typename T = DefaultType, typename U>
 __simd_callee__ inline void LoadUnAlign(U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void LoadUnalign(U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
 
 template <typename T = DefaultType, typename U>
 __simd_callee__ inline void Load(U& dstReg, __ubuf__ T* srcAddr);
@@ -101,8 +111,15 @@ __simd_callee__ inline void Load(U& dstReg, __ubuf__ T* srcAddr);
 template <typename T>
 __simd_callee__ inline void LoadUnAlignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr, AddrReg& areg);
 
+template <typename T>
+__simd_callee__ inline void LoadUnalignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr, AddrReg& areg);
+
 template <typename T = DefaultType, typename U>
 __simd_callee__ inline void LoadUnAlign(
+    U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, AddrReg& areg, uint32_t inc);
+
+template <typename T = DefaultType, typename U>
+__simd_callee__ inline void LoadUnalign(
     U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, AddrReg& areg, uint32_t inc);
 
 // vstus/vstas
@@ -110,8 +127,15 @@ template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MOD
 __simd_callee__ inline void StoreUnAlign(
     __ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, uint32_t postUpdateStride);
 
+template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+__simd_callee__ inline void StoreUnalign(
+    __ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, uint32_t postUpdateStride);
+
 template <typename T, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE>
 __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
+
+template <typename T, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE>
+__simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
 
 template <typename T = DefaultType, typename U>
 __simd_callee__ inline void Store(__ubuf__ T* dstAddr, U& srcReg);
@@ -123,15 +147,27 @@ __simd_callee__ inline void Store(__ubuf__ T* dstAddr, U& srcReg, uint32_t count
 template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
 __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, AddrReg& areg);
 
+template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+__simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, AddrReg& areg);
+
 template <typename T>
 __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, AddrReg& areg);
+
+template <typename T>
+__simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, AddrReg& areg);
 
 // vstur/vstar
 template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
 __simd_callee__ inline void StoreUnAlign(__ubuf__ T* dstAddr, U& srcReg, UnalignRegForStore& ureg);
 
+template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+__simd_callee__ inline void StoreUnalign(__ubuf__ T* dstAddr, U& srcReg, UnalignRegForStore& ureg);
+
 template <typename T>
 __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T* dstAddr, UnalignRegForStore& ureg);
+
+template <typename T>
+__simd_callee__ inline void StoreUnalignPost(__ubuf__ T* dstAddr, UnalignRegForStore& ureg);
 
 // vgather2
 template <typename T0 = DefaultType, typename T1, typename T2 = DefaultType, typename T3, typename T4>
@@ -170,6 +206,9 @@ __simd_callee__ inline void StoreAlign(__ubuf__ T*& dstAddr, MaskReg& mask, int3
 // pstu
 template <typename T>
 __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg);
+
+template <typename T>
+__simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg);
 
 } // namespace Reg
 } // namespace AscendC

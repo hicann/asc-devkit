@@ -9,11 +9,11 @@ This example implements unaligned data transfer operations between UB (Unified B
 	 	</tr>
 	 	<tr>
 	 		<td>1</td>
-	 		<td>Single-core unaligned data transfer: Uses LoadUnAlign and StoreUnAlign for data transfer at unaligned addresses</td>
+            <td>Single-core unaligned data transfer: Uses LoadUnalign and StoreUnalign for data transfer at unaligned addresses</td>
 	 	</tr>
 	 	<tr>
 	 		<td>2</td>
-	 		<td>Multi-core unaligned scenario computation and transfer: Uses LoadUnAlign to handle unaligned input (uint16_t), ReduceDataBlock(MAX) for block-wise maximum</td>
+            <td>Multi-core unaligned scenario computation and transfer: Uses LoadUnalign to handle unaligned input (uint16_t), ReduceDataBlock(MAX) for block-wise maximum</td>
 	 	</tr>
 	 </table>
 
@@ -54,7 +54,7 @@ This example implements unaligned data transfer operations between UB (Unified B
 
 ### Scenario 2: Multi-core Address-unaligned and Data Volume Unaligned Scenario Transfer
 - Example functionality:
-  Input shape is a [14, 255] uint16_t matrix, demonstrating a natural use case for LoadUnAlign handling unaligned input. Uses ReduceDataBlock to find the maximum of each DataBlock (16 uint16_t elements), with 4 cores processing in parallel, and StoreUnAlign for contiguous result storage.
+  Input shape is a [14, 255] uint16_t matrix, demonstrating a natural use case for LoadUnalign handling unaligned input. Uses ReduceDataBlock to find the maximum of each DataBlock (16 uint16_t elements), with 4 cores processing in parallel, and StoreUnalign for contiguous result storage.
 - Example specifications:
   <table>
   <tr><td rowspan="1" align="center">Example Type (OpType)</td><td colspan="3" align="center">AIV Example</td></tr>
@@ -70,19 +70,19 @@ This example implements unaligned data transfer operations between UB (Unified B
      - UB is packed tightly, with 255 elements per row
      - Rows 1-3 start addresses are not 32B aligned (510 bytes, 1020 bytes, 1530 bytes)
 
-  2. **LoadUnAlign natural usage**:
-     - All rows uniformly use LoadUnAlignPre + LoadUnAlign to handle both aligned addresses (row 0) and unaligned addresses (rows 1-3)
+  2. **LoadUnalign natural usage**:
+     - All rows uniformly use LoadUnalignPre + LoadUnalign to handle both aligned addresses (row 0) and unaligned addresses (rows 1-3)
      - Aligned addresses can also use the StoreAlign API. This is only to maintain uniform code format and serves as an example demonstration, not as a reference for optimal performance
 
   3. **ReduceDataBlock computation**:
      - Each row of 255 elements is processed in 2 VL blocks (128 + 127)
      - Each VL block produces 8 results (maximum per DataBlock)
 
-  4. **StoreUnAlign contiguous storage**:
-     - Uses the StoreUnAlign version with postUpdateStride
+  4. **StoreUnalign contiguous storage**:
+     - Uses the StoreUnalign version with postUpdateStride
      - Each store offsets by 8 elements (resultsPerRepeat=8)
      - After 2 loop iterations, automatically offsets to dstAddr+16
-     - StoreUnAlignPost handles the final boundary data
+     - StoreUnalignPost handles the final boundary data
 
   5. **Output layout**:
      - 16 results per row, data arranged contiguously

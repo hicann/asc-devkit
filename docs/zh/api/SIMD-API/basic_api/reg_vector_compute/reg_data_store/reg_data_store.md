@@ -4,11 +4,11 @@
 
 -   **[非连续对齐搬出（StoreAlign）](StoreAlign_noncontinuous.md)**  
 
--   **[连续非对齐搬出（StoreUnAlign）](StoreUnAlign_continuous.md)**  
+-   **[连续非对齐搬出（StoreUnalign）](StoreUnalign_continuous.md)**
 
 -   **[MaskReg搬出（StoreAlign）](StoreAlign_MaskReg.md)**  
 
--   **[MaskReg非对齐搬出（StoreUnAlign）](StoreUnAlign_MaskReg.md)**  
+-   **[MaskReg非对齐搬出（StoreUnalign）](StoreUnalign_MaskReg.md)**
 
 -   **[离散搬出（Scatter）](Scatter_discrete.md)**  
 

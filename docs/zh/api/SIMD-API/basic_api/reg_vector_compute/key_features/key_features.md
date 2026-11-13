@@ -47,7 +47,7 @@ Reg矢量计算API提供了下表所示多种搬运指令，合理选择搬运�
 | :-- | :-- | 
 | 连续对齐搬入(LoadAlign) | 能够实现数据从起始地址32B对齐的UB连续搬入RegTensor。 |
 | 非连续对齐搬入(LoadAlign) | 能够实现数据从起始地址32B对齐的UB非连续搬入RegTensor。|
-| 连续非对齐搬入(LoadUnAlign) | 能够实现数据从起始地址非32B对齐的UB连续搬入RegTensor。|
+| 连续非对齐搬入(LoadUnalign) | 能够实现数据从起始地址非32B对齐的UB连续搬入RegTensor。|
 | MaskReg搬入(LoadAlign) | 能够实现数据从起始地址32B对齐的UB连续搬入MaskReg。|
 | MaskReg搬入(MaskGenWithRegTensor) | 能够实现数据从RegTensor搬入MaskReg。|
 | 离散搬入(Gather) | 能够根据索引值index将源操作数按元素收集到目的操作数RegTensor中。|

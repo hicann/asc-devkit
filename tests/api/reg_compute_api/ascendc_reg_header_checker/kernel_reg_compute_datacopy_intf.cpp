@@ -216,4 +216,18 @@ extern "C" __simd_vf__ void datacopy_test()
     // template <typename T>
     // __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg);
     AscendC::Reg::StoreUnAlign(bAddr, mask, u1);
+
+    // Verify all overloads of the normalized Unalign APIs alongside the legacy names.
+    AscendC::Reg::LoadUnalignPre(u1, aAddr);
+    AscendC::Reg::LoadUnalign(a, u1, aAddr, 5);
+    AscendC::Reg::LoadUnalign(a, u1, aAddr);
+    AscendC::Reg::LoadUnalignPre(u1, aAddr, a1);
+    AscendC::Reg::LoadUnalign(a, u1, aAddr, a1, 0);
+    AscendC::Reg::StoreUnalign(aAddr, a, u1, 5);
+    AscendC::Reg::StoreUnalignPost(aAddr, u1, 5);
+    AscendC::Reg::StoreUnalign(aAddr, a, u1, a1);
+    AscendC::Reg::StoreUnalignPost(aAddr, u1, a1);
+    AscendC::Reg::StoreUnalign(aAddr, a, u1);
+    AscendC::Reg::StoreUnalignPost(aAddr, u1);
+    AscendC::Reg::StoreUnalign(bAddr, mask, u1);
 }

@@ -136,12 +136,16 @@ static void test_host_kernel_reg_compute_datacopy_intf()
     using AscendC::Reg::Load;
     using AscendC::Reg::LoadAlign;
     using AscendC::Reg::LoadUnAlign;
+    using AscendC::Reg::LoadUnalign;
     using AscendC::Reg::LoadUnAlignPre;
+    using AscendC::Reg::LoadUnalignPre;
     using AscendC::Reg::Scatter;
     using AscendC::Reg::Store;
     using AscendC::Reg::StoreAlign;
     using AscendC::Reg::StoreUnAlign;
+    using AscendC::Reg::StoreUnalign;
     using AscendC::Reg::StoreUnAlignPost;
+    using AscendC::Reg::StoreUnalignPost;
 }
 
 static void test_host_kernel_reg_compute_gather_mask_intf()

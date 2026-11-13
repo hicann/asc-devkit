@@ -137,7 +137,7 @@ for (uint32_t i = 0; i < aDim; i++) {
    当前RegBase的基础写法仍会写入UB，未进行循环融合。
 
 2. **显式Load/Store控制搬运时机**：
-   MemBase中搬运动作由API隐式完成，开发者无法控制。RegBase通过 `LoadAlign` / `StoreAlign`（对齐搬运）或 `LoadUnAlign` / `StoreUnAlign`（非对齐搬运）显式控制搬运粒度与时机，可以精确调度数据流。
+   MemBase中搬运动作由API隐式完成，开发者无法控制。RegBase通过 `LoadAlign` / `StoreAlign`（对齐搬运）或 `LoadUnalign` / `StoreUnalign`（非对齐搬运）显式控制搬运粒度与时机，可以精确调度数据流。
 
 **关键变化**：
 

@@ -166,7 +166,7 @@
 
 -   UnalignRegForLoad & UnalignRegForStore
 
-    UnalignRegForLoad、UnalignRegForStore用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销。在读不对齐地址前，UnalignRegForLoad、UnalignRegForStore应该通过LoadUnAlignPre API初始化，然后使用LoadUnAlign API。在写不对齐地址时，先使用StoreUnAlign API，再使用StoreUnAlignPost API后处理。
+    UnalignRegForLoad、UnalignRegForStore用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销。在读不对齐地址前，UnalignRegForLoad、UnalignRegForStore应该通过LoadUnalignPre API初始化，然后使用LoadUnalign API。在写不对齐地址时，先使用StoreUnalign API，再使用StoreUnalignPost API后处理。
 
 -   AddrReg
 

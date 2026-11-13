@@ -136,7 +136,7 @@ for (uint32_t i = 0; i < aDim; i++) {
    Note that the current RegBase baseline approach still writes back to UB without loop fusion.
 
 2. **Explicit Load/Store control over data movement timing**:
-   In MemBase, data movement actions are implicitly performed by the API and cannot be controlled by the developer. RegBase, through `LoadAlign` / `StoreAlign` (aligned movement) or `LoadUnAlign` / `StoreUnAlign` (unaligned movement), allows explicit control over movement granularity and timing, enabling precise scheduling of data flow.
+   In MemBase, data movement actions are implicitly performed by the API and cannot be controlled by the developer. RegBase, through `LoadAlign` / `StoreAlign` (aligned movement) or `LoadUnalign` / `StoreUnalign` (unaligned movement), allows explicit control over movement granularity and timing, enabling precise scheduling of data flow.
 
 **Key Changes**:
 

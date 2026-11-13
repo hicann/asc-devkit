@@ -18,9 +18,9 @@ Ascend 950PR&950DT系列产品
 | 非连续对齐搬入（LoadAlign） | b8 | b8 | 128 |
 | 非连续对齐搬入（LoadAlign） | b16 | b16 | 64 |
 | 非连续对齐搬入（LoadAlign） | b32 | b32 | 32 |
-| 连续非对齐搬入（LoadUnAlign） | b8 | b8 | 256（LoadUnAlign）/32（LoadUnAlignPre） |
-| 连续非对齐搬入（LoadUnAlign） | b16 | b16 | 128（LoadUnAlign）/16（LoadUnAlignPre） |
-| 连续非对齐搬入（LoadUnAlign） | b32 | b32 | 64（LoadUnAlign）/8（LoadUnAlignPre） |
+| 连续非对齐搬入（LoadUnalign） | b8 | b8 | 256（LoadUnalign）/32（LoadUnalignPre） |
+| 连续非对齐搬入（LoadUnalign） | b16 | b16 | 128（LoadUnalign）/16（LoadUnalignPre） |
+| 连续非对齐搬入（LoadUnalign） | b32 | b32 | 64（LoadUnalign）/8（LoadUnalignPre） |
 | 离散搬入（Gather） | b8 | b16 | 64 |
 | 离散搬入（Gather） | b16 | b16 | 64 |
 | 离散搬入（Gather） | b32 | b32 | 32 |
@@ -43,9 +43,9 @@ Ascend 950PR&950DT系列产品
 | 非连续对齐搬出（StoreAlign） | b8 | b8 | 128 |
 | 非连续对齐搬出（StoreAlign） | b16 | b16 | 64 |
 | 非连续对齐搬出（StoreAlign） | b32 | b32 | 32 |
-| 连续非对齐搬出（StoreUnAlign） | b8 | b8 | 256（StoreUnAlign）/32（StoreUnAlignPost） |
-| 连续非对齐搬出（StoreUnAlign） | b16 | b16 | 128（StoreUnAlign）/16（StoreUnAlignPost） |
-| 连续非对齐搬出（StoreUnAlign） | b32 | b32 | 64（StoreUnAlign）/8（StoreUnAlignPost） |
+| 连续非对齐搬出（StoreUnalign） | b8 | b8 | 256（StoreUnalign）/32（StoreUnalignPost） |
+| 连续非对齐搬出（StoreUnalign） | b16 | b16 | 128（StoreUnalign）/16（StoreUnalignPost） |
+| 连续非对齐搬出（StoreUnalign） | b32 | b32 | 64（StoreUnalign）/8（StoreUnalignPost） |
 | 离散搬出（Scatter） | b8 | b8 | 128 |
 | 离散搬出（Scatter） | b16 | b16 | 64 |
 | 离散搬出（Scatter） | b32 | b32 | 32 |
@@ -62,7 +62,7 @@ Ascend 950PR&950DT系列产品
 | 接口 | 理论耗时（cycle） |
 | -------- | ---------------- |
 | MaskReg搬出（StoreAlign） | 1 |
-| MaskReg非对齐搬出（StoreUnAlign） | 1 |
+| MaskReg非对齐搬出（StoreUnalign） | 1 |
 
 **表5**  MaskReg计算
 

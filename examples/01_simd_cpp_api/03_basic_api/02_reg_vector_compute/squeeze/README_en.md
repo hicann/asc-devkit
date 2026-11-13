@@ -1,7 +1,7 @@
 # squeeze Example
 
 ## Overview
-This example implements the Squeeze operation based on the Reg programming interface, primarily calling the Squeeze API and the StoreUnAlign/StoreUnAlignPost APIs.
+This example implements the Squeeze operation based on the Reg programming interface, primarily calling the Squeeze API and the StoreUnalign/StoreUnalignPost APIs.
 
 ## Supported Products and CANN Versions
 
@@ -23,10 +23,10 @@ This example implements the Squeeze operation based on the Reg programming inter
 ## Example Description
 - Example functionality:
   This example sets MaskReg to MaskPattern::M4. In each iteration, elements from the input vector xReg whose indices are multiples of 4 are selected and sequentially copied into the output vector yReg in a contiguous layout, with the remaining positions in the output vector set to 0.
-  - When the Squeeze API template parameter store is configured as STORE_REG, it can record the number of valid elements and store it in the AR special register, for use with the StoreUnAlign API
-  - The StoreUnAlign API can use the value recorded in the AR special register as the number of elements to transfer, enabling contiguous unaligned transfer to move the Squeeze results out consecutively
+  - When the Squeeze API template parameter store is configured as STORE_REG, it can record the number of valid elements and store it in the AR special register, for use with the StoreUnalign API
+  - The StoreUnalign API can use the value recorded in the AR special register as the number of elements to transfer, enabling contiguous unaligned transfer to move the Squeeze results out consecutively
 - Constraint description:
-  - When the Squeeze API template parameter store is configured as STORE_REG, the Squeeze API and StoreUnAlign API must be used alternately to ensure proper enabling of the AR special register
+  - When the Squeeze API template parameter store is configured as STORE_REG, the Squeeze API and StoreUnalign API must be used alternately to ensure proper enabling of the AR special register
   - Before computation, call the ClearSpr API to clear the AR register; otherwise, residual data may cause precision issues
 - Example specifications:
   <table>
@@ -39,8 +39,8 @@ This example implements the Squeeze operation based on the Reg programming inter
 - Example implementation:
   - The input vector shape is [1, 256] with data type float. Four iterations are performed, with each iteration processing 64 elements
   - Squeeze: Each call selects elements from xReg whose indices are multiples of 4, that is, xReg[i * 4], and writes them consecutively into yReg[i]. The result y[0:16] contains 16 valid elements, the remaining y[16:64] is set to 0, and the AR special register value is set to 16
-  - StoreUnAlign: Uses the value in the AR register as the number of elements to transfer, moving the first 16 elements from yReg to the unaligned register ureg or the output UB address yAddr
-  - StoreUnAlignPost: After all 4 iterations complete, moves the remaining data from ureg
+  - StoreUnalign: Uses the value in the AR register as the number of elements to transfer, moving the first 16 elements from yReg to the unaligned register ureg or the output UB address yAddr
+  - StoreUnalignPost: After all 4 iterations complete, moves the remaining data from ureg
   - Invocation implementation: Uses the kernel invocation syntax <<<>>> to call the kernel function.
 
 ## Build and Run

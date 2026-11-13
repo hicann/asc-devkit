@@ -74,7 +74,7 @@ This example demonstrates and verifies data transfer from a RegTensor (the basic
 
 - Example implementation:
   1. Calls LoadAlign to load selection operands x, y into RegTensor
-  2. Calls LoadUnAlignPre/LoadUnAlign to load the mask operand into RegTensor, loading 2 elements per iteration, that is, 8 bytes / 64 bits of data
+  2. Calls LoadUnalignPre/LoadUnalign to load the mask operand into RegTensor, loading 2 elements per iteration, that is, 8 bytes / 64 bits of data
   3. Calls MaskGenWithRegTensor to extract 64 bits of data from the first 8 bytes of mReg, fills them into a 256-bit MaskReg in downsampling mode: every 4 mask bits correspond to 1 src bit. Processing diagram:
   <img src="figures/move_reg_1.png">
   4. Calls the Select API to select elements from xReg or yReg element-wise based on maskReg, writing into zReg, as shown below

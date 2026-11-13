@@ -294,7 +294,7 @@
 | --- | --- |
 | [RegTensor](reg_vector_compute/register_data_types/RegTensor.md) | Reg矢量计算基本单元，RegTensor位宽为VL（Vector Length），具体值可能因不同AI处理器型号而异。 |
 | [MaskReg](reg_vector_compute/register_data_types/MaskReg.md) | MaskReg用于指示在计算过程中哪些元素参与计算，宽度为RegTensor的八分之一（VL/8）。 |
-| [UnalignRegForLoad & UnalignRegForStore](reg_vector_compute/register_data_types/UnalignRegForLoad-UnalignRegForStore.md) | UnalignRegForLoad、UnalignRegForStore用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销。在读不对齐地址前，UnalignRegForLoad、UnalignRegForStore应该通过LoadUnAlignPre API初始化，然后使用LoadUnAlign API。在写不对齐地址时，先使用StoreUnAlign API， |
+| [UnalignRegForLoad & UnalignRegForStore](reg_vector_compute/register_data_types/UnalignRegForLoad-UnalignRegForStore.md) | UnalignRegForLoad、UnalignRegForStore用作缓冲区来优化UB和RegTensor之间连续不对齐地址访问的开销。在读不对齐地址前，UnalignRegForLoad、UnalignRegForStore应该通过LoadUnalignPre API初始化，然后使用LoadUnalign API。在写不对齐地址时，先使用StoreUnalign API， |
 | [AddrReg](reg_vector_compute/register_data_types/AddrReg.md) | AddrReg即为Address Register（地址寄存器），是用于存储地址偏移量的寄存器。AddrReg应该通过CreateAddrReg API初始化，然后在循环中使用AddrReg存储地址偏移量。AddrReg在每层循环中根据所设置的stride进行自增。 |
 
 ### Reg数据搬运
@@ -305,8 +305,8 @@
 | [连续对齐搬出](reg_vector_compute/reg_data_store/StoreAlign_continuous.md) | Reg矢量计算数据搬运接口，适用于从RegTensor连续对齐搬出到UB。 |
 | [非连续对齐搬入](reg_vector_compute/reg_data_load/LoadAlign_noncontinuous.md) | Reg矢量计算数据搬运接口，适用于从UB非连续对齐搬入RegTensor（以DataBlock为单位）。 |
 | [非连续对齐搬出](reg_vector_compute/reg_data_store/StoreAlign_noncontinuous.md) | Reg矢量计算数据搬运接口，适用于从RegTensor非连续对齐搬出到UB（以DataBlock为单位）。 |
-| [连续非对齐搬入](reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md) | Reg矢量计算数据搬运接口，适用于从UB非32B对齐地址起始连续搬入RegTensor。 |
-| [连续非对齐搬出](reg_vector_compute/reg_data_store/StoreUnAlign_continuous.md) | Reg矢量计算数据搬运接口，适用于从RegTensor连续非对齐搬出到UB。 |
+| [连续非对齐搬入](reg_vector_compute/reg_data_load/LoadUnalign_continuous.md) | Reg矢量计算数据搬运接口，适用于从UB非32B对齐地址起始连续搬入RegTensor。 |
+| [连续非对齐搬出](reg_vector_compute/reg_data_store/StoreUnalign_continuous.md) | Reg矢量计算数据搬运接口，适用于从RegTensor连续非对齐搬出到UB。 |
 | [MaskReg搬入](reg_vector_compute/reg_data_load/LoadAlign_MaskReg.md) | Reg矢量计算数据搬运接口，适用于从UB或RegTensor搬入MaskReg。 |
 | [MaskReg搬出](reg_vector_compute/reg_data_store/StoreAlign_MaskReg.md) | Reg矢量计算数据搬运接口，适用于从MaskReg搬出到UB。 |
 | [Move](reg_vector_compute/reg_data_load/Move.md) | 对srcReg中的有效元素逐个复制写入dstReg中对应位置处。 |

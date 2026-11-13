@@ -43,7 +43,7 @@
 
 Reg矢量计算数据搬运接口，支持从Unified Buffer（UB）非32字节对齐的源地址srcAddr搬运至RegTensor。当RegTensor模板参数regTrait为RegTraitNumOne时，搬运量为VL（256B）；当regTrait为RegTraitNumTwo时，搬运量为2*VL（512B）。连续搬运时，用户需手动更新srcAddr地址。
 
-该接口封装了[LoadUnAlignPre和LoadUnAlign](LoadUnAlign_continuous.md)。
+该接口封装了[LoadUnalignPre和LoadUnalign](LoadUnalign_continuous.md)。
 
 ## 函数原型<a name="section429122319217"></a>
 

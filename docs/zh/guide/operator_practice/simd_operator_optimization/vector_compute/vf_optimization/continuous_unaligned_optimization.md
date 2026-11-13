@@ -3,7 +3,7 @@
 ## 连续非对齐搬运优化建议<a name="section14269121313385"></a>
 
 -   优先采用连续对齐搬运以避免额外开销，提升整体性能。
--   由于硬件支持限制，连续非对齐搬运时不建议使用AddrReg存储偏移量，推荐使用uint32\_t类型存储偏移量，使用[post update](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnAlign_continuous.md)模式搬运，该场景下每次调用接口自动更新源操作数在Unified Buffer（UB）上的地址。后续的优化建议均基于此场景展开。
+-   由于硬件支持限制，连续非对齐搬运时不建议使用AddrReg存储偏移量，推荐使用uint32\_t类型存储偏移量，使用[post update](../../../../../api/SIMD-API/basic_api/reg_vector_compute/reg_data_load/LoadUnalign_continuous.md)模式搬运，该场景下每次调用接口自动更新源操作数在Unified Buffer（UB）上的地址。后续的优化建议均基于此场景展开。
 -   连续非对齐搬入时，每次将UB数据搬运至RegTensor后，非对齐寄存器会缓存后续非对齐数据，下一次搬运时非对齐寄存器中的数据会写入RegTensor，因此连续非对齐搬入初始化仅需执行一次，应移至for循环外部。
 -   连续非对齐搬出时，每次将RegTensor数据搬运至UB后，非对齐寄存器会缓存后续非对齐数据，下一次搬运时非对齐寄存器中缓存的数据将写入UB，因此连续非对齐搬出后处理只需执行一次，应移至for循环外部。
 
@@ -11,23 +11,23 @@
 
 ```
 // 非对齐搬入初始化，使用uint32_t管理偏移量，移至for循环外部。
-AscendC::Reg::LoadUnAlignPre(ureg0, srcAddr);
+AscendC::Reg::LoadUnalignPre(ureg0, srcAddr);
 for (uint16_t i = 0; i < repeatTimes; ++i) {
-     AscendC::Reg::LoadUnAlign(srcReg, ureg0, srcAddr + i * postUpdateStride);
-     AscendC::Reg::StoreUnAlign(dstAddr, srcReg, ureg1, postUpdateStride);
+     AscendC::Reg::LoadUnalign(srcReg, ureg0, srcAddr + i * postUpdateStride);
+     AscendC::Reg::StoreUnalign(dstAddr, srcReg, ureg1, postUpdateStride);
 }
 // 非对齐搬出后处理，移至for循环外部。
-AscendC::Reg::StoreUnAlignPost(dstAddr, ureg1, 0);
+AscendC::Reg::StoreUnalignPost(dstAddr, ureg1, 0);
 ```
 
 【反例】
 
 ```
 for (uint16_t i = 0; i < repeatTimes; ++i) {
-     AscendC::Reg::LoadUnAlignPre(ureg0, srcAddr + i * postUpdateStride);
-     AscendC::Reg::LoadUnAlign(srcReg, ureg0, srcAddr + i * postUpdateStride);
-     AscendC::Reg::StoreUnAlign(dstAddr, srcReg, ureg1, postUpdateStride);
-     AscendC::Reg::StoreUnAlignPost(dstAddr, ureg1, 0);
+     AscendC::Reg::LoadUnalignPre(ureg0, srcAddr + i * postUpdateStride);
+     AscendC::Reg::LoadUnalign(srcReg, ureg0, srcAddr + i * postUpdateStride);
+     AscendC::Reg::StoreUnalign(dstAddr, srcReg, ureg1, postUpdateStride);
+     AscendC::Reg::StoreUnalignPost(dstAddr, ureg1, 0);
 }
 ```
 
@@ -35,27 +35,27 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
 
 为提升对不规则内存地址的处理能力，Reg矢量计算支持在数据搬运过程中对非32字节对齐的地址进行访问，适用于从UB向RegTensor非对齐搬运，或从RegTensor向UB非对齐搬运的场景。为降低非对齐访问带来的性能开销，RegBase引入非对齐寄存器缓存机制，该机制利用非对齐寄存器UnalignRegForLoad和UnalignRegForStore作为临时缓存区，用于暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。
 
-在读非对齐地址前，应该先通过LoadUnAlignPre进行初始化，然后再使用LoadUnAlign。在写非对齐地址时，先使用StoreUnAlign，再使用StoreUnAlignPost进行后处理。使用uint32\_t管理偏移量的搬入搬出接口和maskReg搬出接口如下：
+在读非对齐地址前，应该先通过LoadUnalignPre进行初始化，然后再使用LoadUnalign。在写非对齐地址时，先使用StoreUnalign，再使用StoreUnalignPost进行后处理。使用uint32\_t管理偏移量的搬入搬出接口和maskReg搬出接口如下：
 
 -   连续非对齐搬入，使用uint32\_t存储搬运量
 
     ```
-    __simd_callee__ inline void LoadUnAlignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
-    __simd_callee__ inline void LoadUnAlign(U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, uint32_t postUpdateStride);
+    __simd_callee__ inline void LoadUnalignPre(UnalignRegForLoad& ureg, __ubuf__ T* srcAddr);
+    __simd_callee__ inline void LoadUnalign(U& dstReg, UnalignRegForLoad& ureg, __ubuf__ T*& srcAddr, uint32_t postUpdateStride);
     ```
 
 -   连续非对齐搬出，使用uint32\_t存储偏移量
 
     ```
-    __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, uint32_t postUpdateStride);
-    __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
+    __simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, uint32_t postUpdateStride);
+    __simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
     ```
 
 -   连续非对齐搬出，将maskReg搬出至UB
 
     ```
-    __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg);
-    __simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
+    __simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg);
+    __simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride);
     ```
 
 ## 非对齐寄存器原理<a name="section1949183624916"></a>
@@ -66,8 +66,8 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
 
     如下图所示，从UB地址srcAddr \~ 304读取数据，并将其搬运至目标寄存器dstReg（256B）。处理流程如下：
 
-    -   调用**LoadUnAlignPre**进行非对齐搬入初始化。非对齐寄存器ureg缓存UB地址32 \~ 64的有效数据，作为后续非对齐访问的前置数据缓存。
-    -   调用**LoadUnAlign**，硬件指令将UB地址64 \~ 320的数据搬入临时寄存器tmpReg，并将ureg中srcAddr \~ 64对应的数据与tmpReg中地址64 \~ 304对应的数据拼接在一起，将结果写入dstReg。本次搬运后，UB地址288 \~ 320的数据会被写入ureg。连续非对齐搬入时，由于LoadUnAlign会将后续未对齐的数据缓存至ureg，所以下一次搬入不需要再次调用LoadUnAlignPre，只需在第一次搬入前调用一次LoadUnAlignPre，从而实现非对齐搬入的性能优化。
+    -   调用**LoadUnalignPre**进行非对齐搬入初始化。非对齐寄存器ureg缓存UB地址32 \~ 64的有效数据，作为后续非对齐访问的前置数据缓存。
+    -   调用**LoadUnalign**，硬件指令将UB地址64 \~ 320的数据搬入临时寄存器tmpReg，并将ureg中srcAddr \~ 64对应的数据与tmpReg中地址64 \~ 304对应的数据拼接在一起，将结果写入dstReg。本次搬运后，UB地址288 \~ 320的数据会被写入ureg。连续非对齐搬入时，由于LoadUnalign会将后续未对齐的数据缓存至ureg，所以下一次搬入不需要再次调用LoadUnalignPre，只需在第一次搬入前调用一次LoadUnalignPre，从而实现非对齐搬入的性能优化。
 
         **图1**  非对齐数据搬入<a name="fig638414472320"></a>  
         
@@ -79,8 +79,8 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
 
     **场景一：ureg为空**
 
-    -   调用**StoreUnAlign**，此时ureg内无有效数据，表示连续非对齐搬出的起始状态，将srcReg中对应UB地址48 \~ 288的数据写入dstAddr，同步将srcReg中对应UB地址288 \~ 320的数据缓存至ureg。
-    -   调用**StoreUnAlignPost**进行非对齐搬出后处理。将ureg中缓存的UB地址288 \~ 320对应的有效数据写入UB。
+    -   调用**StoreUnalign**，此时ureg内无有效数据，表示连续非对齐搬出的起始状态，将srcReg中对应UB地址48 \~ 288的数据写入dstAddr，同步将srcReg中对应UB地址288 \~ 320的数据缓存至ureg。
+    -   调用**StoreUnalignPost**进行非对齐搬出后处理。将ureg中缓存的UB地址288 \~ 320对应的有效数据写入UB。
 
     **图2**  非对齐数据搬出（ureg为空）<a name="fig34750199610"></a>  
     
@@ -88,8 +88,8 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
 
     **场景二：ureg不为空**
 
-    -   调用**StoreUnAlign**，此时ureg内有有效数据，系统将ureg中UB地址32 \~ dstAddr对应的数据与srcReg中UB地址dstAddr \~ 288对应的数据进行拼接，结果写入UB地址dstAddr。同步将srcReg中对应UB地址288 \~ 320的数据缓存至ureg。连续非对齐搬出时，由于当ureg不为空时，下一次StoreUnAlign会读本次StoreUnAlign缓存至ureg中数据，所以本次搬出不需调用StoreUnAlignPost，只需在搬出后调用一次StoreUnAlignPost，从而实现非对齐搬出的性能优化。
-    -   调用**StoreUnAlignPost**进行非对齐搬出后处理。将ureg中缓存的UB地址288 \~ 320对应的有效数据写入UB。
+    -   调用**StoreUnalign**，此时ureg内有有效数据，系统将ureg中UB地址32 \~ dstAddr对应的数据与srcReg中UB地址dstAddr \~ 288对应的数据进行拼接，结果写入UB地址dstAddr。同步将srcReg中对应UB地址288 \~ 320的数据缓存至ureg。连续非对齐搬出时，由于当ureg不为空时，下一次StoreUnalign会读本次StoreUnalign缓存至ureg中数据，所以本次搬出不需调用StoreUnalignPost，只需在搬出后调用一次StoreUnalignPost，从而实现非对齐搬出的性能优化。
+    -   调用**StoreUnalignPost**进行非对齐搬出后处理。将ureg中缓存的UB地址288 \~ 320对应的有效数据写入UB。
 
     **图3**  非对齐数据搬出（ureg不为空）<a name="fig579119300430"></a>  
     
@@ -107,7 +107,7 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
     -   将maskReg1压缩后的16B数据（UB地址dstAddr \~ 56）缓存至ureg。
     -   将ureg中的数据与maskReg2压缩后的16B数据的部分数据（UB地址56 \~ 64）进行拼接，结果写入UB地址dstAddr \~ 64。
     -   将maskReg2压缩后的16B数据的部分数据（UB地址64 \~ 72）缓存至ureg。
-    -   非对齐搬出后处理。将ureg中缓存的数据写入UB地址64 \~ 72。MaskReg连续非对齐搬出与RegTensor连续非对齐搬出类似，只需在搬出后调用一次StoreUnAlignPost，实现MaskReg连续非对齐搬出的性能优化。
+    -   非对齐搬出后处理。将ureg中缓存的数据写入UB地址64 \~ 72。MaskReg连续非对齐搬出与RegTensor连续非对齐搬出类似，只需在搬出后调用一次StoreUnalignPost，实现MaskReg连续非对齐搬出的性能优化。
 
     **图4**  MaskReg连续非对齐数据搬出<a name="fig18974124104813"></a>  
     
@@ -123,19 +123,19 @@ for (uint16_t i = 0; i < repeatTimes; ++i) {
 
     ```cpp
     template <typename T> 
-    __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t postUpdateStride, uint16_t repeatTimes) 
+    __simd_vf__ inline void LoadUnalignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t postUpdateStride, uint16_t repeatTimes)
     { 
     AscendC::Reg::RegTensor<T> srcReg; 
     AscendC::Reg::UnalignRegForLoad ureg0; 
     AscendC::Reg::UnalignRegForStore ureg1; 
     // 非对齐搬入初始化，只需在迭代开始前调用一次。 
-    AscendC::Reg::LoadUnAlignPre(ureg0, srcAddr); 
+    AscendC::Reg::LoadUnalignPre(ureg0, srcAddr);
     for (uint16_t i = 0; i < repeatTimes; ++i) { 
-        AscendC::Reg::LoadUnAlign(srcReg, ureg0, srcAddr, postUpdateStride); 
-        AscendC::Reg::StoreUnAlign(dstAddr, srcReg, ureg1, postUpdateStride); 
+        AscendC::Reg::LoadUnalign(srcReg, ureg0, srcAddr, postUpdateStride);
+        AscendC::Reg::StoreUnalign(dstAddr, srcReg, ureg1, postUpdateStride);
     } 
     // 非对齐搬出后处理，只需在迭代结束后调用一次。 
-    AscendC::Reg::StoreUnAlignPost(dstAddr, ureg1, 0); 
+    AscendC::Reg::StoreUnalignPost(dstAddr, ureg1, 0);
     }
     ```
 

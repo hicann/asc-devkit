@@ -50,7 +50,7 @@ __aicore__ inline int64_t GetSpr()
 
 | 取值 | 含义 |
 |------|------|
-| AR | AR寄存器通常配合Reg矢量计算API [Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_vector_compute/reg_data_store/StoreUnAlign_continuous.md)的场景3（无需显式传入偏移量）接口一起使用，寄存器会存储有效元素的总字节数。 |
+| AR | AR寄存器通常配合Reg矢量计算API [Squeeze](../reg_vector_compute/compare_and_select/Squeeze.md)和[连续非对齐搬出](../reg_vector_compute/reg_data_store/StoreUnalign_continuous.md)的场景3（无需显式传入偏移量）接口一起使用，寄存器会存储有效元素的总字节数。 |
 
 ## 数据类型<a name="section3853852112218"></a>
 
@@ -80,9 +80,9 @@ __simd_vf__ inline void SqueezeVF(__ubuf__ T* xAddr, __ubuf__ T* yAddr, uint32_t
     for (uint16_t i = 0; i < repeatTimes; ++i) {
         AscendC::Reg::LoadAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(xReg, xAddr, oneRepeatSize);
         AscendC::Reg::Squeeze<T, AscendC::Reg::GatherMaskMode::STORE_REG>(yReg, xReg, mask);
-        AscendC::Reg::StoreUnAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(yAddr, yReg, ureg);
+        AscendC::Reg::StoreUnalign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(yAddr, yReg, ureg);
     }
-    AscendC::Reg::StoreUnAlignPost(yAddr, ureg);
+    AscendC::Reg::StoreUnalignPost(yAddr, ureg);
 }
 
 __aicore__ inline void Process()

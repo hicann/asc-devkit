@@ -76,8 +76,8 @@ __simd_callee__ inline void LocalMemBar()
 
 | MemType取值 | 含义 |
 | ------ | ------ |
-| VEC_STORE | SIMD_VF函数内矢量写UB流水线。<br>对应寄存器到UB的搬运指令，如StoreAlign、StoreUnAlign、Store。 |
-| VEC_LOAD | SIMD_VF函数内矢量读UB流水线。<br>对应UB到寄存器的搬运指令，如LoadAlign、LoadUnAlign、Load。 |
+| VEC_STORE | SIMD_VF函数内矢量写UB流水线。<br>对应寄存器到UB的搬运指令，如StoreAlign、StoreUnalign、Store。 |
+| VEC_LOAD | SIMD_VF函数内矢量读UB流水线。<br>对应UB到寄存器的搬运指令，如LoadAlign、LoadUnalign、Load。 |
 | SCALAR_STORE | SIMD_VF函数内标量写UB流水线。<br>对应标量写入UB的指令。 |
 | SCALAR_LOAD | SIMD_VF函数内标量读UB流水线。<br>对应UB读取标量的指令。 |
 | VEC_ALL | SIMD_VF函数内所有矢量读写UB流水线。 |

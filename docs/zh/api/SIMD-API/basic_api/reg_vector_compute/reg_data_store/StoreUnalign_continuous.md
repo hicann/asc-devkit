@@ -1,4 +1,4 @@
-# 连续非对齐搬出（StoreUnAlign）<a name="ZH-CN_TOPIC_0000001929071470"></a>
+# 连续非对齐搬出（StoreUnalign）<a name="ZH-CN_TOPIC_0000001929071470"></a>
 
 ## 产品支持情况<a name="section1550532418810"></a>
 
@@ -50,7 +50,10 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h"`。
 
-为提升对不规则内存地址的处理能力，Reg矢量计算支持在数据搬运过程中对非32字节对齐的地址进行访问，降低非对齐访问带来的性能开销。StoreUnAlign能够实现数据从[RegTensor](../register_data_types/RegTensor.md)连续搬运至非对齐Unified Buffer（UB），利用非对齐寄存器UnalignRegForStore作为临时缓存区，暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。
+>[!NOTE]说明
+>StoreUnalign、StoreUnalignPost接口分别与StoreUnAlign、StoreUnAlignPost接口的功能、模板参数、函数参数、支持的数据类型和约束保持一致。推荐使用StoreUnalign、StoreUnalignPost。
+
+为提升对不规则内存地址的处理能力，Reg矢量计算支持在数据搬运过程中对非32字节对齐的地址进行访问，降低非对齐访问带来的性能开销。StoreUnalign能够实现数据从[RegTensor](../register_data_types/RegTensor.md)连续搬运至非对齐Unified Buffer（UB），利用非对齐寄存器UnalignRegForStore作为临时缓存区，暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。
 
 非对齐搬运接口有：PostUpdate扩展搬运接口、使用[AddrReg](../register_data_types/AddrReg.md)寄存器存储偏移量接口、使用[AR寄存器](../compare_and_select/Squeeze.md)存储偏移量接口。
 
@@ -65,9 +68,21 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
-非对齐寄存器UnalignRegForStore作为临时缓存区，用于暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。在写非对齐地址前，应该先调用StoreUnAlign，再调用StoreUnAlignPost进行后处理，处理非32字节对齐的尾块数据。
+非对齐寄存器UnalignRegForStore作为临时缓存区，用于暂存跨对齐边界的数据，从而实现高效的连续非对齐数据传输。在写非对齐地址前，应该先调用StoreUnalign，再调用StoreUnalignPost进行后处理，处理非32字节对齐的尾块数据。
 
 - PostUpdate扩展搬运接口
+
+    推荐接口（新名称）：
+
+    ```cpp
+    template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+    __simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, uint32_t postUpdateStride)
+
+    template <typename T, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE>
+    __simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride)
+    ```
+
+    原接口（兼容保留）：
 
     ```cpp
     template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
@@ -79,6 +94,18 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 - 使用AddrReg寄存器存储偏移量接口
 
+    推荐接口（新名称）：
+
+    ```cpp
+    template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+    __simd_callee__ inline void StoreUnalign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, AddrReg& areg)
+
+    template <typename T>
+    __simd_callee__ inline void StoreUnalignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, AddrReg& areg)
+    ```
+
+    原接口（兼容保留）：
+
     ```cpp
     template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
     __simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, U& srcReg, UnalignRegForStore& ureg, AddrReg& areg)
@@ -88,6 +115,18 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
     ```
 
 - 使用AR寄存器存储偏移量接口：配合[Squeeze](../compare_and_select/Squeeze.md)使用，Squeeze会存储有效元素的总字节数到AR特殊寄存器，使用此接口会将AR寄存器中有效元素个数作为存储偏移量。
+
+    推荐接口（新名称）：
+
+    ```cpp
+    template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
+    __simd_callee__ inline void StoreUnalign(__ubuf__ T* dstAddr, U& srcReg, UnalignRegForStore& ureg)
+
+    template <typename T>
+    __simd_callee__ inline void StoreUnalignPost(__ubuf__ T* dstAddr, UnalignRegForStore& ureg)
+    ```
+
+    原接口（兼容保留）：
 
     ```cpp
     template <typename T = DefaultType, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE, typename U>
@@ -137,9 +176,9 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 ## 约束说明<a name="section1575141714439"></a>
 
-- StoreUnAlign与StoreUnAlignPost接口需要组合使用。
+- StoreUnalign与StoreUnalignPost接口需要组合使用。
 - 对于使用AR寄存器存储偏移量接口：
-    - 当Squeeze接口的模板参数store配置为STORE_REG时，必须保证Squeeze接口和StoreUnAlign交替使用。
+    - 当Squeeze接口的模板参数store配置为STORE_REG时，必须保证Squeeze接口和StoreUnalign交替使用。
     - 在调用计算前需要调用ClearSpr接口，将AR寄存器清零。
 
 - 当RegTensor模板参数RegTrait为RegTraitNumOne和RegTraitNumTwo时，支持情况如下：
@@ -159,9 +198,9 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 如[图1](#fig-storeunalign-1)所示，从源寄存器srcReg（256B）读取数据，并将其搬运至目标UB地址（dstAddr ~ 304）。处理流程如下：
 
-① 调用**StoreUnAlign**，此时ureg内无有效数据，表示连续非对齐搬出的起始状态，将srcReg中对应UB地址48 ~ 288的数据写入dstAddr。此外，srcReg中对应UB地址288 ~ 304的数据会被写入ureg。
+① 调用**StoreUnalign**，此时ureg内无有效数据，表示连续非对齐搬出的起始状态，将srcReg中对应UB地址48 ~ 288的数据写入dstAddr。此外，srcReg中对应UB地址288 ~ 304的数据会被写入ureg。
 
-② 调用**StoreUnAlignPost**进行非对齐搬出后处理。将ureg中缓存的数据写入UB地址288 ~ 304。
+② 调用**StoreUnalignPost**进行非对齐搬出后处理。将ureg中缓存的数据写入UB地址288 ~ 304。
 
 **图 1**  非对齐数据搬出（ureg为空）<a id="fig-storeunalign-1"></a>
 
@@ -171,9 +210,9 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 如[图2](#fig-storeunalign-2)所示，从源寄存器srcReg（256B）读取数据，并将其搬运至目标UB地址（dstAddr ~ 304）。处理流程如下：
 
-① 调用**StoreUnAlign**，此时ureg内有有效数据，系统将ureg中UB地址32 ~ dstAddr对应的数据与srcReg中UB地址dstAddr ~ 288对应的数据进行拼接，结果写入UB地址dstAddr。此外，srcReg中对应UB地址288 ~ 304的数据会被写入ureg。
+① 调用**StoreUnalign**，此时ureg内有有效数据，系统将ureg中UB地址32 ~ dstAddr对应的数据与srcReg中UB地址dstAddr ~ 288对应的数据进行拼接，结果写入UB地址dstAddr。此外，srcReg中对应UB地址288 ~ 304的数据会被写入ureg。
 
-② 调用**StoreUnAlignPost**进行非对齐搬出后处理。将ureg中缓存的数据写入UB地址288 ~ 304。
+② 调用**StoreUnalignPost**进行非对齐搬出后处理。将ureg中缓存的数据写入UB地址288 ~ 304。
 
 
 **图 2**  非对齐数据搬出（ureg不为空）<a id="fig-storeunalign-2"></a>
@@ -186,9 +225,9 @@ RegTensor的模板参数regTrait支持RegTraitNumOne及RegTraitNumTwo，具体�
 
 ![](../../../../figures/reg_loadstoreunalign.png)
 
-**连续非对齐搬入时，LoadUnAlign会将后续未对齐的数据缓存至ureg，所以下一次搬入不需要再次调用LoadUnAlignPre，只需在迭代开始前调用一次LoadUnAlignPre，从而实现非对齐搬入的性能优化。**
+**连续非对齐搬入时，LoadUnalign会将后续未对齐的数据缓存至ureg，所以下一次搬入不需要再次调用LoadUnalignPre，只需在迭代开始前调用一次LoadUnalignPre，从而实现非对齐搬入的性能优化。**
 
-**连续非对齐搬出时，下次迭代的StoreUnAlign会将本次迭代StoreUnAlign缓存至ureg中的数据写入UB，所以本次迭代不需要调用StoreUnAlignPost将ureg数据写入UB，只需在迭代结束后调用一次StoreUnAlignPost，从而实现非对齐搬出的性能优化。**
+**连续非对齐搬出时，下次迭代的StoreUnalign会将本次迭代StoreUnalign缓存至ureg中的数据写入UB，所以本次迭代不需要调用StoreUnalignPost将ureg数据写入UB，只需在迭代结束后调用一次StoreUnalignPost，从而实现非对齐搬出的性能优化。**
 
 如[图3 连续非对齐搬入搬出示例](#fig-storeunalign-3)，将UB地址48 \~ 560的uint32\_t数据\[1, 2, 3, ... , 128\]搬入至dstReg，再搬回UB，需要两次搬入搬出操作，即for循环执行两次，初始化和后处理移至for循环外。
 
@@ -198,19 +237,19 @@ PostUpdate扩展搬运接口POST\_MODE\_UPDATE模式示例片段如下：
 
 ```cpp
 template <typename T>
-__simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t postUpdateStride, uint16_t repeatTimes)
+__simd_vf__ inline void LoadUnalignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t postUpdateStride, uint16_t repeatTimes)
 {
     AscendC::Reg::RegTensor<T> dstReg;
     AscendC::Reg::UnalignRegForLoad ureg1;
     AscendC::Reg::UnalignRegForStore ureg2;
     // 非对齐搬入初始化，只需在迭代开始前调用一次。
-    AscendC::Reg::LoadUnAlignPre(ureg1, srcAddr);
+    AscendC::Reg::LoadUnalignPre(ureg1, srcAddr);
     for (uint16_t i = 0; i < repeatTimes; ++i) {
-        AscendC::Reg::LoadUnAlign(dstReg, ureg1, srcAddr, postUpdateStride);
-        AscendC::Reg::StoreUnAlign(dstAddr, dstReg, ureg2, postUpdateStride);
+        AscendC::Reg::LoadUnalign(dstReg, ureg1, srcAddr, postUpdateStride);
+        AscendC::Reg::StoreUnalign(dstAddr, dstReg, ureg2, postUpdateStride);
     }
     // 非对齐搬出后处理，只需在迭代结束后调用一次。
-    AscendC::Reg::StoreUnAlignPost(dstAddr, ureg2, 0);
+    AscendC::Reg::StoreUnalignPost(dstAddr, ureg2, 0);
 }
 ```
 
@@ -229,17 +268,17 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
 
     ```cpp
     template <typename T>
-    __simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t postUpdateStride, uint16_t repeatTimes)
+    __simd_vf__ inline void StoreUnalignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t postUpdateStride, uint16_t repeatTimes)
     {
         AscendC::Reg::RegTensor<T> srcReg;
         AscendC::Reg::UnalignRegForLoad ureg0;
         AscendC::Reg::UnalignRegForStore ureg1;
-        AscendC::Reg::LoadUnAlignPre(ureg0, srcAddr);
+        AscendC::Reg::LoadUnalignPre(ureg0, srcAddr);
         for (uint16_t i = 0; i < repeatTimes; ++i) {
-            AscendC::Reg::LoadUnAlign(srcReg, ureg0, srcAddr, postUpdateStride);
-            AscendC::Reg::StoreUnAlign(dstAddr, srcReg, ureg1, postUpdateStride);
+            AscendC::Reg::LoadUnalign(srcReg, ureg0, srcAddr, postUpdateStride);
+            AscendC::Reg::StoreUnalign(dstAddr, srcReg, ureg1, postUpdateStride);
         }
-        AscendC::Reg::StoreUnAlignPost(dstAddr, ureg1, 0);
+        AscendC::Reg::StoreUnalignPost(dstAddr, ureg1, 0);
     }
     ```
 
@@ -247,7 +286,7 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
 
     ```cpp
     template <typename T>
-    __simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
+    __simd_vf__ inline void StoreUnalignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t oneRepeatSize, uint16_t repeatTimes)
     {
         AscendC::Reg::RegTensor<T> srcReg;    
         AscendC::Reg::UnalignRegForLoad ureg0;
@@ -255,11 +294,11 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
         AscendC::Reg::AddrReg aReg;
         for (uint16_t i = 0; i < repeatTimes; ++i) {
             aReg = AscendC::Reg::CreateAddrReg<T>(i, oneRepeatSize);
-            AscendC::Reg::LoadUnAlignPre(ureg0, srcAddr, aReg);
-            AscendC::Reg::LoadUnAlign(srcReg, ureg0, srcAddr, aReg, 0);
-            AscendC::Reg::StoreUnAlign(dstAddr, srcReg, ureg1, aReg);
+            AscendC::Reg::LoadUnalignPre(ureg0, srcAddr, aReg);
+            AscendC::Reg::LoadUnalign(srcReg, ureg0, srcAddr, aReg, 0);
+            AscendC::Reg::StoreUnalign(dstAddr, srcReg, ureg1, aReg);
         }
-        AscendC::Reg::StoreUnAlignPost(dstAddr, ureg1, aReg);
+        AscendC::Reg::StoreUnalignPost(dstAddr, ureg1, aReg);
     }
     ```
 
@@ -276,8 +315,8 @@ __simd_vf__ inline void LoadUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, 
         for (uint16_t i = 0; i < repeatTimes; ++i) {
             AscendC::Reg::LoadAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(srcReg0, srcAddr, oneRepeatSize);
             AscendC::Reg::Squeeze<T, AscendC::Reg::GatherMaskMode::STORE_REG>(srcReg1, srcReg0, mask);
-            AscendC::Reg::StoreUnAlign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(dstAddr, srcReg1, ureg);
+            AscendC::Reg::StoreUnalign<T, AscendC::Reg::PostLiteral::POST_MODE_UPDATE>(dstAddr, srcReg1, ureg);
         }
-        AscendC::Reg::StoreUnAlignPost(dstAddr, ureg);
+        AscendC::Reg::StoreUnalignPost(dstAddr, ureg);
     }
     ```
