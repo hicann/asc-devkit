@@ -58,7 +58,10 @@ const uint16_t MASK_ARRAY_SIZE = 4;
      __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)
 const int32_t B32_BIT_SIZE = 32;
 #endif
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113))
+const uint32_t TOTAL_L0A_SIZE = 32 * 1024;
+const uint32_t TOTAL_L0B_SIZE = 32 * 1024;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
 const uint32_t TOTAL_L0A_SIZE = 0;
 const uint32_t TOTAL_L0B_SIZE = 16 * 1024;
 #else
@@ -96,6 +99,11 @@ constexpr uint32_t POWER_INT32_BITS = 32;
 constexpr uint32_t INT4_TWO = 2;
 constexpr uint32_t INT4_BIT_NUM = 4;
 
+#if (__NPU_ARCH__ == 3113)
+// int2b_t param
+constexpr uint32_t INT1_EIGHT = 8;
+#endif
+
 #if (__NPU_ARCH__ == 5102)
 // int2b_t param
 constexpr uint32_t INT2_FOUR = 4;
@@ -120,6 +128,7 @@ constexpr uint32_t INT3_BIT_NUM = 3;
 // int2b_t param
 constexpr uint32_t INT2_FOUR = 4;
 constexpr uint32_t INT2_BIT_NUM = 2;
+constexpr uint32_t INT1_BIT_NUM = 1;
 #endif
 
 namespace ConstantsInternal {
@@ -207,6 +216,13 @@ const uint32_t SINGLE_MSG_SIZE = 64;
 const uint32_t CACHE_LINE_SIZE = 64;
 const uint32_t TOTAL_L0C_SIZE = 128 * 1024;
 const uint32_t VECTOR_REG_WIDTH = 256;
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3103)
+const int32_t TOTAL_VEC_LOCAL_SIZE = 118 * 1024;
+const uint32_t TOTAL_UB_SIZE = 118 * 1024;
+const uint32_t TMP_UB_OFFSET = 118 * 1024;
+const uint32_t TOTAL_L1_SIZE = 512 * 1024;
+const uint32_t TOTAL_L0C_SIZE = 32 * 1024;
+const uint32_t ONE_BLOCK_SIZE = 32;
 #elif (__NPU_ARCH__ == 3510)
 const int32_t TOTAL_VEC_LOCAL_SIZE = 248 * 1024;
 const uint32_t TOTAL_UB_SIZE = 248 * 1024;
@@ -713,7 +729,8 @@ struct IntegerSubType {
 
 using int4b_t = integer_sub_type<INT4_BIT_NUM, true>;
 
-#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5102) || \
+    (__NPU_ARCH__ == 5162)
 using int2b_t = IntegerSubType<INT2_BIT_NUM, true>;
 using int1b_t = IntegerSubType<INT1_BIT_NUM, true>;
 using uint1b_t = IntegerSubType<INT1_BIT_NUM, false>;
@@ -802,7 +819,7 @@ struct SizeOfBits<int4b_t> {
     static int const value = INT4_BIT_NUM;
 };
 
-#if (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
+#if (__NPU_ARCH__ == 3103) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 5162)
 template <>
 struct SizeOfBits<int2b_t> {
     static constexpr uint32_t value = INT2_BIT_NUM;

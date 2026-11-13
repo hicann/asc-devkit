@@ -12,7 +12,6 @@
  * \file kernel_operator_macro_intf.h
  * \brief
  */
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "kernel_operator_macro_intf.h cannot be used with compile flag --enable-simt enabled."
 #endif
@@ -23,7 +22,7 @@
 #endif
 
 #ifndef ASCENDC_MODULE_OPERATOR_MACRO_INTERFACE_H
-#define ASCENDC_MODULE_OPERATOR_MACRO_INTERFACE_
+#define ASCENDC_MODULE_OPERATOR_MACRO_INTERFACE_H
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101 || __NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || \
                               __NPU_ARCH__ == 5163 || __NPU_ARCH__ == 5162)

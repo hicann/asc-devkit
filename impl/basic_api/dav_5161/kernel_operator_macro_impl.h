@@ -12,7 +12,6 @@
  * \file kernel_operator_macro_impl.h
  * \brief
  */
-
 #if !defined(__ASCENDC_INCLUDE_INTERNAL_HEADERS__)
 #pragma message( \
     "impl/basic_api/dav_5161/kernel_operator_macro_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"basic_api/kernel_operator_intf.h\"\" and use public functions or variables defined in interface headers files.")
@@ -312,11 +311,18 @@ __aicore__ inline void SetItaMaxAddrCal(const ItaMaxAddrParaParams& params)
 
 __aicore__ inline void SetMatrixMxParaCal(const MatrixMxParaBitModeParams& params)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current version is not supported!"); });
+#else
     set_mx_buf_addr(params.GetConfig0());
+#endif
 }
 
 __aicore__ inline void SetMatrixMxParaCal(const MatrixMxParaParams& params)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current version is not supported!"); });
+#else
     constexpr uint8_t POS_A_MX_ADDR = 0;
     constexpr uint8_t POS_B_MX_ADDR = 32;
 
@@ -325,6 +331,7 @@ __aicore__ inline void SetMatrixMxParaCal(const MatrixMxParaParams& params)
     mxPara |= (uint64_t)(params.bMxAddr) << POS_B_MX_ADDR;
 
     set_mx_buf_addr(mxPara);
+#endif
 }
 
 __aicore__ inline uint64_t EncodeConvFixConfig0Dav5161(const ConvFixParams& convFixParams)
@@ -423,12 +430,8 @@ __aicore__ inline void matmul(
         (IsSameType<Src0T, float8_e4m3_t>::value && IsSameType<Src1T, float8_e4m3_t>::value) ||
         (IsSameType<Src0T, float8_e4m3_t>::value && IsSameType<Src1T, int8_t>::value)) {
         matmul_to_cbuf(dst, left, right, bias, btBias, config);
-    } else if constexpr (IsSameType<Src0T, float8_e4m3_t>::value) {
-        matmul_to_cbuf_e4m3s4(dst, left, (__cb__ void*)right, bias, btBias, config);
-    } else if constexpr (IsSameType<Src0T, int8_t>::value) {
-        matmul_to_cbuf_s8s4(dst, left, (__cb__ void*)right, bias, btBias, config);
     } else {
-        matmul_to_cbuf_s4s4(dst, (__cbuf__ void*)left, (__cb__ void*)right, bias, btBias, config);
+        ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "datatype is not supported!"); });
     }
 }
 
@@ -526,16 +529,23 @@ template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadMxFixCal(
     __cbuf__ DstT* dst, __cbuf__ Src0T* left, __cb__ Src1T* right, const MmadFixBitModeParams& mmadFixParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     matmul_mx_to_cbuf(dst, left, right, (__cbuf__ int32_t*)get_imm(0), (uint64_t)0, mmadFixParams.GetConfig0());
+#else
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "MmadMxFix is not supported on current device"); });
+#endif
 }
 
 template <typename DstT, typename Src0T, typename Src1T>
 __aicore__ inline void MmadMxFixCal(
     __cbuf__ DstT* dst, __cbuf__ Src0T* left, __cb__ Src1T* right, const MmadFixParams& mmadFixParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     uint64_t config0 = EncodeMmadFixConfig0Dav5161(mmadFixParams);
-
     matmul_mx_to_cbuf(dst, left, right, (__cbuf__ int32_t*)get_imm(0), (uint64_t)0, config0);
+#else
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "MmadMxFix is not supported on current device"); });
+#endif
 }
 
 template <typename DstT, typename Src0T, typename Src1T, typename BiasT>
@@ -543,17 +553,22 @@ __aicore__ inline void MmadMxFixCal(
     __cbuf__ DstT* dst, __cbuf__ Src0T* left, __cb__ Src1T* right, uint64_t bias,
     const MmadFixBitModeParams& mmadFixParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     if (mmadFixParams.GetBiasMatrixBroadcast()) {
         matmul_mx_to_cbuf(dst, left, right, (__cbuf__ int32_t*)get_imm(0), bias, mmadFixParams.GetConfig0());
     } else {
         matmul_mx_to_cbuf(dst, left, right, (__cbuf__ int32_t*)bias, (uint64_t)0, mmadFixParams.GetConfig0());
     }
+#else
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "MmadMxFix is not supported on current device"); });
+#endif
 }
 
 template <typename DstT, typename Src0T, typename Src1T, typename BiasT>
 __aicore__ inline void MmadMxFixCal(
     __cbuf__ DstT* dst, __cbuf__ Src0T* left, __cb__ Src1T* right, uint64_t bias, const MmadFixParams& mmadFixParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5161 || __NPU_ARCH__ == 5165 || __NPU_ARCH__ == 5163)
     uint64_t config0 = EncodeMmadFixConfig0Dav5161(mmadFixParams);
 
     if (mmadFixParams.biasMatrixBroadcast) {
@@ -561,6 +576,9 @@ __aicore__ inline void MmadMxFixCal(
     } else {
         matmul_mx_to_cbuf(dst, left, right, (__cbuf__ int32_t*)bias, (uint64_t)0, config0);
     }
+#else
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "MmadMxFix is not supported on current device"); });
+#endif
 }
 
 template <typename DstT, typename SrcT>

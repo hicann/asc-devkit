@@ -24,6 +24,52 @@
 #include "../../../include/basic_api/kernel_operator_sys_var_intf.h"
 
 namespace AscendC {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+template <typename T>
+__aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const Load2DBitModeParam& loadDataParam)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "LoadData A1 To A2 is not supported!"); });
+}
+
+template <typename T>
+__aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const Load2DBitModeParam& loadDataParam)
+{
+    static_assert(
+        SupportType<
+            T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, half,
+            bfloat16_t>(),
+        "LoadData 2dv2 only support int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, uint8_t, int8_t, hifloat8_t, fp8_e5m2_t, fp8_e4m3fn_t, \
+         half, bfloat16_t, on current device!");
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+    if (loadDataParam.GetIfTranspose()) {
+        load_cbuf_to_cb(
+            dst, src, loadDataParam.GetMStartPosition(), loadDataParam.GetKStartPosition(), loadDataParam.GetMStep(),
+            loadDataParam.GetKStep(), loadDataParam.GetSrcStride(), loadDataParam.GetDstStride(), 1);
+    } else {
+        load_cbuf_to_cb(
+            dst, src, loadDataParam.GetMStartPosition(), loadDataParam.GetKStartPosition(), loadDataParam.GetMStep(),
+            loadDataParam.GetKStep(), loadDataParam.GetSrcStride(), loadDataParam.GetDstStride(), 0);
+    }
+#else
+    if constexpr (SupportType<T, int4b_t, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t>()) {
+        if (loadDataParam.GetIfTranspose()) {
+            load_cbuf_to_cb_s4(
+                (__cb__ void*)dst, (__cbuf__ void*)src, loadDataParam.GetConfig0(), loadDataParam.GetConfig1(), true);
+        } else {
+            load_cbuf_to_cb_s4(
+                (__cb__ void*)dst, (__cbuf__ void*)src, loadDataParam.GetConfig0(), loadDataParam.GetConfig1(), false);
+        }
+    } else {
+        if (loadDataParam.GetIfTranspose()) {
+            load_cbuf_to_cb(dst, src, loadDataParam.GetConfig0(), loadDataParam.GetConfig1(), true);
+        } else {
+            load_cbuf_to_cb(dst, src, loadDataParam.GetConfig0(), loadDataParam.GetConfig1(), false);
+        }
+    }
+#endif
+}
+#endif
+
 /* **************************************************************************************************
  * LoadData 2dv1                                             *
  * ************************************************************************************************* */
@@ -72,12 +118,13 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const LoadData2DParamsV2& loadDataParams)
 {
     static_assert(
-        SupportType<T, int4b_t, uint8_t, int8_t, fp8_e4m3fn_t, half>(),
-        "LoadData 2dv2 only support int4b_t/uint8_t/int8_t/fp8_e4m3fn_t/half on current device!");
+        SupportType<T, int4b_t, uint8_t, uint16_t, int8_t, int16_t, hifloat8_t, half, bfloat16_t>(),
+        "LoadData 2dv2 only support int4b_t, uint8_t, uint16_t, int8_t, int16_t, hifloat8_t, half, bfloat16_t on "
+        "current device!");
 
     if constexpr (IsSameType<T, int4b_t>::value) {
         load_cbuf_to_cb_s4(
-            (__cb__ T*)dst, (__cbuf__ T*)src, loadDataParams.mStartPosition, loadDataParams.kStartPosition,
+            (__cb__ void*)dst, (__cbuf__ void*)src, loadDataParams.mStartPosition, loadDataParams.kStartPosition,
             loadDataParams.mStep, loadDataParams.kStep, loadDataParams.srcStride, loadDataParams.dstStride, false);
     } else if (loadDataParams.ifTranspose) {
         load_cbuf_to_cb(
@@ -196,11 +243,25 @@ __aicore__ inline void LoadData2DL12L0ATransposeCal(
 }
 
 template <typename T>
+__aicore__ inline void LoadData2DL12L0ATransposeCal(
+    __ca__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParamsV2& loadDataParam)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "LoadData A1 To A2 is not supported!"); });
+}
+
+template <typename T>
 __aicore__ inline void LoadData2DL12L0BTransposeCal(
     __cb__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParams& loadDataParams)
 {
     // LoadData2dTransposeParams do not match hardware capabilities, not currently supported, will be added later
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "LoadData A1 To A2 is not supported!"); });
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "LoadData B1 To B2 is not supported!"); });
+}
+
+template <typename T>
+__aicore__ inline void LoadData2DL12L0BTransposeCal(
+    __cb__ T* dst, __cbuf__ T* src, const LoadData2dTransposeParamsV2& loadDataParam)
+{
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "LoadData B1 To B2 is not supported!"); });
 }
 
 /* **************************************************************************************************
@@ -220,9 +281,12 @@ __aicore__ inline void LoadData2DL12L0BCal(
     __cb__ U* dst, __cbuf__ T* src0, __cbuf__ V* src1, const LoadData2DParamsV2& loadDataParams,
     const LoadData2DMxParams& loadMxDataParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current version is not supported!"); });
+#else
     static_assert(
         SupportType<T, fp8_e4m3fn_t, int4b_t>() ||
-            SupportType<Tuple<U, T>, Tuple<fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<int4b_t, int4b_t>>(),
+            SupportType<Tuple<U, T>, Tuple<fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<int4b_t, int4b_t> >(),
         "LoadData 2dv2 with scale matrix only support fp8_e4m3fn_t/int4b_t dtype on current device!");
 
     if constexpr (SupportType<U, fp8_e4m3fn_t>()) {
@@ -253,6 +317,7 @@ __aicore__ inline void LoadData2DL12L0BCal(
     load_cbuf_to_cb_mx(
         mxDstAddr, static_cast<__cbuf__ void*>(src1), loadMxDataParams.xStartPosition, loadMxDataParams.yStartPosition,
         loadMxDataParams.xStep, loadMxDataParams.yStep, loadMxDataParams.srcStride, loadMxDataParams.dstStride);
+#endif
 }
 
 /* **************************************************************************************************
@@ -365,23 +430,6 @@ __aicore__ inline void LoadData2DGM2L1DecompCal(
 }
 
 /* **************************************************************************************************
- * Mmad                                             *
- * ************************************************************************************************* */
-
-template <typename DstT, typename Src0T, typename Src1T>
-__aicore__ inline void MmadCal(__cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, const MmadParams& mmadParams)
-{
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Mmad is not supported!"); });
-}
-
-template <typename DstT, typename Src0T, typename Src1T>
-__aicore__ inline void MmadCal(
-    __cc__ DstT* c, __ca__ Src0T* a, __cb__ Src1T* b, uint64_t bias, const MmadParams& mmadParams, bool cmatrixSource)
-{
-    ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "Mmad is not supported!"); });
-}
-
-/* **************************************************************************************************
  * LoadData 3dv1                                             *
  * ************************************************************************************************* */
 template <typename T>
@@ -490,6 +538,13 @@ __aicore__ inline void BroadCastVecToMMCal(
 template <typename T>
 __aicore__ inline void InitL1BufferCal(__cbuf__ T* dst, const InitConstValueParams<T>& initConstValueParams)
 {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+    if (static_cast<uint64_t>(initConstValueParams.repeatTimes) > 32767UL) {
+        ASCENDC_ASSERT(
+            (false), { KERNEL_LOG(KERNEL_ERROR, "InitConstValue repeatTimes out of range, max is 32767!"); });
+    }
+#endif
+
     if constexpr (2 == sizeof(T)) {
         T tmpValue = initConstValueParams.initValue;
         half initValue = *(half*)(&tmpValue);

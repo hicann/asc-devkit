@@ -12,7 +12,6 @@
  * \file kernel_operator_fixpipe_impl.h
  * \brief
  */
-
 #if !defined(__ASCENDC_INCLUDE_INTERNAL_HEADERS__)
 #pragma message( \
     "impl/basic_api/dav_5161/kernel_operator_fixpipe_impl.h is an internal header file and must not be used directly. Functions or variables defined in this file may be removed in the future. Please use \"#include \"basic_api/kernel_tensor.h\"\" and use public functions or variables defined in interface headers files.")
@@ -26,7 +25,15 @@
 #include "../../../include/basic_api/kernel_struct_fixpipe.h"
 
 namespace AscendC {
-__aicore__ inline void SetFixPipeClipReluImpl(uint64_t config) { set_m_clip_relu(config); }
+__aicore__ inline void SetFixPipeClipReluImpl(uint64_t config)
+{
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+    (void)(config);
+    ASCENDC_REPORT_NOT_SUPPORT(false, "SetFixPipeClipRelu");
+#else
+    set_m_clip_relu(config);
+#endif
+}
 
 template <typename T>
 __aicore__ inline void SetFixPipeAddrImpl(const LocalTensor<T>& eleWiseTensor, uint16_t c0ChStride)
@@ -69,6 +76,46 @@ __aicore__ inline void SetFixpipeNz2ndFlagImpl(uint16_t ndNum, uint16_t srcNdStr
 }
 
 __aicore__ inline void SetFixpipePreQuantFlagImpl(uint64_t config) { set_m_quant_pre(config); }
+
+template <typename T, typename U, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2UBImpl(__ubuf__ T* dst, __cc__ U* src, const FixpipeParamsV220& intriParams)
+{
+    (void)(dst);
+    (void)(src);
+    (void)(intriParams);
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe L0C to UB");
+}
+
+template <typename T, typename U, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2UBImpl(
+    __ubuf__ T* dst, __cc__ U* src, __cbuf__ uint64_t* cbufWorkspace, const FixpipeParamsV220& intriParams)
+{
+    (void)(dst);
+    (void)(src);
+    (void)(cbufWorkspace);
+    (void)(intriParams);
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe L0C to UB");
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2GMImpl(__gm__ DstT* dst, __cc__ SrcT* src, const FixpipeParamsV220& intriParams)
+{
+    (void)(dst);
+    (void)(src);
+    (void)(intriParams);
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe L0C Buffer(CO1) to GM");
+}
+
+template <typename DstT, typename SrcT, const FixpipeConfig& config>
+__aicore__ inline void FixpipeL0C2GMImpl(
+    __gm__ DstT* dst, __cc__ SrcT* src, __cbuf__ uint64_t* cbufWorkspace, const FixpipeParamsV220& intriParams)
+{
+    (void)(dst);
+    (void)(src);
+    (void)(cbufWorkspace);
+    (void)(intriParams);
+    ASCENDC_REPORT_NOT_SUPPORT(false, "Fixpipe L0C Buffer(CO1) to GM");
+}
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_FIXPIPE_IMPL_H
 

@@ -12,7 +12,6 @@
  * \file kernel_common.h
  * \brief
  */
-
 #if defined(__NPU_COMPILER_INTERNAL_PURE_SIMT__)
 #error "kernel_common.h cannot be used with compile flag --enable-simt enabled."
 #endif

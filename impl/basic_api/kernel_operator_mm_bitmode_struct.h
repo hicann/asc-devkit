@@ -28,6 +28,14 @@
 #include "dav_9202/kernel_operator_mm_bitmode_impl.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5102)
 #include "dav_m510/kernel_operator_mm_bitmode_impl.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3003)
+#include "dav_l300/kernel_operator_mm_bitmode_impl_300.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3103)
+#include "dav_l310/kernel_operator_mm_bitmode_impl_310.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3113)
+#include "dav_l311/kernel_operator_mm_bitmode_impl_311.h"
+#elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5101)
+#include "dav_5161/kernel_operator_mm_bitmode_impl_5161.h"
 #elif defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
 #include "dav_5162/kernel_operator_mm_bitmode_impl.h"
 #endif
