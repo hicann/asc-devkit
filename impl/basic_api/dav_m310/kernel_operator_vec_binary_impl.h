@@ -39,137 +39,78 @@ __aicore__ inline void AddImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M310_DEFINE_BINARY_BITMASK_B16(DataType, Function, VectorType, VectorIntrinsic)              \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void Function(                                                                     \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const uint64_t mask[], \
+        const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                \
+    {                                                                                                    \
+        __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);     \
+        *((__ubuf__ uint64_t*)tmpBuf) = mask[0];                                                         \
+        *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];                                                     \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));         \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                            \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                           \
+        __VEC_SCOPE__                                                                                    \
+        {                                                                                                \
+            VectorType vreg0;                                                                            \
+            VectorType vreg1;                                                                            \
+            VectorType vreg2;                                                                            \
+            vector_bool preg;                                                                            \
+            plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);                                             \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);        \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);        \
+            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
+                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);           \
+                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);           \
+                VectorIntrinsic(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                \
+                vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);             \
+            }                                                                                            \
+        }                                                                                                \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);                                              \
     }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, AddImpl, vector_f16, vadd)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, AddImpl, vector_s16, vadd)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
+#define ASC_M310_DEFINE_BINARY_BITMASK_B32(DataType, Function, VectorType, VectorIntrinsic)              \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void Function(                                                                     \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const uint64_t mask[], \
+        const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                \
+    {                                                                                                    \
+        __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);     \
+        *((__ubuf__ uint64_t*)tmpBuf) = mask[0];                                                         \
+        *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];                                                     \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));         \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                            \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                           \
+        __VEC_SCOPE__                                                                                    \
+        {                                                                                                \
+            VectorType vreg0;                                                                            \
+            VectorType vreg1;                                                                            \
+            VectorType vreg2;                                                                            \
+            vector_bool preg;                                                                            \
+            vector_bool preg1;                                                                           \
+            plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);                                             \
+            punpack(preg1, preg, LOWER);                                                                 \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);        \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);        \
+            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
+                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);           \
+                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);           \
+                VectorIntrinsic(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);                               \
+                vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);             \
+            }                                                                                            \
+        }                                                                                                \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);                                              \
     }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
 
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vadd(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vadd(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B32(int32_t, AddImpl, vector_s32, vadd)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, AddImpl, vector_f32, vadd)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void AddImpl(
@@ -179,101 +120,36 @@ __aicore__ inline void AddImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
+#define ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(                                                          \
+    DataType, Function, VectorType, MaskIntrinsic, ElementCount, VectorIntrinsic)                        \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void Function(                                                                     \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const uint64_t mask,   \
+        const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                \
+    {                                                                                                    \
+        __VEC_SCOPE__                                                                                    \
+        {                                                                                                \
+            VectorType vreg0;                                                                            \
+            VectorType vreg1;                                                                            \
+            VectorType vreg2;                                                                            \
+            uint32_t sreg = static_cast<uint32_t>(mask);                                                 \
+            vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                                         \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);        \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);        \
+            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
+                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * ElementCount, strideConfig0, preg); \
+                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * ElementCount, strideConfig1, preg); \
+                VectorIntrinsic(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                \
+                vsstb(vreg2, dst + i * repeatParams.dstRepStride * ElementCount, strideConfig2, preg);   \
+            }                                                                                            \
+        }                                                                                                \
     }
-}
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void AddImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, AddImpl, vector_f16, plt_b16, 16, vadd)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, AddImpl, vector_s16, plt_b16, 16, vadd)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int32_t, AddImpl, vector_s32, plt_b32, 8, vadd)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(float, AddImpl, vector_f32, plt_b32, 8, vadd)
 /* **************************************************************************************************
  * Sub                                             *
  * ************************************************************************************************* */
@@ -286,137 +162,10 @@ __aicore__ inline void SubImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vsub(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vsub(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, SubImpl, vector_f16, vsub)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, SubImpl, vector_s16, vsub)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(int32_t, SubImpl, vector_s32, vsub)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, SubImpl, vector_f32, vsub)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void SubImpl(
@@ -426,101 +175,10 @@ __aicore__ inline void SubImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void SubImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, SubImpl, vector_f16, plt_b16, 16, vsub)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, SubImpl, vector_s16, plt_b16, 16, vsub)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int32_t, SubImpl, vector_s32, plt_b32, 8, vsub)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(float, SubImpl, vector_f32, plt_b32, 8, vsub)
 
 /* **************************************************************************************************
  * Mul                                             *
@@ -534,141 +192,10 @@ __aicore__ inline void MulImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmul(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmul(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, MulImpl, vector_f16, vmul)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, MulImpl, vector_s16, vmul)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(int32_t, MulImpl, vector_s32, vmul)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, MulImpl, vector_f32, vmul)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void MulImpl(
@@ -678,101 +205,10 @@ __aicore__ inline void MulImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MulImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, MulImpl, vector_f16, plt_b16, 16, vmul)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, MulImpl, vector_s16, plt_b16, 16, vmul)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int32_t, MulImpl, vector_s32, plt_b32, 8, vmul)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(float, MulImpl, vector_f32, plt_b32, 8, vmul)
 
 /* **************************************************************************************************
  * Div                                             *
@@ -786,73 +222,8 @@ __aicore__ inline void DivImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void DivImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void DivImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vdiv(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, DivImpl, vector_f16, vdiv)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, DivImpl, vector_f32, vdiv)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void DivImpl(
@@ -862,29 +233,7 @@ __aicore__ inline void DivImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void DivImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, DivImpl, vector_f16, plt_b16, 16, vdiv)
 
 template <typename T = float, bool isSetMask = true>
 __aicore__ inline void DivImpl(
@@ -931,237 +280,14 @@ __aicore__ inline void MaxImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmax(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmax(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, MaxImpl, vector_f16, vmax)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, MaxImpl, vector_s16, vmax)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(int32_t, MaxImpl, vector_s32, vmax)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, MaxImpl, vector_f32, vmax)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, MaxImpl, vector_f16, plt_b16, 16, vmax)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, MaxImpl, vector_s16, plt_b16, 16, vmax)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int32_t, MaxImpl, vector_s32, plt_b32, 8, vmax)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(float, MaxImpl, vector_f32, plt_b32, 8, vmax)
 
 /* **************************************************************************************************
  * Min                                             *
@@ -1175,141 +301,12 @@ __aicore__ inline void MinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
+ASC_M310_DEFINE_BINARY_BITMASK_B16(half, MinImpl, vector_f16, vmin)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, MinImpl, vector_s16, vmin)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(int32_t, MinImpl, vector_s32, vmin)
+ASC_M310_DEFINE_BINARY_BITMASK_B32(float, MinImpl, vector_f32, vmin)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmin(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg1);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg1);
-            vmin(vreg2, vreg0, vreg1, preg1, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg1);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+#undef ASC_M310_DEFINE_BINARY_BITMASK_B32
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void MinImpl(
@@ -1319,101 +316,10 @@ __aicore__ inline void MinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void MinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, const uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 8, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 8, strideConfig1, preg);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 8, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(half, MinImpl, vector_f16, plt_b16, 16, vmin)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, MinImpl, vector_s16, plt_b16, 16, vmin)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int32_t, MinImpl, vector_s32, plt_b32, 8, vmin)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(float, MinImpl, vector_f32, plt_b32, 8, vmin)
 
 /* **************************************************************************************************
  * And                                             *
@@ -1427,70 +333,8 @@ __aicore__ inline void AndImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void AndImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void AndImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, AndImpl, vector_s16, vand)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(uint16_t, AndImpl, vector_u16, vand)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void AndImpl(
@@ -1500,53 +344,8 @@ __aicore__ inline void AndImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void AndImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void AndImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, AndImpl, vector_s16, plt_b16, 16, vand)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(uint16_t, AndImpl, vector_u16, plt_b16, 16, vand)
 
 /* **************************************************************************************************
  * Or                                             *
@@ -1560,69 +359,10 @@ __aicore__ inline void OrImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void OrImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
+ASC_M310_DEFINE_BINARY_BITMASK_B16(int16_t, OrImpl, vector_s16, vor)
+ASC_M310_DEFINE_BINARY_BITMASK_B16(uint16_t, OrImpl, vector_u16, vor)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void OrImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const uint64_t mask[],
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tmpBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tmpBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tmpBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tmpBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tmpBuf);
-}
+#undef ASC_M310_DEFINE_BINARY_BITMASK_B16
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void OrImpl(
@@ -1632,53 +372,10 @@ __aicore__ inline void OrImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void OrImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(int16_t, OrImpl, vector_s16, plt_b16, 16, vor)
+ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK(uint16_t, OrImpl, vector_u16, plt_b16, 16, vor)
 
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void OrImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const uint64_t mask,
-    const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-        uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * 16, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * 16, strideConfig1, preg);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsstb(vreg2, dst + i * repeatParams.dstRepStride * 16, strideConfig2, preg);
-        }
-    }
-}
+#undef ASC_M310_DEFINE_BINARY_CONTINUOUS_MASK
 
 /* **************************************************************************************************
  * AddRelu                                             *

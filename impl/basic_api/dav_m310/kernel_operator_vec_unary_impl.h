@@ -64,8 +64,7 @@ namespace AscendC {
     }
 
 // Macros for level-0 api
-// for normal 8-bit types: s8, u8
-#define UNARY_VEC_NORMAL_T8(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                     \
+#define ASC_M310_DEFINE_UNARY_NORMAL(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE, UPDATE_MASK, BLOCK_ELEMS)  \
     template <typename T = DATA_TYPE, bool isSetMask = true>                                             \
     __aicore__ inline void FUNC_NAME(                                                                    \
         __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask, const uint8_t repeatTime, \
@@ -76,59 +75,13 @@ namespace AscendC {
             REG_TYPE vreg0;                                                                              \
             REG_TYPE vreg1;                                                                              \
             uint32_t sreg = static_cast<uint32_t>(mask);                                                 \
-            vector_bool preg = plt_b8(sreg, POST_UPDATE);                                                \
+            vector_bool preg = UPDATE_MASK(sreg, POST_UPDATE);                                           \
             uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);         \
             uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
             for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
-                vsldb(vreg0, src + i * repeatParams.srcRepStride * B8_BLOCK_SIZE, strideConfig0, preg);  \
+                vsldb(vreg0, src + i * repeatParams.srcRepStride * BLOCK_ELEMS, strideConfig0, preg);    \
                 OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                               \
-                vsstb(vreg1, dst + i * repeatParams.dstRepStride * B8_BLOCK_SIZE, strideConfig1, preg);  \
-            }                                                                                            \
-        }                                                                                                \
-    }
-
-// for normal 16-bit types: s16, f16
-#define UNARY_VEC_NORMAL_T16(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                    \
-    template <typename T = DATA_TYPE, bool isSetMask = true>                                             \
-    __aicore__ inline void FUNC_NAME(                                                                    \
-        __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask, const uint8_t repeatTime, \
-        const UnaryRepeatParams& repeatParams)                                                           \
-    {                                                                                                    \
-        __VEC_SCOPE__                                                                                    \
-        {                                                                                                \
-            REG_TYPE vreg0;                                                                              \
-            REG_TYPE vreg1;                                                                              \
-            uint32_t sreg = static_cast<uint32_t>(mask);                                                 \
-            vector_bool preg = plt_b16(sreg, POST_UPDATE);                                               \
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);         \
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
-                vsldb(vreg0, src + i * repeatParams.srcRepStride * B16_BLOCK_SIZE, strideConfig0, preg); \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                               \
-                vsstb(vreg1, dst + i * repeatParams.dstRepStride * B16_BLOCK_SIZE, strideConfig1, preg); \
-            }                                                                                            \
-        }                                                                                                \
-    }
-
-// for normal 32-bit types: s32, f32
-#define UNARY_VEC_NORMAL_T32(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                    \
-    template <typename T = DATA_TYPE, bool isSetMask = true>                                             \
-    __aicore__ inline void FUNC_NAME(                                                                    \
-        __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask, const uint8_t repeatTime, \
-        const UnaryRepeatParams& repeatParams)                                                           \
-    {                                                                                                    \
-        __VEC_SCOPE__                                                                                    \
-        {                                                                                                \
-            REG_TYPE vreg0;                                                                              \
-            REG_TYPE vreg1;                                                                              \
-            uint32_t sreg = static_cast<uint32_t>(mask);                                                 \
-            vector_bool preg = plt_b32(sreg, POST_UPDATE);                                               \
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);         \
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);         \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                           \
-                vsldb(vreg0, src + i * repeatParams.srcRepStride * B32_BLOCK_SIZE, strideConfig0, preg); \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                               \
-                vsstb(vreg1, dst + i * repeatParams.dstRepStride * B32_BLOCK_SIZE, strideConfig1, preg); \
+                vsstb(vreg1, dst + i * repeatParams.dstRepStride * BLOCK_ELEMS, strideConfig1, preg);    \
             }                                                                                            \
         }                                                                                                \
     }
@@ -165,128 +118,63 @@ namespace AscendC {
         AscendCUtils::FreeTemporaryBuffer<uint64_t>(maskBuf);                                               \
     }
 
-// for bit-wise 16-bit types: s16, f16
-#define UNARY_VEC_BITWISE_T16(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                     \
-    template <typename T = DATA_TYPE, bool isSetMask = true>                                               \
-    __aicore__ inline void FUNC_NAME(                                                                      \
-        __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask[], const uint8_t repeatTime, \
-        const UnaryRepeatParams& repeatParams)                                                             \
-    {                                                                                                      \
-        __ubuf__ uint64_t* maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(TMP_UB_OFFSET, 2);     \
-        maskBuf[0] = mask[0];                                                                              \
-        maskBuf[1] = mask[1];                                                                              \
-        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));           \
-        SetFlag<HardEvent::S_V>(eventIdSToV);                                                              \
-        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                             \
-        __VEC_SCOPE__                                                                                      \
-        {                                                                                                  \
-            REG_TYPE vreg0;                                                                                \
-            REG_TYPE vreg1;                                                                                \
-            vector_bool preg;                                                                              \
-            plds(preg, ((__ubuf__ uint32_t*)maskBuf), 0, US);                                              \
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);           \
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);           \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                             \
-                vsldb(vreg0, src + i * repeatParams.srcRepStride * B16_BLOCK_SIZE, strideConfig0, preg);   \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                                 \
-                vsstb(vreg1, dst + i * repeatParams.dstRepStride * B16_BLOCK_SIZE, strideConfig1, preg);   \
-            }                                                                                              \
-        }                                                                                                  \
-        AscendCUtils::FreeTemporaryBuffer<uint64_t>(maskBuf);                                              \
+// For 32-bit elements, expand the loaded predicate before using it.
+#define ASC_M310_LOAD_UNARY_MASK_B16(maskReg, maskBuf) \
+    vector_bool maskReg;                               \
+    plds(maskReg, ((__ubuf__ uint32_t*)maskBuf), 0, US)
+
+#define ASC_M310_LOAD_UNARY_MASK_B32(maskReg, maskBuf) \
+    vector_bool preg;                                  \
+    vector_bool maskReg;                               \
+    plds(preg, ((__ubuf__ uint32_t*)maskBuf), 0, US);  \
+    punpack(maskReg, preg, LOWER)
+
+#define ASC_M310_DEFINE_UNARY_BITWISE(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE, LOAD_MASK, MASK_REG, BLOCK_ELEMS) \
+    template <typename T = DATA_TYPE, bool isSetMask = true>                                                     \
+    __aicore__ inline void FUNC_NAME(                                                                            \
+        __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask[], const uint8_t repeatTime,       \
+        const UnaryRepeatParams& repeatParams)                                                                   \
+    {                                                                                                            \
+        __ubuf__ uint64_t* maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(TMP_UB_OFFSET, 2);           \
+        maskBuf[0] = mask[0];                                                                                    \
+        maskBuf[1] = mask[1];                                                                                    \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));                 \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                                    \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                                   \
+        __VEC_SCOPE__                                                                                            \
+        {                                                                                                        \
+            REG_TYPE vreg0;                                                                                      \
+            REG_TYPE vreg1;                                                                                      \
+            LOAD_MASK(MASK_REG, maskBuf);                                                                        \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);                 \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);                 \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                   \
+                vsldb(vreg0, src + i * repeatParams.srcRepStride * BLOCK_ELEMS, strideConfig0, MASK_REG);        \
+                OP_NAME(vreg1, vreg0, MASK_REG, MODE_ZEROING);                                                   \
+                vsstb(vreg1, dst + i * repeatParams.dstRepStride * BLOCK_ELEMS, strideConfig1, MASK_REG);        \
+            }                                                                                                    \
+        }                                                                                                        \
+        AscendCUtils::FreeTemporaryBuffer<uint64_t>(maskBuf);                                                    \
     }
 
-// for bit-wise 32-bit types: s32, f32
-#define UNARY_VEC_BITWISE_T32(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                     \
-    template <typename T = DATA_TYPE, bool isSetMask = true>                                               \
-    __aicore__ inline void FUNC_NAME(                                                                      \
-        __ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const uint64_t mask[], const uint8_t repeatTime, \
-        const UnaryRepeatParams& repeatParams)                                                             \
-    {                                                                                                      \
-        __ubuf__ uint64_t* maskBuf = AscendCUtils::GetTemporaryBufferAddr<uint64_t>(TMP_UB_OFFSET, 2);     \
-        maskBuf[0] = mask[0];                                                                              \
-        maskBuf[1] = mask[1];                                                                              \
-        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));           \
-        SetFlag<HardEvent::S_V>(eventIdSToV);                                                              \
-        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                             \
-        __VEC_SCOPE__                                                                                      \
-        {                                                                                                  \
-            REG_TYPE vreg0;                                                                                \
-            REG_TYPE vreg1;                                                                                \
-            vector_bool preg;                                                                              \
-            vector_bool preg1;                                                                             \
-            plds(preg, ((__ubuf__ uint32_t*)maskBuf), 0, US);                                              \
-            punpack(preg1, preg, LOWER);                                                                   \
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.srcBlkStride)) << 16);           \
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);           \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                             \
-                vsldb(vreg0, src + i * repeatParams.srcRepStride * B32_BLOCK_SIZE, strideConfig0, preg1);  \
-                OP_NAME(vreg1, vreg0, preg1, MODE_ZEROING);                                                \
-                vsstb(vreg1, dst + i * repeatParams.dstRepStride * B32_BLOCK_SIZE, strideConfig1, preg1);  \
-            }                                                                                              \
-        }                                                                                                  \
-        AscendCUtils::FreeTemporaryBuffer<uint64_t>(maskBuf);                                              \
-    }
-
-// for counter level-2 8-bit data
-#define UNARY_VEC_COUNTER_T8(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                        \
-    __aicore__ inline void FUNC_NAME(__ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const int32_t& count) \
-    {                                                                                                        \
-        __VEC_SCOPE__                                                                                        \
-        {                                                                                                    \
-            REG_TYPE vreg0;                                                                                  \
-            REG_TYPE vreg1;                                                                                  \
-            uint32_t sreg = static_cast<uint32_t>(count);                                                    \
-            vector_bool preg;                                                                                \
-            uint32_t sregLower = static_cast<uint32_t>(B8_REPEAT_SIZE);                                      \
-            uint16_t repeatTime = CeilDivision(count, B8_REPEAT_SIZE);                                       \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                               \
-                preg = plt_b8(sreg, POST_UPDATE);                                                            \
-                vlds(vreg0, src, i* sregLower, NORM);                                                        \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                                   \
-                vsts(vreg1, dst, i* sregLower, NORM_B8, preg);                                               \
-            }                                                                                                \
-        }                                                                                                    \
-    }
-
-// for counter level-2 16-bit data
-#define UNARY_VEC_COUNTER_T16(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                       \
-    __aicore__ inline void FUNC_NAME(__ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const int32_t& count) \
-    {                                                                                                        \
-        __VEC_SCOPE__                                                                                        \
-        {                                                                                                    \
-            REG_TYPE vreg0;                                                                                  \
-            REG_TYPE vreg1;                                                                                  \
-            uint32_t sreg = static_cast<uint32_t>(count);                                                    \
-            vector_bool preg;                                                                                \
-            uint32_t sregLower = static_cast<uint32_t>(B16_REPEAT_SIZE);                                     \
-            uint16_t repeatTime = CeilDivision(count, B16_REPEAT_SIZE);                                      \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                               \
-                preg = plt_b16(sreg, POST_UPDATE);                                                           \
-                vlds(vreg0, src, i* sregLower, NORM);                                                        \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                                   \
-                vsts(vreg1, dst, i* sregLower, NORM_B16, preg);                                              \
-            }                                                                                                \
-        }                                                                                                    \
-    }                                                                                                        \
-// for counter level-2 32-bit data
-#define UNARY_VEC_COUNTER_T32(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE)                                       \
-    __aicore__ inline void FUNC_NAME(__ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const int32_t& count) \
-    {                                                                                                        \
-        __VEC_SCOPE__                                                                                        \
-        {                                                                                                    \
-            REG_TYPE vreg0;                                                                                  \
-            REG_TYPE vreg1;                                                                                  \
-            uint32_t sreg = static_cast<uint32_t>(count);                                                    \
-            vector_bool preg;                                                                                \
-            uint32_t sregLower = static_cast<uint32_t>(B32_REPEAT_SIZE);                                     \
-            uint16_t repeatTime = CeilDivision(count, B32_REPEAT_SIZE);                                      \
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                               \
-                preg = plt_b32(sreg, POST_UPDATE);                                                           \
-                vlds(vreg0, src, i* sregLower, NORM);                                                        \
-                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                                   \
-                vsts(vreg1, dst, i* sregLower, NORM_B32, preg);                                              \
-            }                                                                                                \
-        }                                                                                                    \
+#define ASC_M310_DEFINE_UNARY_COUNTER(FUNC_NAME, OP_NAME, DATA_TYPE, REG_TYPE, UPDATE_MASK, REPEAT_ELEMS, STORE_MODE) \
+    __aicore__ inline void FUNC_NAME(__ubuf__ DATA_TYPE* dst, __ubuf__ DATA_TYPE* src, const int32_t& count)          \
+    {                                                                                                                 \
+        __VEC_SCOPE__                                                                                                 \
+        {                                                                                                             \
+            REG_TYPE vreg0;                                                                                           \
+            REG_TYPE vreg1;                                                                                           \
+            uint32_t sreg = static_cast<uint32_t>(count);                                                             \
+            vector_bool preg;                                                                                         \
+            uint32_t sregLower = static_cast<uint32_t>(REPEAT_ELEMS);                                                 \
+            uint16_t repeatTime = CeilDivision(count, REPEAT_ELEMS);                                                  \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                        \
+                preg = UPDATE_MASK(sreg, POST_UPDATE);                                                                \
+                vlds(vreg0, src, i* sregLower, NORM);                                                                 \
+                OP_NAME(vreg1, vreg0, preg, MODE_ZEROING);                                                            \
+                vsts(vreg1, dst, i* sregLower, STORE_MODE, preg);                                                     \
+            }                                                                                                         \
+        }                                                                                                             \
     }
 
 /* **************************************************************************************************
@@ -296,17 +184,17 @@ namespace AscendC {
 UNARY_VEC_NORMAL_NOT_SUPPORT(ExpImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(ExpImpl);
 
-UNARY_VEC_NORMAL_T16(ExpImpl, vexp, half, vector_f16);
-UNARY_VEC_NORMAL_T32(ExpImpl, vexp, float, vector_f32);
+ASC_M310_DEFINE_UNARY_NORMAL(ExpImpl, vexp, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(ExpImpl, vexp, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(ExpImpl, vexp, half, vector_f16);
-UNARY_VEC_BITWISE_T32(ExpImpl, vexp, float, vector_f32);
+ASC_M310_DEFINE_UNARY_BITWISE(ExpImpl, vexp, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(ExpImpl, vexp, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Exp::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(ExpImpl);
 
-UNARY_VEC_COUNTER_T16(ExpImpl, vexp, half, vector_f16);
-UNARY_VEC_COUNTER_T32(ExpImpl, vexp, float, vector_f32);
+ASC_M310_DEFINE_UNARY_COUNTER(ExpImpl, vexp, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(ExpImpl, vexp, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // /* **************************************************************************************************
 //  * Ln                                             *
@@ -315,17 +203,17 @@ UNARY_VEC_COUNTER_T32(ExpImpl, vexp, float, vector_f32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(LnImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(LnImpl);
 
-UNARY_VEC_NORMAL_T16(LnImpl, vln, half, vector_f16);
-UNARY_VEC_NORMAL_T32(LnImpl, vln, float, vector_f32);
+ASC_M310_DEFINE_UNARY_NORMAL(LnImpl, vln, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(LnImpl, vln, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(LnImpl, vln, half, vector_f16);
-UNARY_VEC_BITWISE_T32(LnImpl, vln, float, vector_f32);
+ASC_M310_DEFINE_UNARY_BITWISE(LnImpl, vln, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(LnImpl, vln, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Ln::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(LnImpl);
 
-UNARY_VEC_COUNTER_T16(LnImpl, vln, half, vector_f16);
-UNARY_VEC_COUNTER_T32(LnImpl, vln, float, vector_f32);
+ASC_M310_DEFINE_UNARY_COUNTER(LnImpl, vln, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(LnImpl, vln, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // /* **************************************************************************************************
 //  * Abs                                             *
@@ -334,26 +222,26 @@ UNARY_VEC_COUNTER_T32(LnImpl, vln, float, vector_f32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(AbsImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(AbsImpl);
 
-UNARY_VEC_NORMAL_T8(AbsImpl, vabs, int8_t, vector_s8);
-UNARY_VEC_NORMAL_T16(AbsImpl, vabs, half, vector_f16);
-UNARY_VEC_NORMAL_T32(AbsImpl, vabs, float, vector_f32);
-UNARY_VEC_NORMAL_T16(AbsImpl, vabs, int16_t, vector_s16);
-UNARY_VEC_NORMAL_T32(AbsImpl, vabs, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_NORMAL(AbsImpl, vabs, int8_t, vector_s8, plt_b8, B8_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(AbsImpl, vabs, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(AbsImpl, vabs, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(AbsImpl, vabs, int16_t, vector_s16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(AbsImpl, vabs, int32_t, vector_s32, plt_b32, B32_BLOCK_SIZE);
 
 UNARY_VEC_BITWISE_T8(AbsImpl, vabs, int8_t, vector_s8);
-UNARY_VEC_BITWISE_T16(AbsImpl, vabs, half, vector_f16);
-UNARY_VEC_BITWISE_T32(AbsImpl, vabs, float, vector_f32);
-UNARY_VEC_BITWISE_T16(AbsImpl, vabs, int16_t, vector_s16);
-UNARY_VEC_BITWISE_T32(AbsImpl, vabs, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_BITWISE(AbsImpl, vabs, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(AbsImpl, vabs, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(AbsImpl, vabs, int16_t, vector_s16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(AbsImpl, vabs, int32_t, vector_s32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Abs::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(AbsImpl);
 
-UNARY_VEC_COUNTER_T8(AbsImpl, vabs, int8_t, vector_s8);
-UNARY_VEC_COUNTER_T16(AbsImpl, vabs, half, vector_f16);
-UNARY_VEC_COUNTER_T32(AbsImpl, vabs, float, vector_f32);
-UNARY_VEC_COUNTER_T16(AbsImpl, vabs, int16_t, vector_s16);
-UNARY_VEC_COUNTER_T32(AbsImpl, vabs, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_COUNTER(AbsImpl, vabs, int8_t, vector_s8, plt_b8, B8_REPEAT_SIZE, NORM_B8);
+ASC_M310_DEFINE_UNARY_COUNTER(AbsImpl, vabs, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(AbsImpl, vabs, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
+ASC_M310_DEFINE_UNARY_COUNTER(AbsImpl, vabs, int16_t, vector_s16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(AbsImpl, vabs, int32_t, vector_s32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // /* **************************************************************************************************
 //  * Rec                                             *
@@ -362,17 +250,19 @@ UNARY_VEC_COUNTER_T32(AbsImpl, vabs, int32_t, vector_s32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(ReciprocalImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(ReciprocalImpl);
 
-UNARY_VEC_NORMAL_T16(ReciprocalImpl, vrec, half, vector_f16);
-UNARY_VEC_NORMAL_T32(ReciprocalImpl, vrec, float, vector_f32);
+ASC_M310_DEFINE_UNARY_NORMAL(ReciprocalImpl, vrec, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(ReciprocalImpl, vrec, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(ReciprocalImpl, vrec, half, vector_f16);
-UNARY_VEC_BITWISE_T32(ReciprocalImpl, vrec, float, vector_f32);
+ASC_M310_DEFINE_UNARY_BITWISE(
+    ReciprocalImpl, vrec, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(
+    ReciprocalImpl, vrec, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Rec::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(ReciprocalImpl);
 
-UNARY_VEC_COUNTER_T16(ReciprocalImpl, vrec, half, vector_f16);
-UNARY_VEC_COUNTER_T32(ReciprocalImpl, vrec, float, vector_f32);
+ASC_M310_DEFINE_UNARY_COUNTER(ReciprocalImpl, vrec, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(ReciprocalImpl, vrec, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // /* **************************************************************************************************
 //  * Sqrt                                             *
@@ -381,17 +271,17 @@ UNARY_VEC_COUNTER_T32(ReciprocalImpl, vrec, float, vector_f32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(SqrtImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(SqrtImpl);
 
-UNARY_VEC_NORMAL_T16(SqrtImpl, vsqrt, half, vector_f16);
-UNARY_VEC_NORMAL_T32(SqrtImpl, vsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_NORMAL(SqrtImpl, vsqrt, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(SqrtImpl, vsqrt, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(SqrtImpl, vsqrt, half, vector_f16);
-UNARY_VEC_BITWISE_T32(SqrtImpl, vsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_BITWISE(SqrtImpl, vsqrt, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(SqrtImpl, vsqrt, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Sqrt::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(SqrtImpl);
 
-UNARY_VEC_COUNTER_T16(SqrtImpl, vsqrt, half, vector_f16);
-UNARY_VEC_COUNTER_T32(SqrtImpl, vsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_COUNTER(SqrtImpl, vsqrt, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(SqrtImpl, vsqrt, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // // /* **************************************************************************************************
 // //  * Rsqrt                                             *
@@ -400,17 +290,18 @@ UNARY_VEC_COUNTER_T32(SqrtImpl, vsqrt, float, vector_f32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(RsqrtImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(RsqrtImpl);
 
-UNARY_VEC_NORMAL_T16(RsqrtImpl, vrsqrt, half, vector_f16);
-UNARY_VEC_NORMAL_T32(RsqrtImpl, vrsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_NORMAL(RsqrtImpl, vrsqrt, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(RsqrtImpl, vrsqrt, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(RsqrtImpl, vrsqrt, half, vector_f16);
-UNARY_VEC_BITWISE_T32(RsqrtImpl, vrsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_BITWISE(RsqrtImpl, vrsqrt, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(
+    RsqrtImpl, vrsqrt, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Rec::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(RsqrtImpl);
 
-UNARY_VEC_COUNTER_T16(RsqrtImpl, vrsqrt, half, vector_f16);
-UNARY_VEC_COUNTER_T32(RsqrtImpl, vrsqrt, float, vector_f32);
+ASC_M310_DEFINE_UNARY_COUNTER(RsqrtImpl, vrsqrt, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(RsqrtImpl, vrsqrt, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // // /* **************************************************************************************************
 // //  * Not                                             *
@@ -419,35 +310,35 @@ UNARY_VEC_COUNTER_T32(RsqrtImpl, vrsqrt, float, vector_f32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(NotImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(NotImpl);
 
-UNARY_VEC_NORMAL_T8(NotImpl, vnot, uint8_t, vector_u8)
-UNARY_VEC_NORMAL_T8(NotImpl, vnot, int8_t, vector_s8)
-UNARY_VEC_NORMAL_T16(NotImpl, vnot, uint16_t, vector_u16);
-UNARY_VEC_NORMAL_T16(NotImpl, vnot, int16_t, vector_s16);
-UNARY_VEC_NORMAL_T16(NotImpl, vnot, half, vector_f16);
-UNARY_VEC_NORMAL_T32(NotImpl, vnot, float, vector_f32);
-UNARY_VEC_NORMAL_T32(NotImpl, vnot, uint32_t, vector_u32);
-UNARY_VEC_NORMAL_T32(NotImpl, vnot, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, uint8_t, vector_u8, plt_b8, B8_BLOCK_SIZE)
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, int8_t, vector_s8, plt_b8, B8_BLOCK_SIZE)
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, uint16_t, vector_u16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, int16_t, vector_s16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, uint32_t, vector_u32, plt_b32, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(NotImpl, vnot, int32_t, vector_s32, plt_b32, B32_BLOCK_SIZE);
 
 UNARY_VEC_BITWISE_T8(NotImpl, vnot, uint8_t, vector_u8)
 UNARY_VEC_BITWISE_T8(NotImpl, vnot, int8_t, vector_s8)
-UNARY_VEC_BITWISE_T16(NotImpl, vnot, uint16_t, vector_u16);
-UNARY_VEC_BITWISE_T16(NotImpl, vnot, int16_t, vector_s16);
-UNARY_VEC_BITWISE_T16(NotImpl, vnot, half, vector_f16);
-UNARY_VEC_BITWISE_T32(NotImpl, vnot, float, vector_f32);
-UNARY_VEC_BITWISE_T32(NotImpl, vnot, uint32_t, vector_u32);
-UNARY_VEC_BITWISE_T32(NotImpl, vnot, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, uint16_t, vector_u16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, int16_t, vector_s16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, uint32_t, vector_u32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(NotImpl, vnot, int32_t, vector_s32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // // Not::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(NotImpl);
 
-UNARY_VEC_COUNTER_T8(NotImpl, vnot, uint8_t, vector_u8);
-UNARY_VEC_COUNTER_T8(NotImpl, vnot, int8_t, vector_s8);
-UNARY_VEC_COUNTER_T16(NotImpl, vnot, uint16_t, vector_u16);
-UNARY_VEC_COUNTER_T16(NotImpl, vnot, int16_t, vector_s16);
-UNARY_VEC_COUNTER_T16(NotImpl, vnot, half, vector_f16);
-UNARY_VEC_COUNTER_T32(NotImpl, vnot, float, vector_f32);
-UNARY_VEC_COUNTER_T32(NotImpl, vnot, uint32_t, vector_u32);
-UNARY_VEC_COUNTER_T32(NotImpl, vnot, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, uint8_t, vector_u8, plt_b8, B8_REPEAT_SIZE, NORM_B8);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, int8_t, vector_s8, plt_b8, B8_REPEAT_SIZE, NORM_B8);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, uint16_t, vector_u16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, int16_t, vector_s16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, uint32_t, vector_u32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
+ASC_M310_DEFINE_UNARY_COUNTER(NotImpl, vnot, int32_t, vector_s32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
 
 // /* **************************************************************************************************
 //  * Relu                                             *
@@ -457,20 +348,29 @@ UNARY_VEC_COUNTER_T32(NotImpl, vnot, int32_t, vector_s32);
 UNARY_VEC_NORMAL_NOT_SUPPORT(ReluImpl);
 UNARY_VEC_BITWISE_NOT_SUPPORT(ReluImpl);
 
-UNARY_VEC_NORMAL_T16(ReluImpl, vrelu, half, vector_f16);
-UNARY_VEC_NORMAL_T32(ReluImpl, vrelu, float, vector_f32);
-UNARY_VEC_NORMAL_T32(ReluImpl, vrelu, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_NORMAL(ReluImpl, vrelu, half, vector_f16, plt_b16, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(ReluImpl, vrelu, float, vector_f32, plt_b32, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_NORMAL(ReluImpl, vrelu, int32_t, vector_s32, plt_b32, B32_BLOCK_SIZE);
 
-UNARY_VEC_BITWISE_T16(ReluImpl, vrelu, half, vector_f16);
-UNARY_VEC_BITWISE_T32(ReluImpl, vrelu, float, vector_f32);
-UNARY_VEC_BITWISE_T32(ReluImpl, vrelu, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_BITWISE(ReluImpl, vrelu, half, vector_f16, ASC_M310_LOAD_UNARY_MASK_B16, preg, B16_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(ReluImpl, vrelu, float, vector_f32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
+ASC_M310_DEFINE_UNARY_BITWISE(
+    ReluImpl, vrelu, int32_t, vector_s32, ASC_M310_LOAD_UNARY_MASK_B32, preg1, B32_BLOCK_SIZE);
 
 // // Relu::Level 2
 UNARY_VEC_COUNTER_NOT_SUPPORT(ReluImpl);
 
-UNARY_VEC_COUNTER_T16(ReluImpl, vrelu, half, vector_f16);
-UNARY_VEC_COUNTER_T32(ReluImpl, vrelu, float, vector_f32);
-UNARY_VEC_COUNTER_T32(ReluImpl, vrelu, int32_t, vector_s32);
+ASC_M310_DEFINE_UNARY_COUNTER(ReluImpl, vrelu, half, vector_f16, plt_b16, B16_REPEAT_SIZE, NORM_B16);
+ASC_M310_DEFINE_UNARY_COUNTER(ReluImpl, vrelu, float, vector_f32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
+ASC_M310_DEFINE_UNARY_COUNTER(ReluImpl, vrelu, int32_t, vector_s32, plt_b32, B32_REPEAT_SIZE, NORM_B32);
+#undef ASC_M310_DEFINE_UNARY_NORMAL
+
+#undef ASC_M310_DEFINE_UNARY_COUNTER
+
+#undef ASC_M310_DEFINE_UNARY_BITWISE
+#undef ASC_M310_LOAD_UNARY_MASK_B32
+#undef ASC_M310_LOAD_UNARY_MASK_B16
+
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_UNARY_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_UNARY_IMPL_H__)

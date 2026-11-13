@@ -34,91 +34,35 @@ __aicore__ inline void AddImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void AddImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M310_DEFINE_BINARY_COUNT(                                                                   \
+    Function, DataType, VectorType, ElementCount, MaskIntrinsic, VectorIntrinsic, NORM_B16Arg)          \
+    __aicore__ inline void Function(                                                                    \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count) \
+    {                                                                                                   \
+        __VEC_SCOPE__                                                                                   \
+        {                                                                                               \
+            VectorType vreg0;                                                                           \
+            VectorType vreg1;                                                                           \
+            VectorType vreg2;                                                                           \
+            uint32_t sreg = static_cast<uint32_t>(count);                                               \
+            vector_bool preg;                                                                           \
+            uint32_t sregLower = ElementCount;                                                          \
+            uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, ElementCount));             \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                 \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                  \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                  \
+                VectorIntrinsic(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                               \
+                vsts(vreg2, dst, i* sregLower, NORM_B16Arg, preg);                                      \
+            }                                                                                           \
+        }                                                                                               \
     }
-}
 
-__aicore__ inline void AddImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void AddImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void AddImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(AddImpl, half, vector_f16, 128, plt_b16, vadd, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(AddImpl, int16_t, vector_s16, 128, plt_b16, vadd, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(AddImpl, int32_t, vector_s32, 64, plt_b32, vadd, NORM_B32)
+ASC_M310_DEFINE_BINARY_COUNT(AddImpl, float, vector_f32, 64, plt_b32, vadd, NORM_B32)
 
 /* **************************************************************************************************
  * Sub                                             *
@@ -130,92 +74,10 @@ __aicore__ inline void SubImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void SubImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(SubImpl, half, vector_f16, 128, plt_b16, vsub, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(SubImpl, int16_t, vector_s16, 128, plt_b16, vsub, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(SubImpl, int32_t, vector_s32, 64, plt_b32, vsub, NORM_B32)
+ASC_M310_DEFINE_BINARY_COUNT(SubImpl, float, vector_f32, 64, plt_b32, vsub, NORM_B32)
 
 /* **************************************************************************************************
  * Mul                                             *
@@ -227,91 +89,10 @@ __aicore__ inline void MulImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void MulImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(MulImpl, half, vector_f16, 128, plt_b16, vmul, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MulImpl, int16_t, vector_s16, 128, plt_b16, vmul, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MulImpl, int32_t, vector_s32, 64, plt_b32, vmul, NORM_B32)
+ASC_M310_DEFINE_BINARY_COUNT(MulImpl, float, vector_f32, 64, plt_b32, vmul, NORM_B32)
 
 /* **************************************************************************************************
  * Div                                             *
@@ -323,47 +104,8 @@ __aicore__ inline void DivImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void DivImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void DivImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(DivImpl, half, vector_f16, 128, plt_b16, vdiv, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(DivImpl, float, vector_f32, 64, plt_b32, vdiv, NORM_B32)
 
 /* **************************************************************************************************
  * Max                                             *
@@ -375,91 +117,10 @@ __aicore__ inline void MaxImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void MaxImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(MaxImpl, half, vector_f16, 128, plt_b16, vmax, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MaxImpl, int16_t, vector_s16, 128, plt_b16, vmax, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MaxImpl, int32_t, vector_s32, 64, plt_b32, vmax, NORM_B32)
+ASC_M310_DEFINE_BINARY_COUNT(MaxImpl, float, vector_f32, 64, plt_b32, vmax, NORM_B32)
 
 /* **************************************************************************************************
  * Min                                             *
@@ -471,91 +132,10 @@ __aicore__ inline void MinImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void MinImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 64;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 64));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(MinImpl, half, vector_f16, 128, plt_b16, vmin, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MinImpl, int16_t, vector_s16, 128, plt_b16, vmin, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(MinImpl, int32_t, vector_s32, 64, plt_b32, vmin, NORM_B32)
+ASC_M310_DEFINE_BINARY_COUNT(MinImpl, float, vector_f32, 64, plt_b32, vmin, NORM_B32)
 
 /* **************************************************************************************************
  * And                                             *
@@ -567,49 +147,8 @@ __aicore__ inline void AndImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void AndImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void AndImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(AndImpl, int16_t, vector_s16, 128, plt_b16, vand, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(AndImpl, uint16_t, vector_u16, 128, plt_b16, vand, NORM_B16)
 
 /* **************************************************************************************************
  * Or                                             *
@@ -621,49 +160,10 @@ __aicore__ inline void OrImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-__aicore__ inline void OrImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+ASC_M310_DEFINE_BINARY_COUNT(OrImpl, int16_t, vector_s16, 128, plt_b16, vor, NORM_B16)
+ASC_M310_DEFINE_BINARY_COUNT(OrImpl, uint16_t, vector_u16, 128, plt_b16, vor, NORM_B16)
 
-__aicore__ inline void OrImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = 128;
-        uint16_t repeatTime = static_cast<uint16_t>(CeilDivision(count, 128));
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+#undef ASC_M310_DEFINE_BINARY_COUNT
 /* **************************************************************************************************
  * FusedMulAdd                                             *
  * ************************************************************************************************* */

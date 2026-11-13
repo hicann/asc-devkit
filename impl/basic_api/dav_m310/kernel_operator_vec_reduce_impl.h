@@ -24,6 +24,65 @@
 #include "../../../include/basic_api/kernel_tpipe.h"
 #include "../../../include/basic_api/kernel_common.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M310_STAGE_REDUCE_INIT_F16_REGISTERS(tempBuf, srcBlkStride) \
+    vector_f16 vreg0;                                                   \
+    vector_f16 vreg1;                                                   \
+    vector_align ureg;                                                  \
+    vector_bool preg;                                                   \
+    plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);                   \
+    uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16)
+
+#define ASC_M310_STAGE_REDUCE_INIT_F32_REGISTERS(vreg0, vreg1, ureg, preg, tempBuf, srcBlkStride) \
+    vector_f32 vreg0;                                                                             \
+    vector_f32 vreg1;                                                                             \
+    vector_align ureg;                                                                            \
+    vector_bool preg;                                                                             \
+    vector_bool preg1;                                                                            \
+    plds(preg1, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                            \
+    punpack(preg, preg1, LOWER);                                                                  \
+    uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16)
+
+#define ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask)                                                 \
+    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16); \
+    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));      \
+    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));  \
+    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));      \
+    SetFlag<HardEvent::S_V>(eventIdSToV);                                                         \
+    WaitFlag<HardEvent::S_V>(eventIdSToV)
+
+#define ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                               \
+    repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)  \
+    int32_t newRepeat = repeatTime;                                              \
+    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg;               \
+    uint32_t newDstRepStride = dstRepStride;                                     \
+    __ubuf__ DataType* newSrc = src;                                             \
+    if (dstRepStride == 0 && repeatTime > 0) {                                   \
+        newRepeat = 1;                                                           \
+        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg * (repeatTime - 1); \
+        newSrc += srcStrideOffset;                                               \
+        newDstRepStride = 1;                                                     \
+    }
+
+#define ASC_M310_STAGE_REDUCE_ADJUST_LAST_REPEAT(                                                                 \
+    dstRepStride, repeatTime, newRepeat, srcStrideOffset, srcRepStride, newSrc, newDstRepStride, dstStrideOffset) \
+    if (dstRepStride == 0 && repeatTime > 0) {                                                                    \
+        newRepeat = 1;                                                                                            \
+        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);                                     \
+        newSrc += srcStrideOffset;                                                                                \
+        newDstRepStride = 1;                                                                                      \
+        dstStrideOffset = 1;                                                                                      \
+    }
+
+#define ASC_M310_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic) \
+    VectorType vreg0;                                                              \
+    VectorType vreg1;                                                              \
+    vector_align ureg;                                                             \
+    uint32_t sreg = static_cast<uint32_t>(mask);                                   \
+    vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                           \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                   \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16)
+
 namespace AscendC {
 #define VCPADD_FUNC() vcpadd(vreg1, vreg0, preg, MODE_ZEROING)
 #define VCGADD_FUNC() vcgadd(vreg1, vreg0, preg, MODE_ZEROING)
@@ -67,23 +126,16 @@ namespace AscendC {
         }                                                                         \
     }
 
-#define BITBYBIT_MODE_FLOAT_REDUCE_VF(reduceFunc, dstStrideOffset)                \
-    __VEC_SCOPE__                                                                 \
-    {                                                                             \
-        vector_f32 vreg0;                                                         \
-        vector_f32 vreg1;                                                         \
-        vector_align ureg;                                                        \
-        vector_bool preg;                                                         \
-        vector_bool preg1;                                                        \
-        plds(preg1, ((__ubuf__ uint32_t*)tempBuf), 0, US);                        \
-        punpack(preg, preg1, LOWER);                                              \
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);    \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {         \
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);       \
-            reduceFunc();                                                         \
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                \
-            vstas(ureg, dst, dstStrideOffset*(newDstRepStride - 1), POST_UPDATE); \
-        }                                                                         \
+#define BITBYBIT_MODE_FLOAT_REDUCE_VF(reduceFunc, dstStrideOffset)                                 \
+    __VEC_SCOPE__                                                                                  \
+    {                                                                                              \
+        ASC_M310_STAGE_REDUCE_INIT_F32_REGISTERS(vreg0, vreg1, ureg, preg, tempBuf, srcBlkStride); \
+        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {                          \
+            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);                        \
+            reduceFunc();                                                                          \
+            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                                 \
+            vstas(ureg, dst, dstStrideOffset*(newDstRepStride - 1), POST_UPDATE);                  \
+        }                                                                                          \
     }
 
 /* **************************************** Pair Reduce Impl ****************************************** */
@@ -103,93 +155,41 @@ __aicore__ inline void PairReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M310_DEFINE_PAIR_REDUCE_BITMASK(                                                             \
+    DataType, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg, FULL_MASK_LENArg)                    \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void PairReduceSumImpl(                                                            \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const uint64_t mask[], \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)              \
+    {                                                                                                    \
+        ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);                                                       \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                       \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                  \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCPADD_FUNC, FULL_MASK_LENArg / HALF_FACTOR);                    \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                             \
     }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCPADD_FUNC, FULL_MASK_LEN / HALF_FACTOR);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M310_DEFINE_PAIR_REDUCE_BITMASK(half, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, FULL_MASK_LEN)
+ASC_M310_DEFINE_PAIR_REDUCE_BITMASK(float, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, HALF_MASK_LEN)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+#undef ASC_M310_DEFINE_PAIR_REDUCE_BITMASK
+
+#define ASC_M310_DEFINE_PAIR_REDUCE_CONTINUOUS_MASK(DataType, ONE_BLK_HALF_NUMArg, f16Arg, b16Arg, FULL_MASK_LENArg) \
+    template <typename T = DataType, bool isSetMask = true>                                                          \
+    __aicore__ inline void PairReduceSumImpl(                                                                        \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const int32_t mask,                \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)                          \
+    {                                                                                                                \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                                   \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                              \
+        CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f16Arg, b16Arg, FULL_MASK_LENArg / HALF_FACTOR);                      \
     }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCPADD_FUNC, HALF_MASK_LEN / HALF_FACTOR);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f16, b16, FULL_MASK_LEN / HALF_FACTOR);
-}
+ASC_M310_DEFINE_PAIR_REDUCE_CONTINUOUS_MASK(half, ONE_BLK_HALF_NUM, f16, b16, FULL_MASK_LEN)
+ASC_M310_DEFINE_PAIR_REDUCE_CONTINUOUS_MASK(float, ONE_BLK_FLOAT_NUM, f32, b32, HALF_MASK_LEN)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f32, b32, HALF_MASK_LEN / HALF_FACTOR);
-}
+#undef ASC_M310_DEFINE_PAIR_REDUCE_CONTINUOUS_MASK
 
 /* **************************************** Block Reduce Impl ****************************************** */
 template <typename T, bool isSetMask = true>
@@ -207,95 +207,39 @@ __aicore__ inline void BlockReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+#define ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(                                                            \
+    DataType, Function, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg, VCGADD_FUNCArg)            \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void Function(                                                                     \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const uint64_t mask[], \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)              \
+    {                                                                                                    \
+        ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);                                                       \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                       \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                  \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCGADD_FUNCArg, DEFAULT_BLK_NUM);                                \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                             \
     }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGADD_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    half, BlockReduceSumImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGADD_FUNC)
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    float, BlockReduceSumImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGADD_FUNC)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+#define ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(                                                 \
+    DataType, Function, ONE_BLK_HALF_NUMArg, VCGADD_FUNCArg, f16Arg, b16Arg)                          \
+    template <typename T = DataType, bool isSetMask = true>                                           \
+    __aicore__ inline void Function(                                                                  \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const int32_t mask, \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)           \
+    {                                                                                                 \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                    \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)               \
+        CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNCArg, f16Arg, b16Arg, DEFAULT_BLK_NUM);                   \
     }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGADD_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(half, BlockReduceSumImpl, ONE_BLK_HALF_NUM, VCGADD_FUNC, f16, b16)
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(float, BlockReduceSumImpl, ONE_BLK_FLOAT_NUM, VCGADD_FUNC, f32, b32)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void BlockReduceMaxImpl(
@@ -313,93 +257,12 @@ __aicore__ inline void BlockReduceMaxImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGMAX_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMAX_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGMAX_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMAX_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    half, BlockReduceMaxImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGMAX_FUNC)
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(half, BlockReduceMaxImpl, ONE_BLK_HALF_NUM, VCGMAX_FUNC, f16, b16)
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    float, BlockReduceMaxImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGMAX_FUNC)
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(float, BlockReduceMaxImpl, ONE_BLK_FLOAT_NUM, VCGMAX_FUNC, f32, b32)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void BlockReduceMinImpl(
@@ -417,94 +280,17 @@ __aicore__ inline void BlockReduceMinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    half, BlockReduceMinImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGMIN_FUNC)
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(half, BlockReduceMinImpl, ONE_BLK_HALF_NUM, VCGMIN_FUNC, f16, b16)
+ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK(
+    float, BlockReduceMinImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGMIN_FUNC)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+#undef ASC_M310_DEFINE_BLOCK_REDUCE_BITMASK
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGMIN_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK(float, BlockReduceMinImpl, ONE_BLK_FLOAT_NUM, VCGMIN_FUNC, f32, b32)
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMIN_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGMIN_FUNC, DEFAULT_BLK_NUM);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMIN_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+#undef ASC_M310_DEFINE_BLOCK_REDUCE_CONTINUOUS_MASK
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void RepeatReduceSumImpl(
@@ -531,107 +317,62 @@ __aicore__ inline void WholeReduceMaxImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
+#define ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK(                                                                \
+    DataType, Function, ONE_BLK_HALF_NUMArg, VectorType, MaskIntrinsic, VectorIntrinsic)                             \
+    template <typename T = DataType, bool isSetMask = true>                                                          \
+    __aicore__ inline void Function(                                                                                 \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t mask, const int32_t repeatTime,                \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order) \
+    {                                                                                                                \
+        int32_t newRepeat = repeatTime;                                                                              \
+        uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg;                                               \
+        uint32_t newDstRepStride = dstRepStride;                                                                     \
+        uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;                                                       \
+        __ubuf__ DataType* newSrc = src;                                                                             \
+        if (dstRepStride == 0 && repeatTime > 0) {                                                                   \
+            newRepeat = 1;                                                                                           \
+            srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg * (repeatTime - 1);                                 \
+            newSrc += srcStrideOffset;                                                                               \
+            newDstRepStride = 1;                                                                                     \
+            dstStrideOffset = 1;                                                                                     \
+        }                                                                                                            \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            VectorType vreg0;                                                                                        \
+            VectorType vreg1;                                                                                        \
+            vector_align ureg;                                                                                       \
+            uint32_t sreg = static_cast<uint32_t>(mask);                                                             \
+            vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                                                     \
+            uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);                                   \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {                                        \
+                vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);                                      \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                   \
+                vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                                               \
+                vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);                                    \
+            }                                                                                                        \
+        }                                                                                                            \
     }
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-}
+ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK(half, WholeReduceMaxImpl, ONE_BLK_HALF_NUM, vector_f16, plt_b16, vcmax)
+ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK(float, WholeReduceMaxImpl, ONE_BLK_FLOAT_NUM, vector_f32, plt_b32, vcmax)
 
 template <typename T = half, bool isSetMask = true>
 __aicore__ inline void WholeReduceMaxImpl(
     __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
     const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
 {
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);
 
     int32_t newRepeat = repeatTime;
     uint32_t newDstRepStride = dstRepStride;
     uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
     __ubuf__ half* newSrc = src;
     uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
+    ASC_M310_STAGE_REDUCE_ADJUST_LAST_REPEAT(
+        dstRepStride, repeatTime, newRepeat, srcStrideOffset, srcRepStride, newSrc, newDstRepStride, dstStrideOffset)
     __VEC_SCOPE__
     {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
+        ASC_M310_STAGE_REDUCE_INIT_F16_REGISTERS(tempBuf, srcBlkStride);
         for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
             vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
             vcmax(vreg1, vreg0, preg, MODE_ZEROING);
@@ -642,50 +383,39 @@ __aicore__ inline void WholeReduceMaxImpl(
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
 }
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
+#define ASC_M310_DEFINE_WHOLE_MINMAX_BITMASK_B32(Function, VectorIntrinsic)                                          \
+    template <typename T = float, bool isSetMask = true>                                                             \
+    __aicore__ inline void Function(                                                                                 \
+        __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,                   \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order) \
+    {                                                                                                                \
+        ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);                                                                   \
+        int32_t newRepeat = repeatTime;                                                                              \
+        uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;                                                 \
+        uint32_t newDstRepStride = dstRepStride;                                                                     \
+        uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;                                                       \
+        __ubuf__ float* newSrc = src;                                                                                \
+        if (dstRepStride == 0 && repeatTime > 0) {                                                                   \
+            newRepeat = 1;                                                                                           \
+            srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);                                   \
+            newSrc += srcStrideOffset;                                                                               \
+            newDstRepStride = 1;                                                                                     \
+            dstStrideOffset = 1;                                                                                     \
+        }                                                                                                            \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M310_STAGE_REDUCE_INIT_F32_REGISTERS(vreg0, vreg1, ureg, preg, tempBuf, srcBlkStride);               \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {                                        \
+                vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);                                      \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                   \
+                vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                                               \
+                vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);                                    \
+            }                                                                                                        \
+        }                                                                                                            \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                         \
     }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg1, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg, preg1, LOWER);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+
+ASC_M310_DEFINE_WHOLE_MINMAX_BITMASK_B32(WholeReduceMaxImpl, vcmax)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void WholeReduceMinImpl(
@@ -703,108 +433,29 @@ __aicore__ inline void WholeReduceMinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-}
+ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK(half, WholeReduceMinImpl, ONE_BLK_HALF_NUM, vector_f16, plt_b16, vcmin)
+ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK(float, WholeReduceMinImpl, ONE_BLK_FLOAT_NUM, vector_f32, plt_b32, vcmin)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-}
+#undef ASC_M310_DEFINE_WHOLE_MINMAX_CONTINUOUS_MASK
 
 template <typename T = half, bool isSetMask = true>
 __aicore__ inline void WholeReduceMinImpl(
     __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
     const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
 {
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);
 
     int32_t newRepeat = repeatTime;
     uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
     uint32_t newDstRepStride = dstRepStride;
     uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
     __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
+    ASC_M310_STAGE_REDUCE_ADJUST_LAST_REPEAT(
+        dstRepStride, repeatTime, newRepeat, srcStrideOffset, srcRepStride, newSrc, newDstRepStride, dstStrideOffset)
 
     __VEC_SCOPE__
     {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
+        ASC_M310_STAGE_REDUCE_INIT_F16_REGISTERS(tempBuf, srcBlkStride);
         for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
             vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
             vcmin(vreg1, vreg0, preg, MODE_ZEROING);
@@ -815,50 +466,9 @@ __aicore__ inline void WholeReduceMinImpl(
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
 }
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M310_DEFINE_WHOLE_MINMAX_BITMASK_B32(WholeReduceMinImpl, vcmin)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    uint32_t dstStrideOffset = (dstRepStride > 1) ? 2 : 1;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-        dstStrideOffset = 1;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg1, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg, preg1, LOWER);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, newDstRepStride - dstStrideOffset, POST_UPDATE);
-        }
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+#undef ASC_M310_DEFINE_WHOLE_MINMAX_BITMASK_B32
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void WholeReduceSumImpl(
@@ -876,95 +486,39 @@ __aicore__ inline void WholeReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+#define ASC_M310_DEFINE_WHOLE_SUM_CONTINUOUS_MASK(DataType, ONE_BLK_HALF_NUMArg, f16Arg, b16Arg)      \
+    template <typename T = DataType, bool isSetMask = true>                                           \
+    __aicore__ inline void WholeReduceSumImpl(                                                        \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t mask, const int32_t repeatTime, \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)           \
+    {                                                                                                 \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                    \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)               \
+        CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f16Arg, b16Arg, 1);                                     \
     }
-    CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f16, b16, 1);
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
+ASC_M310_DEFINE_WHOLE_SUM_CONTINUOUS_MASK(half, ONE_BLK_HALF_NUM, f16, b16)
+ASC_M310_DEFINE_WHOLE_SUM_CONTINUOUS_MASK(float, ONE_BLK_FLOAT_NUM, f32, b32)
+
+#undef ASC_M310_DEFINE_WHOLE_SUM_CONTINUOUS_MASK
+
+#define ASC_M310_DEFINE_WHOLE_SUM_BITMASK(DataType, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg) \
+    template <typename T = DataType, bool isSetMask = true>                                               \
+    __aicore__ inline void WholeReduceSumImpl(                                                            \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const uint64_t mask[], const int32_t repeatTime,  \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)               \
+    {                                                                                                     \
+        ASC_M310_STAGE_REDUCE_STAGE_BITMASK(mask);                                                        \
+        ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                        \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                   \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCADD_FUNC, 1);                                                   \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                              \
     }
-    CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f32, b32, 1);
-}
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M310_DEFINE_WHOLE_SUM_BITMASK(half, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF)
+ASC_M310_DEFINE_WHOLE_SUM_BITMASK(float, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCADD_FUNC, 1);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCADD_FUNC, 1);
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+#undef ASC_M310_DEFINE_WHOLE_SUM_BITMASK
 
 /* **************************************** Reduce Interface ****************************************** */
 template <typename T>
@@ -983,111 +537,92 @@ __aicore__ inline void ReduceMaxIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceMaxIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK(                                                            \
+    Function, DataType, VectorType, MaskIntrinsic, ElementCount, VectorIntrinsic)                                      \
+    __aicore__ inline void Function(                                                                                   \
+        __ubuf__ DataType* sharedTmpBuffer, __ubuf__ DataType* srcLocal, const int32_t mask, const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                    \
+    {                                                                                                                  \
+        __VEC_SCOPE__                                                                                                  \
+        {                                                                                                              \
+            ASC_M310_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic);                                \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                         \
+                vsldb(vreg0, srcLocal + i * srcRepStride * ElementCount, strideConfig0, preg);                         \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                     \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                                   \
+            }                                                                                                          \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                              \
+        }                                                                                                              \
     }
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK(ReduceMaxIntrinsicsImpl, half, vector_f16, plt_b16, 16, vcmax)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B16(Function, VectorIntrinsic)                                 \
+    __aicore__ inline void Function(                                                                              \
+        __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                               \
+    {                                                                                                             \
+        __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);             \
+        *((__ubuf__ uint64_t*)tempBuf) = mask[0];                                                                 \
+        *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];                                                             \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));                  \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                                     \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                                    \
+        __VEC_SCOPE__                                                                                             \
+        {                                                                                                         \
+            vector_f16 vreg0;                                                                                     \
+            vector_f16 vreg1;                                                                                     \
+            vector_align ureg;                                                                                    \
+            vector_bool preg;                                                                                     \
+            plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                                     \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                                          \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);                                          \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                    \
+                vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);                              \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                              \
+            }                                                                                                     \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                         \
+        }                                                                                                         \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                      \
     }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B16(ReduceMaxIntrinsicsImpl, vcmax)
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK(ReduceMaxIntrinsicsImpl, float, vector_f32, plt_b32, 8, vcmax)
+
+#define ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B32(Function, VectorIntrinsic)                                   \
+    __aicore__ inline void Function(                                                                                \
+        __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                 \
+    {                                                                                                               \
+        __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);               \
+        *((__ubuf__ uint64_t*)tempBuf) = mask[0];                                                                   \
+        *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];                                                               \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));                    \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                                       \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                                      \
+        __VEC_SCOPE__                                                                                               \
+        {                                                                                                           \
+            vector_f32 vreg0;                                                                                       \
+            vector_f32 vreg1;                                                                                       \
+            vector_align ureg;                                                                                      \
+            vector_bool preg;                                                                                       \
+            vector_bool preg1;                                                                                      \
+            plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                                       \
+            punpack(preg1, preg, LOWER);                                                                            \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                                            \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);                                            \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                      \
+                vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);                                \
+                VectorIntrinsic(vreg1, vreg0, preg1, MODE_ZEROING);                                                 \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                                \
+            }                                                                                                       \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                           \
+        }                                                                                                           \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                        \
     }
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);
-            vcmax(vreg1, vreg0, preg1, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B32(ReduceMaxIntrinsicsImpl, vcmax)
 
 template <typename T>
 __aicore__ inline void ReduceMinIntrinsicsImpl(
@@ -1105,111 +640,18 @@ __aicore__ inline void ReduceMinIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceMinIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK(ReduceMinIntrinsicsImpl, half, vector_f16, plt_b16, 16, vcmin)
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B16(ReduceMinIntrinsicsImpl, vcmin)
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+#undef ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B16
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK(ReduceMinIntrinsicsImpl, float, vector_f32, plt_b32, 8, vcmin)
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+#undef ASC_M310_DEFINE_REDUCE_MINMAX_WORK_CONTINUOUS_MASK
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B32(ReduceMinIntrinsicsImpl, vcmin)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);
-            vcmin(vreg1, vreg0, preg1, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+#undef ASC_M310_DEFINE_REDUCE_MINMAX_WORK_BITMASK_B32
 
 template <typename T>
 __aicore__ inline void ReduceSumIntrinsicsImpl(
@@ -1227,27 +669,24 @@ __aicore__ inline void ReduceSumIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceSumIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceSumIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcadd(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M310_DEFINE_REDUCE_SUM_WORK_CONTINUOUS_MASK(DataType, VectorType, MaskIntrinsic, ElementCount)             \
+    __aicore__ inline void ReduceSumIntrinsicsImpl(                                                                    \
+        __ubuf__ DataType* sharedTmpBuffer, __ubuf__ DataType* srcLocal, const int32_t mask, const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                    \
+    {                                                                                                                  \
+        __VEC_SCOPE__                                                                                                  \
+        {                                                                                                              \
+            ASC_M310_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic);                                \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                         \
+                vsldb(vreg0, srcLocal + i * srcRepStride * ElementCount, strideConfig0, preg);                         \
+                vcadd(vreg1, vreg0, preg, MODE_ZEROING);                                                               \
+                vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);                                                   \
+            }                                                                                                          \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                              \
+        }                                                                                                              \
     }
-}
+
+ASC_M310_DEFINE_REDUCE_SUM_WORK_CONTINUOUS_MASK(half, vector_f16, plt_b16, 16)
 
 __aicore__ inline void ReduceSumIntrinsicsImpl(
     __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
@@ -1279,27 +718,9 @@ __aicore__ inline void ReduceSumIntrinsicsImpl(
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
 }
 
-__aicore__ inline void ReduceSumIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcadd(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+ASC_M310_DEFINE_REDUCE_SUM_WORK_CONTINUOUS_MASK(float, vector_f32, plt_b32, 8)
+
+#undef ASC_M310_DEFINE_REDUCE_SUM_WORK_CONTINUOUS_MASK
 
 __aicore__ inline void ReduceSumIntrinsicsImpl(
     __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
@@ -1982,3 +1403,11 @@ __aicore__ inline T GetAccValImpl()
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_REDUCE_IMPL_H__
 #endif
+
+#undef ASC_M310_STAGE_REDUCE_INIT_WORK_REGISTERS
+#undef ASC_M310_STAGE_REDUCE_ADJUST_LAST_REPEAT
+#undef ASC_M310_STAGE_REDUCE_INIT_BITMASK_REPEAT
+#undef ASC_M310_STAGE_REDUCE_STAGE_BITMASK
+#undef ASC_M310_STAGE_REDUCE_INIT_F32_REGISTERS
+
+#undef ASC_M310_STAGE_REDUCE_F16_STRIDE

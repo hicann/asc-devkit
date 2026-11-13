@@ -23,6 +23,19 @@
 #include "../../../include/basic_api/kernel_struct_fixpipe.h"
 #include "../../../include/basic_api/kernel_operator_block_sync_intf.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M310_STAGE_FIXPIPE_INIT_BURST_OFFSETS(fixpipeTiling, nIterIndex, intriParams, config, T) \
+    uint16_t cburstNum = fixpipeTiling.nSize / 16;                                                   \
+    uint32_t srcOffset = cburstNum * nIterIndex * intriParams.srcStride * BLOCK_CUBE;                \
+    uint32_t dstOffset = 0;                                                                          \
+    bool nz2ndEn = false;                                                                            \
+    if constexpr (config.format == CO2Layout::ROW_MAJOR) {                                           \
+        dstOffset = nIterIndex * fixpipeTiling.nSize;                                                \
+        nz2ndEn = true;                                                                              \
+    } else {                                                                                         \
+        dstOffset = cburstNum * nIterIndex * intriParams.dstStride * 32 / sizeof(T);                 \
+    }
+
 namespace AscendC {
 /* **************************************************************************************************
  * SPR                                             *
@@ -350,16 +363,7 @@ __aicore__ inline void FixpipeL0cToUB(
     __ubuf__ T* dst, __cc__ U* src, const FixpipeParamsM310& intriParams, const FixpipeTilingM310& fixpipeTiling,
     uint16_t calNSize, uint16_t nIterIndex = 0)
 {
-    uint16_t cburstNum = fixpipeTiling.nSize / 16;
-    uint32_t srcOffset = cburstNum * nIterIndex * intriParams.srcStride * BLOCK_CUBE;
-    uint32_t dstOffset = 0;
-    bool nz2ndEn = false;
-    if constexpr (config.format == CO2Layout::ROW_MAJOR) {
-        dstOffset = nIterIndex * fixpipeTiling.nSize;
-        nz2ndEn = true;
-    } else {
-        dstOffset = cburstNum * nIterIndex * intriParams.dstStride * 32 / sizeof(T);
-    }
+    ASC_M310_STAGE_FIXPIPE_INIT_BURST_OFFSETS(fixpipeTiling, nIterIndex, intriParams, config, T)
     // LOC -> UB only n direction need tiling, m no need tiling
     return copy_matrix_cc_to_ub(
         (__ubuf__ T*)(dst + dstOffset), (__cc__ U*)(src + srcOffset), 0, calNSize, intriParams.mSize,
@@ -437,17 +441,7 @@ __aicore__ inline void FixpipeL0cToL1(
     __cbuf__ T* dst, __cc__ U* src, const FixpipeParamsM310& intriParams, const FixpipeTilingM310& fixpipeTiling,
     uint16_t calNSize, uint16_t nIterIndex = 0)
 {
-    uint16_t cburstNum = fixpipeTiling.nSize / 16;
-    uint32_t srcOffset = cburstNum * nIterIndex * intriParams.srcStride * BLOCK_CUBE;
-
-    uint32_t dstOffset = 0;
-    bool nz2ndEn = false;
-    if constexpr (config.format == CO2Layout::ROW_MAJOR) {
-        dstOffset = nIterIndex * fixpipeTiling.nSize;
-        nz2ndEn = true;
-    } else {
-        dstOffset = cburstNum * nIterIndex * intriParams.dstStride * 32 / sizeof(T);
-    }
+    ASC_M310_STAGE_FIXPIPE_INIT_BURST_OFFSETS(fixpipeTiling, nIterIndex, intriParams, config, T)
     // LOC -> L1 only n direction need tiling, m no need tiling
     return copy_matrix_cc_to_cbuf(
         (__cbuf__ T*)(dst + dstOffset), (__cc__ U*)(src + srcOffset), 0, calNSize, intriParams.mSize,
@@ -543,16 +537,7 @@ __aicore__ inline void FixpipeL0cToOut(
     __gm__ T* dst, __cc__ U* src, const FixpipeParamsM310& intriParams, const FixpipeTilingM310& fixpipeTiling,
     uint16_t calNSize, uint16_t nIterIndex = 0)
 {
-    uint16_t cburstNum = fixpipeTiling.nSize / 16;
-    uint32_t srcOffset = cburstNum * nIterIndex * intriParams.srcStride * BLOCK_CUBE;
-    uint32_t dstOffset = 0;
-    bool nz2ndEn = false;
-    if constexpr (config.format == CO2Layout::ROW_MAJOR) {
-        dstOffset = nIterIndex * fixpipeTiling.nSize;
-        nz2ndEn = true;
-    } else {
-        dstOffset = cburstNum * nIterIndex * intriParams.dstStride * 32 / sizeof(T);
-    }
+    ASC_M310_STAGE_FIXPIPE_INIT_BURST_OFFSETS(fixpipeTiling, nIterIndex, intriParams, config, T)
 
     if constexpr (g_gm_overflow_check) {
         uint64_t gmLen = GetGMLength<T>(intriParams, calNSize, nz2ndEn);
@@ -632,3 +617,5 @@ __aicore__ inline void FixpipeL0C2GMImpl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_FIXPIPE_IMPL_H__
 #endif
+
+#undef ASC_M310_STAGE_FIXPIPE_INIT_BURST_OFFSETS

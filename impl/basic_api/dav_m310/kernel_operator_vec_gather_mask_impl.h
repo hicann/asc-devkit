@@ -24,6 +24,23 @@
 #include "../../../include/basic_api/kernel_tpipe.h"
 #include "../../../include/basic_api/kernel_common.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M310_STAGE_GATHER_MASK_INIT_B16(dst, gatherMaskParams, mask)                        \
+    sprclr(SPR_AR);                                                                             \
+    uint64_t hoistLetVar0 = ((uint64_t)dst);                                                    \
+    uint32_t sreg0;                                                                             \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(gatherMaskParams.src0BlockStride)) << 16); \
+    uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(half);                                       \
+    uint16_t counterLoop = (mask + repeatElm - 1) / repeatElm
+
+#define ASC_M310_STAGE_GATHER_MASK_LOAD_B16(                                                                           \
+    preg0, sreg0, vreg0, src0, i, gatherMaskParams, blockElm, j, strideConfig0)                                        \
+    preg0 = plt_b16(sreg0, POST_UPDATE);                                                                               \
+    vsldb(                                                                                                             \
+        vreg0,                                                                                                         \
+        src0 + i * gatherMaskParams.src0RepeatStride * blockElm + j * 8 * gatherMaskParams.src0BlockStride * blockElm, \
+        strideConfig0, preg0)
+
 namespace AscendC {
 template <typename T>
 __aicore__ inline void GatherMaskCal(
@@ -62,21 +79,12 @@ __aicore__ inline int64_t GetGatherMaskRemainCountImpl()
                 vector_bool preg0;                                                                                 \
                 vector_bool preg1;                                                                                 \
                 vector_bool preg2;                                                                                 \
-                sprclr(SPR_AR);                                                                                    \
-                uint64_t hoistLetVar0 = ((uint64_t)dst);                                                           \
-                uint32_t sreg0;                                                                                    \
-                uint32_t strideConfig0 = ((static_cast<uint32_t>(gatherMaskParams.src0BlockStride)) << 16);        \
-                uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(half);                                              \
-                uint16_t counterLoop = (mask + repeatElm - 1) / repeatElm;                                         \
+                ASC_M310_STAGE_GATHER_MASK_INIT_B16(dst, gatherMaskParams, mask);                                  \
                 for (uint16_t i = 0; i < static_cast<uint16_t>(gatherMaskParams.repeatTimes); ++i) {               \
                     sreg0 = mask;                                                                                  \
                     for (uint16_t j = 0; j < static_cast<uint16_t>(counterLoop); ++j) {                            \
-                        preg0 = plt_b16(sreg0, POST_UPDATE);                                                       \
-                        vsldb(                                                                                     \
-                            vreg0,                                                                                 \
-                            src0 + i * gatherMaskParams.src0RepeatStride * blockElm +                              \
-                                j * 8 * gatherMaskParams.src0BlockStride * blockElm,                               \
-                            strideConfig0, preg0);                                                                 \
+                        ASC_M310_STAGE_GATHER_MASK_LOAD_B16(                                                       \
+                            preg0, sreg0, vreg0, src0, i, gatherMaskParams, blockElm, j, strideConfig0);           \
                         plds(                                                                                      \
                             preg1, ((__ubuf__ uint32_t*)src1), i* gatherMaskParams.src1RepeatStride * 32 + j * 16, \
                             US);                                                                                   \
@@ -234,21 +242,12 @@ __aicore__ inline void GatherMaskCal(
                 vsts(vreg2, ((__ubuf__ uint32_t*)tempBuf), 0, NORM_B32, preg3);                                  \
                 mem_bar(VST_VLD);                                                                                \
                 plds(preg1, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                               \
-                sprclr(SPR_AR);                                                                                  \
-                uint64_t hoistLetVar0 = ((uint64_t)dst);                                                         \
-                uint32_t sreg0;                                                                                  \
-                uint32_t strideConfig0 = ((static_cast<uint32_t>(gatherMaskParams.src0BlockStride)) << 16);      \
-                uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(half);                                            \
-                uint16_t counterLoop = (mask + repeatElm - 1) / repeatElm;                                       \
+                ASC_M310_STAGE_GATHER_MASK_INIT_B16(dst, gatherMaskParams, mask);                                \
                 for (uint16_t i = 0; i < static_cast<uint16_t>(gatherMaskParams.repeatTimes); ++i) {             \
                     sreg0 = mask;                                                                                \
                     for (uint16_t j = 0; j < static_cast<uint16_t>(counterLoop); ++j) {                          \
-                        preg0 = plt_b16(sreg0, POST_UPDATE);                                                     \
-                        vsldb(                                                                                   \
-                            vreg0,                                                                               \
-                            src0 + i * gatherMaskParams.src0RepeatStride * blockElm +                            \
-                                j * 8 * gatherMaskParams.src0BlockStride * blockElm,                             \
-                            strideConfig0, preg0);                                                               \
+                        ASC_M310_STAGE_GATHER_MASK_LOAD_B16(                                                     \
+                            preg0, sreg0, vreg0, src0, i, gatherMaskParams, blockElm, j, strideConfig0);         \
                         pmov(preg2, preg1, preg0);                                                               \
                         vsqz(vreg1, vreg0, preg2, MODE_STORED);                                                  \
                         vstur(ureg0, vreg1, ((__ubuf__ dataType*&)hoistLetVar0), POST_UPDATE);                   \
@@ -336,3 +335,6 @@ REGISTER_GATHER_MASK_SOLID_B32(int32_t, s32)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_GATHER_MASK_IMPL_H__
 #endif
+
+#undef ASC_M310_STAGE_GATHER_MASK_LOAD_B16
+#undef ASC_M310_STAGE_GATHER_MASK_INIT_B16
