@@ -24,6 +24,7 @@
 #if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201))
 #include "impl/c_api/reg_base_impl/reg_logic_intf_impl.h"
 #endif
+#include "c_api/composite/reg_logic_composite.h"
 
 /**
  * @ingroup simd_c_api.reg_compute.reg_logic

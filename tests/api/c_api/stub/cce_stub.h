@@ -1785,6 +1785,14 @@ inline void vshrs(vector_u16& dst, vector_u16 src, uint16_t shift, vector_bool m
 inline void vshrs(vector_s16& dst, vector_s16 src, uint16_t shift, vector_bool mask, Literal mode) {}
 inline void vshrs(vector_u32& dst, vector_u32 src, uint32_t shift, vector_bool mask, Literal mode) {}
 inline void vshrs(vector_s32& dst, vector_s32 src, uint32_t shift, vector_bool mask, Literal mode) {}
+inline void vshl(vector_u64& dst, vector_u64 src, vector_u32 shift, vector_bool mask, Literal mode) {}
+inline void vshl(vector_s64& dst, vector_s64 src, vector_u32 shift, vector_bool mask, Literal mode) {}
+inline void vshr(vector_u64& dst, vector_u64 src, vector_u32 shift, vector_bool mask, Literal mode) {}
+inline void vshr(vector_s64& dst, vector_s64 src, vector_u32 shift, vector_bool mask, Literal mode) {}
+inline void vshls(vector_u64& dst, vector_u64 src, uint32_t shift, vector_bool mask, Literal mode) {}
+inline void vshls(vector_s64& dst, vector_s64 src, uint32_t shift, vector_bool mask, Literal mode) {}
+inline void vshrs(vector_u64& dst, vector_u64 src, uint32_t shift, vector_bool mask, Literal mode) {}
+inline void vshrs(vector_s64& dst, vector_s64 src, uint32_t shift, vector_bool mask, Literal mode) {}
 inline void vcgmaxv2(vector_f16& dst, vector_f16 src, vector_bool mask) {}
 inline void vcgmaxv2(vector_f32& dst, vector_f32 src, vector_bool mask) {}
 inline void vcgmaxv2(vector_u16& dst, vector_u16 src, vector_bool mask) {}
