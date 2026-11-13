@@ -52,6 +52,9 @@ stages:
         container:
           image: swr.cn-north-4.myhuaweicloud.com/ci_cann/ubuntu20.04.05_x86:k8s_v1.1006
       JOB_pre:
+        permissions:
+          repository: read
+          id-token: write
         name: Test_PreBuild
         uses: cann/.gitcode/.gitcode/workflows/pre_action.yml@master
     pre:
@@ -61,6 +64,9 @@ stages:
     name: Compile
     jobs:
       JOB_x86_compile_ubuntu24:
+        permissions:
+          repository: read
+          id-token: write
         name: Compile_x86_ubuntu24
         uses: .gitcode/workflows/compile_action.yml
         with:
@@ -69,6 +75,9 @@ stages:
           arch: 'x64'
           package_name: 'cann-asc-devkit_linux-x86_64_ubuntu24.run'
       JOB_x86_compile:
+        permissions:
+          repository: read
+          id-token: write
         name: Compile_x86
         uses: .gitcode/workflows/compile_action.yml
         with:
@@ -77,6 +86,9 @@ stages:
           arch: 'x64'
           package_name: 'cann-asc-devkit_linux-x86_64.run'
       JOB_arm_compile_ubuntu24:
+        permissions:
+          repository: read
+          id-token: write
         name: Compile_arm_ubuntu24
         uses: .gitcode/workflows/compile_action.yml
         with:
@@ -85,6 +97,9 @@ stages:
           arch: 'arm64'
           package_name: 'cann-asc-devkit_linux-aarch64_ubuntu24.run'
       JOB_arm_compile:
+        permissions:
+          repository: read
+          id-token: write
         name: Compile_arm
         uses: .gitcode/workflows/compile_action.yml
         with:
@@ -93,12 +108,18 @@ stages:
           arch: 'arm64'
           package_name: 'cann-asc-devkit_linux-aarch64.run'
       JOB_codecheck:
+        permissions:
+          repository: read
+          id-token: write
         name: CodeCheck
         uses: cann/.gitcode/.gitcode/workflows/codecheck_action.yml@master
         with:
           precommit_image_version: ${{ jobs.JOB_image.outputs.precommit }}
           codecheck_image_version: ${{ jobs.JOB_image.outputs.codecheck }}
       JOB_staticcheck_md_check:
+        permissions:
+          repository: read
+          id-token: write
         name: staticcheck_md_check
         uses: .gitcode/workflows/staticcheck_action.yml
         with:
@@ -127,6 +148,9 @@ stages:
         container:
           image: swr.cn-north-4.myhuaweicloud.com/ci_cann/${{ jobs.JOB_image.outputs.API_Check }}
       JOB_UT_Test_adv_test_one:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_adv_test_one
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -135,6 +159,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_adv_test_two:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_adv_test_two
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -143,6 +170,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_basic_test_one:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_basic_test_one
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -151,6 +181,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_basic_test_two:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_basic_test_two
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -159,6 +192,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_basic_test_three:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_basic_test_three
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -167,6 +203,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_basic_test_four:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_basic_test_four
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -175,6 +214,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_basic_test_five:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_basic_test_five
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -183,6 +225,9 @@ stages:
           image_version: ${{ jobs.JOB_image.outputs.UT_Test }}
           arch: 'x64'
       JOB_UT_Test_arm:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_Test_arm
         uses: .gitcode/workflows/ut_action.yml
         with:
@@ -197,6 +242,9 @@ stages:
     name: UT_report
     jobs:
       JOB_ut_report_lcov:
+        permissions:
+          repository: read
+          id-token: write
         name: UT_report
         steps:
           -
@@ -206,6 +254,15 @@ stages:
             with:
               ref: ${{ atomgit.event.pull_request.merge_commit_sha }}
               allow-unsafe-pr-checkout: true
+          -
+            name: oidc_auth
+            uses: huaweicloud-oidc-auth
+            with:
+              audience: ${{ secrets.audience }}
+              agency_urn: ${{ secrets.agency_urn }}
+              provider_urn: ${{ secrets.provider_urn }}
+              region: cn-north-4
+              duration: 3600
           -
             name: download
             uses: obs-download
@@ -235,8 +292,6 @@ stages:
             with:
               endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
               bucket: "ascend-ci"
-              access-key: ${{secrets.AK}}
-              secret-key: ${{secrets.SK}}
               artifact-path: |
                 ${{ steps.process_checkout.outputs.path }}/ut_cov_*.tar.gz
               object-prefix: ${{ env.obs_path }}/
@@ -248,6 +303,9 @@ stages:
     name: PreSmoke
     jobs:
       A2_smoke:
+        permissions:
+          repository: read
+          id-token: write
         name: PreSmoke_A2
         steps:
           -
@@ -258,13 +316,20 @@ stages:
               ref: ${{ atomgit.event.pull_request.merge_commit_sha }}
               allow-unsafe-pr-checkout: true
           -
+            name: oidc_auth
+            uses: huaweicloud-oidc-auth
+            with:
+              audience: ${{ secrets.audience }}
+              agency_urn: ${{ secrets.agency_urn }}
+              provider_urn: ${{ secrets.provider_urn }}
+              region: cn-north-4
+              duration: 3600
+          -
             name: download
             uses: obs-download
             with:
               endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
               bucket: "ascend-ci"
-              access-key: ${{ secrets.AK }}
-              secret-key: ${{ secrets.SK }}
               key: |
                 ${{ env.obs_path }}/pr_filelist.txt
                 ${{ env.obs_path }}/pr_filelist_mod.txt
@@ -283,8 +348,6 @@ stages:
                 export repo_name=${{env.repo_name}}
                 export pr_id=${{ env.MERGE_ID }}
                 export obs_path=${{env.obs_path}}
-                export AK=${{secrets.AK}}
-                export SK=${{secrets.SK}}
                 export obs_smoke_path=${{ env.obs_smoke_path }}
                 ARCH=dav-2201 \
                   PRESMOKE_MULTI_CARD_MODE=fixed NPU_SLOTS=1 TIMEOUT=120 \
@@ -295,8 +358,6 @@ stages:
             with:
               endpoint: "https://obs.cn-north-4.myhuaweicloud.com"
               bucket: "ascend-ci"
-              access-key: ${{ secrets.AK }}
-              secret-key: ${{ secrets.SK }}
               artifact-path: "${{ steps.process_checkout.outputs.path }}/slog*.tar.gz"
               object-prefix: ${{ env.obs_smoke_path }}/plog/
         if: env.TARGET_BRANCH == 'master'
