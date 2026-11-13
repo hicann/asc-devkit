@@ -112,10 +112,12 @@ __simd_callee__ inline auto load_gather(
 ## 约束说明
 
 - 传入`coord`时，坐标维数必须与Tensor布局匹配，且坐标不能越界。
+- 基地址必须32B对齐。传入`coord`时，基地址为`tensor.engine() + tensor.layout()(coord)`；不传入`coord`时，基地址为`tensor`起始地址。
 - 索引对应的数据必须在UB有效地址范围内。
 - `gather_mode::data_block`仅使用`index`的前8个元素，且每个索引必须大于等于0且32B对齐。
 - 索引可以存在相同的值。
-- 当`tensor`与`index`数据类型不一致时，数据写入结果寄存器索引为偶数的位置，奇数索引位置置零。
+- 在`gather_mode::element`模式下，`gather_mask`未选中的结果寄存器元素置0。
+- 在`gather_mode::element`模式下，当`index`的元素位宽大于`tensor`的元素位宽时，数据写入结果寄存器的偶数索引位置，奇数索引位置置零。
 - 寄存器数据搬入应在`__simd_vf__`函数或`__simd_callee__`函数中完成。
 
 ## 调用示例

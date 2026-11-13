@@ -85,13 +85,14 @@ __simd_vf__ inline void MoveData(SrcTensor src, DstTensor dst,
     uint32_t one_repeat_size)
 {
     using data_type = typename SrcTensor::data_type;
+    const data_type init_value = static_cast<data_type>(1);
     uint32_t remain = total_length;
     for (uint16_t i = 0; i < repeat_times; ++i) {
         auto mask = asc::te::experimental::update_mask<data_type>(remain);
         uint32_t offset = i * one_repeat_size;
         const auto coord = asc::te::make_coord(offset);
         auto src_reg = asc::te::experimental::load(src, coord).with_mask(mask);
-        auto dst_reg = src_reg;
+        auto dst_reg = asc::te::experimental::fill(init_value);
         auto result = asc::te::experimental::move(dst_reg, src_reg);
         asc::te::experimental::store(dst, coord, result);
     }
@@ -108,8 +109,7 @@ __simd_vf__ inline void MoveMask(SrcTensor src, DstTensor dst,
 {
     using data_type = typename SrcTensor::data_type;
     uint32_t remain = total_length;
-    auto mask = asc::te::experimental::make_mask<
-        asc::te::experimental::mask_pattern::vl8, data_type>();
+    auto mask = asc::te::experimental::all_mask<data_type>();
     for (uint16_t i = 0; i < repeat_times; ++i) {
         auto src_reg = asc::te::experimental::update_mask<data_type>(remain);
         src_reg.with_mask(mask);
