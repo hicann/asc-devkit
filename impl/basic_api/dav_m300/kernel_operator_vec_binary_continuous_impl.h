@@ -22,6 +22,16 @@
 #define ASCENDC_MODULE_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H
 #include "../kernel_utils.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M300_STAGE_CONTIGUOUS_INIT_COUNT_MASK(VectorType, vreg1, vreg2, vreg3, count, ElementCount) \
+    VectorType vreg1;                                                                                   \
+    VectorType vreg2;                                                                                   \
+    VectorType vreg3;                                                                                   \
+    uint32_t sreg = static_cast<uint32_t>(count);                                                       \
+    vector_bool preg;                                                                                   \
+    uint32_t sregLower = static_cast<uint32_t>(ElementCount);                                           \
+    uint16_t repeatTime = CeilDivision(count, ElementCount)
+
 namespace AscendC {
 /* **************************************************************************************************
  * Add                                             *
@@ -33,91 +43,35 @@ __aicore__ inline void AddImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void AddImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_CONTIGUOUS_1(                                                                   \
+    Function, DataType, VectorType, ElementCount, MaskIntrinsic, VectorIntrinsic, NORM_B16Arg)          \
+    __aicore__ inline void Function(                                                                    \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count) \
+    {                                                                                                   \
+        __VEC_SCOPE__                                                                                   \
+        {                                                                                               \
+            VectorType vreg0;                                                                           \
+            VectorType vreg1;                                                                           \
+            VectorType vreg2;                                                                           \
+            uint32_t sreg = static_cast<uint32_t>(count);                                               \
+            vector_bool preg;                                                                           \
+            uint32_t sregLower = static_cast<uint32_t>(ElementCount);                                   \
+            uint16_t repeatTime = CeilDivision(count, ElementCount);                                    \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                          \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                  \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                  \
+                VectorIntrinsic(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                               \
+                vsts(vreg2, dst, i* sregLower, NORM_B16Arg, preg);                                      \
+            }                                                                                           \
+        }                                                                                               \
     }
-}
 
-__aicore__ inline void AddImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void AddImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void AddImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(AddImpl, half, vector_f16, 128, plt_b16, vadd, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(AddImpl, int16_t, vector_s16, 128, plt_b16, vadd, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(AddImpl, int32_t, vector_s32, 64, plt_b32, vadd, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_1(AddImpl, float, vector_f32, 64, plt_b32, vadd, NORM_B32)
 
 /* **************************************************************************************************
  * Sub                                             *
@@ -129,91 +83,10 @@ __aicore__ inline void SubImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void SubImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void SubImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(SubImpl, half, vector_f16, 128, plt_b16, vsub, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(SubImpl, int16_t, vector_s16, 128, plt_b16, vsub, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(SubImpl, int32_t, vector_s32, 64, plt_b32, vsub, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_1(SubImpl, float, vector_f32, 64, plt_b32, vsub, NORM_B32)
 
 /* **************************************************************************************************
  * Mul                                             *
@@ -225,91 +98,10 @@ __aicore__ inline void MulImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void MulImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MulImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmul(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(MulImpl, half, vector_f16, 128, plt_b16, vmul, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MulImpl, int16_t, vector_s16, 128, plt_b16, vmul, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MulImpl, int32_t, vector_s32, 64, plt_b32, vmul, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_1(MulImpl, float, vector_f32, 64, plt_b32, vmul, NORM_B32)
 
 /* **************************************************************************************************
  * Div                                             *
@@ -321,47 +113,8 @@ __aicore__ inline void DivImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void DivImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void DivImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vdiv(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(DivImpl, half, vector_f16, 128, plt_b16, vdiv, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(DivImpl, float, vector_f32, 64, plt_b32, vdiv, NORM_B32)
 
 /* **************************************************************************************************
  * Max                                             *
@@ -373,91 +126,10 @@ __aicore__ inline void MaxImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void MaxImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MaxImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmax(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(MaxImpl, half, vector_f16, 128, plt_b16, vmax, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MaxImpl, int16_t, vector_s16, 128, plt_b16, vmax, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MaxImpl, int32_t, vector_s32, 64, plt_b32, vmax, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_1(MaxImpl, float, vector_f32, 64, plt_b32, vmax, NORM_B32)
 
 /* **************************************************************************************************
  * Min                                             *
@@ -469,91 +141,10 @@ __aicore__ inline void MinImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void MinImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-__aicore__ inline void MinImpl(__ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vmin(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(MinImpl, half, vector_f16, 128, plt_b16, vmin, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MinImpl, int16_t, vector_s16, 128, plt_b16, vmin, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(MinImpl, int32_t, vector_s32, 64, plt_b32, vmin, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_1(MinImpl, float, vector_f32, 64, plt_b32, vmin, NORM_B32)
 
 /* **************************************************************************************************
  * And                                             *
@@ -565,49 +156,8 @@ __aicore__ inline void AndImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* sr
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void AndImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-__aicore__ inline void AndImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vand(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(AndImpl, int16_t, vector_s16, 128, plt_b16, vand, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(AndImpl, uint16_t, vector_u16, 128, plt_b16, vand, NORM_B16)
 
 /* **************************************************************************************************
  * Or                                             *
@@ -619,49 +169,10 @@ __aicore__ inline void OrImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T* src
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-__aicore__ inline void OrImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_CONTIGUOUS_1(OrImpl, int16_t, vector_s16, 128, plt_b16, vor, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_1(OrImpl, uint16_t, vector_u16, 128, plt_b16, vor, NORM_B16)
 
-__aicore__ inline void OrImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vor(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CONTIGUOUS_1
 
 /* **************************************************************************************************
  * AddRelu                                             *
@@ -673,58 +184,31 @@ __aicore__ inline void AddReluImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf__ T
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half>
-__aicore__ inline void AddReluImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, half>(), "AddRelu level-2 api only support half/float on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vsts(vreg3, dst, i * sregLower, NORM_B16, preg);
-        }
+#define ASC_M300_DEFINE_CONTIGUOUS_2(DataType, VectorType, ElementCount, MaskIntrinsic, NORM_B16Arg)                \
+    template <typename T = DataType>                                                                                \
+    __aicore__ inline void AddReluImpl(                                                                             \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count)             \
+    {                                                                                                               \
+        static_assert(SupportType<T, DataType>(), "AddRelu level-2 api only support half/float on current device"); \
+        __VEC_SCOPE__                                                                                               \
+        {                                                                                                           \
+            VectorType vreg0;                                                                                       \
+            ASC_M300_STAGE_CONTIGUOUS_INIT_COUNT_MASK(VectorType, vreg1, vreg2, vreg3, count, ElementCount);        \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                             \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                            \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                              \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                              \
+                vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                      \
+                vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                            \
+                vsts(vreg3, dst, i* sregLower, NORM_B16Arg, preg);                                                  \
+            }                                                                                                       \
+        }                                                                                                           \
     }
-}
 
-template <typename T = float>
-__aicore__ inline void AddReluImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, float>(), "AddRelu level-2 api only support half/float on current device");
+ASC_M300_DEFINE_CONTIGUOUS_2(half, vector_f16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_2(float, vector_f32, 64, plt_b32, NORM_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vsts(vreg3, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CONTIGUOUS_2
 
 /* **************************************************************************************************
  * FusedMulAdd                                             *
@@ -736,57 +220,31 @@ __aicore__ inline void FusedMulAddImpl(__ubuf__ T* dst, __ubuf__ T* src0, __ubuf
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half>
-__aicore__ inline void FusedMulAddImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, half>(), "FusedMulAdd level-2 api only support half/float on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
+#define ASC_M300_DEFINE_CONTIGUOUS_3(DataType, VectorType, ElementCount, MaskIntrinsic, NORM_B16Arg)          \
+    template <typename T = DataType>                                                                          \
+    __aicore__ inline void FusedMulAddImpl(                                                                   \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count)       \
+    {                                                                                                         \
+        static_assert(                                                                                        \
+            SupportType<T, DataType>(), "FusedMulAdd level-2 api only support half/float on current device"); \
+        __VEC_SCOPE__                                                                                         \
+        {                                                                                                     \
+            ASC_M300_STAGE_CONTIGUOUS_INIT_COUNT_MASK(VectorType, vreg0, vreg1, vreg2, count, ElementCount);  \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                       \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                      \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                        \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                        \
+                vlds(vreg2, dst, i* sregLower, NORM);                                                         \
+                vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                               \
+                vsts(vreg2, dst, i* sregLower, NORM_B16Arg, preg);                                            \
+            }                                                                                                 \
+        }                                                                                                     \
     }
-}
 
-template <typename T = float>
-__aicore__ inline void FusedMulAddImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, float>(), "FusedMulAdd level-2 api only support half/float on current device");
+ASC_M300_DEFINE_CONTIGUOUS_3(half, vector_f16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_3(float, vector_f32, 64, plt_b32, NORM_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CONTIGUOUS_3
 
 /* **************************************************************************************************
  * FusedMulAddRelu                                             *
@@ -798,61 +256,39 @@ __aicore__ inline void FusedMulAddReluImpl(__ubuf__ T* dst, __ubuf__ T* src0, __
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half>
-__aicore__ inline void FusedMulAddReluImpl(
-    __ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, half>(), "FusedMulAddRelu level-2 api only support half/float on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vsts(vreg3, dst, i * sregLower, NORM_B16, preg);
-        }
+#define ASC_M300_DEFINE_CONTIGUOUS_4(DataType, VectorType, ElementCount, MaskIntrinsic, NORM_B16Arg)              \
+    template <typename T = DataType>                                                                              \
+    __aicore__ inline void FusedMulAddReluImpl(                                                                   \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count)           \
+    {                                                                                                             \
+        static_assert(                                                                                            \
+            SupportType<T, DataType>(), "FusedMulAddRelu level-2 api only support half/float on current device"); \
+        __VEC_SCOPE__                                                                                             \
+        {                                                                                                         \
+            VectorType vreg0;                                                                                     \
+            VectorType vreg1;                                                                                     \
+            VectorType vreg2;                                                                                     \
+            VectorType vreg3;                                                                                     \
+            uint32_t sreg = static_cast<uint32_t>(count);                                                         \
+            vector_bool preg;                                                                                     \
+            uint32_t sregLower = static_cast<uint32_t>(ElementCount);                                             \
+            uint16_t repeatTime = CeilDivision(count, ElementCount);                                              \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                           \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                          \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                            \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                            \
+                vlds(vreg2, dst, i* sregLower, NORM);                                                             \
+                vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                   \
+                vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                          \
+                vsts(vreg3, dst, i* sregLower, NORM_B16Arg, preg);                                                \
+            }                                                                                                     \
+        }                                                                                                         \
     }
-}
 
-template <typename T = float>
-__aicore__ inline void FusedMulAddReluImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    static_assert(SupportType<T, float>(), "FusedMulAddRelu level-2 api only support half/float on current device");
+ASC_M300_DEFINE_CONTIGUOUS_4(half, vector_f16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_4(float, vector_f32, 64, plt_b32, NORM_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vsts(vreg3, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CONTIGUOUS_4
 /* **************************************************************************************************
  * MulAddDst                                             *
  * ************************************************************************************************* */
@@ -863,169 +299,40 @@ __aicore__ inline void MulAddDstImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf__
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, typename U = half>
-__aicore__ inline void MulAddDstImpl(__ubuf__ half* dst, __ubuf__ half* src0, __ubuf__ half* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, half>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, half>(), "MulAddDst level-2 api only support b16/b32 on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
+#define ASC_M300_DEFINE_CONTIGUOUS_5(DataType, VectorType, ElementCount, MaskIntrinsic, NORM_B16Arg)               \
+    template <typename T = DataType, typename U = DataType>                                                        \
+    __aicore__ inline void MulAddDstImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, const int32_t& count)            \
+    {                                                                                                              \
+        static_assert(SupportType<U, DataType>(), "MulAddDst level-2 api only support b16/b32 on current device"); \
+        static_assert(SupportType<T, DataType>(), "MulAddDst level-2 api only support b16/b32 on current device"); \
+        __VEC_SCOPE__                                                                                              \
+        {                                                                                                          \
+            ASC_M300_STAGE_CONTIGUOUS_INIT_COUNT_MASK(VectorType, vreg0, vreg1, vreg2, count, ElementCount);       \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                            \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                           \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                             \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                             \
+                vlds(vreg2, dst, i* sregLower, NORM);                                                              \
+                vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                    \
+                vsts(vreg2, dst, i* sregLower, NORM_B16Arg, preg);                                                 \
+            }                                                                                                      \
+        }                                                                                                          \
     }
-}
 
-template <typename T = int16_t, typename U = int16_t>
-__aicore__ inline void MulAddDstImpl(
-    __ubuf__ int16_t* dst, __ubuf__ int16_t* src0, __ubuf__ int16_t* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, int16_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, int16_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
+ASC_M300_DEFINE_CONTIGUOUS_5(half, vector_f16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_5(int16_t, vector_s16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_5(uint16_t, vector_u16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_CONTIGUOUS_5(float, vector_f32, 64, plt_b32, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_5(int32_t, vector_s32, 64, plt_b32, NORM_B32)
+ASC_M300_DEFINE_CONTIGUOUS_5(uint32_t, vector_u32, 64, plt_b32, NORM_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg0;
-        vector_s16 vreg1;
-        vector_s16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-template <typename T = uint16_t, typename U = uint16_t>
-__aicore__ inline void MulAddDstImpl(
-    __ubuf__ uint16_t* dst, __ubuf__ uint16_t* src0, __ubuf__ uint16_t* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, uint16_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, uint16_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg0;
-        vector_u16 vreg1;
-        vector_u16 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B16, preg);
-        }
-    }
-}
-
-template <typename T = float, typename U = float>
-__aicore__ inline void MulAddDstImpl(
-    __ubuf__ float* dst, __ubuf__ float* src0, __ubuf__ float* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, float>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, float>(), "MulAddDst level-2 api only support b16/b32 on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, typename U = int32_t>
-__aicore__ inline void MulAddDstImpl(
-    __ubuf__ int32_t* dst, __ubuf__ int32_t* src0, __ubuf__ int32_t* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, int32_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, int32_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg0;
-        vector_s32 vreg1;
-        vector_s32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
-
-template <typename T = uint32_t, typename U = uint32_t>
-__aicore__ inline void MulAddDstImpl(
-    __ubuf__ uint32_t* dst, __ubuf__ uint32_t* src0, __ubuf__ uint32_t* src1, const int32_t& count)
-{
-    static_assert(SupportType<U, uint32_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-    static_assert(SupportType<T, uint32_t>(), "MulAddDst level-2 api only support b16/b32 on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_u32 vreg0;
-        vector_u32 vreg1;
-        vector_u32 vreg2;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vlds(vreg2, dst, i * sregLower, NORM);
-            vmula(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vsts(vreg2, dst, i * sregLower, NORM_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CONTIGUOUS_5
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H__)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_BINARY_CONTINUOUS_IMPL_H__
 #endif
+
+#undef ASC_M300_STAGE_CONTIGUOUS_INIT_COUNT_MASK

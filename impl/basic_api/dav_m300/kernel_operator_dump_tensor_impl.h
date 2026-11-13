@@ -537,18 +537,23 @@ __aicore__ static __attribute__((noinline)) void DumpShapeImpl(const ShapeInfo& 
     }
 }
 
-template <typename T>
-__aicore__ inline void DumpTensorLocal2GMImpl(
-    const LocalTensor<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape, const uint32_t shapeDim)
-{
-    uint64_t ctrlValue = get_ctrl();
-    set_atomic_none();
-    dcci((__gm__ uint64_t*)g_sysPrintFifoSpace, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);
-    if (g_sysPrintFifoSpace != nullptr) {
-        DumpTensorRingBufImpl(src, desc, dumpSize, shape, shapeDim);
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_DUMP_1(Function, LocalTensorArg)                                                         \
+    template <typename T>                                                                                        \
+    __aicore__ inline void Function(                                                                             \
+        const LocalTensorArg<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape,                   \
+        const uint32_t shapeDim)                                                                                 \
+    {                                                                                                            \
+        uint64_t ctrlValue = get_ctrl();                                                                         \
+        set_atomic_none();                                                                                       \
+        dcci((__gm__ uint64_t*)g_sysPrintFifoSpace, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT); \
+        if (g_sysPrintFifoSpace != nullptr) {                                                                    \
+            DumpTensorRingBufImpl(src, desc, dumpSize, shape, shapeDim);                                         \
+        }                                                                                                        \
+        set_ctrl(ctrlValue);                                                                                     \
     }
-    set_ctrl(ctrlValue);
-}
+
+ASC_M300_DEFINE_DUMP_1(DumpTensorLocal2GMImpl, LocalTensor)
 
 template <typename T>
 __aicore__ inline void DumpTensorLocal2GMImpl(const LocalTensor<T>& src, uint32_t desc, uint32_t dumpSize)
@@ -556,18 +561,9 @@ __aicore__ inline void DumpTensorLocal2GMImpl(const LocalTensor<T>& src, uint32_
     DumpTensorLocal2GMImpl(src, desc, dumpSize, nullptr, 0);
 }
 
-template <typename T>
-__aicore__ inline void DumpTensorGM2GMImpl(
-    const GlobalTensor<T>& src, uint32_t desc, uint32_t dumpSize, const uint32_t* shape, const uint32_t shapeDim)
-{
-    uint64_t ctrlValue = get_ctrl();
-    set_atomic_none();
-    dcci((__gm__ uint64_t*)g_sysPrintFifoSpace, cache_line_t::ENTIRE_DATA_CACHE, dcci_dst_t::CACHELINE_OUT);
-    if (g_sysPrintFifoSpace != nullptr) {
-        DumpTensorRingBufImpl(src, desc, dumpSize, shape, shapeDim);
-    }
-    set_ctrl(ctrlValue);
-}
+ASC_M300_DEFINE_DUMP_1(DumpTensorGM2GMImpl, GlobalTensor)
+
+#undef ASC_M300_DEFINE_DUMP_1
 
 template <typename T>
 __aicore__ inline void DumpTensorGM2GMImpl(const GlobalTensor<T>& src, uint32_t desc, uint32_t dumpSize)

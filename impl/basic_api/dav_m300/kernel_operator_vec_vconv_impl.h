@@ -28,6 +28,66 @@
 #include "../../../include/basic_api/kernel_tpipe.h"
 #include "../../../include/basic_api/kernel_operator_block_sync_intf.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS(VectorType, VectorType2, sregLower, mask) \
+    VectorType vreg0;                                                                    \
+    VectorType vreg1;                                                                    \
+    VectorType vreg2;                                                                    \
+    VectorType vreg3;                                                                    \
+    VectorType2 vreg4;                                                                   \
+    uint32_t sregLower = static_cast<uint32_t>(mask)
+
+#define ASC_M300_STAGE_CAST_FUSED_B16_LOOP(                                                                     \
+    repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, vreg4, \
+    VectorType3, VectorType4, dst, pregLower)                                                                   \
+    uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);                         \
+    uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);                         \
+    uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);                          \
+    uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / ElementCount);            \
+    uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / ElementCount);            \
+    uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / ElementCount2);            \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                          \
+        mem_bar(VST_VLD);                                                                                       \
+        vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);                                            \
+        vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);                                            \
+        vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                          \
+        vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                                \
+        vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);                                                \
+        vpack((VectorType3&)vreg4, (VectorType4&)vreg4, LOWER, MODE_ZEROING);                                   \
+        vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);                                        \
+    }
+
+#define ASC_M300_STAGE_CAST_PREPARE_FUSED_BITMASK(VectorType, VectorType2, MaskIntrinsic) \
+    VectorType vreg0;                                                                     \
+    VectorType vreg1;                                                                     \
+    VectorType vreg2;                                                                     \
+    VectorType vreg3;                                                                     \
+    VectorType2 vreg4;                                                                    \
+    vector_bool pregLower;                                                                \
+    vector_bool preg;                                                                     \
+    preg = MaskIntrinsic();                                                               \
+    ppack(pregLower, preg, LOWER)
+
+#define ASC_M300_STAGE_CAST_FUSED_B32_LOOP(                                                                     \
+    repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, vreg4, \
+    VectorType3, VectorType4, dst, pregLower)                                                                   \
+    uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);                         \
+    uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);                         \
+    uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);                          \
+    uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / ElementCount);            \
+    uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / ElementCount);            \
+    uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / ElementCount2);            \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                          \
+        mem_bar(VST_VLD);                                                                                       \
+        vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);                                            \
+        vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);                                            \
+        vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                          \
+        vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                                \
+        vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);                                                \
+        vpack((VectorType3&)vreg4, (VectorType4&)vreg4, LOWER, MODE_ZEROING);                                   \
+        vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);                                        \
+    }
+
 namespace AscendC {
 #define VCVT_U8_TO_F16(roundMode) vcvt(vreg1, vreg0, preg, PART_EVEN)
 #define VCVT_S8_TO_F16(roundMode) vcvt(vreg1, vreg0, preg, PART_EVEN)
@@ -586,81 +646,35 @@ __aicore__ inline void AddReluCastImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half, bool isSetMask = true>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, half>(), "AddReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, int8_t>(), "AddReluCast level-0 api only support half/float on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        uint32_t sregLower = static_cast<uint32_t>(mask);
-        uint32_t sregUpper = static_cast<uint32_t>(mask);
-        vector_bool pregLower = plt_b8(sregLower, POST_UPDATE);
-        vector_bool preg = plt_b16(sregUpper, POST_UPDATE);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 16);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 16);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 8);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u8&)vreg4, (vector_u16&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_CAST_1(                                                                                      \
+    DataType, DataType2, VectorType, VectorType2, MaskIntrinsic, MaskIntrinsic2, ElementCount, ElementCount2,        \
+    VectorType3, VectorType4)                                                                                        \
+    template <typename T = DataType, typename U = DataType2, bool isSetMask = true>                                  \
+    __aicore__ inline void AddReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint64_t mask,             \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                                  \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "AddReluCast level-0 api only support half/float on current device");       \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "AddReluCast level-0 api only support half/float on current device");        \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS(VectorType, VectorType2, sregLower, mask);                        \
+            uint32_t sregUpper = static_cast<uint32_t>(mask);                                                        \
+            vector_bool pregLower = MaskIntrinsic(sregLower, POST_UPDATE);                                           \
+            vector_bool preg = MaskIntrinsic2(sregUpper, POST_UPDATE);                                               \
+            ASC_M300_STAGE_CAST_FUSED_B16_LOOP(                                                                      \
+                repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, \
+                vreg4, VectorType3, VectorType4, dst, pregLower)                                                     \
+        }                                                                                                            \
     }
-}
 
-template <typename T = half, typename U = float, bool isSetMask = true>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, float>(), "AddReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, half>(), "AddReluCast level-0 api only support half/float on current device");
+ASC_M300_DEFINE_CAST_1(int8_t, half, vector_f16, vector_s8, plt_b8, plt_b16, 16, 8, vector_u8, vector_u16)
+ASC_M300_DEFINE_CAST_1(half, float, vector_f32, vector_f16, plt_b16, plt_b32, 32, 16, vector_u16, vector_u32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        uint32_t sregLower = static_cast<uint32_t>(mask);
-        uint32_t sregUpper = static_cast<uint32_t>(mask);
-        vector_bool pregLower = plt_b16(sregLower, POST_UPDATE);
-        vector_bool preg = plt_b32(sregUpper, POST_UPDATE);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 32);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 32);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u16&)vreg4, (vector_u32&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_1
 
 // AddReluCast::Level 0 - mask bit mode
 template <typename T, typename U, bool isSetMask = true>
@@ -671,89 +685,34 @@ __aicore__ inline void AddReluCastImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half, bool isSetMask = true>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<T, int8_t>(), "AddReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, half>(), "AddReluCast level-2 api only support float/half on current device");
-
-    if constexpr (isSetMask) {
-        SetVectorMask<U>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_CAST_2(                                                                                      \
+    DataType, DataType2, VectorType, VectorType2, MaskIntrinsic, ElementCount, ElementCount2, VectorType3,           \
+    VectorType4)                                                                                                     \
+    template <typename T = DataType, typename U = DataType2, bool isSetMask = true>                                  \
+    __aicore__ inline void AddReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint64_t mask[],           \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                                  \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "AddReluCast level-2 api only support half/int8_t on current device");       \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "AddReluCast level-2 api only support float/half on current device");       \
+        if constexpr (isSetMask) {                                                                                   \
+            SetVectorMask<U>(mask[1], mask[0]);                                                                      \
+        }                                                                                                            \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_PREPARE_FUSED_BITMASK(VectorType, VectorType2, MaskIntrinsic);                       \
+            ASC_M300_STAGE_CAST_FUSED_B16_LOOP(                                                                      \
+                repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, \
+                vreg4, VectorType3, VectorType4, dst, pregLower)                                                     \
+        }                                                                                                            \
     }
 
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        vector_bool pregLower;
-        vector_bool preg;
-        preg = movp_b16();
-        ppack(pregLower, preg, LOWER);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 16);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 16);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 8);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u8&)vreg4, (vector_u16&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+ASC_M300_DEFINE_CAST_2(int8_t, half, vector_f16, vector_s8, movp_b16, 16, 8, vector_u8, vector_u16)
+ASC_M300_DEFINE_CAST_2(half, float, vector_f32, vector_f16, movp_b32, 32, 16, vector_u16, vector_u32)
 
-template <typename T = half, typename U = float, bool isSetMask = true>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<T, half>(), "AddReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, float>(), "AddReluCast level-2 api only support float/half on current device");
-
-    if constexpr (isSetMask) {
-        SetVectorMask<U>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        vector_bool pregLower;
-        vector_bool preg;
-        preg = movp_b32();
-        ppack(pregLower, preg, LOWER);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 32);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 32);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u16&)vreg4, (vector_u32&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_2
 
 // AddReluCast::Level 2
 template <typename T, typename U>
@@ -762,65 +721,37 @@ __aicore__ inline void AddReluCastImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint32_t count)
-{
-    static_assert(SupportType<T, int8_t>(), "AddReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, half>(), "AddReluCast level-2 api only support float/half on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vsts(vreg4, dst, i * sregLower, PK_B16, preg);
-        }
+#define ASC_M300_DEFINE_CAST_3(DataType, DataType2, VectorType, VectorType2, ElementCount, MaskIntrinsic, PK_B16Arg) \
+    template <typename T = DataType, typename U = DataType2>                                                         \
+    __aicore__ inline void AddReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint32_t count)            \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "AddReluCast level-2 api only support half/int8_t on current device");       \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "AddReluCast level-2 api only support float/half on current device");       \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS(VectorType, VectorType2, sreg, count);                            \
+            vector_bool preg;                                                                                        \
+            uint32_t sregLower = static_cast<uint32_t>(ElementCount);                                                \
+            uint16_t repeatTime = CeilDivision(count, ElementCount);                                                 \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                              \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                             \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                               \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                               \
+                vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                       \
+                vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                             \
+                vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);                                             \
+                vsts(vreg4, dst, i* sregLower, PK_B16Arg, preg);                                                     \
+            }                                                                                                        \
+        }                                                                                                            \
     }
-}
 
-template <typename T = half, typename U = float>
-__aicore__ inline void AddReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint32_t count)
-{
-    static_assert(SupportType<T, half>(), "AddReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, float>(), "AddReluCast level-2 api only support float/half on current device");
+ASC_M300_DEFINE_CAST_3(int8_t, half, vector_f16, vector_s8, 128, plt_b16, PK_B16)
+ASC_M300_DEFINE_CAST_3(half, float, vector_f32, vector_f16, 64, plt_b32, PK_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vadd(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vsts(vreg4, dst, i * sregLower, PK_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_3
 
 // SubReluCast::Level 0 - mask count mode
 template <typename T, typename U, bool isSetMask = true>
@@ -831,81 +762,34 @@ __aicore__ inline void SubReluCastImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half, bool isSetMask = true>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask, uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, half>(), "SubReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, int8_t>(), "SubReluCast level-0 api only support half/float on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        uint32_t sregLower = static_cast<uint32_t>(mask);
-        uint32_t sregUpper = static_cast<uint32_t>(mask);
-        vector_bool pregLower = plt_b8(sregLower, POST_UPDATE);
-        vector_bool preg = plt_b16(sregUpper, POST_UPDATE);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 16);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 16);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 8);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u8&)vreg4, (vector_u16&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
+#define ASC_M300_DEFINE_CAST_4(                                                                                      \
+    DataType, DataType2, VectorType, VectorType2, MaskIntrinsic, MaskIntrinsic2, ElementCount, ElementCount2,        \
+    VectorType3, VectorType4)                                                                                        \
+    template <typename T = DataType, typename U = DataType2, bool isSetMask = true>                                  \
+    __aicore__ inline void SubReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint64_t mask,             \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                                  \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "SubReluCast level-0 api only support half/float on current device");       \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "SubReluCast level-0 api only support half/float on current device");        \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS(VectorType, VectorType2, sregLower, mask);                        \
+            uint32_t sregUpper = static_cast<uint32_t>(mask);                                                        \
+            vector_bool pregLower = MaskIntrinsic(sregLower, POST_UPDATE);                                           \
+            vector_bool preg = MaskIntrinsic2(sregUpper, POST_UPDATE);                                               \
+            ASC_M300_STAGE_CAST_FUSED_B32_LOOP(                                                                      \
+                repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, \
+                vreg4, VectorType3, VectorType4, dst, pregLower)                                                     \
+        }                                                                                                            \
     }
-}
 
-template <typename T = half, typename U = float, bool isSetMask = true>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask, uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, float>(), "SubReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, half>(), "SubReluCast level-0 api only support half/float on current device");
+ASC_M300_DEFINE_CAST_4(int8_t, half, vector_f16, vector_s8, plt_b8, plt_b16, 16, 8, vector_u8, vector_u16)
+ASC_M300_DEFINE_CAST_4(half, float, vector_f32, vector_f16, plt_b16, plt_b32, 32, 16, vector_u16, vector_u32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        uint32_t sregLower = static_cast<uint32_t>(mask);
-        uint32_t sregUpper = static_cast<uint32_t>(mask);
-        vector_bool pregLower = plt_b16(sregLower, POST_UPDATE);
-        vector_bool preg = plt_b32(sregUpper, POST_UPDATE);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 32);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 32);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u16&)vreg4, (vector_u32&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_4
 
 // SubReluCast::Level 0 - mask bit mode
 template <typename T, typename U, bool isSetMask = true>
@@ -916,89 +800,34 @@ __aicore__ inline void SubReluCastImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half, bool isSetMask = true>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint64_t mask[], uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, half>(), "SubReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, int8_t>(), "SubReluCast level-0 api only support half/float on current device");
-
-    if constexpr (isSetMask) {
-        SetVectorMask<U>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_CAST_5(                                                                                      \
+    DataType, DataType2, VectorType, VectorType2, MaskIntrinsic, ElementCount, ElementCount2, VectorType3,           \
+    VectorType4)                                                                                                     \
+    template <typename T = DataType, typename U = DataType2, bool isSetMask = true>                                  \
+    __aicore__ inline void SubReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint64_t mask[],           \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                                  \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "SubReluCast level-0 api only support half/float on current device");       \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "SubReluCast level-0 api only support half/float on current device");        \
+        if constexpr (isSetMask) {                                                                                   \
+            SetVectorMask<U>(mask[1], mask[0]);                                                                      \
+        }                                                                                                            \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_PREPARE_FUSED_BITMASK(VectorType, VectorType2, MaskIntrinsic);                       \
+            ASC_M300_STAGE_CAST_FUSED_B32_LOOP(                                                                      \
+                repeatParams, ElementCount, ElementCount2, repeatTime, vreg0, src0, preg, vreg1, src1, vreg2, vreg3, \
+                vreg4, VectorType3, VectorType4, dst, pregLower)                                                     \
+        }                                                                                                            \
     }
 
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        vector_bool pregLower;
-        vector_bool preg;
-        preg = movp_b16();
-        ppack(pregLower, preg, LOWER);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 16);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 16);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 8);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u8&)vreg4, (vector_u16&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+ASC_M300_DEFINE_CAST_5(int8_t, half, vector_f16, vector_s8, movp_b16, 16, 8, vector_u8, vector_u16)
+ASC_M300_DEFINE_CAST_5(half, float, vector_f32, vector_f16, movp_b32, 32, 16, vector_u16, vector_u32)
 
-template <typename T = half, typename U = float, bool isSetMask = true>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint64_t mask[], uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    static_assert(SupportType<U, float>(), "SubReluCast level-0 api only support half/float on current device");
-    static_assert(SupportType<T, half>(), "SubReluCast level-0 api only support half/float on current device");
-
-    if constexpr (isSetMask) {
-        SetVectorMask<U>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        vector_bool pregLower;
-        vector_bool preg;
-        preg = movp_b32();
-        ppack(pregLower, preg, LOWER);
-        uint32_t strideConfig0 = (static_cast<uint32_t>(repeatParams.src0BlkStride) << 16);
-        uint32_t strideConfig1 = (static_cast<uint32_t>(repeatParams.src1BlkStride) << 16);
-        uint32_t strideConfig2 = (static_cast<uint32_t>(repeatParams.dstBlkStride) << 16);
-        uint32_t strideOffset0 = static_cast<uint32_t>(repeatParams.src0RepStride * 256 / 32);
-        uint32_t strideOffset1 = static_cast<uint32_t>(repeatParams.src1RepStride * 256 / 32);
-        uint32_t strideOffset2 = static_cast<uint32_t>(repeatParams.dstRepStride * 256 / 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            mem_bar(VST_VLD);
-            vsldb(vreg0, src0 + i * strideOffset0, strideConfig0, preg);
-            vsldb(vreg1, src1 + i * strideOffset1, strideConfig1, preg);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vpack((vector_u16&)vreg4, (vector_u32&)vreg4, LOWER, MODE_ZEROING);
-            vsstb(vreg4, dst + i * strideOffset2, strideConfig2, pregLower);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_5
 
 // SubReluCast::Level 2
 template <typename T, typename U>
@@ -1007,65 +836,37 @@ __aicore__ inline void SubReluCastImpl(__ubuf__ T* dst, __ubuf__ U* src0, __ubuf
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = int8_t, typename U = half>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ int8_t* dst, __ubuf__ half* src0, __ubuf__ half* src1, const uint32_t count)
-{
-    static_assert(SupportType<T, int8_t>(), "SubReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, half>(), "SubReluCast level-2 api only support float/half on current device");
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_f16 vreg2;
-        vector_f16 vreg3;
-        vector_s8 vreg4;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(128);
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vsts(vreg4, dst, i * sregLower, PK_B16, preg);
-        }
+#define ASC_M300_DEFINE_CAST_6(DataType, DataType2, VectorType, VectorType2, ElementCount, MaskIntrinsic, PK_B16Arg) \
+    template <typename T = DataType, typename U = DataType2>                                                         \
+    __aicore__ inline void SubReluCastImpl(                                                                          \
+        __ubuf__ DataType* dst, __ubuf__ DataType2* src0, __ubuf__ DataType2* src1, const uint32_t count)            \
+    {                                                                                                                \
+        static_assert(                                                                                               \
+            SupportType<T, DataType>(), "SubReluCast level-2 api only support half/int8_t on current device");       \
+        static_assert(                                                                                               \
+            SupportType<U, DataType2>(), "SubReluCast level-2 api only support float/half on current device");       \
+        __VEC_SCOPE__                                                                                                \
+        {                                                                                                            \
+            ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS(VectorType, VectorType2, sreg, count);                            \
+            vector_bool preg;                                                                                        \
+            uint32_t sregLower = static_cast<uint32_t>(ElementCount);                                                \
+            uint16_t repeatTime = CeilDivision(count, ElementCount);                                                 \
+            for (uint16_t i = 0; i < repeatTime; ++i) {                                                              \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                                             \
+                vlds(vreg0, src0, i* sregLower, NORM);                                                               \
+                vlds(vreg1, src1, i* sregLower, NORM);                                                               \
+                vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);                                                       \
+                vrelu(vreg3, vreg2, preg, MODE_ZEROING);                                                             \
+                vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);                                             \
+                vsts(vreg4, dst, i* sregLower, PK_B16Arg, preg);                                                     \
+            }                                                                                                        \
+        }                                                                                                            \
     }
-}
 
-template <typename T = half, typename U = float>
-__aicore__ inline void SubReluCastImpl(
-    __ubuf__ half* dst, __ubuf__ float* src0, __ubuf__ float* src1, const uint32_t count)
-{
-    static_assert(SupportType<T, half>(), "SubReluCast level-2 api only support half/int8_t on current device");
-    static_assert(SupportType<U, float>(), "SubReluCast level-2 api only support float/half on current device");
+ASC_M300_DEFINE_CAST_6(int8_t, half, vector_f16, vector_s8, 128, plt_b16, PK_B16)
+ASC_M300_DEFINE_CAST_6(half, float, vector_f32, vector_f16, 64, plt_b32, PK_B32)
 
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_f32 vreg2;
-        vector_f32 vreg3;
-        vector_f16 vreg4;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint32_t sregLower = static_cast<uint32_t>(64);
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < repeatTime; ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vlds(vreg0, src0, i * sregLower, NORM);
-            vlds(vreg1, src1, i * sregLower, NORM);
-            vsub(vreg2, vreg0, vreg1, preg, MODE_ZEROING);
-            vrelu(vreg3, vreg2, preg, MODE_ZEROING);
-            vcvt(vreg4, vreg3, preg, ROUND_R, RS_ENABLE, PART_EVEN);
-            vsts(vreg4, dst, i * sregLower, PK_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_CAST_6
 
 __aicore__ inline void SetDeqScaleImpl(float scale, int16_t offset, bool signMode)
 {
@@ -1089,3 +890,8 @@ __aicore__ inline void SetDeqScaleImpl(T config)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_VCONV_IMPL_H__
 #endif
+
+#undef ASC_M300_STAGE_CAST_FUSED_B32_LOOP
+#undef ASC_M300_STAGE_CAST_PREPARE_FUSED_BITMASK
+#undef ASC_M300_STAGE_CAST_FUSED_B16_LOOP
+#undef ASC_M300_STAGE_CAST_DECLARE_FUSED_REGS

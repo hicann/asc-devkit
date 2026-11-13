@@ -42,113 +42,34 @@ __aicore__ inline void DuplicateImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ half* dstLocal, const half& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_DUPLICATE_1(DataType, VectorType, MaskIntrinsic, ElementCount)                     \
+    template <typename T = DataType, bool isSetMask = true>                                                \
+    __aicore__ inline void DuplicateImpl(                                                                  \
+        __ubuf__ DataType* dstLocal, const DataType& scalarValue, uint64_t mask, const uint8_t repeatTime, \
+        const uint16_t dstBlockStride, const uint8_t dstRepeatStride)                                      \
+    {                                                                                                      \
+        __VEC_SCOPE__                                                                                      \
+        {                                                                                                  \
+            VectorType vreg;                                                                               \
+            uint32_t sreg = static_cast<uint32_t>(mask);                                                   \
+            vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                                           \
+            uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);                       \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                             \
+                vdup(vreg, scalarValue, preg, MODE_ZEROING);                                               \
+                vsstb(vreg, dstLocal + i * dstRepeatStride * ElementCount, strideConfig, preg);            \
+            }                                                                                              \
+        }                                                                                                  \
     }
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ float* dstLocal, const float& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_DUPLICATE_1(half, vector_f16, plt_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_1(float, vector_f32, plt_b32, 8)
+ASC_M300_DEFINE_DUPLICATE_1(int16_t, vector_s16, plt_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_1(uint16_t, vector_u16, plt_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_1(int32_t, vector_s32, plt_b32, 8)
+ASC_M300_DEFINE_DUPLICATE_1(uint32_t, vector_u32, plt_b32, 8)
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ int16_t* dstLocal, const int16_t& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ uint16_t* dstLocal, const uint16_t& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ int32_t* dstLocal, const int32_t& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = uint32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ uint32_t* dstLocal, const uint32_t& scalarValue, uint64_t mask, const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_u32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_DUPLICATE_1
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void DuplicateImpl(
@@ -158,137 +79,36 @@ __aicore__ inline void DuplicateImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ half* dstLocal, const half& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_DUPLICATE_2(DataType, VectorType, MaskIntrinsic, ElementCount)                       \
+    template <typename T = DataType, bool isSetMask = true>                                                  \
+    __aicore__ inline void DuplicateImpl(                                                                    \
+        __ubuf__ DataType* dstLocal, const DataType& scalarValue, uint64_t mask[], const uint8_t repeatTime, \
+        const uint16_t dstBlockStride, const uint8_t dstRepeatStride)                                        \
+    {                                                                                                        \
+        if constexpr (isSetMask) {                                                                           \
+            SetVectorMask<T>(mask[1], mask[0]);                                                              \
+        }                                                                                                    \
+        __VEC_SCOPE__                                                                                        \
+        {                                                                                                    \
+            VectorType vreg;                                                                                 \
+            vector_bool preg;                                                                                \
+            preg = MaskIntrinsic();                                                                          \
+            uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);                         \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                               \
+                vdup(vreg, scalarValue, preg, MODE_ZEROING);                                                 \
+                vsstb(vreg, dstLocal + i * dstRepeatStride * ElementCount, strideConfig, preg);              \
+            }                                                                                                \
+        }                                                                                                    \
     }
 
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg;
-        vector_bool preg;
-        preg = movp_b16();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_DUPLICATE_2(half, vector_f16, movp_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_2(float, vector_f32, movp_b32, 8)
+ASC_M300_DEFINE_DUPLICATE_2(int16_t, vector_s16, movp_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_2(uint16_t, vector_u16, movp_b16, 16)
+ASC_M300_DEFINE_DUPLICATE_2(int32_t, vector_s32, movp_b32, 8)
+ASC_M300_DEFINE_DUPLICATE_2(uint32_t, vector_u32, movp_b32, 8)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ float* dstLocal, const float& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg;
-        vector_bool preg;
-        preg = movp_b32();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ int16_t* dstLocal, const int16_t& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg;
-        vector_bool preg;
-        preg = movp_b16();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ uint16_t* dstLocal, const uint16_t& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg;
-        vector_bool preg;
-        preg = movp_b16();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 16, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ int32_t* dstLocal, const int32_t& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg;
-        vector_bool preg;
-        preg = movp_b32();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
-
-template <typename T = uint32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(
-    __ubuf__ uint32_t* dstLocal, const uint32_t& scalarValue, uint64_t mask[], const uint8_t repeatTime,
-    const uint16_t dstBlockStride, const uint8_t dstRepeatStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_u32 vreg;
-        vector_bool preg;
-        preg = movp_b32();
-        uint32_t strideConfig = ((static_cast<uint32_t>(dstBlockStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsstb(vreg, dstLocal + i * dstRepeatStride * 8, strideConfig, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_DUPLICATE_2
 
 template <typename T>
 __aicore__ inline void DuplicateImpl(__ubuf__ T* dstLocal, const T& scalarValue, const int32_t& count)
@@ -296,107 +116,33 @@ __aicore__ inline void DuplicateImpl(__ubuf__ T* dstLocal, const T& scalarValue,
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported on current device!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ half* dstLocal, const half& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 128, NORM_B16, preg);
-        }
+#define ASC_M300_DEFINE_DUPLICATE_3(DataType, VectorType, ElementCount, MaskIntrinsic, NORM_B16Arg) \
+    template <typename T = DataType, bool isSetMask = true>                                         \
+    __aicore__ inline void DuplicateImpl(                                                           \
+        __ubuf__ DataType* dstLocal, const DataType& scalarValue, const int32_t& count)             \
+    {                                                                                               \
+        __VEC_SCOPE__                                                                               \
+        {                                                                                           \
+            VectorType vreg;                                                                        \
+            uint32_t sreg = static_cast<uint32_t>(count);                                           \
+            vector_bool preg;                                                                       \
+            uint16_t repeatTime = CeilDivision(count, ElementCount);                                \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                      \
+                preg = MaskIntrinsic(sreg, POST_UPDATE);                                            \
+                vdup(vreg, scalarValue, preg, MODE_ZEROING);                                        \
+                vsts(vreg, dstLocal, i* ElementCount, NORM_B16Arg, preg);                           \
+            }                                                                                       \
+        }                                                                                           \
     }
-}
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ float* dstLocal, const float& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 64, NORM_B32, preg);
-        }
-    }
-}
+ASC_M300_DEFINE_DUPLICATE_3(half, vector_f16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_DUPLICATE_3(float, vector_f32, 64, plt_b32, NORM_B32)
+ASC_M300_DEFINE_DUPLICATE_3(int16_t, vector_s16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_DUPLICATE_3(uint16_t, vector_u16, 128, plt_b16, NORM_B16)
+ASC_M300_DEFINE_DUPLICATE_3(int32_t, vector_s32, 64, plt_b32, NORM_B32)
+ASC_M300_DEFINE_DUPLICATE_3(uint32_t, vector_u32, 64, plt_b32, NORM_B32)
 
-template <typename T = int16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ int16_t* dstLocal, const int16_t& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 128, NORM_B16, preg);
-        }
-    }
-}
-
-template <typename T = uint16_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ uint16_t* dstLocal, const uint16_t& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u16 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 128);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b16(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 128, NORM_B16, preg);
-        }
-    }
-}
-
-template <typename T = int32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ int32_t* dstLocal, const int32_t& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_s32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 64, NORM_B32, preg);
-        }
-    }
-}
-
-template <typename T = uint32_t, bool isSetMask = true>
-__aicore__ inline void DuplicateImpl(__ubuf__ uint32_t* dstLocal, const uint32_t& scalarValue, const int32_t& count)
-{
-    __VEC_SCOPE__
-    {
-        vector_u32 vreg;
-        uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg;
-        uint16_t repeatTime = CeilDivision(count, 64);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            preg = plt_b32(sreg, POST_UPDATE);
-            vdup(vreg, scalarValue, preg, MODE_ZEROING);
-            vsts(vreg, dstLocal, i * 64, NORM_B32, preg);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_DUPLICATE_3
 } // namespace AscendC
 #endif // ASCENDC_MODULE_OPERATOR_VEC_DUPLICATE_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_DUPLICATE_IMPL_H__)

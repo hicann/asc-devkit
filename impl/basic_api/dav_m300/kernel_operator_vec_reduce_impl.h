@@ -25,6 +25,50 @@
 #include "../../../include/basic_api/kernel_tpipe.h"
 #include "../../../include/basic_api/kernel_operator_block_sync_intf.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                               \
+    repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)  \
+    int32_t newRepeat = repeatTime;                                              \
+    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg;               \
+    uint32_t newDstRepStride = dstRepStride;                                     \
+    __ubuf__ DataType* newSrc = src;                                             \
+    if (dstRepStride == 0 && repeatTime > 0) {                                   \
+        newRepeat = 1;                                                           \
+        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg * (repeatTime - 1); \
+        newSrc += srcStrideOffset;                                               \
+        newDstRepStride = 1;                                                     \
+    }
+
+#define ASC_M300_STAGE_REDUCE_INIT_SCALAR_REPEAT(                                      \
+    repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, order, dstRepStride, DataType, src) \
+    int32_t newRepeat = repeatTime;                                                    \
+    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg;                     \
+    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;      \
+    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);               \
+    __ubuf__ DataType* newSrc = src;                                                   \
+    if (dstRepStride == 0 && repeatTime > 0) {                                         \
+        newRepeat = 1;                                                                 \
+        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUMArg * (repeatTime - 1);       \
+        newSrc += srcStrideOffset;                                                     \
+    }
+
+#define ASC_M300_STAGE_REDUCE_LOAD_BITMASK(mask)                                                  \
+    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16); \
+    *((__ubuf__ uint64_t*)tempBuf) = mask[0];                                                     \
+    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];                                                 \
+    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));      \
+    SetFlag<HardEvent::S_V>(eventIdSToV);                                                         \
+    WaitFlag<HardEvent::S_V>(eventIdSToV)
+
+#define ASC_M300_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic) \
+    VectorType vreg0;                                                              \
+    VectorType vreg1;                                                              \
+    vector_align ureg;                                                             \
+    uint32_t sreg = static_cast<uint32_t>(mask);                                   \
+    vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                           \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                   \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16)
+
 namespace AscendC {
 #define VCPADD_FUNC() vcpadd(vreg1, vreg0, preg, MODE_ZEROING)
 #define VCGADD_FUNC() vcgadd(vreg1, vreg0, preg, MODE_ZEROING)
@@ -102,85 +146,41 @@ __aicore__ inline void PairReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_REDUCE_1(DataType, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg, FULL_MASK_LENArg) \
+    template <typename T = DataType, bool isSetMask = true>                                                        \
+    __aicore__ inline void PairReduceSumImpl(                                                                      \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const uint64_t mask[],           \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)                        \
+    {                                                                                                              \
+        if constexpr (isSetMask) {                                                                                 \
+            SetVectorMask<T>(mask[1], mask[0]);                                                                    \
+        }                                                                                                          \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                                 \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                            \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCPADD_FUNC, FULL_MASK_LENArg / HALF_FACTOR);                              \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCPADD_FUNC, FULL_MASK_LEN / HALF_FACTOR);
-}
+ASC_M300_DEFINE_REDUCE_1(half, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, FULL_MASK_LEN)
+ASC_M300_DEFINE_REDUCE_1(float, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, HALF_MASK_LEN)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#undef ASC_M300_DEFINE_REDUCE_1
+
+#define ASC_M300_DEFINE_REDUCE_2(DataType, ONE_BLK_HALF_NUMArg, f16Arg, b16Arg, FULL_MASK_LENArg)     \
+    template <typename T = DataType, bool isSetMask = true>                                           \
+    __aicore__ inline void PairReduceSumImpl(                                                         \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const int32_t mask, \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)           \
+    {                                                                                                 \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                    \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)               \
+        CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f16Arg, b16Arg, FULL_MASK_LENArg / HALF_FACTOR);       \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCPADD_FUNC, HALF_MASK_LEN / HALF_FACTOR);
-}
+ASC_M300_DEFINE_REDUCE_2(half, ONE_BLK_HALF_NUM, f16, b16, FULL_MASK_LEN)
+ASC_M300_DEFINE_REDUCE_2(float, ONE_BLK_FLOAT_NUM, f32, b32, HALF_MASK_LEN)
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f16, b16, FULL_MASK_LEN / HALF_FACTOR);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void PairReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCPADD_FUNC, f32, b32, HALF_MASK_LEN / HALF_FACTOR);
-}
+#undef ASC_M300_DEFINE_REDUCE_2
 
 /* **************************************** Block Reduce Impl ****************************************** */
 template <typename T, bool isSetMask = true>
@@ -198,85 +198,37 @@ __aicore__ inline void BlockReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_REDUCE_3(                                                                        \
+    DataType, Function, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg, VCGADD_FUNCArg)            \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void Function(                                                                     \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const uint64_t mask[], \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)              \
+    {                                                                                                    \
+        if constexpr (isSetMask) {                                                                       \
+            SetVectorMask<T>(mask[1], mask[0]);                                                          \
+        }                                                                                                \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                       \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                  \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCGADD_FUNCArg, DEFAULT_BLK_NUM);                                \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGADD_FUNC, DEFAULT_BLK_NUM);
-}
+ASC_M300_DEFINE_REDUCE_3(half, BlockReduceSumImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGADD_FUNC)
+ASC_M300_DEFINE_REDUCE_3(float, BlockReduceSumImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGADD_FUNC)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_REDUCE_4(DataType, Function, ONE_BLK_HALF_NUMArg, VCGADD_FUNCArg, f16Arg, b16Arg) \
+    template <typename T = DataType, bool isSetMask = true>                                               \
+    __aicore__ inline void Function(                                                                      \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t repeatTime, const int32_t mask,     \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)               \
+    {                                                                                                     \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                        \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                   \
+        CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNCArg, f16Arg, b16Arg, DEFAULT_BLK_NUM);                       \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGADD_FUNC, DEFAULT_BLK_NUM);
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGADD_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+ASC_M300_DEFINE_REDUCE_4(half, BlockReduceSumImpl, ONE_BLK_HALF_NUM, VCGADD_FUNC, f16, b16)
+ASC_M300_DEFINE_REDUCE_4(float, BlockReduceSumImpl, ONE_BLK_FLOAT_NUM, VCGADD_FUNC, f32, b32)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void BlockReduceMaxImpl(
@@ -294,85 +246,10 @@ __aicore__ inline void BlockReduceMaxImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGMAX_FUNC, DEFAULT_BLK_NUM);
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMAX_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGMAX_FUNC, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMAX_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+ASC_M300_DEFINE_REDUCE_3(half, BlockReduceMaxImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGMAX_FUNC)
+ASC_M300_DEFINE_REDUCE_4(half, BlockReduceMaxImpl, ONE_BLK_HALF_NUM, VCGMAX_FUNC, f16, b16)
+ASC_M300_DEFINE_REDUCE_3(float, BlockReduceMaxImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGMAX_FUNC)
+ASC_M300_DEFINE_REDUCE_4(float, BlockReduceMaxImpl, ONE_BLK_FLOAT_NUM, VCGMAX_FUNC, f32, b32)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void BlockReduceMinImpl(
@@ -390,85 +267,15 @@ __aicore__ inline void BlockReduceMinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const uint64_t mask[], const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
+ASC_M300_DEFINE_REDUCE_3(half, BlockReduceMinImpl, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF, VCGMIN_FUNC)
+ASC_M300_DEFINE_REDUCE_4(half, BlockReduceMinImpl, ONE_BLK_HALF_NUM, VCGMIN_FUNC, f16, b16)
+ASC_M300_DEFINE_REDUCE_3(float, BlockReduceMinImpl, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF, VCGMIN_FUNC)
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCGMIN_FUNC, DEFAULT_BLK_NUM);
-}
+#undef ASC_M300_DEFINE_REDUCE_3
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMIN_FUNC, f16, b16, DEFAULT_BLK_NUM);
-}
+ASC_M300_DEFINE_REDUCE_4(float, BlockReduceMinImpl, ONE_BLK_FLOAT_NUM, VCGMIN_FUNC, f32, b32)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const uint64_t mask[],
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCGMIN_FUNC, DEFAULT_BLK_NUM);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void BlockReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t repeatTime, const int32_t mask, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCGMIN_FUNC, f32, b32, DEFAULT_BLK_NUM);
-}
+#undef ASC_M300_DEFINE_REDUCE_4
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void RepeatReduceSumImpl(
@@ -495,140 +302,64 @@ __aicore__ inline void WholeReduceMaxImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_REDUCE_5(DataType, Function, ONE_BLK_HALF_NUMArg, VectorType, MaskIntrinsic, VectorIntrinsic) \
+    template <typename T = DataType, bool isSetMask = true>                                                           \
+    __aicore__ inline void Function(                                                                                  \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t mask, const int32_t repeatTime,                 \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)  \
+    {                                                                                                                 \
+        ASC_M300_STAGE_REDUCE_INIT_SCALAR_REPEAT(                                                                     \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, order, dstRepStride, DataType, src)                        \
+        __VEC_SCOPE__                                                                                                 \
+        {                                                                                                             \
+            VectorType vreg0;                                                                                         \
+            VectorType vreg1;                                                                                         \
+            vector_align ureg;                                                                                        \
+            uint32_t sreg = static_cast<uint32_t>(mask);                                                              \
+            vector_bool preg = MaskIntrinsic(sreg, POST_UPDATE);                                                      \
+            uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);                                    \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {                                         \
+                vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);                                       \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                    \
+                vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                                                \
+                vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);                                                   \
+            }                                                                                                         \
+        }                                                                                                             \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        preg = movp_b16();
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
+ASC_M300_DEFINE_REDUCE_5(half, WholeReduceMaxImpl, ONE_BLK_HALF_NUM, vector_f16, plt_b16, vcmax)
+ASC_M300_DEFINE_REDUCE_5(float, WholeReduceMaxImpl, ONE_BLK_FLOAT_NUM, vector_f32, plt_b32, vcmax)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMaxImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_REDUCE_6(DataType, Function, ONE_BLK_HALF_NUMArg, VectorType, MaskIntrinsic, VectorIntrinsic) \
+    template <typename T = DataType, bool isSetMask = true>                                                           \
+    __aicore__ inline void Function(                                                                                  \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const uint64_t mask[], const int32_t repeatTime,              \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)  \
+    {                                                                                                                 \
+        if constexpr (isSetMask) {                                                                                    \
+            SetVectorMask<T>(mask[1], mask[0]);                                                                       \
+        }                                                                                                             \
+        ASC_M300_STAGE_REDUCE_INIT_SCALAR_REPEAT(                                                                     \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, order, dstRepStride, DataType, src)                        \
+        __VEC_SCOPE__                                                                                                 \
+        {                                                                                                             \
+            VectorType vreg0;                                                                                         \
+            VectorType vreg1;                                                                                         \
+            vector_align ureg;                                                                                        \
+            vector_bool preg;                                                                                         \
+            preg = MaskIntrinsic();                                                                                   \
+            uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);                                    \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {                                         \
+                vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);                                       \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                    \
+                vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);                                                \
+                vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);                                                   \
+            }                                                                                                         \
+        }                                                                                                             \
     }
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        preg = movp_b32();
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
+
+ASC_M300_DEFINE_REDUCE_6(half, WholeReduceMaxImpl, ONE_BLK_HALF_NUM, vector_f16, movp_b16, vcmax)
+ASC_M300_DEFINE_REDUCE_6(float, WholeReduceMaxImpl, ONE_BLK_FLOAT_NUM, vector_f32, movp_b32, vcmax)
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void WholeReduceMinImpl(
@@ -646,142 +377,15 @@ __aicore__ inline void WholeReduceMinImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
+ASC_M300_DEFINE_REDUCE_5(half, WholeReduceMinImpl, ONE_BLK_HALF_NUM, vector_f16, plt_b16, vcmin)
+ASC_M300_DEFINE_REDUCE_5(float, WholeReduceMinImpl, ONE_BLK_FLOAT_NUM, vector_f32, plt_b32, vcmin)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_REDUCE_5
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
+ASC_M300_DEFINE_REDUCE_6(half, WholeReduceMinImpl, ONE_BLK_HALF_NUM, vector_f16, movp_b16, vcmin)
+ASC_M300_DEFINE_REDUCE_6(float, WholeReduceMinImpl, ONE_BLK_FLOAT_NUM, vector_f32, movp_b32, vcmin)
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        preg = movp_b16();
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceMinImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride, const ReduceOrder order)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
-    }
-
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t dstStrideOffset = (order == ReduceOrder::ORDER_VALUE_INDEX) ? 2 : 1;
-    uint32_t dstStrideOffsetPost = dstStrideOffset * (dstRepStride - 1);
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-    }
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        preg = movp_b32();
-        uint32_t strideConfig = ((static_cast<uint32_t>(srcBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeat); ++i) {
-            vsldb(vreg0, newSrc + i * srcStrideOffset, strideConfig, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, dstStrideOffset, vreg1, dst, POST_UPDATE);
-            vstas(ureg, dst, dstStrideOffsetPost, POST_UPDATE);
-        }
-    }
-}
+#undef ASC_M300_DEFINE_REDUCE_6
 
 template <typename T, bool isSetMask = true>
 __aicore__ inline void WholeReduceSumImpl(
@@ -799,84 +403,40 @@ __aicore__ inline void WholeReduceSumImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "current data type is not supported!"); });
 }
 
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f16, b16, 1);
-}
-
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const int32_t mask, const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f32, b32, 1);
-}
-
-template <typename T = half, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ half* dst, __ubuf__ half* src, const uint64_t mask[], const int32_t repeatTime, const int32_t dstRepStride,
-    const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#define ASC_M300_DEFINE_REDUCE_7(DataType, ONE_BLK_HALF_NUMArg, f16Arg, b16Arg)                       \
+    template <typename T = DataType, bool isSetMask = true>                                           \
+    __aicore__ inline void WholeReduceSumImpl(                                                        \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const int32_t mask, const int32_t repeatTime, \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)           \
+    {                                                                                                 \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                    \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)               \
+        CONTINUOUS_MODE_REDUCE_VF(VCADD_FUNC, f16Arg, b16Arg, 1);                                     \
     }
 
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ half* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_HALF_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_HALF_REDUCE_VF(VCADD_FUNC, 1);
-}
+ASC_M300_DEFINE_REDUCE_7(half, ONE_BLK_HALF_NUM, f16, b16)
+ASC_M300_DEFINE_REDUCE_7(float, ONE_BLK_FLOAT_NUM, f32, b32)
 
-template <typename T = float, bool isSetMask = true>
-__aicore__ inline void WholeReduceSumImpl(
-    __ubuf__ float* dst, __ubuf__ float* src, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)
-{
-    if constexpr (isSetMask) {
-        SetVectorMask<T>(mask[1], mask[0]);
+#undef ASC_M300_DEFINE_REDUCE_7
+
+#define ASC_M300_DEFINE_REDUCE_8(DataType, ONE_BLK_HALF_NUMArg, BITBYBIT_MODE_HALF_REDUCE_VFArg)         \
+    template <typename T = DataType, bool isSetMask = true>                                              \
+    __aicore__ inline void WholeReduceSumImpl(                                                           \
+        __ubuf__ DataType* dst, __ubuf__ DataType* src, const uint64_t mask[], const int32_t repeatTime, \
+        const int32_t dstRepStride, const int32_t srcBlkStride, const int32_t srcRepStride)              \
+    {                                                                                                    \
+        if constexpr (isSetMask) {                                                                       \
+            SetVectorMask<T>(mask[1], mask[0]);                                                          \
+        }                                                                                                \
+        ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT(                                                       \
+            repeatTime, srcRepStride, ONE_BLK_HALF_NUMArg, dstRepStride, DataType, src)                  \
+        BITBYBIT_MODE_HALF_REDUCE_VFArg(VCADD_FUNC, 1);                                                  \
     }
-    int32_t newRepeat = repeatTime;
-    uint32_t srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM;
-    uint32_t newDstRepStride = dstRepStride;
-    __ubuf__ float* newSrc = src;
-    if (dstRepStride == 0 && repeatTime > 0) {
-        newRepeat = 1;
-        srcStrideOffset = srcRepStride * ONE_BLK_FLOAT_NUM * (repeatTime - 1);
-        newSrc += srcStrideOffset;
-        newDstRepStride = 1;
-    }
-    BITBYBIT_MODE_FLOAT_REDUCE_VF(VCADD_FUNC, 1);
-}
+
+ASC_M300_DEFINE_REDUCE_8(half, ONE_BLK_HALF_NUM, BITBYBIT_MODE_HALF_REDUCE_VF)
+ASC_M300_DEFINE_REDUCE_8(float, ONE_BLK_FLOAT_NUM, BITBYBIT_MODE_FLOAT_REDUCE_VF)
+
+#undef ASC_M300_DEFINE_REDUCE_8
 
 /* **************************************** Reduce Interface ****************************************** */
 template <typename T>
@@ -895,111 +455,81 @@ __aicore__ inline void ReduceMaxIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceMaxIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M300_DEFINE_REDUCE_9(Function, DataType, VectorType, MaskIntrinsic, ElementCount, VectorIntrinsic)         \
+    __aicore__ inline void Function(                                                                                   \
+        __ubuf__ DataType* sharedTmpBuffer, __ubuf__ DataType* srcLocal, const int32_t mask, const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                    \
+    {                                                                                                                  \
+        __VEC_SCOPE__                                                                                                  \
+        {                                                                                                              \
+            ASC_M300_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic);                                \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                         \
+                vsldb(vreg0, srcLocal + i * srcRepStride * ElementCount, strideConfig0, preg);                         \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                     \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                                   \
+            }                                                                                                          \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                              \
+        }                                                                                                              \
     }
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+ASC_M300_DEFINE_REDUCE_9(ReduceMaxIntrinsicsImpl, half, vector_f16, plt_b16, 16, vcmax)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M300_DEFINE_REDUCE_10(Function, VectorIntrinsic)                                                      \
+    __aicore__ inline void Function(                                                                              \
+        __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                               \
+    {                                                                                                             \
+        ASC_M300_STAGE_REDUCE_LOAD_BITMASK(mask);                                                                 \
+        __VEC_SCOPE__                                                                                             \
+        {                                                                                                         \
+            vector_f16 vreg0;                                                                                     \
+            vector_f16 vreg1;                                                                                     \
+            vector_align ureg;                                                                                    \
+            vector_bool preg;                                                                                     \
+            plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                                     \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                                          \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);                                          \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                    \
+                vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);                              \
+                VectorIntrinsic(vreg1, vreg0, preg, MODE_ZEROING);                                                \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                              \
+            }                                                                                                     \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                         \
+        }                                                                                                         \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                      \
     }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcmax(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+ASC_M300_DEFINE_REDUCE_10(ReduceMaxIntrinsicsImpl, vcmax)
+ASC_M300_DEFINE_REDUCE_9(ReduceMaxIntrinsicsImpl, float, vector_f32, plt_b32, 8, vcmax)
+
+#define ASC_M300_DEFINE_REDUCE_11(Function, VectorIntrinsic)                                                        \
+    __aicore__ inline void Function(                                                                                \
+        __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                 \
+    {                                                                                                               \
+        ASC_M300_STAGE_REDUCE_LOAD_BITMASK(mask);                                                                   \
+        __VEC_SCOPE__                                                                                               \
+        {                                                                                                           \
+            vector_f32 vreg0;                                                                                       \
+            vector_f32 vreg1;                                                                                       \
+            vector_align ureg;                                                                                      \
+            vector_bool preg;                                                                                       \
+            vector_bool preg1;                                                                                      \
+            plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                                       \
+            punpack(preg1, preg, LOWER);                                                                            \
+            uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);                                            \
+            uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);                                            \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                      \
+                vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);                                \
+                VectorIntrinsic(vreg1, vreg0, preg1, MODE_ZEROING);                                                 \
+                vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);                                                \
+            }                                                                                                       \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                           \
+        }                                                                                                           \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                        \
     }
-}
 
-__aicore__ inline void ReduceMaxIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);
-            vcmax(vreg1, vreg0, preg1, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+ASC_M300_DEFINE_REDUCE_11(ReduceMaxIntrinsicsImpl, vcmax)
 
 template <typename T>
 __aicore__ inline void ReduceMinIntrinsicsImpl(
@@ -1017,111 +547,18 @@ __aicore__ inline void ReduceMinIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceMinIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+ASC_M300_DEFINE_REDUCE_9(ReduceMinIntrinsicsImpl, half, vector_f16, plt_b16, 16, vcmin)
+ASC_M300_DEFINE_REDUCE_10(ReduceMinIntrinsicsImpl, vcmin)
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+#undef ASC_M300_DEFINE_REDUCE_10
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+ASC_M300_DEFINE_REDUCE_9(ReduceMinIntrinsicsImpl, float, vector_f32, plt_b32, 8, vcmin)
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcmin(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+#undef ASC_M300_DEFINE_REDUCE_9
 
-__aicore__ inline void ReduceMinIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
+ASC_M300_DEFINE_REDUCE_11(ReduceMinIntrinsicsImpl, vcmin)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        vector_bool preg;
-        vector_bool preg1;
-        plds(preg, ((__ubuf__ uint32_t*)tempBuf), 0, US);
-        punpack(preg1, preg, LOWER);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg1);
-            vcmin(vreg1, vreg0, preg1, MODE_ZEROING);
-            vstus(ureg, 2, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+#undef ASC_M300_DEFINE_REDUCE_11
 
 template <typename T>
 __aicore__ inline void ReduceSumIntrinsicsImpl(
@@ -1139,39 +576,30 @@ __aicore__ inline void ReduceSumIntrinsicsImpl(
     ASCENDC_ASSERT(false, { KERNEL_LOG(KERNEL_ERROR, "ReduceSumIntrinsicsImpl is not supported!"); });
 }
 
-__aicore__ inline void ReduceSumIntrinsicsImpl(
-    __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f16 vreg0;
-        vector_f16 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b16(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 16, strideConfig0, preg);
-            vcadd(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
+#define ASC_M300_DEFINE_REDUCE_12(DataType, VectorType, MaskIntrinsic, ElementCount)                                   \
+    __aicore__ inline void ReduceSumIntrinsicsImpl(                                                                    \
+        __ubuf__ DataType* sharedTmpBuffer, __ubuf__ DataType* srcLocal, const int32_t mask, const int32_t repeatTime, \
+        const int32_t srcRepStride)                                                                                    \
+    {                                                                                                                  \
+        __VEC_SCOPE__                                                                                                  \
+        {                                                                                                              \
+            ASC_M300_STAGE_REDUCE_INIT_WORK_REGISTERS(VectorType, mask, MaskIntrinsic);                                \
+            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                         \
+                vsldb(vreg0, srcLocal + i * srcRepStride * ElementCount, strideConfig0, preg);                         \
+                vcadd(vreg1, vreg0, preg, MODE_ZEROING);                                                               \
+                vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);                                                   \
+            }                                                                                                          \
+            vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);                                                              \
+        }                                                                                                              \
     }
-}
+
+ASC_M300_DEFINE_REDUCE_12(half, vector_f16, plt_b16, 16)
 
 __aicore__ inline void ReduceSumIntrinsicsImpl(
     __ubuf__ half* sharedTmpBuffer, __ubuf__ half* srcLocal, const uint64_t mask[], const int32_t repeatTime,
     const int32_t srcRepStride)
 {
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M300_STAGE_REDUCE_LOAD_BITMASK(mask);
     __VEC_SCOPE__
     {
         vector_f16 vreg0;
@@ -1191,39 +619,15 @@ __aicore__ inline void ReduceSumIntrinsicsImpl(
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
 }
 
-__aicore__ inline void ReduceSumIntrinsicsImpl(
-    __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const int32_t mask, const int32_t repeatTime,
-    const int32_t srcRepStride)
-{
-    __VEC_SCOPE__
-    {
-        vector_f32 vreg0;
-        vector_f32 vreg1;
-        vector_align ureg;
-        uint32_t sreg = static_cast<uint32_t>(mask);
-        vector_bool preg = plt_b32(sreg, POST_UPDATE);
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(1)) << 16);
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(0)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            vsldb(vreg0, srcLocal + i * srcRepStride * 8, strideConfig0, preg);
-            vcadd(vreg1, vreg0, preg, MODE_ZEROING);
-            vstus(ureg, 1, vreg1, sharedTmpBuffer, POST_UPDATE);
-        }
-        vstas(ureg, sharedTmpBuffer, 0, POST_UPDATE);
-    }
-}
+ASC_M300_DEFINE_REDUCE_12(float, vector_f32, plt_b32, 8)
+
+#undef ASC_M300_DEFINE_REDUCE_12
 
 __aicore__ inline void ReduceSumIntrinsicsImpl(
     __ubuf__ float* sharedTmpBuffer, __ubuf__ float* srcLocal, const uint64_t mask[], const int32_t repeatTime,
     const int32_t srcRepStride)
 {
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    *((__ubuf__ uint64_t*)tempBuf) = mask[0];
-    *((__ubuf__ uint64_t*)tempBuf + 1) = mask[1];
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M300_STAGE_REDUCE_LOAD_BITMASK(mask);
     __VEC_SCOPE__
     {
         vector_f32 vreg0;
@@ -1895,3 +1299,8 @@ __aicore__ inline T GetAccValImpl()
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_REDUCE_IMPL_H__
 #endif
+
+#undef ASC_M300_STAGE_REDUCE_LOAD_BITMASK
+#undef ASC_M300_STAGE_REDUCE_INIT_WORK_REGISTERS
+#undef ASC_M300_STAGE_REDUCE_INIT_SCALAR_REPEAT
+#undef ASC_M300_STAGE_REDUCE_INIT_BITMASK_REPEAT

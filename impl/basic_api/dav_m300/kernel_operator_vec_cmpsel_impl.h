@@ -28,27 +28,164 @@
 #include "../../../include/basic_api/kernel_struct_unary.h"
 #include "../../../include/basic_api/kernel_operator_block_sync_intf.h"
 
+// Expand shared register stages in place to preserve the compiler input and instruction order.
+#define ASC_M300_STAGE_COMPARE_INIT_INPUT_STRIDES(vector_bool, vreg0, preg0, vreg1, cmpMode)  \
+    vector_bool preg1;                                                                        \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);     \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);     \
+    uint32_t blockElm = ONE_BLK_SIZE / sizeof(half);                                          \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                        \
+        vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0); \
+        vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0); \
+        vcmp_##cmpMode(preg1, vreg0, vreg1, preg0);                                           \
+        psts(preg1, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);                                \
+    }
+
+#define ASC_M300_STAGE_COMPARE_INIT_F32_MASKS(vector_f32, vreg2, vreg3, preg0, count, preg1) \
+    vector_f32 vreg2;                                                                        \
+    vector_f32 vreg3;                                                                        \
+    vector_bool preg0;                                                                       \
+    uint32_t sreg = static_cast<uint32_t>(count);                                            \
+    vector_bool preg1;                                                                       \
+    vector_bool preg2;                                                                       \
+    vector_bool preg3;                                                                       \
+    vector_bool preg4;                                                                       \
+    uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float);                                   \
+    uint16_t repeatTime = CeilDivision(count, repeatElm)
+
+#define ASC_M300_STAGE_SELECT_INIT_SCALAR_PREDICATE(                                                   \
+    vector_bool, sel, repeatParams, repeatTime, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2, dst) \
+    vector_bool preg1;                                                                                 \
+    plds(preg1, ((__ubuf__ uint32_t*)sel), 0, US);                                                     \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);              \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);              \
+    uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);               \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                 \
+        vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);          \
+        vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);          \
+        vsel(vreg2, vreg0, vreg1, preg1);                                                              \
+        vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);            \
+    }
+
+#define ASC_M300_STAGE_SELECT_INIT_TENSOR_STRIDES(                                                            \
+    vector_bool, preg1, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2, dst) \
+    vector_bool preg1;                                                                                        \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);                     \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);                     \
+    uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);                      \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                                        \
+        plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);                                                \
+        vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);                 \
+        vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);                 \
+        vsel(vreg2, vreg0, vreg1, preg1);                                                                     \
+        vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);                   \
+    }
+
+#define ASC_M300_STAGE_SELECT_DECLARE_F32_REGS(vector_f32, vreg0, vreg1, vreg2) \
+    vector_f32 vreg0;                                                           \
+    vector_f32 vreg1;                                                           \
+    vector_f32 vreg2;                                                           \
+    vector_f32 vreg3;                                                           \
+    vector_f32 vreg4;                                                           \
+    vector_f32 vreg5
+
+#define ASC_M300_STAGE_SELECT_PACKED_MASK_LOOP(                                                                      \
+    vector_bool, preg1, preg2, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2, dst, \
+    vreg3, vreg4, vreg5, vector_f32)                                                                                 \
+    vector_bool preg1;                                                                                               \
+    vector_bool preg2 = pset_b8(PAT_ALLF);                                                                           \
+    vector_bool preg3;                                                                                               \
+    vector_bool preg4;                                                                                               \
+    uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);                            \
+    uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);                            \
+    uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);                             \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {                                           \
+        plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);                                                       \
+        pintlv_b16(preg3, preg4, preg1, preg2);                                                                      \
+        vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);                    \
+        vsldb(vreg1, src1 + i * 2 * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);                    \
+        vsel(vreg2, vreg0, vreg1, preg3);                                                                            \
+        vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);                      \
+        vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);              \
+        vsldb(vreg4, src1 + (i * 2 + 1) * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);              \
+        vsel(vreg5, vreg3, vreg4, preg4);                                                                            \
+        vsstb(vreg5, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);                \
+    }                                                                                                                \
+    vector_f32 vreg6;                                                                                                \
+    vector_f32 vreg7;                                                                                                \
+    vector_f32 vreg8;                                                                                                \
+    vector_bool preg5;                                                                                               \
+    vector_bool preg6;                                                                                               \
+    uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;                                 \
+    uint32_t offset1 = (repeatTime / 2) * 2 * repeatParams.src1RepStride * blockElm;                                 \
+    uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;                                  \
+    uint32_t selOffset = (repeatTime / 2) * 4;                                                                       \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {                                           \
+        plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);                                                   \
+        punpack(preg6, preg5, LOWER);                                                                                \
+        vsldb(vreg6, src0 + offset0, strideConfig0, preg0);                                                          \
+        vsldb(vreg7, src1 + offset1, strideConfig1, preg0);                                                          \
+        vsel(vreg8, vreg6, vreg7, preg6);                                                                            \
+        vsstb(vreg8, dst + offset2, strideConfig2, preg0);                                                           \
+    }
+
+#define ASC_M300_STAGE_SELECT_SPLIT_PREDICATES(                                                                    \
+    repeatTime, preg1, sel, preg3, preg4, preg2, vreg0, src0, repeatParams, blockElm, strideConfig0, preg0, vreg2, \
+    vreg1, dst, strideConfig2, vreg3, vreg4, vector_f32, vector_bool)                                              \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {                                         \
+        plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);                                                     \
+        pintlv_b16(preg3, preg4, preg1, preg2);                                                                    \
+        vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);                  \
+        vsel(vreg2, vreg0, vreg1, preg3);                                                                          \
+        vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);                    \
+        vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);            \
+        vsel(vreg4, vreg3, vreg1, preg4);                                                                          \
+        vsstb(vreg4, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);              \
+    }                                                                                                              \
+    vector_f32 vreg5;                                                                                              \
+    vector_f32 vreg6;                                                                                              \
+    vector_bool preg5;                                                                                             \
+    vector_bool preg6;                                                                                             \
+    uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;                               \
+    uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;                                \
+    uint32_t selOffset = (repeatTime / 2) * 4;                                                                     \
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {                                         \
+        plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);                                                 \
+        punpack(preg6, preg5, LOWER);                                                                              \
+        vsldb(vreg5, src0 + offset0, strideConfig0, preg0);                                                        \
+        vsel(vreg6, vreg5, vreg1, preg6);                                                                          \
+        vsstb(vreg6, dst + offset2, strideConfig2, preg0);                                                         \
+    }
+
+#define ASC_M300_STAGE_SELECT_WRITE_PREDICATE_BUFFER(mask)                                        \
+    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16); \
+    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));      \
+    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));  \
+    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));      \
+    SetFlag<HardEvent::S_V>(eventIdSToV);                                                         \
+    WaitFlag<HardEvent::S_V>(eventIdSToV)
+
+#define ASC_M300_STAGE_SELECT_INIT_COUNT_MASKS(count)      \
+    vector_bool preg0;                                     \
+    vector_bool preg1;                                     \
+    vector_bool preg2 = pset_b8(PAT_ALLF);                 \
+    vector_bool preg3;                                     \
+    vector_bool preg4;                                     \
+    uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float); \
+    uint16_t repeatTime = CeilDivision(count, repeatElm)
+
 namespace AscendC {
 /* ***************************************************************************************
  * ************************************** Compare ****************************************
  * ************************************************************************************** */
-#define CONTINUOUS_MODE_B16_VCMPV_VF(cmpMode)                                                     \
-    __VEC_SCOPE__                                                                                 \
-    {                                                                                             \
-        vector_f16 vreg0;                                                                         \
-        vector_f16 vreg1;                                                                         \
-        uint32_t sreg = static_cast<uint32_t>(mask);                                              \
-        vector_bool preg0 = plt_b16(sreg, POST_UPDATE);                                           \
-        vector_bool preg1;                                                                        \
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);     \
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);     \
-        uint32_t blockElm = ONE_BLK_SIZE / sizeof(half);                                          \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                        \
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0); \
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0); \
-            vcmp_##cmpMode(preg1, vreg0, vreg1, preg0);                                           \
-            psts(preg1, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);                                \
-        }                                                                                         \
+#define CONTINUOUS_MODE_B16_VCMPV_VF(cmpMode)                                                \
+    __VEC_SCOPE__                                                                            \
+    {                                                                                        \
+        vector_f16 vreg0;                                                                    \
+        vector_f16 vreg1;                                                                    \
+        uint32_t sreg = static_cast<uint32_t>(mask);                                         \
+        vector_bool preg0 = plt_b16(sreg, POST_UPDATE);                                      \
+        ASC_M300_STAGE_COMPARE_INIT_INPUT_STRIDES(vector_bool, vreg0, preg0, vreg1, cmpMode) \
     }
 
 #define CONTINUOUS_MODE_B32_VCMPV_VF(cmpMode)                                                               \
@@ -91,23 +228,14 @@ namespace AscendC {
         }                                                                                                   \
     }
 
-#define BITS_MODE_B16_VCMPV_VF(cmpMode)                                                           \
-    __VEC_SCOPE__                                                                                 \
-    {                                                                                             \
-        vector_f16 vreg0;                                                                         \
-        vector_f16 vreg1;                                                                         \
-        vector_bool preg0;                                                                        \
-        plds(preg0, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                        \
-        vector_bool preg1;                                                                        \
-        uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);     \
-        uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);     \
-        uint32_t blockElm = ONE_BLK_SIZE / sizeof(half);                                          \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {                        \
-            vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0); \
-            vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0); \
-            vcmp_##cmpMode(preg1, vreg0, vreg1, preg0);                                           \
-            psts(preg1, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);                                \
-        }                                                                                         \
+#define BITS_MODE_B16_VCMPV_VF(cmpMode)                                                      \
+    __VEC_SCOPE__                                                                            \
+    {                                                                                        \
+        vector_f16 vreg0;                                                                    \
+        vector_f16 vreg1;                                                                    \
+        vector_bool preg0;                                                                   \
+        plds(preg0, ((__ubuf__ uint32_t*)tempBuf), 0, US);                                   \
+        ASC_M300_STAGE_COMPARE_INIT_INPUT_STRIDES(vector_bool, vreg0, preg0, vreg1, cmpMode) \
     }
 
 #define BITS_MODE_B32_VCMPV_VF(cmpMode)                                                                     \
@@ -171,46 +299,37 @@ namespace AscendC {
         }                                                                  \
     }
 
-#define COUNTER_MODE_B32_VCMPV_VF(cmpMode)                                     \
-    __VEC_SCOPE__                                                              \
-    {                                                                          \
-        vector_f32 vreg0;                                                      \
-        vector_f32 vreg1;                                                      \
-        vector_f32 vreg2;                                                      \
-        vector_f32 vreg3;                                                      \
-        vector_bool preg0;                                                     \
-        uint32_t sreg = static_cast<uint32_t>(count);                          \
-        vector_bool preg1;                                                     \
-        vector_bool preg2;                                                     \
-        vector_bool preg3;                                                     \
-        vector_bool preg4;                                                     \
-        uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float);                 \
-        uint16_t repeatTime = CeilDivision(count, repeatElm);                  \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) { \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg0, src0, i * 2 * repeatElm, NORM);                        \
-            vlds(vreg1, src1, i * 2 * repeatElm, NORM);                        \
-            vcmp_##cmpMode(preg1, vreg0, vreg1, preg0);                        \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg2, src0, (i * 2 + 1) * repeatElm, NORM);                  \
-            vlds(vreg3, src1, (i * 2 + 1) * repeatElm, NORM);                  \
-            vcmp_##cmpMode(preg2, vreg2, vreg3, preg0);                        \
-            pdintlv_b8(preg3, preg4, preg1, preg2);                            \
-            psts(preg3, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);             \
-        }                                                                      \
-        vector_bool preg5;                                                     \
-        vector_bool preg6;                                                     \
-        uint32_t offset0 = (repeatTime / 2) * 2 * repeatElm;                   \
-        uint32_t offset1 = (repeatTime / 2) * 2 * repeatElm;                   \
-        uint32_t offset2 = (repeatTime / 2) * 4;                               \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) { \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg0, src0 + offset0, 0, NORM);                              \
-            vlds(vreg1, src1 + offset1, 0, NORM);                              \
-            vcmp_##cmpMode(preg5, vreg0, vreg1, preg0);                        \
-            ppack(preg6, preg5, LOWER);                                        \
-            psts(preg6, ((__ubuf__ uint32_t*)dst + offset2), 0, PK);           \
-        }                                                                      \
+#define COUNTER_MODE_B32_VCMPV_VF(cmpMode)                                                    \
+    __VEC_SCOPE__                                                                             \
+    {                                                                                         \
+        vector_f32 vreg0;                                                                     \
+        vector_f32 vreg1;                                                                     \
+        ASC_M300_STAGE_COMPARE_INIT_F32_MASKS(vector_f32, vreg2, vreg3, preg0, count, preg1); \
+        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {                \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                               \
+            vlds(vreg0, src0, i * 2 * repeatElm, NORM);                                       \
+            vlds(vreg1, src1, i * 2 * repeatElm, NORM);                                       \
+            vcmp_##cmpMode(preg1, vreg0, vreg1, preg0);                                       \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                               \
+            vlds(vreg2, src0, (i * 2 + 1) * repeatElm, NORM);                                 \
+            vlds(vreg3, src1, (i * 2 + 1) * repeatElm, NORM);                                 \
+            vcmp_##cmpMode(preg2, vreg2, vreg3, preg0);                                       \
+            pdintlv_b8(preg3, preg4, preg1, preg2);                                           \
+            psts(preg3, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);                            \
+        }                                                                                     \
+        vector_bool preg5;                                                                    \
+        vector_bool preg6;                                                                    \
+        uint32_t offset0 = (repeatTime / 2) * 2 * repeatElm;                                  \
+        uint32_t offset1 = (repeatTime / 2) * 2 * repeatElm;                                  \
+        uint32_t offset2 = (repeatTime / 2) * 4;                                              \
+        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {                \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                               \
+            vlds(vreg0, src0 + offset0, 0, NORM);                                             \
+            vlds(vreg1, src1 + offset1, 0, NORM);                                             \
+            vcmp_##cmpMode(preg5, vreg0, vreg1, preg0);                                       \
+            ppack(preg6, preg5, LOWER);                                                       \
+            psts(preg6, ((__ubuf__ uint32_t*)dst + offset2), 0, PK);                          \
+        }                                                                                     \
     }
 
 /* ***************************************************************************************
@@ -335,268 +454,165 @@ namespace AscendC {
         }                                                          \
     }
 
-#define COUNTER_MODE_B32_VCMPVS_VF(cmpMode, dataType)                          \
-    __VEC_SCOPE__                                                              \
-    {                                                                          \
-        dataType vreg0;                                                        \
-        dataType vreg2;                                                        \
-        vector_bool preg0;                                                     \
-        uint32_t sreg = static_cast<uint32_t>(count);                          \
-        vector_bool preg1;                                                     \
-        vector_bool preg2;                                                     \
-        vector_bool preg3;                                                     \
-        vector_bool preg4;                                                     \
-        uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float);                 \
-        uint16_t repeatTime = CeilDivision(count, repeatElm);                  \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) { \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg0, src0, i * 2 * repeatElm, NORM);                        \
-            vcmps_##cmpMode(preg1, vreg0, src1, preg0);                        \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg2, src0, (i * 2 + 1) * repeatElm, NORM);                  \
-            vcmps_##cmpMode(preg2, vreg2, src1, preg0);                        \
-            pdintlv_b16(preg3, preg4, preg1, preg2);                           \
-            psts(preg3, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);             \
-        }                                                                      \
-        vector_bool preg5;                                                     \
-        vector_bool preg6;                                                     \
-        uint32_t offset0 = (repeatTime / 2) * 2 * repeatElm;                   \
-        uint32_t offset2 = (repeatTime / 2) * 4;                               \
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) { \
-            preg0 = plt_b32(sreg, POST_UPDATE);                                \
-            vlds(vreg0, src0 + offset0, 0, NORM);                              \
-            vcmps_##cmpMode(preg5, vreg0, src1, preg0);                        \
-            ppack(preg6, preg5, LOWER);                                        \
-            psts(preg6, ((__ubuf__ uint32_t*)dst + offset2), 0, PK);           \
-        }                                                                      \
+#define COUNTER_MODE_B32_VCMPVS_VF(cmpMode, dataType)                                       \
+    __VEC_SCOPE__                                                                           \
+    {                                                                                       \
+        ASC_M300_STAGE_COMPARE_INIT_F32_MASKS(dataType, vreg0, vreg2, preg0, count, preg1); \
+        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {              \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                             \
+            vlds(vreg0, src0, i * 2 * repeatElm, NORM);                                     \
+            vcmps_##cmpMode(preg1, vreg0, src1, preg0);                                     \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                             \
+            vlds(vreg2, src0, (i * 2 + 1) * repeatElm, NORM);                               \
+            vcmps_##cmpMode(preg2, vreg2, src1, preg0);                                     \
+            pdintlv_b16(preg3, preg4, preg1, preg2);                                        \
+            psts(preg3, ((__ubuf__ uint32_t*)dst + i * 4), 0, PK);                          \
+        }                                                                                   \
+        vector_bool preg5;                                                                  \
+        vector_bool preg6;                                                                  \
+        uint32_t offset0 = (repeatTime / 2) * 2 * repeatElm;                                \
+        uint32_t offset2 = (repeatTime / 2) * 4;                                            \
+        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {              \
+            preg0 = plt_b32(sreg, POST_UPDATE);                                             \
+            vlds(vreg0, src0 + offset0, 0, NORM);                                           \
+            vcmps_##cmpMode(preg5, vreg0, src1, preg0);                                     \
+            ppack(preg6, preg5, LOWER);                                                     \
+            psts(preg6, ((__ubuf__ uint32_t*)dst + offset2), 0, PK);                        \
+        }                                                                                   \
     }
 
 // Compare::Level 0 - mask bit mode
-template <typename T = half, typename U, bool isSetMask = true>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ U* dst, __ubuf__ half* src0, __ubuf__ half* src1, CMPMODE cmpMode, const uint64_t mask[],
-    uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            BITS_MODE_B16_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            BITS_MODE_B16_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            BITS_MODE_B16_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            BITS_MODE_B16_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            BITS_MODE_B16_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            BITS_MODE_B16_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
+// Emit the original overloads with their existing vector scope and intrinsic order.
+#define ASC_M300_DEFINE_CMPSEL_1(DataType, BITS_MODE_B16_VCMPV_VFArg)                                              \
+    template <typename T = DataType, typename U, bool isSetMask = true>                                            \
+    __aicore__ inline void VcmpvImpl(                                                                              \
+        __ubuf__ U* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, CMPMODE cmpMode, const uint64_t mask[], \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                                \
+    {                                                                                                              \
+        __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);              \
+        (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));                   \
+        (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));               \
+        event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));                   \
+        SetFlag<HardEvent::S_V>(eventIdSToV);                                                                      \
+        WaitFlag<HardEvent::S_V>(eventIdSToV);                                                                     \
+        switch (cmpMode) {                                                                                         \
+            case CMPMODE::LT: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(lt);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            case CMPMODE::GT: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(gt);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            case CMPMODE::EQ: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(eq);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            case CMPMODE::LE: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(le);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            case CMPMODE::GE: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(ge);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            case CMPMODE::NE: {                                                                                    \
+                BITS_MODE_B16_VCMPV_VFArg(ne);                                                                     \
+                break;                                                                                             \
+            }                                                                                                      \
+            default:                                                                                               \
+                break;                                                                                             \
+        }                                                                                                          \
+        AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);                                                       \
     }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
 
-template <typename T = float, typename U, bool isSetMask = true>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ U* dst, __ubuf__ float* src0, __ubuf__ float* src1, CMPMODE cmpMode, const uint64_t mask[],
-    uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
+ASC_M300_DEFINE_CMPSEL_1(half, BITS_MODE_B16_VCMPV_VF)
+ASC_M300_DEFINE_CMPSEL_1(float, BITS_MODE_B32_VCMPV_VF)
 
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            BITS_MODE_B32_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            BITS_MODE_B32_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            BITS_MODE_B32_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            BITS_MODE_B32_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            BITS_MODE_B32_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            BITS_MODE_B32_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
-    }
-    AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
-}
+#undef ASC_M300_DEFINE_CMPSEL_1
 
 // Compare::Level 0 - mask normal mode
-template <typename T = half, typename U, bool isSetMask = true>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ U* dst, __ubuf__ half* src0, __ubuf__ half* src1, CMPMODE cmpMode, const uint64_t mask, uint8_t repeatTime,
-    const BinaryRepeatParams& repeatParams)
-{
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            CONTINUOUS_MODE_B16_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
+#define ASC_M300_DEFINE_CMPSEL_2(DataType, CONTINUOUS_MODE_B16_VCMPV_VFArg)                                      \
+    template <typename T = DataType, typename U, bool isSetMask = true>                                          \
+    __aicore__ inline void VcmpvImpl(                                                                            \
+        __ubuf__ U* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, CMPMODE cmpMode, const uint64_t mask, \
+        uint8_t repeatTime, const BinaryRepeatParams& repeatParams)                                              \
+    {                                                                                                            \
+        switch (cmpMode) {                                                                                       \
+            case CMPMODE::LT: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(lt);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            case CMPMODE::GT: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(gt);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            case CMPMODE::EQ: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(eq);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            case CMPMODE::LE: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(le);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            case CMPMODE::GE: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(ge);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            case CMPMODE::NE: {                                                                                  \
+                CONTINUOUS_MODE_B16_VCMPV_VFArg(ne);                                                             \
+                break;                                                                                           \
+            }                                                                                                    \
+            default:                                                                                             \
+                break;                                                                                           \
+        }                                                                                                        \
     }
-}
 
-template <typename T = float, typename U, bool isSetMask = true>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ U* dst, __ubuf__ float* src0, __ubuf__ float* src1, CMPMODE cmpMode, const uint64_t mask,
-    uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
-{
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            CONTINUOUS_MODE_B32_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
-    }
-}
+ASC_M300_DEFINE_CMPSEL_2(half, CONTINUOUS_MODE_B16_VCMPV_VF)
+ASC_M300_DEFINE_CMPSEL_2(float, CONTINUOUS_MODE_B32_VCMPV_VF)
+
+#undef ASC_M300_DEFINE_CMPSEL_2
 
 // Compare::Level 2
-template <typename T>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ T* dst, __ubuf__ half* src0, __ubuf__ half* src1, CMPMODE cmpMode, const uint32_t count)
-{
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            COUNTER_MODE_B16_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            COUNTER_MODE_B16_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            COUNTER_MODE_B16_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            COUNTER_MODE_B16_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            COUNTER_MODE_B16_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            COUNTER_MODE_B16_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
+#define ASC_M300_DEFINE_CMPSEL_3(DataType, COUNTER_MODE_B16_VCMPV_VFArg)                                          \
+    template <typename T>                                                                                         \
+    __aicore__ inline void VcmpvImpl(                                                                             \
+        __ubuf__ T* dst, __ubuf__ DataType* src0, __ubuf__ DataType* src1, CMPMODE cmpMode, const uint32_t count) \
+    {                                                                                                             \
+        switch (cmpMode) {                                                                                        \
+            case CMPMODE::LT: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(lt);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            case CMPMODE::GT: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(gt);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            case CMPMODE::EQ: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(eq);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            case CMPMODE::LE: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(le);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            case CMPMODE::GE: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(ge);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            case CMPMODE::NE: {                                                                                   \
+                COUNTER_MODE_B16_VCMPV_VFArg(ne);                                                                 \
+                break;                                                                                            \
+            }                                                                                                     \
+            default:                                                                                              \
+                break;                                                                                            \
+        }                                                                                                         \
     }
-}
 
-template <typename T>
-__aicore__ inline void VcmpvImpl(
-    __ubuf__ T* dst, __ubuf__ float* src0, __ubuf__ float* src1, CMPMODE cmpMode, const uint32_t count)
-{
-    switch (cmpMode) {
-        case CMPMODE::LT: {
-            COUNTER_MODE_B32_VCMPV_VF(lt);
-            break;
-        }
-        case CMPMODE::GT: {
-            COUNTER_MODE_B32_VCMPV_VF(gt);
-            break;
-        }
-        case CMPMODE::EQ: {
-            COUNTER_MODE_B32_VCMPV_VF(eq);
-            break;
-        }
-        case CMPMODE::LE: {
-            COUNTER_MODE_B32_VCMPV_VF(le);
-            break;
-        }
-        case CMPMODE::GE: {
-            COUNTER_MODE_B32_VCMPV_VF(ge);
-            break;
-        }
-        case CMPMODE::NE: {
-            COUNTER_MODE_B32_VCMPV_VF(ne);
-            break;
-        }
-        default:
-            break;
-    }
-}
+ASC_M300_DEFINE_CMPSEL_3(half, COUNTER_MODE_B16_VCMPV_VF)
+ASC_M300_DEFINE_CMPSEL_3(float, COUNTER_MODE_B32_VCMPV_VF)
+
+#undef ASC_M300_DEFINE_CMPSEL_3
 
 // Compare written to CMPMASK
 template <typename T, bool isSetMask = true>
@@ -740,17 +756,8 @@ __aicore__ inline void VselImpl(
             vector_f16 vreg2;
             uint32_t sreg = static_cast<uint32_t>(mask);
             vector_bool preg0 = plt_b16(sreg, POST_UPDATE);
-            vector_bool preg1;
-            plds(preg1, ((__ubuf__ uint32_t*)sel), 0, US);
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg2, vreg0, vreg1, preg1);
-                vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            }
+            ASC_M300_STAGE_SELECT_INIT_SCALAR_PREDICATE(
+                vector_bool, sel, repeatParams, repeatTime, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2, dst)
         }
     } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
         __VEC_SCOPE__
@@ -760,17 +767,9 @@ __aicore__ inline void VselImpl(
             vector_f16 vreg2;
             uint32_t sreg = static_cast<uint32_t>(mask);
             vector_bool preg0 = plt_b16(sreg, POST_UPDATE);
-            vector_bool preg1;
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg2, vreg0, vreg1, preg1);
-                vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            }
+            ASC_M300_STAGE_SELECT_INIT_TENSOR_STRIDES(
+                vector_bool, preg1, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2,
+                dst)
         }
     }
 }
@@ -811,51 +810,12 @@ __aicore__ inline void VselImpl(
     } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
         __VEC_SCOPE__
         {
-            vector_f32 vreg0;
-            vector_f32 vreg1;
-            vector_f32 vreg2;
-            vector_f32 vreg3;
-            vector_f32 vreg4;
-            vector_f32 vreg5;
+            ASC_M300_STAGE_SELECT_DECLARE_F32_REGS(vector_f32, vreg0, vreg1, vreg2);
             uint32_t sreg = static_cast<uint32_t>(mask);
             vector_bool preg0 = plt_b32(sreg, POST_UPDATE);
-            vector_bool preg1;
-            vector_bool preg2 = pset_b8(PAT_ALLF);
-            vector_bool preg3;
-            vector_bool preg4;
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
-                plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-                pintlv_b16(preg3, preg4, preg1, preg2);
-                vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg1, src1 + i * 2 * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg2, vreg0, vreg1, preg3);
-                vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-                vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg4, src1 + (i * 2 + 1) * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg5, vreg3, vreg4, preg4);
-                vsstb(vreg5, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            }
-
-            vector_f32 vreg6;
-            vector_f32 vreg7;
-            vector_f32 vreg8;
-            vector_bool preg5;
-            vector_bool preg6;
-            uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;
-            uint32_t offset1 = (repeatTime / 2) * 2 * repeatParams.src1RepStride * blockElm;
-            uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;
-            uint32_t selOffset = (repeatTime / 2) * 4;
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {
-                plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);
-                punpack(preg6, preg5, LOWER);
-                vsldb(vreg6, src0 + offset0, strideConfig0, preg0);
-                vsldb(vreg7, src1 + offset1, strideConfig1, preg0);
-                vsel(vreg8, vreg6, vreg7, preg6);
-                vsstb(vreg8, dst + offset2, strideConfig2, preg0);
-            }
+            ASC_M300_STAGE_SELECT_PACKED_MASK_LOOP(
+                vector_bool, preg1, preg2, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg0, vreg1, src1,
+                vreg2, dst, vreg3, vreg4, vreg5, vector_f32)
         }
     }
 }
@@ -928,31 +888,9 @@ __aicore__ inline void VselImpl(
         vector_bool preg4;
         uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
         uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
-            plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-            pintlv_b16(preg3, preg4, preg1, preg2);
-            vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-            vsel(vreg2, vreg0, vreg1, preg3);
-            vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-            vsel(vreg4, vreg3, vreg1, preg4);
-            vsstb(vreg4, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-        }
-
-        vector_f32 vreg5;
-        vector_f32 vreg6;
-        vector_bool preg5;
-        vector_bool preg6;
-        uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;
-        uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;
-        uint32_t selOffset = (repeatTime / 2) * 4;
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {
-            plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);
-            punpack(preg6, preg5, LOWER);
-            vsldb(vreg5, src0 + offset0, strideConfig0, preg0);
-            vsel(vreg6, vreg5, vreg1, preg6);
-            vsstb(vreg6, dst + offset2, strideConfig2, preg0);
-        }
+        ASC_M300_STAGE_SELECT_SPLIT_PREDICATES(
+            repeatTime, preg1, sel, preg3, preg4, preg2, vreg0, src0, repeatParams, blockElm, strideConfig0, preg0,
+            vreg2, vreg1, dst, strideConfig2, vreg3, vreg4, vector_f32, vector_bool)
     }
 }
 
@@ -992,17 +930,8 @@ __aicore__ inline void VselImpl(
             vector_f16 vreg2;
             vector_bool preg0;
             plds(preg0, ((__ubuf__ uint32_t*)tempBuf), 0, US); // mask位宽扩展
-            vector_bool preg1;
-            plds(preg1, ((__ubuf__ uint32_t*)sel), 0, US);
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg2, vreg0, vreg1, preg1);
-                vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            }
+            ASC_M300_STAGE_SELECT_INIT_SCALAR_PREDICATE(
+                vector_bool, sel, repeatParams, repeatTime, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2, dst)
         }
     } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
         __VEC_SCOPE__
@@ -1012,17 +941,9 @@ __aicore__ inline void VselImpl(
             vector_f16 vreg2;
             vector_bool preg0;
             plds(preg0, ((__ubuf__ uint32_t*)tempBuf), 0, US); // mask位宽扩展
-            vector_bool preg1;
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-                vsldb(vreg0, src0 + i * repeatParams.src0RepStride * blockElm, strideConfig0, preg0);
-                vsldb(vreg1, src1 + i * repeatParams.src1RepStride * blockElm, strideConfig1, preg0);
-                vsel(vreg2, vreg0, vreg1, preg1);
-                vsstb(vreg2, dst + i * repeatParams.dstRepStride * blockElm, strideConfig2, preg0);
-            }
+            ASC_M300_STAGE_SELECT_INIT_TENSOR_STRIDES(
+                vector_bool, preg1, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg0, vreg1, src1, vreg2,
+                dst)
         }
     }
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
@@ -1073,53 +994,14 @@ __aicore__ inline void VselImpl(
     } else if (selMode == SELMODE::VSEL_TENSOR_TENSOR_MODE) {
         __VEC_SCOPE__
         {
-            vector_f32 vreg0;
-            vector_f32 vreg1;
-            vector_f32 vreg2;
-            vector_f32 vreg3;
-            vector_f32 vreg4;
-            vector_f32 vreg5;
+            ASC_M300_STAGE_SELECT_DECLARE_F32_REGS(vector_f32, vreg0, vreg1, vreg2);
             vector_bool preg0;
             vector_bool preg7;
             plds(preg0, ((__ubuf__ uint32_t*)tempBuf), 0, US);
             punpack(preg7, preg0, LOWER);
-            vector_bool preg1;
-            vector_bool preg2 = pset_b8(PAT_ALLF);
-            vector_bool preg3;
-            vector_bool preg4;
-            uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
-            uint32_t strideConfig1 = ((static_cast<uint32_t>(repeatParams.src1BlkStride)) << 16);
-            uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
-                plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-                pintlv_b16(preg3, preg4, preg1, preg2);
-                vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg7);
-                vsldb(vreg1, src1 + i * 2 * repeatParams.src1RepStride * blockElm, strideConfig1, preg7);
-                vsel(vreg2, vreg0, vreg1, preg3);
-                vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg7);
-                vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg7);
-                vsldb(vreg4, src1 + (i * 2 + 1) * repeatParams.src1RepStride * blockElm, strideConfig1, preg7);
-                vsel(vreg5, vreg3, vreg4, preg4);
-                vsstb(vreg5, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg7);
-            }
-
-            vector_f32 vreg6;
-            vector_f32 vreg7;
-            vector_f32 vreg8;
-            vector_bool preg5;
-            vector_bool preg6;
-            uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;
-            uint32_t offset1 = (repeatTime / 2) * 2 * repeatParams.src1RepStride * blockElm;
-            uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;
-            uint32_t selOffset = (repeatTime / 2) * 4;
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {
-                plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);
-                punpack(preg6, preg5, LOWER);
-                vsldb(vreg6, src0 + offset0, strideConfig0, preg7);
-                vsldb(vreg7, src1 + offset1, strideConfig1, preg7);
-                vsel(vreg8, vreg6, vreg7, preg6);
-                vsstb(vreg8, dst + offset2, strideConfig2, preg7);
-            }
+            ASC_M300_STAGE_SELECT_PACKED_MASK_LOOP(
+                vector_bool, preg1, preg2, repeatParams, repeatTime, sel, vreg0, src0, blockElm, preg7, vreg1, src1,
+                vreg2, dst, vreg3, vreg4, vreg5, vector_f32)
         }
     }
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
@@ -1144,13 +1026,7 @@ __aicore__ inline void VselImpl(
             KERNEL_ERROR, "Failed to check dtype in Select, current api support dtype selMask:  uint8_t / uint16_t / "
                           "uint32_t / uint64_t");
     });
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M300_STAGE_SELECT_WRITE_PREDICATE_BUFFER(mask);
 
     __VEC_SCOPE__
     {
@@ -1185,13 +1061,7 @@ __aicore__ inline void VselImpl(
             KERNEL_ERROR, "Failed to check dtype in Select, current api support dtype selMask:  uint8_t / uint16_t / "
                           "uint32_t / uint64_t");
     });
-    __ubuf__ uint8_t* tempBuf = AscendCUtils::GetTemporaryBufferAddr<uint8_t>(TMP_UB_OFFSET, 16);
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf)) = (static_cast<uint64_t>(mask[0]));
-    (*(__ubuf__ uint64_t*)((__ubuf__ uint64_t*)tempBuf + 1)) = (static_cast<uint64_t>(mask[1]));
-
-    event_t eventIdSToV = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
-    SetFlag<HardEvent::S_V>(eventIdSToV);
-    WaitFlag<HardEvent::S_V>(eventIdSToV);
+    ASC_M300_STAGE_SELECT_WRITE_PREDICATE_BUFFER(mask);
 
     __VEC_SCOPE__
     {
@@ -1212,31 +1082,9 @@ __aicore__ inline void VselImpl(
         uint32_t strideConfig0 = ((static_cast<uint32_t>(repeatParams.src0BlkStride)) << 16);
         uint32_t strideConfig2 = ((static_cast<uint32_t>(repeatParams.dstBlkStride)) << 16);
         uint32_t blockElm = ONE_BLK_SIZE / sizeof(float);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
-            plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
-            pintlv_b16(preg3, preg4, preg1, preg2);
-            vsldb(vreg0, src0 + i * 2 * repeatParams.src0RepStride * blockElm, strideConfig0, preg7);
-            vsel(vreg2, vreg0, vreg1, preg3);
-            vsstb(vreg2, dst + i * 2 * repeatParams.dstRepStride * blockElm, strideConfig2, preg7);
-            vsldb(vreg3, src0 + (i * 2 + 1) * repeatParams.src0RepStride * blockElm, strideConfig0, preg7);
-            vsel(vreg4, vreg3, vreg1, preg4);
-            vsstb(vreg4, dst + (i * 2 + 1) * repeatParams.dstRepStride * blockElm, strideConfig2, preg7);
-        }
-
-        vector_f32 vreg5;
-        vector_f32 vreg6;
-        vector_bool preg5;
-        vector_bool preg6;
-        uint32_t offset0 = (repeatTime / 2) * 2 * repeatParams.src0RepStride * blockElm;
-        uint32_t offset2 = (repeatTime / 2) * 2 * repeatParams.dstRepStride * blockElm;
-        uint32_t selOffset = (repeatTime / 2) * 4;
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime % 2); ++i) {
-            plds(preg5, ((__ubuf__ uint32_t*)sel + selOffset), 0, US);
-            punpack(preg6, preg5, LOWER);
-            vsldb(vreg5, src0 + offset0, strideConfig0, preg7);
-            vsel(vreg6, vreg5, vreg1, preg6);
-            vsstb(vreg6, dst + offset2, strideConfig2, preg7);
-        }
+        ASC_M300_STAGE_SELECT_SPLIT_PREDICATES(
+            repeatTime, preg1, sel, preg3, preg4, preg2, vreg0, src0, repeatParams, blockElm, strideConfig0, preg7,
+            vreg2, vreg1, dst, strideConfig2, vreg3, vreg4, vector_f32, vector_bool)
     }
 
     AscendCUtils::FreeTemporaryBuffer<uint8_t>(tempBuf);
@@ -1311,13 +1159,7 @@ __aicore__ inline void VselImpl(
         vector_f32 vreg4;
         vbr(vreg1, src1);
         uint32_t sreg = static_cast<uint32_t>(count);
-        vector_bool preg0;
-        vector_bool preg1;
-        vector_bool preg2 = pset_b8(PAT_ALLF);
-        vector_bool preg3;
-        vector_bool preg4;
-        uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float);
-        uint16_t repeatTime = CeilDivision(count, repeatElm);
+        ASC_M300_STAGE_SELECT_INIT_COUNT_MASKS(count);
         for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
             plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
             pintlv_b16(preg3, preg4, preg1, preg2);
@@ -1448,13 +1290,7 @@ __aicore__ inline void VselImpl(
             vector_f32 vreg3;
             vector_f32 vreg4;
             vector_f32 vreg5;
-            vector_bool preg0;
-            vector_bool preg1;
-            vector_bool preg2 = pset_b8(PAT_ALLF);
-            vector_bool preg3;
-            vector_bool preg4;
-            uint32_t repeatElm = VECTOR_REG_WIDTH / sizeof(float);
-            uint16_t repeatTime = CeilDivision(count, repeatElm);
+            ASC_M300_STAGE_SELECT_INIT_COUNT_MASKS(count);
             for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime / 2); ++i) {
                 plds(preg1, ((__ubuf__ uint32_t*)sel + i * 4), 0, US);
                 pintlv_b16(preg3, preg4, preg1, preg2);
@@ -1507,3 +1343,13 @@ __aicore__ inline void SetCmpMaskImpl(__ubuf__ T* src)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_CMPSEL_IMPL_H__
 #endif
+
+#undef ASC_M300_STAGE_SELECT_INIT_COUNT_MASKS
+#undef ASC_M300_STAGE_SELECT_WRITE_PREDICATE_BUFFER
+#undef ASC_M300_STAGE_SELECT_SPLIT_PREDICATES
+#undef ASC_M300_STAGE_SELECT_PACKED_MASK_LOOP
+#undef ASC_M300_STAGE_SELECT_DECLARE_F32_REGS
+#undef ASC_M300_STAGE_SELECT_INIT_TENSOR_STRIDES
+#undef ASC_M300_STAGE_SELECT_INIT_SCALAR_PREDICATE
+#undef ASC_M300_STAGE_COMPARE_INIT_F32_MASKS
+#undef ASC_M300_STAGE_COMPARE_INIT_INPUT_STRIDES
