@@ -12,9 +12,9 @@ dependencies:
   - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
     kind: related
     condition: "舍入与饱和模式说明"
-  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_saturation_flag.md
     kind: requires
-    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+    condition: "使用饱和或非饱和模式前需通过asc_set_saturation_flag接口配置"
 version: ">=9.0.0"
 version_changes:
   - since: "9.2.0"
@@ -134,7 +134,7 @@ __simd_callee__ inline vector_fp8_e5m2_t asc_float2e5m2_rn(vector_float src,
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
 - 位置选择标签选择目的操作数的写入地址，其他位置清零。
 - `mask`掩码位为0时，`dst`对应元素置0。
-- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 
 ## 调用示例
 

@@ -1,6 +1,6 @@
 ---
 okftype: reference.api
-description: "把参与mask筛选的bfloat16_t矢量元素按rd、rn、rna、ru、rz舍入与饱和或非饱和模式转换为half，结果写入目的寄存器或作为返回值，使用饱和模式前需配置ctrl寄存器，仅在AIV生效。"
+description: "把参与mask筛选的bfloat16_t矢量元素按rd、rn、rna、ru、rz舍入与饱和或非饱和模式转换为half，结果写入目的寄存器或作为返回值，使用饱和模式前需通过asc_set_saturation_flag接口配置，仅在AIV生效。"
 tag:
   - roles: [compute]
   - operations: [conversion]
@@ -12,9 +12,9 @@ dependencies:
   - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
     kind: related
     condition: "舍入与饱和模式说明"
-  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_saturation_flag.md
     kind: requires
-    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+    condition: "使用饱和或非饱和模式前需通过asc_set_saturation_flag接口配置"
 version: ">=9.0.0"
 version_changes:
   - since: "9.2.0"
@@ -109,7 +109,7 @@ __simd_callee__ inline vector_half asc_bfloat162half_rn(vector_bfloat16_t src,
 ## 约束说明
 
 - Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
-- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 - `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例

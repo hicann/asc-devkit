@@ -118,7 +118,7 @@ __simd_callee__ inline vector_uint8_t asc_int322uint8(vector_int32_t src,
 - 位置选择标签参数仅能使用编译期常量，编译器据此在编译期分发至对应的重载。
 - 位置选择标签选择目的操作数的写入地址，其他位置清零。
 - `mask`掩码位为0时，`dst`对应元素置0。
-- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 
 ## 调用示例
 

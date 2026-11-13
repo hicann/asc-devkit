@@ -113,7 +113,7 @@ __simd_callee__ inline vector_uint8_t asc_half2uint8_rd(vector_half src,
 
 - Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 当数据写入目的操作数索引为奇数的位置，索引为偶数位置的数值置零。反之亦然。
-- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 - `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例

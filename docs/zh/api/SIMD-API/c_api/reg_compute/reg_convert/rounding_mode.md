@@ -1,6 +1,6 @@
 ---
 okftype: reference.concept
-description: "介绍数据类型转换支持的RINT、ROUND、FLOOR、CEIL、TRUNC、ODD、HYBRID七种舍入模式及其函数后缀，并用整型与浮点示例说明饱和和非饱和模式下溢出、正负无穷与NaN输入的结果差异，以及通过ctrl寄存器开启饱和模式的方法。"
+description: "介绍数据类型转换支持的RINT、ROUND、FLOOR、CEIL、TRUNC、ODD、HYBRID七种舍入模式及其函数后缀，并用整型与浮点示例说明饱和和非饱和模式下溢出、正负无穷与NaN输入的结果差异，以及通过asc_set_saturation_flag接口配置饱和模式的方法。"
 ---
 # 舍入模式与饱和模式
 
@@ -112,7 +112,7 @@ Ascend C API支持以下舍入模式：
 
 ### 配置方法
 
-开启饱和模式和非饱和模式时，需配置ctrl寄存器。ctrl寄存器的详细说明请参见[asc_set_ctrl接口](../../spr/asc_set_ctrl.md)。
+使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 
 ### 非饱和模式（Non-Saturation Mode）
 

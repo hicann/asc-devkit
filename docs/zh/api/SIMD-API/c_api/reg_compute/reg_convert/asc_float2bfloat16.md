@@ -12,9 +12,9 @@ dependencies:
   - path: docs/zh/api/SIMD-API/c_api/reg_compute/reg_convert/rounding_mode.md
     kind: related
     condition: "舍入与饱和模式说明"
-  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_ctrl.md
+  - path: docs/zh/api/SIMD-API/c_api/spr/asc_set_saturation_flag.md
     kind: requires
-    condition: "使用饱和或非饱和模式前需配置ctrl寄存器"
+    condition: "使用饱和或非饱和模式前需通过asc_set_saturation_flag接口配置"
 version: ">=9.0.0"
 version_changes:
   - since: "9.2.0"
@@ -142,7 +142,7 @@ __simd_callee__ inline void asc_float2bfloat16_rn(vector_bfloat16_t& dst,
 - `src`与`dst`的数据类型需要与函数原型匹配。
 - `mask`掩码位为0时，`dst`对应元素置0。
 - 结果写入`dst`的奇数索引位置时，偶数索引位置置0；结果写入偶数索引位置时，奇数索引位置置0。
-- 使用饱和或非饱和模式时，需要配置`ctrl`寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 
 ## 调用示例
 

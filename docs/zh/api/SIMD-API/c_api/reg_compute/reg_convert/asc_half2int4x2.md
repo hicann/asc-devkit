@@ -127,7 +127,7 @@ __simd_callee__ inline vector_int4x2_t asc_half2int4x2_rna(vector_half src,
 
 - Reg矢量计算C API通用约束请参见[通用约束](../overview.md#通用约束)。
 - 位置选择标签参数仅能使用上述编译期常量。
-- 开启饱和模式或非饱和模式时，需配置ctrl寄存器，详细说明请参见[asc_set_ctrl](../../spr/asc_set_ctrl.md)。
+- 使用饱和或非饱和模式时，需要通过[asc_set_saturation_flag](../../spr/asc_set_saturation_flag.md)接口配置，具体配置要求请参见该接口说明。
 - `mask`掩码位为0时，`dst`对应元素置0。
 
 ## 调用示例
