@@ -82,7 +82,7 @@ struct UnPadParams {
 
 ## 约束说明
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#alignment_requirements)。
 
 ## 调用示例
 

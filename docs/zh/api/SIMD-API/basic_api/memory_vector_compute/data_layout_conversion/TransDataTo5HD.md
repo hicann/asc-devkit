@@ -162,8 +162,8 @@ KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t�
 
 ## 约束说明<a name="zh-cn_topic_0000001521260417_section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
-- 操作数地址重叠约束请参考[Unified Buffer地址重叠约束](../../../general_description_and_constraints.md#section668772811100)。
+- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
+- 操作数地址重叠约束请参考[Unified Buffer地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - dst与src中的地址需要连续存放。
 - 单次和多次repeat操作实现转置功能，都只需要配置一次srcList和dstList，后续LocalTensor地址通过nchwconvParams参数自动偏移。
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_layout_conversion/TransDataTo5HD_res.md#id3 -->

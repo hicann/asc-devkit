@@ -176,7 +176,7 @@ struct PowerConfig {
 <!-- npu="310p" id8 -->
 -   对于Atlas推理系列产品AI Core，幂运算的指数必须小于2<sup>31</sup>-1。
 <!-- end id8 -->
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 -   支持的数据类型<a id="li559613463410"></a>
 
     <!-- npu="950" id9 -->

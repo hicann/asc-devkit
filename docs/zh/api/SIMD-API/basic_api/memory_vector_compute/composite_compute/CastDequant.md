@@ -158,8 +158,8 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
-- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#section668772811100)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
+- 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 - 当输出类型为b8时，目的操作数数据类型需要和`SetDeqScale`接口的signMode入参配合，当signMode=true时输出数据类型int8_t；signMode=false时输出数据类型uint8_t。
 - halfBlock参数仅在输出数据为b8类型时有效。
 <!-- npu="A3,910b,950" id12 -->

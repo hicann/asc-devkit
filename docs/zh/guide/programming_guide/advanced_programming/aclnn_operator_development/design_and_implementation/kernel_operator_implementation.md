@@ -90,7 +90,7 @@ extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z
 }
 ```
 
-需要为特定TilingKey设置不同类型时，可以使用`KERNEL_TASK_TYPE(key, value)`接口。接口的产品支持情况、类型取值及使用约束请参考[设置核函数（Kernel）类型](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)。
+需要为特定TilingKey设置不同类型时，可以使用`KERNEL_TASK_TYPE(key, value)`接口。接口的产品支持情况、类型取值及使用约束请参考[设置核函数（Kernel）类型](../../../../../api/SIMD-API/basic_api/tool_interface/execution_mode/set_Kernel_type.md)。
 
 在Tiling模板编程场景中，在模板参数定义头文件的`ASCENDC_TPL_ARGS_SEL`内使用`ASCENDC_TPL_KERNEL_TYPE_SEL`设置该组模板参数组合的核函数（Kernel）类型。同一个`ASCENDC_TPL_SEL`下，选择显式设置类型时，每个`ASCENDC_TPL_ARGS_SEL`都需要配置此接口。接口详情及支持的类型请参考[模板参数定义](../../../../../api/Utils-API/Tiling_template_programming/template_params_definition.md)。
 
@@ -104,7 +104,7 @@ Host侧Tiling函数会把核函数（Kernel）运行需要的参数写入TilingD
 
 **标准C++结构体**
 
-使用标准C++语法定义TilingData时，核函数（Kernel）侧在入口函数中使用[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)注册默认结构体。
+使用标准C++语法定义TilingData时，核函数（Kernel）侧在入口函数中使用[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_key_management/REGISTER_TILING_DEFAULT.md)注册默认结构体。
 
 ```cpp
 extern "C" __global__ __aicore__ void add_custom(GM_ADDR x, GM_ADDR y, GM_ADDR z,
@@ -135,8 +135,8 @@ REGISTER_TILING_DATA_CLASS(AddCustom, AddStruct)
 
 两个宏的能力区别如下：
 
-- [GET_TILING_DATA](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA.md)`(tiling_data, tiling_arg)`：使用当前核函数（Kernel）分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
-- [GET_TILING_DATA_WITH_STRUCT](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)`(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
+- [GET_TILING_DATA](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_data_acquisition/GET_TILING_DATA.md)`(tiling_data, tiling_arg)`：使用当前核函数（Kernel）分支注册的默认TilingData类型进行解析，适用于只需访问默认结构体的场景。
+- [GET_TILING_DATA_WITH_STRUCT](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_data_acquisition/GET_TILING_DATA_WITH_STRUCT.md)`(tiling_struct, tiling_data, tiling_arg)`：显式指定解析使用的TilingData结构体类型，既可用于不同TilingKey使用不同结构体的场景，也可用于TPL/SEL模板分支显式指定模板TilingData结构体的场景。
 
 默认TilingData结构体通过`GET_TILING_DATA`解析。第一个参数是解析后的变量名，第二个参数是核函数（Kernel）入口中的`tiling`地址。
 

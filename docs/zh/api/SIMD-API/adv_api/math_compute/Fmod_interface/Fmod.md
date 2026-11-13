@@ -123,7 +123,7 @@ struct FmodConfig {
 <!-- npu="950" id10 -->
 -   对于Ascend 950PR&950DT系列产品，模板参数config中的algo为ITERATION\_COMPENSATION迭代补偿模式下，操作数的数据类型仅支持float。
 <!-- end id10 -->
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 <!-- npu="950" id11 -->
 -   针对Ascend 950PR&950DT系列产品，接口内部计算对Subnormal的处理方式受编译选项`--cce-ftz`控制（默认值为`true`）：

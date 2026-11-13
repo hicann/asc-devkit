@@ -61,7 +61,7 @@ __aicore__ inline void LoadUnzipIndex(const GlobalTensor<T>& src, uint32_t numOf
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 - LoadUnzipIndex必须在任何LoadDataUnzip指令之前执行。
 - LoadUnzipIndex加载的索引表个数必须大于或等于LoadDataUnzip指令执行的次数。
 

@@ -82,7 +82,7 @@
 ## 约束说明
 
 -   源操作数和目的操作数的Tensor空间可以复用。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 -   当前仅支持ND格式的输入，不支持其他格式。
 -   不支持sharedTmpBuffer与源操作数和目的操作数地址重叠。
 

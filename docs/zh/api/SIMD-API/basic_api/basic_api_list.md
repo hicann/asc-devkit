@@ -444,13 +444,6 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [LocalMemBar](reg_vector_compute/sync_control/LocalMemBar.md) | Reg矢量计算宏函数内不同流水线之间的同步指令。该同步指令指定src源流水线和dst目的流水线，目的流水线将等待源流水线上所有指令完成才进行执行。读写场景下，当读指令使用的寄存器和写指令使用的寄存器相同时，可以触发寄存器保序，指令将会按照代码顺序执行，不需要插入同步指令，而当使用的寄存器不同时，如果要确保读写指令顺序执行，则需要插入同步指令，写写场景同理。 |
-| [AllocMutexID (ISASI)](sync_control/intra_core_sync/AllocMutexID_ISASI.md) | 从框架获取并占用一个MutexID，与ReleaseMutexID配合使用，管理MutexID的获取和释放。获取的MutexID可以传入Mutex接口使用，此时Mutex可以与TQue等其他接口配合使用。 |
-| [DataSyncBarrier(ISASI)](sync_control/intra_core_sync/DataSyncBarrier_ISASI.md) | 阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可通过参数控制）执行结束，用于解决Scalar的内存依赖。 |
-| [PipeBarrier(ISASI)](sync_control/intra_core_sync/PipeBarrier_ISASI.md) | 完成同一流水线内的同步控制，用于在同一流水线内部约束执行顺序。其作用是，保证前序指令中所有数据的读写工作全部完成，后序指令才能执行。 |
-| [ReleaseMutexID (ISASI)](sync_control/intra_core_sync/ReleaseMutexID_ISASI.md) | 从框架释放一个MutexID，与AllocMutexID配合使用。 |
-| [SetFlag/WaitFlag(ISASI)](sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | SetFlag/WaitFlag接口用于核内多流水间的同步。 |
-| [CrossCoreSetFlag(ISASI)](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，使用时需传入核间同步的标记ID（flagId），每个ID对应一个用于控制同步的计数器。CrossCoreSetFlag接口用于通知调度模块“本核的pipe流水任务已经完成”，CrossCoreWaitFlag接口用于阻塞后续指令下发，直到所有相关核均完成同步后方可解除阻塞。 |
-| [CrossCoreWaitFlag(ISASI)](sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，具体功能请参考[CrossCoreSetFlag](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)。 |
 
 ### 系统变量访问
 
@@ -503,15 +496,53 @@
 
 ## 同步控制
 
+### 核内同步
+
 | 接口名 | 功能描述 |
 | --- | --- |
 | [TQueSync](sync_control/intra_core_sync/TQueSync.md) | TQueSync类提供同步控制接口，开发者可以使用这类API来自行完成同步控制。 |
+| [AllocMutexID (ISASI)](sync_control/intra_core_sync/AllocMutexID_ISASI.md) | 从框架获取并占用一个MutexID，与ReleaseMutexID配合使用，管理MutexID的获取和释放。获取的MutexID可以传入Mutex接口使用，此时Mutex可以与TQue等其他接口配合使用。 |
+| [DataSyncBarrier(ISASI)](sync_control/intra_core_sync/DataSyncBarrier_ISASI.md) | 阻塞后续的指令执行，直到所有之前的内存访问指令（需要等待的内存位置可通过参数控制）执行结束，用于解决Scalar的内存依赖。 |
+| [PipeBarrier(ISASI)](sync_control/intra_core_sync/PipeBarrier_ISASI.md) | 完成同一流水线内的同步控制，用于在同一流水线内部约束执行顺序。其作用是，保证前序指令中所有数据的读写工作全部完成，后序指令才能执行。 |
+| [ReleaseMutexID (ISASI)](sync_control/intra_core_sync/ReleaseMutexID_ISASI.md) | 从框架释放一个MutexID，与AllocMutexID配合使用。 |
+| [SetFlag/WaitFlag(ISASI)](sync_control/intra_core_sync/SetFlag_WaitFlag_ISASI.md) | SetFlag/WaitFlag接口用于核内多流水间的同步。 |
+
+### 核间同步
+
+| 接口名 | 功能描述 |
+| --- | --- |
 | [IBSet](sync_control/inter_core_sync/IBSet.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [IBWait](sync_control/inter_core_sync/IBWait.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [SyncAll](sync_control/inter_core_sync/SyncAll.md) | SyncAll是核间同步控制接口。 |
 | [InitDetermineComputeWorkspace](sync_control/inter_core_sync/InitDetermineComputeWorkspace.md) | InitDetermineComputeWorkspace是基于核间顺序执行的确定性计算的初始化配置接口，能够初始化GM共享内存的值，完成初始化后才可以调用WaitPreBlock和NotifyNextBlock。以上三个接口共同完成基于核间顺序执行的确定性计算，确定性计算的具体含义请参考确定性计算。 |
 | [NotifyNextBlock](sync_control/inter_core_sync/NotifyNextBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
 | [WaitPreBlock](sync_control/inter_core_sync/WaitPreBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
+| [CrossCoreSetFlag(ISASI)](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，使用时需传入核间同步的标记ID（flagId），每个ID对应一个用于控制同步的计数器。CrossCoreSetFlag接口用于通知调度模块“本核的pipe流水任务已经完成”，CrossCoreWaitFlag接口用于阻塞后续指令下发，直到所有相关核均完成同步后方可解除阻塞。 |
+| [CrossCoreWaitFlag(ISASI)](sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，具体功能请参考[CrossCoreSetFlag](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)。 |
+| [Arrive](sync_control/inter_core_sync/GroupBarrier/Arrive.md) | 通知其他等待的AIV，本AIV已经完成其依赖的任务。 |
+| [Wait](sync_control/inter_core_sync/GroupBarrier/Wait.md) | 阻塞当前AIV，直到Arrive组的AIV均完成依赖任务。 |
+| [GetWorkspaceLen](sync_control/inter_core_sync/GroupBarrier/GetWorkspaceLen.md) | 返回当前GroupBarrier所占用的Global Memory消息空间大小。 |
+
+### 核间通信
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [CreateCubeResGroup](sync_control/inter_core_communication/CubeResGroupHandle/CreateCubeResGroup.md) | 快速创建CubeResGroupHandle对象，内部完成消息队列空间和同步事件分配。推荐使用该接口，避免使用CubeResGroupHandle的构造函数创建对象，出现不同对象的消息队列空间冲突、同步事件错误等情况。 |
+| [AssignQueue](sync_control/inter_core_communication/CubeResGroupHandle/AssignQueue.md) | 用于AIV绑定CubeResGroupHandle中某一个消息队列的序号。 |
+| [AllocMessage](sync_control/inter_core_communication/CubeResGroupHandle/AllocMessage.md) | AIV从消息队列里申请消息空间，用于存放消息结构体，返回当前申请的消息空间的地址。消息队列的深度固定为4，申请消息空间的顺序为自上而下，然后循环。当消息队列指针指向的消息空间为FREE状态时，AllocMessage返回空间的地址，否则循环等待，直到当前空间的状态为FREE。 |
+| [PostMessage](sync_control/inter_core_communication/CubeResGroupHandle/PostMessage.md) | 通过AllocMessage接口获取到消息空间地址msg后，构造消息结构体CubeMsgType，发送该消息。 |
+| [PostFakeMsg](sync_control/inter_core_communication/CubeResGroupHandle/PostFakeMsg.md) | 通过AllocMessage接口获取到消息空间地址后，AIV发送假消息，刷新消息状态msgState为FAKE。 |
+| [SetQuit](sync_control/inter_core_communication/CubeResGroupHandle/SetQuit.md) | 通过AllocMessage接口获取到消息空间地址后，发送退出消息，告知该消息队列对应的AIC无需处理该队列的消息。Queue5对应的AIV发了退出消息后，Block1将不再处理Queue5的任何消息。 |
+| [Wait](sync_control/inter_core_communication/CubeResGroupHandle/Wait.md) | 在调用PostMessage或PostFakeMessage后，查询该消息是否已被AIC处理完。 |
+| [FreeMessage](sync_control/inter_core_communication/CubeResGroupHandle/FreeMessage.md) | 在自定义的回调函数逻辑中，完成消息处理后，调用该接口，刷新消息状态为FREE；或者待消息状态为指定状态waitState时，刷新消息状态为FREE。 |
+| [SetSkipMsg](sync_control/inter_core_communication/CubeResGroupHandle/SetSkipMsg.md) | AIC跳过指定个数假消息的处理，仅在回调函数中调用。下图中Block0通过调用SetSkipMsg跳过三个假消息。 |
+| [UpdateKfcWorkspace](sync_control/inter_core_communication/KfcWorkspace/UpdateKfcWorkspace.md) | 更新用于CubeResGroupHandle消息通信区的内存地址。用户使用CubeResGroupHandle接口时，需要用此接口自主管理空间地址。 |
+| [GetKfcWorkspace](sync_control/inter_core_communication/KfcWorkspace/GetKfcWorkspace.md) | 获取用于CubeResGroupHandle消息通信区的内存地址。用户使用CubeResGroupHandle接口时，需要用此接口自主管理空间地址。 |
+
+### 任务间同步
+
+| 接口名 | 功能描述 |
+| --- | --- |
 | [SetNextTaskStart](sync_control/inter_task_sync/SetNextTaskStart.md) | 在SuperKernel的子核函数（Kernel）中调用，调用后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子KernelN-1调用该接口后，之后的指令会和后续子KernelN实现并行。 |
 | [WaitPreTaskEnd](sync_control/inter_task_sync/WaitPreTaskEnd.md) | 在SuperKernel的子核函数（Kernel）中调用，调用前的指令可以和前序其他的子核函数（Kernel）实现并行，提升整体性能。SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子KernelN+1调用该接口之前的指令会和前序子KernelN实现并行。 |
 
@@ -587,41 +618,18 @@
 | [GetProgramCounter(ISASI)](tool_interface/system_resources_and_variables/GetProgramCounter_ISASI.md) | 获取程序计数器的值，以追踪当前程序执行的位置。 |
 | [GetSubBlockNum(ISASI)](tool_interface/system_resources_and_variables/GetSubBlockNum_ISASI.md) | 在分离模式架构下，获取当前配置中，一个逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的数量。 |
 | [GetSubBlockIdx(ISASI)](tool_interface/system_resources_and_variables/GetSubBlockIdx_ISASI.md) | 在分离模式架构下，获取逻辑AI Core上Cube Core（AIC）或者Vector Core（AIV）的逻辑索引。 |
-
-## Cube分组管理（ISASI）
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [CreateCubeResGroup](cube_group_mgmt_ISASI/CubeResGroupHandle/CreateCubeResGroup.md) | 快速创建CubeResGroupHandle对象，内部完成消息队列空间和同步事件分配。推荐使用该接口，避免使用CubeResGroupHandle的构造函数创建对象，出现不同对象的消息队列空间冲突、同步事件错误等情况。 |
-| [AssignQueue](cube_group_mgmt_ISASI/CubeResGroupHandle/AssignQueue.md) | 用于AIV绑定CubeResGroupHandle中某一个消息队列的序号。 |
-| [AllocMessage](cube_group_mgmt_ISASI/CubeResGroupHandle/AllocMessage.md) | AIV从消息队列里申请消息空间，用于存放消息结构体，返回当前申请的消息空间的地址。消息队列的深度固定为4，申请消息空间的顺序为自上而下，然后循环。当消息队列指针指向的消息空间为FREE状态时，AllocMessage返回空间的地址，否则循环等待，直到当前空间的状态为FREE。 |
-| [PostMessage](cube_group_mgmt_ISASI/CubeResGroupHandle/PostMessage.md) | 通过AllocMessage接口获取到消息空间地址msg后，构造消息结构体CubeMsgType，发送该消息。 |
-| [PostFakeMsg](cube_group_mgmt_ISASI/CubeResGroupHandle/PostFakeMsg.md) | 通过AllocMessage接口获取到消息空间地址后，AIV发送假消息，刷新消息状态msgState为FAKE。 |
-| [SetQuit](cube_group_mgmt_ISASI/CubeResGroupHandle/SetQuit.md) | 通过AllocMessage接口获取到消息空间地址后，发送退出消息，告知该消息队列对应的AIC无需处理该队列的消息。Queue5对应的AIV发了退出消息后，Block1将不再处理Queue5的任何消息。 |
-| [Wait](cube_group_mgmt_ISASI/CubeResGroupHandle/Wait.md) | 在调用PostMessage或PostFakeMessage后，查询该消息是否已被AIC处理完。 |
-| [FreeMessage](cube_group_mgmt_ISASI/CubeResGroupHandle/FreeMessage.md) | 在自定义的回调函数逻辑中，完成消息处理后，调用该接口，刷新消息状态为FREE；或者待消息状态为指定状态waitState时，刷新消息状态为FREE。 |
-| [SetSkipMsg](cube_group_mgmt_ISASI/CubeResGroupHandle/SetSkipMsg.md) | AIC跳过指定个数假消息的处理，仅在回调函数中调用。下图中Block0通过调用SetSkipMsg跳过三个假消息。 |
-| [Arrive](cube_group_mgmt_ISASI/GroupBarrier/Arrive.md) | 通知其他等待的AIV，本AIV已经完成其依赖的任务。 |
-| [GetWorkspaceLen](cube_group_mgmt_ISASI/GroupBarrier/GetWorkspaceLen.md) | 返回当前GroupBarrier所占用的Global Memory消息空间大小。 |
-| [UpdateKfcWorkspace](cube_group_mgmt_ISASI/KfcWorkspace/UpdateKfcWorkspace.md) | 更新用于CubeResGroupHandle消息通信区的内存地址。用户使用CubeResGroupHandle接口时，需要用此接口自主管理空间地址。 |
-| [GetKfcWorkspace](cube_group_mgmt_ISASI/KfcWorkspace/GetKfcWorkspace.md) | 获取用于CubeResGroupHandle消息通信区的内存地址。用户使用CubeResGroupHandle接口时，需要用此接口自主管理空间地址。 |
-
-## Kernel-Tiling
-
-| 接口名 | 功能描述 |
-| --- | --- |
-| [GET_TILING_DATA](Kernel-Tiling/GET_TILING_DATA.md) | 用于获取算子核函数（Kernel）入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过TilingData结构注册注册了多个TilingData结构体，使用该接口返回默认注册的结构体。 |
-| [GET_TILING_DATA_WITH_STRUCT](Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md) | 使用该接口指定结构体名称，可获取指定的tiling信息，并填入对应的Tiling结构体中，此函数会以宏展开的方式进行编译。与GET\_TILING\_DATA的区别是：GET\_TILING\_DATA只能获取默认注册的结构体，该接口可以根据指定的结构体名称获取对应的结构体，常用于针对不同的TilingKey注册了不同结构体的情况下。 |
-| [GET_TILING_DATA_MEMBER](Kernel-Tiling/GET_TILING_DATA_MEMBER.md) | 用于获取tiling结构体的成员变量。 |
-| [GET_TILING_DATA_PTR_WITH_STRUCT](Kernel-Tiling/GET_TILING_DATA_PTR_WITH_STRUCT.md) | 在使用该宏时，开发者可以通过指定结构体名称来获取相应的Tiling信息，并将其填入对应的Tiling结构体中。完成填充后，该宏将返回一个指向该Tiling结构体的指针，并使用\_\_tiling\_data\_ptr\_\_修饰符对该指针进行修饰。这种修饰方式能够确保在动静态Shape场景下代码的统一性和兼容性。 |
-| [COPY_TILING_WITH_STRUCT](Kernel-Tiling/COPY_TILING_WITH_STRUCT.md) | 拷贝Tiling结构体，并返回指向拷贝后的Tiling结构体的指针。该宏适用于嵌套结构体场景，可拷贝结构体的子结构体成员变量。该宏将指定结构体拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
-| [COPY_TILING_WITH_ARRAY](Kernel-Tiling/COPY_TILING_WITH_ARRAY.md) | 拷贝指定大小的数组内容到目标数组中，并返回指向拷贝后数组的指针。适用于拷贝一个结构体的数组成员变量的场景。该宏将指定数组拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
-| [TILING_KEY_IS](Kernel-Tiling/TILING_KEY_IS.md) | 在核函数（Kernel）中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条核函数（Kernel）分支。 |
-| [TILING_KEY_LIST](Kernel-Tiling/TILING_KEY_LIST.md) | TILING_KEY_LIST函数用于在核函数（Kernel）中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。 |
-| [REGISTER_TILING_DEFAULT](Kernel-Tiling/REGISTER_TILING_DEFAULT.md) | 用于在核函数（Kernel）侧注册用户使用标准C++语法自定义的默认TilingData结构体。 |
-| [REGISTER_TILING_FOR_TILINGKEY](Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md) | 用于在核函数（Kernel）侧注册与TilingKey相匹配的TilingData自定义结构体；该接口需提供一个逻辑表达式，逻辑表达式以字符串“TILING_KEY_VAR”代指实际TilingKey，表达TilingKey所满足的范围。 |
-| [REGISTER_NONE_TILING](Kernel-Tiling/REGISTER_NONE_TILING.md) | 在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套GET\_TILING\_DATA\_WITH\_STRUCT、GET\_TILING\_DATA\_MEMBER、GET\_TILING\_DATA\_PTR\_WITH\_STRUCT获取对应的TilingData。 |
-| [设置核函数（Kernel）类型](Kernel-Tiling/set_Kernel_type.md) | 用于用户自定义设置核函数（Kernel）类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
+| [GET_TILING_DATA](tool_interface/tiling_data_acquisition/GET_TILING_DATA.md) | 用于获取算子核函数（Kernel）入口函数传入的Tiling信息，并填入注册的TilingData结构体中，此函数会以宏展开的方式进行编译。对应的算子host实现中需要定义TilingData结构体，实现并注册计算TilingData的Tiling函数。如果用户通过TilingData结构注册注册了多个TilingData结构体，使用该接口返回默认注册的结构体。 |
+| [GET_TILING_DATA_WITH_STRUCT](tool_interface/tiling_data_acquisition/GET_TILING_DATA_WITH_STRUCT.md) | 使用该接口指定结构体名称，可获取指定的tiling信息，并填入对应的Tiling结构体中，此函数会以宏展开的方式进行编译。与GET\_TILING\_DATA的区别是：GET\_TILING\_DATA只能获取默认注册的结构体，该接口可以根据指定的结构体名称获取对应的结构体，常用于针对不同的TilingKey注册了不同结构体的情况下。 |
+| [GET_TILING_DATA_MEMBER](tool_interface/tiling_data_acquisition/GET_TILING_DATA_MEMBER.md) | 用于获取tiling结构体的成员变量。 |
+| [GET_TILING_DATA_PTR_WITH_STRUCT](tool_interface/tiling_data_acquisition/GET_TILING_DATA_PTR_WITH_STRUCT.md) | 在使用该宏时，开发者可以通过指定结构体名称来获取相应的Tiling信息，并将其填入对应的Tiling结构体中。完成填充后，该宏将返回一个指向该Tiling结构体的指针，并使用\_\_tiling\_data\_ptr\_\_修饰符对该指针进行修饰。这种修饰方式能够确保在动静态Shape场景下代码的统一性和兼容性。 |
+| [COPY_TILING_WITH_STRUCT](tool_interface/tiling_data_acquisition/COPY_TILING_WITH_STRUCT.md) | 拷贝Tiling结构体，并返回指向拷贝后的Tiling结构体的指针。该宏适用于嵌套结构体场景，可拷贝结构体的子结构体成员变量。该宏将指定结构体拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
+| [COPY_TILING_WITH_ARRAY](tool_interface/tiling_data_acquisition/COPY_TILING_WITH_ARRAY.md) | 拷贝指定大小的数组内容到目标数组中，并返回指向拷贝后数组的指针。适用于拷贝一个结构体的数组成员变量的场景。该宏将指定数组拷贝至栈上，适用于频繁访问Tiling数据的场景，能够加快数据访问速度。 |
+| [TILING_KEY_IS](tool_interface/tiling_key_management/TILING_KEY_IS.md) | 在核函数（Kernel）中判断本次执行时的tiling_key是否等于host侧运行时设置的某个key，从而标识tiling_key==key的一条核函数（Kernel）分支。 |
+| [TILING_KEY_LIST](tool_interface/tiling_key_management/TILING_KEY_LIST.md) | TILING_KEY_LIST函数用于在核函数（Kernel）中判断当前执行的TilingKey是否与Host侧配置的指定TilingKey匹配，从而标识满足TilingKey == key1或TilingKey == key2条件的分支逻辑。 |
+| [REGISTER_TILING_DEFAULT](tool_interface/tiling_key_management/REGISTER_TILING_DEFAULT.md) | 用于在核函数（Kernel）侧注册用户使用标准C++语法自定义的默认TilingData结构体。 |
+| [REGISTER_TILING_FOR_TILINGKEY](tool_interface/tiling_key_management/REGISTER_TILING_FOR_TILINGKEY.md) | 用于在核函数（Kernel）侧注册与TilingKey相匹配的TilingData自定义结构体；该接口需提供一个逻辑表达式，逻辑表达式以字符串“TILING_KEY_VAR”代指实际TilingKey，表达TilingKey所满足的范围。 |
+| [REGISTER_NONE_TILING](tool_interface/tiling_key_management/REGISTER_NONE_TILING.md) | 在核函数（Kernel）侧使用标准C++语法自定义的TilingData结构体时，若用户不确定需要注册哪些结构体，可使用该接口告知框架侧需使用未注册的标准C++语法来定义TilingData，并配套GET\_TILING\_DATA\_WITH\_STRUCT、GET\_TILING\_DATA\_MEMBER、GET\_TILING\_DATA\_PTR\_WITH\_STRUCT获取对应的TilingData。 |
+| [设置核函数（Kernel）类型](tool_interface/execution_mode/set_Kernel_type.md) | 用于用户自定义设置核函数（Kernel）类型，控制算子执行时只启动该类型的核，避免启动不需要工作的核，缩短核启动开销。 |
 
 ## 特殊寄存器访问
 

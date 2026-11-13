@@ -99,7 +99,7 @@ I0(x) = Σ_{k=0}^{+∞} (1 / (k!)^2) * (x/2)^{2k}
 - 使用本接口前，需要包含头文件，头文件路径为：`adv_api/experimental/bessel_i0.h`。
 - 使用前需要增加编译选项`-DCANN_ASC_USE_EXPERIMENTAL`开启试验特性。
 - **不支持源操作数与目的操作数地址重叠。**
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 ## 调用示例
 

@@ -62,7 +62,7 @@ __aicore__ inline int64_t GetSubBlockNum()
 | Mix算子 | \_\_mix\_\_(1, 1) | 1 | 1 |
 | Mix算子 | \_\_mix\_\_(1, 2) | 1 | 2 |
 
-在自定义算子工程和核函数（Kernel）直调工程场景下，不同核函数（Kernel）类型（通过[设置核函数（Kernel）类型](../../Kernel-Tiling/set_Kernel_type.md)设置）在AIC和AIV上调用该接口的返回值如下：
+在自定义算子工程和核函数（Kernel）直调工程场景下，不同核函数（Kernel）类型（通过[设置核函数（Kernel）类型](../../tool_interface/execution_mode/set_Kernel_type.md)设置）在AIC和AIV上调用该接口的返回值如下：
 
 **表2** 通过Kernel Type接口设置核函数（Kernel）类型时的返回值
 

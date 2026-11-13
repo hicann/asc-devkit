@@ -955,7 +955,7 @@
 | 基础API > 类型转换 | Cast |
 | 基础API > 归约计算 | ReduceRepeat、ReduceDataBlock、ReducePairElem |
 | 基础API > 数据填充 | Duplicate |
-| 基础API > Kernel-Tiling | GET_TILING_DATA、GET_TILING_DATA_WITH_STRUCT、GET_TILING_DATA_MEMBER |
+| 基础API > 工具接口 > Tiling数据获取 | GET_TILING_DATA、GET_TILING_DATA_WITH_STRUCT、GET_TILING_DATA_MEMBER |
 | Utils API > 调测接口（SIMD VF） | printf、asc_dump_reg、asc_dump、asc_dump_ubuf |
 | 高阶API | AscendAntiQuant、AdjustSoftMaxRes、TopK |
 

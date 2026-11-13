@@ -112,7 +112,7 @@ Kirin9050处理器系列产品，支持数据类型为：b8、b16、b32。
 
 ## 约束说明<a id="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 - 本通路场景下不支持转置。
 
 ## 调用示例<a id="section6461234123118"></a>

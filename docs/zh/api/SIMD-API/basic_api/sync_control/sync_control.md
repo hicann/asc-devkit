@@ -6,4 +6,6 @@
 
 - **[核间同步](inter_core_sync/inter_core_sync.md)**  
 
+- **[核间通信](inter_core_communication/inter_core_communication.md)**
+
 - **[任务间同步](inter_task_sync/inter_task_sync.md)**  

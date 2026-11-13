@@ -26,8 +26,4 @@
 
 - **[工具接口](tool_interface/tool_interface.md)**  
 
-- **[Cube分组管理（ISASI）](cube_group_mgmt_ISASI/cube_group_mgmt_ISASI.md)**  
-
-- **[Kernel Tiling](Kernel-Tiling/Kernel-Tiling.md)**  
-
 - **[特殊寄存器访问](special_register_access/special_register_access.md)**  

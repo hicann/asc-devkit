@@ -39,7 +39,7 @@ HCCL为**集合通信任务客户端**，主要对外提供了集合通信原语
     hccl.InitV2(contextGM, &tilingData);
     ```
 
-    当调用InitV2接口时，必须使用标准C++语法定义TilingData结构体的开发方式。如上示例代码中的tilingGM为host侧传入的、作为核函数（Kernel）入参的算子TilingData的GM地址，通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../basic_api/Kernel-Tiling/GET_TILING_DATA_WITH_STRUCT.md)获取TilingData。调用[InitV2](InitV2.md)初始化接口时，需要传入通信上下文信息，可以通过框架提供的获取通信上下文的接口[GetHcclContext](../HCCL-Context/GetHcclContext.md)获取。
+    当调用InitV2接口时，必须使用标准C++语法定义TilingData结构体的开发方式。如上示例代码中的tilingGM为host侧传入的、作为核函数（Kernel）入参的算子TilingData的GM地址，通过[GET\_TILING\_DATA\_WITH\_STRUCT](../../../basic_api/tool_interface/tiling_data_acquisition/GET_TILING_DATA_WITH_STRUCT.md)获取TilingData。调用[InitV2](InitV2.md)初始化接口时，需要传入通信上下文信息，可以通过框架提供的获取通信上下文的接口[GetHcclContext](../HCCL-Context/GetHcclContext.md)获取。
 
 2.  设置对应通信算法的Tiling地址。
 

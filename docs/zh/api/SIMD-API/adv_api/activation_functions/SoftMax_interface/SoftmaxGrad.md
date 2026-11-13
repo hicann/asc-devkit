@@ -122,7 +122,7 @@ struct SoftMaxShapeInfo {
 ## 约束说明
 
 -   srcTensor和dstTensor的Tensor空间可以复用。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 -   不支持sharedTmpBuffer与源操作数和目的操作数地址重叠。
 <!-- npu="A3,910b,310p" id8 -->
 -   当参数softmaxShapeInfo中srcM != oriSrcM或者srcK != oriSrcK时，开发者需要对GM上的原始输入\(oriSrcM, oriSrcK\)在M或K方向补齐数据到\(srcM, srcK\)，补齐的数据会参与部分运算，在输入输出复用的场景下，API的计算结果会覆盖srcTensor中补齐的原始数据，在输入输出不复用的场景下，API的计算结果会覆盖dstTensor中对应srcTensor补齐位置的数据。

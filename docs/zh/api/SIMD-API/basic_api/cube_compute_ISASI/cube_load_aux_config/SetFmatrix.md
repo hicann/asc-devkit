@@ -68,7 +68,7 @@ __aicore__ inline void SetFmatrix(uint16_t l1H, uint16_t l1W, const uint8_t padL
 ## 约束说明<a name="section633mcpsimp"></a>
 
 - 该接口需要配合[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口一起使用，需要在[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口之前调用，其中fmatrixMode参数需要和LoadData（卷积数据搬运）接口参数中的fMatrixCtrl值保持一致。
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

@@ -93,7 +93,7 @@ SSBuffer适用于同一AI Core内的小数据量通信，常见场景如下。
 
 ### 核函数与编译配置
 
-使用[函数执行空间限定符](../../language_extension/simd_builtin_keywords.md#section1074418132518)明确核函数的执行方式。`__mix__(1, 2)`表示每组AIC/AIV按1:2配比运行，多组执行时，各组访问其各自的SSBuffer。工程化算子应配置与`__mix__(1, 2)`对应的[核函数类型](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)，即`KERNEL_TYPE_MIX_AIC_1_2`。
+使用[函数执行空间限定符](../../language_extension/simd_builtin_keywords.md#section1074418132518)明确核函数的执行方式。`__mix__(1, 2)`表示每组AIC/AIV按1:2配比运行，多组执行时，各组访问其各自的SSBuffer。工程化算子应配置与`__mix__(1, 2)`对应的[核函数类型](../../../../api/SIMD-API/basic_api/tool_interface/execution_mode/set_Kernel_type.md)，即`KERNEL_TYPE_MIX_AIC_1_2`。
 
 在上述核函数配置下，还需根据通信的实现方式确定是否设置编译宏[ENABLE_CV_COMM_VIA_SSBUF](../../compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#section57020345148)：
 

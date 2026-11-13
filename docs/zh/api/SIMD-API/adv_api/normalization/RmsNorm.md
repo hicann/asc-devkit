@@ -89,7 +89,7 @@
 
 -   dstLocal和gammaLocal的Tensor空间不允许复用。
 -   当前仅支持ND格式的输入，不支持其他格式。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#alignment_requirements)。
 -   当srcLocal的原始shape中H轴非32字节对齐时，开发者需要对原始输入在H轴方向补齐数据到32字节对齐，API的计算结果会覆盖dstLocal中对应srcLocal补齐位置的数据。
 
 <!-- npu="950" id9 -->

@@ -257,7 +257,7 @@ AscendC::Add(zLocal, xLocal, yLocal, blockLength);
 
 毕昇编译器提供`--cce-auto-sync-log=<file>`编译选项可以输出同步插入信息到`<file>`文件中，帮助开发者显式地识别毕昇编译器在算子文件中插入的同步指令信息。
 
-> [!CAUTION]注意    
+> [!CAUTION]注意
 > 获取毕昇编译器自动同步日志，还需要设置[`-g`编译选项](../../../../../../zh/guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)，用于获取算子代码文件行号。
 
 根据开发场景不同，添加该编译选项的方式如下：

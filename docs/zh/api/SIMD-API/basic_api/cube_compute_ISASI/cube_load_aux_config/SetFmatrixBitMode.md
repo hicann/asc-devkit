@@ -94,7 +94,7 @@ __aicore__ inline SetFMatrixBitModeParams(const LoadData3DParamsV2<T> &loadData3
 ## 约束说明<a name="section633mcpsimp"></a>
 
 - 该接口需要配合[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口一起使用，需要在[LoadData（卷积数据搬运）](../cube_compute_load/LoadData_3D.md)接口之前调用。
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 ## 调用示例<a name="section642mcpsimp"></a>
 

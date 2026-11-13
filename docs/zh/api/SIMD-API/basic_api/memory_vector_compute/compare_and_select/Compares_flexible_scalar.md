@@ -110,7 +110,7 @@ Ascend 950PR&950DT系列产品，目的操作数dst支持的数据类型为：ui
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 -   调用灵活标量位置接口且源操作数为LocalTensor单点元素的场景，不支持源操作数和目的操作数地址重叠。
 
 -   dst按照小端顺序排序成二进制结果，对应src中相应位置的数据比较结果。

@@ -98,7 +98,7 @@ Atlas推理系列产品AI Core，支持的数据类型为：half/float。
 ## 约束说明<a name="section633mcpsimp"></a>
 
 -   当存在proposal\[i\]与proposal\[j\]的score值相同时，如果i\>j，则proposal\[j\]将首先被选出来，排在前面。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 -   不支持源操作数与目的操作数之间存在地址重叠。
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/MrgSort4_res.md#id2 -->

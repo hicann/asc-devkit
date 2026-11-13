@@ -120,7 +120,7 @@ __aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)
 
 ## 约束说明<a id="section633mcpsimp"></a>
 
-- 由于当核函数（Kernel）类型为KERNEL_TYPE_AIC_ONLY或KERNEL_TYPE_AIV_ONLY时，硬件不会开启调度模块，也就无法正常进行核间同步。各同步模式支持的[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)和[核函数（Kernel）类型](../../Kernel-Tiling/set_Kernel_type.md)如下表所示：
+- 由于当核函数（Kernel）类型为KERNEL_TYPE_AIC_ONLY或KERNEL_TYPE_AIV_ONLY时，硬件不会开启调度模块，也就无法正常进行核间同步。各同步模式支持的[函数执行空间限定符](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md#函数执行空间限定符)和[核函数（Kernel）类型](../../tool_interface/execution_mode/set_Kernel_type.md)如下表所示：
 
     **表3**  模式与支持的核函数（Kernel）类型配置<a id="table3"></a>
 

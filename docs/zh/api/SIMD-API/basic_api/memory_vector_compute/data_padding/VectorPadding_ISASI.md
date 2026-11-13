@@ -97,9 +97,10 @@
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-- 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
-- mask仅控制目的操作数中的哪些元素要写入，源操作数的读取与mask无关。
-- count表示写入目的操作数中的元素总数，源操作数的读取与count无关。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
+
+-   mask仅控制目的操作数中的哪些元素要写入，源操作数的读取与mask无关。
+-   count表示写入目的操作数中的元素总数，源操作数的读取与count无关。
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/data_padding/VectorPadding_ISASI_res.md#id2 -->
 
 ## 调用示例<a name="section642mcpsimp"></a>

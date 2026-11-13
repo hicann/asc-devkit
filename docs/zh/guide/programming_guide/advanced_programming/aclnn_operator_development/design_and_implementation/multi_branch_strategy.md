@@ -114,7 +114,7 @@ if (TILING_KEY_IS(1)) {
 }
 ```
 
-使用[REGISTER_TILING_FOR_TILINGKEY](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_FOR_TILINGKEY.md)时，必须同时通过[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/REGISTER_TILING_DEFAULT.md)注册默认结构体。Host侧也需要在key 2分支中调用`GetTilingData<TilingData1>()`写入数据，保证两侧类型和字段布局一致。
+使用[REGISTER_TILING_FOR_TILINGKEY](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_key_management/REGISTER_TILING_FOR_TILINGKEY.md)时，必须同时通过[REGISTER_TILING_DEFAULT](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_key_management/REGISTER_TILING_DEFAULT.md)注册默认结构体。Host侧也需要在key 2分支中调用`GetTilingData<TilingData1>()`写入数据，保证两侧类型和字段布局一致。
 
 ### 只编译指定TilingKey<a id="compile-selected-tiling-keys"></a>
 
@@ -337,5 +337,5 @@ add_custom_template<float, float, float, 8, 0>
 - [算子功能设计](./operator_function_design.md)：判断是否需要按dtype、shape或运行配置拆分核函数（Kernel）。
 - [Host侧Tiling实现](./host_tiling_implementation.md)：设置TilingData、TilingKey和核函数（Kernel）启动参数。
 - [核函数（Kernel）侧算子实现](./kernel_operator_implementation.md)：注册和解析不同TilingData结构体。
-- [TILING_KEY_IS](../../../../../api/SIMD-API/basic_api/Kernel-Tiling/TILING_KEY_IS.md)：核函数（Kernel）侧分支判断接口。
+- [TILING_KEY_IS](../../../../../api/SIMD-API/basic_api/tool_interface/tiling_key_management/TILING_KEY_IS.md)：核函数（Kernel）侧分支判断接口。
 - [ASCENDC_TPL_SEL_PARAM](../../../../../api/Utils-API/Tiling_template_programming/ASCENDC_TPL_SEL_PARAM.md)：Host侧模板参数选择接口。

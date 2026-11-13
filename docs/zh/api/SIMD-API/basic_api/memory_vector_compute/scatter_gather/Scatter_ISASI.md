@@ -114,8 +114,8 @@ Kirin9030处理器系列产品，支持的数据类型为：int16_t、uint16_t�
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
--   操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#section668772811100)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
+-   操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
 
 - dstOffset的取值要求如下：
   - 偏移地址不能有相同值，如果存在2个或者多个偏移重复的情况，行为是不可预期的。 

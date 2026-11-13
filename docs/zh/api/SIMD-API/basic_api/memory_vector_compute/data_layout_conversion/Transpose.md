@@ -329,7 +329,7 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
 
 ## 约束说明
 
-- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+- 操作数地址对齐要求请参见[Unified Buffer地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 - 普通转置接口支持src和dst复用。
 - 增强转置接口，transposeType为TRANSPOSE\_ND2ND\_B16时支持src和dst复用，transposeType为TRANSPOSE\_NCHW2NHWC、TRANSPOSE\_NHWC2NCHW时不支持src和dst复用。
 - 二维矩阵数据块转置时，nSize、cSize无需传入，传入数值无效；hSize、wSize固定传入16。

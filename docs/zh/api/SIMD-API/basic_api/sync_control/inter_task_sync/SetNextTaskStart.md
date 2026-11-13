@@ -1,6 +1,6 @@
 # SetNextTaskStart<a name="ZH-CN_TOPIC_0000002337763421"></a>
 
-> [!NOTE]说明 
+> [!NOTE]说明
 >本接口为试验接口，在后续版本中可能会调整或改进，不保证后续兼容性。请开发者在使用过程中关注后续版本更新。
 
 ## 产品支持情况<a name="section17196114513104"></a>
@@ -115,7 +115,7 @@ SuperKernel是一种算子的二进制融合技术，与源码融合不同，它
 | AIC_PIPE | SetNextTaskStart之后运行的指令，如果位于AIC上的AIC_PIPE流水，可以与后序算子并行。AIC_PIPE的取值范围为PIPE_MTE1、PIPE_MTE2、PIPE_MTE3、PIPE_FIX、PIPE_M。 |
 | FORCE | 离线编译时是否强制启用Early-Start能力，不影响在线编译。<br>false：离线编译时不强制启用Early-Start能力；<br>true：离线编译时启用Early-Start能力，适用于无在线编译流程的算子（如<<<>>>开发的算子）。 |
 
-> [!NOTE]说明 
+> [!NOTE]说明
 >不同的硬件架构，每一种硬件流水类型包含的具体流水会有所差异，流水类型详细介绍请参考[硬件流水类型](../intra_core_sync/intra_core_sync_overview.md#zh-cn_topic_0000002542725361_section1272612276459)。
 
 ## 返回值说明<a name="section640mcpsimp"></a>

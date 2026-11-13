@@ -126,7 +126,7 @@ Tiling下沉场景下，算子工程的目录结构如下，Tiling实现文件�
 
 -   算子核函数（Kernel）实现
 
-    通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/Kernel-Tiling/set_Kernel_type.md)接口指定核函数（Kernel）的执行类型。
+    通过[KERNEL\_TASK\_TYPE\_DEFAULT](../../../../api/SIMD-API/basic_api/tool_interface/execution_mode/set_Kernel_type.md)接口指定核函数（Kernel）的执行类型。
 
     ```
     extern "C" __global__ __aicore__ void add_custom_tiling_sink(GM_ADDR x, GM_ADDR y, GM_ADDR z, GM_ADDR workspace, GM_ADDR tiling)

@@ -1,5 +1,7 @@
 # 核间同步<a name="ZH-CN_TOPIC_0000001871607660"></a>
 
+核间同步接口用于控制不同AI Core之间的执行顺序、任务到达和等待关系。
+
 - **[核间同步能力概述](inter_core_sync_overview.md)**  
 
 - **[关键特性说明](key_features.md)**  
@@ -19,3 +21,5 @@
 - **[NotifyNextBlock](NotifyNextBlock.md)**  
 
 - **[WaitPreBlock](WaitPreBlock.md)**  
+
+- **[GroupBarrier](GroupBarrier/GroupBarrier.md)**

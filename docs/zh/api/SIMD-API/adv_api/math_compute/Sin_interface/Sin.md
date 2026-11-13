@@ -129,7 +129,7 @@ enum class SinAlgo { POLYNOMIAL_APPROXIMATION = 0, RADIAN_REDUCTION };
 
 -   **不支持源操作数与目的操作数地址重叠。**
 -   不支持sharedTmpBuffer与源操作数和目的操作数地址重叠。
--   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#section796754519912)。
+-   操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
 
 ## 调用示例
 

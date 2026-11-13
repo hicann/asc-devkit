@@ -1263,7 +1263,7 @@
         "minResults": 1,
         "targets": [
           { "exact": "/guide/编程指南/高级编程/硬件实现/架构规格/NPU架构版本3510", "grade": 3 },
-          { "contains": "/cube_group_mgmt_ISASI/", "grade": 2 },
+          { "contains": "/sync_control/inter_core_communication/CubeResGroupHandle/", "grade": 2 },
           { "exact": "/guide/算子实践参考/SIMD算子性能优化/流水编排/使能Iterate或IterateAll异步接口避免AIC-AIV同步依赖", "grade": 3 }
         ]
       }
