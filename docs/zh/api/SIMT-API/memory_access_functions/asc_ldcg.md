@@ -205,6 +205,9 @@ L2 Cache中的缓存数据或输入的Global Memory地址上的数据。
     __global__ __launch_bounds__(1024) void kernel_asc_ldcg(float* dst, float* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+        // ldcg：从L2 Cache读取，未命中时从Global Memory读取并仅缓存到L2 Cache，不经过Data Cache；
+        // 适合数据仅读取一次、不希望占用Data Cache的场景。若数据会被本核重复读取，应改用asc_ldca。
         dst[idx] = asc_ldcg(src + idx);
     }
     ```
@@ -219,6 +222,9 @@ L2 Cache中的缓存数据或输入的Global Memory地址上的数据。
     __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_ldcg(__gm__ float* dst, __gm__ float* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+        // ldcg：从L2 Cache读取，未命中时从Global Memory读取并仅缓存到L2 Cache，不经过Data Cache；
+        // 适合数据仅读取一次、不希望占用Data Cache的场景。若数据会被本核重复读取，应改用asc_ldca。
         dst[idx] = asc_ldcg(src + idx);
     }
     ```

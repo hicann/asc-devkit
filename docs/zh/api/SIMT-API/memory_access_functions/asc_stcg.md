@@ -213,6 +213,8 @@ inline void asc_stcg(half2* address, half2 val)
         if (idx >= input_total_length) {
             return;
         }
+        // stcg：写入Global Memory并缓存到L2 Cache，不缓存到Data Cache；
+        // 适合写出的数据不会被本核再次读取、希望避免污染Data Cache的场景（如流式输出）。
         asc_stcg(dst + idx, val[idx]);
     }
     ```
@@ -230,6 +232,8 @@ inline void asc_stcg(half2* address, half2 val)
         if (idx >= input_total_length) {
             return;
         }
+        // stcg：写入Global Memory并缓存到L2 Cache，不缓存到Data Cache；
+        // 适合写出的数据不会被本核再次读取、希望避免污染Data Cache的场景（如流式输出）。
         asc_stcg(dst + idx, val[idx]);
     }
     ```

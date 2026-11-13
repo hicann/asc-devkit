@@ -220,6 +220,10 @@ inline half2 asc_ldca(half2* address)
     __global__ __launch_bounds__(1024) void kernel_asc_ldca(float* dst, float* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+        // ldca：优先从Data Cache读取，未命中依次尝试L2 Cache与Global Memory，并将数据回填到Data Cache与L2 Cache。
+        // 适合本核稍后还会重复读取该数据的复用场景；
+        // 若数据仅读取一次、不希望占用Data Cache，应改用asc_ldcg（仅经过L2 Cache）。
         dst[idx] = asc_ldca(src + idx);
     }
     ```
@@ -234,6 +238,10 @@ inline half2 asc_ldca(half2* address)
     __simt_vf__ __launch_bounds__(1024) inline void kernel_asc_ldca(__gm__ float* dst, __gm__ float* src)
     {
         int idx = threadIdx.x + blockIdx.x * blockDim.x;
+
+        // ldca：优先从Data Cache读取，未命中依次尝试L2 Cache与Global Memory，并将数据回填到Data Cache与L2 Cache。
+        // 适合本核稍后还会重复读取该数据的复用场景；
+        // 若数据仅读取一次、不希望占用Data Cache，应改用asc_ldcg（仅经过L2 Cache）。
         dst[idx] = asc_ldca(src + idx);
     }
     ```

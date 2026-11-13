@@ -213,6 +213,8 @@ inline void asc_stwt(half2* address, half2 val)
         if (idx >= input_total_length) {
             return;
         }
+        // stwt：写入Global Memory并缓存到Data Cache与L2 Cache；
+        // 适合写出的数据稍后会被本核再次读取的复用场景。若写出数据不会被复用，可改用asc_stcg以避免占用Data Cache。
         asc_stwt(dst + idx, val[idx]);
     }
     ```
@@ -230,6 +232,8 @@ inline void asc_stwt(half2* address, half2 val)
         if (idx >= input_total_length) {
             return;
         }
+        // stwt：写入Global Memory并缓存到Data Cache与L2 Cache；
+        // 适合写出的数据稍后会被本核再次读取的复用场景。若写出数据不会被复用，可改用asc_stcg以避免占用Data Cache。
         asc_stwt(dst + idx, val[idx]);
     }
     ```
