@@ -267,20 +267,22 @@ __simd_callee__ inline void ExpImpl(U& dstReg, U& srcReg, MaskReg& mask)
     ) {
         MaskReg maskSubnormal;
         U tmpReg;
+        // Preserve srcReg for compensation when the source and destination alias.
+        U expReg;
         if constexpr (SupportType<ActualT, float>()) {
             NotNumUnion subnormalBound;
             subnormalBound.i = 0x7fffff;
-            vexp(dstReg, srcReg, mask, modeValue);
-            vcmps_le(maskSubnormal, dstReg, subnormalBound.f, mask);
+            vexp(expReg, srcReg, mask, modeValue);
+            vcmps_le(maskSubnormal, expReg, subnormalBound.f, mask);
             ExpPrecision(tmpReg, srcReg, maskSubnormal);
-            vsel(dstReg, tmpReg, dstReg, maskSubnormal);
+            vsel(dstReg, tmpReg, expReg, maskSubnormal);
         } else {
             NotNumUnion subnormalBound;
             subnormalBound.i = 0x3ff;
-            vexp(dstReg, srcReg, mask, modeValue);
-            vcmps_le(maskSubnormal, dstReg, subnormalBound.f, mask);
+            vexp(expReg, srcReg, mask, modeValue);
+            vcmps_le(maskSubnormal, expReg, subnormalBound.f, mask);
             ExpPrecision(tmpReg, srcReg, maskSubnormal);
-            vsel(dstReg, tmpReg, dstReg, maskSubnormal);
+            vsel(dstReg, tmpReg, expReg, maskSubnormal);
         }
     } else {
         vexp(dstReg, srcReg, mask, modeValue);
