@@ -3552,7 +3552,7 @@ __aicore__ inline void asc_ndim_copy_gm2ub(
 
 __aicore__ inline void asc_copy_gm2ub(
     __ubuf__ void* dst, __gm__ void* src, uint32_t burst_count, uint32_t burst_len, bool enable_pre_load_ignore_sync,
-    uint16_t src_stride, uint16_t dst_stride, bool enable_retry);
+    uint64_t src_stride, uint32_t dst_stride, bool enable_retry);
 
 __aicore__ inline void asc_copy_gm2ub_align(
     __ubuf__ uint8_t* dst, __gm__ uint8_t* src, uint32_t burst_count, uint32_t burst_len, uint8_t left_padding_num,
