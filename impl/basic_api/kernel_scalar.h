@@ -136,6 +136,10 @@ __aicore__ inline void WriteGmBypassDCacheImpl(__gm__ T* addr, T value)
             static_cast<uint32_t>(reinterpret_cast<uint64_t>(addr) % 128)));
 #endif
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+    // 5162 无 L2/DCache：GM 标量读写即满足 bypass 语义
+    *addr = value;
+#else
     if constexpr (SupportBytes<T, 8>()) {
         st_dev(*(reinterpret_cast<uint64_t*>(&value)), reinterpret_cast<__gm__ uint64_t*>(addr), 0);
     } else if constexpr (SupportBytes<T, 4>()) {
@@ -145,6 +149,7 @@ __aicore__ inline void WriteGmBypassDCacheImpl(__gm__ T* addr, T value)
     } else {
         st_dev(*(reinterpret_cast<uint8_t*>(&value)), reinterpret_cast<__gm__ uint8_t*>(addr), 0);
     }
+#endif
 }
 
 template <typename T>
@@ -155,6 +160,10 @@ __aicore__ inline T ReadGmBypassDCacheImpl(__gm__ T* addr)
         "ReadGmBypassDCache only support int8_t/uint8_t/int16_t/uint16_t/int32_t/uint32_t/int64_t/uint64_t "
         "data type on current device!");
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+    // 5162 无 L2/DCache：GM 标量读写即满足 bypass 语义（无 st_dev/ld_dev 指令，参考 c_api npu_arch_5162 同法）
+    return *addr;
+#else
     if constexpr (SupportBytes<T, 8>()) {
         return ld_dev(reinterpret_cast<__gm__ uint64_t*>(addr), 0);
     } else if constexpr (SupportBytes<T, 4>()) {
@@ -164,6 +173,7 @@ __aicore__ inline T ReadGmBypassDCacheImpl(__gm__ T* addr)
     } else {
         return ld_dev(reinterpret_cast<__gm__ uint8_t*>(addr), 0);
     }
+#endif
 }
 #endif
 

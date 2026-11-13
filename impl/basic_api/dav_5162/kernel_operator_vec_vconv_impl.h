@@ -341,8 +341,9 @@ __aicore__ inline void CastImpl(
         Tuple<int16_t, int4x2_t>, Tuple<bfloat16_t, int4x2_t>, Tuple<complex64, complex32>>();
     constexpr bool using_cast_rint = SupportType<
         Tuple<DST_TYPE, SRC_TYPE>, Tuple<int8_t, half>, Tuple<uint8_t, half>, Tuple<int4x2_t, half>, Tuple<half, float>,
-        Tuple<half, int16_t>, Tuple<float, int32_t>, Tuple<complex32, complex64>>();
-    constexpr bool cast_odd = SupportType<Tuple<DST_TYPE, SRC_TYPE>, Tuple<half, float>, Tuple<complex32, complex64>>();
+        Tuple<half, int16_t>, Tuple<float, int32_t>, Tuple<float, int64_t>, Tuple<complex32, complex64>>();
+    constexpr bool cast_odd = SupportType<
+        Tuple<DST_TYPE, SRC_TYPE>, Tuple<half, float>, Tuple<float, int64_t>, Tuple<complex32, complex64>>();
     constexpr bool cast_rint =
         SupportType<Tuple<DST_TYPE, SRC_TYPE>, Tuple<fp8_e5m2_t, float>, Tuple<fp8_e4m3fn_t, float>>();
     constexpr bool cast_round =
@@ -950,8 +951,8 @@ __aicore__ inline void CastImplMaskCommonDav5162(
         Tuple<int16_t, int4x2_t>, Tuple<bfloat16_t, int4x2_t>>();
     constexpr bool using_cast_rint = SupportType<
         Tuple<DST_TYPE, SRC_TYPE>, Tuple<int8_t, half>, Tuple<uint8_t, half>, Tuple<int4x2_t, half>, Tuple<half, float>,
-        Tuple<half, int16_t>, Tuple<float, int32_t>>();
-    constexpr bool cast_odd = SupportType<Tuple<DST_TYPE, SRC_TYPE>, Tuple<half, float>>();
+        Tuple<half, int16_t>, Tuple<float, int32_t>, Tuple<float, int64_t>>();
+    constexpr bool cast_odd = SupportType<Tuple<DST_TYPE, SRC_TYPE>, Tuple<half, float>, Tuple<float, int64_t>>();
     constexpr bool cast_rint =
         SupportType<Tuple<DST_TYPE, SRC_TYPE>, Tuple<fp8_e5m2_t, float>, Tuple<fp8_e4m3fn_t, float>>();
     constexpr bool cast_round =

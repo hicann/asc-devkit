@@ -29,9 +29,16 @@ __aicore__ inline void ClcSyncCount(
         *(reinterpret_cast<__ubuf__ int32_t*>(ubWorkspaceAddr)) = 1;
         set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
         wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        // CPU 调试桩提供 8 参（含 l2_cache_ctl）形态；5162 设备侧为 7 参（无 L2）
         copy_ubuf_to_gm_align_v2(
-            static_cast<__gm__ int32_t*>(localSyncGM), static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), 0, 1, 32, 0, 32,
+            static_cast<__gm__ void*>(localSyncGM), static_cast<__ubuf__ void*>(ubWorkspaceAddr), 0, 1, 32, 0, 32, 32);
+#else
+        // 5162 无 L2：copy_ubuf_to_gm_align_v2 为 7 参形态（无 l2_cache_mode）
+        copy_ubuf_to_gm_align_v2(
+            static_cast<__gm__ int32_t*>(localSyncGM), static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), 0, 1, 32, 32,
             32);
+#endif
         count = 1;
         for (int32_t i = 0; i < totalBlocks; i++) {
             if (i != blockIdx) {
@@ -56,9 +63,17 @@ __aicore__ inline void SoftSyncAllImpl(
     int32_t blockIdx = isAIVOnly ? get_block_idx() : GetBlockIdxImpl();
 
     __gm__ int32_t* localSyncGM = gmWorkspaceAddr + (blockIdx * DEFAULT_BLK_NUM);
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+    // CPU 调试桩为 11 参（含 l2_cache_ctl）形态；5162 设备侧为 10 参（无 L2）
     copy_gm_to_ubuf_align_v2(
         static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), static_cast<__gm__ int32_t*>(localSyncGM), 0, 1, 32, 0, 0,
         false, 0, 32, 32);
+#else
+    // 5162 无 L2：copy_gm_to_ubuf_align_v2 为 10 参形态（无 l2_cache_mode），与 dav_5162 data_copy 一致
+    copy_gm_to_ubuf_align_v2(
+        static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), static_cast<__gm__ int32_t*>(localSyncGM), 0, 1, 32, 0, 0,
+        false, 32, 32);
+#endif
     set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
     wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
     int32_t curValue = *(reinterpret_cast<__ubuf__ int32_t*>(ubWorkspaceAddr)) + 1;
@@ -66,17 +81,31 @@ __aicore__ inline void SoftSyncAllImpl(
     *(reinterpret_cast<__ubuf__ int32_t*>(ubWorkspaceAddr)) = curValue;
     set_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
     wait_flag(PIPE_S, PIPE_MTE3, EVENT_ID0);
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+    // CPU 调试桩提供 8 参（含 l2_cache_ctl）形态；5162 设备侧为 7 参（无 L2）
     copy_ubuf_to_gm_align_v2(
-        static_cast<__gm__ int32_t*>(localSyncGM), static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), 0, 1, 32, 0, 32,
-        32);
+        static_cast<__gm__ void*>(localSyncGM), static_cast<__ubuf__ void*>(ubWorkspaceAddr), 0, 1, 32, 0, 32, 32);
+#else
+    // 5162 无 L2：copy_ubuf_to_gm_align_v2 为 7 参形态（无 l2_cache_mode）
+    copy_ubuf_to_gm_align_v2(
+        static_cast<__gm__ int32_t*>(localSyncGM), static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), 0, 1, 32, 32, 32);
+#endif
     set_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
     wait_flag(PIPE_MTE3, PIPE_MTE2, EVENT_ID0);
     int32_t totalBlockCount = ONE_BLK_FLOAT_NUM * totalBlocks;
     uint16_t blockLen = totalBlockCount / AscendCUtils::GetC0Count(sizeof(int32_t));
     while (true) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        // CPU 调试桩为 11 参（含 l2_cache_ctl）形态；5162 设备侧为 10 参（无 L2）
         copy_gm_to_ubuf_align_v2(
             static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), static_cast<__gm__ int32_t*>(gmWorkspaceAddr), 0, 1,
             blockLen * 32, 0, 0, false, 0, blockLen * 32, blockLen * 32);
+#else
+        // 5162 无 L2：copy_gm_to_ubuf_align_v2 为 10 参形态（无 l2_cache_mode）
+        copy_gm_to_ubuf_align_v2(
+            static_cast<__ubuf__ int32_t*>(ubWorkspaceAddr), static_cast<__gm__ int32_t*>(gmWorkspaceAddr), 0, 1,
+            blockLen * 32, 0, 0, false, blockLen * 32, blockLen * 32);
+#endif
         set_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
         wait_flag(PIPE_MTE2, PIPE_S, EVENT_ID0);
         int32_t count = 0;

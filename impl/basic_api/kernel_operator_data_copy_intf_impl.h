@@ -1208,8 +1208,8 @@ __aicore__ inline __inout_pipe__(MTE3) void DataCopy(
 #endif // ASCENDC_CPU_DEBUG
 }
 
-#if defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || \
+                              (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162))
 template <typename T>
 __aicore__ inline void DataCopy(
     const LocalTensor<T>& dst, const LocalTensor<T>& src, const Nz2NdParamsFull& intriParams)
@@ -1232,8 +1232,8 @@ __aicore__ inline void DataCopy(
  * @param [out] dst output GlobalTensor
  * @param [in] src input LocalTensor
  */
-#if defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || \
+                              (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162))
 template <typename T>
 __aicore__ inline void DataCopy(
     const GlobalTensor<T>& dst, const LocalTensor<T>& src, const Nz2DnParamsFull& intriParams)

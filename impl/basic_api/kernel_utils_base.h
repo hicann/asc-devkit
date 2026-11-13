@@ -189,13 +189,21 @@ public:
     template <typename T>
     __aicore__ static inline void SetMaskCount()
     {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+        // through-pass 5162 not use
+#else
         set_mask_count();
+#endif
     }
 
     template <typename T>
     __aicore__ static inline void SetMaskNorm()
     {
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 5162)
+        // through-pass 5162 not use
+#else
         set_mask_norm();
+#endif
     }
 
 #if defined(__NPU_ARCH__) &&                                                                                 \

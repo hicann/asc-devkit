@@ -32,6 +32,16 @@
 
 namespace AscendC {
 namespace Internal {
+__aicore__ constexpr uint32_t Log2FloorU32(uint32_t v)
+{
+    uint32_t r = 0;
+    while (v > 1) {
+        v >>= 1;
+        ++r;
+    }
+    return r;
+}
+
 template <typename T>
 __aicore__ inline void ReduceProd(Reg::RegTensor<T>& dst, Reg::RegTensor<T> src, Reg::MaskReg mask)
 {
@@ -50,17 +60,16 @@ __aicore__ inline void ReduceProd(Reg::RegTensor<T>& dst, Reg::RegTensor<T> src,
         Reg::DeInterleave(dst, src, src, tempOne);
         Reg::Mul(src, dst, src, mask);
     }
-    // fold from 64 to 2
-    Reg::DeInterleave(dst, src, src, tempOne);
-    Reg::Mul(src, dst, src, mask);
-    Reg::DeInterleave(dst, src, src, tempOne);
-    Reg::Mul(src, dst, src, mask);
-    Reg::DeInterleave(dst, src, src, tempOne);
-    Reg::Mul(src, dst, src, mask);
-    Reg::DeInterleave(dst, src, src, tempOne);
-    Reg::Mul(src, dst, src, mask);
-    Reg::DeInterleave(dst, src, src, tempOne);
-    Reg::Mul(src, dst, src, mask);
+    // fold from (VL/sizeof(T)) lanes down to 2 -- VL-general fold count
+    // (3510: 256B reg -> 64 float lanes -> 5 folds; 5162: 32B reg -> 8 float lanes -> 2 folds)
+    constexpr uint32_t preFolds = (sizeof(T) == 1 ? 1u : 0u) + (sizeof(T) <= 2 ? 1u : 0u);
+    constexpr uint32_t lanesAfterPre = (GetVecLen() / sizeof(T)) >> preFolds;
+    constexpr uint32_t midFolds = Log2FloorU32(lanesAfterPre) - 1;
+#pragma unroll
+    for (uint32_t foldI = 0; foldI < midFolds; ++foldI) {
+        Reg::DeInterleave(dst, src, src, tempOne);
+        Reg::Mul(src, dst, src, mask);
+    }
     // fold to 1
     Reg::DeInterleave(dst, src, src, tempOne);
     Reg::Mul(dst, dst, src, mask);

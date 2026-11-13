@@ -270,23 +270,12 @@ __aicore__ inline void SetMmadStrideParaCal(const MmadStrideParaParams& params)
 
 __aicore__ inline void SetItaMaxAddrCal(const ItaMaxAddrBitModeParams& params)
 {
-    set_ita_max_addr(params.GetConfig0());
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "SetItaMaxAddr is not supported on current device"); });
 }
 
 __aicore__ inline void SetItaMaxAddrCal(const ItaMaxAddrParaParams& params)
 {
-    constexpr uint8_t POS_HMAX_ADDR = 0;
-    constexpr uint8_t POS_TMAX_ADDR = 16;
-    constexpr uint8_t POS_DMAX_ADDR = 32;
-    constexpr uint8_t POS_M0N_ADDR = 48;
-
-    uint64_t itaMaxAddr = 0;
-    itaMaxAddr |= (uint64_t)(params.hmaxAddr) << POS_HMAX_ADDR;
-    itaMaxAddr |= (uint64_t)(params.tmaxAddr) << POS_TMAX_ADDR;
-    itaMaxAddr |= (uint64_t)(params.dmaxAddr) << POS_DMAX_ADDR;
-    itaMaxAddr |= (uint64_t)(params.m0nStride) << POS_M0N_ADDR;
-
-    set_ita_max_addr(itaMaxAddr);
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "SetItaMaxAddr is not supported on current device"); });
 }
 
 __aicore__ inline void SetMatrixMxParaCal(const MatrixMxParaBitModeParams& params)

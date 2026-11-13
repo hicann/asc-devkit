@@ -537,7 +537,7 @@ __simd_vf__ inline void ConfusionTransposeND2NZWithInlvVFImpl(
             srcOffset += regWidth;
             dstOffset += regWidth * heightLoopNum * factor;
         }
-        const uint32_t regWidthHalf = 128;
+        const uint32_t regWidthHalf = GetVecLen() / 2;
         for (uint16_t j = 0; j < heightLoopNum; j++) {
             uint64_t rowStrideAddr = uint64_t(srcAddr + srcOffset + factor * j * width);
             uint64_t neighborStrideAddr = uint64_t(srcAddr + srcOffset + (factor * j + 1) * width);
@@ -571,9 +571,9 @@ template <typename T>
 __aicore__ inline void ConfusionTransposeND2NZWithInlvImpl(
     __ubuf__ T* dstAddr, __ubuf__ T* srcAddr, ConfusionTranspose210Tiling& tiling)
 {
-    constexpr uint32_t regWidth = 256; // vf reg length
-    constexpr uint32_t c0Size = 32;    // fractal size
-    constexpr uint32_t factor = 2;     // row factor
+    constexpr uint32_t regWidth = GetVecLen(); // vf reg length (VL-general: 3510=256, 5162=32)
+    constexpr uint32_t c0Size = 32;            // fractal size
+    constexpr uint32_t factor = 2;             // row factor
     uint32_t height = tiling.dim1;
     uint32_t width = tiling.dim2;
     uint32_t tailWidth = width % regWidth;

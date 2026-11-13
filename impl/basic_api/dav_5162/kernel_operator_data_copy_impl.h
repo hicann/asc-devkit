@@ -55,21 +55,46 @@ __aicore__ inline void CopyGmToUbufAlignV2(
         leftPaddingCnt = 0;
     }
     if constexpr (sizeof(T) == B64_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        // CPU 调试桩为 11 参（含 l2_cache_ctl）形态；5162 设备侧为 10 参（无 L2）
+        copy_gm_to_ubuf_align_v2(
+            (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt * 2,
+            rigntPaddingCnt * 2, isPad, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt * 2,
             rigntPaddingCnt * 2, isPad, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B32_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_ubuf_align_v2(
+            (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
+            rigntPaddingCnt, isPad, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
             rigntPaddingCnt, isPad, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B16_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_ubuf_align_v2(
+            (__ubuf__ uint16_t*)dst, (__gm__ uint16_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
+            rigntPaddingCnt, isPad, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint16_t*)dst, (__gm__ uint16_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
             rigntPaddingCnt, isPad, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B8_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_ubuf_align_v2(
+            (__ubuf__ uint8_t*)dst, (__gm__ uint8_t*)src, sid, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
+            isPad, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_ubuf_align_v2(
             (__ubuf__ uint8_t*)dst, (__gm__ uint8_t*)src, sid, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
             isPad, actSrcStride, actDstStride);
+#endif
     }
 }
 
@@ -93,8 +118,14 @@ __aicore__ inline void CopyUbufToGmAlignV2(
         actSrcStride = burstLength;
     }
     uint64_t actDstStride = dstStride * unitOfBytes + burstLength; // GM   DataCopy:32Bytes, DataCopyPad:1Byte
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+    // CPU 调试桩提供 8 参（含 l2_cache_ctl）形态；5162 设备侧为 7 参（无 L2）
+    copy_ubuf_to_gm_align_v2(
+        (__gm__ void*)dst, (__ubuf__ void*)src, sid, blockCount, burstLength, 0, actDstStride, actSrcStride);
+#else
     copy_ubuf_to_gm_align_v2(
         (__gm__ void*)dst, (__ubuf__ void*)src, sid, blockCount, burstLength, actDstStride, actSrcStride);
+#endif
 }
 
 // only support CubeCore   PIPE_MTE2
@@ -124,21 +155,46 @@ __aicore__ inline void CopyGmToCbufAlignV2(
     }
 
     if constexpr (sizeof(T) == B64_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        // CPU 调试桩为 11 参（含 l2_cache_ctl）形态；5162 设备侧为 10 参（无 L2）
+        copy_gm_to_cbuf_align_v2(
+            (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt * 2,
+            rigntPaddingCnt * 2, true, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt * 2,
             rigntPaddingCnt * 2, true, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B32_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_cbuf_align_v2(
+            (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
+            rigntPaddingCnt, true, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint32_t*)dst, (__gm__ uint32_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
             rigntPaddingCnt, true, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B16_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_cbuf_align_v2(
+            (__cbuf__ uint16_t*)dst, (__gm__ uint16_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
+            rigntPaddingCnt, true, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint16_t*)dst, (__gm__ uint16_t*)src, sid, blockCount, burstLength, leftPaddingCnt,
             rigntPaddingCnt, true, actSrcStride, actDstStride);
+#endif
     } else if constexpr (sizeof(T) == B8_BYTE_SIZE) {
+#if defined(ASCENDC_CPU_DEBUG) && ASCENDC_CPU_DEBUG == 1
+        copy_gm_to_cbuf_align_v2(
+            (__cbuf__ uint8_t*)dst, (__gm__ uint8_t*)src, sid, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
+            true, 0, actSrcStride, actDstStride);
+#else
         copy_gm_to_cbuf_align_v2(
             (__cbuf__ uint8_t*)dst, (__gm__ uint8_t*)src, sid, blockCount, burstLength, leftPaddingCnt, rigntPaddingCnt,
             true, actSrcStride, actDstStride);
+#endif
     }
 }
 
@@ -590,17 +646,17 @@ __aicore__ inline __in_pipe__(MTE3)
 
 template <typename T>
 __aicore__ inline void DataCopyUB2GMNZ2NDImplBase(
-    __gm__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t high, uint16_t width, uint16_t srcNStride, uint16_t dstDStride,
+    __gm__ T* dstAddr, __ubuf__ T* srcAddr, uint16_t high, uint32_t width, uint16_t srcNStride, uint64_t dstDStride,
     const uint8_t cacheMode = 0, const uint8_t sid = 1)
 {
     const uint16_t highBlock = MAX_REPEAT_TIMES;
     const uint16_t highBlocks = high / highBlock;
     const uint16_t highTail = high % highBlock;
-    const uint16_t widthFractal = (width + BLOCK_CUBE - 1) / BLOCK_CUBE;
+    const uint32_t widthFractal = (width + BLOCK_CUBE - 1) / BLOCK_CUBE;
 
-    for (int i = 0; i < widthFractal; ++i) {
-        uint16_t computeCount = (i + 1) * BLOCK_CUBE;
-        uint16_t leftLen = width >= computeCount ? BLOCK_CUBE : (width - i * BLOCK_CUBE);
+    for (uint32_t i = 0; i < widthFractal; ++i) {
+        uint32_t computeCount = (i + 1) * BLOCK_CUBE;
+        uint16_t leftLen = width >= computeCount ? BLOCK_CUBE : static_cast<uint16_t>(width - i * BLOCK_CUBE);
         uint16_t srcLeftLen = (sizeof(T) == B32_BYTE_SIZE && leftLen <= DEFAULT_BLK_NUM) ? MIN_BLOCK_LEN : 0;
         for (int j = 0; j < highBlocks; ++j) {
             DataCopyPadUB2GMImpl(
@@ -630,11 +686,11 @@ __aicore__ inline void DataCopyUB2GMNZ2NDImpl(
 {
     const uint16_t ndNum = intriParams.ndNum;
     const uint16_t nValue = intriParams.nValue;
-    const uint16_t dValue = intriParams.dValue;
+    const uint32_t dValue = intriParams.dValue;
     const uint16_t srcNdMatrixStride = intriParams.srcNdMatrixStride;
     const uint16_t srcNStride = intriParams.srcNStride;
-    const uint16_t dstDStride = intriParams.dstDStride;
-    const uint16_t dstNdMatrixStride = intriParams.dstNdMatrixStride;
+    const uint64_t dstDStride = intriParams.dstDStride;
+    const uint64_t dstNdMatrixStride = intriParams.dstNdMatrixStride;
 
     for (int i = 0; i < ndNum; ++i) {
         DataCopyUB2GMNZ2NDImplBase(
@@ -757,6 +813,144 @@ __aicore__ inline void DataCopyL12GMImpl(
     __gm__ T* dst, __cbuf__ T* src, const DataCopyParams& intriParams, const uint8_t cacheMode = 0)
 {
     ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported data copy from cbuf to GM on current device"); });
+}
+
+/* **************************************************************************************************
+ * NZ2ND                                         *
+ * ************************************************************************************************* */
+template <typename T>
+__aicore__ inline void DataCopyL12GMNZ2NDImpl(
+    __gm__ T* dst, __cbuf__ T* src, const Nz2NdParamsFull& intriParams, const uint8_t sid = 5)
+{
+    if constexpr (SupportBytes<T, 1, 2>()) {
+        // ISA/API: Is the ND matrix number to be moved
+        uint64_t ndNum = intriParams.ndNum;
+        // ISA/API: unit of element
+        uint16_t loop2Size = intriParams.nValue;
+        // ISA/API: unit of element
+        uint32_t loop3Size = intriParams.dValue;
+        // ISA: loop2SrcStride = 1, and does not to be set by programmer.
+        constexpr uint64_t loop2SrcStride = 1;
+        // ISA: unit of C0_size(32B)    API: unit of 16 elements
+        uint64_t loop3SrcStride = intriParams.srcNStride * sizeof(T) >> 1;
+        // ISA: unit of C0_size(32B)    API: unit of 256 elements
+        uint64_t loop4SrcStride = intriParams.srcNdMatrixStride * sizeof(T) * 8;
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop2DstStride = intriParams.dstDStride * sizeof(T);
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop4DstStride = intriParams.dstNdMatrixStride * sizeof(T);
+
+        // SPR.FIXP_NZ_PARA
+        uint64_t config = ndNum | (loop4SrcStride << 16) | (loop4DstStride << 32);
+        set_fixp_nz_para(config);
+
+        fix_cbuf_to_gm(
+            dst, src, loop3Size, loop2Size, loop2DstStride, loop3SrcStride, loop2SrcStride, fixp_trans_mode_t::NZ2ND,
+            sid);
+    } else {
+        ASSERT(false && "fix copy only support type b8/b16 on current device");
+    }
+}
+
+template <typename T>
+__aicore__ inline void DataCopyL12UBNZ2NDImpl(__ubuf__ T* dst, __cbuf__ T* src, const Nz2NdParamsFull& intriParams)
+{
+    if constexpr (SupportBytes<T, 1, 2>()) {
+        // ISA/API: Is the ND matrix number to be moved
+        uint64_t ndNum = intriParams.ndNum;
+        // ISA/API: unit of element
+        uint16_t loop2Size = intriParams.nValue;
+        // ISA/API: unit of element
+        uint32_t loop3Size = intriParams.dValue;
+        // ISA: loop2SrcStride = 1, and does not to be set by programmer.
+        constexpr uint64_t loop2SrcStride = 1;
+        // ISA: unit of C0_size(32B)    API: unit of 16 elements
+        uint64_t loop3SrcStride = intriParams.srcNStride * sizeof(T) >> 1;
+        // ISA: unit of C0_size(32B)    API: unit of 256 elements
+        uint64_t loop4SrcStride = intriParams.srcNdMatrixStride * sizeof(T) * 8;
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop2DstStride = intriParams.dstDStride * sizeof(T);
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop4DstStride = intriParams.dstNdMatrixStride * sizeof(T);
+
+        // SPR.FIXP_NZ_PARA
+        uint64_t config = ndNum | (loop4SrcStride << 16) | (loop4DstStride << 32);
+        set_fixp_nz_para(config);
+
+        fix_cbuf_to_ubuf(
+            dst, src, loop3Size, loop2Size, loop2DstStride, loop3SrcStride, loop2SrcStride, fixp_trans_mode_t::NZ2ND);
+    } else {
+        ASSERT(false && "fix copy only support type b8/b16 on current device");
+    }
+}
+
+/* **************************************************************************************************
+ * NZ2DN                                         *
+ * ************************************************************************************************* */
+template <typename T>
+__aicore__ inline void DataCopyL12GMNZ2DNImpl(
+    __gm__ T* dst, __cbuf__ T* src, const Nz2DnParamsFull& intriParams, const uint8_t sid = 5)
+{
+    if constexpr (SupportBytes<T, 1, 2>()) {
+        // ISA/API: Is the ND matrix number to be moved
+        uint64_t dnNum = intriParams.dnNum;
+        // ISA/API: unit of element
+        uint16_t loop2Size = intriParams.nValue;
+        // ISA/API: unit of element
+        uint32_t loop3Size = intriParams.dValue;
+        // ISA: loop2SrcStride = 1, and does not to be set by programmer.
+        constexpr uint64_t loop2SrcStride = 1;
+        // ISA: unit of C0_size(32B)    API: unit of 16 elements
+        uint64_t loop3SrcStride = intriParams.srcNStride * sizeof(T) >> 1;
+        // ISA: unit of C0_size(32B)    API: unit of 256 elements
+        uint64_t loop4SrcStride = intriParams.srcNzMatrixStride * sizeof(T) * 8;
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop2DstStride = intriParams.dstNStride * sizeof(T);
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop4DstStride = intriParams.dstDnMatrixStride * sizeof(T);
+
+        // SPR.FIXP_NZ_PARA
+        uint64_t config = dnNum | (loop4SrcStride << 16) | (loop4DstStride << 32);
+        set_fixp_nz_para(config);
+
+        fix_cbuf_to_gm(
+            dst, src, loop3Size, loop2Size, loop2DstStride, loop3SrcStride, loop2SrcStride, fixp_trans_mode_t::NZ2DN,
+            sid);
+    } else {
+        ASSERT(false && "fix copy only support type b8/b16 on current device");
+    }
+}
+
+template <typename T>
+__aicore__ inline void DataCopyL12UBNZ2DNImpl(__ubuf__ T* dst, __cbuf__ T* src, const Nz2DnParamsFull& intriParams)
+{
+    if constexpr (SupportBytes<T, 1, 2>()) {
+        // ISA/API: Is the ND matrix number to be moved
+        uint64_t dnNum = intriParams.dnNum;
+        // ISA/API: unit of element
+        uint16_t loop2Size = intriParams.nValue;
+        // ISA/API: unit of element
+        uint32_t loop3Size = intriParams.dValue;
+        // ISA: loop2SrcStride = 1, and does not to be set by programmer.
+        constexpr uint64_t loop2SrcStride = 1;
+        // ISA: unit of C0_size(32B)    API: unit of 16 elements
+        uint64_t loop3SrcStride = intriParams.srcNStride * sizeof(T) >> 1;
+        // ISA: unit of C0_size(32B)    API: unit of 256 elements
+        uint64_t loop4SrcStride = intriParams.srcNzMatrixStride * sizeof(T) * 8;
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop2DstStride = intriParams.dstNStride * sizeof(T);
+        // ISA: unit of byte    API: unit of element
+        uint64_t loop4DstStride = intriParams.dstDnMatrixStride * sizeof(T);
+
+        // SPR.FIXP_NZ_PARA
+        uint64_t config = dnNum | (loop4SrcStride << 16) | (loop4DstStride << 32);
+        set_fixp_nz_para(config);
+
+        fix_cbuf_to_ubuf(
+            dst, src, loop3Size, loop2Size, loop2DstStride, loop3SrcStride, loop2SrcStride, fixp_trans_mode_t::NZ2DN);
+    } else {
+        ASSERT(false && "fix copy only support type b8/b16 on current device");
+    }
 }
 
 template <typename T>

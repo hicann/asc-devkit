@@ -1182,6 +1182,18 @@ __aicore__ inline void GetReduceMaxMinCountImpl(uint32_t& maxMinValue)
 }
 
 template <typename T>
+__aicore__ inline void GetReduceMaxMinCountImpl(T& maxMinValue, T& maxMinIndex)
+{
+    ASCENDC_ASSERT((false), "GetReduceMaxMinCount is not supported on current device");
+}
+
+template <typename T>
+__aicore__ inline void GetReduceMaxMinCountImpl(T& maxMinValue)
+{
+    ASCENDC_ASSERT((false), "GetReduceMaxMinCount is not supported on current device");
+}
+
+template <typename T>
 __aicore__ inline T GetAccValImpl()
 {
     ASCENDC_ASSERT((false), "GetAccVal is not supported on current device");

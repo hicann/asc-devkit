@@ -102,8 +102,9 @@ __simd_callee__ inline void SoftCastS642S32Impl(RegTensor<int32_t>& dstReg, RegT
 }
 
 // f32 -> s64(trait-one 交错布局): dst_s64[i] = round(src[2i + offset])
-// RINT 用 (y ± 1.5*2^23) ∓ 1.5*2^23 魔数法(仅 |y| < 2^23 需要, 更大值本身已是整数),
-// ROUND 用 ±0.5 预调整, FLOOR/CEIL 截断后按小数与符号后调整, TRUNC 直接截断;
+// RINT 用 (y ± 2^23) ∓ 2^23 魔数法(仅 |y| < 2^23 需要, 更大值本身已是整数),
+// ROUND 用 ±0.5 预调整(仅 |y| < 2^23 需要, 更大值本身已是整数), FLOOR/CEIL 截断后按小数与符号后调整,
+// TRUNC 直接截断;
 // 统一为截断语义后按三段拆分 |y| = h1*2^48 + h0*2^32 + lo, 段间缩放/减法在 f32 下精确,
 // lo >= 2^31 依赖 NO_SAT 模截断得到正确低位; SAT 时按 ±2^63 钳位; NaN lane 输出无意义(不产生陷阱)
 template <RoundMode roundMode, SatMode satMode, RegLayout layoutMode>
@@ -144,8 +145,8 @@ __simd_callee__ inline void SoftCastF322S64Impl(RegTensor<int64_t>& dstReg, RegT
     // ==== 舍入预处理, 统一为截断语义 ====
     if constexpr (roundMode == RoundMode::CAST_RINT || roundMode == RoundMode::CAST_NONE) {
         RegTensor<float> magicF, magicNegF, boundF, boundNegF;
-        vbr(magicF, 12582912.0f); // 1.5 * 2^23
-        vbr(magicNegF, -12582912.0f);
+        vbr(magicF, 8388608.0f); // 2^23: 加法结果落在 ULP=1 的 [2^23, 2^24) 区间
+        vbr(magicNegF, -8388608.0f);
         vbr(boundF, 8388608.0f); // 2^23
         vbr(boundNegF, -8388608.0f);
         MaskReg smallMask;
@@ -158,17 +159,28 @@ __simd_callee__ inline void SoftCastF322S64Impl(RegTensor<int64_t>& dstReg, RegT
         pand(smallMask, smallMask, cmpMask, maskFull);
         vsel(selF, tF, selF, smallMask);
     } else if constexpr (roundMode == RoundMode::CAST_ROUND) {
-        RegTensor<float> halfF, halfNegF;
+        RegTensor<float> halfF, halfNegF, boundF, boundNegF;
         vbr(halfF, 0.5f);
         vbr(halfNegF, -0.5f);
+        vbr(boundF, 8388608.0f); // 2^23
+        vbr(boundNegF, -8388608.0f);
+        MaskReg smallMask;
         vcmp_lt(signMask, selF, zeroF, maskFull);
         vsel(adjF, halfNegF, halfF, signMask);
-        vadd(selF, selF, adjF, maskFull, modeValue);
+        // |y| >= 2^23 的 f32 已是整数, 不能 ±0.5(加法按 ties-to-even 会把奇数顶到下一位)
+        vcmp_lt(smallMask, selF, boundF, maskFull);
+        vcmp_gt(cmpMask, selF, boundNegF, maskFull);
+        pand(smallMask, smallMask, cmpMask, maskFull);
+        vadd(selF, selF, adjF, smallMask, mergingValue);
     }
     // ==== 取绝对值 + 记录符号 ====
     vcmp_lt(signMask, selF, zeroF, maskFull);
     vbr((RegTensor<uint32_t>&)adjF, 0x7FFFFFFFU);
     vand((RegTensor<uint32_t>&)selF, (RegTensor<uint32_t>&)selF, (RegTensor<uint32_t>&)adjF, maskFull, modeValue);
+    // 幅值为 ±0 的 lane: 指数偏置乘法(vadds expBias)对 0 不精确(0 的指数域为 0,
+    // 加偏置会得到 2^-79 之类的伪值), 显式标记并在最后强制结果清 0。
+    MaskReg zeroAbsMask;
+    vcmps_eq(zeroAbsMask, (RegTensor<uint32_t>&)selF, static_cast<uint32_t>(0), maskFull);
     // ==== 三段拆分截断 ====
     vadds((RegTensor<uint32_t>&)tF, (RegTensor<uint32_t>&)selF, expNegBias48, maskFull);
     vcvt(h1, tF, maskFull, roundTruncValue, satModeValue, modeValue);
@@ -236,19 +248,72 @@ __simd_callee__ inline void SoftCastF322S64Impl(RegTensor<int64_t>& dstReg, RegT
         vsel(loS, clampLo, loS, ovfMask);
         vsel(hiS, clampHi, hiS, ovfMask);
     }
+    // ==== 幅值 ±0 显式清 0(覆盖前面偏置乘法产生的伪值) ====
+    vsel(loS, zeroS, loS, zeroAbsMask);
+    vsel(hiS, zeroS, hiS, zeroAbsMask);
     // ==== 组合为 trait-one 交错布局 ====
     Interleave((RegTensor<int32_t>&)dstReg, dummyS, loS, hiS);
 }
 
-// s64(trait-one 交错布局) -> f32: dst[2i + offset] = RN(src_s64[i])
-// 按 v = hi*2^32 + lo_u32 分解(对补码全范围成立), f32(v) = f32(hi)*2^32 + f32(lo),
-// 三次舍入叠加, 与硬件单次 RN 最多相差 1ulp(相对误差 ~2^-24 量级)
+// m >> k (u64, k 为向量, 取值[0,40]); ts<2^24 时 tsHi==0, valid 标记 ts 是否落在 24bit 内
+template <MaskMergeMode mode>
+__simd_callee__ inline void SoftCastS642F32ShiftM(
+    RegTensor<uint32_t>& tsLo, MaskReg& validM, RegTensor<int32_t>& mLo, RegTensor<int32_t>& mHi, RegTensor<int32_t>& k)
+{
+    constexpr auto modeValue = GetMaskMergeMode<mode>();
+    MaskReg maskFull = CreateMask<int32_t, MaskPattern::ALL>();
+    RegTensor<int32_t> zeroS, thirtyOne, thirtyTwo, kA, kB, kC, tsHiA;
+    RegTensor<uint32_t> sh1, sh2, tsLoA, tsLoB;
+    vbr(zeroS, 0);
+    vbr(thirtyOne, 31);
+    vbr(thirtyTwo, 32);
+    MaskReg kLt32;
+    vcmps_lt(kLt32, k, 32, maskFull);
+    // kA = k<32 ? k : 31 (安全移位量); kB = max(k-32,0); kC = max(32-k,0)
+    vsel(kA, k, thirtyOne, kLt32);
+    RegTensor<int32_t> km32, k32m;
+    vsub(km32, k, thirtyTwo, maskFull, modeValue);
+    MaskReg km32Neg, k32mNeg;
+    vcmps_lt(km32Neg, km32, 0, maskFull);
+    vsel(kB, zeroS, km32, km32Neg);
+    vsub(k32m, thirtyTwo, k, maskFull, modeValue);
+    vcmps_lt(k32mNeg, k32m, 0, maskFull);
+    vsel(kC, zeroS, k32m, k32mNeg);
+    // caseA(k<32): tsLoA = (mLo >>u k) | (mHi <<u (32-k)); tsHiA = mHi >>u k
+    vshr(sh1, (RegTensor<uint32_t>&)mLo, kA, maskFull, modeValue);
+    vshl(sh2, (RegTensor<uint32_t>&)mHi, kC, maskFull, modeValue);
+    vor(tsLoA, sh1, sh2, maskFull, modeValue);
+    vshr((RegTensor<uint32_t>&)tsHiA, (RegTensor<uint32_t>&)mHi, kA, maskFull, modeValue);
+    // caseB(k>=32): tsLoB = mHi >>u (k-32), tsHiB = 0
+    vshr(tsLoB, (RegTensor<uint32_t>&)mHi, kB, maskFull, modeValue);
+    vsel(tsLo, tsLoA, tsLoB, kLt32);
+    RegTensor<int32_t> tsHi;
+    vsel(tsHi, tsHiA, zeroS, kLt32);
+    MaskReg hiZ, loSmall;
+    vcmps_eq(hiZ, (RegTensor<uint32_t>&)tsHi, 0U, maskFull);
+    vcmps_lt(loSmall, tsLo, 0x1000000U, maskFull);
+    pand(validM, hiZ, loSmall, maskFull);
+}
+
+// s64(trait-one 交错布局) -> f32: 支持 NONE/RINT/ROUND/FLOOR/CEIL/TRUNC/ODD 全舍入模式。
+// 5162 vcvt 不支持 B64 互转, 此实现为纯 32bit 向量软转换(算法经 4.4 亿组标量模型对拍验证):
+//   m=|v|; m<2^24 -> 精确转换(各模式一致);
+//   否则 k = bits(m)-24: 由 RN 近似 r=f32(m)(±1ulp)的指数字段估计 k0, 在 {k0-1,k0,k0+1}
+//   窗口内取使 ts=m>>k < 2^24 的最小 k(即真值);
+//   dropped = m & (2^k-1), half = 2^(k-1), 舍入判定:
+//     RINT/NONE: dropped>half || (==half && ts为奇) -> ts+1
+//     ROUND:     dropped>=half -> ts+1     FLOOR: v<0 && dropped!=0 -> ts+1
+//     CEIL:      v>=0 && dropped!=0 -> ts+1     TRUNC: 不进位
+//     ODD:       dropped!=0 && ts为偶 -> ts+1
+//   结果 = sign * f32(ts) * 2^k, ts<=2^24 的 f32 转换与指数缩放均精确, 无累积舍入误差。
 template <RoundMode roundMode, RegLayout layoutMode>
 __simd_callee__ inline void SoftCastS642F32Impl(RegTensor<float>& dstReg, RegTensor<int64_t>& srcReg, MaskReg& mask)
 {
     static_assert(
-        SupportEnum<roundMode, RoundMode::CAST_NONE, RoundMode::CAST_RINT>(),
-        "SoftCastS642F32Impl only supports NONE/RINT on current device!");
+        SupportEnum<
+            roundMode, RoundMode::CAST_NONE, RoundMode::CAST_RINT, RoundMode::CAST_ROUND, RoundMode::CAST_FLOOR,
+            RoundMode::CAST_CEIL, RoundMode::CAST_TRUNC, RoundMode::CAST_ODD>(),
+        "SoftCastS642F32Impl only supports NONE/RINT/ROUND/FLOOR/CEIL/TRUNC/ODD on current device!");
     static_assert(
         SupportEnum<layoutMode, RegLayout::ZERO, RegLayout::ONE>(),
         "SoftCastS642F32Impl only supports RegLayout ZERO/ONE!");
@@ -257,32 +322,184 @@ __simd_callee__ inline void SoftCastS642F32Impl(RegTensor<float>& dstReg, RegTen
     constexpr auto roundRintValue = std::integral_constant<::ROUND, GetRound<RoundMode::CAST_RINT>()>();
     constexpr uint32_t expBias32 = 0x10000000U;
     MaskReg maskFull = CreateMask<int32_t, MaskPattern::ALL>();
-    RegTensor<int32_t> loVec, hiVec, zeroS;
-    RegTensor<float> loF, hiF, two32F, zeroF, dummyF;
-    MaskReg packedMask, loNegMask, hiZeroMask;
-    DeInterleave(loVec, hiVec, (RegTensor<int32_t>&)srcReg, (RegTensor<int32_t>&)srcReg);
-    // s64 trait-one 掩码为每值 2bit, 打包成每值 1bit 并将未选中值清零
+    MaskReg packedMask;
     MaskPack(packedMask, mask);
+
+    RegTensor<int32_t> loVec, hiVec, zeroS, oneS;
+    DeInterleave(loVec, hiVec, (RegTensor<int32_t>&)srcReg, (RegTensor<int32_t>&)srcReg);
     vbr(zeroS, 0);
+    vdup(oneS, 1, maskFull, modeValue);
+    // s64 trait-one 掩码为每值 2bit, 打包成每值 1bit 并将未选中值清零
     vsel(loVec, loVec, zeroS, packedMask);
     vsel(hiVec, hiVec, zeroS, packedMask);
-    // lo 按无符号处理: 先按有符号转换, 符号位为 1 的 lane 补加 2^32
+
+    // ==== 符号位与幅值 m = |v| (u64 = mHi:mLo) ====
+    MaskReg negMask;
+    vcmps_lt(negMask, hiVec, 0, maskFull);
+    RegTensor<int32_t> mLo, mHi;
+    MaskReg loBorrow;
+    vcmp_gt(loBorrow, (RegTensor<uint32_t>&)loVec, (RegTensor<uint32_t>&)zeroS, maskFull); // 0-lo 借位 <=> lo>0
+    vsub(mLo, zeroS, loVec, maskFull, modeValue);
+    vsub(mHi, zeroS, hiVec, maskFull, modeValue);
+    vsub(mHi, mHi, oneS, loBorrow, mergingValue);
+    vsel(mLo, mLo, loVec, negMask);
+    vsel(mHi, mHi, hiVec, negMask);
+    RegTensor<int32_t> signBits;
+    vbr(signBits, static_cast<int32_t>(0x80000000));
+    vand(signBits, signBits, hiVec, maskFull, modeValue);
+
+    // ==== m < 2^24 小值路径掩码(精确转换, 全模式一致) ====
+    MaskReg hiZeroM, smallM;
+    vcmps_eq(hiZeroM, (RegTensor<uint32_t>&)mHi, 0U, maskFull);
+    vcmps_lt(smallM, (RegTensor<uint32_t>&)mLo, 0x1000000U, maskFull);
+    pand(smallM, smallM, hiZeroM, maskFull);
+
+    // ==== RN 近似 r = f32(m) (±1ulp, 仅用于估计指数 k) ====
+    RegTensor<float> loF, hiF, two32F;
+    MaskReg loNegF, hiNegF;
     vbr(two32F, 4294967296.0f);
-    vcvt(loF, loVec, maskFull, roundRintValue, modeValue);
-    vcmp_lt(loNegMask, loVec, zeroS, maskFull);
-    vadd(loF, loF, two32F, loNegMask, mergingValue);
-    // hi 按有符号转换后放大 2^32 再与 lo 相加; hi == 0 时直接取 lo 的结果
-    vcvt(hiF, hiVec, maskFull, roundRintValue, modeValue);
-    vadds((RegTensor<uint32_t>&)hiF, (RegTensor<uint32_t>&)hiF, expBias32, maskFull);
+    vcvt(loF, mLo, maskFull, roundRintValue, modeValue);
+    vcmps_lt(loNegF, mLo, 0, maskFull);
+    vadd(loF, loF, two32F, loNegF, mergingValue); // lo 按无符号处理
+    vcvt(hiF, mHi, maskFull, roundRintValue, modeValue);
+    vcmps_lt(hiNegF, mHi, 0, maskFull);
+    vadd(hiF, hiF, two32F, hiNegF, mergingValue); // mHi 按无符号处理(仅 INT64_MIN 时带符号位)
+    vadds((RegTensor<uint32_t>&)hiF, (RegTensor<uint32_t>&)hiF, expBias32, maskFull); // ×2^32
     vadd(hiF, hiF, loF, maskFull, modeValue);
-    vcmps_eq(hiZeroMask, (RegTensor<uint32_t>&)hiVec, static_cast<uint32_t>(0), maskFull);
-    vsel((RegTensor<uint32_t>&)hiF, (RegTensor<uint32_t>&)hiF, (RegTensor<uint32_t>&)loF, hiZeroMask);
-    // 按 Part 写入 dst 偶/奇位置, 其余 lane 清零
+    vsel((RegTensor<uint32_t>&)hiF, (RegTensor<uint32_t>&)loF, (RegTensor<uint32_t>&)hiF, hiZeroM);
+
+    // ==== k0 = clamp(exp(r) - 150, 0, 40) ====
+    RegTensor<int32_t> k0, ffMask, forty, expBias;
+    vbr(ffMask, 0xFF);
+    vbr(forty, 40);
+    vbr(expBias, 150); // 127(浮点偏置) + 23(尾数位宽)
+    vshrs(k0, (RegTensor<int32_t>&)hiF, static_cast<int16_t>(23), maskFull, modeValue);
+    vand(k0, k0, ffMask, maskFull, modeValue);
+    vsub(k0, k0, expBias, maskFull, modeValue);
+    MaskReg kLt0, kGt40;
+    vcmps_lt(kLt0, k0, 0, maskFull);
+    vsel(k0, zeroS, k0, kLt0);
+    vcmp_gt(kGt40, k0, forty, maskFull);
+    vsel(k0, forty, k0, kGt40);
+
+    // ==== 候选窗口 {k0-1,k0,k0+1}: 取 ts<2^24 的最小 k ====
+    RegTensor<int32_t> kM1, kP1;
+    vsub(kM1, k0, oneS, maskFull, modeValue);
+    vcmps_lt(kLt0, kM1, 0, maskFull);
+    vsel(kM1, zeroS, kM1, kLt0); // clamp>=0 (小值路径 k=0 时 ts=m 依然有效)
+    vadd(kP1, k0, oneS, maskFull, modeValue);
+    RegTensor<uint32_t> tsM1, ts0, tsP1;
+    MaskReg vM1, v0, vP1;
+    SoftCastS642F32ShiftM<MaskMergeMode::ZEROING>(tsM1, vM1, mLo, mHi, kM1);
+    SoftCastS642F32ShiftM<MaskMergeMode::ZEROING>(ts0, v0, mLo, mHi, k0);
+    SoftCastS642F32ShiftM<MaskMergeMode::ZEROING>(tsP1, vP1, mLo, mHi, kP1);
+    RegTensor<int32_t> kSel;
+    RegTensor<uint32_t> tsSel;
+    vsel(kSel, k0, kP1, v0);
+    vsel(tsSel, ts0, tsP1, v0);
+    vsel(kSel, kM1, kSel, vM1);
+    vsel(tsSel, tsM1, tsSel, vM1);
+
+    // ==== dropped = m & ((1<<k)-1), half = 2^(k-1) (u64 分段) ====
+    RegTensor<int32_t> thirtyOne, thirtyTwo, oneI32;
+    vbr(thirtyOne, 31);
+    vbr(thirtyTwo, 32);
+    MaskReg kSelLt32;
+    vcmps_lt(kSelLt32, kSel, 32, maskFull);
+    RegTensor<int32_t> ksA, ksB32;
+    vsel(ksA, kSel, thirtyOne, kSelLt32);
+    vsub(ksB32, kSel, thirtyTwo, maskFull, modeValue);
+    MaskReg ksB32Neg;
+    vcmps_lt(ksB32Neg, ksB32, 0, maskFull);
+    vsel(ksB32, zeroS, ksB32, ksB32Neg);
+    RegTensor<uint32_t> oneU, maskLo, maskHi, allOnes;
+    vbr((RegTensor<int32_t>&)oneU, 1);
+    vbr((RegTensor<int32_t>&)allOnes, static_cast<int32_t>(0xFFFFFFFF));
+    vshl(maskLo, oneU, ksA, maskFull, modeValue);
+    vsub((RegTensor<int32_t>&)maskLo, (RegTensor<int32_t>&)maskLo, oneS, maskFull, modeValue); // (1<<kA)-1
+    vshl(maskHi, oneU, ksB32, maskFull, modeValue);
+    vsub((RegTensor<int32_t>&)maskHi, (RegTensor<int32_t>&)maskHi, oneS, maskFull, modeValue);
+    vsel(maskLo, maskLo, allOnes, kSelLt32);
+    vsel(maskHi, maskHi, (RegTensor<uint32_t>&)zeroS, kSelLt32);
+    RegTensor<uint32_t> dropLo, dropHi;
+    vand(dropLo, maskLo, (RegTensor<uint32_t>&)mLo, maskFull, modeValue);
+    vand(dropHi, maskHi, (RegTensor<uint32_t>&)mHi, maskFull, modeValue);
+    // half = 2^(k-1): k>=1 恒成立(通用路径 m>=2^24)
+    RegTensor<int32_t> km1, km1A, km1B;
+    vsub(km1, kSel, oneS, maskFull, modeValue);
+    MaskReg km1Neg, km1Lt32;
+    vcmps_lt(km1Neg, km1, 0, maskFull);
+    vsel(km1, zeroS, km1, km1Neg);
+    vcmps_lt(km1Lt32, km1, 32, maskFull);
+    vsel(km1A, km1, thirtyOne, km1Lt32);
+    vsub(km1B, km1, thirtyTwo, maskFull, modeValue);
+    MaskReg km1BNeg;
+    vcmps_lt(km1BNeg, km1B, 0, maskFull);
+    vsel(km1B, zeroS, km1B, km1BNeg);
+    RegTensor<uint32_t> halfLo, halfHi;
+    vshl(halfLo, oneU, km1A, maskFull, modeValue);
+    vshl(halfHi, oneU, km1B, maskFull, modeValue);
+    vsel(halfLo, halfLo, (RegTensor<uint32_t>&)zeroS, km1Lt32);
+    vsel(halfHi, (RegTensor<uint32_t>&)zeroS, halfHi, km1Lt32);
+
+    // ==== u64 字典序比较标志 ====
+    RegTensor<uint32_t> dropOr, zeroU;
+    vor(dropOr, dropLo, dropHi, maskFull, modeValue);
+    vbr((RegTensor<int32_t>&)zeroU, 0);
+    MaskReg dNZ, hiGt, hiEq, hiEq0, loGt, loEq, dGtH, dEqH, tsOddM;
+    vcmp_gt(dNZ, dropOr, zeroU, maskFull);
+    vcmp_gt(hiGt, dropHi, halfHi, maskFull);
+    vcmp_eq(hiEq0, dropHi, halfHi, maskFull);
+    vcmp_gt(loGt, dropLo, halfLo, maskFull);
+    vcmp_eq(loEq, dropLo, halfLo, maskFull);
+    pand(hiEq, hiEq0, loGt, maskFull);
+    por(dGtH, hiGt, hiEq, maskFull);   // dropped > half
+    pand(dEqH, hiEq0, loEq, maskFull); // dropped == half
+    RegTensor<uint32_t> tsParity;
+    vand(tsParity, tsSel, oneU, maskFull, modeValue);
+    vcmp_gt(tsOddM, tsParity, zeroU, maskFull);
+
+    // ==== 按模式生成进位掩码 incM, tsOut = tsSel + inc ====
+    RegTensor<int32_t> tsOut, incI;
+    MaskReg incM;
+    if constexpr (roundMode == RoundMode::CAST_RINT || roundMode == RoundMode::CAST_NONE) {
+        MaskReg tieOdd;
+        pand(tieOdd, dEqH, tsOddM, maskFull);
+        por(incM, dGtH, tieOdd, maskFull);
+    } else if constexpr (roundMode == RoundMode::CAST_ROUND) {
+        por(incM, dGtH, dEqH, maskFull);
+    } else if constexpr (roundMode == RoundMode::CAST_FLOOR) {
+        pand(incM, negMask, dNZ, maskFull);
+    } else if constexpr (roundMode == RoundMode::CAST_CEIL) {
+        MaskReg posM;
+        pnot(posM, negMask, maskFull);
+        pand(incM, posM, dNZ, maskFull);
+    } else if constexpr (roundMode == RoundMode::CAST_ODD) {
+        MaskReg tsEven; // 非精确时取奇数尾数
+        pnot(tsEven, tsOddM, maskFull);
+        pand(incM, dNZ, tsEven, maskFull);
+    } else { // CAST_TRUNC: 恒不进位
+        pnot(incM, maskFull, maskFull);
+    }
+    vsel(incI, oneS, zeroS, incM);
+    vadd(tsOut, (RegTensor<int32_t>&)tsSel, incI, maskFull, modeValue);
+
+    // ==== 组装 f32 = ts * 2^k (两步均精确), 小值路径直接转换 ====
+    RegTensor<float> fGen, fSmall, zeroF, dummyF;
+    vcvt(fGen, tsOut, maskFull, roundRintValue, modeValue);
+    RegTensor<int32_t> kSh;
+    vshls(kSh, kSel, static_cast<int16_t>(23), maskFull, modeValue); // k<<23
+    vadd((RegTensor<uint32_t>&)fGen, (RegTensor<uint32_t>&)fGen, (RegTensor<uint32_t>&)kSh, maskFull, modeValue);
+    vcvt(fSmall, mLo, maskFull, roundRintValue, modeValue); // m<2^24 精确
+    vsel((RegTensor<uint32_t>&)fGen, (RegTensor<uint32_t>&)fSmall, (RegTensor<uint32_t>&)fGen, smallM);
+    vxor((RegTensor<uint32_t>&)fGen, (RegTensor<uint32_t>&)fGen, (RegTensor<uint32_t>&)signBits, maskFull, modeValue);
+
+    // ==== 按 Part 写入 dst 偶/奇位置, 其余 lane 清零 ====
     vbr(zeroF, 0.0f);
     if constexpr (layoutMode == RegLayout::ZERO) {
-        Interleave(dstReg, dummyF, hiF, zeroF);
+        Interleave(dstReg, dummyF, fGen, zeroF);
     } else {
-        Interleave(dummyF, dstReg, zeroF, hiF);
+        Interleave(dummyF, dstReg, zeroF, fGen);
     }
 }
 
@@ -330,8 +547,19 @@ __simd_callee__ inline void CastOperator(RegTensor<T>& dstReg, RegTensor<U>& src
             // vcvt_if s42f16
             vcvt_s42f16(dstReg, srcReg, mask, ppModeValue, modeValue);
         } else if constexpr (SupportType<Tuple<T, U>, Tuple<bfloat16_t, int4x2_t>>()) {
-            // vcvt_if s42bf16
-            vcvt_s42bf16(dstReg, srcReg, mask, ppModeValue, modeValue);
+            // 516 家族无 vcvt_if s42bf16（编译器仅对 310R6/5102/9201/9202/3510 提供）。
+            // 两步软路径：s4->f16（无损，s4 整数值 f16 精确表示）再 f16->bf16（|s4|<=8，RN 无损）。
+            RegTensor<half> midReg;
+            constexpr auto zeroModeValue = GetMaskMergeMode<MaskMergeMode::ZEROING>();
+            constexpr auto roundRintValue = std::integral_constant<::ROUND, GetRound<RoundMode::CAST_RINT>()>();
+            vcvt_s42f16(midReg, srcReg, mask, ppModeValue, zeroModeValue);
+            vcvt(dstReg, midReg, mask, roundRintValue, modeValue);
+        } else if constexpr (SupportType<
+                                 Tuple<T, U>, Tuple<bfloat16_t, fp4x2_e2m1_t>, Tuple<bfloat16_t, fp4x2_e1m2_t>>()) {
+            constexpr auto roundModeValue = std::integral_constant<::ROUND, GetRound<RoundMode::CAST_RINT>()>();
+            constexpr auto satModeValue =
+                std::integral_constant<::RoundingSaturation, static_cast<::RoundingSaturation>(SatMode::NO_SAT)>();
+            vcvt(dstReg, srcReg, mask, roundModeValue, satModeValue, ppModeValue);
         } else if constexpr (SupportType<Tuple<T, U>, Tuple<int16_t, int4x2_t>>()) {
             // vcvt_if s42s16
             vcvt_s42s16(dstReg, srcReg, mask, ppModeValue, modeValue);
@@ -555,7 +783,9 @@ __simd_callee__ inline void CastOperator(RegTensor<T>& dstReg, RegTensor<U>& src
     } else if constexpr (ppCondition) {
         // vcvt_ff bf162fp4e2m1/bf162fp4e1m2
         constexpr auto ppModeValue = std::integral_constant<::Part_T, static_cast<::Part_T>(layoutMode)>();
-        vcvt(dstReg, srcReg, mask, roundModeValue, ppModeValue, modeValue);
+        constexpr auto satModeValue =
+            std::integral_constant<::RoundingSaturation, static_cast<::RoundingSaturation>(SatMode::NO_SAT)>();
+        vcvt(dstReg, srcReg, mask, roundModeValue, satModeValue, ppModeValue);
     } else {
         static_assert(!(partCondition && ppCondition), "current cast data type is not supported on current device!");
     }

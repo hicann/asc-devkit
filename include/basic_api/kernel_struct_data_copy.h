@@ -356,8 +356,8 @@ struct Nd2NzParams {
 struct Nz2NdParamsFull {
     __aicore__ Nz2NdParamsFull(){}
 
-#if defined(__NPU_ARCH__) && \
-    ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163))
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 5101) || (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || \
+                              (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162))
     __aicore__ Nz2NdParamsFull(
         const uint16_t ndNumIn, const uint16_t nValueIn, const uint32_t dValueIn, const uint16_t srcNdMatrixStrideIn,
         const uint16_t srcNStrideIn, const uint64_t dstDStrideIn, const uint64_t dstNdMatrixStrideIn)
