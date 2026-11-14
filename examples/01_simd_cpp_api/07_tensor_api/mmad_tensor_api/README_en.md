@@ -8,7 +8,7 @@ This example implements dynamic Shape matrix multiplication and inline quantizat
 
 | Product | CANN Version |
 |---------|-------------|
-| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.3.0 |
 
 > **Note:** This example depends on CANN features that have not been officially released. Use the latest CANN master package.
 

@@ -22,6 +22,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_SYNC_MUTEX_H
 #define INCLUDE_TENSOR_API_ARCH_SYNC_MUTEX_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -82,6 +83,7 @@ private:
 } // namespace asc
 
 #include "impl/tensor_api/arch/sync/mutex_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_SYNC_MUTEX_H
 

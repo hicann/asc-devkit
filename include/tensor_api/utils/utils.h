@@ -36,6 +36,7 @@ namespace Std = AscendC::Std;
 
 enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 /** @brief Initialize the device state of the current AI Core. */
 __aicore__ inline void init_soc_state();
 
@@ -54,6 +55,7 @@ __aicore__ inline constexpr int64_t get_vf_len();
  * @param offset Byte offset within the physical buffer.
  */
 __aicore__ inline uint64_t get_phy_buf_addr(uint64_t offset);
+#endif
 
 using _0 = Std::Int<0>;
 using _1 = Std::Int<1>;

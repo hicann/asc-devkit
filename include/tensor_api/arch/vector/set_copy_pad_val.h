@@ -21,6 +21,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_VECTOR_SET_COPY_PAD_VAL_H
 #define INCLUDE_TENSOR_API_ARCH_VECTOR_SET_COPY_PAD_VAL_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -37,6 +38,7 @@ __aicore__ inline void set_copy_pad_val(T pad_value);
 } // namespace asc
 
 #include "impl/tensor_api/arch/vector/copy_pad_val/set_copy_pad_val_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_VECTOR_SET_COPY_PAD_VAL_H
 

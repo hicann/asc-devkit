@@ -21,6 +21,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_CACHE_CONTROL_CACHE_CONTROL_H
 #define INCLUDE_TENSOR_API_ARCH_CACHE_CONTROL_CACHE_CONTROL_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -52,6 +53,7 @@ __aicore__ inline void datacache_clean();
 } // namespace asc
 
 #include "impl/tensor_api/arch/cache_control/cache_control_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_CACHE_CONTROL_CACHE_CONTROL_H
 

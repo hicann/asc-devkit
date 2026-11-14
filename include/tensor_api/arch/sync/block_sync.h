@@ -22,6 +22,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_SYNC_BLOCK_SYNC_H
 #define INCLUDE_TENSOR_API_ARCH_SYNC_BLOCK_SYNC_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -78,6 +79,7 @@ __aicore__ inline void sync_subblock_wait(pipe_t pipe, int64_t flag_id);
 } // namespace asc
 
 #include "impl/tensor_api/arch/sync/block_sync_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_SYNC_BLOCK_SYNC_H
 

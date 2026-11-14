@@ -10,7 +10,7 @@ This sample supports three Global Memory input/output data formats (NC1HWC0, NCH
 
 | Product | CANN Software Version |
 |---------|----------------------|
-| Ascend 950PR&950DT products | >= CANN 9.2.0 |
+| Ascend 950PR&950DT products | >= CANN 9.3.0 |
 
 ## Directory Structure
 

@@ -21,6 +21,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_SYNC_DATA_BARRIER_H
 #define INCLUDE_TENSOR_API_ARCH_SYNC_DATA_BARRIER_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -35,6 +36,7 @@ __aicore__ inline void sync_data_barrier(mem_dsb_t scope);
 } // namespace asc
 
 #include "impl/tensor_api/arch/sync/data_barrier_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_SYNC_DATA_BARRIER_H
 

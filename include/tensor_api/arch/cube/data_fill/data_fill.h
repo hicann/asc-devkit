@@ -22,6 +22,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_CUBE_DATA_FILL_H
 #define INCLUDE_TENSOR_API_ARCH_CUBE_DATA_FILL_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -64,6 +65,7 @@ __aicore__ inline void fill(const Tensor& dst, const T& init_value);
 } // namespace asc
 
 #include "impl/tensor_api/arch/cube/data_fill/data_fill_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_CUBE_DATA_FILL_H
 

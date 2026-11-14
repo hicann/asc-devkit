@@ -22,6 +22,7 @@
 #ifndef INCLUDE_TENSOR_API_ARCH_ATOMIC_DMA_ATOMIC_H
 #define INCLUDE_TENSOR_API_ARCH_ATOMIC_DMA_ATOMIC_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 namespace asc {
 namespace te {
 
@@ -56,6 +57,7 @@ __aicore__ inline void disable_dma_atomic();
 } // namespace asc
 
 #include "impl/tensor_api/arch/atomic/dma_atomic_impl.h"
+#endif
 
 #endif // INCLUDE_TENSOR_API_ARCH_ATOMIC_DMA_ATOMIC_H
 

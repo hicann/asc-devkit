@@ -10,7 +10,7 @@ GM和UB之间的数据搬运使用Tensor API的`copy`接口，ND到NZ重排的�
 
 | 产品 | CANN软件版本 |
 |------|-------------|
-| Ascend 950PR&950DT系列产品 | >= CANN 9.2.0 |
+| Ascend 950PR&950DT系列产品 | >= CANN 9.3.0 |
 
 ## 目录结构介绍
 
