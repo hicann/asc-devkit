@@ -115,13 +115,14 @@ constexpr int64_t sync_flag_id = 0;
 __global__ __mix__(1, 2) void block_sync_kernel(__gm__ float* output)
 {
     using namespace asc::te;
+    init_soc_state();
     __ubuf__ float data_buffer[total_length];
 
     auto layout = make_layout(make_shape(total_length));
     auto data_ub = make_tensor(make_mem_ptr(data_buffer), layout);
     auto output_gm = make_tensor(make_mem_ptr<location::gm>(output), layout);
 
-    if ASC_IS_AIV {
+    if ASCEND_IS_AIV {
         for (uint32_t i = 0; i < total_length; ++i) {
             data_buffer[i] = 1.0f;
         }
@@ -129,9 +130,10 @@ __global__ __mix__(1, 2) void block_sync_kernel(__gm__ float* output)
         sync_block_arrive(pipe_t::PIPE_MTE3, sync_flag_id);
     }
 
-    if ASC_IS_AIC {
-        sync_block_wait(pipe_t::PIPE_MTE1, sync_flag_id);
+    if ASCEND_IS_AIC {
+        sync_block_wait(pipe_t::PIPE_S, sync_flag_id);
         output[0] = 1.0f;
     }
+    sync_pipe(pipe_t::PIPE_ALL);
 }
 ```

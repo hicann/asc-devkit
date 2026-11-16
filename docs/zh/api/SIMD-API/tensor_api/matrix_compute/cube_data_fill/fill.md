@@ -102,8 +102,8 @@ __aicore__ inline void fill(const Tensor& dst, const T& init_value)
 
 #include "tensor_api/tensor.h"
 
-constexpr uint32_t rows = 16;
-constexpr uint32_t columns = 16;
+constexpr uint32_t rows = 128;
+constexpr uint32_t columns = 128;
 constexpr uint32_t element_count = rows * columns;
 
 __global__ __cube__ void fill_l1_kernel(__gm__ half* output)
@@ -114,23 +114,45 @@ __global__ __cube__ void fill_l1_kernel(__gm__ half* output)
     __cb__ half l0_b_buffer[element_count];
     __cc__ float l0_c_buffer[element_count];
 
-    auto l1_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<half>>(rows, columns);
-    auto l0_a_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<half>>(rows, columns);
-    auto l0_b_layout = make_frame_layout<zn_layout_ptn, layout_trait_default<half>>(rows, columns);
-    auto l0_c_layout = make_frame_layout<nz_layout_ptn, layout_trait_default<float>>(rows, columns);
-    auto output_layout = make_frame_layout<nd_ext_layout_ptn, layout_trait_default<half>>(rows, columns);
+    auto l1_layout = make_frame_layout<nz_layout_ptn, half>(rows, columns);
+    auto l0_a_layout = make_frame_layout<nz_layout_ptn, half>(rows, columns);
+    auto l0_b_layout = make_frame_layout<zn_layout_ptn, half>(rows, columns);
+    auto l0_c_layout = make_frame_layout<nz_layout_ptn, float>(rows, columns);
+    auto output_layout = make_frame_layout<nd_ext_layout_ptn, half>(rows, columns);
     auto l1_tensor = make_tensor(make_mem_ptr(l1_buffer), l1_layout);
     auto l0_a_tensor = make_tensor(make_mem_ptr(l0_a_buffer), l0_a_layout);
     auto l0_b_tensor = make_tensor(make_mem_ptr(l0_b_buffer), l0_b_layout);
     auto l0_c_tensor = make_tensor(make_mem_ptr(l0_c_buffer), l0_c_layout);
     auto output_tensor = make_tensor(make_mem_ptr<location::gm>(output), output_layout);
 
-    fill(l1_tensor, static_cast<half>(2));
-    copy(make_copy(copy_l1_to_l0a{}), l0_a_tensor, l1_tensor);
-    copy(make_copy(copy_l1_to_l0b{}), l0_b_tensor, l1_tensor);
+    fill_params<half> params{};
+    params.repeat_times = rows;
+    params.block_num = columns * sizeof(half) / 32;
+    params.dst_gap = 0;
+    params.init_value = static_cast<half>(2);
+
+    mutex<PIPE_MTE2> fill_mutex(0);
+    fill_mutex.lock();
+    fill(l1_tensor, params);
+    fill_mutex.unlock();
+
+    mutex<PIPE_MTE1> l0_mutex(0);
+    l0_mutex.lock();
+    copy(make_copy(copy_l1_to_l0a{}, l1_to_l0a_trait_default{}), l0_a_tensor, l1_tensor);
+    copy(make_copy(copy_l1_to_l0b{}, l1_to_l0b_trait_default{}), l0_b_tensor, l1_tensor);
+    l0_mutex.unlock();
+
+    mutex<PIPE_M> mmad_mutex(0);
+    mmad_mutex.lock();
     mmad(make_mmad(mmad_operation{}, mmad_trait_default{}).with(mmad_params{rows, columns, columns,
                   unit_flag_mode::disable, true}),
         l0_c_tensor, l0_a_tensor, l0_b_tensor);
+    mmad_mutex.unlock();
+
+    mutex<PIPE_FIX> output_mutex(0);
+    output_mutex.lock();
     copy(make_copy(copy_l0c_to_gm{}, l0c_to_gm_trait_default{}), output_tensor, l0_c_tensor);
+    output_mutex.unlock();
+    sync_pipe(PIPE_ALL);
 }
 ```

@@ -50,7 +50,8 @@ __aicore__ inline void sync_data_barrier(mem_dsb_t scope)
 
 ## 约束说明
 
-`DSB_ALL`只等待GM和UB访问指令，不包括其他内存位置，例如L0C Buffer、L1 Buffer。
+- `mem_dsb_t`类型的入参必须直接传递枚举值字面量。
+- 等待的内存位置取值为`DSB_ALL`时，只能等待GM和Unified Buffer（UB）的访问指令，不包括其他内存位置，例如L0C Buffer、L1 Buffer。
 
 ## 调用示例
 

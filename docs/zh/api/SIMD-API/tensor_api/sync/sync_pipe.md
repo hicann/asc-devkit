@@ -55,17 +55,19 @@ PIPE_S
 ## 约束说明
 
 - Scalar流水之间的同步由硬件自动保证，本接口不支持`PIPE_S`。
+- `PIPE_V`之间的同步由硬件自动保证。
 - `sync_pipe(pipe_t::PIPE_ALL)`会等待所有流水中此前提交的指令完成，可能影响性能。若只需等待单条流水，应传入对应流水值。
 - `pipe_t::PIPE_MTE2`和`pipe_t::PIPE_MTE3`在搬运目的地址重叠时，开发者需要插入同步，保证多条搬运指令串行执行。
 
 ## 调用示例
 
-以下示例完成GM到UB搬入、UB内计算和UB到GM搬出后，调用sync_pipe等待所有流水中的前序指令完成。
+以下示例先通过同ID的MTE2/MTE3 mutex完成GM到UB搬入和UB到GM搬出，最后调用sync_pipe等待所有流水中的前序指令完成。
 
 ```cpp
 #include "tensor_api/tensor.h"
 
 constexpr uint32_t total_length = 64;
+constexpr uint8_t buffer_lock_id = 0;
 
 __global__ __vector__ void sync_pipe_kernel(__gm__ float* src, __gm__ float* dst)
 {
@@ -77,8 +79,15 @@ __global__ __vector__ void sync_pipe_kernel(__gm__ float* src, __gm__ float* dst
     auto dst_gm = make_tensor(make_mem_ptr<location::gm>(dst), layout);
     auto ub_tensor = make_tensor(make_mem_ptr(buffer), layout);
 
+    mutex<pipe_t::PIPE_MTE2> copy_in_mutex(buffer_lock_id);
+    copy_in_mutex.lock();
     copy(make_copy(copy_gm_to_ub{}), ub_tensor, src_gm);
+    copy_in_mutex.unlock();
+
+    mutex<pipe_t::PIPE_MTE3> copy_out_mutex(buffer_lock_id);
+    copy_out_mutex.lock();
     copy(make_copy(copy_ub_to_gm{}), dst_gm, ub_tensor);
+    copy_out_mutex.unlock();
     sync_pipe(pipe_t::PIPE_ALL);
 }
 ```

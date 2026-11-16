@@ -59,12 +59,13 @@ __aicore__ inline void set_atomic_max()
 - 开启后对后续所有目的地址为GM的搬运指令生效，可以调用[`disable_dma_atomic`](disable_dma_atomic.md)关闭。
 - 本接口执行前不会自动将GM上已有数据置零。若期望原子取大前GM上的原始数据为零，需手动清零。
 - 本接口仅对后续通过MTE3、Fixpipe单元搬运且目的地址为GM的搬运指令生效，对标量写GM指令不生效。
+- 本接口与紧邻的后续搬运指令之间的同步由硬件保证。
 - 后续搬运指令的操作数据类型必须与`T`一致。
 - 本接口不能保证后续搬运指令的执行顺序。
 
 ## 调用示例
 
-以下示例先读取Global Memory上的初始值，再通过DMA原子取最大值将输入数据与初始值计算后写回Global Memory，最后关闭原子模式。
+以下示例先通过同ID的MTE2/MTE3 mutex保证输入搬运完成后，再开启DMA原子取最大值，将输入数据与GM初始值计算后写回Global Memory，最后关闭原子模式。
 
 ```cpp
 #include <cstdint>
@@ -72,24 +73,28 @@ __aicore__ inline void set_atomic_max()
 #include "tensor_api/tensor.h"
 
 constexpr uint32_t total_length = 64;
+constexpr uint8_t buffer_lock_id = 0;
 
 __global__ __vector__ void atomic_max_kernel(__gm__ float* output, __gm__ float* input)
 {
     using namespace asc::te;
     __ubuf__ float input_buffer[total_length];
-    __ubuf__ float output_buffer[total_length];
 
     auto layout = make_frame_layout<nd_ext_layout_ptn>(1, total_length);
     auto input_gm = make_tensor(make_mem_ptr<location::gm>(input), layout);
     auto output_gm = make_tensor(make_mem_ptr<location::gm>(output), layout);
     auto input_ub = make_tensor(make_mem_ptr(input_buffer), layout);
-    auto output_ub = make_tensor(make_mem_ptr(output_buffer), layout);
 
+    mutex<pipe_t::PIPE_MTE2> copy_in_mutex(buffer_lock_id);
+    copy_in_mutex.lock();
     copy(make_copy(copy_gm_to_ub{}), input_ub, input_gm);
-    copy(make_copy(copy_gm_to_ub{}), output_ub, output_gm);
+    copy_in_mutex.unlock();
 
     set_atomic_max<float>();
+    mutex<pipe_t::PIPE_MTE3> copy_out_mutex(buffer_lock_id);
+    copy_out_mutex.lock();
     copy(make_copy(copy_ub_to_gm{}), output_gm, input_ub);
+    copy_out_mutex.unlock();
     disable_dma_atomic();
 }
 ```

@@ -57,25 +57,28 @@ __aicore__ inline void set_copy_pad_val(T pad_value)
 
 - 本接口仅在AIV上生效。
 - 本接口只设置填充值，须先调用本接口，再执行对应的[GM到UB搬运](../reg_vector_compute/vector_compute_load/copy_gm_to_ub.md)。
-- 填充值仅在[GM到UB搬运](../reg_vector_compute/vector_compute_load/copy_gm_to_ub.md)的`gm_to_ub_params`参数中`enable_constant_pad`成员设置为`true`时被取用。
-- 填充值配置对后续所有满足条件的GM到UB对齐搬运生效，直到再次调用本接口覆盖配置。
+- 填充值用于[GM到UB搬运](../reg_vector_compute/vector_compute_load/copy_gm_to_ub.md)产生的左右Padding区域及32字节对齐补齐区域。
+- 填充值配置对后续所有满足条件的GM到UB对齐搬运生效，直到再次调用本接口覆盖配置；不同搬运任务间若需不同填充值，应在调用搬运接口前重新调用本接口设置。
+- 在[GM到UB搬运](../reg_vector_compute/vector_compute_load/copy_gm_to_ub.md)的`gm_to_ub_params`参数中，当`left_padding_count`和`right_padding_count`均为0时，`enable_constant_pad`为`true`才使用本接口配置的值填充补齐区域；为`false`时，由硬件自动填充dummy假数据，本接口设置不生效。
+- 在[GM到UB搬运](../reg_vector_compute/vector_compute_load/copy_gm_to_ub.md)的`gm_to_ub_params`参数中，当`left_padding_count`或`right_padding_count`非0时，`enable_constant_pad`不生效，必须在搬运前调用本接口配置填充值。左右Padding区域及右侧为32字节对齐继续补齐的区域均使用该值。
 
 ## 调用示例
 
-以下示例从Global Memory读取每行24个int8_t数据，在每行左侧填充3个、右侧填充5个-9后写入Global Memory。示例展示set_copy_pad_val与gm_to_ub_params的配合使用。
+以下示例从Global Memory读取32行、每行24个int8_t数据，在每行左侧填充3个、右侧填充5个-9后写入Global Memory。示例展示set_copy_pad_val与gm_to_ub_params的配合使用，并使用mutex串行化GM到UB与UB到GM两个流水阶段。
 
 ```cpp
 #include <cstdint>
 
 #include "tensor_api/tensor.h"
 
-constexpr uint32_t rows = 2;
+constexpr uint32_t rows = 32;
 constexpr uint32_t source_columns = 24;
 constexpr uint32_t padded_columns = 32;
 constexpr uint32_t padded_length = rows * padded_columns;
 constexpr uint8_t left_padding = 3;
 constexpr uint8_t right_padding = 5;
 constexpr int8_t padding_value = -9;
+constexpr uint8_t buffer_lock_id = 0;
 
 __global__ __vector__ void padded_copy_kernel(__gm__ int8_t* src, __gm__ int8_t* dst)
 {
@@ -90,7 +93,15 @@ __global__ __vector__ void padded_copy_kernel(__gm__ int8_t* src, __gm__ int8_t*
 
     set_copy_pad_val<int8_t>(padding_value);
     constexpr gm_to_ub_params padding_params{left_padding, right_padding, true};
+
+    mutex<pipe_t::PIPE_MTE2> copy_in_mutex(buffer_lock_id);
+    copy_in_mutex.lock();
     copy(make_copy(copy_gm_to_ub{}).with(padding_params), dst_ub, src_gm);
+    copy_in_mutex.unlock();
+
+    mutex<pipe_t::PIPE_MTE3> copy_out_mutex(buffer_lock_id);
+    copy_out_mutex.lock();
     copy(make_copy(copy_ub_to_gm{}), dst_gm, dst_ub);
+    copy_out_mutex.unlock();
 }
 ```
