@@ -42,15 +42,16 @@ __simd_callee__ inline reg_tensor<DstType> cast(const reg_tensor<SrcType>& src);
 
 /**
  * @ingroup tensor_api.experimental.reg_compute.reg_cast
- * @brief Truncates the fractional part of each active register element.
+ * @brief Rounds each active register element using the selected mode.
  *
  * @override_id te_experimental_trunc__const_reg_tensor_T_R__template_T
  * @archs 3510
- * @return The truncated register tensor with the source mask preserved.
- * @note Supported element types are half, bfloat16_t, and float.
+ * @return The rounded register tensor with the source mask preserved.
+ * @note Supported element types are half, bfloat16_t, and float. The default mode is trunc.
+ * @tparam Mode Rounding mode: trunc, round, rint, ceil, or floor.
  * @param [in] src Source register tensor.
  */
-template <typename T>
+template <cast_round_mode Mode = cast_round_mode::trunc, typename T>
 __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src);
 
 } // namespace experimental

@@ -30,27 +30,24 @@
 
 命名空间：`asc::te::experimental`。
 
-`trunc`将源寄存器中mask选中的浮点元素向0取整，即截去小数部分并保留原数据类型，计算关系如下：
+trunc对源寄存器中mask选中的浮点元素取整，结果保持原数据类型。通过模板参数指定取整模式，默认使用`cast_round_mode::trunc`。
 
-```text
-dst[i] = trunc(src[i])
-```
+对于有限浮点数，各模式的计算关系如下，其中`x = src[i]`：
 
-对于有限浮点数，计算规则可表示为：
+| Mode | 计算关系 | 取整规则 |
+| --- | --- | --- |
+| cast_round_mode::trunc | dst[i] = trunc(x) | 向0取整，舍去小数部分；例如3.75 -> 3.0、-3.75 -> -3.0。 |
+| cast_round_mode::round | dst[i] = round(x) | 取最接近的整数；居中时远离0，例如3.1 -> 3.0、2.5 -> 3.0、-2.5 -> -3.0。 |
+| cast_round_mode::rint | dst[i] = rint(x) | 取最接近的整数；居中时取偶数，例如3.1 -> 3.0、2.5 -> 2.0、-2.5 -> -2.0。 |
+| cast_round_mode::ceil | dst[i] = ceil(x) | 向正无穷取整，例如2.5 -> 3.0、-2.5 -> -2.0。 |
+| cast_round_mode::floor | dst[i] = floor(x) | 向负无穷取整，例如2.5 -> 2.0、-2.5 -> -3.0。 |
 
-```text
-src[i] >= 0：dst[i] = floor(src[i])
-src[i] <  0：dst[i] = ceil(src[i])
-```
-
-例如，输入`3.75`时输出`3.0`，输入`-3.75`时输出`-3.0`；输入本身为整数值时，数值保持不变。输出元素类型与输入元素类型相同。
-
-接口使用`src.mask`筛选参与计算的元素，底层固定采用向0舍入和zeroing模式：mask未选中的返回值数据元素置0。返回值的mask与`src.mask`保持一致，可继续用于后续寄存器计算或`asc::te::experimental::store`写回。
+输入本身为整数值时，数值保持不变。接口使用`src.mask`筛选参与计算的元素，mask未选中的返回值数据元素置0。
 
 ## 函数原型
 
 ```cpp
-template <typename T>
+template <cast_round_mode Mode = cast_round_mode::trunc, typename T>
 __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src)
 ```
 
@@ -60,6 +57,7 @@ __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src)
 
 | 参数名 | 描述 |
 | --- | --- |
+| `Mode` | 舍入模式，默认为`cast_round_mode::trunc`。支持`trunc`（向0取整）、`round`（舍入到最近整数，恰好居中时远离0）、`rint`（舍入到最近整数，恰好居中时取偶数）、`ceil`（向正无穷取整）和`floor`（向负无穷取整）。 |
 | `T` | 源、目的元素类型，由函数实参自动推导，无需显式指定。支持的数据类型请参考[数据类型](#数据类型)。 |
 
 **表2** 参数说明
@@ -84,13 +82,12 @@ __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src)
 
 返回`reg_tensor<T>`：
 
-- `reg`保存向0取整后的结果，mask未选中的元素置0。
+- `reg`保存所选模式舍入后的结果，mask未选中的元素置0。
 - `mask`与`src.mask`相同，接口不会重新生成或扩展有效范围。
 
 ## 约束说明
 
 - 调用前必须初始化`src.reg`和`src.mask`。`asc::te::experimental::load`只初始化返回对象的`reg`，需通过`with_mask`绑定与元素类型匹配的mask。
-- 舍入模式固定为向0舍入，不支持参考Reg矢量计算`Truncate`接口中的其他舍入模式，也不提供舍入模式模板参数。
 - 接口不改变元素类型，也不提供饱和或非饱和模式配置。
 - mask合并模式固定为zeroing，不支持merging模式。mask未选中的返回值数据元素置0；后续使用单源`asc::te::experimental::store`时，写回仍由返回值中传递的mask控制。
 - 寄存器计算应在`__simd_vf__`函数或`__simd_callee__`函数中完成。

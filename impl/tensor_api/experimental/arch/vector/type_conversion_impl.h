@@ -147,17 +147,28 @@ __simd_callee__ inline reg_tensor<DstType> cast(const reg_tensor<SrcType>& src)
     return detail::cast_impl<DstType, SrcType, opt.layout, opt.round, opt.sat>(src);
 }
 
-template <typename T>
+template <cast_round_mode Mode, typename T>
 __simd_callee__ inline reg_tensor<T> trunc(const reg_tensor<T>& src)
 {
-    if constexpr (detail::is_supported<T>::value) {
-        reg_tensor<T> dst;
+    static_assert(
+        Mode == cast_round_mode::trunc || Mode == cast_round_mode::round || Mode == cast_round_mode::rint ||
+            Mode == cast_round_mode::ceil || Mode == cast_round_mode::floor,
+        "reg_tensor trunc supports only trunc, round, rint, ceil, and floor modes");
+    static_assert(detail::is_supported<T>::value, "reg_tensor trunc supports only half, bfloat16_t, and float");
+    reg_tensor<T> dst;
+    if constexpr (Mode == cast_round_mode::trunc) {
         asc_trunc(dst.reg, src.reg, src.mask);
-        dst.mask = src.mask;
-        return dst;
-    } else {
-        static_assert(detail::is_supported<T>::value, "reg_tensor trunc supports only half, bfloat16_t, and float");
+    } else if constexpr (Mode == cast_round_mode::round) {
+        asc_round(dst.reg, src.reg, src.mask);
+    } else if constexpr (Mode == cast_round_mode::rint) {
+        asc_rint(dst.reg, src.reg, src.mask);
+    } else if constexpr (Mode == cast_round_mode::ceil) {
+        asc_ceil(dst.reg, src.reg, src.mask);
+    } else if constexpr (Mode == cast_round_mode::floor) {
+        asc_floor(dst.reg, src.reg, src.mask);
     }
+    dst.mask = src.mask;
+    return dst;
 }
 
 } // namespace experimental
