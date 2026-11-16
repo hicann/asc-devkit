@@ -19,6 +19,7 @@ This directory contains samples that directly include `tensor_api/tensor.h` and 
 | [bank_conflict](./bank_conflict) | Introduces bank conflicts and mitigation methods based on the Tensor API | Ascend 950PR&950DT products |
 | [matmul_split_k](./matmul_split_k) | Implements multi-core matrix multiplication with K-axis splitting using the Tensor API | Ascend 950PR&950DT products |
 | [matmul_bias_fusion](./matmul_bias_fusion) | Implements Cube-Vector (CV) fusion computation with Bias using the Tensor API | Ascend 950PR&950DT products |
+| [flash_attention_tensor_api](./flash_attention_tensor_api) | Implements the complete FlashAttention forward pass using the Tensor API, demonstrating Cube matmul and Vector online-softmax CV cooperation | Ascend 950PR&950DT products |
 | [abs_diff](./experimental/reg_vector_compute/abs_diff) | Computes the element-wise absolute difference of two float Tensors using the Tensor API | Ascend 950PR&950DT products |
 | [add](./experimental/reg_vector_compute/add) | Implements element-wise addition of two float Tensors using the Tensor API | Ascend 950PR&950DT products |
 | [cast](./experimental/reg_vector_compute/cast) | Implements element-wise data type conversion in multiple scenarios using the Tensor API | Ascend 950PR&950DT products |

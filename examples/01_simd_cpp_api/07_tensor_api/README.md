@@ -19,6 +19,7 @@
 | [bank_conflict](./bank_conflict) | 基于Tensor API介绍bank冲突及规避方式 | Ascend 950PR&950DT系列产品 |
 | [matmul_split_k](./matmul_split_k) | 基于Tensor API实现多核K轴切分矩阵乘计算 | Ascend 950PR&950DT系列产品 |
 | [matmul_bias_fusion](./matmul_bias_fusion) | 基于Tensor API实现Cube和Vector的CV融合计算 | Ascend 950PR&950DT系列产品 |
+| [flash_attention_tensor_api](./flash_attention_tensor_api) | 基于Tensor API实现FlashAttention前向算子的完整计算流程，展示Cube矩阵乘与Vector online softmax的CV协作 | Ascend 950PR&950DT系列产品 |
 | [abs_diff](./experimental/reg_vector_compute/abs_diff) | 基于Tensor API对两组float Tensor逐元素计算差的绝对值 | Ascend 950PR&950DT系列产品 |
 | [add](./experimental/reg_vector_compute/add) | 基于Tensor API对两组float Tensor执行逐元素加法 | Ascend 950PR&950DT系列产品 |
 | [cast](./experimental/reg_vector_compute/cast) | 基于Tensor API实现多场景逐元素数据类型转换 | Ascend 950PR&950DT系列产品 |
