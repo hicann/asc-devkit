@@ -1,6 +1,6 @@
 # Contribution Guide
 
-This project welcomes developers to experience and participate in contributions. Before participating in community contributions, see [cann-community](https://gitcode.com/cann/community) to understand the code of conduct, sign the CLA agreement, and learn about the contribution process for source code repositories.
+This project welcomes developers to experience and participate in contributions. Before participating in community contributions, see [cann-community](https://gitcode.com/cann/community) to understand the code of conduct, sign the CLA agreement, and learn about the contribution process for source code repositories. Beyond the contribution scenarios described in this guide, you can also engage more deeply with the CANN community through [Basic Contribution](https://gitcode.com/cann/community#基础贡献) (joining community meetings and mailing-list discussions, submitting Issues/PRs, etc.) or [Advanced Contribution](https://gitcode.com/cann/community#进阶贡献) (creating a SIG or becoming a key contributor, organizing meetings, creating new repositories and CI configurations, etc.).
 
 When preparing local code and submitting PRs, developers need to pay attention to the following points:
 
