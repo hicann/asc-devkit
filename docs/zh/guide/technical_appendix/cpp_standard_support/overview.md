@@ -7,7 +7,7 @@
 
 ## 语言标准的选择
 
-SIMD和SIMT编程场景均可通过`-std=c++<version>`或`--std=c++<version>`编译选项为编译单元指定C++语言标准。该选项启用所选标准的全部语言特性，并同时作用于Host侧与Device侧的编译过程。Device侧可选择的语言标准及对应编译选项如下：
+在bisheng编译命令中添加`-std=c++<version>`或`--std=c++<version>`，可指定本次编译使用的C++语言标准。该选项同时作用于Host侧和Device侧代码。Device侧可选择的语言标准及对应编译选项如下：
 
 -   C++11（ISO/IEC 14882:2011）：`-std=c++11`
 -   C++14（ISO/IEC 14882:2014）：`-std=c++14`

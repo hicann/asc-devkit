@@ -250,6 +250,64 @@ __global__ void probe(float* output, uint32_t count)
 > [!NOTE]说明
 > 从C++14起，推荐使用constexpr变量替代const限定变量，C++17起也可使用inline constexpr变量。constexpr变量不受类型限制，且语义上明确为编译期常量，Device侧使用行为与const一致。
 
+### const和constexpr全局变量的取地址与字节重解释
+
+常量表达式初始化的const或constexpr全局变量（namespace-scope）在Device侧可取地址，所得指针指向常量地址空间。可以用`reinterpret_cast`改变指针所指的数据类型，但转换后的指针仍须指向该常量地址空间。以`__aicore__`函数中将`const int*`转换为`const float*`为例：
+
+```cpp
+constexpr int ASCRT_NAN_F_VALUE = 0x7fffffffU;
+
+__aicore__ inline float nanf(float x)
+{
+    float res = *(reinterpret_cast<const float*>(&ASCRT_NAN_F_VALUE));
+    (void)x;
+    return res;
+}
+```
+
+但是，SIMD与SIMT混合编程场景，在使用`-O0`编译选项（`CMAKE_BUILD_TYPE=Debug`）时，对未标记`__gm__`的const或constexpr全局变量取地址会触发编译器后端错误；即使只通过同类型指针读取，也会报错：
+
+```cpp
+constexpr int NANF_BITS = 0x7fffffffU;
+
+__simt_vf__ __launch_bounds__(128) void nanf_worker_bad(__gm__ float* out)
+{
+    const int* ip = &NANF_BITS;              // ERROR(-O0)：编译器后端错误
+    out[0] = static_cast<float>(*ip);
+}
+```
+
+强烈建议使用以下更通用的方法：
+
+-   为全局变量加`__gm__`标识，并以`__gm__`指针接收；
+-   不取全局变量地址，在SIMT VF函数内用局部联合体将整数的位模式按float类型解释。
+
+如下所示：
+
+```cpp
+__gm__ constexpr int GM_NANF_BITS = 0x7fffffffU;
+
+__simt_vf__ __launch_bounds__(128) void nanf_worker(__gm__ float* out)
+{
+    const __gm__ int* ip = &GM_NANF_BITS;    // __gm__对象配__gm__指针，-O0下可用
+    out[0] = *reinterpret_cast<const __gm__ float*>(ip);  // 按浮点位模式读取
+}
+```
+
+第二种方法不依赖全局变量的地址：
+
+```cpp
+__simt_vf__ __launch_bounds__(128) void nanf_worker_by_bits(__gm__ float* out)
+{
+    union Data {
+        int i;
+        float f;
+    } data;
+    data.i = 0x7fffffff;
+    out[0] = data.f;                         // 按float解释整数位模式
+}
+```
+
 ### volatile限定符变量
 
 volatile关键字为兼容ISO C++而支持，volatile读写不提供线程间同步保证，也不保证硬件执行的记忆体访问次数与指令数一致，编译器不合并、不省略volatile访问，但多个线程对同一volatile对象的访问无顺序与可见性保证。
@@ -264,14 +322,14 @@ __global__ __launch_bounds__(128) void probe(int* flag, float* output, uint32_t 
         volatile int* vflag = flag;
         int32_t spins = 0;
         for (uint32_t i = 0; i < 1000u; ++i) {
-            spins += *vflag;                 // 每轮真实读GM，不被合并/省略
+            spins += *vflag;                 // 每轮真实读GM，不被合并、不被省略
         }
         output[0] = static_cast<float>(spins);
     }
 }
 ```
 
-若去掉volatile，编译器可将循环内的多次读取合并为一次加载甚至完全消除，将无法实及时获取到其他执行单元对该地址的修改。但volatile只保证访问不被优化，不保证读到其他核、其他线程写入的最新值。原因是各核对GM的修改缺乏跨核可见性与顺序保证，轮询也有可能读到旧值。
+若去掉volatile，编译器可将循环内的多次读取合并为一次加载甚至完全消除，将无法及时获取到其他执行单元对该地址的修改。但volatile只保证访问不被优化，不保证读到其他核、其他线程写入的最新值。原因是各核对GM的修改缺乏跨核可见性与顺序保证，轮询也有可能读到旧值。
 
 ### constexpr全局只读表
 
@@ -395,6 +453,39 @@ __global__ __launch_bounds__(128) void probe(float* output, uint32_t count)
     }
     ```
 
+<!-- npu="950" id1 -->
+### constexpr函数的调用约束
+
+Ascend 950PR&950DT系列产品上，编译器会将Device侧的`constexpr`函数附加上`__callee__`语义，并引入调用关系约束：`constexpr`调用的子函数必须标记为`constexpr`或`__callee__` ，否则校验报错，调用将触发编译报错：
+
+```cpp
+__aicore__ inline int32_t plain_add(int32_t a, int32_t b) { return a + b; }
+
+constexpr __aicore__ int32_t cexpr_caller(int32_t x)
+{
+    return plain_add(x, 1); // 不能调用非constexpr的plain_add
+}
+```
+
+**正确写法**：Device侧使用的constexpr函数须标记`constexpr __aicore__`，且其调用的函数也须为`constexpr __aicore__`或`__callee__`：
+
+```cpp
+// __callee__ int32_t cexpr_add(int32_t a, int32_t b) { return a + b; } 同样可行
+constexpr __aicore__ int32_t cexpr_add(int32_t a, int32_t b) { return a + b; }
+
+constexpr __aicore__ int32_t cexpr_caller(int32_t x)
+{
+    return cexpr_add(x, 1);            // constexpr调用constexpr：可用
+}
+
+__global__ __vector__ void probe(__gm__ int32_t* output)
+{
+    constexpr int32_t v = cexpr_caller(41);   // 编译期折叠为42
+    output[0] = v;                            // 运行结果42
+}
+```
+<!-- end id1 -->
+
 ### 递归
 
 编译期递归即constexpr求值递归，constexpr函数需要加上函数标记。
@@ -483,7 +574,7 @@ __simt_vf__ void simt_kernel(__gm__ TestS *data1, __ubuf__ TestS *data2)
 struct TestS {
     int a;
     float b;
-    //device 侧代码隔离
+    //device侧代码隔离
 #ifdef __NPU_ARCH__
     __callee__ TestS(const __gm__ TestS& other) {
         a = other.a;
@@ -494,7 +585,7 @@ struct TestS {
         b = other.b;
     }
 #endif
-    // host 侧代码
+    // host侧代码
     TestS(const TestS& other) {
         a = other.a;
         b = other.b;
@@ -681,3 +772,30 @@ asc_vf_call<vf_scale>(dim3(THREAD_COUNT), ub_out, input, count, 2.f);
 ```
 
 须显式指定完整实例，如`asc_vf_call<vf_scale<float>>`。
+
+### 模板默认实参中的设备内置变量
+
+Device侧模板函数（含VF模板函数与核函数模板）的**非类型模板参数默认值中不可以使用`warpSize`、`laneid()`、`blockIdx`等设备内置变量**，此类变量只能在函数体内使用。
+
+```cpp
+template <int kNumThreads,
+          int kNumWarps = kNumThreads / warpSize>   // ERROR: use of undeclared identifier 'warpSize'
+__simt_vf__ __launch_bounds__(kNumThreads) inline void vf_func(__gm__ int* out, uint32_t count)
+{
+    out[threadIdx.x] = kNumWarps;
+}
+```
+
+正确写法为模板默认实参使用字面常量或`constexpr`变量，函数体内再使用内置变量：
+
+```cpp
+template <int thread_num = 128>    // 默认值使用字面常量（也可使用constexpr变量）：编译通过
+__simt_vf__ __launch_bounds__(thread_num) inline void vf_func(__gm__ int* out, uint32_t count)
+{
+    const int32_t warp_num = thread_num / warpSize;
+    const int32_t warp_idx = threadIdx.x / warpSize;    // 函数体内使用warpSize：可用
+    out[threadIdx.x] = warp_num + warp_idx;
+}
+```
+
+该限制对`__simt_vf__`、`__simt_callee__`与核函数的模板函数均成立。
