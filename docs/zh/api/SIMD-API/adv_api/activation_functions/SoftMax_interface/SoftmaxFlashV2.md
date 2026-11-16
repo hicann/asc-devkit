@@ -255,7 +255,7 @@ struct SoftMaxShapeInfo {
 
 -   srcK对齐
 
-    本样例中输入srcTensor和输出dstTensor的shape大小为\[320,64\]，输入inSumTensor、inMaxTensor的shape大小为\[320,16\]，输出expMaxTensor的shape大小为\[320,16\]，数据类型均为half，输入输出的数据排布格式为ND，srcTensor和dstTensor空间不复用，不开启基本块，isUpdate为true。
+    本样例中输入srcTensor和输出dstTensor的shape大小为\[320,64\]，输入inExpSumTensor、inMaxTensor的shape大小为\[320,16\]，输出expMaxTensor的shape大小为\[320,16\]，数据类型均为half，输入输出的数据排布格式为ND，srcTensor和dstTensor空间不复用，不开启基本块，isUpdate为true。
 
     ```
     // dstLocal: 存放SoftMax计算结果的Tensor
