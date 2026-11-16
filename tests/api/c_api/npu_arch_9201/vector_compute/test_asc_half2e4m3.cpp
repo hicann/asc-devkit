@@ -47,13 +47,6 @@ TEST_HALF_TO_FP8_VCVT_RETURN_POS(
 TEST_HALF_TO_FP8_VCVT_RETURN_POS(
     Half2e4m3_rn_sat_odd, asc_half2e4m3_rn_sat, vcvt, vector_fp8_e4m3fn_t, vector_half, ASC_POSITION_ODD, ROUND_R,
     RS_ENABLE, PART_ODD, MODE_ZEROING);
-TEST_HALF_TO_FP8_VCVT_V2(
-    Half2e4m3_rn_v2, asc_half2e4m3_rn_v2, vcvt, vector_fp8_e4m3fn_t, vector_half, ROUND_R, RS_DISABLE, PART_ODD,
-    MODE_ZEROING);
-TEST_HALF_TO_FP8_VCVT_V2(
-    Half2e4m3_rn_sat_v2, asc_half2e4m3_rn_sat_v2, vcvt, vector_fp8_e4m3fn_t, vector_half, ROUND_R, RS_ENABLE, PART_ODD,
-    MODE_ZEROING);
-
 #define TEST_ASC_CAST_HALF_TO_E4M3(                                                                                \
     test_name, c_api_name, saturation_mode, dst_pos, expected_sat, expected_part, expected_mode)                   \
     namespace {                                                                                                    \

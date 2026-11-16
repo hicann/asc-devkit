@@ -4377,19 +4377,6 @@ __simd_callee__ inline vector_fp8_e4m3fn_t asc_half2e4m3_rn_sat(
     return dst;
 }
 
-__simd_callee__ inline void asc_half2e4m3_rn_v2(vector_fp8_e4m3fn_t& dst, vector_half src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt(dst, src, mask, ROUND_R, RS_DISABLE, PART_ODD, MODE_ZEROING);
-    }
-}
-__simd_callee__ inline void asc_half2e4m3_rn_sat_v2(vector_fp8_e4m3fn_t& dst, vector_half src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt(dst, src, mask, ROUND_R, RS_ENABLE, PART_ODD, MODE_ZEROING);
-    }
-}
-
 __simd_callee__ inline void asc_half2e5m2_rn(
     vector_fp8_e5m2_t& dst, vector_half src, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::EVEN>)
@@ -4484,19 +4471,6 @@ __simd_callee__ inline vector_fp8_e5m2_t asc_half2e5m2_rn_sat(
     return dst;
 }
 
-__simd_callee__ inline void asc_half2e5m2_rn_v2(vector_fp8_e5m2_t& dst, vector_half src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt(dst, src, mask, ROUND_R, RS_DISABLE, PART_ODD, MODE_ZEROING);
-    }
-}
-__simd_callee__ inline void asc_half2e5m2_rn_sat_v2(vector_fp8_e5m2_t& dst, vector_half src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt(dst, src, mask, ROUND_R, RS_ENABLE, PART_ODD, MODE_ZEROING);
-    }
-}
-
 __simd_callee__ inline void asc_e6m22bfloat16(
     vector_bfloat16_t& dst, vector_fp8_e6m2_t src, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::EVEN>)
@@ -4527,13 +4501,6 @@ __simd_callee__ inline vector_bfloat16_t asc_e6m22bfloat16(
     asc_e6m22bfloat16(dst, src, mask, src_pos);
     return dst;
 }
-__simd_callee__ inline void asc_e6m22bfloat16_v2(vector_bfloat16_t& dst, vector_fp8_e6m2_t src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt_e6m22bf16(dst, src, mask, PART_ODD);
-    }
-}
-
 __simd_callee__ inline void asc_e8m02bfloat16(
     vector_bfloat16_t& dst, vector_fp8_e8m0_t src, vector_bool mask,
     std::integral_constant<asc_position_mode, asc_position_mode::EVEN>)
@@ -4564,13 +4531,6 @@ __simd_callee__ inline vector_bfloat16_t asc_e8m02bfloat16(
     asc_e8m02bfloat16(dst, src, mask, src_pos);
     return dst;
 }
-__simd_callee__ inline void asc_e8m02bfloat16_v2(vector_bfloat16_t& dst, vector_fp8_e8m0_t src, vector_bool mask)
-{
-    if ASC_IS_AIV {
-        vcvt_e8m02bf16(dst, src, mask, PART_ODD);
-    }
-}
-
 // ==========asc_cast/asc_cast_merge half to e4m3==========
 
 __simd_callee__ inline void asc_cast(

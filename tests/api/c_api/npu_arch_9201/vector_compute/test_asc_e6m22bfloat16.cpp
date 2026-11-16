@@ -77,19 +77,6 @@ TEST(E6m2ToBf16, ReturnOdd)
     GlobalMockObject::verify();
 }
 
-TEST(E6m2ToBf16, V2)
-{
-    vector_fp8_e6m2_t src;
-    vector_bool mask;
-    vector_bfloat16_t dst;
-    MOCKER_CPP(vcvt_e6m22bf16, void(vector_bfloat16_t&, vector_fp8_e6m2_t, vector_bool, Literal))
-        .times(1)
-        .will(invoke(E6m2ToBf16OddStub));
-
-    asc_e6m22bfloat16_v2(dst, src, mask);
-    GlobalMockObject::verify();
-}
-
 TEST(AscCastE6m2ToBf16, Even)
 {
     vector_bfloat16_t dst;

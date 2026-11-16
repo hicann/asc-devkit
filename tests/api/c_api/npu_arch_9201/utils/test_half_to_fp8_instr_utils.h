@@ -76,33 +76,4 @@
         GlobalMockObject::verify();                                                                                \
     }
 
-#define TEST_HALF_TO_FP8_VCVT_V2(                                                                                  \
-    class_name, c_api_name, cce_name, dst_data_type, src_data_type, round, sat, part, mode)                        \
-                                                                                                                   \
-    namespace {                                                                                                    \
-    void class_name##V2Stub(                                                                                       \
-        dst_data_type&, src_data_type, vector_bool, Literal actual_round, Literal actual_sat, Literal actual_part, \
-        Literal actual_mode)                                                                                       \
-    {                                                                                                              \
-        EXPECT_EQ(actual_round, round);                                                                            \
-        EXPECT_EQ(actual_sat, sat);                                                                                \
-        EXPECT_EQ(actual_part, part);                                                                              \
-        EXPECT_EQ(actual_mode, mode);                                                                              \
-    }                                                                                                              \
-    }                                                                                                              \
-                                                                                                                   \
-    TEST(HalfToFp8V2, class_name)                                                                                  \
-    {                                                                                                              \
-        dst_data_type dst;                                                                                         \
-        src_data_type src;                                                                                         \
-        vector_bool mask;                                                                                          \
-                                                                                                                   \
-        MOCKER_CPP(cce_name, void(dst_data_type&, src_data_type, vector_bool, Literal, Literal, Literal, Literal)) \
-            .times(1)                                                                                              \
-            .will(invoke(class_name##V2Stub));                                                                     \
-                                                                                                                   \
-        c_api_name(dst, src, mask);                                                                                \
-        GlobalMockObject::verify();                                                                                \
-    }
-
 #endif
