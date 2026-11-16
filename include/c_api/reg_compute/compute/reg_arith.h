@@ -2365,6 +2365,83 @@ __simd_callee__ inline void asc_exp(vector_half& dst, vector_half src, vector_bo
  */
 __simd_callee__ inline void asc_exp(vector_float& dst, vector_float src, vector_bool mask);
 
+#if (ASC_DEVKIT_VERSION_NUM >= 90200000)
+/**
+ * @ingroup simd_c_api.reg_compute.reg_arith
+ * @brief Computes the elementwise natural exponential of the half src under mask control with the compile-time
+ * precision tag and returns the half result vector.
+ *
+ * @override_id asc_exp__vf16_vb_icexpprecisionnormal
+ * @archs 9201
+ * @param [in] src Source vector register of half elements.
+ * @param [in] mask Element mask; a bit of 1 lets that element participate in the computation and a bit of 0 zeroes the
+ * corresponding output element.
+ * @param [in] precision Compile-time precision tag of type std::integral_constant<asc_exp_precision,
+ * asc_exp_precision::NORMAL>; the half exponentiation is computed directly in half precision. Only compile-time
+ * constants such as ASC_EXP_PRECISION_NORMAL are accepted.
+ */
+__simd_callee__ inline vector_half asc_exp(
+    vector_half src, vector_bool mask, std::integral_constant<asc_exp_precision, asc_exp_precision::NORMAL> precision);
+
+/**
+ * @ingroup simd_c_api.reg_compute.reg_arith
+ * @brief Computes the elementwise natural exponential of the half src under mask control with the compile-time
+ * precision tag and returns the half result vector.
+ *
+ * @override_id asc_exp__vf16_vb_icexpprecisionhigh
+ * @archs 9201
+ * @param [in] src Source vector register of half elements; the selected elements are promoted to float for the
+ * exponentiation and then cast back to half.
+ * @param [in] mask Element mask; a bit of 1 lets that element participate in the computation and a bit of 0 zeroes the
+ * corresponding output element.
+ * @param [in] precision Compile-time precision tag of type std::integral_constant<asc_exp_precision,
+ * asc_exp_precision::HIGH>; the half source is promoted to float, exponentiated in float precision and the result is
+ * cast back to half with round-to-nearest and saturation. Only compile-time constants such as
+ * ASC_EXP_PRECISION_HIGH are accepted.
+ */
+__simd_callee__ inline vector_half asc_exp(
+    vector_half src, vector_bool mask, std::integral_constant<asc_exp_precision, asc_exp_precision::HIGH> precision);
+/**
+ * @ingroup simd_c_api.reg_compute.reg_arith
+ * @brief Computes the elementwise natural exponential of the half src under mask control with the compile-time
+ * precision tag and writes the half results to dst.
+ *
+ * @override_id asc_exp__Rvf16_vf16_vb_icexpprecisionnormal
+ * @archs 9201
+ * @param [out] dst Destination vector register that receives the half results.
+ * @param [in] src Source vector register of half elements.
+ * @param [in] mask Element mask; a bit of 1 lets that element participate in the computation and a bit of 0 zeroes the
+ * corresponding output element.
+ * @param [in] precision Compile-time precision tag of type std::integral_constant<asc_exp_precision,
+ * asc_exp_precision::NORMAL>; the half exponentiation is computed directly in half precision. Only compile-time
+ * constants such as ASC_EXP_PRECISION_NORMAL are accepted.
+ */
+__simd_callee__ inline void asc_exp(
+    vector_half& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_exp_precision, asc_exp_precision::NORMAL> precision);
+
+/**
+ * @ingroup simd_c_api.reg_compute.reg_arith
+ * @brief Computes the elementwise natural exponential of the half src under mask control with the compile-time
+ * precision tag and writes the half results to dst.
+ *
+ * @override_id asc_exp__Rvf16_vf16_vb_icexpprecisionhigh
+ * @archs 9201
+ * @param [out] dst Destination vector register that receives the half results.
+ * @param [in] src Source vector register of half elements; the selected elements are promoted to float for the
+ * exponentiation and then cast back to half.
+ * @param [in] mask Element mask; a bit of 1 lets that element participate in the computation and a bit of 0 zeroes the
+ * corresponding output element.
+ * @param [in] precision Compile-time precision tag of type std::integral_constant<asc_exp_precision,
+ * asc_exp_precision::HIGH>; the half source is promoted to float, exponentiated in float precision and the result is
+ * cast back to half with round-to-nearest and saturation. Only compile-time constants such as
+ * ASC_EXP_PRECISION_HIGH are accepted.
+ */
+__simd_callee__ inline void asc_exp(
+    vector_half& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_exp_precision, asc_exp_precision::HIGH> precision);
+#endif
+
 /**
  * @ingroup simd_c_api.reg_compute.reg_arith
  * @brief Adds the scalar value to each of the 256 int8_t elements of src that mask selects and writes the vector_int8_t

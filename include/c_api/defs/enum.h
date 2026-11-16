@@ -85,6 +85,14 @@ enum class asc_position_mode { EVEN = 0, ODD };
 constexpr std::integral_constant<asc_position_mode, asc_position_mode::EVEN> ASC_POSITION_EVEN;
 constexpr std::integral_constant<asc_position_mode, asc_position_mode::ODD> ASC_POSITION_ODD;
 
+enum class asc_exp_precision : uint8_t {
+    NORMAL = 0, // Half exponentiation is computed directly in half precision.
+    HIGH        // Half source is promoted to float, exponentiated and cast back to half.
+};
+
+constexpr std::integral_constant<asc_exp_precision, asc_exp_precision::NORMAL> ASC_EXP_PRECISION_NORMAL;
+constexpr std::integral_constant<asc_exp_precision, asc_exp_precision::HIGH> ASC_EXP_PRECISION_HIGH;
+
 enum class asc_position_quarter_mode {
     DISPERSE_FIRST_QUARTER = 0,
     DISPERSE_SECOND_QUARTER,

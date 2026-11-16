@@ -653,26 +653,30 @@ __aicore__ inline void asc_set_store_atomic_config_v1(uint16_t type, uint16_t op
 /**
  * @ingroup simd_c_api.atomic.scalar_atomic
  * @brief Reads back the currently configured atomic-operation enable bits and atomic-operation type into an
- * asc_store_atomic_config value.
+ * asc_store_atomic_config value. On 9201-architecture products this store-atomic configuration does not exist, so the
+ * interface is a no-op; use asc_atomic_add for scalar atomic addition instead.
  *
  * @override_id asc_get_store_atomic_config__Ratomiccfg
- * @archs 2201 3510
+ * @archs 2201 3510 9201
  * @param [out] config Reference receiving the current atomic type/op configuration; its config field packs a 3-bit
- * atomic_type and a 2-bit atomic_op.
+ * atomic_type and a 2-bit atomic_op. On 9201-architecture products it is not written, so it keeps the value it had
+ * before the call (0 for a default-initialized object).
  */
 __aicore__ inline void asc_get_store_atomic_config(asc_store_atomic_config& config);
 
 ASC_DEPRECATED(9.1.0, "2027/09/07", asc_atomic_add)
 /**
  * @ingroup simd_c_api.deprecated_interface
- * @brief Deprecated setter of the atomic-operation enable bits and atomic operation type.
+ * @brief Deprecated setter of the atomic-operation enable bits and atomic operation type. On 9201-architecture
+ * products this store-atomic configuration does not exist, so the interface is a no-op; use asc_atomic_add for scalar
+ * atomic addition instead.
  *
  * @override_id asc_set_store_atomic_config_v2__u16_u16
- * @archs 3510
+ * @archs 3510 9201
  * @param [in] type Atomic operation enable selector, where 1 enables int32_t, 4 half, 5 float, 7 bfloat16_t, 9 int16_t
- * and 10 int8_t atomic operations; all other values have no defined meaning.
+ * and 10 int8_t atomic operations; all other values have no defined meaning. Ignored on 9201-architecture products.
  * @param [in] op Atomic operation type, where 2 selects the summation operation; all other values have no defined
- * meaning.
+ * meaning. Ignored on 9201-architecture products.
  */
 __aicore__ inline void asc_set_store_atomic_config_v2(uint16_t type, uint16_t op);
 

@@ -225,6 +225,52 @@ __simd_callee__ inline void asc_min_merge(vector_float& dst, vector_float src0, 
     }
 }
 
+__simd_callee__ inline void asc_exp(
+    vector_half& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_exp_precision, asc_exp_precision::NORMAL>)
+{
+    if ASC_IS_AIV {
+        vexp(dst, src, mask, MODE_ZEROING);
+    }
+}
+
+__simd_callee__ inline void asc_exp(
+    vector_half& dst, vector_half src, vector_bool mask,
+    std::integral_constant<asc_exp_precision, asc_exp_precision::HIGH>)
+{
+    if ASC_IS_AIV {
+        vector_bool fullMask = pset_b16(PAT_ALL);
+        vector_float evenSrc;
+        vector_float oddSrc;
+        vector_half zero;
+
+        vcvt(evenSrc, src, fullMask, PART_EVEN, MODE_ZEROING);
+        vexp(evenSrc, evenSrc, fullMask, MODE_ZEROING);
+        vcvt(oddSrc, src, fullMask, PART_ODD, MODE_ZEROING);
+        vexp(oddSrc, oddSrc, fullMask, MODE_ZEROING);
+        vcvt(dst, evenSrc, fullMask, ROUND_R, RS_ENABLE, PART_EVEN, MODE_ZEROING);
+        vcvt(dst, oddSrc, fullMask, ROUND_R, RS_ENABLE, PART_ODD, MODE_MERGING);
+        vdup(zero, (half)0, fullMask, MODE_ZEROING);
+        vsel(dst, dst, zero, mask);
+    }
+}
+
+__simd_callee__ inline vector_half asc_exp(
+    vector_half src, vector_bool mask, std::integral_constant<asc_exp_precision, asc_exp_precision::NORMAL> precision)
+{
+    vector_half dst;
+    asc_exp(dst, src, mask, precision);
+    return dst;
+}
+
+__simd_callee__ inline vector_half asc_exp(
+    vector_half src, vector_bool mask, std::integral_constant<asc_exp_precision, asc_exp_precision::HIGH> precision)
+{
+    vector_half dst;
+    asc_exp(dst, src, mask, precision);
+    return dst;
+}
+
 #endif
 
 #if defined(UNDEF_ASCENDC_C_API_INCLUDE_COMPILER_INTERNAL_HEADERS_ASCENDC)
