@@ -148,7 +148,14 @@ __simd_callee__ inline void AddImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING, MaskMergeMode::MERGING>(),
         "current Add api only supported Mode ZEROING/MERGING on current device!");
-    AddOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    if constexpr ((SupportBytes<ActualT, 8>() || SupportType<ActualT, complex32>()) && mode == MaskMergeMode::MERGING) {
+        // B64/complex32 仍需要通过软仿实现MERGING模式
+        U dstCopyReg;
+        AddOperator<T, MaskMergeMode::ZEROING, U>(dstCopyReg, srcReg0, srcReg1, mask);
+        CopyMergingImpl(dstReg, dstCopyReg, mask);
+    } else {
+        AddOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    }
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
@@ -1625,7 +1632,14 @@ __simd_callee__ inline void MaxImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING, MaskMergeMode::MERGING>(),
         "current Max api only supported Mode ZEROING/MERGING on current device!");
-    MaxOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    if constexpr (SupportBytes<ActualT, 8>() && mode == MaskMergeMode::MERGING) {
+        // B64 仍需要通过软仿实现MERGING模式
+        U dstCopyReg;
+        MaxOperator<T, MaskMergeMode::ZEROING, U>(dstCopyReg, srcReg0, srcReg1, mask);
+        CopyMergingImpl(dstReg, dstCopyReg, mask);
+    } else {
+        MaxOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    }
 }
 
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
@@ -1647,7 +1661,14 @@ __simd_callee__ inline void MinImpl(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& 
     static_assert(
         SupportEnum<mode, MaskMergeMode::ZEROING, MaskMergeMode::MERGING>(),
         "current Min api only supported Mode ZEROING/MERGING on current device!");
-    MinOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    if constexpr (SupportBytes<ActualT, 8>() && mode == MaskMergeMode::MERGING) {
+        // B64 仍需要通过软仿实现MERGING模式
+        U dstCopyReg;
+        MinOperator<T, MaskMergeMode::ZEROING, U>(dstCopyReg, srcReg0, srcReg1, mask);
+        CopyMergingImpl(dstReg, dstCopyReg, mask);
+    } else {
+        MinOperator<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+    }
 }
 
 template <typename T = int32_t, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U, typename S>

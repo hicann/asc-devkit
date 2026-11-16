@@ -479,7 +479,6 @@ __aicore__ inline void DataCopyGM2L1Impl(
 template <typename T, typename Params>
 __aicore__ inline void SetMte2NzPara(const Params& intriParams)
 {
-    // loop2_dst_stride = dst_nz_n_stride; loop3_dst_stride = dst_nz_c0_stride
     // loop4_dst_stride: dst_nz_matrix_stride * size_of_dst_type / C0_size
     uint16_t loop4DstStride = static_cast<uint16_t>(intriParams.dstNzMatrixStride * sizeof(T) / ONE_BLK_SIZE);
     uint16_t matrixNum;
