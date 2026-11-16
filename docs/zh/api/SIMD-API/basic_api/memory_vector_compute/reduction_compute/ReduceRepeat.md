@@ -166,7 +166,7 @@
 ## 约束说明
 
 - 操作数地址重叠约束请参考[通用地址重叠约束](../../../general_description_and_constraints.md#通用地址重叠约束)。
-- 源操作数的地址对齐约束请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)，起始地址需要32字节对齐；目的操作数的起始地址对齐约束受操作数数据类型、`reduceType`和`order`参数的影响，请参考[表3](#tab3)。
+- 源操作数的地址对齐约束请参考[通用地址对齐约束](../../../general_description_and_constraints.md#通用地址对齐约束)，起始地址需要32字节对齐；目的操作数的起始地址对齐约束受操作数数据类型和`reduceType`参数的影响，请参考[表3](#tab3)。
 
     **表3**  目的操作数地址对齐约束及dstRepStride单位
 
@@ -181,12 +181,14 @@
     | --- | --- | --- | --- | --- |
     | MAX/MIN | `half` | `ORDER_VALUE_INDEX` | 4字节对齐 | 4字节 |
     | MAX/MIN | `half` | `ORDER_INDEX_VALUE` | 4字节对齐 | 4字节 |
-    | MAX/MIN | `half` | `ORDER_ONLY_VALUE` | 2字节对齐 | 2字节 |
+    | MAX/MIN | `half` | `ORDER_ONLY_VALUE` | 4字节对齐 | 2字节 |
     | MAX/MIN | `half` | `ORDER_ONLY_INDEX` | 4字节对齐 | 4字节 |
     | MAX/MIN | `float` | `ORDER_VALUE_INDEX` | 8字节对齐 | 8字节 |
     | MAX/MIN | `float` | `ORDER_INDEX_VALUE` | 8字节对齐 | 8字节 |
-    | MAX/MIN | `float` | `ORDER_ONLY_VALUE` | 4字节对齐 | 4字节 |
-    | MAX/MIN | `float` | `ORDER_ONLY_INDEX` | 4字节对齐 | 4字节 |
+    | MAX/MIN | `float` | `ORDER_ONLY_VALUE` | 8字节对齐 | 4字节 |
+    | MAX/MIN | `float` | `ORDER_ONLY_INDEX` | 8字节对齐 | 4字节 |
+
+    > **注意**：归约操作类型为MAX或MIN时，目的操作数的起始地址对齐要求固定为`2 * sizeof(T)`（`half`为4字节，`float`为8字节），与`order`参数取值无关。
 
 - `dstRepStride`、`srcBlkStride`、`srcRepStride`取值范围为[0, $2^{16}-1$]，需要结合Unified Buffer（UB）的实际大小避免出现越界。
 
