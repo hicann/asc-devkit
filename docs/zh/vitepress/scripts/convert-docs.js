@@ -56,6 +56,7 @@ const srcFigures = resolve(repoRoot, 'docs', 'zh', 'figures')
 const dstFigures = resolve(root, 'docs', 'figures')
 if (existsSync(srcFigures)) {
   console.log(`Copying figures/...`)
+  rmSync(dstFigures, { recursive: true, force: true })
   cpSync(srcFigures, dstFigures, { recursive: true })
   console.log(`  ${srcFigures} -> ${dstFigures}`)
 }

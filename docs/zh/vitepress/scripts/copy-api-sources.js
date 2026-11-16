@@ -48,12 +48,24 @@ const flatDir = path.join(outDir, 'files')
 fs.mkdirSync(flatDir, { recursive: true })
 
 const manifest = {}
+const expectedFiles = new Set()
 for (const src of files) {
   const rel = path.relative(apiDir, src).replace(/\\/g, '/')
   const hash = hashPath(rel)
   manifest[rel] = hash
-  const dest = path.join(flatDir, hash + '.md')
-  fs.copyFileSync(src, dest)
+  const fileName = hash + '.md'
+  expectedFiles.add(fileName)
+  fs.copyFileSync(src, path.join(flatDir, fileName))
+}
+
+// File names are hashed from the source path, so a renamed or deleted document
+// leaves its previous file behind. Prune those files, otherwise their stable
+// URLs keep serving removed content from every published release.
+let prunedCount = 0
+for (const name of fs.readdirSync(flatDir)) {
+  if (expectedFiles.has(name)) continue
+  fs.rmSync(path.join(flatDir, name), { recursive: true, force: true })
+  prunedCount++
 }
 
 fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf-8')
@@ -67,6 +79,7 @@ fs.writeFileSync(path.join(outDir, 'bundle.json'), JSON.stringify(bundle), 'utf-
 
 const bundleSize = (fs.statSync(path.join(outDir, 'bundle.json')).size / (1024 * 1024)).toFixed(1)
 console.log(`copied ${files.length} .md files to docs/public/api-source/files/`)
+console.log(`pruned ${prunedCount} stale file(s) from docs/public/api-source/files/`)
 console.log(`generated bundle.json (${bundleSize} MB) with ${Object.keys(bundle).length} entries`)
 
 const contribFiles = [
@@ -80,6 +93,10 @@ const contribFiles = [
 const contribSrcDir = path.resolve(repoRoot, 'docs', 'zh')
 const contribDstDir = path.resolve(root, 'docs')
 fs.mkdirSync(contribDstDir, { recursive: true })
+
+// The contributing/ trees are generated from the fixed list above; rebuild them
+// so removed entries do not survive as stale pages in the next build.
+fs.rmSync(path.join(contribDstDir, 'contributing'), { recursive: true, force: true })
 
 let copiedCount = 0
 for (const f of contribFiles) {
@@ -95,6 +112,7 @@ for (const f of contribFiles) {
 const contribEnDir = path.resolve(repoRoot, 'docs', 'en')
 const contribEnDst = path.resolve(root, 'docs', 'en')
 fs.mkdirSync(contribEnDst, { recursive: true })
+fs.rmSync(path.join(contribEnDst, 'contributing'), { recursive: true, force: true })
 
 for (const f of contribFiles) {
   const src = path.join(contribEnDir, f)

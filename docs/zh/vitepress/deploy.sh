@@ -209,6 +209,9 @@ deploy_nginx() {
     NGINX_RELEASES_ROOT="/usr/share/nginx/html/ascendc-docs-releases"
     NGINX_CURRENT="/usr/share/nginx/html/ascendc-docs-current"
     NGINX_PREVIOUS="/usr/share/nginx/html/ascendc-docs-previous"
+    # Legacy single-directory layout used before the release scheme. It is
+    # migrated away below so its old pages cannot keep being served.
+    NGINX_LEGACY_ROOT="/usr/share/nginx/html/ascendc-docs"
     NGINX_CONF="/etc/nginx/conf.d/ascendc-docs.conf"
 
     log "=== Nginx部署模式 ==="
@@ -345,12 +348,22 @@ NGINX_EOF
         fi
     done
 
-    # 检查服务状态
+    # 检查服务状态：不仅要求可访问，还要求内容与本次发布的 release 一致，
+    # 避免 nginx 仍指向旧目录/旧 release 时误报部署成功。
     sleep 1
-    if curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${NGINX_PORT}/" | grep -q "200\|301\|302"; then
+    HTTP_CODE="$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${NGINX_PORT}/index.html" || true)"
+    SERVED_INDEX="$(curl -s "http://127.0.0.1:${NGINX_PORT}/index.html" 2>/dev/null | sha256sum | awk '{print $1}' || true)"
+    RELEASE_INDEX="$(sha256sum "$RELEASE_DIR/index.html" | awk '{print $1}')"
+    if { [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; } && \
+       [ -n "$SERVED_INDEX" ] && [ "$SERVED_INDEX" = "$RELEASE_INDEX" ]; then
+        if [ -e "$NGINX_LEGACY_ROOT" ] && [ ! -L "$NGINX_LEGACY_ROOT" ]; then
+            log "清理旧版部署目录: $NGINX_LEGACY_ROOT"
+            rm -rf -- "$NGINX_LEGACY_ROOT"
+        fi
         log "部署成功! 访问地址: http://$(hostname -I 2>/dev/null | awk '{print $1}' || echo '127.0.0.1'):${NGINX_PORT}"
     else
-        warn "Nginx可能未正常启动，请手动检查"
+        err "部署校验失败: 实际返回内容与最新 release 不一致 (HTTP ${HTTP_CODE})，请检查 nginx 配置与 root"
+        exit 1
     fi
 }
 
