@@ -21,62 +21,62 @@
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
 __simd_callee__ inline void asc_shiftleft(
-    vector_uint64_t& dst, vector_uint64_t src0, vector_uint32_t shift, vector_bool mask)
+    vector_uint64_t& dst, vector_uint64_t src, vector_uint32_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshl(dst, src0, shift, mask, MODE_ZEROING);
+        vshl(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftleft(
-    vector_int64_t& dst, vector_int64_t src0, vector_uint32_t shift, vector_bool mask)
+    vector_int64_t& dst, vector_int64_t src, vector_uint32_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshl(dst, src0, shift, mask, MODE_ZEROING);
+        vshl(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
-__simd_callee__ inline vector_uint64_t asc_shiftleft(vector_uint64_t src0, vector_uint32_t shift, vector_bool mask)
+__simd_callee__ inline vector_uint64_t asc_shiftleft(vector_uint64_t src, vector_uint32_t shift, vector_bool mask)
 {
     vector_uint64_t dst;
-    asc_shiftleft(dst, src0, shift, mask);
+    asc_shiftleft(dst, src, shift, mask);
     return dst;
 }
 
-__simd_callee__ inline vector_int64_t asc_shiftleft(vector_int64_t src0, vector_uint32_t shift, vector_bool mask)
+__simd_callee__ inline vector_int64_t asc_shiftleft(vector_int64_t src, vector_uint32_t shift, vector_bool mask)
 {
     vector_int64_t dst;
-    asc_shiftleft(dst, src0, shift, mask);
+    asc_shiftleft(dst, src, shift, mask);
     return dst;
 }
 
 __simd_callee__ inline void asc_shiftright(
-    vector_uint64_t& dst, vector_uint64_t src0, vector_uint32_t shift, vector_bool mask)
+    vector_uint64_t& dst, vector_uint64_t src, vector_uint32_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshr(dst, src0, shift, mask, MODE_ZEROING);
+        vshr(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
 __simd_callee__ inline void asc_shiftright(
-    vector_int64_t& dst, vector_int64_t src0, vector_uint32_t shift, vector_bool mask)
+    vector_int64_t& dst, vector_int64_t src, vector_uint32_t shift, vector_bool mask)
 {
     if ASC_IS_AIV {
-        vshr(dst, src0, shift, mask, MODE_ZEROING);
+        vshr(dst, src, shift, mask, MODE_ZEROING);
     }
 }
 
-__simd_callee__ inline vector_uint64_t asc_shiftright(vector_uint64_t src0, vector_uint32_t shift, vector_bool mask)
+__simd_callee__ inline vector_uint64_t asc_shiftright(vector_uint64_t src, vector_uint32_t shift, vector_bool mask)
 {
     vector_uint64_t dst;
-    asc_shiftright(dst, src0, shift, mask);
+    asc_shiftright(dst, src, shift, mask);
     return dst;
 }
 
-__simd_callee__ inline vector_int64_t asc_shiftright(vector_int64_t src0, vector_uint32_t shift, vector_bool mask)
+__simd_callee__ inline vector_int64_t asc_shiftright(vector_int64_t src, vector_uint32_t shift, vector_bool mask)
 {
     vector_int64_t dst;
-    asc_shiftright(dst, src0, shift, mask);
+    asc_shiftright(dst, src, shift, mask);
     return dst;
 }
 

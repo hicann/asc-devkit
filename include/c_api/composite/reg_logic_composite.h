@@ -27,18 +27,18 @@
 #endif
 
 __simd_callee__ inline void asc_shiftleft(
-    vector_uint64_t& dst, vector_uint64_t src0, vector_uint32_t shift, vector_bool mask);
+    vector_uint64_t& dst, vector_uint64_t src, vector_uint32_t shift, vector_bool mask);
 __simd_callee__ inline void asc_shiftleft(
-    vector_int64_t& dst, vector_int64_t src0, vector_uint32_t shift, vector_bool mask);
-__simd_callee__ inline vector_uint64_t asc_shiftleft(vector_uint64_t src0, vector_uint32_t shift, vector_bool mask);
-__simd_callee__ inline vector_int64_t asc_shiftleft(vector_int64_t src0, vector_uint32_t shift, vector_bool mask);
+    vector_int64_t& dst, vector_int64_t src, vector_uint32_t shift, vector_bool mask);
+__simd_callee__ inline vector_uint64_t asc_shiftleft(vector_uint64_t src, vector_uint32_t shift, vector_bool mask);
+__simd_callee__ inline vector_int64_t asc_shiftleft(vector_int64_t src, vector_uint32_t shift, vector_bool mask);
 
 __simd_callee__ inline void asc_shiftright(
-    vector_uint64_t& dst, vector_uint64_t src0, vector_uint32_t shift, vector_bool mask);
+    vector_uint64_t& dst, vector_uint64_t src, vector_uint32_t shift, vector_bool mask);
 __simd_callee__ inline void asc_shiftright(
-    vector_int64_t& dst, vector_int64_t src0, vector_uint32_t shift, vector_bool mask);
-__simd_callee__ inline vector_uint64_t asc_shiftright(vector_uint64_t src0, vector_uint32_t shift, vector_bool mask);
-__simd_callee__ inline vector_int64_t asc_shiftright(vector_int64_t src0, vector_uint32_t shift, vector_bool mask);
+    vector_int64_t& dst, vector_int64_t src, vector_uint32_t shift, vector_bool mask);
+__simd_callee__ inline vector_uint64_t asc_shiftright(vector_uint64_t src, vector_uint32_t shift, vector_bool mask);
+__simd_callee__ inline vector_int64_t asc_shiftright(vector_int64_t src, vector_uint32_t shift, vector_bool mask);
 
 __simd_callee__ inline void asc_shiftleft_scalar(
     vector_uint64_t& dst, vector_uint64_t src, uint32_t shift, vector_bool mask);
