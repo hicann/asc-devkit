@@ -194,9 +194,10 @@ enum KfcReduceScatterSoleNhr2DieParamIndex : uint32_t {
     KFC_RS_SOLE_NHR_2DIE_PARAM_NUM = 29,
 };
 
-// SoleNHR（CcuSchedAllGatherSoleNHR）单帧 xnData 布局（N2 常量内联 + D4 双 die，13 槽）：
-//  [0]=INPUT 兼作轮次有效哨兵——server 仅检查 param[0] != INVALID_U64（真实地址必不等于），
-//  原 opId 槽纯哨兵用途（kernel 不接收 opId），故由 INPUT 占位。
+// SoleNHR（CcuSchedAllGatherSoleNHR）单帧 xnData 布局（N2 常量内联 + D4 双 die，14 槽）：
+//  [0]=opId 哨兵，参数从 1 顺排（RS SoleNHR 2Die 同口径）——server 仅检查 param[0] !=
+//  INVALID_U64 判定轮次有效（opId 为类型位域值必不等于；终止帧由 AIV Finalize 直接写
+//  INVALID_U64），kernel 不接收 opId，该槽纯哨兵用途。
 //  常量参数不占槽、由 kernel LoadNhr1DArgs 内联（sole executor 恒定）：
 //  die0LastSize=die0Size、repeatNum=1、三 stride=0。
 //  isInputOutputEqual 不占槽：in-place 时 AIV 将两 die 的 goSize 均按 0 字节计算
@@ -206,20 +207,21 @@ enum KfcReduceScatterSoleNhr2DieParamIndex : uint32_t {
 // AIV prepare（CcuPrepareForAllGatherSoleNhrM2M）写入、KFC dispatch 逐槽转发、
 // kernel 形参三处索引必须一致。
 enum KfcAllGatherSoleNhrParamIndex : uint32_t {
-    KFC_AG_SOLE_NHR_INPUT = 0,
-    KFC_AG_SOLE_NHR_OUTPUT = 1,
-    KFC_AG_SOLE_NHR_DIE0_SIZE = 2,
-    KFC_AG_SOLE_NHR_DIE1_SIZE = 3,
-    KFC_AG_SOLE_NHR_OUTPUT_SLICE_STRIDE = 4,
-    KFC_AG_SOLE_NHR_GO_D0_SIZE_0 = 5,
-    KFC_AG_SOLE_NHR_GO_D0_SIZE_1 = 6,
-    KFC_AG_SOLE_NHR_GO_D0_SIZE_2 = 7,
-    KFC_AG_SOLE_NHR_GO_D0_SIZE_3 = 8,
-    KFC_AG_SOLE_NHR_GO_D1_SIZE_0 = 9,
-    KFC_AG_SOLE_NHR_GO_D1_SIZE_1 = 10,
-    KFC_AG_SOLE_NHR_GO_D1_SIZE_2 = 11,
-    KFC_AG_SOLE_NHR_GO_D1_SIZE_3 = 12,
-    KFC_AG_SOLE_NHR_PARAM_NUM = 13,
+    KFC_AG_SOLE_NHR_OP_ID = 0,
+    KFC_AG_SOLE_NHR_INPUT = 1,
+    KFC_AG_SOLE_NHR_OUTPUT = 2,
+    KFC_AG_SOLE_NHR_DIE0_SIZE = 3,
+    KFC_AG_SOLE_NHR_DIE1_SIZE = 4,
+    KFC_AG_SOLE_NHR_OUTPUT_SLICE_STRIDE = 5,
+    KFC_AG_SOLE_NHR_GO_D0_SIZE_0 = 6,
+    KFC_AG_SOLE_NHR_GO_D0_SIZE_1 = 7,
+    KFC_AG_SOLE_NHR_GO_D0_SIZE_2 = 8,
+    KFC_AG_SOLE_NHR_GO_D0_SIZE_3 = 9,
+    KFC_AG_SOLE_NHR_GO_D1_SIZE_0 = 10,
+    KFC_AG_SOLE_NHR_GO_D1_SIZE_1 = 11,
+    KFC_AG_SOLE_NHR_GO_D1_SIZE_2 = 12,
+    KFC_AG_SOLE_NHR_GO_D1_SIZE_3 = 13,
+    KFC_AG_SOLE_NHR_PARAM_NUM = 14,
 };
 
 // SoleNHR（CcuSchedAllReduceSoleNHR）单帧 xnData 布局（die 切分 + reduce-scatter/all-gather 分片尺寸，9 槽）：

@@ -271,7 +271,7 @@ static void DispatchKfcSubKernel(
                 ctx.arg->nhrStepInfoVector, ctx.arg->nhrRank2ChannelIdx);
         } else if (ctx.arg->role == KfcServerRole::ALL_GATHER_SOLE_NHR) {
             // SoleNHR（CcuSchedAllGatherSoleNHR）单帧布局见 KfcAllGatherSoleNhrParamIndex
-            // （D4：13 槽，[0]=INPUT 兼作哨兵，常量参数 kernel 内联，双 die 参数 die1Size/GO_D1，
+            // （D4：14 槽，[0]=opId 哨兵，常量参数 kernel 内联，双 die 参数 die1Size/GO_D1，
             //  goSize 组按 kernelArg.axisId 选档；token 由 server ctx 注入；turnEndAddr 由
             //  server 传入，kernel 末步同步后、PostSync 前写 turn-end——D3）。
             const uint32_t goSizeBase =

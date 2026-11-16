@@ -396,6 +396,7 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         die0Size = sliceCount * ccuParam_.dieSplitRatioPermille / 1000U * dataTypeSize;
         die1Size = sliceSize - die0Size;
     }
+    xnData_[KFC_AG_SOLE_NHR_OP_ID] = GetOpId(commParam);
     xnData_[KFC_AG_SOLE_NHR_INPUT] = inputBase;
     xnData_[KFC_AG_SOLE_NHR_OUTPUT] = outputBase;
     xnData_[KFC_AG_SOLE_NHR_DIE0_SIZE] = die0Size;
