@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------------------------------------
 
 # 后续如果更新asc-comm代码需要同步更新至devkit run包需要更新change id
-set(ASC_COMM_TAG_ID 4e5cc2603f195cdff9b3ca5bdd7ac0a3395ed803)
+set(ASC_COMM_TAG_ID 3dd6e71d400765014348605aa198f0a47d0dee06)
 
 # asc-comm 与 asc-devkit 按同级目录放置。路径以本文件所在目录(<devkit>/cmake/third_party)为锚，
 # 对于CI环境已经存在asc-comm代码, 不去拉取代码否则使用submodule方式拉取asc-comm仓代码
@@ -132,8 +132,8 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
         install(TARGETS asccomm_ccu
             LIBRARY DESTINATION ${CMAKE_SYSTEM_PROCESSOR}-linux/lib64 ${INSTALL_OPTIONAL}
             COMPONENT asc-devkit)
-        install(DIRECTORY ${ASC_COMM_SOURCE_PATH}/include/ccu/hcomm/
-            DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api/ccu/hcomm
+        install(DIRECTORY ${ASC_COMM_SOURCE_PATH}/include/ccu/ccu_api/
+            DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api/ccu/ccu_api
             COMPONENT asc-devkit
             FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
         install(FILES ${ASC_COMM_SOURCE_PATH}/cmake/asccomm-config.cmake
@@ -158,7 +158,7 @@ if(EXISTS "${ASC_COMM_CCU_CMAKE_DIR}/CMakeLists.txt")
                 ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime.cpp
                 ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime_backend.cpp
                 ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_aot_adapter.cpp
-                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime_hcomm_backend.cpp)
+                ${ASC_COMM_CCU_CMAKE_DIR}/experimental/ccu_runtime_asccomm_backend.cpp)
             target_compile_features(ccu_runtime_static PRIVATE cxx_std_17)
             target_compile_options(ccu_runtime_static PRIVATE -Wall -Wextra -Werror)
             target_compile_definitions(ccu_runtime_static PRIVATE
