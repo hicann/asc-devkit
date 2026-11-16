@@ -155,18 +155,44 @@ def call_bisheng_v200_dynamic(param: SingleTilingKeyCompileParams, kernel_type):
     return dst_file, compile_cmd, section_content
 
 
+def _static_kernel_name(compile_info, kernel_type):
+    if kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AICORE, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE]:
+        return compile_info.kernel_name
+    return compile_info.get_kernel_func_name()
+
+
+def _append_static_kernel_defines(compile_cmd, compile_info, tiling_info, kernel_type):
+    kernel_name = _static_kernel_name(compile_info, kernel_type)
+    compile_cmd.append(f"-Dauto_gen_{compile_info.origin_func_name}_kernel={kernel_name}")
+    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
+        tiling_data = tiling_info.tiling_data
+        if isinstance(tiling_data, str):
+            tiling_data = tiling_data.encode("utf-8")
+        elif not tiling_data:
+            tiling_data = tiling_info.file_content.encode("utf-8")
+        tiling_hash = hashlib.sha256(tiling_data).hexdigest()[:8]
+        compile_cmd.append(
+            f"-D{compile_info.origin_func_name}="
+            f"{compile_info.origin_func_name}_{tiling_hash}_{tiling_info.tiling_key}_tilingkey"
+        )
+    compile_cmd.append(f"-D{TILING_KEY_MACRO}={tiling_info.tiling_key}UL")
+    return kernel_name
+
+
+def _write_static_dfx_source(compile_info, tiling_info, kernel_name):
+    sources = CommonUtility().ascendc_read_file(compile_info.gen_kernel_func_file)[:-1]
+    section = DFXSectionGenerator().generate_dfx_section(
+        str(tiling_info.tiling_key), tiling_info, kernel_name, compile_info, True
+    )
+    sources += section
+    sources += "#endif\n"
+    CommonUtility().ascendc_write_file(compile_info.gen_kernel_func_file, sources)
+
+
 def call_bisheng_v200_static(
     compile_info: CompileInfo, compile_option_tuple, tiling_info: TilingInfo, sub_arch: str, kernel_type: KernelMetaType
 ):
-    """generate static bisheng cmd instead of _build_aicore_compile_cmd
-        since tbe set davinci-m200-{sub_core} in build_cce.cc
-
-    Args:
-        compile_info (CompileInfo): compile info for generate .o and .json
-        compile_options (list): compile options for bisheng
-        tiling_info (TilingInfo): tiling info
-        sub_arch (str): davinci-m200-cube or davinci-m200-vec
-    """
+    """Generate the static V200 compile command and DFX source."""
     compile_cmd = gen_compile_cmd_v200(
         compile_info.gen_kernel_func_file,
         compile_info.dst_file,
@@ -174,35 +200,9 @@ def call_bisheng_v200_static(
         sub_arch,
         tiling_info.tiling_data_file_path,
     )
-    # tbe-pass add "__kernel0" in tbe-codegen and json, we use -D to change function name
-    if kernel_type in [KernelMetaType.KERNEL_TYPE_MIX_AICORE, KernelMetaType.KERNEL_TYPE_MIX_VECTOR_CORE]:
-        kernel_name = compile_info.kernel_name
-    else:
-        kernel_name = compile_info.get_kernel_func_name()
-    compile_cmd += [f"-Dauto_gen_{compile_info.origin_func_name}_kernel={kernel_name}"]
-    if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
-        tiling_data_hash_src = tiling_info.tiling_data
-        if isinstance(tiling_data_hash_src, str):
-            tiling_data_hash_src = tiling_data_hash_src.encode("utf-8")
-        elif not tiling_data_hash_src:
-            tiling_data_hash_src = tiling_info.file_content.encode("utf-8")
-        tiling_data_hash = hashlib.sha256(tiling_data_hash_src).hexdigest()[:8]
-        compile_cmd += [
-            f"-D{compile_info.origin_func_name}="
-            f"{compile_info.origin_func_name}_{tiling_data_hash}_{tiling_info.tiling_key}_tilingkey"
-        ]
-    compile_cmd += [f"-D{TILING_KEY_MACRO}={tiling_info.tiling_key}UL"]
+    kernel_name = _append_static_kernel_defines(compile_cmd, compile_info, tiling_info, kernel_type)
     add_op_system_run_cfg_option(
         compile_cmd, compile_info, tiling_info, tiling_info.tiling_key, sub_arch, definition_key=tiling_info.tiling_key
     )
-
-    sources = CommonUtility().ascendc_read_file(compile_info.gen_kernel_func_file)
-    new_sources = sources[:-1]
-    new_sources += DFXSectionGenerator().generate_dfx_section(
-        str(tiling_info.tiling_key), tiling_info, kernel_name, compile_info, True
-    )
-    new_sources += "#endif\n"
-    # add dfx info section to sourse file
-    CommonUtility().ascendc_write_file(compile_info.gen_kernel_func_file, new_sources)
+    _write_static_dfx_source(compile_info, tiling_info, kernel_name)
     CommonUtility.run_cmd_inner(compile_cmd, CompileStage.COMPILE, compile_info.compile_log_path)
-    return

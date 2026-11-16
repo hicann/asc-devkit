@@ -113,6 +113,7 @@ from .super_kernel_sub_op_compile import split_sub_kernel_objs, gen_sub_super_ke
 from .static_compile_resource_generator import KernelSpecCompilation, gen_sk_bind_source
 from .super_kernel_option_parse import parse_super_kernel_options
 from .kernel_info_infer import KernelInfoInfer
+from .kernel_signature import collect_kernel_arguments, render_super_kernel_signature
 from .ascendc_compile_utils import check_custom_dcci_end_false, check_if_gen_placehoder
 from .ascendc_compile_gen_json import (  # noqa: F401  后四项为兼容既有 UT 的导入路径而再导出
     TILING_KEY_SEARCH_KEYWORD,
@@ -196,8 +197,6 @@ def _gen_kernel_func_declare_head(
     # generate kernel function
     source = ""
     dfx_generator = DFXSectionGenerator()
-    func_params = []
-    super_kernel_params = []
     needs_ffts = (is_mix or is_single_and_using_hard_sync) and not (
         CommonUtility.is_c310()
         or CommonUtility.is_920r1()
@@ -205,48 +204,9 @@ def _gen_kernel_func_declare_head(
         or CommonUtility.is_m510()
         or CommonUtility.is_516r2()
     )
-    workspace_idx = 0
-    if needs_ffts:
-        func_params.append("GM_ADDR ffts_addr")
-        workspace_idx += 1
-        super_kernel_params.append("ffts_addr")
-        dfx_generator.insert_param(DFXArgInfo("ffts", DFXParamType.FFTS))
-
-    if opinfo.mc2_ctx:
-        for ctx_name in opinfo.mc2_ctx:
-            func_params.append("GM_ADDR {}".format(ctx_name))
-            workspace_idx += 1
-            super_kernel_params.append(str(ctx_name))
-            dfx_generator.insert_param(DFXArgInfo(ctx_name, DFXParamType.MC2CTX))
-
-    for input in opinfo.inputs:
-        if input is None:
-            continue
-        func_params.append("GM_ADDR {}".format(input["param_name"]))
-        workspace_idx += 1
-        super_kernel_params.append(input["param_name"])
-        dfx_generator.insert_param(DFXArgInfo(input["param_name"], DFXParamType.INPUT))
-
-    for output in opinfo.outputs:
-        if output is None:
-            continue
-        func_params.append("GM_ADDR {}".format(output["param_name"]))
-        workspace_idx += 1
-        super_kernel_params.append(output["param_name"])
-        dfx_generator.insert_param(DFXArgInfo(output["param_name"], DFXParamType.OUTPUT))
-
-    if opinfo.output_shape_depend_on_compute is not None and len(opinfo.output_shape_depend_on_compute) > 0:
-        func_params.append("GM_ADDR __ascendc_output_shape")
-        workspace_idx += 1
-        super_kernel_params.append("__ascendc_output_shape")
-        dfx_generator.insert_param(DFXArgInfo("shape_tensor", DFXParamType.SHAPE_TENSOR))
-        # modify point type for OutputShapeDependOnCompute output
-        for index in opinfo.output_shape_depend_on_compute:
-            parameter: DFXArgInfo = dfx_generator.get_param(opinfo.outputs[index]["param_name"])
-            parameter.point_type = DFXPointType.LEVEL_1_FOR_SHAPE_TENSOR
-        # for static shape, set size to max value, len(OutputShapeDependOnCompute output) * mix dim(8) * uint64_t(8)
-        if tiling_info.static_shape_flag:
-            dfx_generator.set_size_of_dfx_info("shape_tensor", len(opinfo.output_shape_depend_on_compute) * 8 * 8)
+    func_params, super_kernel_params, workspace_idx = collect_kernel_arguments(
+        needs_ffts, opinfo, tiling_info, dfx_generator
+    )
 
     # dynamic: must add workspace, static: if workspace_size >= 0 add workspace
     if not tiling_info.static_shape_flag or tiling_info.static_workspace_size >= 0:
@@ -259,21 +219,7 @@ def _gen_kernel_func_declare_head(
     if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
         global_var_storage.set_variable("ascendc_sub_super_kernel_params", super_kernel_params)
         context = get_context()
-        if context is None or context.get_addition("super_kernel_sub_combine") is not True:
-            called_func_params = "args_offset"
-            called_func_params_type = "uint64_t args_offset"
-            source += "uint64_t args_offset) {\n"
-            source += "    GM_ADDR *param_base = (GM_ADDR *)get_para_base();\n"
-            for param in func_params:
-                source += f"    {param} = param_base[args_offset++];\n"
-        else:
-            called_func_params = "param, sargs"
-            called_func_params_type = "__gm__ uint64_t *param, sk::SkSystemArgs *sargs"
-            source += "__gm__ uint64_t *param, sk::SkSystemArgs *sargs) {\n"
-            source += "    sargs->SkInit();\n"
-            source += "    uint32_t __asc_index = 0;\n"
-            for param in func_params:
-                source += f"    {param} = (GM_ADDR)param[__asc_index++];\n"
+        source, called_func_params, called_func_params_type = render_super_kernel_signature(func_params, context)
 
     else:
         param_metadata = build_kernel_param_metadata_from_formals(func_params)

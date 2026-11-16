@@ -162,7 +162,15 @@ class TestSkBindOptions(unittest.TestCase):
                 node
                 for node in tree.body
                 if isinstance(node, ast.FunctionDef)
-                and node.name in ("match_kernel_name_patern", "gen_gm_get_set_value_dcci_compile_options")
+                and node.name
+                in (
+                    "match_kernel_name_patern",
+                    "_get_dcci_option_lists",
+                    "_set_dcci_option_flags",
+                    "_set_dynamic_dcci_option_flags",
+                    "_should_skip_gm_dcci",
+                    "gen_gm_get_set_value_dcci_compile_options",
+                )
             ]
             flags = {}
             env = {

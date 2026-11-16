@@ -294,3 +294,39 @@ def test_direct_cli_forwards_kernel_spec_options(tmp_path):
     config.write_text(config.read_text().replace("float32", "float16"))
     subprocess.run(result.args, check=True, capture_output=True)
     assert marker.read_text() == "float32 resource"
+
+
+@pytest.mark.parametrize(
+    "option",
+    [
+        "--tiling_key",
+        "--tiling_key=",
+        "--tiling_key=abc",
+        "--tiling_key=1=2",
+        "--tiling_key=3-1",
+        "--tiling_key=1;bad",
+        "--tiling_key=1;",
+        "--tiling_key=-1",
+    ],
+)
+def test_invalid_tiling_key_reports_operator_and_option(tmp_path, option):
+    config = tmp_path / "opc.ini"
+    config.write_text("Add@ALL@" + option + "\n")
+    with pytest.raises(ValueError, match="Invalid --tiling_key.*Add") as error:
+        ascendc_bin_param_build.parse_op_debug_config(str(config), "ascend910b")
+    assert option in str(error.value)
+
+
+@pytest.mark.parametrize("option", ["--tiling_key_flag", "--tiling_key_flag=7", "--other=--tiling_key"])
+def test_similar_option_does_not_select_tiling_keys(tmp_path, option):
+    config = tmp_path / "opc.ini"
+    config.write_text("Add@ALL@" + option + "\n")
+    result = ascendc_bin_param_build.parse_op_debug_config(str(config), "ascend910b")
+    assert not result.tiling_key_info
+
+
+def test_tiling_key_ranges_merge_and_other_soc_is_ignored(tmp_path):
+    config = tmp_path / "opc.ini"
+    config.write_text("Add@ALL@--tiling_key=0;3-5\nAdd@ALL@--tiling_key=4;9\nAdd@ascend310p@--tiling_key\n")
+    result = ascendc_bin_param_build.parse_op_debug_config(str(config), "ascend910b")
+    assert result.tiling_key_info["Add"] == {0, 3, 4, 5, 9}

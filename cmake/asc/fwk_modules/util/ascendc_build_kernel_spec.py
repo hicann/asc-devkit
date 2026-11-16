@@ -22,10 +22,7 @@ from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
 import tempfile
-
-
-class BundleError(RuntimeError):
-    pass
+from kernel_spec_resources import BundleError, KernelSpecSourceMapper, _checked_path, _relative
 
 
 def task_directory(root, current_op_type, soc):
@@ -41,22 +38,6 @@ def load_build_context(config_path):
     if not isinstance(context, dict):
         raise BundleError("build configuration must be a JSON object")
     return context
-
-
-def _checked_path(value):
-    path = Path(os.path.abspath(value))
-    if any(parent.is_symlink() for parent in (path, *path.parents)):
-        raise BundleError(f"symlink is not permitted: {path}")
-    return path
-
-
-def _relative(value):
-    if not isinstance(value, str) or not value or "\\" in value or any(c in value for c in "\n\r\0"):
-        raise BundleError(f"invalid relative path: {value!r}")
-    path = PurePosixPath(value)
-    if path.is_absolute() or ".." in path.parts or path == PurePosixPath("."):
-        raise BundleError(f"path must stay below its root: {value}")
-    return path
 
 
 def _files(root, include_directories=False):
@@ -127,60 +108,6 @@ def _atomic_write(output, write):
     finally:
         if os.path.exists(name):
             os.unlink(name)
-
-
-class KernelSpecSourceMapper:
-    """Resolve source candidates to their installed paths."""
-
-    def __init__(self, source_map, source_file=()):
-        self.source_files = source_file
-        maps = {}
-        for source, installed in source_map:
-            root = _checked_path(source)
-            target = _relative(installed).as_posix()
-            if root in maps and maps[root] != target:
-                raise BundleError(f"conflicting source-map: {root}")
-            maps[root] = target
-        self.maps = sorted(maps.items(), key=lambda item: (-len(item[0].parts), str(item[0])))
-
-    def map_path(self, path):
-        for root, installed in self.maps:
-            try:
-                tail = path.relative_to(root)
-            except ValueError:
-                continue
-            return str(PurePosixPath(installed) / PurePosixPath(tail.as_posix()))
-        return None
-
-    def resolve(self, value, bound_source=None):
-        """Resolve only the referenced source; unrelated files do not need installation maps."""
-        relative = _relative(value)
-
-        def matches(path):
-            if len(relative.parts) == 1:
-                return path.name == value
-            return self.map_path(path) == relative.as_posix()
-
-        if bound_source is not None:
-            bound = _checked_path(bound_source)
-            candidates = {path for path in bound.rglob(relative.name) if matches(path)} if bound.is_dir() else {bound}
-            if not bound.is_dir() and not matches(bound):
-                raise BundleError(f"source_file does not match producer source: {value}: {bound_source}")
-        else:
-            candidates = set()
-            for source_value in self.source_files:
-                path = Path(os.path.abspath(source_value))
-                if matches(path):
-                    candidates.add(path)
-        if len(candidates) != 1:
-            raise BundleError(f"missing or ambiguous source_file {relative}: {len(candidates)} candidates")
-        source = _checked_path(candidates.pop())
-        if not source.is_file():
-            raise BundleError(f"source file is missing: {source}")
-        installed = self.map_path(source)
-        if installed is None:
-            raise BundleError(f"source file has no source-map: {source}")
-        return source, installed
 
 
 @dataclass
@@ -282,17 +209,8 @@ class KernelSpecBundleBuilder:
                 self.write_install_entry(install, output if exported else None)
             return exported
 
-    def _export(self, output, work):
-        mapper = KernelSpecSourceMapper(self.source_map, self.source_file)
-        units = self._collect(mapper)
-        if not units:
-            output.unlink(missing_ok=True)
-            output.with_suffix(output.suffix + ".cache.json").unlink(missing_ok=True)
-            return False
-        tools = {name: _tool(getattr(self, name)) for name in ("exporter", "cxx", "make")}
-        keep = _keep_temp(self.opc_config)
-        if self.jobs < 1:
-            raise BundleError("jobs must be positive")
+    @staticmethod
+    def _resource_fingerprint(units, tools):
         fingerprint = hashlib.sha256()
         for name, tool in sorted(tools.items()):
             fingerprint.update((name + str(tool) + _hash_file(tool)).encode())
@@ -305,8 +223,58 @@ class KernelSpecBundleBuilder:
                     fingerprint.update(json.dumps(["directory", relative]).encode())
                 else:
                     fingerprint.update(json.dumps(["file", relative, _hash_file(path)]).encode())
+        return fingerprint.hexdigest()
+
+    @staticmethod
+    def _stage_resource_units(units, bundle_dir):
+        collected = bundle_dir / "collected"
+        for index, (_resource_id, unit) in enumerate(units):
+            # Use private ordinal directories; resource IDs are data, never filesystem paths.
+            destination = collected / f"{index:08d}"
+            destination.mkdir(parents=True)
+            resource_path = unit.resource_root.relative_to(unit.manifest_path.parent)
+            shutil.copytree(unit.resource_root, destination / resource_path, symlinks=True)
+            (destination / "resource_manifest.json").write_bytes(unit.manifest_json)
+        return collected
+
+    def _run_exporter(self, tools, bundle_dir, collected, output, keep):
+        argv = [
+            str(tools["exporter"]),
+            "--input-dir",
+            str(collected),
+            "--output",
+            str(output),
+            "--cxx",
+            str(tools["cxx"]),
+            "--make",
+            str(tools["make"]),
+            "--jobs",
+            str(self.jobs),
+        ]
+        if keep:
+            argv.append("--save-temp-files")
+        env = dict(os.environ, TMPDIR=str(bundle_dir))
+        with open(bundle_dir / "build.log", "wb") as log:
+            result = subprocess.run(argv, stdout=log, stderr=subprocess.STDOUT, env=env, check=False)
+        if result.returncode:
+            with open(bundle_dir / "build.log", "rb") as log:
+                log.seek(max(0, log.seek(0, os.SEEK_END) - 8192))
+                detail = log.read().decode("utf-8", errors="replace")
+            raise BundleError(f"exporter failed ({result.returncode}): {detail}")
+
+    def _export(self, output, work):
+        mapper = KernelSpecSourceMapper(self.source_map, self.source_file)
+        units = self._collect(mapper)
+        if not units:
+            output.unlink(missing_ok=True)
+            output.with_suffix(output.suffix + ".cache.json").unlink(missing_ok=True)
+            return False
+        tools = {name: _tool(getattr(self, name)) for name in ("exporter", "cxx", "make")}
+        keep = _keep_temp(self.opc_config)
+        if self.jobs < 1:
+            raise BundleError("jobs must be positive")
+        signature = self._resource_fingerprint(units, tools)
         cache = _checked_path(output.with_suffix(output.suffix + ".cache.json"))
-        signature = fingerprint.hexdigest()
         if not keep and cache.is_file() and output.is_file():
             try:
                 saved = json.loads(cache.read_text(encoding="utf-8"))
@@ -316,37 +284,8 @@ class KernelSpecBundleBuilder:
                 return True
         bundle_dir = Path(tempfile.mkdtemp(prefix=".bundle-", dir=work))
         try:
-            collected = bundle_dir / "collected"
-            for index, (_resource_id, unit) in enumerate(units):
-                # Use private ordinal directories; resource IDs are data, never filesystem paths.
-                destination = collected / f"{index:08d}"
-                destination.mkdir(parents=True)
-                resource_path = unit.resource_root.relative_to(unit.manifest_path.parent)
-                shutil.copytree(unit.resource_root, destination / resource_path, symlinks=True)
-                (destination / "resource_manifest.json").write_bytes(unit.manifest_json)
-            argv = [
-                str(tools["exporter"]),
-                "--input-dir",
-                str(collected),
-                "--output",
-                str(output),
-                "--cxx",
-                str(tools["cxx"]),
-                "--make",
-                str(tools["make"]),
-                "--jobs",
-                str(self.jobs),
-            ]
-            if keep:
-                argv.append("--save-temp-files")
-            env = dict(os.environ, TMPDIR=str(bundle_dir))
-            with open(bundle_dir / "build.log", "wb") as log:
-                result = subprocess.run(argv, stdout=log, stderr=subprocess.STDOUT, env=env, check=False)
-            if result.returncode:
-                with open(bundle_dir / "build.log", "rb") as log:
-                    log.seek(max(0, log.seek(0, os.SEEK_END) - 8192))
-                    detail = log.read().decode("utf-8", errors="replace")
-                raise BundleError(f"exporter failed ({result.returncode}): {detail}")
+            collected = self._stage_resource_units(units, bundle_dir)
+            self._run_exporter(tools, bundle_dir, collected, output, keep)
             # asc_compile_exporter owns atomic publication and cross-filesystem handling.
             if not output.is_file():
                 raise BundleError(f"exporter succeeded without publishing output: {output}")

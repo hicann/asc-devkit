@@ -181,11 +181,7 @@ class CompileKernel:
                 self.clean()
                 raise RuntimeError("prepare json file aic-{}-ops-info.json failed!".format(self.op_soc_ver))
 
-    def ascendc_build(self: any):
-        op_info = ascendc_op_info.OpInfo(self.op_type, self.op_cfg_ini)
-        op_file = op_info.get_op_file()
-        op_bin_dir = os.path.join(self.op_output, self.op_soc_ver, op_file)
-        os.makedirs(op_bin_dir, exist_ok=True)
+    def _write_makefile(self, op_file):
         all_tar = []
         sub_cmd = []
         index = 0
@@ -202,6 +198,9 @@ class CompileKernel:
             sub_cmd.insert(0, "all: " + " ".join(all_tar))
             fd.write("\n".join(sub_cmd))
 
+        return mkfile
+
+    def _run_make(self, mkfile, op_bin_dir):
         if os.getenv("TILINGKEY_PAR_COMPILE") is None:
             cmd_str = (
                 "export HI_PYTHON=python3 && export ASCEND_CUSTOM_OPP_PATH={} && export TILINGKEY_PAR_COMPILE=1"
@@ -236,6 +235,13 @@ class CompileKernel:
             raise RuntimeError(
                 "Kernel Compilation Error: OpType {} Kernel File {}!".format(self.op_type, self.op_cpp_file)
             )
+
+    def ascendc_build(self: any):
+        op_info = ascendc_op_info.OpInfo(self.op_type, self.op_cfg_ini)
+        op_file = op_info.get_op_file()
+        op_bin_dir = os.path.join(self.op_output, self.op_soc_ver, op_file)
+        os.makedirs(op_bin_dir, exist_ok=True)
+        self._run_make(self._write_makefile(op_file), op_bin_dir)
 
     def record_kernel_spec_result(self, status, reason=""):
         """Publish this producer's result and source selection in one record."""

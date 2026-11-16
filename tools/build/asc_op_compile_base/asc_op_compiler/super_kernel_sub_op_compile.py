@@ -42,61 +42,56 @@ def match_kernel_name_patern(op_type, op_list, use_regex=False):
     return op_type in op_list
 
 
+def _get_dcci_option_lists(compile_info):
+    sp_options = compile_info.super_kernel_info["sp_options"]
+    return {
+        "before": [
+            value.strip() for value in sp_options.get("dcci-before-kernel-start", "").split(",") if value.strip()
+        ],
+        "after": [value.strip() for value in sp_options.get("dcci-after-kernel-end", "").split(",") if value.strip()],
+        "disable": [
+            value.strip() for value in sp_options.get("dcci-disable-on-kernel", "").split(",") if value.strip()
+        ],
+    }
+
+
+def _set_dcci_option_flags(match_key, option_lists, use_regex):
+    option_flags = (
+        ("before", "ascendc_sub_super_kernel_call_dcci_before_kernel_start"),
+        ("after", "ascendc_sub_super_kernel_call_dcci_after_kernel_end"),
+        ("disable", "ascendc_sub_super_kernel_call_dcci_disable_on_kernel"),
+    )
+    for option_name, variable_name in option_flags:
+        if match_kernel_name_patern(match_key, option_lists[option_name], use_regex):
+            global_var_storage.set_variable(variable_name, True)
+
+
+def _set_dynamic_dcci_option_flags():
+    global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_before_kernel_start", True)
+    global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_after_kernel_end", True)
+    global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_disable_on_kernel", False)
+
+
+def _should_skip_gm_dcci(compile_info, option_lists, is_sub_combine):
+    if is_sub_combine:
+        return match_kernel_name_patern(
+            compile_info.kernel_name, option_lists["before"], use_regex=True
+        ) or match_kernel_name_patern(compile_info.kernel_name, option_lists["after"], use_regex=True)
+    return compile_info.op_type in (option_lists["disable"] + option_lists["before"] + option_lists["after"])
+
+
 def gen_gm_get_set_value_dcci_compile_options(compile_option_tuple, compile_info, is_static_shape):
     if not is_static_shape:
-        # dynamic op runs offline compilation, dcci-before-kernel-start can not modify offline compilation
-        # so call dcci before and after kernel by default, remove dcci in gm Get/SetValue
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_before_kernel_start", True)
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_after_kernel_end", True)
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_disable_on_kernel", False)
+        # Dynamic ops use dcci before and after the kernel by default.
+        _set_dynamic_dcci_option_flags()
         return
 
-    dcci_before_kernel_start_op_list = [
-        part_op.strip()
-        for part_op in compile_info.super_kernel_info["sp_options"].get("dcci-before-kernel-start", "").split(",")
-        if part_op.strip()
-    ]
-    dcci_after_kernel_end_op_list = [
-        part_op.strip()
-        for part_op in compile_info.super_kernel_info["sp_options"].get("dcci-after-kernel-end", "").split(",")
-        if part_op.strip()
-    ]
-    dcci_disable_on_kernel_op_list = [
-        part_op.strip()
-        for part_op in compile_info.super_kernel_info["sp_options"].get("dcci-disable-on-kernel", "").split(",")
-        if part_op.strip()
-    ]
-
+    option_lists = _get_dcci_option_lists(compile_info)
     is_sub_combine = get_context().get_addition("super_kernel_sub_combine") is True
     match_key = compile_info.kernel_name if is_sub_combine else compile_info.op_type
-    if match_kernel_name_patern(match_key, dcci_before_kernel_start_op_list, use_regex=is_sub_combine):
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_before_kernel_start", True)
-    if match_kernel_name_patern(match_key, dcci_after_kernel_end_op_list, use_regex=is_sub_combine):
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_after_kernel_end", True)
-    disable_dcci_matched = match_kernel_name_patern(match_key, dcci_disable_on_kernel_op_list, use_regex=is_sub_combine)
-    if disable_dcci_matched:
-        global_var_storage.set_variable("ascendc_sub_super_kernel_call_dcci_disable_on_kernel", True)
-
-    if is_sub_combine:
-        # For aclgraph+sk workflow (super_kernel_sub_combine), dcci_disable_on_kernel will not disable sub kernel
-        # gm set get value dcci
-        if match_kernel_name_patern(
-            compile_info.kernel_name, dcci_before_kernel_start_op_list, use_regex=True
-        ) or match_kernel_name_patern(compile_info.kernel_name, dcci_after_kernel_end_op_list, use_regex=True):
-            # do not call dcci in global tensor get set value, call dcci-all before or after sub kernel
-            return
-    else:
-        if (
-            compile_info.op_type in dcci_disable_on_kernel_op_list
-            or compile_info.op_type in dcci_before_kernel_start_op_list
-            or compile_info.op_type in dcci_after_kernel_end_op_list
-        ):
-            # do not call dcci in global tensor get set value, call dcci-all before or after sub kernel
-            return
-
-    # dcci-all before sub op end has been removed in sk, so call dcci in global tensor get set value by default
-    # in case of performance degradation, try dcci-before-kernel-start or dcci-after-kernel-end or
-    # dcci-disable-on-kernel options
+    _set_dcci_option_flags(match_key, option_lists, use_regex=is_sub_combine)
+    if _should_skip_gm_dcci(compile_info, option_lists, is_sub_combine):
+        return
     if is_sub_combine and compile_info.super_kernel_info["sp_options"].get("dcci-disable-on-kernel", "") == "":
         return
     compile_option_tuple.compile_options.append("-D__ASCENDC_SUPER_KERNEL_ENABLE_GM_GET_SET_VALUE_DCCI__")
