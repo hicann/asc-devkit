@@ -18,14 +18,17 @@ import numpy as np
 
 TOTAL_M = 256
 TOTAL_N = 32
-COEFF_LINEAR = -1.595769
-COEFF_CUBIC = -0.071405
+COEFF_TANH_CUBIC = 0.044715
+CHECK_INPUTS = np.array([-3, -2, -1, 0, 1, 2, 3], dtype=np.float32)
 
 
 def gen_golden_data_simple():
     input_x = np.random.uniform(-10, 10, [TOTAL_M, TOTAL_N]).astype(np.float32)
-    exponent = COEFF_LINEAR * input_x + COEFF_CUBIC * (input_x**3)
-    golden = input_x / (1 + np.exp(exponent))
+    input_x.flat[: CHECK_INPUTS.size] = CHECK_INPUTS
+    # Independent reference: evaluate the original tanh approximation in float64.
+    reference_x = input_x.astype(np.float64)
+    tanh_arg = np.sqrt(2 / np.pi) * (reference_x + COEFF_TANH_CUBIC * reference_x**3)
+    golden = 0.5 * reference_x * (1 + np.tanh(tanh_arg))
 
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)

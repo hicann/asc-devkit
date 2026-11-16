@@ -13,8 +13,16 @@ $$
 对公式进行简化，采用如下方式展开为具体的向量运算步骤：
 
 $$
-GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071405 \cdot x^3}}
+GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071355 \cdot x^3}}
 $$
+
+**系数推导与精度校验**：
+
+令$a=-2\sqrt{2/\pi}$，则三次项系数为$a\times0.044715\approx-0.07135481627260025$。沿用样例中的线性系数`-1.595769f`时，三次项系数通过`COEFF_LINEAR * COEFF_TANH_CUBIC`在编译期计算，避免手写预乘常量引入偏差。上式中的`-0.071355`仅为保留六位小数的展示值。
+
+`scripts/gen_data.py`使用NumPy以float64精度计算原始tanh近似式，再转换为float32生成golden，不复用kernel的展开系数。输入包含固定校验点`[-3, -2, -1, 0, 1, 2, 3]`，其余数据在`[-10, 10]`内随机生成。按“样例执行”中的命令运行后，`scripts/verify_result.py`以`rtol=1e-4`、`atol=1e-5`逐元素比较，允许的不满足容差元素比例不超过`1e-4`。
+
+此校验检查实现与GELU的tanh近似式是否一致，不代表与基于erf定义的精确GELU完全相同。
 
 **输入/输出定义**：
 
@@ -61,8 +69,11 @@ $$
 
 ```cpp
 // GELU 公式系数
+// -2 * sqrt(2 / pi), rounded to six decimal places.
 constexpr float COEFF_LINEAR = -1.595769f;
-constexpr float COEFF_CUBIC = -0.071405f;
+constexpr float COEFF_TANH_CUBIC = 0.044715f;
+// Derive the expanded cubic coefficient at compile time (approximately -0.07135481).
+constexpr float COEFF_CUBIC = COEFF_LINEAR * COEFF_TANH_CUBIC;
 
 // VF 函数：在寄存器中完成 GELU 逐步计算
 __simd_vf__ inline static void GeluVfMethod2(
@@ -79,9 +90,9 @@ __simd_vf__ inline static void GeluVfMethod2(
         AscendC::Reg::LoadAlign(xReg, xAddr + i * oneRepeatSize);   // UB → 寄存器
         AscendC::Reg::Mul(yReg, xReg, xReg, mask);                  // x²
         AscendC::Reg::Mul(yReg, yReg, xReg, mask);                  // x³
-        AscendC::Reg::Muls(yReg, yReg, COEFF_CUBIC, mask);          // -0.071405 * x³
+        AscendC::Reg::Muls(yReg, yReg, COEFF_CUBIC, mask);          // -0.07135481 * x³
         AscendC::Reg::Muls(tmpReg, xReg, COEFF_LINEAR, mask);       // -1.595769 * x
-        AscendC::Reg::Add(yReg, tmpReg, yReg, mask);                // -1.595769x - 0.071405x³
+        AscendC::Reg::Add(yReg, tmpReg, yReg, mask);                // -1.595769x - 0.07135481x³
         AscendC::Reg::Exp(yReg, yReg, mask);                        // exp(...)
         AscendC::Reg::Adds(yReg, yReg, 1.0f, mask);                 // 1 + exp(...)
         AscendC::Reg::Div(yReg, xReg, yReg, mask);                  // x / (1 + exp(...))

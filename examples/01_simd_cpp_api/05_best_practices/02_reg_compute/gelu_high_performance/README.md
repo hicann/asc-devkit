@@ -58,6 +58,14 @@ $$
 
 本样例以公式（3）进行编程计算，用户在设计向量算子时，需要考虑对原始计算进行化简，可以有效减少计算步骤和内存占用。
 
+**系数推导与精度校验**：
+
+令$a=-2\sqrt{2/\pi}$，则三次项系数为$a\times0.044715\approx-0.07135481627260025$。本样例的kernel采用因式分解形式，依次乘以`0.044715f`、加上输入、再乘以`-1.595769f`，避免手写预乘常量。下文方式2中的`-0.071355`仅为保留六位小数的展示值。
+
+`scripts/gen_data.py`使用NumPy以float64精度计算原始tanh近似式，再转换为float32生成golden，不复用kernel的展开系数。输入包含固定校验点`[-3, -2, -1, 0, 1, 2, 3]`，其余数据在`[-10, 10]`内随机生成。按“编译运行”中的命令运行后，`scripts/verify_result.py`以`rtol=1e-4`、`atol=1e-5`逐元素比较，允许的不满足容差元素比例不超过`1e-4`。
+
+此校验检查实现与GELU的tanh近似式是否一致，不代表与基于erf定义的精确GELU完全相同。
+
 ## 计算步骤分析
 
 为说明公式化简对算子性能的影响，对比三种不同的Gelu计算实现方式。
@@ -71,7 +79,7 @@ $$
 **方式2：**
 
 $$
-GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071405 \cdot x^3}}
+GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071355 \cdot x^3}}
 $$
 
 **方式3：**
@@ -112,10 +120,10 @@ $$
 |:---:|:---|:---:|:---|
 | 1 | yLocal = x² | Mul | xLocal, yLocal |
 | 2 | yLocal = x³ | Mul | xLocal, yLocal |
-| 3 | yLocal = -0.071405 * x³ | Muls | yLocal |
+| 3 | yLocal = -0.071355 * x³ | Muls | yLocal |
 | 4 | tmp0 = -1.595769 * x | Muls | tmp0, xLocal |
-| 5 | yLocal = -1.595769 * x + (-0.071405 * x³) | Add | yLocal, tmp0 |
-| 6 | yLocal = e^(-1.595769 * x - 0.071405 * x³) | Exp | yLocal |
+| 5 | yLocal = -1.595769 * x + (-0.071355 * x³) | Add | yLocal, tmp0 |
+| 6 | yLocal = e^(-1.595769 * x - 0.071355 * x³) | Exp | yLocal |
 | 7 | yLocal = 1 + e^(...) | Adds | yLocal |
 | 8 | yLocal = x / (1 + e^(...)) | Div | yLocal, xLocal |
 

@@ -13,8 +13,16 @@ $$
 Simplifying the formula, it expands into specific vector computation steps as follows:
 
 $$
-GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071405 \cdot x^3}}
+GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071355 \cdot x^3}}
 $$
+
+**Coefficient derivation and accuracy verification**:
+
+Let $a=-2\sqrt{2/\pi}$. The cubic coefficient is $a\times0.044715\approx-0.07135481627260025$. With the example's rounded linear coefficient `-1.595769f`, the cubic coefficient is computed at compile time as `COEFF_LINEAR * COEFF_TANH_CUBIC` to avoid manually precomputing it. The value `-0.071355` in the formula above is rounded to six decimal places for display only.
+
+`scripts/gen_data.py` evaluates the original tanh approximation in NumPy float64 and converts the result to float32 for the golden data, independently of the kernel's expanded coefficients. The input includes fixed checkpoints `[-3, -2, -1, 0, 1, 2, 3]`; the remaining values are sampled uniformly from `[-10, 10]`. After running the commands in the execution section, `scripts/verify_result.py` compares elements with `rtol=1e-4` and `atol=1e-5`, allowing at most a `1e-4` fraction of elements outside these tolerances.
+
+This checks consistency with the tanh approximation of GELU, rather than exact equality with GELU defined using erf.
 
 **Input/Output Definition**:
 
@@ -61,8 +69,11 @@ This example follows the execution flow of "copy in — synchronize — compute 
 
 ```cpp
 // GELU formula coefficients
+// -2 * sqrt(2 / pi), rounded to six decimal places.
 constexpr float COEFF_LINEAR = -1.595769f;
-constexpr float COEFF_CUBIC = -0.071405f;
+constexpr float COEFF_TANH_CUBIC = 0.044715f;
+// Derive the expanded cubic coefficient at compile time (approximately -0.07135481).
+constexpr float COEFF_CUBIC = COEFF_LINEAR * COEFF_TANH_CUBIC;
 
 // VF function: Complete GELU step-by-step computation in registers
 __simd_vf__ inline static void GeluVfMethod2(
@@ -79,9 +90,9 @@ __simd_vf__ inline static void GeluVfMethod2(
         AscendC::Reg::LoadAlign(xReg, xAddr + i * oneRepeatSize);   // UB → Register
         AscendC::Reg::Mul(yReg, xReg, xReg, mask);                  // x²
         AscendC::Reg::Mul(yReg, yReg, xReg, mask);                  // x³
-        AscendC::Reg::Muls(yReg, yReg, COEFF_CUBIC, mask);          // -0.071405 * x³
+        AscendC::Reg::Muls(yReg, yReg, COEFF_CUBIC, mask);          // -0.07135481 * x³
         AscendC::Reg::Muls(tmpReg, xReg, COEFF_LINEAR, mask);       // -1.595769 * x
-        AscendC::Reg::Add(yReg, tmpReg, yReg, mask);                // -1.595769x - 0.071405x³
+        AscendC::Reg::Add(yReg, tmpReg, yReg, mask);                // -1.595769x - 0.07135481x³
         AscendC::Reg::Exp(yReg, yReg, mask);                        // exp(...)
         AscendC::Reg::Adds(yReg, yReg, 1.0f, mask);                 // 1 + exp(...)
         AscendC::Reg::Div(yReg, xReg, yReg, mask);                  // x / (1 + exp(...))

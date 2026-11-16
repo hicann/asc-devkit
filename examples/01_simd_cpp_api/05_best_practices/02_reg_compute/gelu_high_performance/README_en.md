@@ -58,6 +58,14 @@ Where $-2 \cdot \sqrt{\frac{2}{\pi}} \approx -1.595769$.
 
 This example uses formula (3) for programming computation. When designing vector operators, users should consider simplifying the original computation to effectively reduce computation steps and memory usage.
 
+**Coefficient derivation and accuracy verification**:
+
+Let $a=-2\sqrt{2/\pi}$. The cubic coefficient is $a\times0.044715\approx-0.07135481627260025$. The kernel uses the factored form: multiply by `0.044715f`, add the input, then multiply by `-1.595769f`. This avoids manually precomputing the cubic coefficient. The value `-0.071355` in Method 2 below is rounded to six decimal places for display only.
+
+`scripts/gen_data.py` evaluates the original tanh approximation in NumPy float64 and converts the result to float32 for the golden data, independently of the kernel's expanded coefficients. The input includes fixed checkpoints `[-3, -2, -1, 0, 1, 2, 3]`; the remaining values are sampled uniformly from `[-10, 10]`. After running the commands in the execution section, `scripts/verify_result.py` compares elements with `rtol=1e-4` and `atol=1e-5`, allowing at most a `1e-4` fraction of elements outside these tolerances.
+
+This checks consistency with the tanh approximation of GELU, rather than exact equality with GELU defined using erf.
+
 ## Computation Step Analysis
 
 To illustrate the impact of formula simplification on operator performance, three different Gelu computation implementations are compared.
@@ -71,7 +79,7 @@ $$
 **Method 2:**
 
 $$
-GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071405 \cdot x^3}}
+GELU(x) \approx \frac{x}{1 + e^{-1.595769 \cdot x - 0.071355 \cdot x^3}}
 $$
 
 **Method 3:**
@@ -112,10 +120,10 @@ Let input UB memory be xLocal, output UB memory be yLocal, and temporary UB memo
 |:---:|:---|:---:|:---|
 | 1 | yLocal = x² | Mul | xLocal, yLocal |
 | 2 | yLocal = x³ | Mul | xLocal, yLocal |
-| 3 | yLocal = -0.071405 * x³ | Muls | yLocal |
+| 3 | yLocal = -0.071355 * x³ | Muls | yLocal |
 | 4 | tmp0 = -1.595769 * x | Muls | tmp0, xLocal |
-| 5 | yLocal = -1.595769 * x + (-0.071405 * x³) | Add | yLocal, tmp0 |
-| 6 | yLocal = e^(-1.595769 * x - 0.071405 * x³) | Exp | yLocal |
+| 5 | yLocal = -1.595769 * x + (-0.071355 * x³) | Add | yLocal, tmp0 |
+| 6 | yLocal = e^(-1.595769 * x - 0.071355 * x³) | Exp | yLocal |
 | 7 | yLocal = 1 + e^(...) | Adds | yLocal |
 | 8 | yLocal = x / (1 + e^(...)) | Div | yLocal, xLocal |
 
