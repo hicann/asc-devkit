@@ -14,6 +14,7 @@
 | [batch_matmul_tensor_api](./batch_matmul_tensor_api) | 基于Tensor API编程方式实现带Bias的Batch Matmul计算 | Ascend 950PR&950DT系列产品 |
 | [conv2d_forward_tensor_api](./conv2d_forward_tensor_api) | 基于Tensor API实现Conv2D Forward计算，支持NC1HWC0、NCHW和NHWC三种GM输入/输出格式 | Ascend 950PR&950DT系列产品 |
 | [mmad_tensor_api](./mmad_tensor_api) | 基于Tensor API实现动态Shape矩阵乘法和随路量化计算 | Ascend 950PR&950DT系列产品 |
+| [quant_matmul](./quant_matmul) | 基于Tensor API实现AIC:AIV为1:2的QuantMatmul样例 | Ascend 950PR&950DT系列产品 |
 | [matmul_mxfp4_tensor_api_high_performance](./matmul_mxfp4_tensor_api_high_performance) | MxFP4 Matmul Tensor API高性能样例，展示基于静态Tensor编程的高性能实现路径 | Ascend 950PR&950DT系列产品 |
 | [custom_op_tensor_api](./custom_op_tensor_api) | 基于自定义Tensor API Copy Operation实现batch输入展平和共享权重QKV投影 | Ascend 950PR&950DT系列产品 |
 | [bank_conflict](./bank_conflict) | 基于Tensor API介绍bank冲突及规避方式 | Ascend 950PR&950DT系列产品 |

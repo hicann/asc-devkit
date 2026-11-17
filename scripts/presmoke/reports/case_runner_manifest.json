@@ -15293,6 +15293,33 @@
     ]
   },
   {
+    "case": "01_simd_cpp_api/07_tensor_api/quant_matmul",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/07_tensor_api/quant_matmul/run.sh",
+    "source": "readme",
+    "confidence": "high",
+    "source_case": "01_simd_cpp_api/07_tensor_api/quant_matmul",
+    "supported_archs": [
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu",
+      "sim"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [],
+    "commands": [
+      "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-3510",
+      "make -j",
+      "python3 ../scripts/gen_data.py",
+      "./demo",
+      "python3 ../scripts/verify_result.py output/output.bin output/golden.bin"
+    ]
+  },
+  {
     "case": "02_simd_c_api/00_introduction/00_quickstart/hello_world_npu",
     "runner": "scripts/presmoke/cases/02_simd_c_api/00_introduction/00_quickstart/hello_world_npu/run.sh",
     "source": "readme",

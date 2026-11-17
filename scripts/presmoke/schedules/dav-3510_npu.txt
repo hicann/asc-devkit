@@ -647,6 +647,7 @@
 01_simd_cpp_api/07_tensor_api/flash_attention_tensor_api
 01_simd_cpp_api/07_tensor_api/matmul_bias_fusion
 01_simd_cpp_api/07_tensor_api/matmul_split_k
+01_simd_cpp_api/07_tensor_api/quant_matmul
 02_simd_c_api/00_introduction/02_matrix/matmul_multi_core
 02_simd_c_api/01_utilities/00_printf/simd_vf_printf
 02_simd_c_api/01_utilities/00_printf/simple_printf

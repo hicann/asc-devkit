@@ -14,6 +14,7 @@ This directory contains samples that directly include `tensor_api/tensor.h` and 
 | [batch_matmul_tensor_api](./batch_matmul_tensor_api) | Implements Batch Matmul with Bias using the Tensor API programming model | Ascend 950PR&950DT products |
 | [conv2d_forward_tensor_api](./conv2d_forward_tensor_api) | Implements Conv2D Forward using the Tensor API and supports NC1HWC0, NCHW, and NHWC GM input/output formats | Ascend 950PR&950DT products |
 | [mmad_tensor_api](./mmad_tensor_api) | Implements dynamic-shape matrix multiplication and in-path quantization using the Tensor API | Ascend 950PR&950DT products |
+| [quant_matmul](./quant_matmul) | Implements a 1:2 AIC:AIV QuantMatmul sample using the Tensor API | Ascend 950PR&950DT products |
 | [matmul_mxfp4_tensor_api_high_performance](./matmul_mxfp4_tensor_api_high_performance) | High-performance MxFP4 Matmul Tensor API sample based on the static Tensor programming model | Ascend 950PR&950DT products |
 | [custom_op_tensor_api](./custom_op_tensor_api) | Implements batched-input flattening and shared-weight QKV projection with a custom Tensor API Copy Operation | Ascend 950PR&950DT products |
 | [bank_conflict](./bank_conflict) | Introduces bank conflicts and mitigation methods based on the Tensor API | Ascend 950PR&950DT products |
