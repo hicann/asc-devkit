@@ -36,6 +36,16 @@ void asc_fill_l1_stub(__cbuf__ half* dst, half value, const asc_fill_value_confi
     g_fill_l1_config_capture = config;
 }
 
+asc_hf32_round_mode g_hf32_round_mode_capture = asc_hf32_round_mode::NEAREST_AWAY;
+
+void asc_set_hf32_round_mode_stub(asc_hf32_round_mode mode) { g_hf32_round_mode_capture = mode; }
+
+int g_mmad_direction_capture = 0;
+
+void asc_set_mmad_direction_m_stub() { g_mmad_direction_capture = 1; }
+
+void asc_set_mmad_direction_n_stub() { g_mmad_direction_capture = 2; }
+
 } // namespace
 
 TEST_F(tensor_api_new_interfaces_aic, fill_l1_forwards_params_to_c_api)
@@ -86,4 +96,33 @@ TEST_F(tensor_api_new_interfaces_aic, fill_l1_derives_params_from_layout)
     EXPECT_EQ(g_fill_l1_config_capture.repeat, 1);
     EXPECT_EQ(g_fill_l1_config_capture.blk_num, 2);
     EXPECT_EQ(g_fill_l1_config_capture.dst_gap, 0);
+}
+
+TEST_F(tensor_api_new_interfaces_aic, hf32_interfaces_forward_to_c_api)
+{
+    MOCKER_CPP(asc_enable_hf32, void(void)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(asc_disable_hf32, void(void)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(asc_set_hf32_round_mode, void(asc_hf32_round_mode)).times(2).will(invoke(asc_set_hf32_round_mode_stub));
+
+    asc::te::enable_hf32();
+    asc::te::disable_hf32();
+    asc::te::set_hf32_round_mode(asc::te::hf32_round_mode::nearest_even);
+    EXPECT_EQ(g_hf32_round_mode_capture, asc_hf32_round_mode::NEAREST_EVEN);
+    asc::te::set_hf32_round_mode(asc::te::hf32_round_mode::nearest_away);
+
+    GlobalMockObject::verify();
+    EXPECT_EQ(g_hf32_round_mode_capture, asc_hf32_round_mode::NEAREST_AWAY);
+}
+
+TEST_F(tensor_api_new_interfaces_aic, set_mmad_direction_forwards_to_c_api)
+{
+    MOCKER_CPP(asc_set_mmad_direction_m, void(void)).times(1).will(invoke(asc_set_mmad_direction_m_stub));
+    MOCKER_CPP(asc_set_mmad_direction_n, void(void)).times(1).will(invoke(asc_set_mmad_direction_n_stub));
+
+    asc::te::set_mmad_direction(asc::te::mmad_direction::m);
+    EXPECT_EQ(g_mmad_direction_capture, 1);
+    asc::te::set_mmad_direction(asc::te::mmad_direction::n);
+    EXPECT_EQ(g_mmad_direction_capture, 2);
+
+    GlobalMockObject::verify();
 }

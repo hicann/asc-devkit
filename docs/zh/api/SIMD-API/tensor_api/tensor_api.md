@@ -30,23 +30,11 @@ Tensor API提供基于Tensor的数据搬运、矩阵计算和矢量计算能力�
 - [矩阵计算](matrix_compute/matrix_compute.md)：介绍矩阵数据搬入、矩阵乘加、矩阵结果搬出和相关关键特性。
 - [Cube数据填充](matrix_compute/cube_data_fill/cube_data_fill.md)：介绍矩阵计算前的L1物理块初始化能力。
 - [reg矢量计算](reg_vector_compute/reg_vector_compute.md)：介绍矢量计算的搬入、矢量计算的搬出、寄存器数据搬入搬出、Mask寄存器计算和类型转换。
-- [工具接口](utils/tool_functions.md)：介绍编译期整数、维度保留标记、Layout Pattern查询、类型判断以及调试打印等工具接口的使用方式。
+- [工具接口](utils/tool_functions.md)：介绍编译期整数、维度保留标记、Layout Pattern查询、类型判断、调试打印以及系统变量查询等工具接口的使用方式。
+- [特殊寄存器](special_register/special_register.md)：介绍饱和控制和squeeze状态查询接口。
+- [标量计算](scalar_compute/scalar_compute.md)：介绍标量位运算和标量GM读写接口。
 - [同步控制](sync/sync.md)：介绍函数式核间同步、对象式流水锁和作用域锁保护接口。
-- [缓存控制](cache_control/cache_control.md)：介绍Data Cache目标域刷新和整体失效接口。
-- [原子操作](atomic/atomic.md)：介绍数据搬运到Global Memory过程中的DMA原子模式配置接口。
+- [缓存控制](cache_control/cache_control.md)：介绍Data Cache清理、预取和标量load/store路径的L2 Cache管理策略接口。
+- [原子操作](atomic/atomic.md)：介绍DMA原子模式配置和Scalar原子操作接口。
 - [常量填充值配置](data_move/set_copy_pad_val.md)：介绍GM到UB对齐搬运的常量填充值配置接口。
 - [废弃接口](deprecated_interface/deprecated_interface.md)：介绍用于兼容的大驼峰风格接口。
-
-## 与C API配合使用
-
-Tensor API提供数据组织、数据搬运、矩阵计算、矢量计算、初始化、同步控制、缓存控制、系统变量查询和原子操作配置能力。开发者可以在同一个核函数（Kernel）中组合使用Tensor API和C API，以实现完整的算子功能。
-
-Tensor API和C API的接口支持范围及参数约束相互独立，混合使用时需要同时满足两类接口的要求。
-
-Tensor API未完整覆盖的能力及对应C API资料如下。
-
-**表2**  C API能力说明
-
-| 能力 | C API用途 | 接口示例 | 相关资料 |
-| :--- | :--- | :--- | :--- |
-| 系统变量 | 查询核索引、核数量、系统Cycle等运行信息。Tensor API已提供subblock和物理地址查询封装。 | `asc_get_arch_ver`、`asc_get_core_id`、`asc_get_system_cycle` | [系统变量](../c_api/utils/sys_var/sys_var.md) |

@@ -205,10 +205,58 @@
 | [get_sub_block_num](utils/get_sub_block_num.md) | 获取当前AI Core上AIC或AIV的数量。 |
 | [get_vf_len](utils/get_vf_len.md) | 获取矢量寄存器长度，单位为字节。 |
 | [get_phy_buf_addr](utils/get_phy_buf_addr.md) | 根据偏移量获取片上实际物理地址。 |
+| [get_arch_ver](utils/get_arch_ver.md) | 获取当前AI处理器架构版本号。 |
+| [get_core_id](utils/get_core_id.md) | 获取当前AI Core的编号。 |
+| [get_phy_stack_base](utils/get_phy_stack_base.md) | 获取物理堆栈基地址。 |
+| [get_program_counter](utils/get_program_counter.md) | 获取程序计数器指针。 |
+| [get_smmu_tag_version](utils/get_smmu_tag_version.md) | 获取SMMU版本信息。 |
+| [get_sys_virtual_base](utils/get_sys_virtual_base.md) | 读取系统虚拟基地址。 |
+| [get_system_cycle](utils/get_system_cycle.md) | 读取当前系统Cycle计数器。 |
+| [nop](utils/nop.md) | 生成一条空操作指令。 |
+
+## 特殊寄存器
+
+**表8**  特殊寄存器接口列表
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [get_saturation_flag](special_register/get_saturation_flag.md) | 按饱和模式读取当前是否开启饱和。 |
+| [get_saturation_strategy](special_register/get_saturation_strategy.md) | 读取当前饱和控制策略。 |
+| [get_squeeze_status](special_register/get_squeeze_status.md) | 读取squeeze操作后的有效数据长度。 |
+| [set_saturation_flag](special_register/set_saturation_flag.md) | 按饱和模式设置饱和开关。 |
+| [set_saturation_strategy](special_register/set_saturation_strategy.md) | 设置饱和控制策略。 |
+
+## 标量计算
+
+**表9**  标量计算接口列表
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [clear_nthbit](scalar_compute/clear_nthbit.md) | 清除64位无符号整数的指定二进制位。 |
+| [set_nthbit](scalar_compute/set_nthbit.md) | 置位64位无符号整数的指定二进制位。 |
+| [clz](scalar_compute/clz.md) | 统计64位无符号整数的前导零个数。 |
+| [ffs](scalar_compute/ffs.md) | 查找第一个值为1的二进制位。 |
+| [ffz](scalar_compute/ffz.md) | 查找第一个值为0的二进制位。 |
+| [popc](scalar_compute/popc.md) | 统计值为1的二进制位个数。 |
+| [sflbits](scalar_compute/sflbits.md) | 统计与符号位相同的连续比特位个数。 |
+| [zero_bits_cnt](scalar_compute/zero_bits_cnt.md) | 统计值为0的二进制位个数。 |
+| [load_dev](scalar_compute/load_dev.md) | 不经过DCache从Global Memory读取整型数据。 |
+| [store_dev](scalar_compute/store_dev.md) | 不经过DCache向Global Memory写入整型数据。 |
+
+## mmad计算配置
+
+**表10**  mmad计算配置接口列表
+
+| 接口名 | 功能描述 |
+| --- | --- |
+| [enable_hf32](matrix_compute/mmad_compute_config/enable_hf32.md) | 开启HF32模式。 |
+| [disable_hf32](matrix_compute/mmad_compute_config/disable_hf32.md) | 关闭HF32模式。 |
+| [set_hf32_round_mode](matrix_compute/mmad_compute_config/set_hf32_round_mode.md) | 设置HF32模式的舍入模式。 |
+| [set_mmad_direction](matrix_compute/mmad_compute_config/set_mmad_direction.md) | 设置矩阵乘法的计算方向。 |
 
 ## 搬运配置
 
-**表8** 搬运配置接口列表
+**表11** 搬运配置接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
@@ -216,7 +264,7 @@
 
 ## 同步控制
 
-**表9** 同步控制接口列表
+**表12** 同步控制接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
@@ -226,7 +274,7 @@
 
 ## 原子操作
 
-**表10** 原子操作接口列表
+**表13** 原子操作接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
@@ -234,19 +282,37 @@
 | [set_atomic_max](atomic/set_atomic_max.md) | 对后续受支持的目的地址为GM的搬运开启原子取大。 |
 | [set_atomic_min](atomic/set_atomic_min.md) | 对后续受支持的目的地址为GM的搬运开启原子取小。 |
 | [disable_dma_atomic](atomic/disable_dma_atomic.md) | 关闭DMA原子模式。 |
+| [atomic_add](atomic/atomic_add.md) | 对Global Memory中的单个元素执行标量原子加。 |
+| [atomic_sub](atomic/atomic_sub.md) | 对Global Memory中的单个元素执行标量原子减。 |
+| [atomic_min](atomic/atomic_min.md) | 对Global Memory中的单个元素执行标量原子取小。 |
+| [atomic_max](atomic/atomic_max.md) | 对Global Memory中的单个元素执行标量原子取大。 |
+| [atomic_inc](atomic/atomic_inc.md) | 对Global Memory中的单个元素执行标量原子递增。 |
+| [atomic_dec](atomic/atomic_dec.md) | 对Global Memory中的单个元素执行标量原子递减。 |
+| [atomic_and](atomic/atomic_and.md) | 对Global Memory中的单个元素执行标量原子按位与。 |
+| [atomic_or](atomic/atomic_or.md) | 对Global Memory中的单个元素执行标量原子按位或。 |
+| [atomic_xor](atomic/atomic_xor.md) | 对Global Memory中的单个元素执行标量原子按位异或。 |
+| [atomic_exch](atomic/atomic_exch.md) | 对Global Memory中的单个元素执行标量原子交换。 |
+| [atomic_cas](atomic/atomic_cas.md) | 对Global Memory中的单个元素执行标量原子比较交换。 |
 
 ## 缓存控制
 
-**表11** 缓存控制接口列表
+**表14** 缓存控制接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |
 | [datacache_clean_and_invalid](cache_control/datacache_clean_and_invalid.md) | 按目标域清理并失效Data Cache中的缓存行。 |
 | [datacache_clean](cache_control/datacache_clean.md) | 将整个Data Cache标记为无效，不回写脏数据。 |
+| [datacache_preload](cache_control/datacache_preload.md) | 从Global Memory预取一个Cache Line的数据到DCache。 |
+| [datacache_clean_and_invalid_line](cache_control/datacache_clean_and_invalid_line.md) | 清理并失效Global Memory或Unified Buffer地址所在的Data Cache缓存行。 |
+| [get_icache_preload_status](cache_control/get_icache_preload_status.md) | 获取ICache预取状态。 |
+| [icache_preload](cache_control/icache_preload.md) | 从Global Memory预取指令到ICache。 |
+| [get_scalar_load_cache_mode](cache_control/get_scalar_load_cache_mode.md) | 读取标量load路径的L2 Cache管理策略。 |
+| [get_scalar_store_cache_mode](cache_control/get_scalar_store_cache_mode.md) | 读取标量store路径的L2 Cache管理策略。 |
+| [set_scalar_cache_mode](cache_control/set_scalar_cache_mode.md) | 配置标量load/store路径的L2 Cache管理策略。 |
 
 ## 废弃接口
 
-**表12**  废弃接口列表
+**表15**  废弃接口列表
 
 | 接口名 | 功能描述 |
 | --- | --- |

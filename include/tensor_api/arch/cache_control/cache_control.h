@@ -22,8 +22,28 @@
 #define INCLUDE_TENSOR_API_ARCH_CACHE_CONTROL_CACHE_CONTROL_H
 
 #if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
+
+#include "tensor_api/utils/utils.h"
+#include "tensor_api/tensor/pointer.h"
+
 namespace asc {
 namespace te {
+
+enum class load_l2_cache_mode : uint8_t {
+    normal_first_victim = 0,
+    normal_last_victim = 1,
+    normal_persistent = 2,
+    notalloc_keep = 4,
+    notalloc_clean = 5,
+    notalloc_drop = 6
+};
+
+enum class store_l2_cache_mode : uint8_t {
+    normal_first_victim = 0,
+    normal_last_victim = 1,
+    normal_persistent = 2,
+    notalloc_clean = 4
+};
 
 /** @brief Target domain of an entire-DCache clean-and-invalidate operation.
  *
@@ -39,6 +59,9 @@ enum class clean_target {
     atomic, //!< Refreshes valid cache lines related to scalar atomic operations.
 };
 
+/** @brief Preload data into the DCache. */
+__aicore__ inline void datacache_preload(__gm__ uint64_t* address, int64_t offset);
+
 /**
  * @brief Clean and invalidate DCache lines in the selected target domain.
  *
@@ -46,8 +69,30 @@ enum class clean_target {
  */
 __aicore__ inline void datacache_clean_and_invalid(clean_target target);
 
+/** @brief Clean and invalidate the DCache line containing the input address. */
+template <typename T>
+__aicore__ inline void datacache_clean_and_invalid_line(T address);
+
 /** @brief Invalidate the entire DCache without writing back dirty lines. */
 __aicore__ inline void datacache_clean();
+
+/** @brief Return the ICache preload status. */
+__aicore__ inline int64_t get_icache_preload_status();
+
+/** @brief Return the scalar load L2 cache mode. */
+__aicore__ inline load_l2_cache_mode get_scalar_load_cache_mode();
+
+/** @brief Return the scalar store L2 cache mode. */
+__aicore__ inline store_l2_cache_mode get_scalar_store_cache_mode();
+
+/** @brief Preload instructions into the ICache. */
+__aicore__ inline void icache_preload(const void* addr, int64_t prefetch_len);
+
+/** @brief Set the scalar load L2 cache mode. */
+__aicore__ inline void set_scalar_cache_mode(load_l2_cache_mode mode);
+
+/** @brief Set the scalar store L2 cache mode. */
+__aicore__ inline void set_scalar_cache_mode(store_l2_cache_mode mode);
 
 } // namespace te
 } // namespace asc

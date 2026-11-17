@@ -1,0 +1,74 @@
+# set_saturation_strategy
+
+## 产品支持情况
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT系列产品：支持
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3系列产品：不支持
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2系列产品：不支持
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2推理产品：不支持
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas推理系列产品AI Core：不支持
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas推理系列产品Vector Core：不支持
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas训练系列产品：不支持
+<!-- end id7 -->
+
+## 功能说明
+
+头文件路径为：`tensor_api/tensor.h`。
+
+设置饱和控制策略，默认为开启全局饱和配置。`override_strategy::use_global`表示使用全局饱和配置，`override_strategy::use_api`表示按单指令/API路径配置饱和。该策略尤其影响CAST类饱和。
+
+## 函数原型
+
+```cpp
+__aicore__ inline void set_saturation_strategy(override_strategy strategy)
+```
+
+## 参数说明
+
+**表1** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| strategy | 输入 | 饱和控制策略，类型为`override_strategy`。 |
+
+## 返回值说明
+
+无
+
+## 流水类型
+
+PIPE_S
+
+## 约束说明
+
+- 当策略为`override_strategy::use_api`时，全局CAST饱和配置不生效；若需要CAST全局饱和，必须先或同时将策略设置为`override_strategy::use_global`。
+- 切换策略不会自动修改各`saturation_mode`饱和开关。
+
+## 调用示例
+
+以下示例调用`set_saturation_strategy`接口。
+
+```cpp
+#include "tensor_api/tensor.h"
+
+__global__ __vector__ void set_saturation_strategy_kernel()
+{
+    using namespace asc::te;
+    set_saturation_strategy(override_strategy::use_global);
+    set_saturation_flag(saturation_mode::cast_mode, true);
+}
+```
+

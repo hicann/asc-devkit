@@ -24,9 +24,23 @@
 #define IMPL_TENSOR_API_ARCH_CACHE_CONTROL_CACHE_CONTROL_IMPL_H
 
 #include "c_api/asc_simd.h"
+#include "tensor_api/utils/utils.h"
 
 namespace asc {
 namespace te {
+
+template <typename T, typename = void>
+struct cache_line_location {
+    using type = get_attribute_location<T>;
+};
+
+template <typename T>
+struct cache_line_location<T, void_t<typename T::ptr_pattern>> {
+    using type = typename T::ptr_pattern;
+};
+
+template <typename T>
+using cache_line_location_t = typename cache_line_location<T>::type;
 
 __aicore__ inline void datacache_clean_and_invalid(clean_target target)
 {
@@ -48,7 +62,59 @@ __aicore__ inline void datacache_clean_and_invalid(clean_target target)
     }
 }
 
+__aicore__ inline void datacache_preload(__gm__ uint64_t* address, int64_t offset)
+{
+    asc_datacache_preload(address, offset);
+}
+
+template <typename T>
+__aicore__ inline void datacache_clean_and_invalid_line(T address)
+{
+    using pointer_type = Std::remove_cvref_t<T>;
+    using location_type = cache_line_location_t<pointer_type>;
+    if constexpr (Std::is_same_v<location_type, location::gm>) {
+        if constexpr (is_hardware_mem_ptr_v<pointer_type>) {
+            __asc_aicore::asc_dcci_single(reinterpret_cast<__gm__ void*>(address.get()));
+        } else {
+            __asc_aicore::asc_dcci_single(reinterpret_cast<__gm__ void*>(address));
+        }
+    } else {
+        if constexpr (is_hardware_mem_ptr_v<pointer_type>) {
+            asc_ub_dcci_single(reinterpret_cast<__ubuf__ void*>(address.get()));
+        } else {
+            asc_ub_dcci_single(reinterpret_cast<__ubuf__ void*>(address));
+        }
+    }
+}
+
 __aicore__ inline void datacache_clean() { asc_dci(); }
+
+__aicore__ inline int64_t get_icache_preload_status() { return asc_get_icache_preload_status(); }
+
+__aicore__ inline load_l2_cache_mode get_scalar_load_cache_mode()
+{
+    return static_cast<load_l2_cache_mode>(static_cast<uint8_t>(asc_get_scalar_load_cache_mode()));
+}
+
+__aicore__ inline store_l2_cache_mode get_scalar_store_cache_mode()
+{
+    return static_cast<store_l2_cache_mode>(static_cast<uint8_t>(asc_get_scalar_store_cache_mode()));
+}
+
+__aicore__ inline void icache_preload(const void* addr, int64_t prefetch_len)
+{
+    asc_icache_preload(addr, prefetch_len);
+}
+
+__aicore__ inline void set_scalar_cache_mode(load_l2_cache_mode mode)
+{
+    asc_set_scalar_cache_mode(static_cast<asc_load_l2_cache_mode>(static_cast<uint8_t>(mode)));
+}
+
+__aicore__ inline void set_scalar_cache_mode(store_l2_cache_mode mode)
+{
+    asc_set_scalar_cache_mode(static_cast<asc_store_l2_cache_mode>(static_cast<uint8_t>(mode)));
+}
 
 } // namespace te
 } // namespace asc

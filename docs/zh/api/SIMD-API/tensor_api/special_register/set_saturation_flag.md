@@ -1,0 +1,89 @@
+# set_saturation_flag
+
+## 产品支持情况
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT系列产品：支持
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3系列产品：不支持
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2系列产品：不支持
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2推理产品：不支持
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas推理系列产品AI Core：不支持
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas推理系列产品Vector Core：不支持
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas训练系列产品：不支持
+<!-- end id7 -->
+
+## 功能说明
+
+头文件路径为：`tensor_api/tensor.h`。
+
+按饱和模式类型设置对应饱和开关。`enable_sat`表示API语义上的“是否开启饱和”，接口内部会按模式处理不同语义。
+
+各模式下`enable_sat`的含义如下：
+
+**表1** 饱和模式与enable_sat语义
+
+| saturation_mode | enable_sat=true | enable_sat=false | 说明 |
+| --- | --- | --- | --- |
+| float_mode | 饱和 | 非饱和 | 浮点计算及部分浮点精度转换场景的饱和控制，默认为非饱和状态。 |
+| float8_mode | 饱和 | 非饱和 | fp8相关场景的饱和控制，默认为饱和状态。 |
+| int_mode | 饱和 | 截断 | 整数计算溢出时的饱和/截断控制，默认为非饱和状态。 |
+| cast_mode | 饱和 | 截断 | 浮点转整数或整数转整数时的精度转换饱和控制，默认为饱和状态。仅在策略为`override_strategy::use_global`时生效。 |
+
+## 函数原型
+
+```cpp
+__aicore__ inline void set_saturation_flag(saturation_mode mode, bool enable_sat)
+```
+
+## 参数说明
+
+**表2** 参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| mode | 输入 | 饱和模式类型，类型为`saturation_mode`，取值见**表1**。 |
+| enable_sat | 输入 | 是否开启饱和。`true`表示开启饱和，`false`表示关闭饱和（对`int_mode`为截断；对`float_mode`/`float8_mode`/`cast_mode`为非饱和或截断，见**表1**）。 |
+
+## 返回值说明
+
+无
+
+## 流水类型
+
+PIPE_S
+
+## 约束说明
+
+- `enable_sat`是API语义参数，同一布尔值在不同模式下的关闭语义不同（`int_mode`为截断，`float_mode`/`float8_mode`/`cast_mode`为非饱和或截断），请以**表1**为准。
+- 当对`saturation_mode::float_mode`开启饱和模式前，需要通过[set_saturation_strategy](set_saturation_strategy.md)开启全局饱和配置方可生效。
+- 当`mode`为`saturation_mode::float8_mode`时，还需要先对`saturation_mode::float_mode`开启饱和模式才能生效。
+- 当`mode`为`saturation_mode::cast_mode`时，还需将饱和策略设置为`override_strategy::use_global`，CAST才会生效。
+- 本接口仅修改对应模式的饱和配置，不影响其他模式。
+
+## 调用示例
+
+以下示例调用`set_saturation_flag`接口。
+
+```cpp
+#include "tensor_api/tensor.h"
+
+__global__ __vector__ void set_saturation_flag_kernel()
+{
+    using namespace asc::te;
+    set_saturation_strategy(override_strategy::use_global);
+    set_saturation_flag(saturation_mode::float_mode, true);
+}
+```
+
