@@ -29,8 +29,12 @@
 #include "tensor_api/arch/sync/data_barrier.h"
 #include "tensor_api/arch/sync/mutex.h"
 #include "tensor_api/arch/atomic/dma_atomic.h"
+#include "tensor_api/arch/atomic/scalar_atomic_op.h"
 #include "tensor_api/arch/cache_control/cache_control.h"
 #include "tensor_api/arch/cube/data_fill/data_fill.h"
+#include "tensor_api/arch/cube/mmad_compute_config/mmad_compute_config.h"
+#include "tensor_api/arch/scalar_compute/scalar_load_store.h"
+#include "tensor_api/arch/scalar_compute/scalar_compute_bit.h"
 
 #endif // INCLUDE_TENSOR_API_ARCH_ARCH_H
 

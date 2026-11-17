@@ -24,8 +24,16 @@
 
 namespace asc {
 namespace te {
+/** @brief Matrix multiplication type. */
 enum class mmad_type : uint8_t { normal = 0, mx = 1 };
 
+/**
+ * @brief Matrix multiplication trait.
+ *
+ * Describes compiler-time characteristics used to build a matrix multiplication
+ * operation, including fragment offset, K-direction alignment, BT buffer
+ * initialization, GEMV disabling, and computation type.
+ */
 struct mmad_trait {
     __aicore__ constexpr mmad_trait(){};
 

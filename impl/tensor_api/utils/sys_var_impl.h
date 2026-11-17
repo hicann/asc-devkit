@@ -39,6 +39,27 @@ __aicore__ inline constexpr int64_t get_vf_len() { return asc_get_vf_len(); }
 
 __aicore__ inline uint64_t get_phy_buf_addr(uint64_t offset) { return asc_get_phy_buf_addr(offset); }
 
+__aicore__ inline uint32_t get_arch_ver()
+{
+    uint32_t core_version = 0;
+    asc_get_arch_ver(core_version);
+    return core_version;
+}
+
+__aicore__ inline int64_t get_core_id() { return asc_get_core_id(); }
+
+__aicore__ inline int64_t get_phy_stack_base() { return asc_get_phy_stack_base(); }
+
+__aicore__ inline int64_t get_program_counter() { return asc_get_program_counter(); }
+
+__aicore__ inline int64_t get_smmu_tag_version() { return asc_get_smmu_tag_version(); }
+
+__aicore__ inline int64_t get_sys_virtual_base() { return asc_get_sys_virtual_base(); }
+
+__aicore__ inline int64_t get_system_cycle() { return asc_get_system_cycle(); }
+
+__aicore__ inline void nop() { __asc_aicore::asc_nop(); }
+
 } // namespace te
 } // namespace asc
 

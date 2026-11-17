@@ -30,6 +30,9 @@
 #include "impl/tensor_api/utils/map_impl.h"
 #include "impl/tensor_api/utils/location_impl.h"
 
+#include "impl/tensor_api/utils/sys_var_impl.h"
+#include "impl/tensor_api/utils/spr_impl.h"
+
 #endif // IMPL_TENSOR_API_UTILS_UTILS_IMPL_H
 
 #if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_IMPL_TENSOR_API_UTILS_UTILS_IMPL_H)

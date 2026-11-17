@@ -1,0 +1,64 @@
+/**
+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+#if !defined(ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS)
+#define ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#define UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MMAD_COMPUTE_CONFIG_H
+#endif
+/*!
+ * \file mmad_compute_config.h
+ * \brief MMAD computation configuration interfaces.
+ */
+#ifndef INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_COMPUTE_CONFIG_H
+#define INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_COMPUTE_CONFIG_H
+
+namespace asc {
+namespace te {
+
+/** @brief Rounding mode used by HF32 matrix computation. */
+enum class hf32_round_mode : uint8_t { nearest_away = 0, nearest_even = 1 };
+
+/** @brief Matrix multiplication computation direction. */
+enum class mmad_direction : uint8_t { m = 0, n = 1 };
+
+/** @brief Enable HF32 mode for matrix computation. */
+__aicore__ inline void enable_hf32();
+
+/** @brief Disable HF32 mode for matrix computation. */
+__aicore__ inline void disable_hf32();
+
+/**
+ * @brief Set the rounding mode used by HF32 matrix computation.
+ *
+ * @param mode HF32 rounding mode.
+ */
+__aicore__ inline void set_hf32_round_mode(hf32_round_mode mode);
+
+/**
+ * @brief Set the computation direction used by matrix multiplication.
+ *
+ * @param direction Matrix multiplication computation direction.
+ */
+__aicore__ inline void set_mmad_direction(mmad_direction direction);
+
+} // namespace te
+} // namespace asc
+
+#include "impl/tensor_api/arch/cube/mmad_compute_config/mmad_compute_config_impl.h"
+
+#endif // INCLUDE_TENSOR_API_ARCH_CUBE_MMAD_COMPUTE_CONFIG_H
+
+#if defined(UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MMAD_COMPUTE_CONFIG_H)
+#undef ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS
+#undef UNDEF_ASCENDC_TENSOR_API_INCLUDE_COMPILER_INTERNAL_HEADERS_MMAD_COMPUTE_CONFIG_H
+#endif

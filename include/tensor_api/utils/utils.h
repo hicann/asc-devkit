@@ -36,6 +36,12 @@ namespace Std = AscendC::Std;
 
 enum class unit_flag_mode : uint8_t { disable = 0, enable_keep = 2, enable_update = 3 };
 
+/** @brief Saturation mode used by special-register interfaces. */
+enum class saturation_mode : uint8_t { float_mode = 48, float8_mode = 50, int_mode = 53, cast_mode = 59 };
+
+/** @brief Override strategy for the global saturation configuration. */
+enum class override_strategy : uint8_t { use_api = 0, use_global = 1 };
+
 /** @brief Initialize the device state of the current AI Core. */
 __aicore__ inline void init_soc_state();
 
@@ -54,6 +60,45 @@ __aicore__ inline constexpr int64_t get_vf_len();
  * @param offset Byte offset within the physical buffer.
  */
 __aicore__ inline uint64_t get_phy_buf_addr(uint64_t offset);
+
+/** @brief Return the architecture version. */
+__aicore__ inline uint32_t get_arch_ver();
+
+/** @brief Return the current core ID. */
+__aicore__ inline int64_t get_core_id();
+
+/** @brief Return the physical stack base. */
+__aicore__ inline int64_t get_phy_stack_base();
+
+/** @brief Return the current program counter. */
+__aicore__ inline int64_t get_program_counter();
+
+/** @brief Return the SMMU tag version. */
+__aicore__ inline int64_t get_smmu_tag_version();
+
+/** @brief Return the system virtual base. */
+__aicore__ inline int64_t get_sys_virtual_base();
+
+/** @brief Return the current system cycle count. */
+__aicore__ inline int64_t get_system_cycle();
+
+/** @brief Insert one no-operation instruction. */
+__aicore__ inline void nop();
+
+/** @brief Return whether saturation is enabled for a mode. */
+__aicore__ inline bool get_saturation_flag(saturation_mode mode);
+
+/** @brief Return the current saturation strategy. */
+__aicore__ inline override_strategy get_saturation_strategy();
+
+/** @brief Return the current squeeze status. */
+__aicore__ inline int64_t get_squeeze_status();
+
+/** @brief Set saturation for a mode. */
+__aicore__ inline void set_saturation_flag(saturation_mode mode, bool enable_sat);
+
+/** @brief Set the saturation strategy. */
+__aicore__ inline void set_saturation_strategy(override_strategy strategy);
 
 using _0 = Std::Int<0>;
 using _1 = Std::Int<1>;
@@ -100,9 +145,8 @@ struct ssbuf {};
 } // namespace te
 } // namespace asc
 
-#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 3510)
 #include "impl/tensor_api/utils/sys_var_impl.h"
-#endif
+#include "impl/tensor_api/utils/spr_impl.h"
 
 #endif // INCLUDE_TENSOR_API_UTILS_UTILS_H
 

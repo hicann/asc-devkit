@@ -37,6 +37,105 @@ int64_t get_subblockdim_stub() { return g_tensor_api_sub_block_num; }
 
 uint64_t get_imm_stub(uint64_t offset) { return offset + g_tensor_api_phy_buf_addr; }
 
+__gm__ int32_t* g_atomic_address = nullptr;
+int32_t g_atomic_value = 0;
+
+int32_t atomic_add_stub(__gm__ int32_t* address, int32_t value)
+{
+    g_atomic_address = address;
+    g_atomic_value = value;
+    return 11;
+}
+
+int32_t atomic_cas_stub(__gm__ int32_t* address, int32_t compare, int32_t desired)
+{
+    (void)compare;
+    g_atomic_address = address;
+    g_atomic_value = desired;
+    return 12;
+}
+
+int32_t atomic_stub(__gm__ int32_t* address, int32_t value)
+{
+    g_atomic_address = address;
+    g_atomic_value = value;
+    return value + 1;
+}
+
+void scalar_cache_load_stub(asc_load_l2_cache_mode mode)
+{
+    EXPECT_EQ(mode, asc_load_l2_cache_mode::NORMAL_LAST_VICTIM);
+}
+
+void scalar_cache_store_stub(asc_store_l2_cache_mode mode)
+{
+    EXPECT_EQ(mode, asc_store_l2_cache_mode::NORMAL_PERSISTENT);
+}
+
+int32_t load_dev_stub(__gm__ int32_t* address)
+{
+    g_atomic_address = address;
+    return 21;
+}
+
+void store_dev_stub(__gm__ int32_t* address, int32_t value)
+{
+    g_atomic_address = address;
+    g_atomic_value = value;
+}
+
+int64_t scalar_bit_stub(uint64_t value) { return static_cast<int64_t>(value); }
+
+uint64_t nthbit_stub(uint64_t bits, int64_t index) { return bits + static_cast<uint64_t>(index); }
+
+asc_saturation_mode g_saturation_mode_capture = asc_saturation_mode::FLOAT;
+bool g_saturation_enable_capture = false;
+int g_saturation_mode_call_count = 0;
+asc_override_strategy g_saturation_strategy_capture = asc_override_strategy::USE_GLOBAL;
+
+bool get_saturation_flag_stub(asc_saturation_mode mode)
+{
+    g_saturation_mode_capture = mode;
+    ++g_saturation_mode_call_count;
+    return true;
+}
+
+void set_saturation_flag_stub(asc_saturation_mode mode, bool enable)
+{
+    g_saturation_mode_capture = mode;
+    g_saturation_enable_capture = enable;
+    ++g_saturation_mode_call_count;
+}
+
+asc_override_strategy get_saturation_strategy_stub() { return asc_override_strategy::USE_GLOBAL; }
+
+void set_saturation_strategy_stub(asc_override_strategy strategy) { g_saturation_strategy_capture = strategy; }
+
+void get_arch_ver_stub(uint32_t& version) { version = 3510U; }
+
+uint32_t atomic_uint_stub(__gm__ uint32_t* address, uint32_t value)
+{
+    (void)address;
+    return value + 1U;
+}
+
+template <typename T>
+T atomic_value_stub(__gm__ T* address, T value)
+{
+    (void)address;
+    return value + static_cast<T>(1);
+}
+
+template <typename T>
+T atomic_cas_stub(__gm__ T* address, T compare, T desired)
+{
+    (void)address;
+    (void)compare;
+    return desired + static_cast<T>(1);
+}
+
+int64_t get_squeeze_status_stub() { return 4; }
+
 } // namespace
 
 TEST_F(tensor_api_new_interfaces_aiv, init_soc_state_forwards_to_asc_init)
@@ -74,6 +173,383 @@ TEST_F(tensor_api_new_interfaces_aiv, get_phy_buf_addr_forwards_offset_to_c_api)
     g_tensor_api_phy_buf_addr = 0x12340000U;
     MOCKER_CPP(asc_get_phy_buf_addr, uint64_t(uint64_t)).times(1).will(invoke(get_imm_stub));
     EXPECT_EQ(asc::te::get_phy_buf_addr(0x1000U), 0x12341000U);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_atomic_interfaces_forward_to_c_api)
+{
+    __gm__ int32_t address = 0;
+    constexpr int32_t value = 7;
+    MOCKER_CPP(__asc_aicore::asc_atomic_add, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_sub, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_min, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_max, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_and, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_or, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_xor, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_exch, int32_t(__gm__ int32_t*, int32_t)).times(1).will(invoke(atomic_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_cas, int32_t(__gm__ int32_t*, int32_t, int32_t))
+        .times(1)
+        .will(invoke(atomic_stub));
+
+    EXPECT_EQ(asc::te::atomic_add<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_sub<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_min<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_max<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_and<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_or<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_xor<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_exch<int32_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_cas<int32_t>(&address, value, value + 2), value + 1);
+    EXPECT_EQ(g_atomic_address, &address);
+    EXPECT_EQ(g_atomic_value, value);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, atomic_inc_and_dec_dispatch_to_unsigned_c_api)
+{
+    __gm__ uint32_t address = 0;
+    MOCKER_CPP(__asc_aicore::asc_atomic_inc, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_uint_stub));
+    MOCKER_CPP(__asc_aicore::asc_atomic_dec, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_uint_stub));
+
+    EXPECT_EQ(asc::te::atomic_inc<uint32_t>(&address, 7U), 8U);
+    EXPECT_EQ(asc::te::atomic_dec<uint32_t>(&address, 7U), 8U);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, atomic_inc_and_dec_dispatch_to_uint64_c_api)
+{
+    __gm__ uint64_t address = 0;
+    constexpr uint64_t value = 7U;
+    MOCKER_CPP(__asc_aicore::asc_atomic_inc, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_dec, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+
+    EXPECT_EQ(asc::te::atomic_inc<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_dec<uint64_t>(&address, value), value + 1U);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_atomic_uint32_interfaces_forward_to_c_api)
+{
+    __gm__ uint32_t address = 0;
+    constexpr uint32_t value = 7U;
+    MOCKER_CPP(__asc_aicore::asc_atomic_add, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_sub, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_min, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_max, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_and, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_or, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_xor, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_exch, uint32_t(__gm__ uint32_t*, uint32_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint32_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_cas, uint32_t(__gm__ uint32_t*, uint32_t, uint32_t))
+        .times(1)
+        .will(invoke(atomic_cas_stub<uint32_t>));
+
+    EXPECT_EQ(asc::te::atomic_add<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_sub<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_min<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_max<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_and<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_or<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_xor<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_exch<uint32_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_cas<uint32_t>(&address, value, value + 2U), value + 3U);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_atomic_float_interfaces_forward_to_c_api)
+{
+    __gm__ float address = 0.0F;
+    constexpr float value = 7.0F;
+    MOCKER_CPP(__asc_aicore::asc_atomic_add, float(__gm__ float*, float))
+        .times(1)
+        .will(invoke(atomic_value_stub<float>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_sub, float(__gm__ float*, float))
+        .times(1)
+        .will(invoke(atomic_value_stub<float>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_min, float(__gm__ float*, float))
+        .times(1)
+        .will(invoke(atomic_value_stub<float>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_max, float(__gm__ float*, float))
+        .times(1)
+        .will(invoke(atomic_value_stub<float>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_exch, float(__gm__ float*, float))
+        .times(1)
+        .will(invoke(atomic_value_stub<float>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_cas, float(__gm__ float*, float, float))
+        .times(1)
+        .will(invoke(atomic_cas_stub<float>));
+
+    EXPECT_FLOAT_EQ(asc::te::atomic_add<float>(&address, value), value + 1.0F);
+    EXPECT_FLOAT_EQ(asc::te::atomic_sub<float>(&address, value), value + 1.0F);
+    EXPECT_FLOAT_EQ(asc::te::atomic_min<float>(&address, value), value + 1.0F);
+    EXPECT_FLOAT_EQ(asc::te::atomic_max<float>(&address, value), value + 1.0F);
+    EXPECT_FLOAT_EQ(asc::te::atomic_exch<float>(&address, value), value + 1.0F);
+    EXPECT_FLOAT_EQ(asc::te::atomic_cas<float>(&address, value, value + 2.0F), value + 3.0F);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_atomic_int64_interfaces_forward_to_c_api)
+{
+    __gm__ int64_t address = 0;
+    constexpr int64_t value = 7;
+    MOCKER_CPP(__asc_aicore::asc_atomic_add, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_sub, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_min, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_max, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_and, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_or, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_xor, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_exch, int64_t(__gm__ int64_t*, int64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<int64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_cas, int64_t(__gm__ int64_t*, int64_t, int64_t))
+        .times(1)
+        .will(invoke(atomic_cas_stub<int64_t>));
+
+    EXPECT_EQ(asc::te::atomic_add<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_sub<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_min<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_max<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_and<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_or<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_xor<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_exch<int64_t>(&address, value), value + 1);
+    EXPECT_EQ(asc::te::atomic_cas<int64_t>(&address, value, value + 2), value + 3);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_atomic_uint64_interfaces_forward_to_c_api)
+{
+    __gm__ uint64_t address = 0;
+    constexpr uint64_t value = 7U;
+    MOCKER_CPP(__asc_aicore::asc_atomic_add, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_sub, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_min, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_max, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_and, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_or, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_xor, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_exch, uint64_t(__gm__ uint64_t*, uint64_t))
+        .times(1)
+        .will(invoke(atomic_value_stub<uint64_t>));
+    MOCKER_CPP(__asc_aicore::asc_atomic_cas, uint64_t(__gm__ uint64_t*, uint64_t, uint64_t))
+        .times(1)
+        .will(invoke(atomic_cas_stub<uint64_t>));
+
+    EXPECT_EQ(asc::te::atomic_add<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_sub<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_min<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_max<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_and<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_or<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_xor<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_exch<uint64_t>(&address, value), value + 1U);
+    EXPECT_EQ(asc::te::atomic_cas<uint64_t>(&address, value, value + 2U), value + 3U);
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, cache_control_interfaces_forward_to_c_api)
+{
+    __gm__ int32_t data = 0;
+    __ubuf__ int32_t ubData = 0;
+    g_tensor_api_phy_buf_addr = 0;
+    auto gmAddress = asc::te::make_mem_ptr<asc::te::location::gm, uint64_t>(0);
+    auto ubAddress = asc::te::make_mem_ptr<asc::te::location::ub, uint64_t>(0);
+
+    MOCKER_CPP(asc_datacache_preload, void(__gm__ uint64_t*, int64_t)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(__asc_aicore::asc_dcci_single, void(__gm__ void*)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(asc_ub_dcci_single, void(__ubuf__ void*)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(asc_get_icache_preload_status, int64_t(void)).times(1).will(returnValue(3));
+    MOCKER_CPP(asc_icache_preload, void(const void*, int64_t)).times(1).will(ignoreReturnValue());
+
+    asc::te::datacache_preload(reinterpret_cast<__gm__ uint64_t*>(&data), 8);
+    asc::te::datacache_clean_and_invalid_line(gmAddress);
+    asc::te::datacache_clean_and_invalid_line(ubAddress);
+    EXPECT_EQ(asc::te::get_icache_preload_status(), 3);
+    asc::te::icache_preload(&data, 4);
+
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_cache_mode_interfaces_forward_to_c_api)
+{
+    MOCKER_CPP(asc_set_scalar_cache_mode, void(asc_load_l2_cache_mode)).times(1).will(invoke(scalar_cache_load_stub));
+    MOCKER_CPP(asc_set_scalar_cache_mode, void(asc_store_l2_cache_mode)).times(1).will(invoke(scalar_cache_store_stub));
+    MOCKER_CPP(asc_get_scalar_load_cache_mode, asc_load_l2_cache_mode(void))
+        .times(1)
+        .will(returnValue(asc_load_l2_cache_mode::NORMAL_LAST_VICTIM));
+    MOCKER_CPP(asc_get_scalar_store_cache_mode, asc_store_l2_cache_mode(void))
+        .times(1)
+        .will(returnValue(asc_store_l2_cache_mode::NORMAL_PERSISTENT));
+
+    asc::te::set_scalar_cache_mode(asc::te::load_l2_cache_mode::normal_last_victim);
+    asc::te::set_scalar_cache_mode(asc::te::store_l2_cache_mode::normal_persistent);
+    EXPECT_EQ(asc::te::get_scalar_load_cache_mode(), asc::te::load_l2_cache_mode::normal_last_victim);
+    EXPECT_EQ(asc::te::get_scalar_store_cache_mode(), asc::te::store_l2_cache_mode::normal_persistent);
+
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_compute_interfaces_forward_to_c_api)
+{
+    __gm__ int32_t data = 0;
+    MOCKER_CPP(asc_load_dev, int32_t(__gm__ int32_t*)).times(1).will(invoke(load_dev_stub));
+    MOCKER_CPP(asc_store_dev, void(__gm__ int32_t*, int32_t)).times(1).will(invoke(store_dev_stub));
+
+    EXPECT_EQ(asc::te::load_dev<int32_t>(&data), 21);
+    EXPECT_EQ(g_atomic_address, &data);
+    asc::te::store_dev<int32_t>(&data, 31);
+    EXPECT_EQ(g_atomic_value, 31);
+
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, scalar_bit_interfaces_forward_to_c_api)
+{
+    MOCKER_CPP(asc_clz, int64_t(uint64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_ffs, int64_t(uint64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_ffz, int64_t(uint64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_popc, int64_t(uint64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_sflbits, int64_t(int64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_zero_bits_cnt, int64_t(uint64_t)).times(1).will(invoke(scalar_bit_stub));
+    MOCKER_CPP(asc_set_nthbit, uint64_t(uint64_t, int64_t)).times(1).will(invoke(nthbit_stub));
+    MOCKER_CPP(asc_clear_nthbit, uint64_t(uint64_t, int64_t)).times(1).will(invoke(nthbit_stub));
+
+    EXPECT_EQ(asc::te::clz(7U), 7);
+    EXPECT_EQ(asc::te::ffs(7U), 7);
+    EXPECT_EQ(asc::te::ffz(7U), 7);
+    EXPECT_EQ(asc::te::popc(7U), 7);
+    EXPECT_EQ(asc::te::sflbits(7), 7);
+    EXPECT_EQ(asc::te::zero_bits_cnt(7U), 7);
+    EXPECT_EQ(asc::te::set_nthbit(7U, 2), 9U);
+    EXPECT_EQ(asc::te::clear_nthbit(7U, 2), 9U);
+
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, spr_interfaces_forward_to_c_api)
+{
+    g_saturation_mode_capture = asc_saturation_mode::FLOAT;
+    g_saturation_enable_capture = false;
+    g_saturation_mode_call_count = 0;
+    g_saturation_strategy_capture = asc_override_strategy::USE_GLOBAL;
+    MOCKER_CPP(asc_get_saturation_flag, bool(asc_saturation_mode)).times(4).will(invoke(get_saturation_flag_stub));
+    MOCKER_CPP(asc_get_saturation_strategy, asc_override_strategy(void))
+        .times(1)
+        .will(invoke(get_saturation_strategy_stub));
+    MOCKER_CPP(asc_get_squeeze_status, int64_t(void)).times(1).will(invoke(get_squeeze_status_stub));
+    MOCKER_CPP(asc_set_saturation_flag, void(asc_saturation_mode, bool))
+        .times(4)
+        .will(invoke(set_saturation_flag_stub));
+    MOCKER_CPP(asc_set_saturation_strategy, void(asc_override_strategy))
+        .times(2)
+        .will(invoke(set_saturation_strategy_stub));
+
+    EXPECT_TRUE(asc::te::get_saturation_flag(asc::te::saturation_mode::float_mode));
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::FLOAT);
+    EXPECT_TRUE(asc::te::get_saturation_flag(asc::te::saturation_mode::float8_mode));
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::FLOAT8);
+    EXPECT_TRUE(asc::te::get_saturation_flag(asc::te::saturation_mode::int_mode));
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::INT);
+    EXPECT_TRUE(asc::te::get_saturation_flag(asc::te::saturation_mode::cast_mode));
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::CAST);
+    EXPECT_EQ(asc::te::get_saturation_strategy(), asc::te::override_strategy::use_global);
+    EXPECT_EQ(asc::te::get_squeeze_status(), 4);
+    asc::te::set_saturation_flag(asc::te::saturation_mode::cast_mode, true);
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::CAST);
+    EXPECT_TRUE(g_saturation_enable_capture);
+    asc::te::set_saturation_flag(asc::te::saturation_mode::float_mode, false);
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::FLOAT);
+    EXPECT_FALSE(g_saturation_enable_capture);
+    asc::te::set_saturation_flag(asc::te::saturation_mode::float8_mode, false);
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::FLOAT8);
+    EXPECT_FALSE(g_saturation_enable_capture);
+    asc::te::set_saturation_flag(asc::te::saturation_mode::int_mode, false);
+    EXPECT_EQ(g_saturation_mode_capture, asc_saturation_mode::INT);
+    EXPECT_FALSE(g_saturation_enable_capture);
+    asc::te::set_saturation_strategy(asc::te::override_strategy::use_global);
+    EXPECT_EQ(g_saturation_strategy_capture, asc_override_strategy::USE_GLOBAL);
+    asc::te::set_saturation_strategy(asc::te::override_strategy::use_api);
+    EXPECT_EQ(g_saturation_strategy_capture, asc_override_strategy::USE_API);
+
+    EXPECT_EQ(g_saturation_mode_call_count, 8);
+
+    GlobalMockObject::verify();
+}
+
+TEST_F(tensor_api_new_interfaces_aiv, utils_interfaces_forward_to_c_api)
+{
+    MOCKER_CPP(asc_get_arch_ver, void(uint32_t&)).times(1).will(invoke(get_arch_ver_stub));
+    MOCKER_CPP(asc_get_core_id, int64_t(void)).times(1).will(returnValue(17));
+    MOCKER_CPP(asc_get_phy_stack_base, int64_t(void)).times(1).will(returnValue(18));
+    MOCKER_CPP(asc_get_program_counter, int64_t(void)).times(1).will(returnValue(19));
+    MOCKER_CPP(asc_get_smmu_tag_version, int64_t(void)).times(1).will(returnValue(20));
+    MOCKER_CPP(asc_get_sys_virtual_base, int64_t(void)).times(1).will(returnValue(22));
+    MOCKER_CPP(asc_get_system_cycle, int64_t(void)).times(1).will(returnValue(23));
+    MOCKER_CPP(__asc_aicore::asc_nop, void(void)).times(1).will(ignoreReturnValue());
+
+    EXPECT_EQ(asc::te::get_arch_ver(), 3510U);
+    EXPECT_EQ(asc::te::get_core_id(), 17);
+    EXPECT_EQ(asc::te::get_phy_stack_base(), 18);
+    EXPECT_EQ(asc::te::get_program_counter(), 19);
+    EXPECT_EQ(asc::te::get_smmu_tag_version(), 20);
+    EXPECT_EQ(asc::te::get_sys_virtual_base(), 22);
+    EXPECT_EQ(asc::te::get_system_cycle(), 23);
+    asc::te::nop();
+
     GlobalMockObject::verify();
 }
 
