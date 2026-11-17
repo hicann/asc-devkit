@@ -12,6 +12,7 @@
 
 #include "c_api/stub/cce_stub.h"
 
+using hif4x2_t = hifloat4x2_t;
 using float8_e8m0_t = fp8_e8m0_t;
 
 inline void vgather2(vector_s16& dst, __ubuf__ int8_t* src, vector_u16 index, vector_bool mask) {}

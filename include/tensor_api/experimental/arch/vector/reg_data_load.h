@@ -38,7 +38,7 @@ namespace experimental {
  * @param [in] coord Coordinate of the first source element.
  */
 template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor, typename Coord>
-__simd_callee__ inline decltype(auto) load(const Tensor& tensor, const Coord& coord);
+__simd_callee__ inline auto load(const Tensor& tensor, const Coord& coord);
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
@@ -50,7 +50,44 @@ __simd_callee__ inline decltype(auto) load(const Tensor& tensor, const Coord& co
  * @param [in] tensor Source tensor located in UB.
  */
 template <load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor>
-__simd_callee__ inline decltype(auto) load(const Tensor& tensor);
+__simd_callee__ inline auto load(const Tensor& tensor);
+
+/**
+ * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
+ * @brief Loads packed mask bits from a UB tensor at the specified coordinate.
+ *
+ * @override_id te_experimental_load__const_Tensor_R_const_Coord_R__template_RegDataType_sideband_mode_Tensor_Coord
+ * @archs 3510
+ * @return A Boolean register tensor containing the loaded mask bits in its reg member.
+ * @param [in] tensor Source uint32_t tensor located in UB.
+ * @param [in] coord Coordinate of the first source word.
+ * @note RegDataType must be bool. Supported modes are direct, upsample, and downsample.
+ * Direct mode loads packed bits unchanged; upsample repeats each bit twice; downsample retains even-indexed bits.
+ * The effective source address must be 16-byte aligned for upsample and 32-byte aligned otherwise.
+ * For a 256-byte vector data register, these modes read 32, 16, and 64 bytes, respectively.
+ * The full load must remain within the source buffer.
+ */
+template <
+    typename RegDataType, load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor,
+    typename Coord>
+__simd_callee__ inline auto load(const Tensor& tensor, const Coord& coord);
+
+/**
+ * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
+ * @brief Loads packed mask bits from the beginning of a UB tensor.
+ *
+ * @override_id te_experimental_load__const_Tensor_R__template_RegDataType_sideband_mode_Tensor
+ * @archs 3510
+ * @return A Boolean register tensor containing the loaded mask bits in its reg member.
+ * @param [in] tensor Source uint32_t tensor located in UB.
+ * @note RegDataType must be bool. Supported modes are direct, upsample, and downsample.
+ * Direct mode loads packed bits unchanged; upsample repeats each bit twice; downsample retains even-indexed bits.
+ * The source address must be 16-byte aligned for upsample and 32-byte aligned otherwise.
+ * For a 256-byte vector data register, these modes read 32, 16, and 64 bytes, respectively.
+ * The full load must remain within the source buffer.
+ */
+template <typename RegDataType, load_sideband_mode sideband_mode = load_sideband_mode::direct, typename Tensor>
+__simd_callee__ inline auto load(const Tensor& tensor);
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
@@ -61,9 +98,13 @@ __simd_callee__ inline decltype(auto) load(const Tensor& tensor);
  * @return A register tensor populated according to the selected broadcast mode.
  * @param [in] tensor Source tensor located in UB.
  * @param [in] coord Coordinate of the first source element.
+ * @note The source tensor element type must be supported by brc_mode. An int4b_t source
+ * returns reg_tensor<int4x2_t>; other supported source types return a register tensor
+ * with the corresponding element type. Only the returned reg member is initialized;
+ * call with_mask before using the result in an operation that reads its mask.
  */
 template <broadcast_mode brc_mode = broadcast_mode::elem, typename Tensor, typename Coord>
-__simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor, const Coord& coord);
+__simd_callee__ inline auto load_broadcast(const Tensor& tensor, const Coord& coord);
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
@@ -73,9 +114,13 @@ __simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor, const
  * @archs 3510
  * @return A register tensor populated according to the selected broadcast mode.
  * @param [in] tensor Source tensor located in UB.
+ * @note The source tensor element type must be supported by brc_mode. An int4b_t source
+ * returns reg_tensor<int4x2_t>; other supported source types return a register tensor
+ * with the corresponding element type. Only the returned reg member is initialized;
+ * call with_mask before using the result in an operation that reads its mask.
  */
 template <broadcast_mode brc_mode = broadcast_mode::elem, typename Tensor>
-__simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor);
+__simd_callee__ inline auto load_broadcast(const Tensor& tensor);
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_load
@@ -95,7 +140,7 @@ __simd_callee__ inline decltype(auto) load_broadcast(const Tensor& tensor);
  * mask.
  */
 template <gather_mode mode = gather_mode::element, typename Tensor, typename Coord, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor, const Coord& coord, const reg_tensor<Index> index, const reg_tensor<bool>& gather_mask);
 
 /**
@@ -115,7 +160,7 @@ __simd_callee__ inline decltype(auto) load_gather(
  * mask.
  */
 template <gather_mode mode = gather_mode::element, typename Tensor, typename Index>
-__simd_callee__ inline decltype(auto) load_gather(
+__simd_callee__ inline auto load_gather(
     const Tensor& tensor, const reg_tensor<Index> index, const reg_tensor<bool>& gather_mask);
 
 /**

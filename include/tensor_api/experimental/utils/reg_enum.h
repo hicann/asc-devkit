@@ -55,9 +55,9 @@ enum class cast_sat_mode {
 };
 
 struct cast_options {
-    cast_layout layout = cast_layout::zero;
-    cast_round_mode round = cast_round_mode::rint;
-    cast_sat_mode sat = cast_sat_mode::not_sat;
+    cast_layout layout = cast_layout::unknown;
+    cast_round_mode round = cast_round_mode::unknown;
+    cast_sat_mode sat = cast_sat_mode::unknown;
 };
 
 enum class load_sideband_mode : uint8_t {
@@ -135,7 +135,14 @@ enum class mem_type {
     scalar_all,
 };
 
-enum class div_algo { INTRINSIC, PRECISION_0ULP_FTZ_TRUE };
+enum class div_algo {
+    INTRINSIC,
+    PRECISION_0ULP_FTZ_TRUE,
+    DIFF_COMPENSATION,
+    PRECISION_1ULP_FTZ_TRUE,
+    PRECISION_0ULP_FTZ_FALSE,
+    PRECISION_1ULP_FTZ_FALSE
+};
 
 enum class merge_mode {
     zeroing,

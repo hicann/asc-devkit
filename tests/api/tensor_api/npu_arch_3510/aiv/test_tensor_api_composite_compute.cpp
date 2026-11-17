@@ -25,11 +25,14 @@ __aicore__ inline void test_axpy()
     reg_type<T> dst{};
     reg_type<T> src{};
     T scalar{};
-    dst.mask = asc::te::experimental::all_mask<T>().reg;
+    dst.mask = static_cast<vector_bool>(0x5A5A);
+    src.mask = static_cast<vector_bool>(0xA5A5);
+    auto original_mask = dst.mask;
 
     auto result = asc::te::experimental::axpy(dst, src, scalar);
     static_assert(AscendC::Std::is_same_v<decltype(result), reg_type<T>>);
-    EXPECT_EQ(result.mask, dst.mask);
+    EXPECT_EQ(result.mask, original_mask);
+    EXPECT_EQ(dst.mask, original_mask);
 }
 
 template <typename T>

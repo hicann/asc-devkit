@@ -15,8 +15,10 @@
 
 class TensorApiVectorRegDataCopy3510 : public testing::Test {};
 
+static_assert(!asc::te::experimental::detail::is_move_support_type<bool>, "move with dst input does not support bool");
+
 template <typename T>
-__aicore__ inline void TestMove()
+__aicore__ inline void TestMoveWithDst()
 {
     asc::te::experimental::reg_tensor<T> dst{};
     asc::te::experimental::reg_tensor<T> src{};
@@ -25,13 +27,27 @@ __aicore__ inline void TestMove()
     dst.mask = noneMask.reg;
     src.mask = allMask.reg;
 
-    asc::te::experimental::move(dst, src);
-    EXPECT_EQ(dst.mask, allMask.reg);
+    auto result = asc::te::experimental::move(dst, src);
+    static_assert(AscendC::Std::is_same_v<decltype(result), asc::te::experimental::reg_tensor<T>>);
+    EXPECT_EQ(dst.mask, noneMask.reg);
+    EXPECT_EQ(result.mask, noneMask.reg);
 
     dst.mask = allMask.reg;
     src.mask = noneMask.reg;
-    asc::te::experimental::move(dst, src);
-    EXPECT_EQ(dst.mask, noneMask.reg);
+    result = asc::te::experimental::move(dst, src);
+    EXPECT_EQ(dst.mask, allMask.reg);
+    EXPECT_EQ(result.mask, allMask.reg);
+}
+
+__aicore__ inline void TestMoveWithoutDst()
+{
+    asc::te::experimental::reg_tensor<bool> src{};
+    auto allMask = asc::te::experimental::all_mask<bool>();
+    src.mask = allMask.reg;
+
+    auto result = asc::te::experimental::move(src);
+    static_assert(AscendC::Std::is_same_v<decltype(result), asc::te::experimental::reg_tensor<bool>>);
+    EXPECT_EQ(result.mask, allMask.reg);
 }
 
 template <int16_t Offset, typename T>
@@ -43,23 +59,24 @@ __aicore__ inline void TestMoveMask()
     EXPECT_EQ(dst.mask, asc::te::experimental::all_mask<uint8_t>().reg);
 }
 
-#define REG_DATA_MOVE_TEST(DataType)                        \
-    TEST_F(TensorApiVectorRegDataCopy3510, Move_##DataType) \
-    {                                                       \
-        TestMove<DataType>();                               \
-        SUCCEED();                                          \
+#define REG_DATA_MOVE_WITH_DST_TEST(DataType)                      \
+    TEST_F(TensorApiVectorRegDataCopy3510, MoveWithDst_##DataType) \
+    {                                                              \
+        TestMoveWithDst<DataType>();                               \
+        SUCCEED();                                                 \
     }
 
-REG_DATA_MOVE_TEST(bool)
-REG_DATA_MOVE_TEST(uint8_t)
-REG_DATA_MOVE_TEST(int8_t)
-REG_DATA_MOVE_TEST(uint16_t)
-REG_DATA_MOVE_TEST(int16_t)
-REG_DATA_MOVE_TEST(half)
-REG_DATA_MOVE_TEST(bfloat16_t)
-REG_DATA_MOVE_TEST(uint32_t)
-REG_DATA_MOVE_TEST(int32_t)
-REG_DATA_MOVE_TEST(float)
+REG_DATA_MOVE_WITH_DST_TEST(uint8_t)
+REG_DATA_MOVE_WITH_DST_TEST(int8_t)
+REG_DATA_MOVE_WITH_DST_TEST(uint16_t)
+REG_DATA_MOVE_WITH_DST_TEST(int16_t)
+REG_DATA_MOVE_WITH_DST_TEST(half)
+REG_DATA_MOVE_WITH_DST_TEST(bfloat16_t)
+REG_DATA_MOVE_WITH_DST_TEST(uint32_t)
+REG_DATA_MOVE_WITH_DST_TEST(int32_t)
+REG_DATA_MOVE_WITH_DST_TEST(float)
+
+TEST_F(TensorApiVectorRegDataCopy3510, MoveWithoutDstBool) { TestMoveWithoutDst(); }
 
 TEST_F(TensorApiVectorRegDataCopy3510, MoveMaskUint16)
 {

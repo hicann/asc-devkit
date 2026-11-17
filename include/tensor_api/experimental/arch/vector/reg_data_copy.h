@@ -43,16 +43,29 @@ __simd_callee__ inline reg_tensor<bool> move_mask(const reg_tensor<T>& src);
 
 /**
  * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_copy
- * @brief Copies active register elements selected by the source register tensor's mask.
+ * @brief Copies active register elements selected by the source register tensor's mask in merging mode.
  *
  * @override_id te_experimental_move__reg_tensor_T_R_const_reg_tensor_T_R__template_T
  * @archs 3510
- * @note T must be one of bool, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, or float.
- * @param [in,out] dst Destination register tensor. Its mask is updated from src.mask.
+ * @return The destination register tensor after the copy. Its mask remains unchanged.
+ * @note T must be one of uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, or float.
+ * @param [in,out] dst Destination register tensor. Inactive elements and its mask retain their original values.
  * @param [in] src Source register tensor. Its mask selects the active elements to copy.
  */
 template <typename T>
-__simd_callee__ inline void move(reg_tensor<T>& dst, const reg_tensor<T>& src);
+__simd_callee__ inline reg_tensor<T> move(reg_tensor<T>& dst, const reg_tensor<T>& src);
+
+/**
+ * @ingroup simd_api.tensor_api.reg_vector_compute.reg_data_copy
+ * @brief Copies active bits selected by the source register tensor's mask in zeroing mode.
+ *
+ * @override_id te_experimental_move__const_reg_tensor_bool_R
+ * @archs 3510
+ * @return A register tensor containing the copied bits. Inactive bits are set to zero, and its mask is copied from
+ * src.mask.
+ * @param [in] src Source register tensor. Its mask selects the active bits to copy.
+ */
+__simd_callee__ inline reg_tensor<bool> move(const reg_tensor<bool>& src);
 } // namespace experimental
 } // namespace te
 } // namespace asc

@@ -19,6 +19,7 @@
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_INDEX_IMPL_H
 
 #include "impl/tensor_api/experimental/arch/utils/reg_utils.h"
+#include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 
 namespace asc {
 namespace te {
@@ -41,6 +42,7 @@ __simd_callee__ inline reg_tensor<Std::remove_cvref_t<T>> iota(const T& start)
     } else if constexpr (order == iota_order::decrease) {
         asc_arange_descend(dst.reg, start);
     }
+    dst.with_mask(all_mask<data_type>());
     return dst;
 }
 

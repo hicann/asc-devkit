@@ -27,31 +27,37 @@ __aicore__ inline void check_histograms()
 {
     using dst_type = asc::te::experimental::reg_tensor<uint16_t>;
     using src_type = asc::te::experimental::reg_tensor<uint8_t>;
+    using histogram_function = dst_type (*)(dst_type&, const src_type&);
+    static_assert(AscendC::Std::is_same_v<
+                  decltype(&asc::te::experimental::histograms<
+                           asc::te::experimental::default_histogram_options, uint16_t, uint8_t>),
+                  histogram_function>);
     static_assert(AscendC::Std::is_same_v<
                   decltype(asc::te::experimental::histograms(
-                      AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())),
+                      AscendC::Std::declval<dst_type&>(), AscendC::Std::declval<const src_type&>())),
                   dst_type>);
     static_assert(AscendC::Std::is_same_v<
                   decltype(asc::te::experimental::histograms<frequency_high_options>(
-                      AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())),
+                      AscendC::Std::declval<dst_type&>(), AscendC::Std::declval<const src_type&>())),
                   dst_type>);
     static_assert(AscendC::Std::is_same_v<
                   decltype(asc::te::experimental::histograms<cumulative_low_options>(
-                      AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())),
+                      AscendC::Std::declval<dst_type&>(), AscendC::Std::declval<const src_type&>())),
                   dst_type>);
     static_assert(AscendC::Std::is_same_v<
                   decltype(asc::te::experimental::histograms<cumulative_high_options>(
-                      AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())),
+                      AscendC::Std::declval<dst_type&>(), AscendC::Std::declval<const src_type&>())),
                   dst_type>);
     static_assert(AscendC::Std::is_same_v<
                   decltype(asc::te::experimental::histograms<
                            asc::te::experimental::default_histogram_options, uint16_t, uint8_t>(
-                      AscendC::Std::declval<const dst_type&>(), AscendC::Std::declval<const src_type&>())),
+                      AscendC::Std::declval<dst_type&>(), AscendC::Std::declval<const src_type&>())),
                   dst_type>);
 
     dst_type dst{};
     src_type src{};
-    dst.mask = asc::te::experimental::all_mask<uint16_t>().reg;
+    dst.mask = static_cast<vector_bool>(0x5A5A);
+    auto original_mask = dst.mask;
     src.mask = asc::te::experimental::all_mask<uint8_t>().reg;
     auto frequency_low = asc::te::experimental::histograms(dst, src);
     auto frequency_high = asc::te::experimental::histograms<frequency_high_options>(dst, src);
@@ -61,6 +67,7 @@ __aicore__ inline void check_histograms()
     EXPECT_EQ(frequency_high.mask, dst.mask);
     EXPECT_EQ(cumulative_low.mask, dst.mask);
     EXPECT_EQ(cumulative_high.mask, dst.mask);
+    EXPECT_EQ(dst.mask, original_mask);
 }
 
 TEST(test_tensor_api_histogram_compute, compile_public_api_and_four_modes) { check_histograms(); }

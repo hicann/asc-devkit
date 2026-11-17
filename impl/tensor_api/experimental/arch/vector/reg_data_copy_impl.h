@@ -24,7 +24,7 @@ namespace experimental {
 namespace detail {
 template <typename T>
 inline constexpr bool is_move_support_type =
-    Std::is_one_of_v<T, bool, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, float>;
+    Std::is_one_of_v<T, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, uint32_t, int32_t, float>;
 } // namespace detail
 
 template <int16_t Offset, typename T>
@@ -43,13 +43,21 @@ __simd_callee__ inline reg_tensor<bool> move_mask(const reg_tensor<T>& src)
 }
 
 template <typename T>
-__simd_callee__ inline void move(reg_tensor<T>& dst, const reg_tensor<T>& src)
+__simd_callee__ inline reg_tensor<T> move(reg_tensor<T>& dst, const reg_tensor<T>& src)
 {
     static_assert(
-        detail::is_move_support_type<T>, "move only supports bool, uint8_t, int8_t, uint16_t,"
+        detail::is_move_support_type<T>, "move with dst input only supports uint8_t, int8_t, uint16_t,"
                                          "int16_t, half, bfloat16_t, uint32_t, int32_t and float.");
     asc_copy(dst.reg, src.reg, src.mask);
+    return dst;
+}
+
+__simd_callee__ inline reg_tensor<bool> move(const reg_tensor<bool>& src)
+{
+    reg_tensor<bool> dst;
+    asc_copy(dst.reg, src.reg, src.mask);
     dst.mask = src.mask;
+    return dst;
 }
 } // namespace experimental
 } // namespace te

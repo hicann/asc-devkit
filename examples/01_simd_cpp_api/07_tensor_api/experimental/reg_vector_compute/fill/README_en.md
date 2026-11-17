@@ -2,7 +2,7 @@
 
 ## Overview
 
-This example implements the `fill` operation in scalar fill mode based on the Tensor API. It primarily calls the experimental `asc::te::experimental::fill` interface.
+This example uses the experimental `asc::te::experimental::fill` interface for scalar filling and broadcasting the highest element of a register.
 
 ## Supported Products and CANN Versions
 
@@ -34,9 +34,9 @@ fill
   <tr><td rowspan="1" align="center">Kernel Function</td><td colspan="4" align="center">fill</td></tr>
   </table>
 - Implementation:  
-  The `fill_vf` function calls the `fill` interface to perform scalar filling:
-  - Use `fill` to write the scalar value to every element of the destination `reg_tensor`.
-  - Use `store` to write the result back to UB.
+  The `fill_vf` function fills a source register with 1 and sets its lowest element to 0 to distinguish the two broadcast positions.
+  - Use `update_mask` to generate the write mask for the current block.
+  - Call `fill<high_low_part::high>` to broadcast the highest source element, then use `store` to write the result back to UB.
   - Invoke the kernel function using the `<<<>>>` kernel launch syntax.
 
 ## Build and Run

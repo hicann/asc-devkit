@@ -34,7 +34,7 @@ namespace experimental {
  * @archs 3510
  * @tparam DataType Element type of the source and result register tensors.
  * @tparam IndexType Element type of the index register tensor.
- * @return A register tensor containing the gathered data. The result mask is inherited from index.
+ * @return A register tensor containing the gathered data with an all-active result mask.
  * @param [in] src Source register tensor.
  * @param [in] index Register tensor containing per-lane source indexes.
  */

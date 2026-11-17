@@ -30,7 +30,7 @@ namespace experimental {
  * @archs 3510
  * @tparam part Destination half selected for the pack operation.
  * @tparam T Element type of the source register tensor.
- * @return A register tensor containing the packed data. The result mask follows src.
+ * @return A register tensor containing the packed data with an all-active result mask.
  * @param [in] src Source register tensor.
  */
 template <high_low_part part = high_low_part::low, typename T>
@@ -44,7 +44,7 @@ __simd_callee__ inline decltype(auto) pack(reg_tensor<T> src);
  * @archs 3510
  * @tparam part Source half selected for the unpack operation.
  * @tparam T Element type of the source register tensor.
- * @return A register tensor containing the unpacked data. The result mask follows src.
+ * @return A register tensor containing the unpacked data with an all-active result mask.
  * @param [in] src Source register tensor.
  */
 template <high_low_part part = high_low_part::low, typename T>
@@ -70,7 +70,7 @@ __simd_callee__ inline reg_tensor<T> compress(reg_tensor<T> src);
  * @override_id te_experimental_expand__reg_tensor_bool__template_T
  * @archs 3510
  * @tparam T Element type of the generated index register tensor.
- * @return A register tensor containing prefix-count indexes. The result mask is mask.
+ * @return A register tensor containing prefix-count indexes with an all-active result mask.
  * @param [in] mask Lane-selection mask.
  */
 template <typename T>

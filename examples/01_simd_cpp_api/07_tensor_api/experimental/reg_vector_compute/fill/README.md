@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例基于Tensor API实现fill运算（标量填充模式），主要调用实验性接口 `asc::te::experimental::fill`。
+本样例基于Tensor API实现fill运算演示标量填充和寄存器最高位广播。，主要调用实验性接口 `asc::te::experimental::fill`。
 
 ## 本样例支持的产品及CANN软件版本
 
@@ -33,9 +33,9 @@
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">fill</td></tr>
   </table>
 - 样例实现：  
-  fill_vf函数内调用fill接口进行标量填充：
-  - 使用fill接口将标量值填充到目的reg_tensor的每个元素
-  - 使用store将结果写回UB
+  `fill_vf` 先将源寄存器的所有元素填为1，再将最低位元素置0，以区分最低位和最高位广播。
+  - 使用 `update_mask` 生成当前块的写入掩码。
+  - 调用 `fill<high_low_part::high>` 广播源寄存器的最高位元素，再使用 `store` 写回UB。
   - 调用实现  
     使用内核调用符<<<>>>调用核函数。
 

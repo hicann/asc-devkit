@@ -24,6 +24,7 @@ static uint16_t src_stride_global = 0;
 static bool NZ2ND_en_global = false;
 static bool NZ2DN_en_global = false;
 static void* gm_addr_global = nullptr;
+static void* l0c_addr_global = nullptr;
 static bool is_mock_copy_matrix_cc_to_ub = false;
 static void* ub_addr_global = nullptr;
 static uint64_t quant_pre_global = 0;
@@ -46,6 +47,9 @@ static uint64_t quant_pre_global = 0;
             EXPECT_EQ(nz2dn_en, NZ2DN_en_global);                                                               \
             if (gm_addr_global != nullptr) {                                                                    \
                 EXPECT_EQ(dst_addr, gm_addr_global);                                                            \
+            }                                                                                                   \
+            if (l0c_addr_global != nullptr) {                                                                    \
+                EXPECT_EQ(src_addr, l0c_addr_global);                                                            \
             }                                                                                                   \
             EXPECT_EQ(quant_pre, quant_pre_global);                                                             \
         }                                                                                                       \
@@ -696,10 +700,5 @@ inline int32_t g_coreType = 1;
 #else
 inline int32_t g_coreType = 2;
 #endif
-
-typedef std::integral_constant<Pos, Pos::LOWEST> Lowest_Type;
-typedef std::integral_constant<Pos, Pos::HIGHEST> Highest_Type;
-constexpr Lowest_Type POS_LOWEST = Lowest_Type();
-constexpr Highest_Type POS_HIGHEST = Highest_Type();
 
 #endif

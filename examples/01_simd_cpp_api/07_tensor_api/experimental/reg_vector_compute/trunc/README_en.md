@@ -100,7 +100,7 @@ For example, `3.75` produces `3.0`, and `-3.75` produces `-3.0`.
     auto src_reg = asc::te::experimental::load(src, coord);
     src_reg.with_mask(asc::te::experimental::all_mask<T>());
 
-    auto dst_reg = asc::te::experimental::trunc(src_reg);
+    auto dst_reg = asc::te::experimental::trunc<asc::te::experimental::cast_round_mode::trunc>(src_reg);
     asc::te::experimental::store(dst, coord, dst_reg);
     ```
 

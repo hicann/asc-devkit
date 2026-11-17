@@ -23,7 +23,7 @@ namespace te {
 namespace experimental {
 
 template <const histogram_options& options, typename T, typename U>
-__simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const reg_tensor<U>& src)
+__simd_callee__ inline reg_tensor<T> histograms(reg_tensor<T>& dst, const reg_tensor<U>& src)
 {
     static_assert(
         ::AscendC::Std::is_same_v<T, uint16_t> && ::AscendC::Std::is_same_v<U, uint8_t>,
@@ -34,21 +34,20 @@ __simd_callee__ inline reg_tensor<T> histograms(const reg_tensor<T>& dst, const 
         options.mode == histogram_mode::frequency || options.mode == histogram_mode::cumulative,
         "unsupported histogram mode");
 
-    reg_tensor<T> result = dst;
     if constexpr (options.mode == histogram_mode::frequency) {
         if constexpr (options.half == histogram_half::low) {
-            asc_frequency_histogram_bin0(result.reg, src.reg, src.mask);
+            asc_frequency_histogram_bin0(dst.reg, src.reg, src.mask);
         } else {
-            asc_frequency_histogram_bin1(result.reg, src.reg, src.mask);
+            asc_frequency_histogram_bin1(dst.reg, src.reg, src.mask);
         }
     } else {
         if constexpr (options.half == histogram_half::low) {
-            asc_cumulative_histogram_bin0(result.reg, src.reg, src.mask);
+            asc_cumulative_histogram_bin0(dst.reg, src.reg, src.mask);
         } else {
-            asc_cumulative_histogram_bin1(result.reg, src.reg, src.mask);
+            asc_cumulative_histogram_bin1(dst.reg, src.reg, src.mask);
         }
     }
-    return result;
+    return dst;
 }
 
 } // namespace experimental

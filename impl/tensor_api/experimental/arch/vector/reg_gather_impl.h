@@ -19,6 +19,7 @@
 #define IMPL_TENSOR_API_EXPERIMENTAL_ARCH_VECTOR_REG_GATHER_IMPL_H
 
 #include "impl/tensor_api/experimental/arch/utils/reg_utils.h"
+#include "tensor_api/experimental/arch/vector/mask_reg_compute.h"
 #include "tensor_api/tensor/tensor_interface.h"
 
 namespace asc {
@@ -44,7 +45,7 @@ __simd_callee__ inline reg_tensor<DataType> gather(const reg_tensor<DataType>& s
 
     reg_tensor<DataType> dst;
     asc_gather(dst.reg, src.reg, index.reg);
-    dst.mask = src.mask;
+    dst.with_mask(all_mask<DataType>());
     return dst;
 }
 
