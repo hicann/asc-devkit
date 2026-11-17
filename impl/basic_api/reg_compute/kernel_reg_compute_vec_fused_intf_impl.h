@@ -102,50 +102,61 @@ __simd_callee__ inline void FusedMulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, Ma
 }
 #endif
 
-#if __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void MulDstSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedMulDstSubImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void NegMulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedNegMulDstAddImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void NegMulDstSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedNegMulDstSubImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void FusedMulSubDst(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedMulSubDstImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void FusedNegMulAddDst(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedNegMulAddDstImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, MaskMergeMode mode, typename U>
 __simd_callee__ inline void FusedNegMulSubDst(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     FusedNegMulSubDstImpl<T, mode, U>(dstReg, srcReg0, srcReg1, mask);
+#endif
 }
 
 template <typename T, typename U, const CastTrait& trait, typename S, typename V>
 __simd_callee__ inline void ReciprocalCast(S& dstReg, V& srcReg, MaskReg& mask)
 {
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     ReciprocalCastImpl<T, U, trait>(dstReg, srcReg, mask);
-}
-
 #endif
+}
 
 } // namespace Reg
 } // namespace AscendC

@@ -45,7 +45,6 @@ __simd_callee__ inline void ExpSub(S& dstReg, V& srcReg0, V& srcReg1, MaskReg& m
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void MulDstAdd(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask);
 
-#if __NPU_ARCH__ == 9201 || __NPU_ARCH__ == 9202
 template <typename T = DefaultType, MaskMergeMode mode = MaskMergeMode::ZEROING, typename U>
 __simd_callee__ inline void MulDstSub(U& dstReg, U& srcReg0, U& srcReg1, MaskReg& mask);
 
@@ -67,7 +66,6 @@ __simd_callee__ inline void FusedNegMulSubDst(U& dstReg, U& srcReg0, U& srcReg1,
 template <
     typename T = DefaultType, typename U = DefaultType, const CastTrait& trait = castTrait, typename S, typename V>
 __simd_callee__ inline void ReciprocalCast(S& dstReg, V& srcReg, MaskReg& mask);
-#endif
 
 } // namespace Reg
 } // namespace AscendC

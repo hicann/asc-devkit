@@ -123,15 +123,12 @@ __aicore__ inline void CheckNd2NzParams(Nd2NzParams params, const __gm__ char* m
  * @param [in] intriParams.dstNzNStride stride of n between 2 C0 in L1
  * @param [in] intriParams.dstNzMatrixStride DST_nz_matrix_stride in L1 in unit of element
  */
-#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
-    (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162) || \
-    (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
 template <typename T, bool enableSmallC0>
 __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
     const LocalTensor<T>& dst, const GlobalTensor<T>& src, const Nd2NzParams& intriParams,
     const bool enablePreReadIgnoreSync)
 {
-#if (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
+#if defined(__NPU_ARCH__) && ((__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202))
     CheckNd2NzParams(intriParams, "DataCopy with Nd2NzParams");
     using PrimType = PrimT<T>;
     const Hardware dstHWPos = GetPhyType((TPosition)dst.GetPosition());
@@ -159,6 +156,9 @@ __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
 #endif
 }
 
+#if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 5102) || (__NPU_ARCH__ == 3113) || (__NPU_ARCH__ == 5101) || \
+    (__NPU_ARCH__ == 5161) || (__NPU_ARCH__ == 5165) || (__NPU_ARCH__ == 5163) || (__NPU_ARCH__ == 5162) || \
+    (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202)
 template <typename T, bool enableSmallC0>
 __aicore__ inline __inout_pipe__(MTE2) void DataCopy(
     const LocalTensor<T>& dst, const GlobalTensor<T>& src, const Nd2NzParams& intriParams)
