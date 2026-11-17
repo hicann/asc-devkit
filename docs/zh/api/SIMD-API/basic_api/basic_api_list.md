@@ -93,6 +93,7 @@
 | [DataCopy（L0C到L1数据搬运）](cube_compute_ISASI/cube_compute_store/DataCopy_L0CToL1.md) | 矩阵计算的结果存放在L0C Buffer，DataCopy接口用于将结果搬运至L1 Buffer中，并且在搬运过程中支持随路格式转换等操作。 |
 | [Fixpipe（L0C到L1数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至L1 Buffer中，并且在搬运过程中支持随路格式转换等操作。 |
 | [Fixpipe（L0C Buffer到UB数据搬运）](cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md) | 矩阵计算的结果存放在L0C Buffer，Fixpipe接口用于将结果搬运至UB中，并且在搬运过程中支持随路格式转换等操作。 |
+| [DataCopy（L0C到UB数据搬运）](cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB.md) | 矩阵计算的结果存放在L0C Buffer，DataCopy接口用于将结果搬运至Unified Buffer（UB）中，并且在搬运过程中支持随路量化等操作。 |
 
 ### L1到GM数据搬运
 
@@ -108,6 +109,7 @@
 | [SetFixPipeConfig](cube_compute_ISASI/cube_store_aux_config/SetFixPipeConfig.md) | DataCopy数据搬运（L0C-\>GM、L0C-\>L1）过程中进行随路量化时，通过调用该接口设置量化的参数。 |
 | [SetFixpipePreQuantFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipePreQuantFlag.md) | DataCopy数据搬运（L0C-\>GM、L0C-\>L1）过程中进行随路量化时，通过调用该接口设置scalar量化参数。 |
 | [SetFixpipeNz2ndFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2ndFlag.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。 |
+| [SetFixpipeNz2dnFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2dnFlag.md) | DataCopy数据搬运（L0C Buffer->UB）过程中进行随路格式转换（Nz格式转换为DN格式）时，通过调用该接口设置格式转换的相关配置。 |
 | [SetFixPipeClipRelu](cube_compute_ISASI/cube_store_aux_config/SetFixPipeClipRelu.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置ClipReLU操作的最大值。 |
 | [SetFixPipeAddr](cube_compute_ISASI/cube_store_aux_config/SetFixPipeAddr.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路量化后，通过调用该接口设置Elementwise操作时LocalTensor的地址。 |
 

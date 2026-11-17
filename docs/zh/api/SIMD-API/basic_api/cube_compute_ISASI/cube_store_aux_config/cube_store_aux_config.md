@@ -10,6 +10,8 @@
 
 - **[SetFixpipeNz2ndFlag](SetFixpipeNz2ndFlag.md)**
 
+- **[SetFixpipeNz2dnFlag](SetFixpipeNz2dnFlag.md)**
+
 - **[SetFixPipeClipRelu](SetFixPipeClipRelu.md)**
 
 - **[SetFixPipeReluAlpha](SetFixPipeReluAlpha.md)**

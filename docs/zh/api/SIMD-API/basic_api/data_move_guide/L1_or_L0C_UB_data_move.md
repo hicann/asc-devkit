@@ -91,7 +91,7 @@ template <typename T>
 __aicore__ inline void DataCopyPad(const LocalTensor<T>& dst, const LocalTensor<T>& src, const DataCopyExtParams& dataCopyParams, const Nd2NzParams& nd2nzParams)
 ```
 
-<!-- npu="310p" id1 -->
+<!-- npu="950, 310p" id5 -->
 
 ## DataCopy（L0CToUB随路量化激活搬运）
 
@@ -104,9 +104,18 @@ __aicore__ inline void DataCopyPad(const LocalTensor<T>& dst, const LocalTensor<
 
 搬运的数据为[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)的结果，接口具体介绍请参考：[DataCopy（L0C到UB数据搬运）](../cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB.md)。
 
-该接口仅Atlas推理系列产品AI Core支持。
+<!-- npu="950" id4 -->
+针对Ascend 950PR&950DT系列产品，src和dst分别为源操作数和目的操作数，intriParams为搬运参数。
 
-src和dst分别为源操作数和目的操作数；intriParams和enhancedParams为搬运参数。
+- 函数原型
+    ```cpp
+    template <typename T, typename U>
+    __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<U>& src, const DataCopyCO12DstParams& intriParams);
+    ```
+<!-- end id4 -->
+
+<!-- npu="310p" id1 -->
+针对Atlas推理系列产品AI Core，src和dst分别为源操作数和目的操作数，intriParams和enhancedParams为搬运参数。
 
 - 源操作数和目的操作数类型一致
 
@@ -122,6 +131,7 @@ src和dst分别为源操作数和目的操作数；intriParams和enhancedParams�
     __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<U>& src, const DataCopyParams& intriParams, const DataCopyEnhancedParams& enhancedParams)
     ```
 <!-- end id1 -->
+<!-- end id5 -->
 
 ## Fixpipe（L0CToUB随路量化激活搬运）
 

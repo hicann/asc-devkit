@@ -8,7 +8,7 @@
 |---|---|---|
 | L0C Buffer->GM | [Fixpipe（L0C到GM）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md) | [asc_copy_l0c2gm](../SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md) |
 | L0C Buffer->L1 Buffer | [Fixpipe（L0C到L1）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToL1.md) | [asc_copy_l0c2l1](../SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md) |
-| L0C Buffer->UB | [Fixpipe（L0C到UB）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md) | [asc_copy_l0c2ub](../SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md) |
+| L0C Buffer->UB | [Fixpipe（L0C到UB）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md)、[DataCopy（L0C到UB）](../SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopy_L0CToUB.md) | [asc_copy_l0c2ub](../SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md) |
 
 以下内容针对如下型号生效：
 

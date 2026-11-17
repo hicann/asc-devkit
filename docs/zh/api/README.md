@@ -1324,6 +1324,7 @@
                 -   [SetFixPipeConfig](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeConfig.md)
                 -   [SetFixpipePreQuantFlag](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixpipePreQuantFlag.md)
                 -   [SetFixpipeNz2ndFlag](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2ndFlag.md)
+                -   [SetFixpipeNz2dnFlag](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2dnFlag.md)
                 -   [SetFixPipeClipRelu](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeClipRelu.md)
                 -   [SetFixPipeAddr](SIMD-API/basic_api/cube_compute_ISASI/cube_store_aux_config/SetFixPipeAddr.md)
         -   [Memory矢量计算](SIMD-API/basic_api/memory_vector_compute/memory_vector_compute.md)
