@@ -87,10 +87,10 @@ L2Cache 性能表在 MTE2 耗时之外，还会展示 Cache 命中、缺失和�
 
 <table>
 <tr><th>路径</th><th>参数字段</th><th>本样例取值</th><th>含义</th></tr>
-<tr><td rowspan="4">GM 到 UB</td><td><code>DataCopyParams.blockCount</code></td><td><code>tileM</code></td><td>一次搬运的行数</td></tr>
-<tr><td><code>DataCopyParams.blockLen</code></td><td><code>curCols * sizeof(half)</code></td><td>每行连续搬运的字节数</td></tr>
-<tr><td><code>DataCopyParams.srcStride</code></td><td><code>(n - curCols) * sizeof(half)</code></td><td>源端相邻两行之间跳过的字节数</td></tr>
-<tr><td><code>DataCopyParams.dstStride</code></td><td><code>0</code></td><td>UB 中连续存放，不额外跳行</td></tr>
+<tr><td rowspan="4">GM 到 UB</td><td><code>DataCopyExtParams.blockCount</code></td><td><code>tileM</code></td><td>一次搬运的行数</td></tr>
+<tr><td><code>DataCopyExtParams.blockLen</code></td><td><code>curCols * sizeof(half)</code></td><td>每行连续搬运的字节数</td></tr>
+<tr><td><code>DataCopyExtParams.srcStride</code></td><td><code>(n - curCols) * sizeof(half)</code></td><td>源端相邻两行之间跳过的字节数</td></tr>
+<tr><td><code>DataCopyExtParams.dstStride</code></td><td><code>0</code></td><td>UB 中连续存放，不额外跳行</td></tr>
 <tr><td rowspan="4">GM 到 L1</td><td><code>Nd2NzParams.nValue</code></td><td><code>tileM</code></td><td>ND 源矩阵中本次搬运的行数</td></tr>
 <tr><td><code>Nd2NzParams.dValue</code></td><td><code>curCols</code> 或 <code>tileN</code></td><td>ND 源矩阵中本次搬运的列数</td></tr>
 <tr><td><code>Nd2NzParams.srcDValue</code></td><td><code>n</code></td><td>GM 中原矩阵的行宽</td></tr>
@@ -153,12 +153,12 @@ Ascend 950 系列按 GM 带宽约 1.6TB/s 估算，理论耗时约 188.74μs。�
 
 <table>
 <tr><th>架构</th><th>Scenario</th><th>配置</th><th>Task Duration(μs)</th><th>aiv_total_cycles</th><th>aiv_mte2_time(μs)</th><th>aiv_mte2_ratio</th><th>相对基线MTE2性能提升</th><th>说明</th></tr>
-<tr><td rowspan="3">Atlas A2/A3 系列</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>564.84</td><td>49222116</td><td>548.161</td><td>0.989</td><td>基线</td><td>小分块搬运</td></tr>
-<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>233.54</td><td>20167322</td><td>220.772</td><td>0.972</td><td>+148.3%</td><td>中等分块搬运</td></tr>
-<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=48</td><td>215.82</td><td>18563430</td><td>202.657</td><td>0.969</td><td>+170.5%</td><td>大分块搬运</td></tr>
-<tr><td rowspan="3">Ascend 950 系列</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>884.06</td><td>91585425</td><td>881.13</td><td>1</td><td>基线</td><td>小分块搬运</td></tr>
-<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>208.64</td><td>31489587</td><td>205.99</td><td>0.99</td><td>+327.8%</td><td>中等分块搬运</td></tr>
-<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=64</td><td>188.52</td><td>19710997</td><td>185.66</td><td>0.99</td><td>+374.6%</td><td>大分块搬运</td></tr>
+<tr><td rowspan="3">Atlas A2/A3 系列</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyExtParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>564.84</td><td>49222116</td><td>548.161</td><td>0.989</td><td>基线</td><td>小分块搬运</td></tr>
+<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyExtParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>233.54</td><td>20167322</td><td>220.772</td><td>0.972</td><td>+148.3%</td><td>中等分块搬运</td></tr>
+<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyExtParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=48</td><td>215.82</td><td>18563430</td><td>202.657</td><td>0.969</td><td>+170.5%</td><td>大分块搬运</td></tr>
+<tr><td rowspan="3">Ascend 950 系列</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyExtParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>884.06</td><td>91585425</td><td>881.13</td><td>1</td><td>基线</td><td>小分块搬运</td></tr>
+<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyExtParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>208.64</td><td>31489587</td><td>205.99</td><td>0.99</td><td>+327.8%</td><td>中等分块搬运</td></tr>
+<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyExtParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=64</td><td>188.52</td><td>19710997</td><td>185.66</td><td>0.99</td><td>+374.6%</td><td>大分块搬运</td></tr>
 </table>
 
 **GM 到 L1 性能数据**：
@@ -180,7 +180,7 @@ Ascend 950 系列按 GM 带宽约 1.6TB/s 估算，理论耗时约 188.74μs。�
 
 **实现方式**：非对齐数据场景复用与对齐场景相同的搬运流程，仅改变矩阵 `N` 维，使最后一个搬运块无法按完整列宽覆盖。
 
-非对齐时，最后一个 N 方向 tile 的 `curCols` 小于 `TILE_N`。UB 路径中，`DataCopyParams.blockLen` 会从完整的 `TILE_N * sizeof(half)` 变成 `curCols * sizeof(half)`；L1 路径中，`Nd2NzParams.dValue` 会从完整的 `TILE_N` 变成 `curCols`。
+非对齐时，最后一个 N 方向 tile 的 `curCols` 小于 `TILE_N`。UB 路径中，`DataCopyExtParams.blockLen` 会从完整的 `TILE_N * sizeof(half)` 变成 `curCols * sizeof(half)`；L1 路径中，`Nd2NzParams.dValue` 会从完整的 `TILE_N` 变成 `curCols`。
 
 本样例非对齐场景中，GM 到 UB 的完整 tile 搬运量为 `64 * 1024 * 2B = 131072B`，尾块为 `64 * 1023 * 2B = 130944B`；GM 到 L1 的完整 tile 搬运量为 `64 * 256 * 2B = 32768B`，尾块为 `64 * 255 * 2B = 32640B`。非对齐场景并不是总数据量明显增加，而是尾块需要额外边界处理，导致搬运效率下降。
 

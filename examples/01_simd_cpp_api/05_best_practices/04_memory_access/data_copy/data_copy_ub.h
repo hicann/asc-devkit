@@ -37,10 +37,10 @@ public:
         // 按 tile 粒度切分 M/N 方向，便于比较不同分块大小的搬运效率。
         constexpr uint32_t nLoopCount = (n + tileN - 1) / tileN;
         constexpr uint32_t mLoopCount = singleCoreM / tileM;
-        AscendC::DataCopyParams copyInParams;
+        AscendC::DataCopyExtParams copyInParams;
         copyInParams.blockCount = static_cast<uint16_t>(tileM);
         copyInParams.dstStride = 0;
-        AscendC::DataCopyPadParams padParams{false, 0, 0, 0};
+        AscendC::DataCopyPadExtParams<half> padParams{false, 0, 0, 0};
 
         for (uint32_t mBlockIdx = 0; mBlockIdx < mLoopCount; mBlockIdx++) {
             uint32_t mIdx = mStart + mBlockIdx * tileM;
@@ -95,10 +95,10 @@ private:
         constexpr uint32_t fullMBlockCount = m / singleCoreM;
         constexpr uint32_t nLoopCount = n / tileN;
         constexpr uint32_t mTileCount = singleCoreM / tileM;
-        AscendC::DataCopyParams copyInParams{
+        AscendC::DataCopyExtParams copyInParams{
             static_cast<uint16_t>(tileM), static_cast<uint16_t>(tileN * sizeof(half)),
-            static_cast<uint16_t>((n - tileN) * sizeof(half)), 0};
-        AscendC::DataCopyPadParams padParams{false, 0, 0, 0};
+            static_cast<uint16_t>((n - tileN) * sizeof(half)), 0, 0};
+        AscendC::DataCopyPadExtParams<half> padParams{false, 0, 0, 0};
 
         for (uint32_t mBlockIdx = 0; mBlockIdx < fullMBlockCount; mBlockIdx++) {
             // M 方向先按 numBlocks 切成大块，offsetAddr 为 true 时在每组 numBlocks 个大块内轮转访问顺序。
@@ -122,10 +122,10 @@ private:
 
         uint32_t nLoopCount = nCount / tileN;
         constexpr uint32_t mLoopCount = singleCoreM / tileM;
-        AscendC::DataCopyParams copyInParams{
+        AscendC::DataCopyExtParams copyInParams{
             static_cast<uint16_t>(tileM), static_cast<uint16_t>(tileN * sizeof(half)),
-            static_cast<uint16_t>((n - tileN) * sizeof(half)), 0};
-        AscendC::DataCopyPadParams padParams{false, 0, 0, 0};
+            static_cast<uint16_t>((n - tileN) * sizeof(half)), 0, 0};
+        AscendC::DataCopyPadExtParams<half> padParams{false, 0, 0, 0};
 
         for (uint32_t repeatIdx = 0; repeatIdx < repeatTimes; repeatIdx++) {
             for (uint32_t mBlockIdx = 0; mBlockIdx < mLoopCount; mBlockIdx++) {

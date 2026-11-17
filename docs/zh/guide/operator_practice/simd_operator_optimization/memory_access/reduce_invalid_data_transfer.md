@@ -18,12 +18,12 @@
 __aicore__ inline void CopyIn(){
     AscendC::LocalTensor<T> xLocal = inQueueX.AllocTensor<T>();
     AscendC::Duplicate<T>(xLocal, 0, count);
-    AscendC::DataCopyParams dataCopyParams;
+    AscendC::DataCopyExtParams dataCopyParams;
     dataCopyParams.blockCount = 3;
     dataCopyParams.blockLen = 48;
     dataCopyParams.srcStride = 0;
     dataCopyParams.dstStride = 0;
-    AscendC::DataCopyPadParams dataCopyPadParams;
+    AscendC::DataCopyPadExtParams<T> dataCopyPadParams;
     dataCopyPadParams.isPad = 1;
     dataCopyPadParams.leftPadding = 0;
     dataCopyPadParams.rightPadding = 4;
@@ -52,12 +52,12 @@ __aicore__ inline void CopyIn(){
 __aicore__ inline void CopyIn(){
     AscendC::LocalTensor<T> xLocal = inQueueX.AllocTensor<T>();
     AscendC::Duplicate<T>(xLocal, 0, count);
-    AscendC::DataCopyParams dataCopyParams;
+    AscendC::DataCopyExtParams dataCopyParams;
     dataCopyParams.blockCount = 3;
     dataCopyParams.blockLen = 48;
     dataCopyParams.srcStride = 0;
     dataCopyParams.dstStride = 0;
-    AscendC::DataCopyPadParams dataCopyPadParams;
+    AscendC::DataCopyPadExtParams<T> dataCopyPadParams;
     dataCopyPadParams.isPad = 1;
     dataCopyPadParams.leftPadding = 0;
     dataCopyPadParams.rightPadding = 4;

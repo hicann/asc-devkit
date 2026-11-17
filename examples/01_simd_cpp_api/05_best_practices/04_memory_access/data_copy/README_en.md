@@ -86,10 +86,10 @@ First, examine the shape of a single DataCopy transfer: the UB path transfers da
 
 <table>
 <tr><th>Path</th><th>Parameter Field</th><th>Value in This Example</th><th>Meaning</th></tr>
-<tr><td rowspan="4">GM to UB</td><td><code>DataCopyParams.blockCount</code></td><td><code>tileM</code></td><td>Number of rows per transfer</td></tr>
-<tr><td><code>DataCopyParams.blockLen</code></td><td><code>curCols * sizeof(half)</code></td><td>Continuous bytes transferred per row</td></tr>
-<tr><td><code>DataCopyParams.srcStride</code></td><td><code>(n - curCols) * sizeof(half)</code></td><td>Bytes skipped between adjacent rows on the source side</td></tr>
-<tr><td><code>DataCopyParams.dstStride</code></td><td><code>0</code></td><td>Stored continuously in UB, no extra row skipping</td></tr>
+<tr><td rowspan="4">GM to UB</td><td><code>DataCopyExtParams.blockCount</code></td><td><code>tileM</code></td><td>Number of rows per transfer</td></tr>
+<tr><td><code>DataCopyExtParams.blockLen</code></td><td><code>curCols * sizeof(half)</code></td><td>Continuous bytes transferred per row</td></tr>
+<tr><td><code>DataCopyExtParams.srcStride</code></td><td><code>(n - curCols) * sizeof(half)</code></td><td>Bytes skipped between adjacent rows on the source side</td></tr>
+<tr><td><code>DataCopyExtParams.dstStride</code></td><td><code>0</code></td><td>Stored continuously in UB, no extra row skipping</td></tr>
 <tr><td rowspan="4">GM to L1</td><td><code>Nd2NzParams.nValue</code></td><td><code>tileM</code></td><td>Number of rows in the ND source matrix for this transfer</td></tr>
 <tr><td><code>Nd2NzParams.dValue</code></td><td><code>curCols</code> or <code>tileN</code></td><td>Number of columns in the ND source matrix for this transfer</td></tr>
 <tr><td><code>Nd2NzParams.srcDValue</code></td><td><code>n</code></td><td>Row width of the original matrix in GM</td></tr>
@@ -152,12 +152,12 @@ For Ascend 950 Series, with GM bandwidth approximately 1.6TB/s, the theoretical 
 
 <table>
 <tr><th>Architecture</th><th>Scenario</th><th>Configuration</th><th>Task Duration(μs)</th><th>aiv_total_cycles</th><th>aiv_mte2_time(μs)</th><th>aiv_mte2_ratio</th><th>MTE2 Performance Improvement vs Baseline</th><th>Description</th></tr>
-<tr><td rowspan="3">Atlas A2/A3 Series</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>564.84</td><td>49222116</td><td>548.161</td><td>0.989</td><td>Baseline</td><td>Small block transfer</td></tr>
-<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>233.54</td><td>20167322</td><td>220.772</td><td>0.972</td><td>+148.3%</td><td>Medium block transfer</td></tr>
-<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=48</td><td>215.82</td><td>18563430</td><td>202.657</td><td>0.969</td><td>+170.5%</td><td>Large block transfer</td></tr>
-<tr><td rowspan="3">Ascend 950 Series</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>884.06</td><td>91585425</td><td>881.13</td><td>1</td><td>Baseline</td><td>Small block transfer</td></tr>
-<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>208.64</td><td>31489587</td><td>205.99</td><td>0.99</td><td>+327.8%</td><td>Medium block transfer</td></tr>
-<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=64</td><td>188.52</td><td>19710997</td><td>185.66</td><td>0.99</td><td>+374.6%</td><td>Large block transfer</td></tr>
+<tr><td rowspan="3">Atlas A2/A3 Series</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyExtParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>564.84</td><td>49222116</td><td>548.161</td><td>0.989</td><td>Baseline</td><td>Small block transfer</td></tr>
+<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyExtParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=48</td><td>233.54</td><td>20167322</td><td>220.772</td><td>0.972</td><td>+148.3%</td><td>Medium block transfer</td></tr>
+<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyExtParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=48</td><td>215.82</td><td>18563430</td><td>202.657</td><td>0.969</td><td>+170.5%</td><td>Large block transfer</td></tr>
+<tr><td rowspan="3">Ascend 950 Series</td><td>1</td><td>Tensor=[12288,12288]<br>Tile=[1,64]<br>DataCopyExtParams={blockCount=1, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>884.06</td><td>91585425</td><td>881.13</td><td>1</td><td>Baseline</td><td>Small block transfer</td></tr>
+<tr><td>2</td><td>Tensor=[12288,12288]<br>Tile=[64,64]<br>DataCopyExtParams={blockCount=64, blockLen=128B, srcStride=24448B}<br>Block Num=64</td><td>208.64</td><td>31489587</td><td>205.99</td><td>0.99</td><td>+327.8%</td><td>Medium block transfer</td></tr>
+<tr><td>3</td><td>Tensor=[12288,12288]<br>Tile=[64,1024]<br>DataCopyExtParams={blockCount=64, blockLen=2048B, srcStride=22528B}<br>Block Num=64</td><td>188.52</td><td>19710997</td><td>185.66</td><td>0.99</td><td>+374.6%</td><td>Large block transfer</td></tr>
 </table>
 
 **GM to L1 Performance Data**:
@@ -179,7 +179,7 @@ For Ascend 950 Series, with GM bandwidth approximately 1.6TB/s, the theoretical 
 
 **Implementation**: The unaligned data scenario reuses the same transfer flow as the aligned scenario, only changing the matrix `N` dimension so that the last transfer block cannot cover the full column width.
 
-When unaligned, the last N-direction tile has `curCols` less than `TILE_N`. In the UB path, `DataCopyParams.blockLen` changes from the full `TILE_N * sizeof(half)` to `curCols * sizeof(half)`; in the L1 path, `Nd2NzParams.dValue` changes from the full `TILE_N` to `curCols`.
+When unaligned, the last N-direction tile has `curCols` less than `TILE_N`. In the UB path, `DataCopyExtParams.blockLen` changes from the full `TILE_N * sizeof(half)` to `curCols * sizeof(half)`; in the L1 path, `Nd2NzParams.dValue` changes from the full `TILE_N` to `curCols`.
 
 In the unaligned scenario of this example, the full tile transfer volume for GM to UB is `64 * 1024 * 2B = 131072B`, and the tail block is `64 * 1023 * 2B = 130944B`; the full tile transfer volume for GM to L1 is `64 * 256 * 2B = 32768B`, and the tail block is `64 * 255 * 2B = 32640B`. The unaligned scenario does not significantly increase total data volume; rather, the tail block requires additional boundary processing, causing transfer efficiency degradation.
 
