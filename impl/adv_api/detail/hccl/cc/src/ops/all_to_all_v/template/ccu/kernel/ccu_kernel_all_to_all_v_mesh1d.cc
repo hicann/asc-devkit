@@ -309,11 +309,12 @@ static CcuResult LoadArgs(
     ccu::Variable srcOffset, ccu::Variable dstOffset, ccu::Variable extAddr, ccu::Variable goSize1,
     ccu::Variable goSize2, ccu::Variable goSize3, ccu::Variable goSize4)
 {
-    (void)goSize1;
-    (void)goSize2;
-    (void)goSize3;
-    (void)goSize4;
     HCCL_INFO("[CcuKernelAlltoAllVMesh1D] LoadArgs!");
+    // 本 rank 自拷贝段的 group 搬运参数（host 侧与 CCU_MS_LOCAL_COPY_LOOP_COUNT、32K memSlice 配套计算）
+    ctx.xnMaxTransportGoSize.addrOffset = goSize1;
+    ctx.xnMaxTransportGoSize.loopParam = goSize2;
+    ctx.xnMaxTransportGoSize.parallelParam = goSize3;
+    ctx.xnMaxTransportGoSize.residual = goSize4;
     ctx.input[0] = inputAddr;
     ctx.output[ctx.rankId] = outputAddr;
     ctx.token[ctx.rankId] = tokenInfo;
@@ -358,6 +359,12 @@ static CcuResult DoAll2AllVMultiLoop(AlltoAllVMesh1DContext& ctx)
     ctx.xnMaxTransportSize = UB_MAX_TRANS_SIZE;
     ctx.completedRankCount = 0;
     ctx.xnConst1 = 1;
+    // 整块自拷贝（单轮 256MB）的 group 搬运参数，与远端 Write 的 xnMaxTransportSize 对齐
+    GroupOpSizeVars fullBlockGoSize;
+    fullBlockGoSize.addrOffset = A2AV_MAX_TRANSPORT_SIZE;
+    fullBlockGoSize.loopParam = A2AV_MAX_TRANSPORT_SIZE / (A2AV_GROUP_MEMSLICE_SIZE * A2AV_GROUP_LOOP_COUNT);
+    fullBlockGoSize.parallelParam = 0;
+    fullBlockGoSize.residual = 0;
     // rankSize<=16 时与老实现等价（单 event 全位收齐）；>16 按 16 位一组拆 event 逐组等待
     const uint32_t eventNum = (ctx.rankSize + A2AV_BITS_PER_EVENT - 1) / A2AV_BITS_PER_EVENT;
     ctx.events.resize(eventNum);
@@ -431,16 +438,16 @@ static CcuResult DoAll2AllVMultiLoop(AlltoAllVMesh1DContext& ctx)
                     }
                     CCU_IF(ctx.sendRecvInfo[ctx.rankId].tailSize != 0)
                     { // 尾块数据量不为 0，则需要发送尾块数据
-                        ccu::LocalCopy(
-                            ctx.myDst, ctx.src[ctx.rankId], ctx.sendRecvInfo[ctx.rankId].tailSize, ctx.events[eventIdx],
-                            rankMask);
+                        CCU_CHK_RET(
+                            GroupCopy(ctx, ctx.myDst, ctx.src[ctx.rankId], ctx.xnMaxTransportGoSize, GetCcuVersion()));
+                        ccu::EventRecord(ctx.events[eventIdx], rankMask);
                     }
                     ctx.completedRankCount += ctx.xnConst1; // 之后一轮循环完成，更新已完成的rank数
                 }
                 CCU_IF(ctx.sendRecvInfo[ctx.rankId].loopNum != UINT64_MAX - 1)
                 { // 未完成，则继续循环，发送整块数据
-                    ccu::LocalCopy(
-                        ctx.myDst, ctx.src[ctx.rankId], ctx.xnMaxTransportSize, ctx.events[eventIdx], rankMask);
+                    CCU_CHK_RET(GroupCopy(ctx, ctx.myDst, ctx.src[ctx.rankId], fullBlockGoSize, GetCcuVersion()));
+                    ccu::EventRecord(ctx.events[eventIdx], rankMask);
                     // 更新偏移
                     ctx.src[ctx.rankId].addr += ctx.xnMaxTransportSize;
                     ctx.myDst.addr += ctx.xnMaxTransportSize;
@@ -494,7 +501,7 @@ CcuResult CcuAlltoAllVMesh1DKernel(
     ccu::Variable dstOffset, ccu::Variable extAddr, ccu::Variable goSize1, ccu::Variable goSize2, ccu::Variable goSize3,
     ccu::Variable goSize4, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId)
 {
-    // Ascend960(CCU_V2) 使用新的多轮次 LocalCopy/Write 方案；Ascend950(CCU_V1) 保持 GroupCopy 老逻辑。
+    // Ascend960(CCU_V2) 使用按 16 rank 分组 event 的多轮次方案（自拷贝走 GroupCopy）；Ascend950(CCU_V1) 保持老逻辑。
     const CcuVersion ccuVersion = GetCcuVersion();
     const bool useNewImpl = (ccuVersion == CcuVersion::CCU_V2);
     HCCL_INFO(
