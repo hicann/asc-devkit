@@ -13,7 +13,7 @@ globalTensor1是位于GM上的Tensor：
 -   执行完GetValue\(0\)后，globalTensor1的前8个元素会进入DataCache，后续GetValue\(1\)\~GetValue\(7\)不需要再访问GM，而可以直接从DataCache的Cache Line中读取数据，提高了标量连续访问的效率。
 -   执行完SetValue\(8, val\)后，globalTensor1的index为8\~15的元素会进入DataCache，SetValue只会修改DataCache中的Cache Line数据，同时将Cache Line的状态设置为Dirty，表明Cache Line中的数据与GM中的数据不一致。
 
-```
+```cpp
 AscendC::GlobalTensor<int64_t> globalTensor1;
 globalTensor1.SetGlobalBuffer((__gm__ int64_t *)input);
 // 从0~7共计8个uint64_t类型，DataCache的Cache Line长度为64字节
@@ -42,7 +42,7 @@ globalTensor1.GetValue(8);
 
 Scalar读写UB时，可以使用LocalTensor的SetValue和GetValue接口。示例如下：
 
-```
+```cpp
 for (int32_t i = 0; i < 16; ++i) {
     inputLocal.SetValue(i, i); // 对inputLocal中第i个位置进行赋值为i
 }
@@ -56,18 +56,33 @@ for (int32_t i = 0; i < srcLen; ++i) {
 
 Scalar读写Global Memory和UB时属于PIPE\_S（Scalar流水）操作，当用户使用SetValue或者GetValue接口，且算子工程开启自动同步时，不需要手动插入同步事件。
 
-如果用户关闭算子工程的自动同步功能时，则需要手动插入同步事件：
+如果用户关闭算子工程的自动同步功能时，需要根据依赖对象判断是否插入同步事件。需要区分以下两类依赖：
 
-```
-// GetValue为Scalar操作，与后续的Duplicate存在数据依赖
-// 因此Vector流水需要等待Scalar操作结束
+- 如果后续指令只使用`GetValue`返回的标量值作为入参，此时后续流水依赖的是Scalar流水产生的标量值。Scalar流水会在该标量值就绪后发射后续指令，后续指令不需要再从UB或GM读取该标量值，因此不需要额外插入`S_V`同步。
+- 如果后续流水需要读取`SetValue`写入的UB或GM数据，依赖的是Scalar对存储位置的写入结果，必须通过对应的同步事件保证数据已写入后再读取。其他流水对UB或GM存在真实读写依赖时，也仍需保留相应同步。
+
+常见流水依赖和同步方式如下。表中的“依赖对象”指后续流水真正需要等待的内容；如果后续指令只接收Scalar流水产生的标量值，不需要等待Scalar对存储地址的写入，则不插入额外同步。
+
+| 生产者流水 | 消费者流水 | Scalar操作 | 依赖对象 | 同步方式 | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| MTE2 | Scalar | `GetValue`/`SetValue` | UB数据 | `MTE2_S` | `DataCopy`从GM搬入UB后，Scalar读取或修改该UB地址。 |
+| Vector | Scalar | `GetValue`/`SetValue` | UB数据 | `V_S` | Vector写入UB后，Scalar读取或修改该UB地址。 |
+| MTE3 | Scalar | `GetValue`/`SetValue` | GM数据 | `MTE3_S` | 数据搬出到GM后，Scalar读取或修改该GM地址。 |
+| Scalar | Vector | `SetValue` | UB数据 | `S_V` | `SetValue`写入UB后，Vector读取该UB地址。 |
+| Scalar | Vector | `GetValue` | 标量值 | — | `GetValue`返回值直接作为后续Vector指令参数，不需要插入`S_V`。 |
+| Scalar | MTE2 | `SetValue` | GM数据 | `S_MTE2` | `SetValue`写入GM后，MTE2读取该GM地址作为搬运源。 |
+| Scalar | MTE3 | `SetValue` | UB数据 | `S_MTE3` | `SetValue`写入UB后，MTE3读取该UB地址作为搬运源。 |
+
+其中，`S_V`、`S_MTE2`和`S_MTE3`用于保护Scalar对地址数据的写入；`MTE2_S`、`V_S`和`MTE3_S`用于保护其他流水对地址数据的写入。若Scalar操作只是通过`GetValue`产生一个供后续接口使用的标量值，则不属于这类地址数据依赖。实际使用时还需要根据接口访问的地址和读写方向确认同步事件，不能仅根据流水类型机械插入或删除同步。
+
+```cpp
+// GetValue返回标量值后，Duplicate直接使用该标量参数。
+// Duplicate不需要重新读取srcLocal中的数据，因此无需插入S_V同步。
 float inputVal = srcLocal.GetValue(0);
-SetFlag<HardEvent::S_V>(eventID1);
-WaitFlag<HardEvent::S_V>(eventID1);
 AscendC::Duplicate(dstLocal, inputVal, srcDataSize); 
 
-// SetValue为Scalar操作，与后续的数据搬运操作存在数据依赖
-// 因此MTE3流水需要等待Scalar操作结束
+// SetValue修改UB中的数据，后续DataCopy需要读取该数据。
+// 这里依赖的是UB存储结果，而不是Scalar返回值，因此需要S_MTE3同步。
 srcLocal.SetValue(0, value);
 SetFlag<HardEvent::S_MTE3>(eventID2);
 WaitFlag<HardEvent::S_MTE3>(eventID2);
