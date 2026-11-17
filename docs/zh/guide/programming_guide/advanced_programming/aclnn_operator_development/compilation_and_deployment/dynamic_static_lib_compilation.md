@@ -190,7 +190,7 @@ export ASCEND_CUSTOM_OPP_PATH=${CMAKE_INSTALL_PREFIX}/lib/:${ASCEND_CUSTOM_OPP_P
 ASCEND_CUSTOM_OPP_PATH=<path1>/vendors/vendor_name1:<path2>/lib/:<path3>/vendors/vendor_name3:<path4>/lib/
 ```
 
-如果开发者通过Ascend Graph进行图开发，除了配置环境变量的方式，也可以采用直接在应用程序的编译文件中链接动态库libcust_opapi.so的方式。Ascend Graph图开发的相关信息请参考[《图开发》](https://gitcode.com/cann/ge/blob/master/docs/zh/user_guides/graph_dev/README.md)。动态库链接方式的so加载优先级高于环境变量配置方式。
+如果开发者通过Ascend Graph进行图开发，除了配置环境变量的方式，也可以采用直接在应用程序的编译文件中链接动态库libcust_opapi.so的方式。Ascend Graph图开发的相关信息请参考《[图开发](https://gitcode.com/cann/ge/blob/master/docs/zh/user_guides/graph_dev/README.md)》。动态库链接方式的so加载优先级高于环境变量配置方式。
 
 ## 多厂商和同名动态库处理
 

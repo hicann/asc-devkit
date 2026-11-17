@@ -5,13 +5,13 @@ RTC是Ascend C运行时编译库，通过[aclrtc](../../../../api/Utils-API/RTC/
 运行时编译库提供以下核心接口：
 -   aclrtcCreateProg：根据输入参数（字符串形式表达的Ascend C源代码等）创建aclrtcProg程序实例。
 -   aclrtcAddNameExpr（可选）：注册需要导出的核函数（Kernel）名表达式，支持模板参数（如"核函数（Kernel）::add_custom\<float\>"），非模板核函数（Kernel）可跳过。
--   aclrtcCompileProg：编译给定的程序，支持用户自定义编译选项，比如指定[NPU架构版本号](../../language_extension/simd_builtin_keywords.md#npu-arch)：--npu-arch=dav-2201。支持的编译选项可以参考[《毕昇编译器》](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/compiler/BishengCompiler/atlas_bisheng_10_0001.html)。
+-   aclrtcCompileProg：编译给定的程序，支持用户自定义编译选项，比如指定[NPU架构版本号](../../language_extension/simd_builtin_keywords.md#npu-arch)：--npu-arch=dav-2201。支持的编译选项可以参考《[毕昇编译器](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/latest/compiler/BishengCompiler/atlas_bisheng_10_0001.html)》。
 -   aclrtcGetBinDataSize：获取编译后的Device侧二进制数据的大小。
 -   aclrtcGetBinData：获取编译后的Device侧二进制数据。
 -   aclrtcGetLoweredName（可选）：获取核函数（Kernel）编译后的mangled name，用于后续通过aclrtBinaryGetFunction查找核函数（Kernel）句柄，非模板核函数（Kernel）可跳过。
 -   aclrtcDestroyProg：在编译和执行过程结束后，销毁给定的程序。
 
-编译完成后需要调用如下接口完成（仅列出核心接口）核函数（Kernel）加载与执行。完整流程和详细接口说明请参考[《Runtime运行时API》](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/README.md)。
+编译完成后需要调用如下接口完成（仅列出核心接口）核函数（Kernel）加载与执行。完整流程和详细接口说明请参考《[Runtime运行时API](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/README.md)》。
 1.  调用aclInit、aclrtSetDevice等接口初始化运行环境并指定Device。
 2.  通过aclrtBinaryLoadFromData接口解析由aclrtcGetBinData接口获取的算子二进制数据。加载时可通过ACL_RT_BINARY_LOAD_OPT_MAGIC指定二进制类型，如ACL_RT_BINARY_MAGIC_ELF_AICORE。
 3.  调用aclrtBinaryGetFunction接口获取核函数（Kernel）句柄。

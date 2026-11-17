@@ -73,4 +73,4 @@ CANN Runtime内置默认计算流，所有未显式指定计算流的运算操�
 
 ## 更多的Runtime高级特性
 
-更多的Runtime编程方式及接口，可以参考[《应用开发》](https://gitcode.com/cann/docs/blob/master/docs/zh/app-dev/README.md)。
+更多的Runtime编程方式及接口，可以参考《[应用开发](https://gitcode.com/cann/docs/blob/master/docs/zh/app-dev/README.md)》。

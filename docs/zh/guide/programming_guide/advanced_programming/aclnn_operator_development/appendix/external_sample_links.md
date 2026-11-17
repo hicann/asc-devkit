@@ -54,5 +54,5 @@
 
 ## 其他参考
 
-- [《图开发》](https://gitcode.com/cann/ge/blob/master/docs/zh/user_guides/graph_dev/README.md)。
+- 《[图开发](https://gitcode.com/cann/ge/blob/master/docs/zh/user_guides/graph_dev/README.md)》。
   - 说明：Ascend Graph图开发的完整指南，适用于算子入图场景。
