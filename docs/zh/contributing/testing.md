@@ -97,6 +97,9 @@ tests/
 ```cpp
 // 第一部分：引入头文件
 #include <gtest/gtest.h>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 #include "kernel_operator.h"
 
 // 第二部分：定义测试参数结构体和核函数（Kernel）
@@ -200,24 +203,24 @@ void AxpyKernel(uint8_t* srcGm, uint8_t* dstGm, int32_t dataSize)
 TEST_P(AxpyTestsuite, AxpyTestCase)
 {
     auto param = GetParam();
-    uint8_t srcGm[param.dataSize * param.dataBitSize] = {0};
-    uint8_t dstGm[param.dataSize * param.dataBitSize] = {0};
+    const std::size_t bufferSize = static_cast<std::size_t>(param.dataSize) * param.dataBitSize;
+    std::vector<uint8_t> srcGm(bufferSize, 0);
+    std::vector<uint8_t> dstGm(bufferSize, 0);
 
     // 填充非零且可区分的测试数据
-    for (int32_t i = 0; i < param.dataSize * param.dataBitSize; i++) {
+    for (std::size_t i = 0; i < bufferSize; i++) {
         srcGm[i] = static_cast<uint8_t>(i + 1);
         dstGm[i] = static_cast<uint8_t>(i + 2);
     }
 
     // 在调用被测函数前，保存originalDst并按T/U类型计算golden buffer（dst = src * scalar + dst）
-    uint8_t expectedGm[param.dataSize * param.dataBitSize] = {0};
-    memcpy(expectedGm, dstGm, param.dataSize * param.dataBitSize);
-    param.goldenFunc(srcGm, expectedGm, param.dataSize);
+    auto expectedGm = dstGm;
+    param.goldenFunc(srcGm.data(), expectedGm.data(), param.dataSize);
 
-    param.calFunc(srcGm, dstGm, param.dataSize);
+    param.calFunc(srcGm.data(), dstGm.data(), param.dataSize);
 
     // 逐元素比较实际结果与golden buffer
-    for (int32_t i = 0; i < param.dataSize * param.dataBitSize; i++) {
+    for (std::size_t i = 0; i < bufferSize; i++) {
         EXPECT_EQ(dstGm[i], expectedGm[i]);
     }
 }

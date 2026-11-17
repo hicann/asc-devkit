@@ -97,6 +97,9 @@ tests/
 ```cpp
 // Part 1: Include headers
 #include <gtest/gtest.h>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
 #include "kernel_operator.h"
 
 // Part 2: Define test parameter struct and kernel function
@@ -200,24 +203,24 @@ void AxpyKernel(uint8_t* srcGm, uint8_t* dstGm, int32_t dataSize)
 TEST_P(AxpyTestsuite, AxpyTestCase)
 {
     auto param = GetParam();
-    uint8_t srcGm[param.dataSize * param.dataBitSize] = {0};
-    uint8_t dstGm[param.dataSize * param.dataBitSize] = {0};
+    const std::size_t bufferSize = static_cast<std::size_t>(param.dataSize) * param.dataBitSize;
+    std::vector<uint8_t> srcGm(bufferSize, 0);
+    std::vector<uint8_t> dstGm(bufferSize, 0);
 
     // Fill with non-zero, distinguishable test data
-    for (int32_t i = 0; i < param.dataSize * param.dataBitSize; i++) {
+    for (std::size_t i = 0; i < bufferSize; i++) {
         srcGm[i] = static_cast<uint8_t>(i + 1);
         dstGm[i] = static_cast<uint8_t>(i + 2);
     }
 
     // Before calling the API under test, save originalDst and compute golden buffer per T/U type (dst = src * scalar + dst)
-    uint8_t expectedGm[param.dataSize * param.dataBitSize] = {0};
-    memcpy(expectedGm, dstGm, param.dataSize * param.dataBitSize);
-    param.goldenFunc(srcGm, expectedGm, param.dataSize);
+    auto expectedGm = dstGm;
+    param.goldenFunc(srcGm.data(), expectedGm.data(), param.dataSize);
 
-    param.calFunc(srcGm, dstGm, param.dataSize);
+    param.calFunc(srcGm.data(), dstGm.data(), param.dataSize);
 
     // Compare actual results with golden buffer element-wise
-    for (int32_t i = 0; i < param.dataSize * param.dataBitSize; i++) {
+    for (std::size_t i = 0; i < bufferSize; i++) {
         EXPECT_EQ(dstGm[i], expectedGm[i]);
     }
 }
