@@ -111,7 +111,7 @@
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
-本样例中，源操作数src0Local和src1Local各存储了64个float类型的数据。样例实现的功能为，逐元素对src0Local和src1Local中的数据进行比较，如果src0Local中的元素小于src1Local中的元素，dstLocal结果中对应的比特位置1；反之，则置0。dstLocal结果使用uint8\_t类型数据存储。
+本样例中，源操作数src0Local和src1Local各存储了64个float类型的数据。样例实现的功能为，逐元素对src0Local和src1Local中的数据进行比较，如果src0Local中的元素小于src1Local中的元素，CmpMask寄存器中对应的比特位置1；反之，则置0。随后调用GetCmpMask接口，将CmpMask寄存器中的结果读取到uint8\_t类型的目的操作数中。
 
 本样中只展示部分关键代码。完整的调用样例可参考[Compare类样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/compare)场景二。
 

@@ -93,7 +93,9 @@ __simd_callee__ inline void LocalMemBar()
 
 ## 调用示例<a name="section642mcpsimp"></a>
 
-如下示例中dstPtr和src0Ptr为同一个Unified Buffer（UB）地址，for循环的第二次迭代中读UB矢量搬运和第一次迭代中写UB矢量搬运操作了同一块UB地址空间，因此第二次循环中读UB矢量搬运需要等待第一次循环中写UB矢量搬运执行完成后才能执行，需要插入VEC_LOAD等待VEC_STORE的同步。
+该示例假设调用方将同一个Unified Buffer（UB）起始地址分别作为dstAddr和src0Addr传入。因此，StoreAlign通过dstAddr写入的地址与LoadAlign通过src0Addr读取的地址相同。src1Addr用于读取另一组随循环迭代变化的输入数据。
+ 
+for循环的第二次迭代通过src0Addr读取的UB地址空间，与第一次迭代通过dstAddr写入的UB地址空间相同。为确保第二次迭代读取该地址空间前，第一次迭代的写UB矢量搬运已完成，需要插入VEC_LOAD等待VEC_STORE的同步。
 
 ```cpp
 template<typename T>
