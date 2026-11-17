@@ -111,7 +111,7 @@ uint32_t PlatformAscendC::GetVecRegLen(void) const
         if (size == 0) {
             PF_LOGE("The bit width equals zero!");
         }
-        return ret ? static_cast<uint32_t>(size) : 2 * static_cast<uint32_t>(size);
+        return ret ? static_cast<uint32_t>(size) : sizeof(uint16_t) * static_cast<uint32_t>(size);
     } else {
         PF_LOGE("The sizeStr is invalid.");
         return 0u;
