@@ -28,6 +28,39 @@ namespace AscendC {
 namespace SelInternal {
 constexpr uint32_t maskBitToByte = 8;
 }
+
+template <typename T, bool isCounterMode>
+__simd_callee__ inline void InitSavedMask(
+    __ubuf__ uint64_t* tempBuf, Reg::MaskReg& maskReg, uint32_t& sreg, uint16_t& newRepeatTimes,
+    const uint32_t oneRepSize)
+{
+    if constexpr (isCounterMode) {
+        maskReg = Reg::MoveMask<uint16_t>();
+        Reg::StoreAlign<uint64_t, Reg::MaskDist::DIST_PACK>(tempBuf, maskReg);
+        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::SCALAR_LOAD>();
+        sreg = static_cast<uint32_t>(tempBuf[0]);
+        newRepeatTimes = CeilDivision(sreg, oneRepSize);
+    } else {
+        maskReg = Reg::MoveMask<T>();
+    }
+}
+
+template <typename T, bool isCounterMode, bool isBitMap>
+__simd_callee__ inline void InitMask(
+    const uint64_t mask, Reg::MaskReg& maskReg, uint32_t& sreg, uint16_t& newRepeatTimes, const uint16_t oneRepSize)
+{
+    if constexpr (isCounterMode) {
+        sreg = static_cast<uint32_t>(mask);
+        newRepeatTimes = CeilDivision(sreg, oneRepSize);
+    } else {
+        if constexpr (isBitMap) {
+            maskReg = Reg::MoveMask<T>();
+        } else {
+            sreg = static_cast<uint32_t>(mask);
+            maskReg = Reg::UpdateMask<T>(sreg);
+        }
+    }
+}
 /* ***************************************************************************************
  * *************************************** Select ****************************************
  * ************************************************************************************** */
@@ -69,15 +102,7 @@ __simd_vf__ inline void SelectWithoutMaskMode0ImplVF(
         Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint32_t*)tempBuf);
         Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, selReg);
     }
-    if constexpr (isCounterMode) {
-        maskReg = Reg::MoveMask<uint16_t>();
-        Reg::StoreAlign<uint64_t, Reg::MaskDist::DIST_PACK>(tempBuf, maskReg);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::SCALAR_LOAD>();
-        sreg = static_cast<uint32_t>(tempBuf[0]);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        maskReg = Reg::MoveMask<T>();
-    }
+    InitSavedMask<T, isCounterMode>(tempBuf, maskReg, sreg, newRepeatTimes, oneRepSize);
     for (uint16_t i = 0; i < newRepeatTimes; ++i) {
         if constexpr (isCounterMode) {
             maskReg = Reg::UpdateMask<T>(sreg);
@@ -99,15 +124,7 @@ __simd_vf__ inline void SelectWithoutMaskMode2ImplVF(
     constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
     constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
     uint32_t sreg;
-    if constexpr (isCounterMode) {
-        maskReg = Reg::MoveMask<uint16_t>();
-        Reg::StoreAlign<uint64_t, Reg::MaskDist::DIST_PACK>(tempBuf, maskReg);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::SCALAR_LOAD>();
-        sreg = static_cast<uint32_t>(tempBuf[0]);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        maskReg = Reg::MoveMask<T>();
-    }
+    InitSavedMask<T, isCounterMode>(tempBuf, maskReg, sreg, newRepeatTimes, oneRepSize);
     for (uint16_t i = 0; i < newRepeatTimes; ++i) {
         if constexpr (isCounterMode) {
             maskReg = Reg::UpdateMask<T>(sreg);
@@ -172,15 +189,7 @@ __simd_vf__ inline void SelectWithoutMaskMode1ImplVF(
     constexpr uint32_t oneRepSize = GetVecLen() / sizeof(T);
     constexpr uint32_t blockElm = GetDataBlockSizeInBytes() / sizeof(T);
     constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
-    if constexpr (isCounterMode) {
-        maskReg = Reg::MoveMask<uint16_t>();
-        Reg::StoreAlign<uint64_t, Reg::MaskDist::DIST_PACK>(tempBuf, maskReg);
-        Reg::LocalMemBar<Reg::MemType::VEC_STORE, Reg::MemType::SCALAR_LOAD>();
-        sreg = static_cast<uint32_t>(tempBuf[0]);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        maskReg = Reg::MoveMask<T>();
-    }
+    InitSavedMask<T, isCounterMode>(tempBuf, maskReg, sreg, newRepeatTimes, oneRepSize);
     Reg::Duplicate(srcReg1, scalar);
     for (uint16_t i = 0; i < newRepeatTimes; ++i) {
         if constexpr (isCounterMode) {
@@ -235,17 +244,7 @@ __simd_vf__ inline void SelectMode0Level0(
     Reg::MaskReg maskReg;
     uint32_t sreg;
     uint16_t newRepeatTimes = repeatTime;
-    if constexpr (isCounterMode) {
-        sreg = static_cast<uint32_t>(mask);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        if constexpr (isBitMap) {
-            maskReg = Reg::MoveMask<T>();
-        } else {
-            sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        }
-    }
+    InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
     Reg::MaskReg selMask;
     Reg::LoadAlign<U, Reg::MaskDist::DIST_US>(selMask, sel);
     if constexpr (sizeof(T) == 4) {
@@ -282,17 +281,7 @@ __simd_vf__ inline void SelectMode2Level0(
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
         Reg::RegTensor<T> src0Reg, src1Reg, src2Reg, src3Reg, dst0Reg, dst1Reg;
         Reg::MaskReg maskReg;
-        if constexpr (isCounterMode) {
-            sreg = static_cast<uint32_t>(mask);
-            newRepeatTimes = CeilDivision(sreg, oneRepSize);
-        } else {
-            if constexpr (isBitMap) {
-                maskReg = Reg::MoveMask<T>();
-            } else {
-                sreg = static_cast<uint32_t>(mask);
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-        }
+        InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
 
         Reg::MaskReg selMask0, selMask1, tmpMask0;
         Reg::MaskReg tmpMask1 = Reg::CreateMask<uint8_t, Reg::MaskPattern::ALL>();
@@ -353,17 +342,7 @@ __simd_vf__ inline void SelectMode2Level0(
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
         Reg::RegTensor<T> src0Reg, src1Reg, dstReg;
         Reg::MaskReg maskReg;
-        if constexpr (isCounterMode) {
-            sreg = static_cast<uint32_t>(mask);
-            newRepeatTimes = CeilDivision(sreg, oneRepSize);
-        } else {
-            if constexpr (isBitMap) {
-                maskReg = Reg::MoveMask<T>();
-            } else {
-                sreg = static_cast<uint32_t>(mask);
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-        }
+        InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
         Reg::MaskReg selMask;
         for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
             if constexpr (isCounterMode) {
@@ -432,6 +411,35 @@ __aicore__ inline void VselImpl(
 // ============ select mode: 1 ============
 // ================Level0====================
 
+template <typename T, typename U, bool isCounterMode, bool isSrc0Scalar>
+__simd_callee__ inline void SelectScalarMode1Level0Loop(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* tensorSrc, Reg::RegTensor<T>& src0Reg, Reg::RegTensor<T>& src1Reg,
+    Reg::RegTensor<T>& dstReg, Reg::MaskReg& maskReg, Reg::MaskReg& selMask, uint32_t& sreg,
+    const uint16_t newRepeatTimes, const BinaryRepeatParams& repeatParams)
+{
+    constexpr uint32_t blockElm = GetDataBlockSizeInBytes() / sizeof(T);
+    constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
+    for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
+        if constexpr (isCounterMode) {
+            maskReg = Reg::UpdateMask<T>(sreg);
+        }
+        Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
+        if constexpr (isSrc0Scalar) {
+            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+                src1Reg, tensorSrc + i * blockElm * repeatParams.src1RepStride,
+                static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
+        } else {
+            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+                src0Reg, tensorSrc + i * blockElm * repeatParams.src0RepStride,
+                static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
+        }
+        Reg::Select(dstReg, src0Reg, src1Reg, selMask);
+        Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
+            dst + i * blockElm * repeatParams.dstRepStride, dstReg, static_cast<uint32_t>(repeatParams.dstBlkStride),
+            maskReg);
+    }
+}
+
 template <typename T, typename U, bool isBitMap, bool isCounterMode>
 __simd_vf__ inline void SelectMode1Level0(
     __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, T src1, const uint64_t mask, const uint8_t repeatTime,
@@ -445,48 +453,16 @@ __simd_vf__ inline void SelectMode1Level0(
         Reg::RegTensor<T> src0Reg, src1Reg, dstReg;
         Reg::Duplicate(src1Reg, (const T&)src1);
         Reg::MaskReg maskReg;
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
-        if constexpr (isCounterMode) {
-            sreg = static_cast<uint32_t>(mask);
-            newRepeatTimes = CeilDivision(sreg, oneRepSize);
-        } else {
-            if constexpr (isBitMap) {
-                maskReg = Reg::MoveMask<T>();
-            } else {
-                sreg = static_cast<uint32_t>(mask);
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-        }
+        InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
         Reg::MaskReg selMask;
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
-            if constexpr (isCounterMode) {
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-            Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                src0Reg, src0 + i * blockElm * repeatParams.src0RepStride,
-                static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                dst + i * blockElm * repeatParams.dstRepStride, dstReg,
-                static_cast<uint32_t>(repeatParams.dstBlkStride), maskReg);
-        }
+        SelectScalarMode1Level0Loop<T, U, isCounterMode, false>(
+            dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, newRepeatTimes, repeatParams);
     } else {
         Reg::RegTensor<T> scalarReg, src0Reg, src1Reg, dst0Reg, dst1Reg;
         Reg::MaskReg maskReg;
         constexpr uint32_t unRollConstant = 2;
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
-        if constexpr (isCounterMode) {
-            sreg = static_cast<uint32_t>(mask);
-            newRepeatTimes = CeilDivision(sreg, oneRepSize);
-        } else {
-            if constexpr (isBitMap) {
-                maskReg = Reg::MoveMask<T>();
-            } else {
-                sreg = static_cast<uint32_t>(mask);
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-        }
+        InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
         Reg::MaskReg selMask0, selMask1, tmpMask0;
         Reg::MaskReg tmpMask1 = Reg::CreateMask<uint8_t, Reg::MaskPattern::ALL>();
         uint16_t tail = newRepeatTimes % unRollConstant;
@@ -584,35 +560,13 @@ __simd_vf__ inline void SelectSrc0ScalarMode1Level0(
     constexpr uint16_t oneRepSize = GetVecLen() / sizeof(T);
     uint16_t newRepeatTimes = repeatTime;
     Reg::MaskReg maskReg;
-    if constexpr (isCounterMode) {
-        sreg = static_cast<uint32_t>(mask);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        if constexpr (isBitMap) {
-            maskReg = Reg::MoveMask<T>();
-        } else {
-            sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        }
-    }
+    InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
     if constexpr (sizeof(T) == 2) {
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
         Reg::RegTensor<T> src0Reg, src1Reg, dstReg;
         Reg::Duplicate(src0Reg, (const T&)src0);
         Reg::MaskReg selMask;
-        for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
-            if constexpr (isCounterMode) {
-                maskReg = Reg::UpdateMask<T>(sreg);
-            }
-            Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                src1Reg, src1 + i * blockElm * repeatParams.src1RepStride,
-                static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                dst + i * blockElm * repeatParams.dstRepStride, dstReg,
-                static_cast<uint32_t>(repeatParams.dstBlkStride), maskReg);
-        }
+        SelectScalarMode1Level0Loop<T, U, isCounterMode, true>(
+            dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, newRepeatTimes, repeatParams);
     } else {
         constexpr uint32_t unRollConstant = 2;
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -715,35 +669,13 @@ __simd_vf__ inline void SelectBothTensorMode1Level0(
     constexpr uint16_t oneRepSize = GetVecLen() / sizeof(T);
     uint32_t sreg;
     Reg::MaskReg maskReg, selMask;
-    if constexpr (isCounterMode) {
-        sreg = static_cast<uint32_t>(mask);
-        newRepeatTimes = CeilDivision(sreg, oneRepSize);
-    } else {
-        if constexpr (isBitMap) {
-            maskReg = Reg::MoveMask<T>();
-        } else {
-            sreg = static_cast<uint32_t>(mask);
-            maskReg = Reg::UpdateMask<T>(sreg);
-        }
-    }
+    InitMask<T, isCounterMode, isBitMap>(mask, maskReg, sreg, newRepeatTimes, oneRepSize);
     if constexpr (scalarIdx == 0) {
         if constexpr (sizeof(T) == 2) {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
             Reg::RegTensor<T> src0Reg, src1Reg, dstReg;
             Reg::LoadAlign<T, pattern>(src0Reg, src0);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
-                if constexpr (isCounterMode) {
-                    maskReg = Reg::UpdateMask<T>(sreg);
-                }
-                Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                    src1Reg, src1 + i * blockElm * repeatParams.src1RepStride,
-                    static_cast<uint32_t>(repeatParams.src1BlkStride), maskReg);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                    dst + i * blockElm * repeatParams.dstRepStride, dstReg,
-                    static_cast<uint32_t>(repeatParams.dstBlkStride), maskReg);
-            }
+            SelectScalarMode1Level0Loop<T, U, isCounterMode, true>(
+                dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, newRepeatTimes, repeatParams);
         } else {
             constexpr uint32_t unRollConstant = 2;
             constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -798,22 +730,10 @@ __simd_vf__ inline void SelectBothTensorMode1Level0(
         }
     } else if constexpr (scalarIdx == 1) {
         if constexpr (sizeof(T) == 2) {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
             Reg::RegTensor<T> src0Reg, src1Reg, dstReg;
             Reg::LoadAlign<T, pattern>(src1Reg, src1);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(newRepeatTimes); ++i) {
-                if constexpr (isCounterMode) {
-                    maskReg = Reg::UpdateMask<T>(sreg);
-                }
-                Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                Reg::LoadAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                    src0Reg, src0 + i * blockElm * repeatParams.src0RepStride,
-                    static_cast<uint32_t>(repeatParams.src0BlkStride), maskReg);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T, Reg::DataCopyMode::DATA_BLOCK_COPY>(
-                    dst + i * blockElm * repeatParams.dstRepStride, dstReg,
-                    static_cast<uint32_t>(repeatParams.dstBlkStride), maskReg);
-            }
+            SelectScalarMode1Level0Loop<T, U, isCounterMode, false>(
+                dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, newRepeatTimes, repeatParams);
         } else {
             constexpr uint32_t unRollConstant = 2;
             constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -1071,6 +991,53 @@ __aicore__ inline void VselImpl(
 
 // ============ select mode: 1 ============
 // =============== LEVEL2 ===================
+template <typename T, typename U, typename RegT, bool isSrc0Scalar>
+__simd_callee__ inline void SelectScalarMode1Level2Loop(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* tensorSrc, RegT& src0Reg, RegT& src1Reg, RegT& dstReg,
+    Reg::MaskReg& maskReg, Reg::MaskReg& selMask, uint32_t& sreg, const uint32_t repeatTime,
+    Reg::RegTensor<uint8_t>& selReg, Reg::UnalignReg& ureg)
+{
+    constexpr uint32_t repeatElm = GetVecLen() / sizeof(T) * RegT::trait.REG_NUM;
+    constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * RegT::trait.REG_NUM;
+    Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
+        Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)sel + i * selOffset);
+        Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
+        maskReg = Reg::UpdateMask<T, RegT::trait>(sreg);
+        if constexpr (isSrc0Scalar) {
+            Reg::LoadAlign<T>(src1Reg, tensorSrc + i * repeatElm);
+        } else {
+            Reg::LoadAlign<T>(src0Reg, tensorSrc + i * repeatElm);
+        }
+        Reg::Select(dstReg, src0Reg, src1Reg, selMask);
+        Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
+    }
+}
+
+template <typename T, typename U, typename RegT, bool isSrc0Scalar>
+__simd_callee__ inline void SelectScalarMode1Level2Loop(
+    __ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* tensorSrc, RegT& src0Reg, RegT& src1Reg, RegT& dstReg,
+    Reg::MaskReg& maskReg, Reg::MaskReg& selMask, uint32_t& sreg, const uint32_t repeatTime)
+{
+    constexpr uint32_t repeatElm = GetVecLen() / sizeof(T) * RegT::trait.REG_NUM;
+    constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
+    for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
+        if constexpr (sizeof(T) == 2) {
+            Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
+        } else {
+            Reg::LoadAlign<uint8_t>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
+        }
+        maskReg = Reg::UpdateMask<T>(sreg);
+        if constexpr (isSrc0Scalar) {
+            Reg::LoadAlign<T>(src1Reg, tensorSrc + i * repeatElm);
+        } else {
+            Reg::LoadAlign<T>(src0Reg, tensorSrc + i * repeatElm);
+        }
+        Reg::Select(dstReg, src0Reg, src1Reg, selMask);
+        Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
+    }
+}
+
 template <typename T, typename U, typename RegT>
 __simd_vf__ inline void SelectMode1Level2(__ubuf__ T* dst, __ubuf__ U* sel, __ubuf__ T* src0, T src1, uint32_t calCount)
 {
@@ -1078,21 +1045,13 @@ __simd_vf__ inline void SelectMode1Level2(__ubuf__ T* dst, __ubuf__ U* sel, __ub
     uint32_t repeatTime = CeilDivision(calCount, repeatElm);
     uint32_t sreg = static_cast<uint32_t>(calCount);
     if constexpr (sizeof(T) == 8) {
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * RegT::trait.REG_NUM;
         RegT src0Reg, src1Reg, dstReg;
         Reg::MaskReg selMask, maskReg;
         Reg::RegTensor<uint8_t> selReg;
         Reg::Duplicate(src1Reg, (const T&)src1);
         Reg::UnalignReg ureg;
-        Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)sel + i * selOffset);
-            Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
-            maskReg = Reg::UpdateMask<T, RegT::trait>(sreg);
-            Reg::LoadAlign<T>(src0Reg, src0 + i * repeatElm);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-        }
+        SelectScalarMode1Level2Loop<T, U, RegT, false>(
+            dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime, selReg, ureg);
     } else if constexpr (sizeof(T) == 4) {
         constexpr uint32_t unRollConstant = 2;
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -1128,22 +1087,12 @@ __simd_vf__ inline void SelectMode1Level2(__ubuf__ T* dst, __ubuf__ U* sel, __ub
             Reg::StoreAlign<T>(dst + offset, dst2Reg, maskReg);
         }
     } else {
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
         RegT src0Reg, src1Reg, dstReg;
         uint32_t sreg = static_cast<uint32_t>(calCount);
         Reg::MaskReg maskReg, selMask;
         Reg::Duplicate(src1Reg, (const T&)src1);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            if constexpr (sizeof(T) == 2) {
-                Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            } else {
-                Reg::LoadAlign<uint8_t>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            }
-            maskReg = Reg::UpdateMask<T>(sreg);
-            Reg::LoadAlign<T>(src0Reg, src0 + i * repeatElm);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-        }
+        SelectScalarMode1Level2Loop<T, U, RegT, false>(
+            dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime);
     }
 }
 
@@ -1172,21 +1121,13 @@ __simd_vf__ inline void SelectSrc0ScalarMode1Level2(
     uint32_t repeatTime = CeilDivision(calCount, repeatElm);
     uint32_t sreg = static_cast<uint32_t>(calCount);
     if constexpr (sizeof(T) == 8) {
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * RegT::trait.REG_NUM;
         RegT src0Reg, src1Reg, dstReg;
         Reg::MaskReg selMask, maskReg;
         Reg::RegTensor<uint8_t> selReg;
         Reg::Duplicate(src0Reg, (const T&)src0);
         Reg::UnalignReg ureg;
-        Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)sel + i * selOffset);
-            Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
-            maskReg = Reg::UpdateMask<T, RegT::trait>(sreg);
-            Reg::LoadAlign<T>(src1Reg, src1 + i * repeatElm);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-        }
+        SelectScalarMode1Level2Loop<T, U, RegT, true>(
+            dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime, selReg, ureg);
     } else if constexpr (sizeof(T) == 4) {
         constexpr uint32_t unRollConstant = 2;
         constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -1222,21 +1163,11 @@ __simd_vf__ inline void SelectSrc0ScalarMode1Level2(
             Reg::StoreAlign<T>(dst + offset, dst2Reg, maskReg);
         }
     } else {
-        constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
         RegT src0Reg, src1Reg, dstReg;
         Reg::MaskReg maskReg, selMask;
         Reg::Duplicate(src0Reg, (const T&)src0);
-        for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-            if constexpr (sizeof(T) == 2) {
-                Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            } else {
-                Reg::LoadAlign<uint8_t>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-            }
-            maskReg = Reg::UpdateMask<T>(sreg);
-            Reg::LoadAlign<T>(src1Reg, src1 + i * repeatElm);
-            Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-            Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-        }
+        SelectScalarMode1Level2Loop<T, U, RegT, true>(
+            dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime);
     }
 }
 
@@ -1266,7 +1197,6 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
     uint32_t sreg = static_cast<uint32_t>(calCount);
     if constexpr (scalarIdx == 0) {
         if constexpr (sizeof(T) == 8) {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * RegT::trait.REG_NUM;
             RegT src0Reg, src1Reg, dstReg, tmpReg;
             Reg::MaskReg selMask, maskReg;
             Reg::RegTensor<uint8_t> selReg;
@@ -1280,15 +1210,8 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
                 packedReg);
             Reg::MaskReg maskFull = Reg::CreateMask<uint32_t, Reg::MaskPattern::ALL>();
             Reg::Duplicate(src0Reg, tmpReg, maskFull);
-            Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)sel + i * selOffset);
-                Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
-                maskReg = Reg::UpdateMask<T, RegT::trait>(sreg);
-                Reg::LoadAlign<T>(src1Reg, src1 + i * repeatElm);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-            }
+            SelectScalarMode1Level2Loop<T, U, RegT, true>(
+                dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime, selReg, ureg);
         } else if constexpr (sizeof(T) == 4) {
             constexpr uint32_t unRollConstant = 2;
             constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -1324,25 +1247,14 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
                 Reg::StoreAlign<T>(dst + offset, dst2Reg, maskReg);
             }
         } else {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
             RegT src0Reg, src1Reg, dstReg;
             Reg::MaskReg maskReg, selMask;
             Reg::LoadAlign<T, pattern>(src0Reg, src0);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                if constexpr (sizeof(T) == 2) {
-                    Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                } else {
-                    Reg::LoadAlign<uint8_t>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                }
-                maskReg = Reg::UpdateMask<T>(sreg);
-                Reg::LoadAlign<T>(src1Reg, src1 + i * repeatElm);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-            }
+            SelectScalarMode1Level2Loop<T, U, RegT, true>(
+                dst, sel, src1, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime);
         }
     } else if constexpr (scalarIdx == 1) {
         if constexpr (sizeof(T) == 8) {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * RegT::trait.REG_NUM;
             RegT src0Reg, src1Reg, dstReg, tmpReg;
             Reg::MaskReg selMask, maskReg;
             Reg::RegTensor<uint8_t> selReg;
@@ -1356,15 +1268,8 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
                 (Reg::RegTensor<uint32_t>&)tmpReg.reg[0], (Reg::RegTensor<uint32_t>&)tmpReg.reg[1], packedReg,
                 packedReg);
             Reg::Duplicate(src1Reg, tmpReg, maskFull);
-            Reg::LoadUnAlignPre(ureg, (__ubuf__ uint8_t*)sel);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                Reg::LoadUnAlign(selReg, ureg, (__ubuf__ uint8_t*)sel + i * selOffset);
-                Reg::MaskGenWithRegTensor<uint32_t, 0>(selMask, (Reg::RegTensor<uint32_t>&)selReg);
-                maskReg = Reg::UpdateMask<T, RegT::trait>(sreg);
-                Reg::LoadAlign<T>(src0Reg, src0 + i * repeatElm);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-            }
+            SelectScalarMode1Level2Loop<T, U, RegT, false>(
+                dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime, selReg, ureg);
         } else if constexpr (sizeof(T) == 4) {
             constexpr uint32_t unRollConstant = 2;
             constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T) * unRollConstant;
@@ -1400,21 +1305,11 @@ __simd_vf__ inline void SelectBothTensorMode1Level2(
                 Reg::StoreAlign<T>(dst + offset, dst2Reg, maskReg);
             }
         } else {
-            constexpr uint32_t selOffset = GetVecLen() / SelInternal::maskBitToByte / sizeof(T);
             RegT src0Reg, src1Reg, dstReg;
             Reg::MaskReg maskReg, selMask;
             Reg::LoadAlign<T, pattern>(src1Reg, src1);
-            for (uint16_t i = 0; i < static_cast<uint16_t>(repeatTime); ++i) {
-                if constexpr (sizeof(T) == 2) {
-                    Reg::LoadAlign<uint8_t, Reg::MaskDist::DIST_US>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                } else {
-                    Reg::LoadAlign<uint8_t>(selMask, (__ubuf__ uint8_t*)sel + i * selOffset);
-                }
-                maskReg = Reg::UpdateMask<T>(sreg);
-                Reg::LoadAlign<T>(src0Reg, src0 + i * repeatElm);
-                Reg::Select(dstReg, src0Reg, src1Reg, selMask);
-                Reg::StoreAlign<T>(dst + i * repeatElm, dstReg, maskReg);
-            }
+            SelectScalarMode1Level2Loop<T, U, RegT, false>(
+                dst, sel, src0, src0Reg, src1Reg, dstReg, maskReg, selMask, sreg, repeatTime);
         }
     }
 }
@@ -1445,6 +1340,7 @@ __aicore__ inline void VselImpl(
     }
 }
 } // namespace AscendC
+
 #endif // ASCENDC_MODULE_OPERATOR_VEC_SEL_IMPL_H
 #if defined(__UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_VEC_SEL_IMPL_H__)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__

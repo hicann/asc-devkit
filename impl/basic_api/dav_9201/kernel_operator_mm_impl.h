@@ -68,10 +68,16 @@ __aicore__ inline void LoadData2DGM2L1Cal(
 }
 
 template <typename T>
+__aicore__ constexpr bool IsLoadData2DType()
+{
+    return SupportType<T, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, float, int32_t, uint32_t>();
+}
+
+template <typename T>
 __aicore__ inline void LoadData2DL12L0ACal(__ca__ T* dst, __cbuf__ T* src, const LoadData2DParams& loadDataParam)
 {
     static_assert(
-        SupportType<T, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, float, int32_t, uint32_t>(),
+        IsLoadData2DType<T>(),
         "LoadData 2dv2 only support uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, float, int32_t, uint32_t on "
         "current device!");
     if ASCEND_IS_AIC {
@@ -96,7 +102,7 @@ template <typename T>
 __aicore__ inline void LoadData2DL12L0BCal(__cb__ T* dst, __cbuf__ T* src, const LoadData2DParams& loadDataParam)
 {
     static_assert(
-        SupportType<T, uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, float, int32_t, uint32_t>(),
+        IsLoadData2DType<T>(),
         "LoadData 2dv2 only support uint8_t, int8_t, uint16_t, int16_t, half, bfloat16_t, float, int32_t, uint32_t on "
         "current device!");
     if ASCEND_IS_AIC {
@@ -335,16 +341,21 @@ __aicore__ inline void LoadData2DL12L0BTransposeCal(
     }
 }
 
+template <typename T, typename U>
+__aicore__ constexpr bool IsLoadData2DMxType()
+{
+    return SupportType<T, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t>() ||
+           SupportType<Tuple<U, T>, Tuple<mx_fp8_e4m3_t, fp8_e4m3fn_t>, Tuple<mx_fp8_e5m2_t, fp8_e5m2_t>>() ||
+           SupportType<Tuple<U, T>, Tuple<fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<fp8_e5m2_t, fp8_e5m2_t>>();
+}
+
 template <typename T, typename U = T, typename V = fp8_e8m0_t>
 __aicore__ inline void LoadData2DL12L0ACal(
     __ca__ U* dst, __cbuf__ T* src0, __cbuf__ V* src1, const LoadData2DParamsV2& loadDataParam,
     const LoadData2DMxParams& loadMxDataParams)
 {
     static_assert(
-        SupportType<T, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t>() ||
-            SupportType<Tuple<U, T>, Tuple<mx_fp8_e4m3_t, fp8_e4m3fn_t>, Tuple<mx_fp8_e5m2_t, fp8_e5m2_t>>() ||
-            SupportType<Tuple<U, T>, Tuple<fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<fp8_e5m2_t, fp8_e5m2_t>>(),
-        "LoadData 2dv2 with scale matrix only support fp4/fp8 dtype on current device!");
+        IsLoadData2DMxType<T, U>(), "LoadData 2dv2 with scale matrix only support fp4/fp8 dtype on current device!");
     if ASCEND_IS_AIC {
         if (IsCompatibleTo3510()) {
             DrainCopyMessageQueueImpl<T, PIPE_MTE1>();
@@ -396,10 +407,7 @@ __aicore__ inline void LoadData2DL12L0BCal(
     const LoadData2DMxParams& loadMxDataParams)
 {
     static_assert(
-        SupportType<T, fp4x2_e2m1_t, fp4x2_e1m2_t, hifloat4x2_t>() ||
-            SupportType<Tuple<U, T>, Tuple<mx_fp8_e4m3_t, fp8_e4m3fn_t>, Tuple<mx_fp8_e5m2_t, fp8_e5m2_t>>() ||
-            SupportType<Tuple<U, T>, Tuple<fp8_e4m3fn_t, fp8_e4m3fn_t>, Tuple<fp8_e5m2_t, fp8_e5m2_t>>(),
-        "LoadData 2dv2 with scale matrix only support fp4/fp8 dtype on current device!");
+        IsLoadData2DMxType<T, U>(), "LoadData 2dv2 with scale matrix only support fp4/fp8 dtype on current device!");
     if ASCEND_IS_AIC {
         if (IsCompatibleTo3510()) {
             DrainCopyMessageQueueImpl<T, PIPE_MTE1>();
