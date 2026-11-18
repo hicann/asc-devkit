@@ -218,6 +218,48 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 make_ulong4(
     return tmp;
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long4_16a make_long4_16a(long x, long y, long z, long w)
+{
+    long4_16a tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    tmp.w = w;
+    return tmp;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4_16a make_ulong4_16a(
+    unsigned long x, unsigned long y, unsigned long z, unsigned long w)
+{
+    ulong4_16a tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    tmp.w = w;
+    return tmp;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long4_32a make_long4_32a(long x, long y, long z, long w)
+{
+    long4_32a tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    tmp.w = w;
+    return tmp;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4_32a make_ulong4_32a(
+    unsigned long x, unsigned long y, unsigned long z, unsigned long w)
+{
+    ulong4_32a tmp;
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    tmp.w = w;
+    return tmp;
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 make_longlong2(long long int x, long long int y)
 {
     longlong2 tmp;

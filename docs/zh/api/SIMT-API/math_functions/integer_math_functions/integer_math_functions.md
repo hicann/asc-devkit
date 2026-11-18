@@ -30,6 +30,26 @@
 
 -   **[\_\_mul\_i32toi64](__mul_i32toi64.md)**
 
+-   **[\_\_dp2a\_lo](__dp2a_lo.md)**
+
+-   **[\_\_dp2a\_hi](__dp2a_hi.md)**
+
+-   **[\_\_dp4a](__dp4a.md)**
+
+-   **[__asc\_bswap16](__asc_bswap16.md)**
+
+-   **[__asc\_bswap32](__asc_bswap32.md)**
+
+-   **[__asc\_bswap64](__asc_bswap64.md)**
+
+-   **[\_\_funnelshift\_l](__funnelshift_l.md)**
+
+-   **[\_\_funnelshift\_lc](__funnelshift_lc.md)**
+
+-   **[\_\_funnelshift\_r](__funnelshift_r.md)**
+
+-   **[\_\_funnelshift\_rc](__funnelshift_rc.md)**
+
 -   **[\_\_brev](__brev.md)**
 
 -   **[\_\_clz](__clz.md)**

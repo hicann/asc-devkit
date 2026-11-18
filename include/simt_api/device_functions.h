@@ -887,6 +887,12 @@ __ASC_SIMT_SIMULATION_CHECK__(
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __urhadd(unsigned int x, unsigned int y);
 #endif
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short __asc_bswap16(unsigned short x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __asc_bswap32(unsigned int x);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long __asc_bswap64(unsigned long long x);
+
 static __SIMT_DEVICE_FUNCTIONS_DECL__ int32_t laneid();
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ int32_t lanemask_eq();

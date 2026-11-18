@@ -690,6 +690,20 @@ static inline unsigned long long __umul64hi(unsigned long long x, unsigned long 
     return hi1 + mid_hi + (carry << 32) + (t >> 32); // 32 : uint bit-length
 }
 
+static inline unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s)
+{
+    const uint64_t tmp64 = (static_cast<uint64_t>(y) << 32U) | x;
+    const uint32_t selector0 = (s >> 0U) & 0x7U;
+    const uint32_t selector1 = (s >> 4U) & 0x7U;
+    const uint32_t selector2 = (s >> 8U) & 0x7U;
+    const uint32_t selector3 = (s >> 12U) & 0x7U;
+    const uint32_t byte0 = static_cast<uint32_t>(tmp64 >> (selector0 * 8U)) & 0xffU;
+    const uint32_t byte1 = static_cast<uint32_t>(tmp64 >> (selector1 * 8U)) & 0xffU;
+    const uint32_t byte2 = static_cast<uint32_t>(tmp64 >> (selector2 * 8U)) & 0xffU;
+    const uint32_t byte3 = static_cast<uint32_t>(tmp64 >> (selector3 * 8U)) & 0xffU;
+    return byte0 | (byte1 << 8U) | (byte2 << 16U) | (byte3 << 24U);
+}
+
 namespace cce {
 template <auto funcPtr, typename... Args>
 void async_invoke(const dim3& dim, Args&&... args)

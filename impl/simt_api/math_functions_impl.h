@@ -98,6 +98,196 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fabsf(float x) { return __fabsf(x); 
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmaf(float x, float y, float z) { return __fma(x, y, z); }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float __fmaf_ieee_rn(float x, float y, float z) { return __fma(x, y, z); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __funnelshift_l(unsigned int lo, unsigned int hi, unsigned int shift)
+{
+    const uint32_t n = shift & 31U;
+    return (hi << n) | (lo >> (32U - n));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __funnelshift_lc(
+    unsigned int lo, unsigned int hi, unsigned int shift)
+{
+    const uint32_t n = shift < 32U ? shift : 32U;
+    return (hi << n) | (lo >> (32U - n));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __funnelshift_r(unsigned int lo, unsigned int hi, unsigned int shift)
+{
+    const uint32_t n = shift & 31U;
+    return (lo >> n) | (hi << (32U - n));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __funnelshift_rc(
+    unsigned int lo, unsigned int hi, unsigned int shift)
+{
+    const uint32_t n = shift < 32U ? shift : 32U;
+    return (lo >> n) | (hi << (32U - n));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp2a_lo(int src_a, int src_b, int c)
+{
+    const short2 packed_a = reinterpret_cast<const short2&>(src_a);
+    const char4 packed_b = reinterpret_cast<const char4&>(src_b);
+
+    const int16_t a0 = packed_a.x;
+    const int16_t a1 = packed_a.y;
+    const int8_t b0 = packed_b.x;
+    const int8_t b1 = packed_b.y;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp2a_lo(unsigned int src_a, unsigned int src_b, unsigned int c)
+{
+    const ushort2 packed_a = reinterpret_cast<const ushort2&>(src_a);
+    const uchar4 packed_b = reinterpret_cast<const uchar4&>(src_b);
+
+    const uint16_t a0 = packed_a.x;
+    const uint16_t a1 = packed_a.y;
+    const uint8_t b0 = packed_b.x;
+    const uint8_t b1 = packed_b.y;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp2a_lo(short2 src_a, char4 src_b, int c)
+{
+    const int16_t a0 = src_a.x;
+    const int16_t a1 = src_a.y;
+
+    const int8_t b0 = src_b.x;
+    const int8_t b1 = src_b.y;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp2a_lo(ushort2 src_a, uchar4 src_b, unsigned int c)
+{
+    const uint16_t a0 = src_a.x;
+    const uint16_t a1 = src_a.y;
+
+    const uint8_t b0 = src_b.x;
+    const uint8_t b1 = src_b.y;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp2a_hi(int src_a, int src_b, int c)
+{
+    const short2 packed_a = reinterpret_cast<const short2&>(src_a);
+    const char4 packed_b = reinterpret_cast<const char4&>(src_b);
+
+    const int16_t a0 = packed_a.x;
+    const int16_t a1 = packed_a.y;
+    const int8_t b0 = packed_b.z;
+    const int8_t b1 = packed_b.w;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp2a_hi(unsigned int src_a, unsigned int src_b, unsigned int c)
+{
+    const ushort2 packed_a = reinterpret_cast<const ushort2&>(src_a);
+    const uchar4 packed_b = reinterpret_cast<const uchar4&>(src_b);
+
+    const uint16_t a0 = packed_a.x;
+    const uint16_t a1 = packed_a.y;
+    const uint8_t b0 = packed_b.z;
+    const uint8_t b1 = packed_b.w;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp2a_hi(short2 src_a, char4 src_b, int c)
+{
+    const int16_t a0 = src_a.x;
+    const int16_t a1 = src_a.y;
+
+    const int8_t b0 = src_b.z;
+    const int8_t b1 = src_b.w;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp2a_hi(ushort2 src_a, uchar4 src_b, unsigned int c)
+{
+    const uint16_t a0 = src_a.x;
+    const uint16_t a1 = src_a.y;
+
+    const uint8_t b0 = src_b.z;
+    const uint8_t b1 = src_b.w;
+
+    return c + a0 * b0 + a1 * b1;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp4a(int src_a, int src_b, int c)
+{
+    const char4 packed_a = reinterpret_cast<const char4&>(src_a);
+    const char4 packed_b = reinterpret_cast<const char4&>(src_b);
+
+    const int8_t a0 = packed_a.x;
+    const int8_t a1 = packed_a.y;
+    const int8_t a2 = packed_a.z;
+    const int8_t a3 = packed_a.w;
+
+    const int8_t b0 = packed_b.x;
+    const int8_t b1 = packed_b.y;
+    const int8_t b2 = packed_b.z;
+    const int8_t b3 = packed_b.w;
+
+    return c + a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp4a(unsigned int src_a, unsigned int src_b, unsigned int c)
+{
+    const uchar4 packed_a = reinterpret_cast<const uchar4&>(src_a);
+    const uchar4 packed_b = reinterpret_cast<const uchar4&>(src_b);
+
+    const uint8_t a0 = packed_a.x;
+    const uint8_t a1 = packed_a.y;
+    const uint8_t a2 = packed_a.z;
+    const uint8_t a3 = packed_a.w;
+
+    const uint8_t b0 = packed_b.x;
+    const uint8_t b1 = packed_b.y;
+    const uint8_t b2 = packed_b.z;
+    const uint8_t b3 = packed_b.w;
+
+    return c + a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __dp4a(char4 src_a, char4 src_b, int c)
+{
+    const int8_t a0 = src_a.x;
+    const int8_t a1 = src_a.y;
+    const int8_t a2 = src_a.z;
+    const int8_t a3 = src_a.w;
+
+    const int8_t b0 = src_b.x;
+    const int8_t b1 = src_b.y;
+    const int8_t b2 = src_b.z;
+    const int8_t b3 = src_b.w;
+
+    return c + a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __dp4a(uchar4 src_a, uchar4 src_b, unsigned int c)
+{
+    const uint8_t a0 = src_a.x;
+    const uint8_t a1 = src_a.y;
+    const uint8_t a2 = src_a.z;
+    const uint8_t a3 = src_a.w;
+
+    const uint8_t b0 = src_b.x;
+    const uint8_t b1 = src_b.y;
+    const uint8_t b2 = src_b.z;
+    const uint8_t b3 = src_b.w;
+
+    return c + a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+}
+
 /*
  * Computes a refined sqrt approximation for float inputs.
  *

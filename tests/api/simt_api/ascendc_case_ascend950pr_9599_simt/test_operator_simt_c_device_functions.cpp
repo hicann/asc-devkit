@@ -55,6 +55,15 @@ TEST_F(DeviceTestsuite, MathApiTest)
 #endif
 }
 
+TEST_F(DeviceTestsuite, ByteSwapApiTest)
+{
+    EXPECT_EQ(0x3412U, __asc_bswap16(0x1234U));
+    EXPECT_EQ(0x78563412U, __asc_bswap32(0x12345678U));
+    EXPECT_EQ(0xEFCDAB8967452301ULL, __asc_bswap64(0x0123456789ABCDEFULL));
+}
+
+TEST_F(DeviceTestsuite, BytePermApiTest) { EXPECT_EQ(0x56781234U, __byte_perm(0x1234U, 0x5678U, 0x5410U)); }
+
 void VerifyLdStFloatNumber(float x, float xExpected, float epsilon = 1e-5)
 {
     if (std::isnan(xExpected)) {

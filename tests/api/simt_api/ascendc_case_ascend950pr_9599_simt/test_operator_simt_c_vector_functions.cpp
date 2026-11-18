@@ -26,7 +26,7 @@ protected:
 
 TEST_F(VectorTestsuite, MakeFloatApiTest)
 {
-    float result_fp = static_cast<float>(rand()) / RAND_MAX;
+    float result_fp = 1.5f;
     float2 expect_fp2 = make_float2(result_fp, result_fp);
     EXPECT_EQ(expect_fp2.x, result_fp);
     EXPECT_EQ(expect_fp2.y, result_fp);
@@ -60,7 +60,7 @@ TEST_F(VectorTestsuite, MakeCharApiTest)
     EXPECT_EQ(expect_ch4.z, result_ch);
     EXPECT_EQ(expect_ch4.w, result_ch);
 
-    unsigned char result_uch = '1';
+    unsigned char result_uch = 0xAB;
     uchar2 expect_uch2 = make_uchar2(result_uch, result_uch);
     EXPECT_EQ(expect_uch2.x, result_uch);
     EXPECT_EQ(expect_uch2.y, result_uch);
@@ -79,7 +79,7 @@ TEST_F(VectorTestsuite, MakeCharApiTest)
 
 TEST_F(VectorTestsuite, MakeShortApiTest)
 {
-    short result_sh = static_cast<short>(rand()) / RAND_MAX;
+    short result_sh = 1234;
     short2 expect_sh2 = make_short2(result_sh, result_sh);
     EXPECT_EQ(expect_sh2.x, result_sh);
     EXPECT_EQ(expect_sh2.y, result_sh);
@@ -95,7 +95,7 @@ TEST_F(VectorTestsuite, MakeShortApiTest)
     EXPECT_EQ(expect_sh4.z, result_sh);
     EXPECT_EQ(expect_sh4.w, result_sh);
 
-    unsigned short result_ush = static_cast<unsigned short>(rand()) / RAND_MAX;
+    unsigned short result_ush = 4321;
     ushort2 expect_ush2 = make_ushort2(result_ush, result_ush);
     EXPECT_EQ(expect_ush2.x, result_ush);
     EXPECT_EQ(expect_ush2.y, result_ush);
@@ -114,7 +114,7 @@ TEST_F(VectorTestsuite, MakeShortApiTest)
 
 TEST_F(VectorTestsuite, MakeIntApiTest)
 {
-    int result_int = static_cast<int>(rand()) / RAND_MAX;
+    int result_int = 123456789;
     int2 expect_int2 = make_int2(result_int, result_int);
     EXPECT_EQ(expect_int2.x, result_int);
     EXPECT_EQ(expect_int2.y, result_int);
@@ -130,7 +130,7 @@ TEST_F(VectorTestsuite, MakeIntApiTest)
     EXPECT_EQ(expect_int4.z, result_int);
     EXPECT_EQ(expect_int4.w, result_int);
 
-    unsigned int result_uint = static_cast<unsigned int>(rand()) / RAND_MAX;
+    unsigned int result_uint = 987654321U;
     uint2 expect_uint2 = make_uint2(result_uint, result_uint);
     EXPECT_EQ(expect_uint2.x, result_uint);
     EXPECT_EQ(expect_uint2.y, result_uint);
@@ -149,7 +149,7 @@ TEST_F(VectorTestsuite, MakeIntApiTest)
 
 TEST_F(VectorTestsuite, MakeLongApiTest)
 {
-    long int result_long = static_cast<long int>(rand()) / RAND_MAX;
+    long int result_long = 123456789123456789L;
     long2 expect_long2 = make_long2(result_long, result_long);
     EXPECT_EQ(expect_long2.x, result_long);
     EXPECT_EQ(expect_long2.y, result_long);
@@ -165,7 +165,7 @@ TEST_F(VectorTestsuite, MakeLongApiTest)
     EXPECT_EQ(expect_long4.z, result_long);
     EXPECT_EQ(expect_long4.w, result_long);
 
-    unsigned long int result_ulong = static_cast<unsigned long int>(rand()) / RAND_MAX;
+    unsigned long int result_ulong = 9876543210987654321UL;
     ulong2 expect_ulong2 = make_ulong2(result_ulong, result_ulong);
     EXPECT_EQ(expect_ulong2.x, result_ulong);
     EXPECT_EQ(expect_ulong2.y, result_ulong);
@@ -182,9 +182,47 @@ TEST_F(VectorTestsuite, MakeLongApiTest)
     EXPECT_EQ(expect_ulong4.w, result_ulong);
 }
 
+TEST_F(VectorTestsuite, MakeLong4With16AlignmentApiTest)
+{
+    long int result_long = 123456789123456789L;
+    long4_16a expect_long4 = make_long4_16a(result_long, result_long, result_long, result_long);
+    EXPECT_EQ(expect_long4.x, result_long);
+    EXPECT_EQ(expect_long4.y, result_long);
+    EXPECT_EQ(expect_long4.z, result_long);
+    EXPECT_EQ(expect_long4.w, result_long);
+    EXPECT_EQ(alignof(long4_16a), 16);
+
+    unsigned long int result_ulong = 9876543210987654321UL;
+    ulong4_16a expect_ulong4 = make_ulong4_16a(result_ulong, result_ulong, result_ulong, result_ulong);
+    EXPECT_EQ(expect_ulong4.x, result_ulong);
+    EXPECT_EQ(expect_ulong4.y, result_ulong);
+    EXPECT_EQ(expect_ulong4.z, result_ulong);
+    EXPECT_EQ(expect_ulong4.w, result_ulong);
+    EXPECT_EQ(alignof(ulong4_16a), 16);
+}
+
+TEST_F(VectorTestsuite, MakeLong4With32AlignmentApiTest)
+{
+    long int result_long = 123456789123456789L;
+    long4_32a expect_long4 = make_long4_32a(result_long, result_long, result_long, result_long);
+    EXPECT_EQ(expect_long4.x, result_long);
+    EXPECT_EQ(expect_long4.y, result_long);
+    EXPECT_EQ(expect_long4.z, result_long);
+    EXPECT_EQ(expect_long4.w, result_long);
+    EXPECT_EQ(alignof(long4_32a), 32);
+
+    unsigned long int result_ulong = 9876543210987654321UL;
+    ulong4_32a expect_ulong4 = make_ulong4_32a(result_ulong, result_ulong, result_ulong, result_ulong);
+    EXPECT_EQ(expect_ulong4.x, result_ulong);
+    EXPECT_EQ(expect_ulong4.y, result_ulong);
+    EXPECT_EQ(expect_ulong4.z, result_ulong);
+    EXPECT_EQ(expect_ulong4.w, result_ulong);
+    EXPECT_EQ(alignof(ulong4_32a), 32);
+}
+
 TEST_F(VectorTestsuite, MakeLongLongApiTest)
 {
-    long long int result_longlong = static_cast<long long int>(rand()) / RAND_MAX;
+    long long int result_longlong = 123456789123456789LL;
     longlong2 expect_longlong2 = make_longlong2(result_longlong, result_longlong);
     EXPECT_EQ(expect_longlong2.x, result_longlong);
     EXPECT_EQ(expect_longlong2.y, result_longlong);
@@ -200,7 +238,7 @@ TEST_F(VectorTestsuite, MakeLongLongApiTest)
     EXPECT_EQ(expect_longlong4.z, result_longlong);
     EXPECT_EQ(expect_longlong4.w, result_longlong);
 
-    unsigned long long int result_ulonglong = static_cast<unsigned long long int>(rand()) / RAND_MAX;
+    unsigned long long int result_ulonglong = 9876543210987654321ULL;
     ulonglong2 expect_ulonglong2 = make_ulonglong2(result_ulonglong, result_ulonglong);
     EXPECT_EQ(expect_ulonglong2.x, result_ulonglong);
     EXPECT_EQ(expect_ulonglong2.y, result_ulonglong);

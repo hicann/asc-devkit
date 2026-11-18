@@ -124,6 +124,8 @@
 
 -   **[abs](abs.md)**
 
+-   **[\_\_fmaf\_ieee\_rn](__fmaf_ieee_rn.md)**
+
 -   **[fmaf](fmaf.md)**
 
 -   **[fmaxf](fmaxf.md)**

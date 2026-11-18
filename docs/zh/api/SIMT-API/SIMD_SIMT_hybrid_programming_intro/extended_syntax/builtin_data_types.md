@@ -69,6 +69,10 @@ SIMD与SIMT混合编程提供了一系列适用于Device侧的数据类型，包
 | signed long long (64bit) | longlong2 | longlong4 |
 | unsigned long (64bit) | ulong2 | ulong4 |
 | signed long (64bit) | long2 | long4 |
+| unsigned long (64bit) | - | ulong4_16a |
+| signed long (64bit) | - | long4_16a |
+| unsigned long (64bit) | - | ulong4_32a |
+| signed long (64bit) | - | long4_32a |
 | 浮点型，1符号位，2指数位，1尾数位 | float4_e2m1x2_t | - |
 | 浮点型，1符号位，1指数位，2尾数位 | float4_e1m2x2_t | - |
 | 浮点型，1符号位，4指数位，3尾数位 | float8_e4m3x2_t | - |
@@ -92,6 +96,8 @@ SIMD与SIMT混合编程提供了一系列适用于Device侧的数据类型，包
 | int4, uint4 | 16 | 16 |
 | long2, ulong2 | 16 | 16 |
 | long4, ulong4 | 32 | 32 |
+| long4_16a, ulong4_16a | 32 | 16 |
+| long4_32a, ulong4_32a | 32 | 32 |
 | longlong2, ulonglong2 | 16 | 16 |
 | longlong4, ulonglong4 | 32 | 32 |
 | float2 | 8 | 8 |
@@ -172,6 +178,30 @@ SIMD与SIMT混合编程提供了用于构造短向量的函数。这些构造函
 
     ```cpp
     inline long4 make_long4(long int x, long int y, long int z, long int w)
+    ```
+
+-   make_long4_16a
+
+    ```cpp
+    inline long4_16a make_long4_16a(long x, long y, long z, long w)
+    ```
+
+-   make_ulong4_16a
+
+    ```cpp
+    inline ulong4_16a make_ulong4_16a(unsigned long x, unsigned long y, unsigned long z, unsigned long w)
+    ```
+
+-   make_long4_32a
+
+    ```cpp
+    inline long4_32a make_long4_32a(long x, long y, long z, long w)
+    ```
+
+-   make_ulong4_32a
+
+    ```cpp
+    inline ulong4_32a make_ulong4_32a(unsigned long x, unsigned long y, unsigned long z, unsigned long w)
     ```
 
 -   make_float2

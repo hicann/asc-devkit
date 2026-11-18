@@ -52,6 +52,14 @@ inline uint64_t asc_atomic_max(uint64_t *address, uint64_t val)
 ```
 
 ```cpp
+inline long long asc_atomic_max(long long *address, long long val)
+```
+
+```cpp
+inline unsigned long long asc_atomic_max(unsigned long long *address, unsigned long long val)
+```
+
+```cpp
 inline half asc_atomic_max(half *address, half val)
 ```
 
@@ -83,7 +91,7 @@ inline bfloat16x2_t asc_atomic_max(bfloat16x2_t *address, bfloat16x2_t val)
 | 参数数据类型 | 支持的内存空间 |
 | --- | --- |
 | int32_t、uint32_t、float、half、bfloat16_t、half2、bfloat16x2_t | UB、Global Memory |
-| int64_t、uint64_t | Global Memory |
+| int64_t、uint64_t、long long、unsigned long long | Global Memory |
 
 ## 返回值说明
 

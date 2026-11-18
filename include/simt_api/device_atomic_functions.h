@@ -38,6 +38,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_add(__gm__ int64_t* add
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_add(__gm__ uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 asc_atomic_add(__gm__ float2* address, float2 val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_sub(__ubuf__ int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_sub(__ubuf__ uint32_t* address, uint32_t val);
@@ -86,6 +88,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_max(__gm__ int64_t* add
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_max(__gm__ uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_max(__gm__ long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_max(
+    __gm__ unsigned long long* address, unsigned long long val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_min(__ubuf__ int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_min(__ubuf__ uint32_t* address, uint32_t val);
@@ -101,6 +108,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asc_atomic_min(__gm__ float* address
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_min(__gm__ int64_t* address, int64_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_min(__gm__ uint64_t* address, uint64_t val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_min(__gm__ long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_min(
+    __gm__ unsigned long long* address, unsigned long long val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_inc(__ubuf__ uint32_t* address, uint32_t val);
 
@@ -143,6 +155,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_and(__gm__ int64_t* add
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_and(__gm__ uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_and(__gm__ long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_and(
+    __gm__ unsigned long long* address, unsigned long long val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_or(__ubuf__ int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_or(__ubuf__ uint32_t* address, uint32_t val);
@@ -154,6 +171,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_or(__gm__ uint32_t* ad
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_or(__gm__ int64_t* address, int64_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_or(__gm__ uint64_t* address, uint64_t val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_or(__gm__ long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_or(
+    __gm__ unsigned long long* address, unsigned long long val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_xor(__ubuf__ int32_t* address, int32_t val);
 
@@ -167,6 +189,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_xor(__gm__ int64_t* add
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_xor(__gm__ uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_xor(__gm__ long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_xor(
+    __gm__ unsigned long long* address, unsigned long long val);
+
 #else
 #ifndef ASCENDC_CPU_DEBUG
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_add(int32_t* address, int32_t val);
@@ -178,6 +205,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asc_atomic_add(float* address, float
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_add(int64_t* address, int64_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_add(uint64_t* address, uint64_t val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 asc_atomic_add(float2* address, float2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_sub(int32_t* address, int32_t val);
 
@@ -209,6 +238,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_max(int64_t* address, i
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_max(uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_max(long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_max(
+    unsigned long long* address, unsigned long long val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_min(int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_min(uint32_t* address, uint32_t val);
@@ -218,6 +252,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asc_atomic_min(float* address, float
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_min(int64_t* address, int64_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_min(uint64_t* address, uint64_t val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_min(long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_min(
+    unsigned long long* address, unsigned long long val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_inc(uint32_t* address, uint32_t val);
 
@@ -245,6 +284,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_and(int64_t* address, i
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_and(uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_and(long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_and(
+    unsigned long long* address, unsigned long long val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_or(int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_or(uint32_t* address, uint32_t val);
@@ -253,6 +297,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_or(int64_t* address, in
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_or(uint64_t* address, uint64_t val);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_or(long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_or(
+    unsigned long long* address, unsigned long long val);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_xor(int32_t* address, int32_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_xor(uint32_t* address, uint32_t val);
@@ -260,6 +309,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_xor(uint32_t* address,
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_xor(int64_t* address, int64_t val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_xor(uint64_t* address, uint64_t val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_xor(long long* address, long long val);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_xor(
+    unsigned long long* address, unsigned long long val);
 #endif
 #endif
 } // namespace __asc_simt_vf

@@ -47,6 +47,14 @@ inline int64_t asc_atomic_xor(int64_t *address, int64_t val)
 inline uint64_t asc_atomic_xor(uint64_t *address, uint64_t val)
 ```
 
+```cpp
+inline long long asc_atomic_xor(long long *address, long long val)
+```
+
+```cpp
+inline unsigned long long asc_atomic_xor(unsigned long long *address, unsigned long long val)
+```
+
 ## 参数说明
 
 **表1**  参数说明
@@ -63,7 +71,7 @@ inline uint64_t asc_atomic_xor(uint64_t *address, uint64_t val)
 | 参数数据类型 | 支持的内存空间 |
 | --- | --- |
 | int32_t、uint32_t | UB、Global Memory |
-| int64_t、uint64_t | Global Memory |
+| int64_t、uint64_t、long long、unsigned long long | Global Memory |
 
 ## 返回值说明
 

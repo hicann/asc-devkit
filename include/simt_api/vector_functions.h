@@ -65,6 +65,32 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong3 make_ulong3(unsigned long int x, un
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 make_ulong4(
     unsigned long int x, unsigned long int y, unsigned long int z, unsigned long int w);
 
+struct alignas(16) long4_16a {
+    long x, y, z, w;
+};
+
+struct alignas(16) ulong4_16a {
+    unsigned long x, y, z, w;
+};
+
+struct alignas(32) long4_32a {
+    long x, y, z, w;
+};
+
+struct alignas(32) ulong4_32a {
+    unsigned long x, y, z, w;
+};
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long4_16a make_long4_16a(long x, long y, long z, long w);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4_16a make_ulong4_16a(
+    unsigned long x, unsigned long y, unsigned long z, unsigned long w);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long4_32a make_long4_32a(long x, long y, long z, long w);
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4_32a make_ulong4_32a(
+    unsigned long x, unsigned long y, unsigned long z, unsigned long w);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 make_longlong2(long long int x, long long int y);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong3 make_longlong3(long long int x, long long int y, long long int z);

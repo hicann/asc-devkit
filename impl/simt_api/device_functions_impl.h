@@ -2062,6 +2062,31 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __urhadd(unsigned int x, unsi
     return (s >> 1) + c + r;
 }
 #endif
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short __asc_bswap16(unsigned short x)
+{
+    return static_cast<unsigned short>(__byte_perm(static_cast<unsigned int>(x), 0U, 0x0001U));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __asc_bswap32(unsigned int x) { return __byte_perm(x, 0U, 0x0123U); }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long __asc_bswap64(unsigned long long x)
+{
+    union longlong2uint2 {
+        unsigned long long long_val;
+        uint2 uint2_val;
+    };
+
+    union longlong2uint2 value = (union longlong2uint2&)x;
+    const unsigned int lo = value.uint2_val.x;
+    const unsigned int hi = value.uint2_val.y;
+    union longlong2uint2 res;
+    res.uint2_val.x = __byte_perm(lo, hi, 0x4567U);
+    res.uint2_val.y = __byte_perm(lo, hi, 0x0123U);
+
+    return res.long_val;
+}
+
 namespace __asc_simt_vf {
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_dcci_single(__gm__ void* dst) { dcci(dst, 0); }

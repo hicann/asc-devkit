@@ -68,6 +68,17 @@ TEST_F(AtomicAddTestsuite, AtomicAddFloatTestCase)
     EXPECT_FLOAT_EQ(address, 150.0f);
 }
 
+TEST_F(AtomicAddTestsuite, AtomicAddFloat2TestCase)
+{
+    float2 address = {100.0f, 200.0f};
+    float2 val = {50.0f, 60.0f};
+    float2 old = asc_atomic_add(&address, val);
+    EXPECT_FLOAT_EQ(old.x, 100.0f);
+    EXPECT_FLOAT_EQ(old.y, 200.0f);
+    EXPECT_FLOAT_EQ(address.x, 150.0f);
+    EXPECT_FLOAT_EQ(address.y, 260.0f);
+}
+
 class AtomicSubTestsuite : public testing::Test {
 protected:
     void SetUp() {}
@@ -221,6 +232,24 @@ TEST_F(AtomicMaxTestsuite, AtomicMaxFloatTestCase)
     EXPECT_FLOAT_EQ(address, 150.0f);
 }
 
+TEST_F(AtomicMaxTestsuite, AtomicMaxLongLongTestCase)
+{
+    long long address = -100LL;
+    long long val = 100LL;
+    long long old = asc_atomic_max(&address, val);
+    EXPECT_EQ(old, -100LL);
+    EXPECT_EQ(address, 100LL);
+}
+
+TEST_F(AtomicMaxTestsuite, AtomicMaxUnsignedLongLongTestCase)
+{
+    unsigned long long address = 100ULL;
+    unsigned long long val = 150ULL;
+    unsigned long long old = asc_atomic_max(&address, val);
+    EXPECT_EQ(old, 100ULL);
+    EXPECT_EQ(address, 150ULL);
+}
+
 class AtomicMinTestsuite : public testing::Test {
 protected:
     void SetUp() {}
@@ -270,6 +299,24 @@ TEST_F(AtomicMinTestsuite, AtomicMinFloatTestCase)
     float old = asc_atomic_min(&address, val);
     EXPECT_FLOAT_EQ(old, 100.0f);
     EXPECT_FLOAT_EQ(address, 50.0f);
+}
+
+TEST_F(AtomicMinTestsuite, AtomicMinLongLongTestCase)
+{
+    long long address = 100LL;
+    long long val = -100LL;
+    long long old = asc_atomic_min(&address, val);
+    EXPECT_EQ(old, 100LL);
+    EXPECT_EQ(address, -100LL);
+}
+
+TEST_F(AtomicMinTestsuite, AtomicMinUnsignedLongLongTestCase)
+{
+    unsigned long long address = 150ULL;
+    unsigned long long val = 100ULL;
+    unsigned long long old = asc_atomic_min(&address, val);
+    EXPECT_EQ(old, 150ULL);
+    EXPECT_EQ(address, 100ULL);
 }
 
 class AtomicIncTestsuite : public testing::Test {
@@ -428,6 +475,24 @@ TEST_F(AtomicAndTestsuite, AtomicAndUint64TestCase)
     EXPECT_EQ(address, 0x0F);
 }
 
+TEST_F(AtomicAndTestsuite, AtomicAndLongLongTestCase)
+{
+    long long address = 0xFFLL;
+    long long val = 0x0FLL;
+    long long old = asc_atomic_and(&address, val);
+    EXPECT_EQ(old, 0xFFLL);
+    EXPECT_EQ(address, 0x0FLL);
+}
+
+TEST_F(AtomicAndTestsuite, AtomicAndUnsignedLongLongTestCase)
+{
+    unsigned long long address = 0xFFULL;
+    unsigned long long val = 0x0FULL;
+    unsigned long long old = asc_atomic_and(&address, val);
+    EXPECT_EQ(old, 0xFFULL);
+    EXPECT_EQ(address, 0x0FULL);
+}
+
 class AtomicOrTestsuite : public testing::Test {
 protected:
     void SetUp() {}
@@ -470,6 +535,24 @@ TEST_F(AtomicOrTestsuite, AtomicOrUint64TestCase)
     EXPECT_EQ(address, 0xFF);
 }
 
+TEST_F(AtomicOrTestsuite, AtomicOrLongLongTestCase)
+{
+    long long address = 0xF0LL;
+    long long val = 0x0FLL;
+    long long old = asc_atomic_or(&address, val);
+    EXPECT_EQ(old, 0xF0LL);
+    EXPECT_EQ(address, 0xFFLL);
+}
+
+TEST_F(AtomicOrTestsuite, AtomicOrUnsignedLongLongTestCase)
+{
+    unsigned long long address = 0xF0ULL;
+    unsigned long long val = 0x0FULL;
+    unsigned long long old = asc_atomic_or(&address, val);
+    EXPECT_EQ(old, 0xF0ULL);
+    EXPECT_EQ(address, 0xFFULL);
+}
+
 class AtomicXorTestsuite : public testing::Test {
 protected:
     void SetUp() {}
@@ -510,6 +593,24 @@ TEST_F(AtomicXorTestsuite, AtomicXorUint64TestCase)
     uint64_t old = asc_atomic_xor(&address, val);
     EXPECT_EQ(old, 0xFF);
     EXPECT_EQ(address, 0x0F);
+}
+
+TEST_F(AtomicXorTestsuite, AtomicXorLongLongTestCase)
+{
+    long long address = 0xFFLL;
+    long long val = 0xF0LL;
+    long long old = asc_atomic_xor(&address, val);
+    EXPECT_EQ(old, 0xFFLL);
+    EXPECT_EQ(address, 0x0FLL);
+}
+
+TEST_F(AtomicXorTestsuite, AtomicXorUnsignedLongLongTestCase)
+{
+    unsigned long long address = 0xFFULL;
+    unsigned long long val = 0xF0ULL;
+    unsigned long long old = asc_atomic_xor(&address, val);
+    EXPECT_EQ(old, 0xFFULL);
+    EXPECT_EQ(address, 0x0FULL);
 }
 
 class AtomicAddHalfTestsuite : public testing::Test {

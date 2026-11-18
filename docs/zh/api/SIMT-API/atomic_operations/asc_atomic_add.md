@@ -52,6 +52,10 @@ inline uint64_t asc_atomic_add(uint64_t *address, uint64_t val)
 ```
 
 ```cpp
+inline float2 asc_atomic_add(float2 *address, float2 val)
+```
+
+```cpp
 inline half asc_atomic_add(half *address, half val)
 ```
 
@@ -83,7 +87,7 @@ inline bfloat16x2_t asc_atomic_add(bfloat16x2_t *address, bfloat16x2_t val)
 | 参数数据类型 | 支持的内存空间 |
 | --- | --- |
 | int32_t、uint32_t、float、half、bfloat16_t、half2、bfloat16x2_t | UB、Global Memory |
-| int64_t、uint64_t | Global Memory |
+| int64_t、uint64_t、float2 | Global Memory |
 
 ## 返回值说明
 

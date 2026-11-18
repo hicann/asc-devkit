@@ -190,6 +190,30 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_add(__gm__ uint64_t* a
     return atomicAdd(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 asc_atomic_add(__gm__ float2* address, float2 val)
+{
+    __gm__ uint64_t* bits = reinterpret_cast<__gm__ uint64_t*>(address);
+    uint64_t old_bits = *bits;
+
+    while (true) {
+        union Float2Bits {
+            float2 value;
+            uint64_t bits;
+        };
+
+        union Float2Bits old_value = (union Float2Bits&)old_bits;
+        old_value.value.x += val.x;
+        old_value.value.y += val.y;
+
+        const uint64_t observed = asc_atomic_cas(bits, old_bits, old_value.bits);
+        if (observed == old_bits) {
+            old_value.bits = observed;
+            return old_value.value;
+        }
+        old_bits = observed;
+    }
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_sub(__gm__ int32_t* address, int32_t val)
 {
     return atomicSub(address, val);
@@ -265,6 +289,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_max(__gm__ uint64_t* a
     return atomicMax(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_max(__gm__ long long* address, long long val)
+{
+    return static_cast<long long>(atomicMax(reinterpret_cast<__gm__ int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_max(
+    __gm__ unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        atomicMax(reinterpret_cast<__gm__ uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_min(__gm__ int32_t* address, int32_t val)
 {
     return atomicMin(address, val);
@@ -288,6 +324,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_min(__gm__ int64_t* add
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_min(__gm__ uint64_t* address, uint64_t val)
 {
     return atomicMin(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_min(__gm__ long long* address, long long val)
+{
+    return static_cast<long long>(atomicMin(reinterpret_cast<__gm__ int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_min(
+    __gm__ unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        atomicMin(reinterpret_cast<__gm__ uint64_t*>(address), static_cast<uint64_t>(val)));
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_inc(__gm__ uint32_t* address, uint32_t val)
@@ -355,6 +403,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_and(__gm__ uint64_t* a
     return atomicAnd(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_and(__gm__ long long* address, long long val)
+{
+    return static_cast<long long>(atomicAnd(reinterpret_cast<__gm__ int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_and(
+    __gm__ unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        atomicAnd(reinterpret_cast<__gm__ uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_or(__gm__ int32_t* address, int32_t val)
 {
     return atomicOr(address, val);
@@ -375,6 +435,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_or(__gm__ uint64_t* ad
     return atomicOr(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_or(__gm__ long long* address, long long val)
+{
+    return static_cast<long long>(atomicOr(reinterpret_cast<__gm__ int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_or(
+    __gm__ unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        atomicOr(reinterpret_cast<__gm__ uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_xor(__gm__ int32_t* address, int32_t val)
 {
     return atomicXOr(address, val);
@@ -393,6 +465,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_xor(__gm__ int64_t* add
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_xor(__gm__ uint64_t* address, uint64_t val)
 {
     return atomicXOr(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_xor(__gm__ long long* address, long long val)
+{
+    return static_cast<long long>(atomicXOr(reinterpret_cast<__gm__ int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_xor(
+    __gm__ unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        atomicXOr(reinterpret_cast<__gm__ uint64_t*>(address), static_cast<uint64_t>(val)));
 }
 
 #else
@@ -420,6 +504,30 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_add(int64_t* address, i
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_add(uint64_t* address, uint64_t val)
 {
     return __atomic_add(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 asc_atomic_add(float2* address, float2 val)
+{
+    uint64_t* bits = reinterpret_cast<uint64_t*>(address);
+    uint64_t old_bits = *bits;
+
+    while (true) {
+        union Float2Bits {
+            float2 value;
+            uint64_t bits;
+        };
+
+        union Float2Bits old_value = (union Float2Bits&)old_bits;
+        old_value.value.x += val.x;
+        old_value.value.y += val.y;
+
+        const uint64_t observed = asc_atomic_cas(bits, old_bits, old_value.bits);
+        if (observed == old_bits) {
+            old_value.bits = observed;
+            return old_value.value;
+        }
+        old_bits = observed;
+    }
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_sub(int32_t* address, int32_t val)
@@ -497,6 +605,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_max(uint64_t* address,
     return __atomic_max(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_max(long long* address, long long val)
+{
+    return static_cast<long long>(__atomic_max(reinterpret_cast<int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_max(
+    unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        __atomic_max(reinterpret_cast<uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_min(int32_t* address, int32_t val)
 {
     return __atomic_min(address, val);
@@ -520,6 +640,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_min(int64_t* address, i
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_min(uint64_t* address, uint64_t val)
 {
     return __atomic_min(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_min(long long* address, long long val)
+{
+    return static_cast<long long>(__atomic_min(reinterpret_cast<int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_min(
+    unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        __atomic_min(reinterpret_cast<uint64_t*>(address), static_cast<uint64_t>(val)));
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_atomic_inc(uint32_t* address, uint32_t val)
@@ -587,6 +719,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_and(uint64_t* address,
     return __atomic_and(address, val);
 }
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_and(long long* address, long long val)
+{
+    return static_cast<long long>(__atomic_and(reinterpret_cast<int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_and(
+    unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        __atomic_and(reinterpret_cast<uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_or(int32_t* address, int32_t val)
 {
     return __atomic_or(address, val);
@@ -605,6 +749,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int64_t asc_atomic_or(int64_t* address, in
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_or(uint64_t* address, uint64_t val)
 {
     return __atomic_or(address, val);
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_or(long long* address, long long val)
+{
+    return static_cast<long long>(__atomic_or(reinterpret_cast<int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_or(
+    unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        __atomic_or(reinterpret_cast<uint64_t*>(address), static_cast<uint64_t>(val)));
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_atomic_xor(int32_t* address, int32_t val)
@@ -626,6 +782,19 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint64_t asc_atomic_xor(uint64_t* address,
 {
     return __atomic_xor(address, val);
 }
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline long long asc_atomic_xor(long long* address, long long val)
+{
+    return static_cast<long long>(__atomic_xor(reinterpret_cast<int64_t*>(address), static_cast<int64_t>(val)));
+}
+
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long asc_atomic_xor(
+    unsigned long long* address, unsigned long long val)
+{
+    return static_cast<unsigned long long>(
+        __atomic_xor(reinterpret_cast<uint64_t*>(address), static_cast<uint64_t>(val)));
+}
+
 #endif
 #endif
 } // namespace __asc_simt_vf

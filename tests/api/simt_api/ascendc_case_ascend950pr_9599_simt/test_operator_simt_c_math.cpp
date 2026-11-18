@@ -11,6 +11,7 @@
 #include <climits>
 #include <type_traits>
 #include "simt_api/asc_bf16.h"
+#include "simt_api/math_functions.h"
 using namespace std;
 using namespace AscendC;
 using namespace AscendC::Simt;
@@ -73,6 +74,70 @@ TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_fmabfloat16t)
     bfloat16_t y = 2.0;
     bfloat16_t z = 3.0;
     EXPECT_EQ(static_cast<bfloat16_t>(5.0), __hfma(x, y, z));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_fmafieeern)
+{
+    float x = 2.0f;
+    float y = 3.0f;
+    float z = 1.0f;
+    EXPECT_EQ(7.0f, __fmaf_ieee_rn(x, y, z));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_funnelshiftl)
+{
+    const unsigned int lo = 0x12345678U;
+    const unsigned int hi = 0x9ABCDEF0U;
+    EXPECT_EQ(0xABCDEF01U, __funnelshift_l(lo, hi, 4U));
+    EXPECT_EQ(0xABCDEF01U, __funnelshift_l(lo, hi, 36U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_funnelshiftlc)
+{
+    const unsigned int lo = 0x12345678U;
+    const unsigned int hi = 0x9ABCDEF9U;
+    EXPECT_EQ(0xABCDEF91U, __funnelshift_lc(lo, hi, 4U));
+    EXPECT_EQ(0xBCDEF912U, __funnelshift_lc(lo, hi, 8U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_funnelshiftr)
+{
+    const unsigned int lo = 0x12345678U;
+    const unsigned int hi = 0x9ABCDEF0U;
+    EXPECT_EQ(0x01234567U, __funnelshift_r(lo, hi, 4U));
+    EXPECT_EQ(0x01234567U, __funnelshift_r(lo, hi, 36U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_funnelshiftrc)
+{
+    const unsigned int lo = 0x12345678U;
+    const unsigned int hi = 0x9ABCDEF9U;
+    EXPECT_EQ(0x91234567U, __funnelshift_rc(lo, hi, 4U));
+    EXPECT_EQ(0xF9123456U, __funnelshift_rc(lo, hi, 8U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_dp2alo)
+{
+    EXPECT_EQ(9, __dp2a_lo(0x00020001, 0x03020100, 7));
+    EXPECT_EQ(9U, __dp2a_lo(0x00020001U, 0x03020100U, 7U));
+    EXPECT_EQ(9, __dp2a_lo(short2{1, 2}, char4{0, 1, 2, 3}, 7));
+    EXPECT_EQ(9U, __dp2a_lo(ushort2{1, 2}, uchar4{0, 1, 2, 3}, 7U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_dp2ahi)
+{
+    EXPECT_EQ(15, __dp2a_hi(0x00020001, 0x03020100, 7));
+    EXPECT_EQ(15U, __dp2a_hi(0x00020001U, 0x03020100U, 7U));
+    EXPECT_EQ(15, __dp2a_hi(short2{1, 2}, char4{0, 1, 2, 3}, 7));
+    EXPECT_EQ(15U, __dp2a_hi(ushort2{1, 2}, uchar4{0, 1, 2, 3}, 7U));
+}
+
+TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_dp4a)
+{
+    EXPECT_EQ(37, __dp4a(0x04030201, 0x04030201, 7));
+    EXPECT_EQ(37U, __dp4a(0x04030201U, 0x04030201U, 7U));
+    EXPECT_EQ(37, __dp4a(char4{1, 2, 3, 4}, char4{1, 2, 3, 4}, 7));
+    EXPECT_EQ(37U, __dp4a(uchar4{1, 2, 3, 4}, uchar4{1, 2, 3, 4}, 7U));
 }
 
 TEST_F(FloatComputeTestsuite1, FloatComputeTestCase_maxhalf)
