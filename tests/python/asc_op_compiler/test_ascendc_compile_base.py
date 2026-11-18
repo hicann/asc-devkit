@@ -79,26 +79,31 @@ class TestAscendCCompileBase(unittest.TestCase):
         result = mock.Mock(returncode=0, stderr="")
         with mock.patch.object(CCECInfo, "get_exe", return_value="ld.lld"), mock.patch.object(
             subprocess, "run", return_value=result
-        ) as mock_run, mock.patch.object(os, "listdir", return_value=["sk.o"]), mock.patch.object(
-            os, "makedirs"
-        ), mock.patch.object(os, "getpid", return_value=123):
+        ) as mock_run, mock.patch.object(
+            os, "listdir", return_value=["sk_z.o", "notes.txt", "sk_a.o"]
+        ), mock.patch.object(os, "makedirs"), mock.patch.object(os, "getpid", return_value=123):
             link_sk_norm_combine("kernel.o", "norm.o", "sk_bind.o", "meta_info.o", "compile.log")
 
         relocatable_link_cmd = mock_run.call_args_list[1].args[0]
         self.assertEqual(relocatable_link_cmd.count("meta_info.o"), 1)
-        self.assertEqual(relocatable_link_cmd[-3:], ["norm.o", "sk_bind.o", "meta_info.o"])
+        self.assertEqual(
+            relocatable_link_cmd[4:],
+            ["norm.o", "sk_bind.o", "temp_extract_123/sk_a.o", "temp_extract_123/sk_z.o", "meta_info.o"],
+        )
 
     def test_link_sk_norm_combine_without_meta_file(self):
         result = mock.Mock(returncode=0, stderr="")
         with mock.patch.object(CCECInfo, "get_exe", return_value="ld.lld"), mock.patch.object(
             subprocess, "run", return_value=result
-        ) as mock_run, mock.patch.object(os, "listdir", return_value=["sk.o"]), mock.patch.object(
-            os, "makedirs"
-        ), mock.patch.object(os, "getpid", return_value=123):
+        ) as mock_run, mock.patch.object(
+            os, "listdir", return_value=["sk_z.o", "notes.txt", "sk_a.o"]
+        ), mock.patch.object(os, "makedirs"), mock.patch.object(os, "getpid", return_value=123):
             link_sk_norm_combine("kernel.o", "norm.o", "sk_bind.o", "", "compile.log")
 
         relocatable_link_cmd = mock_run.call_args_list[1].args[0]
-        self.assertEqual(relocatable_link_cmd[-2:], ["norm.o", "sk_bind.o"])
+        self.assertEqual(
+            relocatable_link_cmd[4:], ["norm.o", "sk_bind.o", "temp_extract_123/sk_a.o", "temp_extract_123/sk_z.o"]
+        )
 
     def test_gen_file_header(self):
         file_header = gen_file_header(KernelMetaType.KERNEL_TYPE_AIV_ONLY, 1)
