@@ -64,7 +64,7 @@ half2 __hmulx2(const half2 x, const half2 y)
 
 ## 约束说明
 
-无
+本接口的饱和行为由全局饱和模式决定，SIMT编程场景暂不支持设置CTRL寄存器，本接口按非饱和模式执行；如需设置饱和模式，请在SIMD与SIMT混合编程场景下设置，设置方式参见[饱和模式设置](../../common_constraints.md#饱和模式设置)。
 
 ## 调用示例
 

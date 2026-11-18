@@ -71,7 +71,7 @@ inline __asc_fp8_storage_t __asc_cvt_float_to_fp8(const float x, const __asc_sat
 
 ## 约束说明
 
-使用此接口前需将CTRL\[60\]寄存器设置为0，否则饱和模式不生效。设置方式请参见[控制饱和行为的方式](../../data_type_conversion/overview.md#section1194916101549)。
+使用此接口前需将CTRL\[60\]寄存器设置为0，否则饱和模式不生效。设置方式请参见[饱和模式设置](../../common_constraints.md#饱和模式设置)。
 
 SIMT编程场景当前不支持使用该接口。
 

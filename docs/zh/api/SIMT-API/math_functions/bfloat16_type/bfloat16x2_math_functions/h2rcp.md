@@ -60,9 +60,10 @@ inline bfloat16x2_t h2rcp(bfloat16x2_t x)
 ## 约束说明
 
 <!-- npu="950" id7 -->
-针对Ascend 950PR&950DT系列产品，本接口不支持Subnormal场景：本接口内部实现使用到了除法运算符，由于除法运算符不支持Subnormal场景，当输入x为Subnormal数据时，会导致本接口最终结果为±inf。
+-   针对Ascend 950PR&950DT系列产品，本接口不支持Subnormal场景：本接口内部实现使用到了除法运算符，由于除法运算符不支持Subnormal场景，当输入x为Subnormal数据时，会导致本接口最终结果为±inf。
 <!-- end id7 -->
 
+-   本接口的饱和行为由全局饱和模式决定，SIMT编程场景暂不支持设置CTRL寄存器，本接口按非饱和模式执行；如需设置饱和模式，请在SIMD与SIMT混合编程场景下设置，设置方式参见[饱和模式设置](../../common_constraints.md#饱和模式设置)。
 ## 调用示例
 
 - SIMT编程场景：

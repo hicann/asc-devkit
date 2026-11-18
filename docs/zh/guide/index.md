@@ -412,3 +412,8 @@
             -   [Lambda表达式](./technical_appendix/cpp_standard_support/cpp_language_feature/lambda_expressions.md)
         -   [Device侧C/C++语法限制](./technical_appendix/cpp_standard_support/cpp_language_restrictions/cpp_language_restrictions.md)
             -   [通用语法限制](./technical_appendix/cpp_standard_support/cpp_language_restrictions/general_restrictions.md)
+    -   [浮点计算](./technical_appendix/floating_point_computation/floating_point_computation.md)
+        -   [概述](./technical_appendix/floating_point_computation/overview.md)
+        -   [浮点计算基础](./technical_appendix/floating_point_computation/floating_point_basics.md)
+        -   [Ascend C数据类型汇总](./technical_appendix/floating_point_computation/ascendc_data_type_summary.md)
+        -   [浮点操作](./technical_appendix/floating_point_computation/floating_point_operation.md)

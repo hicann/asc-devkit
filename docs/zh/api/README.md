@@ -2635,6 +2635,7 @@
             -   [lanemask\_gt](SIMT-API/Warp_functions/lane_id_functions/lanemask_gt.md)
 
     -   [数学函数](SIMT-API/math_functions/math_functions.md)
+        -   [通用约束说明](SIMT-API/math_functions/common_constraints.md)
         -   [fp8类型](SIMT-API/math_functions/fp8_type/fp8_type.md)
             -   [fp8数据类型简介](SIMT-API/math_functions/fp8_type/fp8_data_type_intro.md)
             -   [fp8数据转换函数](SIMT-API/math_functions/fp8_type/fp8_conversion_functions/fp8_conversion_functions.md)
