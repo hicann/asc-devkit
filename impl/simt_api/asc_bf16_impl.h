@@ -70,13 +70,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmin(bfloat16_t x, bfloat16_t
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hcos(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = cosf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2cos(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -84,17 +89,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2cos(bfloat16x2_t x)
     res_fp32.y = cosf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hsin(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = sinf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sin(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -102,17 +113,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sin(bfloat16x2_t x)
     res_fp32.y = sinf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t htanh(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = tanhf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2tanh(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -120,17 +137,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2tanh(bfloat16x2_t x)
     res_fp32.y = tanhf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = expf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -138,17 +161,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp(bfloat16x2_t x)
     res_fp32.y = expf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp2(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = exp2f(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp2(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -156,17 +185,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp2(bfloat16x2_t x)
     res_fp32.y = exp2f(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp10(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = exp10f(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp10(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -174,17 +209,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp10(bfloat16x2_t x)
     res_fp32.y = exp10f(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = logf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -192,17 +233,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log(bfloat16x2_t x)
     res_fp32.y = logf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog2(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = log2f(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log2(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -210,17 +257,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log2(bfloat16x2_t x)
     res_fp32.y = log2f(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog10(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = log10f(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log10(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -228,17 +281,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log10(bfloat16x2_t x)
     res_fp32.y = log10f(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hsqrt(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = sqrtf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sqrt(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -246,17 +305,23 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sqrt(bfloat16x2_t x)
     res_fp32.y = sqrtf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hrsqrt(bfloat16_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float tmp = __cvt_float<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     tmp = 1.0f / sqrtf(tmp);
     return __cvt_bfloat16_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(tmp);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2rsqrt(bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float2 x_fp32 =
         __cvt_float2<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(x);
     float2 res_fp32;
@@ -264,6 +329,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2rsqrt(bfloat16x2_t x)
     res_fp32.y = 1.0f / sqrtf(x_fp32.y);
     return __cvt_bfloat16x2_t<__internal_get_round<__RoundMode::CAST_RINT>(), RoundingSaturation::RS_DISABLE_VALUE>(
         res_fp32);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hrcp(bfloat16_t x) { return static_cast<bfloat16_t>(1.0) / x; }
@@ -1151,7 +1217,10 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t asc_atomic_sub(bfloat16x2_t* 
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t asc_atomic_sub(bfloat16_t* address, bfloat16_t val)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return asc_atomic_add(address, -val);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t asc_atomic_exch(bfloat16x2_t* address, bfloat16x2_t val)
@@ -1386,218 +1455,326 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgtu(bfloat16_t x, bfloat16_t y)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbeqx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __heq(x.x, y.x) && __heq(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbnex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hne(x.x, y.x) && __hne(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hblex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hle(x.x, y.x) && __hle(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hge(x.x, y.x) && __hge(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hlt(x.x, y.x) && __hlt(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hgt(x.x, y.x) && __hgt(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbequx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hequ(x.x, y.x) && __hequ(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbneux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hneu(x.x, y.x) && __hneu(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbleux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hleu(x.x, y.x) && __hleu(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgeux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hgeu(x.x, y.x) && __hgeu(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hltu(x.x, y.x) && __hltu(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hgtu(x.x, y.x) && __hgtu(x.y, y.y);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __heqx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __heq(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __heq(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hnex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hne(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hne(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hlex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hle(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hle(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgex2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hge(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hge(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hlt(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hlt(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hgt(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hgt(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hequx2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hequ(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hequ(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hneux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hneu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hneu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hleux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hleu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hleu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgeux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hgeu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hgeu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hltu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hltu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtux2(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t bf;
     bf.x = __hgtu(x.x, y.x) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     bf.y = __hgtu(x.y, y.y) ? (bfloat16_t)1.0f : (bfloat16_t)0.0f;
     return bf;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __heqx2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__heq(x.x, y.x) ? 0xFFFFu : 0x0u) | (__heq(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hnex2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hne(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hne(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hlex2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hle(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hle(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgex2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hge(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hge(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltx2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hlt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hlt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtx2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hgt(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgt(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hequx2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hequ(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hequ(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hneux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hneu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hneu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hleux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hleu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hleu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgeux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hgeu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgeu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hltu(x.x, y.x) ? 0xFFFFu : 0u) | (__hltu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtux2_mask(bfloat16x2_t x, bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return (__hgtu(x.x, y.x) ? 0xFFFFu : 0x0u) | (__hgtu(x.y, y.y) ? 0xFFFF0000u : 0x0u);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __isnanx2(bfloat16x2_t x)
@@ -1630,8 +1807,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hdivx2(const bfloat16x2_t x
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __habsx2(const bfloat16x2_t x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t ret = {__habs(x.x), __habs(x.y)};
     return ret;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2(
@@ -1675,40 +1855,58 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmin_nan(const bfloat16_t x, 
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hfma_relu(const bfloat16_t x, const bfloat16_t y, const bfloat16_t z)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return __hmax_nan(__hfma(x, y, z), (bfloat16_t)0.0f);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2(const bfloat16x2_t x, const bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t ret = {__hmax(x.x, y.x), __hmax(x.y, y.y)};
     return ret;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2(const bfloat16x2_t x, const bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t ret = {__hmin(x.x, y.x), __hmin(x.y, y.y)};
     return ret;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2_nan(const bfloat16x2_t x, const bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t ret = {__hmax_nan(x.x, y.x), __hmax_nan(x.y, y.y)};
     return ret;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2_nan(const bfloat16x2_t x, const bfloat16x2_t y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t ret = {__hmin_nan(x.x, y.x), __hmin_nan(x.y, y.y)};
     return ret;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2_relu(
     const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bfloat16x2_t h;
     h.x = (bfloat16_t)0.0f;
     h.y = (bfloat16_t)0.0f;
     return __hmaxx2_nan(__hfmax2(x, y, z), h);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hcmadd(

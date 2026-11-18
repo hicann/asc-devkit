@@ -24,7 +24,6 @@
 
 #include "simt_api/device_types.h"
 #include "simt_api/math_constants.h"
-#include "impl/simt_api/device_functions_impl.h"
 #include "impl/simt_api/internal_functions_impl.h"
 
 #if (__NPU_ARCH__ == 3510) || (__NPU_ARCH__ == 9201) || (__NPU_ARCH__ == 9202) || (__NPU_ARCH__ == 5102)
@@ -295,20 +294,31 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float expf(float x) { return __internal_ex
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (x > 0.0f && x < 1.17549435e-38f) { // 1.17549435e-38f: subnormal floating-point number boundary
         return __logf(expf(23.0f) * x) - 23.0f;
     }
     return __logf(x);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sqrtf(float x) { return __internal_sqrtf(x); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rsqrtf(float x) { return 1.0f / sqrtf(x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rsqrtf(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / sqrtf(x);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdfinvf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float double_x = x + x;
     float item = 2.0f - double_x;
     float result = 0.0f;
@@ -348,6 +358,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdfinvf(float x)
     }
     result = fmaf(result, -1.41421354f, 0.0f); // -1.41421354f : -sqrt(2.0f)
     return result;
+#pragma GCC diagnostic pop
 }
 
 #define __INTERNAL_MODFF(x, n)                                  \
@@ -395,14 +406,32 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdfinvf(float x)
         return result;                                          \
     } while (0)
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, float* n) { __INTERNAL_MODFF(x, n); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, float* n)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_MODFF(x, n);
+#pragma GCC diagnostic pop
+}
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #ifdef __NPU_ARCH__
 #ifndef ASCENDC_CPU_DEBUG
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, __ubuf__ float* n) { __INTERNAL_MODFF(x, n); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, __ubuf__ float* n)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_MODFF(x, n);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, __gm__ float* n) { __INTERNAL_MODFF(x, n); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float modff(float x, __gm__ float* n)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_MODFF(x, n);
+#pragma GCC diagnostic pop
+}
 #endif
 #endif
 #endif
@@ -600,10 +629,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float copysignf(float x, float y) { return
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float nearbyintf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (isinf(x) || isnan(x)) {
         return x;
     }
     return __rintf(x);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float nextafterf(float x, float y)
@@ -1097,20 +1129,40 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x);
         return copysignf(f32_man_u32, (x));              \
     } while (0)
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, int* exp) { __INTERNAL_FREXPF(x, exp); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, int* exp)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_FREXPF(x, exp);
+#pragma GCC diagnostic pop
+}
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #ifdef __NPU_ARCH__
 #ifndef ASCENDC_CPU_DEBUG
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, __ubuf__ int* exp) { __INTERNAL_FREXPF(x, exp); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, __ubuf__ int* exp)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_FREXPF(x, exp);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, __gm__ int* exp) { __INTERNAL_FREXPF(x, exp); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float frexpf(float x, __gm__ int* exp)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_FREXPF(x, exp);
+#pragma GCC diagnostic pop
+}
 #endif
 #endif
 #endif
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ldexpf(float x, int exp)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float result;
     const int32_t abs_exp = __fabsf(exp);
     if (abs_exp >= 101) { // 101: switch to the multi-stage scaling path for larger exponent magnitudes.
@@ -1144,6 +1196,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ldexpf(float x, int exp)
     }
 
     return result;
+#pragma GCC diagnostic pop
 }
 
 /*
@@ -1359,26 +1412,62 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float hypotf(float x, float y)
         return max_abs;                                                                                          \
     } while (0)
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, float* a) { __INTERNAL_NORMF(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_NORMF(n, a);
+#pragma GCC diagnostic pop
+}
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #ifdef __NPU_ARCH__
 #ifndef ASCENDC_CPU_DEBUG
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, __gm__ float* a) { __INTERNAL_NORMF(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, __gm__ float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_NORMF(n, a);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, __ubuf__ float* a) { __INTERNAL_NORMF(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float normf(int n, __ubuf__ float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    __INTERNAL_NORMF(n, a);
+#pragma GCC diagnostic pop
+}
 #endif
 #endif
 #endif
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, float* a) { return 1.0f / normf(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / normf(n, a);
+#pragma GCC diagnostic pop
+}
 
 #ifndef __NPU_COMPILER_INTERNAL_PURE_SIMT__
 #ifdef __NPU_ARCH__
 #ifndef ASCENDC_CPU_DEBUG
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, __ubuf__ float* a) { return 1.0f / normf(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, __ubuf__ float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / normf(n, a);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, __gm__ float* a) { return 1.0f / normf(n, a); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnormf(int n, __gm__ float* a)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / normf(n, a);
+#pragma GCC diagnostic pop
+}
 #endif
 #endif
 #endif
@@ -1418,10 +1507,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cbrtf(float x)
     return result;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log10f(float x) { return logf(x) / logf(10.0f); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log10f(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return logf(x) / logf(10.0f);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erff(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
     float x_squared = x * x;
     if (abs_x >= 1.00296f) {
@@ -1467,6 +1564,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erff(float x)
 
         return fmaf(poly_term, x, x);
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_poly(float abs_x)
@@ -1495,6 +1593,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_poly(float abs_x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfinvf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float opposite_x = -x;
     float temp1 = fmaf(x, opposite_x, 1.0f);
     float log2_temp = log2f(temp1);
@@ -1524,10 +1624,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfinvf(float x)
         poly = fmaf(poly, neg_log2, 0.8862269f);
         return poly * x;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcinvf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float opposite_x = -x;
     float term = 2.0f + opposite_x;
 
@@ -1564,10 +1667,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcinvf(float x)
         float sign_adj = is_gt_one ? -inv_rsqrt : inv_rsqrt;
         return poly * sign_adj;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcxf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (x < -9.43f) {
         return ASCRT_INF_F;
     }
@@ -1614,10 +1720,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcxf(float x)
         float result = scaled_reciprocal * poly;
         return result;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_compute_sinpi(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float double_x = x * 2;
 
     //  Split a float-value into integer[i] and decimal[f]
@@ -1649,6 +1758,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_compute_sinpi(float x)
         y = fmaf(y, -1.0f, 0.0f);
     }
     return y;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_compute_ln(float x)
@@ -1800,6 +1910,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_result_case3(float ab
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float lgammaf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
     float result = 0.0f;
     if (isinf(abs_x)) {
@@ -1885,10 +1997,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float lgammaf(float x)
         }
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cyl_bessel_i0f(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
     if (isinf(abs_x)) {
         return abs_x;
@@ -1920,10 +2035,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cyl_bessel_i0f(float x)
         y = fmaf(y, square_x, 1);
         return y;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cyl_bessel_i1f(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
     if (isinf(abs_x)) {
         return x;
@@ -1958,6 +2076,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cyl_bessel_i1f(float x)
         y = fmaf(y, square_x, 0.5f);           // 0.5f               : 1/2
         return y * x;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_bessel_middle_trig_red_slowpath_f_fast_mode(
@@ -2024,6 +2143,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_bessel_middle_sin_cosf_mi
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0_y0_middle_pre_coeff(float x, float inv_x, float inv_x2)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float beta = fmaf(5.848699569702148f, inv_x2, -0.5428466796875f);
     beta = fmaf(beta, inv_x2, 0.103515625f);
     beta = fmaf(beta, inv_x2, -0.0625f);
@@ -2031,6 +2152,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0_y0_middle_pre_coeff(fl
     float theta = rsqrtf(x);
     theta = theta * 0.7978846f;
     return beta * theta;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0_y0_middle_alpha(float x, float inv_x, float inv_x2)
@@ -2044,6 +2166,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0_y0_middle_alpha(float 
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1_y1_middle_pre_coeff(float x, float inv_x, float inv_x2)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float beta = fmaf(-7.739953994751f, inv_x2, 0.8052978515625f);
     beta = fmaf(beta, inv_x2, -0.193359375f);
     beta = fmaf(beta, inv_x2, 0.1875f);
@@ -2051,6 +2175,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1_y1_middle_pre_coeff(fl
     float theta = rsqrtf(x);
     theta = theta * 0.7978846f;
     return beta * theta;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1_y1_middle_alpha(float x, float inv_x, float inv_x2)
@@ -2090,6 +2215,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1f_middle_range(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0f_huge_range(float ax)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float inv = 1.0f / ax;
     float inv2 = inv * inv;
 
@@ -2115,10 +2242,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0f_huge_range(float ax)
     // PH leaves r in [0, 2*pi), so r - pi/4 is deep inside cosf's Cody-Waite
     // range.
     return amp * __internal_cosf_cody_waite(r - 0.785398185253143310546875f);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1f_huge_range(float ax)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float inv = 1.0f / ax;
     float inv2 = inv * inv;
 
@@ -2144,6 +2274,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j1f_huge_range(float ax)
     // cos(r - 3pi/4). PH leaves r in [0, 2*pi), so r - 3pi/4 is deep inside
     // cosf's Cody-Waite range.
     return amp * __internal_cosf_cody_waite(r - 2.35619449615478515625f);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_j0f_less8(float x)
@@ -2210,6 +2341,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y0f_middle_range(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y0f_huge_range(float ax)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float inv = 1.0f / ax;
     float inv2 = inv * inv;
 
@@ -2235,6 +2368,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y0f_huge_range(float ax)
     // cos(r - 3pi/4) = sin(r - pi/4). PH leaves r in [0, 2*pi), so r - 3pi/4 is
     // deep inside cosf's Cody-Waite range.
     return amp * __internal_cosf_cody_waite(r - 2.35619449615478515625f);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y1f_middle_range(float x)
@@ -2249,6 +2383,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y1f_middle_range(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y1f_huge_range(float ax)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float inv = 1.0f / ax;
     float inv2 = inv * inv;
 
@@ -2273,10 +2409,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_y1f_huge_range(float ax)
     float amp = beta * rsqrtf(ax) * 0.79788458347320556640625f;
     // cos(r - 5pi/4) = sin(r - 3pi/4) = -cos(r - pi/4)
     return amp * __internal_cosf_cody_waite(r - 3.9269907474517822265625f);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_yn_asymptotic_bessel_amplitude(int n, float x, int index)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float s = 1.0f;
     float mu = 4 * n * n;
     float txq = 2 * x;
@@ -2291,6 +2430,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_yn_asymptotic_bessel_a
         s += 15 * (mu - 1) * (mu - 9) * (mu - 25) / (txq * txq * txq * 8 * 6); // 15,1,9,25,8,6:Constants in formulas
     }
     return sqrtf(s * 2 / (ASCRT_PI_F * x)); // 2:Constants in formulas    sqrt(2*s/(pi*x))
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_yn_asymptotic_bessel_phase_mx(int n, float x)
@@ -2311,6 +2451,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_yn_asymptotic_bessel_p
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case1(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float ampl = __internal_jn_yn_asymptotic_bessel_amplitude(n, x, 0);
     float phase = __internal_jn_yn_asymptotic_bessel_phase_mx(n, x);
     float cx, sx, ci, si, cp, sp;
@@ -2320,10 +2462,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case1(int n, float x)
     sincosf(phase, &sp, &cp);
     float sin_phase = cp * (cx * ci + sx * si) - sp * (sx * ci - cx * si);
     return sin_phase * ampl;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case2(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float prev = j0f(x);
     float current = j1f(x);
     for (int k = 1; k < n; k++) {
@@ -2332,10 +2477,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case2(int n, float x)
         current = value;
     }
     return current;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case3(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float prefix = n * logf(x / 2);
     for (int i = 2; i < n + 1; i++) {
         prefix = prefix - logf(static_cast<float>(i));
@@ -2351,10 +2499,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case3(int n, float x)
         term *= mult / (i * (i + n));
     }
     return prefix * res;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case4(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float max_value = powf(2.0f, 60.0f);
     int N = n + 30;
     float prev = 1e-30f;
@@ -2383,10 +2534,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_jn_case4(int n, float x)
     s -= current;
     res /= s;
     return res * scale;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y0_x_lessdot5(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float part1 = 0.636619772367f * __internal_j0f_less8(x) * logf(x);
     float part2 = fmaf(0.0007977247950890495f, x, -0.016524315326267768f);
     part2 = fmaf(part2, x, 0.0001196180186f);
@@ -2394,6 +2548,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y0_x_lessdot5(float x
     part2 = fmaf(part2, x, 0.00000074368805978f);
     part2 = fmaf(part2, x, -0.07380430393219066f);
     return part1 + part2;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y0_x_part1(float x)
@@ -2443,6 +2598,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y0_x_part2(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y1_x_less1dot2(float x, float minus_two_over_pi_mul_inv_x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float part1 = 0.636619772367f * __internal_j1f_less8(x) * logf(x);
     float part2 = fmaf(0.0002798307076f, x, -0.0034028867918f);
     part2 = fmaf(part2, x, 0.0003643335439f);
@@ -2451,6 +2608,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y1_x_less1dot2(float 
     part2 = fmaf(part2, x, -0.1960600316f);
     part2 = fmaf(part2, x, 0.0000000624278f);
     return part1 + minus_two_over_pi_mul_inv_x + part2;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y1_x_part1(float x)
@@ -2497,6 +2655,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_y1_x_part2(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_yn_recurrence(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bool invalid = false;
 
     // forward recurrence: Y(k) = (2k/x)*Y(k-1) - Y(k-2), Newton-refined 2/x
@@ -2536,10 +2696,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_yn_recurrence(int n, floa
         invalid = true;
     }
     return invalid ? -ASCRT_INF_F : result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_yn_asymptotic(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float ampl = __internal_jn_yn_asymptotic_bessel_amplitude(n, x, 1); // 1: Calculate YnAsymptoticBesselAmplitude
     float phase = __internal_jn_yn_asymptotic_bessel_phase_mx(n, x);
     float phase_shift = n * ASCRT_PI_F / 2 + ASCRT_PI_F / 4;
@@ -2549,6 +2712,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_yn_asymptotic(int n, floa
     float sin_shift = sinf(phase_shift - phase);
     float sin_combined = sin_x * cos_shift - cos_x * sin_shift;
     return sin_combined * ampl;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float j0f(float x)
@@ -2597,6 +2761,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float j1f(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float jnf(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (n == 0) {
         return j0f(x);
     }
@@ -2627,6 +2793,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float jnf(int n, float x)
         res *= __internal_jn_case4(n, x);
     }
     return res;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float y0f(float x)
@@ -2693,6 +2860,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float y1f(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ynf(int n, float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (n == 0) {
         return y0f(x);
     }
@@ -2717,6 +2886,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float ynf(int n, float x)
         res = ASCRT_NAN_F;
     }
     return res;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long int labs(long int x) { return abs(x); }
@@ -2811,6 +2981,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int signbit(float x) { return signbitf(x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdff(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (fabsf(x) > 14.5f) {
         x = copysignf(14.5f, x);
     }
@@ -2829,6 +3001,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdff(float x)
             fmaf(-2.0f * x_over_sqrt2 * erfc_value, x_over_sqrt2_high - x_over_sqrt2 + x_over_sqrt2_low, erfc_value);
     }
     return 0.5f * erfc_value;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
@@ -2930,9 +3103,21 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float remquof(float x, float y, int* quo) { __INTERNAL_REMQUOF(x, y, quo); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x) { return 1.0f - (2.0f / (expf(2.0f * x) + 1.0f)); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f - (2.0f / (expf(2.0f * x) + 1.0f));
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x) { return logf((1.0f + x) / (1.0f - x)) / 2.0f; }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return logf((1.0f + x) / (1.0f - x)) / 2.0f;
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
 {
@@ -2966,10 +3151,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinf(float x)
     }
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x) { return ASCRT_PIO2_F - asinf(x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float acosf(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return ASCRT_PIO2_F - asinf(x);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (fabsf(x) > 0.1f) {
         return expf(x - ASCRT_SCALAR_LN2_F) - expf(x * (-1.0f) - ASCRT_SCALAR_LN2_F);
     } else {
@@ -2986,15 +3179,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinhf(float x)
         __internal_taylor_expand(dst, src, square_v, 5, factor); // 5: Taylor expansion count
         return dst;
     }
+#pragma GCC diagnostic pop
 }
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float powf(float x, float y) { return __powf(x, y); }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp2f(float x) { return powf(2.0f, x); }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x) { return logf(x) / logf(2.0f); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log2f(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return logf(x) / logf(2.0f);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     bool is_x_pos = x > 0;
     float abs_x = fabsf(x);
     float abs_y = fabsf(y);
@@ -3047,15 +3249,19 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float fmodf(float x, float y)
         return __internal_set_res_mod_neg(mod_res);
     }
     return mod_res;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float acoshf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float result = logf(x + sqrtf(x * x - 1.0f));
     if (x < 1) {
         result = ASCRT_NAN_F;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
@@ -3087,7 +3293,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
     }
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x) { return logf(1.0f + x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return logf(1.0f + x);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
 {
@@ -3096,10 +3308,18 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
     return tmp + 0.25f / tmp;
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x) { return cosf(x * ASCRT_PI_F); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return cosf(x * ASCRT_PI_F);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
 
     float poly = __internal_cal_poly(abs_x);
@@ -3139,11 +3359,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
     }
 
     return (x < 0) ? (2.0f - result) : result;
+#pragma GCC diagnostic pop
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x) { return powf(10.0f, x); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return powf(10.0f, x);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x) { return expf(x) - 1.0f; }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float expm1f(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return expf(x) - 1.0f;
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
 {
@@ -3182,6 +3415,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float logbf(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (x == 0.0f || isnan(x)) {
         return ASCRT_MIN_VAL_S;
     }
@@ -3192,6 +3427,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
         x = -x;
     }
     return static_cast<int>(logbf(x));
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalbnf(float x, int32_t n)
@@ -3222,7 +3458,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalbnf(float x, int32_t n)
     return x * __powf(two, static_cast<float>(n));
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n) { return scalbnf(x, static_cast<int32_t>(n)); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return scalbnf(x, static_cast<int32_t>(n));
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, float* s, float* c)
 {
@@ -3294,24 +3536,56 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, _
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float remainderf(float x, float y)
 {
     int32_t quo = -1;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return remquof(x, y, &quo);
+#pragma GCC diagnostic pop
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rhypotf(float x, float y) { return 1.0f / hypotf(x, y); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rhypotf(float x, float y)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / hypotf(x, y);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm3df(float a, float b, float c) { return 1.0f / norm3df(a, b, c); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm3df(float a, float b, float c)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return 1.0f / norm3df(a, b, c);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm4df(float a, float b, float c, float d)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     return 1.0f / norm4df(a, b, c, d);
+#pragma GCC diagnostic pop
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x) { return sinf(x * ASCRT_PI_F); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return sinf(x * ASCRT_PI_F);
+#pragma GCC diagnostic pop
+}
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x) { return tanf(x * ASCRT_PI_F); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return tanf(x * ASCRT_PI_F);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float frac = x - nearbyintf(x);
     //  1/gamma(x + 1)
     //  = 1 + γx + (γ^2 - pi^2/6) * x^2/2! + O(3)
@@ -3345,20 +3619,26 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(floa
     } else {
         return 1.0f / y;
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_abs_x(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = fabsf(x);
     if (abs_x > 41.0999985f) {
         x = copysignf(41.0999985f, x);
         abs_x = fabsf(x);
     }
     return abs_x;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflection(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float abs_x = __internal_cal_abs_x(x);
 
     //  Split the Stirling's Approximation into the main term and the remainder term
@@ -3459,10 +3739,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflec
 
         return __internal_cal_y(abs_x, y_diff, y5, y7);
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (x == 0.0f) {
         return 1.0f / x;
     }
@@ -3475,10 +3758,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
     } else {
         return __internal_stirling_and_euler_reflection(x);
     }
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm3df(float a, float b, float c)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (isinf(a) || isinf(b) || isinf(c)) {
         return ASCRT_INF_F;
     }
@@ -3495,10 +3781,13 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm3df(float a, float b, float c)
     r = fmaf((b / m), (b / m), r);
     r = fmaf((c / m), (c / m), r);
     return m * sqrtf(r);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, float d)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (isinf(a) || isinf(b) || isinf(c) || isinf(d)) {
         return ASCRT_INF_F;
     }
@@ -3517,6 +3806,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, f
     r = fmaf((c / m), (c / m), r);
     r = fmaf((d / m), (d / m), r);
     return m * sqrtf(r);
+#pragma GCC diagnostic pop
 }
 
 #else
@@ -3547,6 +3837,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, f
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdff(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Clamp the input range used by the approximation to avoid overflow in the tail path.
     constexpr float clamp_bound = 14.5f;                     // Input clamp used to keep the tail approximation stable.
     constexpr float inv_sqrt2_hi = -0.70710676908493041992f; // High part of -1/sqrt(2).
@@ -3622,6 +3914,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdff(float x)
         erfc_value = fmaf(z_hi - z + z_lo, correction_scale, erfc_value);
     }
     return erfc_value * 0.5f;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -3646,6 +3939,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float normcdff(float x)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Shared constants for normal/subnormal handling and Newton refinement.
     constexpr float one_third = 0.3333333432674407959f; // nearest fp32 to 1/3
     constexpr uint32_t fp32_inf_bits = 0x7F800000U;     // +inf bit pattern
@@ -3683,6 +3978,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rcbrtf(float x)
     result_bits = (result_bits & ~inf_mask) | (sign_bits & inf_mask);
     result_bits = (result_bits & ~zero_mask) | ((sign_bits | fp32_inf_bits) & zero_mask);
     return __uint_as_float(result_bits);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ static inline uint32_t __asc_float_mantissa_bits_from_abs_bits(uint32_t bits)
@@ -4019,6 +4315,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float scalblnf(float x, int64_t n)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_sincospif_core(float x, float* sin_result, float* cos_result)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     constexpr float large_input_bound = __internal_fp32_scale_2p24;
     constexpr float pi_hi = ASCRT_PI_F; // High-precision single-precision pi constant.
 
@@ -4076,6 +4374,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void __internal_sincospif_core(float x, fl
 
     *sin_result = final_sin;
     *cos_result = final_cos;
+#pragma GCC diagnostic pop
 }
 
 #define __INTERNAL_SINCOSPIF(x, s, c)                             \
@@ -4153,8 +4452,11 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void sincospif(float x, __gm__ float* s, _
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float remainderf(float x, float y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     int32_t quo = -1;
     return remquof(x, y, &quo);
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4182,6 +4484,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float remainderf(float x, float y)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rhypotf(float x, float y)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Shared scaling constants used to keep the squared sum in range.
     // Work with absolute values, then pick the smaller and larger magnitudes.
     const float abs_x = fabsf(x);
@@ -4205,6 +4509,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rhypotf(float x, float y)
 
     // If the smaller magnitude is infinite, the reciprocal hypotenuse collapses to zero.
     return min_abs == ASCRT_INF_F ? 0.0f : result;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4231,6 +4536,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rhypotf(float x, float y)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm3df(float a, float b, float c)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Work with absolute values so the norm depends only on magnitudes.
     const float abs_a = fabsf(a);
     const float abs_b = fabsf(b);
@@ -4269,6 +4576,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm3df(float a, float b, float c)
         result = 0.0f;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4287,6 +4595,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm3df(float a, float b, float c)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm4df(float a, float b, float c, float d)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Work with absolute values so the norm depends only on magnitudes.
     const float abs_a = fabsf(a);
     const float abs_b = fabsf(b);
@@ -4325,6 +4635,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm4df(float a, float b, float c, 
     }
 
     return result;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4348,6 +4659,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float rnorm4df(float a, float b, float c, 
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Large inputs are reduced to signed zero to avoid loss of significance.
     constexpr float large_input_bound = __internal_fp32_scale_2p24;
     constexpr float pi_hi = ASCRT_PI_F; // High-precision single-precision pi constant.
@@ -4390,15 +4703,19 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float sinpif(float x)
     }
 
     return result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_tanpif_small(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Split pi into hi/lo parts so the argument reduction stays accurate.
     constexpr float pi_hi = ASCRT_PI_F;                  // High-precision single-precision pi constant.
     constexpr float pi_lo = -8.7422776573475857731e-08f; // Low-precision single-precision pi constant.
     const float arg = fmaf(x, pi_hi, x * pi_lo);
     return tanf(arg);
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4458,6 +4775,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanpif(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // Reduce the argument around the nearest integer.
     const float reduced = x - nearbyintf(x);
 
@@ -4483,6 +4802,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_euler_gamma_function(floa
     // correctly rounded (single rounding, exact power-of-two scaling)
     const float lifted_denominator = denominator * __internal_fp32_scale_2p24;
     return (1.0f / lifted_denominator) * __internal_fp32_scale_2p24;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_cal_abs_x(float x)
@@ -4664,6 +4984,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_stirling_and_euler_reflec
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     constexpr float tgamma_stirling_bound = 41.09999847412109375f;
 
     // Small magnitudes use the Euler gamma correction path; larger ones use Stirling/reflection.
@@ -4697,6 +5019,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tgammaf(float x)
         result = 1.0f / x;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_asin_acos_reduced_arg(float abs_x)
@@ -4733,6 +5056,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __internal_asin_acos_reduced_arg(flo
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     float ax = x < 0.0f ? -x : x;
 
     // |x| < 0.6 branch: tanh(x) = x * (1 + z * p(z)) with z = x^2, p a 4-term minimax polynomial
@@ -4755,7 +5080,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float tanhf(float x)
     // 0.60000002384185791016 is the float nearest 0.6, the switch point between the two branches.
     float yf = ax >= 0.60000002384185791016f ? y_large : y_small;
     return copysignf(yf, x);
-    ;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -4995,6 +5320,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float log1pf(float x)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     constexpr float overflow_guard = 8.50705917302346158658e+37f;
 
     // Use the log1p identity on the absolute value and restore sign at the end.
@@ -5005,13 +5332,17 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float atanhf(float x)
         log_arg = -2.0f;
     }
     return __internal_with_sign_bit(0.5f, x) * log1pf(log_arg);
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __internal_is_odd_integer_f32(float value)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     const float half_trunc = truncf(value * 0.5f);
     const float remainder = value - (half_trunc + half_trunc);
     return fabsf(remainder) == 1.0f;
+#pragma GCC diagnostic pop
 }
 
 /**
@@ -5366,6 +5697,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float asinhf(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // cosh is even, so fold sign here and work on ax = |x| throughout. NaN and inf pass through unchanged.
     float ax = __fabsf(x);
 
@@ -5399,6 +5732,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float coshf(float x)
         result = ax;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x)
@@ -5453,6 +5787,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float cospif(float x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     // erfc is even in magnitude: erfc(x) = erfc(|x|) for x >= 0, and erfc(-x) = 2 - erfc(x).
     float abs_x = __fabsf(x);
 
@@ -5528,6 +5864,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float erfcf(float x)
 
     // erfc(-x) = 2 - erfc(x); mirror for negative inputs.
     return (x < 0.0f) ? (2.0f - result) : result;
+#pragma GCC diagnostic pop
 }
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float exp10f(float x)
@@ -5707,6 +6044,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t ilogbf(float x)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm3df(float a, float b, float c)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     const float abs_a = fabsf(a);
     const float abs_b = fabsf(b);
     const float abs_c = fabsf(c);
@@ -5751,6 +6090,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm3df(float a, float b, float c)
         result = ASCRT_INF_F;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 /*
@@ -5769,6 +6109,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm3df(float a, float b, float c)
  */
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, float d)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     const float abs_a = fabsf(a);
     const float abs_b = fabsf(b);
     const float abs_c = fabsf(c);
@@ -5819,6 +6161,7 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float norm4df(float a, float b, float c, f
         result = ASCRT_INF_F;
     }
     return result;
+#pragma GCC diagnostic pop
 }
 
 #endif // ASCENDC_USE_LEGACY_PRECISION

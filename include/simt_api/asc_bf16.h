@@ -33,76 +33,140 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hisnan(bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hisinf(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__habs`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __habs(bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hfma(bfloat16_t x, bfloat16_t y, bfloat16_t z);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmax`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmax(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmin`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmin(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hcos`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hcos(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2cos`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2cos(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hsin`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hsin(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2sin`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sin(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `htanh`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t htanh(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2tanh`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2tanh(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hexp`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2exp`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hexp2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp2(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2exp2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp2(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hexp10`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hexp10(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2exp10`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2exp10(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hlog`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2log`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hlog2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog2(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2log2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log2(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hlog10`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hlog10(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2log10`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2log10(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hsqrt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hsqrt(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2sqrt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2sqrt(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hrsqrt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hrsqrt(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2rsqrt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2rsqrt(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `hrcp`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hrcp(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2rcp`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2rcp(bfloat16x2_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hfloor(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2floor`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2floor(bfloat16x2_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hrint(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2rint`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2rint(bfloat16x2_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t hceil(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2ceil`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2ceil(bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `htrunc`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t htrunc(bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `h2trunc`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t h2trunc(bfloat16x2_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __float2bfloat16(const float x);
@@ -187,24 +251,54 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __bfloat162bfloat16_ru(const bf
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __bfloat162bfloat16_rna(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162char_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char __bfloat162char_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162uchar_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned char __bfloat162uchar_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162short_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rn(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162short_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162short_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_rd(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162short_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline short int __bfloat162short_ru(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ushort_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rn(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ushort_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ushort_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_rd(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ushort_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned short int __bfloat162ushort_ru(const bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __bfloat162uint_rn(const bfloat16_t x);
@@ -227,24 +321,50 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __bfloat162int_ru(const bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __bfloat162int_rna(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ull_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int __bfloat162ull_rn(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ull_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int __bfloat162ull_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ull_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int __bfloat162ull_rd(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ull_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int __bfloat162ull_ru(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ull_rna`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned long long int __bfloat162ull_rna(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__bfloat162ll_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long int __bfloat162ll_rn(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__bfloat162ll_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long int __bfloat162ll_rz(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__bfloat162ll_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long int __bfloat162ll_rd(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__bfloat162ll_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long int __bfloat162ll_ru(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__bfloat162ll_rna`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long int __bfloat162ll_rna(const bfloat16_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __uint2bfloat16_rn(const unsigned int x);
@@ -267,40 +387,90 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_ru(const int x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __int2bfloat16_rna(const int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__short2bfloat16_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rn(const short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__short2bfloat16_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rz(const short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__short2bfloat16_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_rd(const short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__short2bfloat16_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __short2bfloat16_ru(const short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ushort2bfloat16_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rn(const unsigned short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ushort2bfloat16_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rz(const unsigned short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ushort2bfloat16_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_rd(const unsigned short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ushort2bfloat16_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ushort2bfloat16_ru(const unsigned short int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ull2bfloat16_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rn(const unsigned long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ull2bfloat16_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rz(const unsigned long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ull2bfloat16_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rd(const unsigned long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ull2bfloat16_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_ru(const unsigned long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ull2bfloat16_rna`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ull2bfloat16_rna(const unsigned long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ll2bfloat16_rn`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ll2bfloat16_rn(const long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ll2bfloat16_rz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ll2bfloat16_rz(const long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ll2bfloat16_rd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ll2bfloat16_rd(const long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ll2bfloat16_ru`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ll2bfloat16_ru(const long long int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__ll2bfloat16_rna`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __ll2bfloat16_rna(const long long int x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __float2bfloat162_rn(const float x);
@@ -610,102 +780,200 @@ __hfmax2_relu(const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z);
 static __SIMT_DEVICE_FUNCTIONS_DECL__ bfloat16x2_t
 __hcmadd(const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z);
 #else
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__heq`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __heq(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hne`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hne(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hle`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hle(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hge`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hge(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hlt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hlt(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgt(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hequ`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hequ(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hneu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hneu(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hleu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hleu(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgeu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgeu(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hltu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hltu(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgtu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hgtu(bfloat16_t x, bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbeqx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbeqx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbnex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbnex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hblex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hblex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbgex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbltx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbgtx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbequx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbequx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbneux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbneux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbleux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbleux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbgeux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgeux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbltux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbltux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hbgtux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bool __hbgtux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__heqx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __heqx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hnex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hnex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hlex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hlex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgex2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgex2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hltx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgtx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hequx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hequx2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hneux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hneux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hleux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hleux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgeux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgeux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hltux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hltux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgtux2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hgtux2(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__heqx2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __heqx2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hnex2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hnex2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hlex2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hlex2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgex2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgex2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hltx2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltx2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgtx2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtx2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hequx2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hequx2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hneux2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hneux2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hleux2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hleux2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgeux2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgeux2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hltux2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hltux2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hgtux2_mask`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __hgtux2_mask(bfloat16x2_t x, bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__isnanx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __isnanx2(bfloat16x2_t x);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __haddx2(const bfloat16x2_t x, const bfloat16x2_t y);
@@ -718,6 +986,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hdivx2(const bfloat16x2_t x
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __habsx2(const bfloat16x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hfmax2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2(
     const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z);
 
@@ -733,24 +1003,42 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hdiv(const bfloat16_t x, cons
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hneg(const bfloat16_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmax_nan`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmax_nan(const bfloat16_t x, const bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmin_nan`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hmin_nan(const bfloat16_t x, const bfloat16_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hfma_relu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16_t __hfma_relu(
     const bfloat16_t x, const bfloat16_t y, const bfloat16_t z);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmaxx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2(const bfloat16x2_t x, const bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hminx2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2(const bfloat16x2_t x, const bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hmaxx2_nan`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hmaxx2_nan(const bfloat16x2_t x, const bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hminx2_nan`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hminx2_nan(const bfloat16x2_t x, const bfloat16x2_t y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hfmax2_relu`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hfmax2_relu(
     const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hcmadd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline bfloat16x2_t __hcmadd(
     const bfloat16x2_t x, const bfloat16x2_t y, const bfloat16x2_t z);
 #endif

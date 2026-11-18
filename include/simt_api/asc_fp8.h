@@ -59,9 +59,15 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 __e4m3x22float2(const float8_e4m3x2
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float2 __e5m2x22float2(const float8_e5m2x2_t x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__asc_cvt_float2_to_fp8x2`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8x2_storage_t __asc_cvt_float2_to_fp8x2(
     const float2 x, const __asc_saturation_t saturate, const __asc_fp8_interpretation_t fp8_interpretation);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202,
+    "Hardware lacks native support for `__asc_cvt_float_to_fp8`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline __asc_fp8_storage_t __asc_cvt_float_to_fp8(
     const float x, const __asc_saturation_t saturation, const __asc_fp8_interpretation_t fp8_interpretation);
 

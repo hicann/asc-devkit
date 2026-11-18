@@ -133,16 +133,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline long2 asc_ldcg(__gm__ long2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong2 asc_ldcg(__gm__ ulong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long4 asc_ldcg(__gm__ long4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 asc_ldcg(__gm__ ulong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 asc_ldcg(__gm__ longlong2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong2 asc_ldcg(__gm__ ulonglong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong4 asc_ldcg(__gm__ longlong4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong4 asc_ldcg(__gm__ ulonglong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char asc_ldcg(__gm__ signed char* address);
@@ -199,16 +207,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline long2 asc_ldca(__gm__ long2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong2 asc_ldca(__gm__ ulong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long4 asc_ldca(__gm__ long4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 asc_ldca(__gm__ ulong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 asc_ldca(__gm__ longlong2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong2 asc_ldca(__gm__ ulonglong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong4 asc_ldca(__gm__ longlong4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong4 asc_ldca(__gm__ ulonglong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char asc_ldca(__gm__ signed char* address);
@@ -265,16 +281,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ long2* address, long2
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ ulong2* address, ulong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ long4* address, long4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ ulong4* address, ulong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ longlong2* address, longlong2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ ulonglong2* address, ulonglong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ longlong4* address, longlong4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ ulonglong4* address, ulonglong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(__gm__ signed char* address, signed char val);
@@ -333,16 +357,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ long2* address, long2
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ ulong2* address, ulong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ long4* address, long4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ ulong4* address, ulong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ longlong2* address, longlong2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ ulonglong2* address, ulonglong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ longlong4* address, longlong4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ ulonglong4* address, ulonglong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(__gm__ signed char* address, signed char val);
@@ -419,16 +451,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline long2 asc_ldcg(long2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong2 asc_ldcg(ulong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long4 asc_ldcg(long4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 asc_ldcg(ulong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 asc_ldcg(longlong2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong2 asc_ldcg(ulonglong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong4 asc_ldcg(longlong4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong4 asc_ldcg(ulonglong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char asc_ldcg(signed char* address);
@@ -485,16 +525,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline long2 asc_ldca(long2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong2 asc_ldca(ulong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long4 asc_ldca(long4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulong4 asc_ldca(ulong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong2 asc_ldca(longlong2* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong2 asc_ldca(ulonglong2* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline longlong4 asc_ldca(longlong4* address);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_ldca`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline ulonglong4 asc_ldca(ulonglong4* address);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline signed char asc_ldca(signed char* address);
@@ -551,16 +599,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(long2* address, long2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(ulong2* address, ulong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(long4* address, long4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(ulong4* address, ulong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(longlong2* address, longlong2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(ulonglong2* address, ulonglong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(longlong4* address, longlong4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stcg`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(ulonglong4* address, ulonglong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stcg(signed char* address, signed char val);
@@ -619,16 +675,24 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(long2* address, long2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(ulong2* address, ulong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(long4* address, long4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(ulong4* address, ulong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(longlong2* address, longlong2 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(ulonglong2* address, ulonglong2 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(longlong4* address, longlong4 val);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `asc_stwt`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(ulonglong4* address, ulonglong4 val);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline void asc_stwt(signed char* address, signed char val);
@@ -735,6 +799,9 @@ static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned int __uhadd(unsigned int x, unsig
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned int __urhadd(unsigned int x, unsigned int y);
 #else
+
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__mul64hi`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline long long __mul64hi(long long x, long long y);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned long long __umul64hi(unsigned long long x, unsigned long long y);
@@ -751,42 +818,72 @@ static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned long __brev(unsigned long x);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ int __clz(int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__clz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __clz(long long x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__clz`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __clz(long x);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ int __ffs(int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ffs`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __ffs(long long x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__ffs`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __ffs(long x);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ int __popc(unsigned int x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__popc`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long long x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__popc`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long x);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ unsigned int __byte_perm(unsigned int x, unsigned int y, unsigned int s);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__saturatef`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __saturatef(float x);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__sad`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __sad(int x, int y, unsigned int z);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__usad`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __usad(unsigned int x, unsigned int y, unsigned int z);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__mul24`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __mul24(int x, int y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__umul24`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __umul24(unsigned int x, unsigned int y);
 
 static __SIMT_DEVICE_FUNCTIONS_DECL__ float __fdividef(float x, float y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__hadd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __hadd(int x, int y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__rhadd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __rhadd(int x, int y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__uhadd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __uhadd(unsigned int x, unsigned int y);
 
+__ASC_SIMT_SIMULATION_CHECK__(
+    3510, 5102, 9201, 9202, "Hardware lacks native support for `__urhadd`. Falling back to software emulation.")
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __urhadd(unsigned int x, unsigned int y);
 #endif
 

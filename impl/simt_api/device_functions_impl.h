@@ -1956,15 +1956,15 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __clz(long x)
         return __clz(val.y);
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long long a)
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long long x)
 {
-    uint2 val = (uint2&)a;
+    uint2 val = (uint2&)x;
     return __popc(val.x) + __popc(val.y);
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long a)
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int __popc(unsigned long x)
 {
-    uint2 val = (uint2&)a;
+    uint2 val = (uint2&)x;
     return __popc(val.x) + __popc(val.y);
 }
 
@@ -1996,13 +1996,22 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int __ffs(long x)
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline float __saturatef(float x)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
     if (__isnan(x)) {
         return 0.0;
     }
     return __fmaxf(0.0, __fminf(1.0, x));
+#pragma GCC diagnostic pop
 }
 
-__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __sad(int x, int y, unsigned int z) { return z + abs(x - y); }
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __sad(int x, int y, unsigned int z)
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuser-defined-warnings"
+    return z + abs(x - y);
+#pragma GCC diagnostic pop
+}
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline unsigned int __usad(unsigned int x, unsigned int y, unsigned int z)
 {

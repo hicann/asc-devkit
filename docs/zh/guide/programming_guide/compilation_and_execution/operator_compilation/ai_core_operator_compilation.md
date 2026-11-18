@@ -326,6 +326,19 @@ add_executable(demo
      该选项仅在Ascend 950PR&950DT系列产品上支持，且用于保证CANN 9.2.0之前版本开发的算子在SIMT API实现变更后仍保持兼容；在CANN 9.2.0版本之后开发的算子不推荐使用该选项。
  <!-- end id20 -->
 
+ <!-- npu="950" id21 -->
+ -   **ASC_SIMT_SIMULATION_CHECK** 用于开启SIMT软仿接口提示，默认开关关闭。开启后，编译器会在软仿接口定义处输出提示信息，帮助开发者识别当前接口是否直接映射到单条硬件指令。提示格式如下：
+     ```text
+     warning: Hardware lacks native support for `<API名>`. Falling back to software emulation.
+     ```
+     示例如下：
+     ```shell
+     bisheng <source_file>.asc -o <output_file> --npu-arch=dav-<npu architecture> -DASC_SIMT_SIMULATION_CHECK
+     ```
+     该选项仅在Ascend 950PR&950DT系列产品上支持，且在CANN 9.3.0后该选项才生效。
+     
+ <!-- end id21 -->
+
 
 ### 内置链接库<a name="section57020345148"></a>
 
