@@ -13,3 +13,4 @@
 | [02_atomic_operation](./02_atomic_operation) | 展示SIMT中atomic相关的API样例。 |
 | [03_warp_instruction](./03_warp_instruction) | 展示SIMT中Warp函数相关的API样例。 |
 | [04_cooperative_groups](./04_cooperative_groups) | 展示SIMT中协作组相关的API样例。 |
+| [05_deterministic_computation](./05_deterministic_computation) | 展示SIMT确定性计算相关样例：原子浮点累加的不确定性与固定顺序分层归约的确定性对照。 |

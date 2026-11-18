@@ -13,3 +13,4 @@ This document presents API samples based on Ascend C SIMT, demonstrating various
 | [02_atomic_operation](./02_atomic_operation) | Samples demonstrating atomic-related APIs in SIMT. |
 | [03_warp_instruction](./03_warp_instruction) | Samples demonstrating Warp function-related APIs in SIMT. |
 | [04_cooperative_groups](./04_cooperative_groups) | Samples demonstrating cooperative groups-related APIs in SIMT. |
+| [05_deterministic_computation](./05_deterministic_computation) | Samples demonstrating deterministic computation in SIMT: contrast between the non-determinism of atomic float accumulation and the determinism of fixed-order layered reduction. |
