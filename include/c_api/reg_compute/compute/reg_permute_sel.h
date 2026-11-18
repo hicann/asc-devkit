@@ -1551,6 +1551,27 @@ __simd_callee__ inline void asc_intlv(
 __simd_callee__ inline void asc_intlv(
     vector_fp8_e5m2_t& dst0, vector_fp8_e5m2_t& dst1, vector_fp8_e5m2_t src0, vector_fp8_e5m2_t src1);
 
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
+/**
+ * @ingroup simd_c_api.reg_compute.reg_permute_sel
+ * @brief Interleaves the fp8_e6m2_t elements of the first halves of src0 and src1 alternately into dst0 and of their
+ * second halves alternately into dst1.
+ *
+ * @override_id asc_intlv__Rvf8e6m2_Rvf8e6m2_vf8e6m2_vf8e6m2
+ * @archs 9201
+ * @param [out] dst0 Destination vector register holding the interleaved lower half, filled alternately from the first
+ * halves of src0 and src1; dtype must equal that of src0, src1 and dst1.
+ * @param [out] dst1 Destination vector register holding the interleaved upper half, filled alternately from the second
+ * halves of src0 and src1; must be a different register from dst0.
+ * @param [in] src0 Source vector register whose first half is interleaved into dst0 and second half into dst1; may
+ * alias src1.
+ * @param [in] src1 Source vector register whose first half is interleaved into dst0 and second half into dst1; may
+ * alias src0.
+ */
+__simd_callee__ inline void asc_intlv(
+    vector_fp8_e6m2_t& dst0, vector_fp8_e6m2_t& dst1, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1);
+#endif
+
 /**
  * @ingroup simd_c_api.reg_compute.reg_permute_sel
  * @brief Interleaves the fp8_e4m3fn_t elements of the first halves of src0 and src1 alternately into dst0 and of their
@@ -2181,6 +2202,27 @@ __simd_callee__ inline void asc_deintlv(
  */
 __simd_callee__ inline void asc_deintlv(
     vector_fp8_e5m2_t& dst0, vector_fp8_e5m2_t& dst1, vector_fp8_e5m2_t src0, vector_fp8_e5m2_t src1);
+
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
+/**
+ * @ingroup simd_c_api.reg_compute.reg_permute_sel
+ * @brief Deinterleaves the even-index and odd-index fp8_e6m2_t elements of src0 and src1, writing the even elements
+ * to dst0 and the odd elements to dst1, with src0 filling the lower halves and src1 the upper halves.
+ *
+ * @override_id asc_deintlv__Rvf8e6m2_Rvf8e6m2_vf8e6m2_vf8e6m2
+ * @archs 9201
+ * @param [out] dst0 Destination vector register receiving the deinterleaved even-index fp8_e6m2_t elements: the lower
+ * half comes from src0 and the upper half from src1; its dtype must match src0, src1 and dst1.
+ * @param [out] dst1 Destination vector register receiving the deinterleaved odd-index fp8_e6m2_t elements: the lower
+ * half comes from src0 and the upper half from src1; must be a different register from dst0.
+ * @param [in] src0 Source vector register; its even-index fp8_e6m2_t elements go to the lower half of dst0 and its
+ * odd-index elements to the lower half of dst1; may alias src1.
+ * @param [in] src1 Source vector register; its even-index fp8_e6m2_t elements go to the upper half of dst0 and its
+ * odd-index elements to the upper half of dst1; may alias src0.
+ */
+__simd_callee__ inline void asc_deintlv(
+    vector_fp8_e6m2_t& dst0, vector_fp8_e6m2_t& dst1, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1);
+#endif
 
 /**
  * @ingroup simd_c_api.reg_compute.reg_permute_sel

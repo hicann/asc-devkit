@@ -20,6 +20,14 @@
 
 #include "impl/c_api/reg_base_impl/utils_impl.h"
 
+__simd_callee__ inline void asc_intlv(
+    vector_fp8_e6m2_t& dst0, vector_fp8_e6m2_t& dst1, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1)
+{
+    if ASC_IS_AIV {
+        vintlv(dst0, dst1, src0, src1);
+    }
+}
+
 __simd_callee__ inline void asc_intlv_half_low_b8(vector_bool& dst, vector_bool src0, vector_bool src1)
 {
     if ASC_IS_AIV {
@@ -500,6 +508,14 @@ __simd_callee__ inline vector_bfloat16_t asc_intlv_half_high(vector_bfloat16_t s
     vector_bfloat16_t dst;
     asc_intlv_half_high(dst, src0, src1);
     return dst;
+}
+
+__simd_callee__ inline void asc_deintlv(
+    vector_fp8_e6m2_t& dst0, vector_fp8_e6m2_t& dst1, vector_fp8_e6m2_t src0, vector_fp8_e6m2_t src1)
+{
+    if ASC_IS_AIV {
+        vdintlv(dst0, dst1, src0, src1);
+    }
 }
 
 __simd_callee__ inline void asc_deintlv_even_b8(vector_bool& dst, vector_bool src0, vector_bool src1)

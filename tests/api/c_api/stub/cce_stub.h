@@ -162,6 +162,10 @@ inline void vscatter(vector_f8e6m2 src, __ubuf__ fp8_e6m2_t* dst, vector_u16 ind
     ++g_e6m2_vector_datamove_stub_state.scatter_count;
 }
 
+inline void vintlv(vector_f8e6m2& dst0, vector_f8e6m2& dst1, vector_f8e6m2 src0, vector_f8e6m2 src1) {}
+
+inline void vdintlv(vector_f8e6m2& dst0, vector_f8e6m2& dst1, vector_f8e6m2 src0, vector_f8e6m2 src1) {}
+
 #endif
 
 using hif4x2_t = hifloat4x2_t;
