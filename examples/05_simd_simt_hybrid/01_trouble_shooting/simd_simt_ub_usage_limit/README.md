@@ -359,11 +359,11 @@ __global__ __vector__ void ub_limit_simd_simt_vf_kernel(__gm__ uint32_t* output)
 
 **执行结果**：
 
-本Case先按当前场景的理论UB可用上限申请`static_ub`，确认Kernel可以正常启动和运行；随后将`static_ub`的申请大小增加4B，也就是多申请一个`uint32_t`元素，用于观察超过UB上限后的运行结果。此时Kernel仍可完成编译，但启动失败，错误信息提示共享内存大小超过上限。
+本Case先按当前场景的理论UB可用上限申请`static_ub`，确认Kernel可以正常启动和运行；随后将`static_ub`的申请大小增加4B，也就是多申请一个`uint32_t`元素，用于观察超过UB上限后的结果。其中，不调用VF的场景（SCENARIO_NUM=2）静态UB数组超过UB总量，编译阶段即报错；存在VF调用的场景（SCENARIO_NUM=3～5）Kernel仍可完成编译，但启动失败，错误信息提示共享内存大小超过上限。
 
 | SCENARIO_NUM | VF调用 | 上限配置结果 | 上限基础上多申请4B后的结果 |
 | --- | --- | --- | --- |
-| 2 | 不调用VF | 运行通过 | Kernel启动失败 |
+| 2 | 不调用VF | 运行通过 | 编译失败 |
 | 3 | 仅调用SIMD VF | 各配置均运行通过 | 各配置均在Kernel启动时失败 |
 | 4 | 仅调用SIMT VF | 各配置均运行通过 | 各配置均在Kernel启动时失败 |
 | 5 | 同时调用SIMD VF和SIMT VF | 各配置均运行通过 | 各配置均在Kernel启动时失败 |
@@ -374,7 +374,15 @@ __global__ __vector__ void ub_limit_simd_simt_vf_kernel(__gm__ uint32_t* output)
 [Case1] result=PASSED
 ```
 
-将`static_ub`的申请大小从当前场景的理论UB可用上限增加到“理论UB可用上限+4B”后，Kernel启动失败，关键错误信息如下：
+将`static_ub`的申请大小从当前场景的理论UB可用上限增加到“理论UB可用上限+4B”后：
+
+- SCENARIO_NUM=2场景编译失败，关键错误信息如下：
+
+```text
+ld.ldd: error: the size of ubuf static variables exceeds maximum size ...
+```
+
+- SCENARIO_NUM=3～5场景Kernel启动失败，关键错误信息如下：
 
 ```text
 [Host] kernel error: ... Reason: the sum of dynamic shared memory and kernel shared memory exceeds the maximum limit.
@@ -690,7 +698,13 @@ make -j
     [Case1] result=PASSED
     ```
 
-    在理论UB上限基础上多申请一个`uint32_t`元素后，Kernel启动失败，关键错误信息如下：
+    在理论UB上限基础上多申请一个`uint32_t`元素后，SCENARIO_NUM=2场景编译失败，关键错误信息如下：
+
+    ```text
+    ld.ldd: error: the size of ubuf static variables exceeds maximum size ...
+    ```
+
+    SCENARIO_NUM=3~5场景Kernel启动失败，关键错误信息如下：
 
     ```text
     [Host] kernel error: ... Reason: the sum of dynamic shared memory and kernel shared memory exceeds the maximum limit.

@@ -361,11 +361,11 @@ __global__ __vector__ void ub_limit_simd_simt_vf_kernel(__gm__ uint32_t* output)
 
 **Execution result**:
 
-This Case first allocates `static_ub` at the theoretical usable UB limit of the current scenario to confirm that the kernel can launch and run successfully. It then increases the `static_ub` allocation by 4 bytes, that is, by one more `uint32_t` element, to observe the runtime result after exceeding the UB limit. In this case, compilation still succeeds, but kernel launch fails and the error indicates that the shared memory size exceeds the limit.
+This Case first allocates `static_ub` at the theoretical usable UB limit of the current scenario to confirm that the kernel can launch and run successfully. It then increases the `static_ub` allocation by 4 bytes, that is, by one more `uint32_t` element, to observe the result after exceeding the UB limit. In the no-VF-call scenario (SCENARIO_NUM=2), the static UB array exceeds the total UB size, so an error is reported during compilation. In the scenarios with a VF call (SCENARIO_NUM=3 through 5), compilation still succeeds, but kernel launch fails and the error indicates that the shared memory size exceeds the limit.
 
 | SCENARIO_NUM | VF Call | Result at Limit | Result After Adding 4 B Beyond the Limit |
 | --- | --- | --- | --- |
-| 2 | No VF call | Passed | Kernel launch failed |
+| 2 | No VF call | Passed | Compilation failed |
 | 3 | SIMD VF only | All configurations passed | Kernel launch failed for all configurations |
 | 4 | SIMT VF only | All configurations passed | Kernel launch failed for all configurations |
 | 5 | Both SIMD VF and SIMT VF | All configurations passed | Kernel launch failed for all configurations |
@@ -376,7 +376,15 @@ When the limit configuration runs successfully, the output is as follows:
 [Case1] result=PASSED
 ```
 
-After increasing the `static_ub` allocation from the theoretical usable UB limit of the current scenario to "theoretical usable UB limit + 4 B", kernel launch fails and prints the following key error information:
+After increasing the `static_ub` allocation from the theoretical usable UB limit of the current scenario to "theoretical usable UB limit + 4 B":
+
+- In the SCENARIO_NUM=2 scenario, compilation fails and the following key error information is printed:
+
+```text
+ld.ldd: error: the size of ubuf static variables exceeds maximum size ...
+```
+
+- In the SCENARIO_NUM=3 through 5 scenarios, kernel launch fails and the following key error information is printed:
 
 ```text
 [Host] kernel error: ... Reason: the sum of dynamic shared memory and kernel shared memory exceeds the maximum limit.
@@ -692,7 +700,13 @@ The following examples show execution results for each Case.
     [Case1] result=PASSED
     ```
 
-    After Case 1 allocates one more `uint32_t` element than the theoretical UB limit, kernel launch fails and prints the following key error information:
+    After Case 1 allocates one more `uint32_t` element than the theoretical UB limit, compilation fails in the SCENARIO_NUM=2 scenario and prints the following key error information:
+
+    ```text
+    ld.ldd: error: the size of ubuf static variables exceeds maximum size ...
+    ```
+
+    Kernel launch fails in the SCENARIO_NUM=3 through 5 scenarios and prints the following key error information:
 
     ```text
     [Host] kernel error: ... Reason: the sum of dynamic shared memory and kernel shared memory exceeds the maximum limit.
