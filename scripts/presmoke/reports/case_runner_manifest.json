@@ -502,6 +502,33 @@
     ]
   },
   {
+    "case": "01_simd_cpp_api/01_utilities/02_dump/large_tensor_dump",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/01_utilities/02_dump/large_tensor_dump/run.sh",
+    "source": "readme",
+    "confidence": "high",
+    "source_case": "01_simd_cpp_api/01_utilities/02_dump/large_tensor_dump",
+    "supported_archs": [
+      "dav-2201",
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [],
+    "commands": [
+      "cmake .. -DCMAKE_ASC_ARCHITECTURES=dav-2201",
+      "make -j",
+      "python3 ../scripts/gen_data.py",
+      "./demo",
+      "python3 ../scripts/verify_result.py output/output.bin output/golden.bin"
+    ]
+  },
+  {
     "case": "01_simd_cpp_api/01_utilities/02_dump/simple_dump",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/01_utilities/02_dump/simple_dump/run.sh",
     "source": "readme",

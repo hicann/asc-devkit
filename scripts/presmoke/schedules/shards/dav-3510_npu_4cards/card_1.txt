@@ -3,6 +3,7 @@
 01_simd_cpp_api/00_introduction/04_reg_compute/gelu
 01_simd_cpp_api/01_utilities/00_printf/simd_vf_printf
 01_simd_cpp_api/01_utilities/02_dump/simple_dump
+01_simd_cpp_api/01_utilities/02_dump/large_tensor_dump
 01_simd_cpp_api/02_features/00_framework/00_pytorch/ge_torchair
 01_simd_cpp_api/02_features/00_framework/00_pytorch/pybind
 01_simd_cpp_api/02_features/04_compile/03_static_library_compile
