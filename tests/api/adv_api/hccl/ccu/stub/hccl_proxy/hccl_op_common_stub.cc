@@ -77,6 +77,12 @@ HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctx
     return aclrtMemset(*ctx, ctxSize, 0, ctxSize) == ACL_SUCCESS ? HCCL_SUCCESS : HCCL_E_RUNTIME;
 }
 
+// 当前 CCU UT 不覆盖图捕获，桩件仅补齐 launch 链上的符号定义。
+HcclResult CaptureSlaveStreams(HcclComm comm, aclrtStream mainStream, const std::vector<ThreadHandle>& threads)
+{
+    return HCCL_SUCCESS;
+}
+
 InsCollAlgBase::InsCollAlgBase() {}
 InsCollAlgBase::~InsCollAlgBase() {}
 std::string InsCollAlgBase::Describe() const { return "InsCollAlgBase"; }

@@ -45,6 +45,21 @@ HcclResult haclrtMemcpy(void* dst, size_t destMax, const void* src, size_t count
     return HCCL_SUCCESS;
 }
 
+HcclResult haclrtMemset(void* dst, size_t destMax, int32_t value, size_t count)
+{
+    if (dst == nullptr) {
+        return HCCL_E_PTR;
+    }
+    if (count == 0) {
+        return HCCL_SUCCESS;
+    }
+    aclError aclRet = aclrtMemset(dst, destMax, value, count);
+    if (aclRet != ACL_SUCCESS) {
+        return HCCL_E_RUNTIME;
+    }
+    return HCCL_SUCCESS;
+}
+
 HcclResult haclrtGetCaptureInfo(aclrtStream stream, aclmdlRICaptureStatus& captureStatus, u64& modelId, bool& isCapture)
 {
     static_cast<void>(stream);

@@ -207,4 +207,64 @@ HcclResult haclrtMemcpy(void* dst, size_t destMax, const void* src, size_t count
     return HCCL_SUCCESS;
 }
 
+HcclResult haclrtMemset(void* dst, size_t destMax, int32_t value, size_t count)
+{
+#ifndef AICPU_COMPILE
+    CHK_PTR_NULL(dst);
+    CHK_PRT_RET(count == 0, HCCL_WARNING("[haclrtMemset] count is zero"), HCCL_SUCCESS);
+
+    // 图捕获场景下 runtime 只允许 RELAXED 模式下做同步 memset，这里临时切换线程捕获模式
+    aclmdlRICaptureMode mode = aclmdlRICaptureMode::ACL_MODEL_RI_CAPTURE_MODE_RELAXED;
+    aclError ret = aclmdlRICaptureThreadExchangeMode(&mode);
+    HCCL_DEBUG("Call aclmdlRICaptureThreadExchangeMode mode before: %d, ret: %d", mode, ret);
+    if (ret == ACL_ERROR_RT_FEATURE_NOT_SUPPORT) {
+        HCCL_WARNING("[haclrtMemset]aclmdlRICaptureThreadExchangeMode not support!");
+    } else {
+        CHK_PRT_RET(
+            ret != ACL_SUCCESS,
+            HCCL_ERROR(
+                "[haclrtMemset]aclmdlRICaptureThreadExchangeMode "
+                "failed mode:%d, return value[%d].",
+                mode, ret),
+            HCCL_E_RUNTIME);
+    }
+
+    ret = aclrtMemset(dst, destMax, value, count);
+    HCCL_DEBUG(
+        "Call aclrtMemset, return[%d], para: dstAddr[%p], destMax[%llu], value[%d], count[%llu]", ret, dst,
+        static_cast<unsigned long long>(destMax), value, static_cast<unsigned long long>(count));
+    if (ret != ACL_SUCCESS) {
+        HCCL_ERROR(
+            "[SyncSet][Mem]errNo[0x%016llx] aclrtMemset failed, "
+            "return[%d], para: dstAddr[%p], destMax[%llu], value[%d], count[%llu].",
+            HCCL_ERROR_CODE(HCCL_E_RUNTIME), ret, dst, static_cast<unsigned long long>(destMax), value,
+            static_cast<unsigned long long>(count));
+        ret = aclmdlRICaptureThreadExchangeMode(&mode);
+        CHK_PRT_RET(
+            ret != ACL_SUCCESS && ret != ACL_ERROR_RT_FEATURE_NOT_SUPPORT,
+            HCCL_ERROR(
+                "[haclrtMemset]aclmdlRICaptureThreadExchangeMode "
+                "failed mode:%d, return value[%d].",
+                mode, ret),
+            HCCL_E_RUNTIME);
+        return HCCL_E_RUNTIME;
+    }
+
+    ret = aclmdlRICaptureThreadExchangeMode(&mode);
+    HCCL_DEBUG("Call aclmdlRICaptureThreadExchangeMode mode before: %d, ret: %d", mode, ret);
+    if (ret == ACL_ERROR_RT_FEATURE_NOT_SUPPORT) {
+        HCCL_WARNING("[haclrtMemset]aclmdlRICaptureThreadExchangeMode not support!");
+    } else {
+        CHK_PRT_RET(
+            ret != ACL_SUCCESS,
+            HCCL_ERROR(
+                "[haclrtMemset]aclmdlRICaptureThreadExchangeMode "
+                "failed mode:%d, return value[%d].",
+                mode, ret),
+            HCCL_E_RUNTIME);
+    }
+#endif
+    return HCCL_SUCCESS;
+}
+
 } // namespace mc2_ops_hccl

@@ -540,13 +540,15 @@ HcclResult AllocComResourceByTilingCcu(
     std::string tagOpResCtx = ctxTag + "_opResCtx";
     uint64_t opResCtxSize = sizeof(OpResCtx);
     CHK_RET(GetOrCreateCcuCtx(comm, tagOpResCtx, opResCtxSize, opResCtx));
-    aclError aclRet = aclrtMemcpy(*opResCtx, opResCtxSize, &resCtx, opResCtxSize, ACL_MEMCPY_HOST_TO_DEVICE);
+    HcclResult hcclRet = haclrtMemcpy(*opResCtx, opResCtxSize, &resCtx, opResCtxSize, ACL_MEMCPY_HOST_TO_DEVICE);
     HCCL_INFO(
         "[CCU_DEBUG] opResCtxPtr=%p, *opResCtx=%p, size=%llu ws=0x%llx wsSize=0x%llx xn=0x%llx cke=0x%llx rankId=%llu "
         "rankSize=%llu",
         opResCtx, *opResCtx, opResCtxSize, resCtx.workSpace, resCtx.workSpaceSize, resCtx.xnAddr, resCtx.ckeAddr,
         resCtx.rankId, resCtx.rankSize);
-    CHK_RET(aclRet == ACL_SUCCESS ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+    CHK_PRT_RET(
+        hcclRet != HCCL_SUCCESS, HCCL_ERROR("[AllocComResourceByTilingCcu] haclrtMemcpy failed, ret[%d].", hcclRet),
+        hcclRet);
     HCCL_INFO("[AllocComResourceByTilingCcu]end AllocComResourceByTilingCcu!");
     return HCCL_SUCCESS;
 }
@@ -943,6 +945,7 @@ void LogKernelLaunchArgs(
 }
 } // namespace
 
+namespace {
 static CcuResult ResolveStreamFromCcuThread(HcclComm comm, ThreadHandle threadHandle, aclrtStream& stream)
 {
     ThreadResTypeStream streamRes = nullptr;
@@ -968,7 +971,7 @@ CcuResult LaunchCcuKernel(const HcclComm comm, aclrtStream stream, const OpParam
 {
     CHK_PRT_RET(comm == nullptr, HCCL_ERROR("[%s] comm is nullptr.", __func__), CCU_E_PTR);
     // stream 非空：用 HcclThreadAcquireWithStream 将用户 stream 封装为通信 thread；
-    // stream 为空：兼容老样例，走资源上下文中预分配 threads 的旧流程。
+    // stream 为空：走资源上下文中预分配 threads 的流程。
     const bool useLegacyThread = (stream == nullptr);
     AlgResourceCtxSerializable resourceCtx;
     CcuResult ret = LoadResourceCtx(opParamHost, resourceCtx);
@@ -1029,6 +1032,66 @@ CcuResult LaunchCcuKernel(const HcclComm comm, aclrtStream stream, const OpParam
     }
     return CCU_SUCCESS;
 }
+
+CcuResult LaunchCcuKernelCapture(const HcclComm comm, aclrtStream stream, const OpParam& opParamHost)
+{
+    AlgResourceCtxSerializable resourceCtx;
+    CcuResult ret = LoadResourceCtx(opParamHost, resourceCtx);
+    if (ret != CCU_SUCCESS) {
+        return ret;
+    }
+    uint32_t missionNum = 0;
+    // capture 复用资源准备阶段的预分配 threads，不在用户主流上重新申请通信 thread，
+    // 因此按 legacy 线程布局校验 launch 输入。
+    ret = GetLaunchMissionNum(resourceCtx, missionNum, true);
+    if (ret != CCU_SUCCESS) {
+        return ret;
+    }
+    // threads[0] 为主流线程，[1..] 为 CCU 从线程。capture 场景按主流捕获状态把 CCU 从流加入 capture
+    // model（aclmdlRICaptureGetInfo + rtStreamAddToModel），与 op_common.cc 中 CCU 分支的调用一致；
+    // 只有主线程时无从流需要纳管，跳过该步骤。
+    if (resourceCtx.threads.size() > 1U) {
+        HcclResult captureRet = CaptureSlaveStreams(comm, stream, resourceCtx.threads);
+        if (captureRet != HCCL_SUCCESS) {
+            HCCL_ERROR("[CcuKernelLaunch] CaptureSlaveStreams failed, ret[%d], stream[%p].", captureRet, stream);
+            return static_cast<CcuResult>(captureRet);
+        }
+    }
+    HCCL_INFO(
+        "[CcuKernelLaunch] start [%u] KFC server missions, stream[%p], mode[capture-preallocated-thread].", missionNum,
+        stream);
+    for (uint32_t missionIndex = 0; missionIndex < missionNum; ++missionIndex) {
+        const ThreadHandle threadHandle = resourceCtx.threads[missionIndex];
+        const CcuKernelHandle kernelHandle = resourceCtx.ccuKernels[missionIndex];
+        CHK_PRT_RET(
+            threadHandle == 0 || kernelHandle == 0, HCCL_ERROR("invalid launch handles for mission[%u]", missionIndex),
+            CCU_E_PARA);
+        LogKernelLaunchArgs(resourceCtx, missionIndex, threadHandle, kernelHandle);
+        const void* kfcArgs =
+            static_cast<const void*>(resourceCtx.kfcServerArgs.data() + missionIndex * KFC_SERVER_ARG_NUM);
+        ret = HcommCcuKernelLaunch(threadHandle, kernelHandle, kfcArgs, resourceCtx.kfcServerArgSize);
+        if (ret != CCU_SUCCESS) {
+            HCCL_ERROR("[CcuKernelLaunch] mission[%u] launch failed, ret[%d]", missionIndex, ret);
+            return ret;
+        }
+    }
+    return CCU_SUCCESS;
+}
+bool IsCcuGraphCapture(aclrtStream stream, CcuResult& ret)
+{
+    aclmdlRICaptureStatus captureStatus = ACL_MODEL_RI_CAPTURE_STATUS_NONE;
+    u64 modelId = 0;
+    bool isCapture = false;
+    const HcclResult captureRet = haclrtGetCaptureInfo(stream, captureStatus, modelId, isCapture);
+    if (captureRet != HCCL_SUCCESS) {
+        HCCL_ERROR("[%s] haclrtGetCaptureInfo failed, ret[%d], stream[%p].", __func__, captureRet, stream);
+        ret = static_cast<CcuResult>(captureRet);
+        return false;
+    }
+    ret = CCU_SUCCESS;
+    return isCapture;
+}
+} // namespace
 
 namespace {
 constexpr uint16_t MC2_AICPU_HCCL_DEFAULT_TIME = 1836U;
@@ -1155,8 +1218,17 @@ CcuResult CcuKernelLaunch(const HcclComm comm, void* opResCtx)
     if (ret != CCU_SUCCESS) {
         return ret;
     }
-    // 传入空的 stream，默认走资源上下文中预分配 threads 的旧流程。
-    return LaunchCcuKernel(comm, nullptr, opParamHost);
+    const bool isCapture = IsCcuGraphCapture(opParamHost.stream, ret);
+    if (ret != CCU_SUCCESS) {
+        return ret;
+    }
+    if (isCapture) {
+        // 图捕获时传入用户主流，把 CCU 从流加入主流对应的捕获图中。
+        return LaunchCcuKernelCapture(comm, opParamHost.stream, opParamHost);
+    } else {
+        // 传入空的 stream，默认走资源上下文中预分配 threads 的旧流程。
+        return LaunchCcuKernel(comm, nullptr, opParamHost);
+    }
 }
 
 HcclResult __attribute__((visibility("default"))) CheckOpResSufficient(HcclComm comm, uint8_t ccType, void* ccArgs)

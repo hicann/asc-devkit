@@ -8,6 +8,7 @@
  * See LICENSE in the root of the software repository for the full text of the License.
  */
 #include "hccl_alloc_ctx_res.h"
+#include "adapter_acl.h"
 #include "mc2_server_debug_config.h"
 #include "external_alg_resolver.h"
 #include "kfc_server_protocol.h"
@@ -1249,8 +1250,7 @@ HcclResult CopyCcuOpParamToDevice(
     void* opParamPtr = nullptr;
     uint64_t opParamSize = sizeof(OpParam);
     CHK_RET(GetOrCreateCcuCtx(comm, tagParam, opParamSize, &opParamPtr));
-    aclError aclRet = aclrtMemcpy(opParamPtr, opParamSize, &opParam, opParamSize, ACL_MEMCPY_HOST_TO_DEVICE);
-    CHK_RET(aclRet == ACL_SUCCESS ? HCCL_SUCCESS : HCCL_E_RUNTIME);
+    CHK_RET(haclrtMemcpy(opParamPtr, opParamSize, &opParam, opParamSize, ACL_MEMCPY_HOST_TO_DEVICE));
     opResCtx.algInfo[tilingIndex].opParam = reinterpret_cast<uint64_t>(opParamPtr);
     opResCtx.algInfo[tilingIndex].offset = initTiling->offset[tilingIndex];
     opResCtx.opParamSize[tilingIndex] = opParamSize;

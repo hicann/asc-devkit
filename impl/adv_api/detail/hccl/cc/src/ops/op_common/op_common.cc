@@ -128,13 +128,7 @@ HcclResult GetOrCreateCcuCtx(HcclComm comm, const std::string& tag, uint64_t ctx
         return HCCL_SUCCESS;
     }
     CHK_RET(HcclEngineCtxCreate(comm, tag.c_str(), COMM_ENGINE_AIV, ctxSize, ctx));
-    aclError aclRet = aclrtMemset(*ctx, ctxSize, 0, ctxSize);
-    CHK_PRT_RET(
-        aclRet != ACL_SUCCESS,
-        HCCL_ERROR(
-            "[GetOrCreateCcuCtx] aclrtMemset failed, ret[%d], tag[%s], addr[%p], size[%llu].", aclRet, tag.c_str(),
-            *ctx, static_cast<unsigned long long>(ctxSize)),
-        HCCL_E_RUNTIME);
+    CHK_RET(haclrtMemset(*ctx, static_cast<size_t>(ctxSize), 0, static_cast<size_t>(ctxSize)));
     return HCCL_SUCCESS;
 }
 
@@ -160,12 +154,13 @@ static HcclResult UpdateCcuCtxTokenOnReuse(
     CHK_PTR_NULL(ctx);
     CHK_PTR_NULL(resCtxHost);
 
+    const size_t copySize = static_cast<size_t>(ctxSize);
     std::vector<char> seq(ctxSize);
-    aclError aclRet = aclrtMemcpy(seq.data(), ctxSize, ctx, ctxSize, ACL_MEMCPY_DEVICE_TO_HOST);
+    HcclResult copyRet = haclrtMemcpy(seq.data(), copySize, ctx, copySize, ACL_MEMCPY_DEVICE_TO_HOST);
     CHK_PRT_RET(
-        aclRet != ACL_SUCCESS,
+        copyRet != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[UpdateCcuCtxTokenOnReuse] aclrtMemcpy D2H failed, ret[%d], dst[%p], src[%p], size[%llu].", aclRet,
+            "[UpdateCcuCtxTokenOnReuse] haclrtMemcpy D2H failed, ret[%d], dst[%p], src[%p], size[%llu].", copyRet,
             seq.data(), ctx, static_cast<unsigned long long>(ctxSize)),
         HCCL_E_RUNTIME);
 
@@ -208,11 +203,11 @@ static HcclResult UpdateCcuCtxTokenOnReuse(
             "[UpdateCcuCtxTokenOnReuse] serialized ctx size changed, oldSize[%llu], newSize[%zu].",
             static_cast<unsigned long long>(ctxSize), updatedSeq.size()),
         HCCL_E_INTERNAL);
-    aclRet = aclrtMemcpy(ctx, ctxSize, updatedSeq.data(), updatedSeq.size(), ACL_MEMCPY_HOST_TO_DEVICE);
+    copyRet = haclrtMemcpy(ctx, copySize, updatedSeq.data(), updatedSeq.size(), ACL_MEMCPY_HOST_TO_DEVICE);
     CHK_PRT_RET(
-        aclRet != ACL_SUCCESS,
+        copyRet != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[UpdateCcuCtxTokenOnReuse] aclrtMemcpy H2D failed, ret[%d], dst[%p], src[%p], size[%zu].", aclRet, ctx,
+            "[UpdateCcuCtxTokenOnReuse] haclrtMemcpy H2D failed, ret[%d], dst[%p], src[%p], size[%zu].", copyRet, ctx,
             updatedSeq.data(), updatedSeq.size()),
         HCCL_E_RUNTIME);
     return HCCL_SUCCESS;
@@ -1473,10 +1468,11 @@ HcclResult GetAlgResCcu(
 
     void* ctx = nullptr;
     CHK_RET(GetOrCreateCcuCtx(comm, param.algTag, size, &ctx));
-    aclError aclRet = aclrtMemcpy(ctx, size, seq.data(), size, ACL_MEMCPY_HOST_TO_DEVICE);
-    if (aclRet != ACL_SUCCESS) {
+    const size_t copySize = static_cast<size_t>(size);
+    HcclResult copyRet = haclrtMemcpy(ctx, copySize, seq.data(), copySize, ACL_MEMCPY_HOST_TO_DEVICE);
+    if (copyRet != HCCL_SUCCESS) {
         HCCL_ERROR(
-            "[GetAlgResCcu] aclrtMemcpy H2D failed, ret[%d], dst[%p], src[%p], size[%llu].", aclRet, ctx, seq.data(),
+            "[GetAlgResCcu] haclrtMemcpy H2D failed, ret[%d], dst[%p], src[%p], size[%llu].", copyRet, ctx, seq.data(),
             size);
         return HCCL_E_RUNTIME;
     }
