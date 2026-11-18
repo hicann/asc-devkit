@@ -70,9 +70,9 @@ Result CaptureAllToAllVMesh1DKernel(void* kernelArg)
     if (config.rankSize < 2 || config.rankId >= config.rankSize || config.channels.size() != config.rankSize - 1) {
         return Result::PARAM_ERROR;
     }
-    std::array<AscendC::ccu::Variable, ALL_TO_ALL_V_TASK_ARG_COUNT> arguments;
+    std::array<AscendC::ccu::variable, ALL_TO_ALL_V_TASK_ARG_COUNT> arguments;
     for (uint32_t index = 0; index < arguments.size(); ++index) {
-        if (AscendC::ccu::LoadArg(arguments[index], index) != Result::SUCCESS) {
+        if (AscendC::ccu::load_arg(arguments[index], index) != Result::SUCCESS) {
             return Result::CONTRACT_ERROR;
         }
     }

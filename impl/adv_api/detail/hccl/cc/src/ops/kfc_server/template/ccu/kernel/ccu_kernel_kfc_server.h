@@ -49,33 +49,6 @@ struct CcuKernelArgKfcServer : CcuKernelArgBase {
     uint32_t hostMissionIndex = 0;
 };
 
-// 多mission由Host使用独立start/done区域调度；Server之间不在CCU侧同步。
-struct KfcServerContext : CcuKernelCtxBase {
-    const CcuKernelArgKfcServer* arg;
-
-    ccu::Variable xnAddr; // HBM上的算子执行参数首地址
-    ccu::Variable ckeAddr;
-    ccu::Variable waitAddr;   // HBM上的每轮开始信号的首地址
-    ccu::Variable recordAddr; // HBM上的每轮完成信号的首地址
-
-    ccu::Variable token;
-    ccu::Variable dieNum; // Die数量，用于判断单双Die，默认为1即单Die
-
-    ccu::Variable missionNum;
-    ccu::Variable missionIndex;
-
-    // 用于Die间同步信号[missionId=0]
-    const char* exportDieSig;
-    const char* importDieSig;
-
-    // 当前missionNum_=1，missionIndex_=0，用于Mission间同步信号
-    std::vector<const char*> exportMissoinSig;
-    std::vector<const char*> importMissionSig;
-    // 用于Mission间同步变量
-    std::vector<ccu::Variable> exportMissionVar;
-    std::vector<ccu::Variable> importMissionVar;
-};
-
 class CcuTaskArgKfcServer : public hcomm::CcuTaskArg {
 public:
     explicit CcuTaskArgKfcServer(
@@ -102,6 +75,8 @@ public:
 };
 
 CcuResult CcuKfcServerKernel(CcuKernelArg arg);
+
+CcuResult CcuKfcServerKernelA6(CcuKernelArg arg);
 
 } // namespace mc2_ops_hccl
 

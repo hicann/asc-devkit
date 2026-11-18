@@ -77,9 +77,9 @@ Result CaptureAllReduceMeshMem2Mem1DKernel(void* kernelArg)
         return Result::PARAM_ERROR;
     }
 
-    std::array<AscendC::ccu::Variable, ALL_REDUCE_TASK_ARG_COUNT> arguments;
+    std::array<AscendC::ccu::variable, ALL_REDUCE_TASK_ARG_COUNT> arguments;
     for (uint32_t index = 0; index < arguments.size(); ++index) {
-        if (AscendC::ccu::LoadArg(arguments[index], index) != Result::SUCCESS) {
+        if (AscendC::ccu::load_arg(arguments[index], index) != Result::SUCCESS) {
             return Result::CONTRACT_ERROR;
         }
     }

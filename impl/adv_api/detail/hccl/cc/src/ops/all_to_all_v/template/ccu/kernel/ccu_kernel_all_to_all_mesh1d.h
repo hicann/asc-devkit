@@ -33,20 +33,20 @@ struct AlltoAllMesh1DContext : CcuKernelCtxBase {
     uint32_t rankId;
     bool loadFromMem;
 
-    std::vector<ccu::Variable> input;
-    std::vector<ccu::Variable> output;
-    std::vector<ccu::Variable> token;
-    ccu::Variable sliceSize;
-    ccu::Variable srcStride;
-    ccu::Variable srcOffset;
-    ccu::Variable dstOffset;
+    std::vector<ccu::variable> input;
+    std::vector<ccu::variable> output;
+    std::vector<ccu::variable> token;
+    ccu::variable sliceSize;
+    ccu::variable srcStride;
+    ccu::variable srcOffset;
+    ccu::variable dstOffset;
     GroupOpSizeVars goSize;
 };
 
 CcuResult CcuAlltoAllMesh1DKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable sliceSize,
-    ccu::Variable srcStride, ccu::Variable srcOffset, ccu::Variable dstOffset, ccu::Variable goSize1,
-    ccu::Variable goSize2, ccu::Variable goSize3, ccu::Variable goSize4, const ChannelHandle channels[],
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable sliceSize,
+    ccu::variable srcStride, ccu::variable srcOffset, ccu::variable dstOffset, ccu::variable goSize1,
+    ccu::variable goSize2, ccu::variable goSize3, ccu::variable goSize4, const ChannelHandle channels[],
     uint32_t channelCount, uint32_t rankSize, uint32_t rankId, bool loadFromMem);
 
 } // namespace mc2_ops_hccl

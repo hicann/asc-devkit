@@ -25,8 +25,6 @@
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d_multi_jetty.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_half_alltoallv_mesh1d.h"
 #include "ccu_kernel_kfc_server.h"
-#include "ccu_variable_dl.hpp"
-#include "ccu_func_dl.hpp"
 #include "mc2_type.h"
 #include "hccl_alloc_ctx_res.h"
 
@@ -101,6 +99,36 @@ const uint32_t DIE1_ID = 1;
 constexpr const char* DIE1_START_SIG = "Die1StartSig";
 constexpr const char* DIE1_END_SIG = "Die1EndSig";
 
+namespace {
+// A5 server 上下文（asc-comm snake 类型）：与 A6 版（_a6.cc 匿名 namespace）同名不同成员，
+// TU 内部隔离。
+struct KfcServerContext : CcuKernelCtxBase {
+    const CcuKernelArgKfcServer* arg;
+
+    ccu::variable xnAddr; // HBM上的算子执行参数首地址
+    ccu::variable ckeAddr;
+    ccu::variable waitAddr;   // HBM上的每轮开始信号的首地址
+    ccu::variable recordAddr; // HBM上的每轮完成信号的首地址
+
+    ccu::variable token;
+    ccu::variable dieNum; // Die数量，用于判断单双Die，默认为1即单Die
+
+    ccu::variable missionNum;
+    ccu::variable missionIndex;
+
+    // 用于Die间同步信号[missionId=0]
+    const char* exportDieSig;
+    const char* importDieSig;
+
+    // 当前missionNum_=1，missionIndex_=0，用于Mission间同步信号
+    std::vector<const char*> exportMissoinSig;
+    std::vector<const char*> importMissionSig;
+    // 用于Mission间同步变量
+    std::vector<ccu::variable> exportMissionVar;
+    std::vector<ccu::variable> importMissionVar;
+};
+} // namespace
+
 static CcuResult ParseKernelArg(KfcServerContext& ctx, const CcuKernelArgKfcServer* kernelArg)
 {
     ctx.arg = kernelArg;
@@ -118,19 +146,19 @@ static CcuResult LoadArgs(KfcServerContext& ctx)
     uint32_t argId = 0;
 
     // 顺序需与 kfcServerArgs 中的字段顺序一致：xnAddr, ckeAddr, dieNum, missionNum, missionIndex, token
-    CCU_CHK_RET(ccu::LoadArg(ctx.xnAddr, argId++));
-    CCU_CHK_RET(ccu::LoadArg(ctx.ckeAddr, argId++));
-    CCU_CHK_RET(ccu::LoadArg(ctx.dieNum, argId++));
-    CCU_CHK_RET(ccu::LoadArg(ctx.missionNum, argId++));
-    CCU_CHK_RET(ccu::LoadArg(ctx.missionIndex, argId++));
-    CCU_CHK_RET(ccu::LoadArg(ctx.token, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.xnAddr, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.ckeAddr, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.dieNum, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.missionNum, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.missionIndex, argId++));
+    CCU_CHK_RET(ccu::load_arg(ctx.token, argId++));
 
     return CCU_SUCCESS;
 }
 
 static CcuResult CompArgs(KfcServerContext& ctx)
 {
-    ccu::Variable regionSize;
+    ccu::variable regionSize;
     ctx.waitAddr = ctx.ckeAddr;
     regionSize = CCU_TASK_NUM_MAX * CCU_ONE_PARAM_SIZE;
     ctx.recordAddr = ctx.ckeAddr + regionSize;
@@ -142,11 +170,11 @@ static CcuResult CompArgs(KfcServerContext& ctx)
     return CCU_SUCCESS;
 }
 
-CcuResult MissionPreSync(const ccu::Variable& func, KfcServerContext& ctx)
+CcuResult MissionPreSync(const ccu::variable& func, KfcServerContext& ctx)
 {
     (void)func;
 
-    // 单 mission 时短路；门控必须用宿主常量（CCU_IF 两分支构图期都会执行）
+    // 单 mission 时短路；门控必须用宿主常量（CCU_IF 两分支构图期都会执行）。
     const uint32_t hostMissionNum = GetKfcServerMissionNum(ctx.arg->opParam.algName);
     if (hostMissionNum == 1) {
         return CCU_SUCCESS;
@@ -157,19 +185,19 @@ CcuResult MissionPreSync(const ccu::Variable& func, KfcServerContext& ctx)
     // imported（发信号侧）、wait 注册到 exported（等信号侧），跨 mission 配对。
     if (ctx.arg->hostMissionIndex == 0) {
         // mission 0: post bit 0, wait bit 1
-        CCU_CHK_RET(ccu::EventRecord("MiSync_m0", 1 << 0));
-        CCU_CHK_RET(ccu::EventWait("MiSync_m1", 1 << 1));
+        CCU_CHK_RET(ccu::event_record("MiSync_m0", 1U << 0));
+        CCU_CHK_RET(ccu::event_wait("MiSync_m1", 1U << 1));
     } else {
         // mission 1: post bit 1, wait bit 0
-        CCU_CHK_RET(ccu::EventRecord("MiSync_m1", 1 << 1));
-        CCU_CHK_RET(ccu::EventWait("MiSync_m0", 1 << 0));
+        CCU_CHK_RET(ccu::event_record("MiSync_m1", 1U << 1));
+        CCU_CHK_RET(ccu::event_wait("MiSync_m0", 1U << 0));
     }
     return CCU_SUCCESS;
 }
 
 CcuResult MissionPostSync(KfcServerContext& ctx)
 {
-    // 单 mission 时短路；双 mission 下远程 Post 由算子 kernel 的 PostSync 实现
+    // 单 mission 时短路；双 mission 下远程 Post 由算子 kernel 的 PostSync 实现。
     const uint32_t hostMissionNum = GetKfcServerMissionNum(ctx.arg->opParam.algName);
     if (hostMissionNum == 1) {
         return CCU_SUCCESS;
@@ -177,40 +205,40 @@ CcuResult MissionPostSync(KfcServerContext& ctx)
     return CCU_SUCCESS;
 }
 
-CcuResult WaitTurnStartSig(const ccu::Variable& hbmSigAddr, ccu::Variable& turnStartSig, const KfcServerContext& ctx)
+CcuResult WaitTurnStartSig(const ccu::variable& hbmSigAddr, ccu::variable& turnStartSig, const KfcServerContext& ctx)
 {
     (void)ctx;
     const uint32_t getDieId = 1;
     // 单Die场景：等待HBM中的信号
     CCU_WHILE(turnStartSig != 1)
     {
-        CCU_CHK_RET(ccu::Load(hbmSigAddr, turnStartSig)); // 循环读HBM对应地址的信号到Xn，直到Xn中的信号值为1
+        CCU_CHK_RET(ccu::load(hbmSigAddr, turnStartSig)); // 循环读HBM对应地址的信号到Xn，直到Xn中的信号值为1
     }
     turnStartSig = 0;                                  // reset Xn
-    CCU_CHK_RET(ccu::Store(hbmSigAddr, turnStartSig)); // reset HBM
+    CCU_CHK_RET(ccu::store(hbmSigAddr, turnStartSig)); // reset HBM
     return CCU_SUCCESS;
 }
 
-CcuResult SetTurnEndSig(const ccu::Variable& hbmSigAddr, const ccu::Variable& turnEndSig, const KfcServerContext& ctx)
+CcuResult SetTurnEndSig(const ccu::variable& hbmSigAddr, const ccu::variable& turnEndSig, const KfcServerContext& ctx)
 {
     (void)ctx;
     const uint32_t getDieId = 1;
-    CCU_CHK_RET(ccu::Store(hbmSigAddr, turnEndSig));
+    CCU_CHK_RET(ccu::store(hbmSigAddr, turnEndSig));
     return CCU_SUCCESS;
 }
 
 CcuResult LoadFuncParamFromMemory(
-    const ccu::Variable& paramAddr, ccu::Array<ccu::Variable>& param, const KfcServerContext& ctx)
+    const ccu::variable& paramAddr, ccu::array<ccu::variable>& param, const KfcServerContext& ctx)
 {
     (void)ctx;
     // 双Die场景Die1需要读后32个参数，其他场景都是读取前32个参数
-    ccu::Variable doubleDie;
+    ccu::variable doubleDie;
     doubleDie = CCU_PARAM_NUM_PER_DIE * CCU_ONE_PARAM_SIZE;
-    ccu::Variable addr;
+    ccu::variable addr;
     addr = paramAddr;
 
     // 一次性读取本轮32个参数
-    CCU_CHK_RET(ccu::Load(addr, param, CCU_PARAM_NUM_PER_DIE));
+    CCU_CHK_RET(ccu::load(addr, param, CCU_PARAM_NUM_PER_DIE));
     return CCU_SUCCESS;
 }
 
@@ -227,7 +255,7 @@ static bool KernelEmitsEarlyTurnEnd(const KfcServerContext& ctx)
 // turnEndAddr：本轮完成信号的 HBM 地址（WAIT 槽 CKE），仅 SoleNHR AG 分支消费（D3）；
 // 双 die 两 mission 共享参数帧、各 server 传入自己的 recordAddr（各写各的完成区）。
 static void DispatchKfcSubKernel(
-    ccu::Array<ccu::Variable>& param, KfcServerContext& ctx, const ccu::Variable& turnEndAddr)
+    ccu::array<ccu::variable>& param, KfcServerContext& ctx, const ccu::variable& turnEndAddr)
 {
     if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLGATHER) {
         const auto* arg = static_cast<const KfcParallelAllGatherArg*>(ctx.arg->algArg.get());
@@ -463,35 +491,35 @@ CcuResult KfcServerGenCircularQueue(KfcServerContext& ctx)
 {
     HCCL_INFO("[KfcServerGenCircularQueue] KfcServerGenCircularQueue start");
 
-    ccu::Variable repeatCond; // 存放《控制repeat循环执行的条件》的寄存器
+    ccu::variable repeatCond; // 存放《控制repeat循环执行的条件》的寄存器
     repeatCond = 0;
-    ccu::Variable turnStartSig; // 存放《轮次执行开始信号》的寄存器
+    ccu::variable turnStartSig; // 存放《轮次执行开始信号》的寄存器
     turnStartSig = 0;
-    ccu::Variable turnEndSig; // 存放《轮次执行完成信号》的寄存器，在循环中固定为1
+    ccu::variable turnEndSig; // 存放《轮次执行完成信号》的寄存器，在循环中固定为1
     turnEndSig = 1;
 
     // 使用独立XN保存队列游标，避免Variable拷贝构造与context基址共享handle。
-    ccu::Variable waitAddr;
-    ccu::Variable recordAddr;
-    ccu::Variable paramAddr;
+    ccu::variable waitAddr;
+    ccu::variable recordAddr;
+    ccu::variable paramAddr;
     waitAddr = ctx.waitAddr;
     recordAddr = ctx.recordAddr;
     paramAddr = ctx.xnAddr;
 
-    ccu::Variable ckeSize; // 其他寄存器
+    ccu::variable ckeSize; // 其他寄存器
     ckeSize = CCU_ONE_PARAM_SIZE;
-    ccu::Variable paramSize;
+    ccu::variable paramSize;
     paramSize = CCU_PARAM_NUM_MAX * CCU_ONE_PARAM_SIZE;
 
-    ccu::Variable queueIdx;
-    ccu::Variable queueEnd;
-    ccu::Variable one;
+    ccu::variable queueIdx;
+    ccu::variable queueEnd;
+    ccu::variable one;
     queueIdx = 0;
     one = 1;
     queueEnd = CCU_TASK_NUM_MAX;
 
     // 存放<每轮算子参数>的寄存器
-    ccu::Array<ccu::Variable> param(CCU_PARAM_NUM_PER_DIE);
+    ccu::array<ccu::variable> param(CCU_PARAM_NUM_PER_DIE);
 
     CCU_WHILE(repeatCond == 0)
     {
@@ -526,23 +554,23 @@ CcuResult KfcServerGenCircularQueue(KfcServerContext& ctx)
 
 CcuResult SlaveKfcServerGenCircularQueue(KfcServerContext& ctx)
 {
-    ccu::Variable signature;  // 算子签名
-    ccu::Variable repeatCond; // 存放《控制repeat循环执行的条件》的寄存器
+    ccu::variable signature;  // 算子签名
+    ccu::variable repeatCond; // 存放《控制repeat循环执行的条件》的寄存器
     repeatCond = 0;
 
-    ccu::Variable paramAddr;
+    ccu::variable paramAddr;
     paramAddr = ctx.xnAddr;
 
     // 参数循环队列 wraparound 游标（声明即初始化见下方赋值，参数帧推进与回绕共用）。
     // 不可写为 "Variable x = imm"：Variable 无整型转换构造，须经 operator= 赋值。
-    ccu::Variable paramSize;
+    ccu::variable paramSize;
     paramSize = CCU_PARAM_NUM_MAX * CCU_ONE_PARAM_SIZE;
-    ccu::Variable queueIdx;
+    ccu::variable queueIdx;
     queueIdx = 0;
-    ccu::Variable one;
+    ccu::variable one;
     one = 1;
 
-    ccu::Array<ccu::Variable> param(CCU_PARAM_NUM_PER_DIE); // 存放<每轮算子参数>的寄存器
+    ccu::array<ccu::variable> param(CCU_PARAM_NUM_PER_DIE); // 存放<每轮算子参数>的寄存器
 
     CCU_WHILE(repeatCond == 0)
     {
@@ -575,7 +603,7 @@ CcuResult CcuKfcServerKernel(CcuKernelArg arg)
 {
     auto* kernelArg = static_cast<CcuKernelArgKfcServer*>(arg);
     KfcServerContext ctx;
-    HCCL_INFO("[CcuKernelKfcServer] KfcServer run");
+    HCCL_INFO("[CcuKernelKfcServer][asccomm] KfcServer run (dataplane primitives from libasccomm_ccu)");
     CCU_CHK_RET(ParseKernelArg(ctx, kernelArg));
     HCCL_INFO("[CcuKernelKfcServer] ParseKernelArg finish");
     CCU_CHK_RET(InitResource(ctx));
@@ -589,4 +617,5 @@ CcuResult CcuKfcServerKernel(CcuKernelArg arg)
     HCCL_INFO("[CcuKernelKfcServer] KfcServer end");
     return CCU_SUCCESS;
 }
+
 } // namespace mc2_ops_hccl

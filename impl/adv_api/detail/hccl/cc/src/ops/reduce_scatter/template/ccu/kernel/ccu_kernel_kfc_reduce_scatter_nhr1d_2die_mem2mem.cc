@@ -37,31 +37,31 @@ struct KfcReduceScatterNhr2DieContext : CcuKernelCtxBase {
     const std::vector<KfcNhrStepInfo>* stepInfoVector = nullptr;
     const std::map<uint32_t, uint32_t>* rank2ChannelIdx = nullptr;
 
-    std::vector<ccu::Variable> input;
-    ccu::Variable output;
-    std::vector<ccu::Variable> token;
-    ccu::Variable die0Size;
-    ccu::Variable die1Size;
-    ccu::Variable die0LastSliceSize;
-    ccu::Variable die1LastSliceSize;
-    ccu::Variable inputSliceStride;
-    ccu::Variable currentRankSliceOutputOffset;
-    ccu::Variable inputRepeatStride;
-    ccu::Variable outputRepeatStride;
-    ccu::Variable repeatNumVar;
-    ccu::Variable repeatNumVarTemp;
-    ccu::Variable isInputOutputEqual;
+    std::vector<ccu::variable> input;
+    ccu::variable output;
+    std::vector<ccu::variable> token;
+    ccu::variable die0Size;
+    ccu::variable die1Size;
+    ccu::variable die0LastSliceSize;
+    ccu::variable die1LastSliceSize;
+    ccu::variable inputSliceStride;
+    ccu::variable currentRankSliceOutputOffset;
+    ccu::variable inputRepeatStride;
+    ccu::variable outputRepeatStride;
+    ccu::variable repeatNumVar;
+    ccu::variable repeatNumVarTemp;
+    ccu::variable isInputOutputEqual;
     GroupOpSizeVars goSizeNormal;
     GroupOpSizeVars goSizeLast;
     GroupOpSizeVars die1GoSizeNormal;
     GroupOpSizeVars die1GoSizeLast;
-    ccu::Variable isRepeatIter;
-    ccu::Variable sliceSize;
+    ccu::variable isRepeatIter;
+    ccu::variable sliceSize;
 
-    ccu::Event event;
-    ccu::LocalAddr localSrc_;
-    ccu::LocalAddr localDst_;
-    ccu::RemoteAddr remoteDst_;
+    ccu::event event;
+    ccu::local_addr localSrc_;
+    ccu::local_addr localDst_;
+    ccu::remote_addr remoteDst_;
 };
 
 CcuResult InitResource(KfcReduceScatterNhr2DieContext& ctx)
@@ -77,8 +77,8 @@ CcuResult InitResource(KfcReduceScatterNhr2DieContext& ctx)
     ctx.input.resize(localIdx + 1U);
     ctx.token.resize(localIdx + 1U);
     for (uint32_t channelIdx = 0; channelIdx < ctx.channelCount; ++channelIdx) {
-        ctx.input[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], INPUT_XN_ID);
-        ctx.token[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], TOKEN_XN_ID);
+        ctx.input[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], INPUT_XN_ID);
+        ctx.token[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], TOKEN_XN_ID);
     }
     ctx.resourceAllocated = false;
     return CCU_SUCCESS;
@@ -88,14 +88,14 @@ CcuResult PreSync(KfcReduceScatterNhr2DieContext& ctx)
 {
     const uint32_t localIdx = ctx.channelCount;
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.input[localIdx], INPUT_XN_ID, CKE_IDX_0, 1 << INPUT_XN_ID));
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.token[localIdx], TOKEN_XN_ID, CKE_IDX_0, 1 << TOKEN_XN_ID));
     }
     uint32_t allBit = 1 << INPUT_XN_ID | 1 << TOKEN_XN_ID;
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], CKE_IDX_0, allBit));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], CKE_IDX_0, allBit));
     }
     return CCU_SUCCESS;
 }
@@ -103,19 +103,19 @@ CcuResult PreSync(KfcReduceScatterNhr2DieContext& ctx)
 CcuResult PostSync(KfcReduceScatterNhr2DieContext& ctx)
 {
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], CKE_IDX_0, 1 << POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_record(ctx.channels[i], CKE_IDX_0, 1 << POST_SYNC_ID));
     }
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], CKE_IDX_0, 1 << POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], CKE_IDX_0, 1 << POST_SYNC_ID));
     }
     return CCU_SUCCESS;
 }
 
 CcuResult DoRepeatWriteReduceSlices(
-    KfcReduceScatterNhr2DieContext& ctx, const u32& toRank, ccu::LocalAddr& src, ccu::RemoteAddr& dst,
+    KfcReduceScatterNhr2DieContext& ctx, const u32& toRank, ccu::local_addr& src, ccu::remote_addr& dst,
     const bool islastSlice)
 {
-    ccu::Variable repeatNumAdd;
+    ccu::variable repeatNumAdd;
     repeatNumAdd = 1;
     ctx.isRepeatIter = 0;
 
@@ -150,34 +150,34 @@ CcuResult DoRepeatWriteReduceSlices(
         CCU_IF(ctx.sliceSize != 0)
         {
             CCU_CHK_RET(
-                ccu::WriteReduce(sendChannel, dst, src, ctx.sliceSize, ctx.dataType, ctx.reduceOp, ctx.event, 1));
+                ccu::write_reduce(sendChannel, dst, src, ctx.sliceSize, ctx.dataType, ctx.reduceOp, ctx.event, 1));
         }
-        CCU_IF(ctx.sliceSize == 0) { CCU_CHK_RET(ccu::EventRecord(ctx.event, 1)); }
-        CCU_CHK_RET(ccu::EventWait(ctx.event, 1));
+        CCU_IF(ctx.sliceSize == 0) { CCU_CHK_RET(ccu::event_record(ctx.event, 1)); }
+        CCU_CHK_RET(ccu::event_wait(ctx.event, 1));
         ctx.isRepeatIter = 1;
     }
     ctx.isRepeatIter = 0;
     return CCU_SUCCESS;
 }
 
-// 只发射单个 slice 的 WriteReduce/占位 EventRecord，不等待；事件位 = 1 << sliceSeq。
-// 流水路径由调用方在步末统一 EventWait；串行路径不经过此函数。
+// 只发射单个 slice 的 write_reduce/占位 event_record，不等待；事件位 = 1 << sliceSeq。
+// 流水路径由调用方在步末统一 event_wait；串行路径不经过此函数。
 CcuResult IssueReduceSlice2Die(
-    KfcReduceScatterNhr2DieContext& ctx, const ChannelHandle& sendChannel, ccu::LocalAddr& src, ccu::RemoteAddr& dst,
-    ccu::Variable& sliceSize, uint32_t sliceSeq)
+    KfcReduceScatterNhr2DieContext& ctx, const ChannelHandle& sendChannel, ccu::local_addr& src, ccu::remote_addr& dst,
+    ccu::variable& sliceSize, uint32_t sliceSeq)
 {
     CCU_IF(sliceSize != 0)
     {
         CCU_CHK_RET(
-            ccu::WriteReduce(sendChannel, dst, src, sliceSize, ctx.dataType, ctx.reduceOp, ctx.event, 1U << sliceSeq));
+            ccu::write_reduce(sendChannel, dst, src, sliceSize, ctx.dataType, ctx.reduceOp, ctx.event, 1U << sliceSeq));
     }
-    CCU_IF(sliceSize == 0) { CCU_CHK_RET(ccu::EventRecord(ctx.event, 1U << sliceSeq)); }
+    CCU_IF(sliceSize == 0) { CCU_CHK_RET(ccu::event_record(ctx.event, 1U << sliceSeq)); }
     return CCU_SUCCESS;
 }
 
 CcuResult DoRepeatReduceScatterNHRSingleStep(
     KfcReduceScatterNhr2DieContext& ctx, const KfcNhrStepInfo& nhrStepInfo,
-    const std::vector<ccu::Variable>& inputSliceOffset)
+    const std::vector<ccu::variable>& inputSliceOffset)
 {
     auto toRankIt = ctx.rank2ChannelIdx->find(nhrStepInfo.toRank);
     if (toRankIt == ctx.rank2ChannelIdx->end()) {
@@ -204,8 +204,8 @@ CcuResult DoRepeatReduceScatterNHRSingleStep(
     // step 非 0 时先做步间就绪同步，保证对端上一轮读取已完成；step 0 的 PreSync 基址交换
     // 刚做过全屏障，跳过（MultiLink kernel 同款先例）
     if (nhrStepInfo.step != 0U) {
-        CCU_CHK_RET(ccu::NotifyRecord(recvChannel, CKE_IDX_0, 1 << STEP_PRE_SYNC_ID));
-        CCU_CHK_RET(ccu::NotifyWait(sendChannel, CKE_IDX_0, 1 << STEP_PRE_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_record(recvChannel, CKE_IDX_0, 1 << STEP_PRE_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_wait(sendChannel, CKE_IDX_0, 1 << STEP_PRE_SYNC_ID));
     }
     // 发射期分流（宿主期值必须用普通 if，只发射命中分支）：slice 数不超单 event 16 位预算时
     // 走步内流水——本轮所有 slice 先全部发射（各占独立事件位；各 slice 的 src/dst 分片互不相交，
@@ -214,8 +214,8 @@ CcuResult DoRepeatReduceScatterNHRSingleStep(
     if (sliceNum != 0U && sliceNum <= RS_NHR_2DIE_EVENT_BIT_BUDGET) {
         const uint16_t waitMask = static_cast<uint16_t>((1U << sliceNum) - 1U);
         // die1 段起始偏移一次性折叠进 turnOffset（axisId 是 emission 期 kernelArg 常量，普通 if）
-        ccu::Variable turnOffset;
-        ccu::Variable repeatNumAdd;
+        ccu::variable turnOffset;
+        ccu::variable repeatNumAdd;
         turnOffset = 0;
         repeatNumAdd = 1;
         if (ctx.axisId == 1) {
@@ -234,12 +234,12 @@ CcuResult DoRepeatReduceScatterNHRSingleStep(
                 ctx.localSrc_.addr += inputSliceOffset[sendSliceIdx];
                 ctx.localSrc_.addr += turnOffset;
                 islastSlice = (sendSliceIdx + 1 == ctx.rankSize);
-                ccu::Variable& sliceSizeVar = (ctx.axisId == 0) ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0Size) :
+                ccu::variable& sliceSizeVar = (ctx.axisId == 0) ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0Size) :
                                                                   (islastSlice ? ctx.die1LastSliceSize : ctx.die1Size);
                 CCU_CHK_RET(
                     IssueReduceSlice2Die(ctx, sendChannel, ctx.localSrc_, ctx.remoteDst_, sliceSizeVar, sliceSeq));
             }
-            CCU_CHK_RET(ccu::EventWait(ctx.event, waitMask));
+            CCU_CHK_RET(ccu::event_wait(ctx.event, waitMask));
             turnOffset += ctx.inputRepeatStride;
         }
     } else {
@@ -256,23 +256,23 @@ CcuResult DoRepeatReduceScatterNHRSingleStep(
     }
 
     // 通知toRank数据写入完毕
-    CCU_CHK_RET(ccu::NotifyRecord(sendChannel, CKE_IDX_0, 1 << STEP_POST_SYNC_ID));
+    CCU_CHK_RET(ccu::notify_record(sendChannel, CKE_IDX_0, 1 << STEP_POST_SYNC_ID));
 
     // 等待fromRank通知数据写入完毕
-    CCU_CHK_RET(ccu::NotifyWait(recvChannel, CKE_IDX_0, 1 << STEP_POST_SYNC_ID));
+    CCU_CHK_RET(ccu::notify_wait(recvChannel, CKE_IDX_0, 1 << STEP_POST_SYNC_ID));
 
     return CCU_SUCCESS;
 }
 
 CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
 {
-    ccu::Variable tmpSliceOffset;
+    ccu::variable tmpSliceOffset;
     tmpSliceOffset = 0;
     // 用来记录每个rank要读取的rank的sliceIdx的偏移
     // 后面会用inputAddr来加上这个偏移获取sliceIdx的地址
-    std::vector<ccu::Variable> inputSliceOffset;
+    std::vector<ccu::variable> inputSliceOffset;
     for (u64 i = 0; i < ctx.rankSize; i++) {
-        inputSliceOffset.push_back(ccu::Variable{});
+        inputSliceOffset.push_back(ccu::variable{});
         inputSliceOffset[i] = tmpSliceOffset;
         tmpSliceOffset += ctx.inputSliceStride;
     }
@@ -289,7 +289,7 @@ CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
     ctx.localDst_.addr += ctx.currentRankSliceOutputOffset;
     ctx.localDst_.token = ctx.token[localIdx];
 
-    ccu::Variable repeatNumAdd2;
+    ccu::variable repeatNumAdd2;
     bool islastSlice = (ctx.rankId + 1 == ctx.rankSize);
     repeatNumAdd2 = 1;
     ctx.isRepeatIter = 0;
@@ -308,7 +308,7 @@ CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
                 ctx.localDst_.addr += ctx.die0Size;
             }
         }
-        ccu::Variable& localSliceSize = (ctx.axisId == 0) ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0Size) :
+        ccu::variable& localSliceSize = (ctx.axisId == 0) ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0Size) :
                                                             (islastSlice ? ctx.die1LastSliceSize : ctx.die1Size);
         GroupOpSizeVars& goSize = (ctx.axisId == 0) ? (islastSlice ? ctx.goSizeLast : ctx.goSizeNormal) :
                                                       (islastSlice ? ctx.die1GoSizeLast : ctx.die1GoSizeNormal);
@@ -316,10 +316,10 @@ CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
         {
             CCU_IF(ctx.isInputOutputEqual == 0)
             {
-                ccu::LocalAddr localDst;
+                ccu::local_addr localDst;
                 localDst.addr = ctx.localDst_.addr;
                 localDst.token = ctx.localDst_.token;
-                ccu::LocalAddr localSrc;
+                ccu::local_addr localSrc;
                 localSrc.addr = ctx.localSrc_.addr;
                 localSrc.token = ctx.localSrc_.token;
                 CCU_CHK_RET(GroupCopy(ctx, localDst, localSrc, goSize));
@@ -333,17 +333,17 @@ CcuResult DoRepeatReduceScatterNHR(KfcReduceScatterNhr2DieContext& ctx)
 } // namespace
 
 CcuResult CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable die0Size,
-    ccu::Variable die1Size, ccu::Variable die0LastSliceSize, ccu::Variable die1LastSliceSize,
-    ccu::Variable inputSliceStride, ccu::Variable currentRankSliceOutputOffset, ccu::Variable inputRepeatStride,
-    ccu::Variable outputRepeatStride, ccu::Variable repeatNumVar, ccu::Variable isInputOutputEqual,
-    ccu::Variable goSizeNormalAddrOffset, ccu::Variable goSizeNormalLoopParam, ccu::Variable goSizeNormalParallelParam,
-    ccu::Variable goSizeNormalResidual, ccu::Variable goSizeLastAddrOffset, ccu::Variable goSizeLastLoopParam,
-    ccu::Variable goSizeLastParallelParam, ccu::Variable goSizeLastResidual, ccu::Variable die1GoSizeNormalAddrOffset,
-    ccu::Variable die1GoSizeNormalLoopParam, ccu::Variable die1GoSizeNormalParallelParam,
-    ccu::Variable die1GoSizeNormalResidual, ccu::Variable die1GoSizeLastAddrOffset,
-    ccu::Variable die1GoSizeLastLoopParam, ccu::Variable die1GoSizeLastParallelParam,
-    ccu::Variable die1GoSizeLastResidual, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable die0Size,
+    ccu::variable die1Size, ccu::variable die0LastSliceSize, ccu::variable die1LastSliceSize,
+    ccu::variable inputSliceStride, ccu::variable currentRankSliceOutputOffset, ccu::variable inputRepeatStride,
+    ccu::variable outputRepeatStride, ccu::variable repeatNumVar, ccu::variable isInputOutputEqual,
+    ccu::variable goSizeNormalAddrOffset, ccu::variable goSizeNormalLoopParam, ccu::variable goSizeNormalParallelParam,
+    ccu::variable goSizeNormalResidual, ccu::variable goSizeLastAddrOffset, ccu::variable goSizeLastLoopParam,
+    ccu::variable goSizeLastParallelParam, ccu::variable goSizeLastResidual, ccu::variable die1GoSizeNormalAddrOffset,
+    ccu::variable die1GoSizeNormalLoopParam, ccu::variable die1GoSizeNormalParallelParam,
+    ccu::variable die1GoSizeNormalResidual, ccu::variable die1GoSizeLastAddrOffset,
+    ccu::variable die1GoSizeLastLoopParam, ccu::variable die1GoSizeLastParallelParam,
+    ccu::variable die1GoSizeLastResidual, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
     uint32_t rankId, uint32_t axisId, uint32_t axisSize, const HcclDataType& dataType, const HcclDataType& outputType,
     const HcclReduceOp& reduceType, const std::vector<KfcNhrStepInfo>& stepInfoVector,
     const std::map<uint32_t, uint32_t>& rank2ChannelIdx)
@@ -380,21 +380,21 @@ CcuResult CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
     ctx.outputRepeatStride = outputRepeatStride;
     ctx.repeatNumVar = repeatNumVar;
     ctx.isInputOutputEqual = isInputOutputEqual;
-    ctx.goSizeNormal.addrOffset = goSizeNormalAddrOffset;
-    ctx.goSizeNormal.loopParam = goSizeNormalLoopParam;
-    ctx.goSizeNormal.parallelParam = goSizeNormalParallelParam;
+    ctx.goSizeNormal.addr_offset = goSizeNormalAddrOffset;
+    ctx.goSizeNormal.loop_param = goSizeNormalLoopParam;
+    ctx.goSizeNormal.parallel_param = goSizeNormalParallelParam;
     ctx.goSizeNormal.residual = goSizeNormalResidual;
-    ctx.goSizeLast.addrOffset = goSizeLastAddrOffset;
-    ctx.goSizeLast.loopParam = goSizeLastLoopParam;
-    ctx.goSizeLast.parallelParam = goSizeLastParallelParam;
+    ctx.goSizeLast.addr_offset = goSizeLastAddrOffset;
+    ctx.goSizeLast.loop_param = goSizeLastLoopParam;
+    ctx.goSizeLast.parallel_param = goSizeLastParallelParam;
     ctx.goSizeLast.residual = goSizeLastResidual;
-    ctx.die1GoSizeNormal.addrOffset = die1GoSizeNormalAddrOffset;
-    ctx.die1GoSizeNormal.loopParam = die1GoSizeNormalLoopParam;
-    ctx.die1GoSizeNormal.parallelParam = die1GoSizeNormalParallelParam;
+    ctx.die1GoSizeNormal.addr_offset = die1GoSizeNormalAddrOffset;
+    ctx.die1GoSizeNormal.loop_param = die1GoSizeNormalLoopParam;
+    ctx.die1GoSizeNormal.parallel_param = die1GoSizeNormalParallelParam;
     ctx.die1GoSizeNormal.residual = die1GoSizeNormalResidual;
-    ctx.die1GoSizeLast.addrOffset = die1GoSizeLastAddrOffset;
-    ctx.die1GoSizeLast.loopParam = die1GoSizeLastLoopParam;
-    ctx.die1GoSizeLast.parallelParam = die1GoSizeLastParallelParam;
+    ctx.die1GoSizeLast.addr_offset = die1GoSizeLastAddrOffset;
+    ctx.die1GoSizeLast.loop_param = die1GoSizeLastLoopParam;
+    ctx.die1GoSizeLast.parallel_param = die1GoSizeLastParallelParam;
     ctx.die1GoSizeLast.residual = die1GoSizeLastResidual;
 
     HCCL_INFO(

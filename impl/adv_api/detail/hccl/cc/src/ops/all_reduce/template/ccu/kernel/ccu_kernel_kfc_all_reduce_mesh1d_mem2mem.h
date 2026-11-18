@@ -36,47 +36,46 @@ struct KfcAllReduceMesh1DMem2MemContext : CcuKernelCtxBase {
     HcclDataType outputDataType;
     HcclReduceOp reduceOp;
 
-    std::vector<ccu::Variable> input;
-    std::vector<ccu::Variable> output;
-    std::vector<ccu::Variable> token;
-    ccu::Variable myScratch;
-    ccu::Variable currentRankSliceInputOffset;
-    ccu::Variable currentRankSliceOutputOffset;
-    ccu::Variable normalSliceSize;
-    ccu::Variable lastSliceSize;
-    ccu::Variable mySliceSize;
-    ccu::Variable sliceOffset;
-    ccu::Variable isInputOutputEqual;
-    ccu::Variable sliceSize;
+    std::vector<ccu::variable> input;
+    std::vector<ccu::variable> output;
+    std::vector<ccu::variable> token;
+    ccu::variable myScratch;
+    ccu::variable currentRankSliceInputOffset;
+    ccu::variable currentRankSliceOutputOffset;
+    ccu::variable normalSliceSize;
+    ccu::variable lastSliceSize;
+    ccu::variable mySliceSize;
+    ccu::variable sliceOffset;
+    ccu::variable isInputOutputEqual;
+    ccu::variable sliceSize;
     GroupOpSizeVars goSize;
-    ccu::Variable chunkSize;
-    ccu::Variable currentSliceSize;
-    ccu::Variable tailSize;
-    ccu::Variable chunkLoopNum;
+    ccu::variable chunkSize;
+    ccu::variable currentSliceSize;
+    ccu::variable tailSize;
+    ccu::variable chunkLoopNum;
     GroupOpSizeVars fullGoSize;
     GroupOpSizeVars tailGoSize;
 
-    std::vector<ccu::Event> events;
+    std::vector<ccu::event> events;
 
-    ccu::LocalAddr srcMem;
-    ccu::LocalAddr localDstMem;
-    ccu::RemoteAddr remoteDstMem;
-    std::vector<ccu::RemoteAddr> reduceScatterSrc;
-    std::vector<ccu::LocalAddr> reduceScatterDst;
+    ccu::local_addr srcMem;
+    ccu::local_addr localDstMem;
+    ccu::remote_addr remoteDstMem;
+    std::vector<ccu::remote_addr> reduceScatterSrc;
+    std::vector<ccu::local_addr> reduceScatterDst;
 };
 
 CcuResult CcuKfcAllReduceMesh1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable scratch,
-    ccu::Variable currentRankSliceInputOffset, ccu::Variable currentRankSliceOutputOffset,
-    ccu::Variable normalSliceSize, ccu::Variable lastSliceSize, ccu::Variable mySliceSize, ccu::Variable sliceOffset,
-    ccu::Variable isInputOutputEqual, ccu::Variable goSize0, ccu::Variable goSize1, ccu::Variable goSize2,
-    ccu::Variable goSize3, ccu::Variable chunkSize, ccu::Variable tailSize, ccu::Variable chunkLoopNum,
-    ccu::Variable fullGoSize0, ccu::Variable fullGoSize1, ccu::Variable fullGoSize2, ccu::Variable fullGoSize3,
-    ccu::Variable tailGoSize0, ccu::Variable tailGoSize1, ccu::Variable tailGoSize2, ccu::Variable tailGoSize3,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable scratch,
+    ccu::variable currentRankSliceInputOffset, ccu::variable currentRankSliceOutputOffset,
+    ccu::variable normalSliceSize, ccu::variable lastSliceSize, ccu::variable mySliceSize, ccu::variable sliceOffset,
+    ccu::variable isInputOutputEqual, ccu::variable goSize0, ccu::variable goSize1, ccu::variable goSize2,
+    ccu::variable goSize3, ccu::variable chunkSize, ccu::variable tailSize, ccu::variable chunkLoopNum,
+    ccu::variable fullGoSize0, ccu::variable fullGoSize1, ccu::variable fullGoSize2, ccu::variable fullGoSize3,
+    ccu::variable tailGoSize0, ccu::variable tailGoSize1, ccu::variable tailGoSize2, ccu::variable tailGoSize3,
     const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId,
     const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType);
 
-CcuResult ReduceLoopGroupV1(KfcAllReduceMesh1DMem2MemContext& ctx, ccu::LocalAddr srcOrg);
-CcuResult ReduceLoopGroupV2(KfcAllReduceMesh1DMem2MemContext& ctx, ccu::LocalAddr srcOrg);
+CcuResult ReduceLoopGroupV1(KfcAllReduceMesh1DMem2MemContext& ctx, ccu::local_addr srcOrg);
 } // namespace mc2_ops_hccl
 #endif // HCCL_CCU_KERNEL_KFC_ALL_REDUCE_MESH_1D_MEM2MEM_H

@@ -24,21 +24,20 @@ namespace mc2_ops_hccl {
 // die0/die1 尺寸与 goSize 为 AIV prepare 运行期计算（MC2 device-driven），经 xnData 传入。
 // 21 个 Variable 形参与 hccl 模板 KernelRun 的 taskArgs 布局逐槽一致。
 CcuResult CcuKfcReduceScatterNHR1D2DieMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable die0Size,
-    ccu::Variable die1Size, ccu::Variable die0LastSliceSize, ccu::Variable die1LastSliceSize,
-    ccu::Variable inputSliceStride, ccu::Variable currentRankSliceOutputOffset, ccu::Variable inputRepeatStride,
-    ccu::Variable outputRepeatStride, ccu::Variable repeatNumVar, ccu::Variable isInputOutputEqual,
-    ccu::Variable goSizeNormalAddrOffset, ccu::Variable goSizeNormalLoopParam, ccu::Variable goSizeNormalParallelParam,
-    ccu::Variable goSizeNormalResidual, ccu::Variable goSizeLastAddrOffset, ccu::Variable goSizeLastLoopParam,
-    ccu::Variable goSizeLastParallelParam, ccu::Variable goSizeLastResidual, ccu::Variable die1GoSizeNormalAddrOffset,
-    ccu::Variable die1GoSizeNormalLoopParam, ccu::Variable die1GoSizeNormalParallelParam,
-    ccu::Variable die1GoSizeNormalResidual, ccu::Variable die1GoSizeLastAddrOffset,
-    ccu::Variable die1GoSizeLastLoopParam, ccu::Variable die1GoSizeLastParallelParam,
-    ccu::Variable die1GoSizeLastResidual, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable die0Size,
+    ccu::variable die1Size, ccu::variable die0LastSliceSize, ccu::variable die1LastSliceSize,
+    ccu::variable inputSliceStride, ccu::variable currentRankSliceOutputOffset, ccu::variable inputRepeatStride,
+    ccu::variable outputRepeatStride, ccu::variable repeatNumVar, ccu::variable isInputOutputEqual,
+    ccu::variable goSizeNormalAddrOffset, ccu::variable goSizeNormalLoopParam, ccu::variable goSizeNormalParallelParam,
+    ccu::variable goSizeNormalResidual, ccu::variable goSizeLastAddrOffset, ccu::variable goSizeLastLoopParam,
+    ccu::variable goSizeLastParallelParam, ccu::variable goSizeLastResidual, ccu::variable die1GoSizeNormalAddrOffset,
+    ccu::variable die1GoSizeNormalLoopParam, ccu::variable die1GoSizeNormalParallelParam,
+    ccu::variable die1GoSizeNormalResidual, ccu::variable die1GoSizeLastAddrOffset,
+    ccu::variable die1GoSizeLastLoopParam, ccu::variable die1GoSizeLastParallelParam,
+    ccu::variable die1GoSizeLastResidual, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
     uint32_t rankId, uint32_t axisId, uint32_t axisSize, const HcclDataType& dataType, const HcclDataType& outputType,
     const HcclReduceOp& reduceType, const std::vector<KfcNhrStepInfo>& stepInfoVector,
     const std::map<uint32_t, uint32_t>& rank2ChannelIdx);
-
 } // namespace mc2_ops_hccl
 
 #endif

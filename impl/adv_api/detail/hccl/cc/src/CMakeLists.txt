@@ -20,6 +20,7 @@ set(INCLUDE_LIST
     ${HCCL_CC_INCLUDE_DIR}/hcomm/ccu
     ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc/hcomm/ccu
     ${HCCL_CC_INCLUDE_DIR}/hcomm/pkg_inc
+    ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/common
     ${CMAKE_CURRENT_SOURCE_DIR}/common/hcomm_dlsym
     ${CMAKE_CURRENT_SOURCE_DIR}/common/hcomm_dlsym/ccu
@@ -281,6 +282,20 @@ if(NOT KERNEL_MODE AND PRODUCT_SIDE STREQUAL "host")
         -DHOST_COMPILE
         MC2_CLIENT_ENABLE_CCU=$<BOOL:${MC2_CLIENT_ENABLE_CCU}>
     )
+
+    if(NOT KERNEL_MODE)
+        if(NOT TARGET asccomm_ccu)
+            message(FATAL_ERROR
+                "mc2_client requires the asccomm_ccu target: build with BUILD_OPEN_PROJECT=ON "
+                "so cmake/third_party/asc-comm.cmake builds libasccomm_ccu.so from the asc-comm source tree.")
+        endif()
+        target_link_libraries(mc2_client PRIVATE
+            -Wl,--no-as-needed
+            asccomm_ccu
+            asccomm_ccu_headers
+            -Wl,--no-as-needed
+        )
+    endif()
 
     target_compile_options(mc2_client PRIVATE
         -Werror

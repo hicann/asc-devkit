@@ -30,12 +30,11 @@ namespace mc2_ops_hccl {
 // 写入，AIV 提前返回，server 侧相应跳过本轮 SetTurnEndSig（PostSync 仍在 server 指令流中
 // 先于下一轮 PreSync 执行，跨轮 XN 保护不变）。
 CcuResult CcuKernelKfcAllGatherNHR1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable die0Size,
-    ccu::Variable die1Size, ccu::Variable outputSliceStride, ccu::Variable goSize0, ccu::Variable goSize1,
-    ccu::Variable goSize2, ccu::Variable goSize3, const ChannelHandle channels[], uint32_t channelCount,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable die0Size,
+    ccu::variable die1Size, ccu::variable outputSliceStride, ccu::variable goSize0, ccu::variable goSize1,
+    ccu::variable goSize2, ccu::variable goSize3, const ChannelHandle channels[], uint32_t channelCount,
     uint32_t rankSize, uint32_t rankId, uint32_t axisId, const std::vector<KfcNhrStepInfo>& stepInfoVector,
-    const std::map<uint32_t, uint32_t>& rank2ChannelIdx, ccu::Variable turnEndAddr);
-
+    const std::map<uint32_t, uint32_t>& rank2ChannelIdx, ccu::variable turnEndAddr);
 } // namespace mc2_ops_hccl
 
 #endif // HCCL_CCU_KERNEL_KFC_ALL_GATHER_NHR_1D_MEM2MEM_H

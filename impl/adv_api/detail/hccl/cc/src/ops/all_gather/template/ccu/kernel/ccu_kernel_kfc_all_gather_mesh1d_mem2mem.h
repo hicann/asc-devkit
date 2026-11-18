@@ -18,18 +18,18 @@ namespace mc2_ops_hccl {
 constexpr uint32_t AG_M2M_UNROLL_NUM = 4;
 
 CcuResult CcuKfcAllGatherMesh1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable outputOffset,
-    ccu::Variable sliceSize, ccu::Variable goSize0, ccu::Variable goSize1, ccu::Variable goSize2, ccu::Variable goSize3,
-    ccu::Variable currentRankSliceInputOffset, ccu::Variable tmpRepeatNum, ccu::Variable inputRepeatStride,
-    ccu::Variable outputRepeatStride, ccu::Variable lastSliceSize, ccu::Variable isInputOutputEqual,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable outputOffset,
+    ccu::variable sliceSize, ccu::variable goSize0, ccu::variable goSize1, ccu::variable goSize2, ccu::variable goSize3,
+    ccu::variable currentRankSliceInputOffset, ccu::variable tmpRepeatNum, ccu::variable inputRepeatStride,
+    ccu::variable outputRepeatStride, ccu::variable lastSliceSize, ccu::variable isInputOutputEqual,
     const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId);
 
 CcuResult CcuKfcParallelAllGatherMesh1DMem2MemKernel(
-    ccu::Variable inputBase, ccu::Variable outputBase, ccu::Variable tokenInfo, ccu::Variable outputStride,
-    ccu::Variable part0Size, ccu::Variable part1Size, ccu::Variable part1Offset, ccu::Variable meshPhaseDoneAddr,
-    ccu::Variable nhrPhaseDoneAddr, ccu::Variable part0GoSize0, ccu::Variable part0GoSize1, ccu::Variable part0GoSize2,
-    ccu::Variable part0GoSize3, ccu::Variable part1GoSize0, ccu::Variable part1GoSize1, ccu::Variable part1GoSize2,
-    ccu::Variable part1GoSize3, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSizeLevel0,
+    ccu::variable inputBase, ccu::variable outputBase, ccu::variable tokenInfo, ccu::variable outputStride,
+    ccu::variable part0Size, ccu::variable part1Size, ccu::variable part1Offset, ccu::variable meshPhaseDoneAddr,
+    ccu::variable nhrPhaseDoneAddr, ccu::variable part0GoSize0, ccu::variable part0GoSize1, ccu::variable part0GoSize2,
+    ccu::variable part0GoSize3, ccu::variable part1GoSize0, ccu::variable part1GoSize1, ccu::variable part1GoSize2,
+    ccu::variable part1GoSize3, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSizeLevel0,
     uint32_t rankIdxLevel0, uint32_t rankSizeLevel1, uint32_t rankIdxLevel1);
 
 } // namespace mc2_ops_hccl

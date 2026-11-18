@@ -109,21 +109,22 @@ private:
     ArithmeticOp op{ArithmeticOp::ADD};
 };
 
-class Variable {
+class variable {
 public:
-    Variable();
-    explicit Variable(ResourceHandle existingHandle);
-    Variable(const Variable& other) = default;
-    Variable(Variable&& other) noexcept = default;
-    Variable& operator=(Variable&& other) noexcept = default;
+    using Variable [[deprecated]] = variable;
+    variable();
+    explicit variable(ResourceHandle existingHandle);
+    variable(const variable& other) = default;
+    variable(variable&& other) noexcept = default;
+    variable& operator=(variable&& other) noexcept = default;
 
-    void operator=(const Variable& other) const;
+    void operator=(const variable& other) const;
     void operator=(const VariableExpr& expr) const;
     void operator=(uint64_t immediate) const;
-    void operator+=(const Variable& other) const;
-    VariableExpr operator+(const Variable& other) const;
-    VariableExpr operator-(const Variable& other) const;
-    VariableExpr operator*(const Variable& other) const;
+    void operator+=(const variable& other) const;
+    VariableExpr operator+(const variable& other) const;
+    VariableExpr operator-(const variable& other) const;
+    VariableExpr operator*(const variable& other) const;
     Condition operator==(uint64_t immediate) const;
     Condition operator!=(uint64_t immediate) const;
 
@@ -157,13 +158,13 @@ public:
     Address(Address&& other) noexcept = default;
     Address& operator=(Address&& other) noexcept = default;
 
-    void operator=(const Variable& variable) const;
+    void operator=(const variable& variable) const;
     void operator=(const Address& address) const;
     void operator=(const AddressExpr& expr) const;
-    void operator+=(const Variable& variable) const;
+    void operator+=(const variable& variable) const;
     void operator+=(const Address& other) const;
     AddressExpr operator+(const Address& other) const;
-    AddressExpr operator+(const Variable& variable) const;
+    AddressExpr operator+(const variable& variable) const;
 
     ResourceHandle handle{0};
 
@@ -172,7 +173,7 @@ private:
     friend class RemoteAddr;
 };
 
-inline AddressExpr operator+(const Variable& var, const Address& addr)
+inline AddressExpr operator+(const variable& var, const Address& addr)
 {
     return AddressExpr(var.handle, addr.handle, false);
 }
@@ -187,7 +188,7 @@ public:
     void operator=(const LocalAddr& other);
 
     Address addr;
-    Variable token;
+    variable token;
     ResourceHandle handle{0};
 
 private:
@@ -204,7 +205,7 @@ public:
     void operator=(const RemoteAddr& other);
 
     Address addr;
-    Variable token;
+    variable token;
     ResourceHandle handle{0};
 
 private:
@@ -250,19 +251,25 @@ private:
 
 template <typename T>
 T GetResByChannel(ChannelHandle channel, uint32_t varIndex);
+template <typename T>
+inline T get_res_by_channel(ChannelHandle channel, uint32_t varIndex)
+{
+    return GetResByChannel<T>(channel, varIndex);
+}
 
 template <>
-Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t varIndex);
+variable GetResByChannel<variable>(ChannelHandle channel, uint32_t varIndex);
 
-Result LoadArg(Variable variable, uint32_t argId);
-Result Load(Variable address, Variable destination);
-Result Load(Variable address, Array<Variable>& destinations, uint32_t count);
-Result Load(uint64_t address, Variable destination);
-Result Load(uint64_t address, Array<Variable>& destinations, uint32_t count);
-Result Store(Variable address, Variable source);
-Result Store(uint64_t address, Variable source);
+Result LoadArg(variable var, uint32_t argId);
+inline Result load_arg(variable var, uint32_t argId) { return LoadArg(var, argId); }
+Result Load(variable address, variable destination);
+Result Load(variable address, Array<variable>& destinations, uint32_t count);
+Result Load(uint64_t address, variable destination);
+Result Load(uint64_t address, Array<variable>& destinations, uint32_t count);
+Result Store(variable address, variable source);
+Result Store(uint64_t address, variable source);
 Result WriteVariableWithNotify(
-    ChannelHandle channel, Variable variable, uint32_t remoteVarIndex, uint32_t remoteNotifyIndex, uint16_t mask = 1);
+    ChannelHandle channel, variable variable, uint32_t remoteVarIndex, uint32_t remoteNotifyIndex, uint16_t mask = 1);
 Result NotifyWait(ChannelHandle channel, uint32_t localNotifyIndex, uint16_t mask = 1);
 Result NotifyRecord(ChannelHandle channel, uint32_t remoteNotifyIndex, uint16_t mask = 1);
 Result EventRecord(Event event, uint16_t mask = 1);
@@ -271,27 +278,30 @@ Result EventWait(Event event, uint16_t mask = 1);
 Result EventRecord(const char* notifyTag, uint16_t mask = 1);
 Result EventWait(const char* notifyTag, uint16_t mask = 1);
 Result Write(
-    ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, Event event, uint16_t mask = 1);
-Result LocalCopy(LocalAddr destination, LocalAddr source, Variable length, Event event, uint16_t mask = 1);
-Result LocalCopy(CcuBuffer destination, LocalAddr source, Variable length, Event event, uint16_t mask = 1);
-Result LocalCopy(LocalAddr destination, CcuBuffer source, Variable length, Event event, uint16_t mask = 1);
-Result Read(ChannelHandle channel, LocalAddr local, RemoteAddr remote, Variable length, Event event, uint16_t mask = 1);
-Result Read(ChannelHandle channel, CcuBuffer local, RemoteAddr remote, Variable length, Event event, uint16_t mask = 1);
+    ChannelHandle channel, RemoteAddr remote, LocalAddr local, variable length, Event event, uint16_t mask = 1);
+Result LocalCopy(LocalAddr destination, LocalAddr source, variable length, Event event, uint16_t mask = 1);
+Result LocalCopy(CcuBuffer destination, LocalAddr source, variable length, Event event, uint16_t mask = 1);
+Result LocalCopy(LocalAddr destination, CcuBuffer source, variable length, Event event, uint16_t mask = 1);
+Result Read(ChannelHandle channel, LocalAddr local, RemoteAddr remote, variable length, Event event, uint16_t mask = 1);
+Result Read(ChannelHandle channel, CcuBuffer local, RemoteAddr remote, variable length, Event event, uint16_t mask = 1);
 Result ReadReduce(
-    ChannelHandle channel, LocalAddr local, RemoteAddr remote, Variable length, HcclDataType dataType,
-    HcclReduceOp opType, Event event, uint16_t mask = 1);
+    ChannelHandle channel, LocalAddr local, RemoteAddr remote, variable length, ::HcclDataType dataType,
+    ::HcclReduceOp opType, Event event, uint16_t mask = 1);
 Result LocalReduce(
-    LocalAddr dst, LocalAddr src, Variable len, HcclDataType dataType, HcclReduceOp opType, Event event,
+    LocalAddr dst, LocalAddr src, variable len, ::HcclDataType dataType, ::HcclReduceOp opType, Event event,
     uint16_t mask = 1);
 Result LocalReduce(
-    CcuBuffer* buffers, uint32_t count, HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType,
-    Variable len, Event event, uint16_t mask = 1);
+    CcuBuffer* buffers, uint32_t count, ::HcclDataType dataType, ::HcclDataType outputDataType, ::HcclReduceOp opType,
+    variable len, Event event, uint16_t mask = 1);
 Result Write(
-    ChannelHandle channel, RemoteAddr remote, CcuBuffer local, Variable length, Event event, uint16_t mask = 1);
+    ChannelHandle channel, RemoteAddr remote, CcuBuffer local, variable length, Event event, uint16_t mask = 1);
 Result WriteReduce(
-    ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, HcclDataType dataType,
-    HcclReduceOp opType, Event event, uint16_t mask = 1);
+    ChannelHandle channel, RemoteAddr remote, LocalAddr local, variable length, ::HcclDataType dataType,
+    ::HcclReduceOp opType, Event event, uint16_t mask = 1);
 
+// 命名空间级 PascalCase 别名：alg_base CCU_DATAPLANE_HCOMM 分支的 GroupOpSizeVars 等结构引用
+// ccu::Variable（原 PascalCase 桩类名），类内 using 作用域不到这里，须命名空间级别名
+using Variable = variable;
 } // namespace ccu
 } // namespace AscendC
 
@@ -318,8 +328,8 @@ public:
 class Loop {
 public:
     Loop();
-    Loop(Variable& loopParam, const Func& func);
-    Loop(Variable& iterNum, Variable& addrOffset, const Func& func);
+    Loop(variable& loopParam, const Func& func);
+    Loop(variable& iterNum, variable& addrOffset, const Func& func);
     Loop(const Loop&) = default;
     ResourceHandle handle{0};
     ResourceHandle loopParamHandle{0};
@@ -329,9 +339,9 @@ public:
 class LoopGroup {
 public:
     LoopGroup();
-    LoopGroup(Variable& parallelCfg, Variable& offsetCfg, uint32_t maxLoopNum, const std::vector<Loop>& loops);
+    LoopGroup(variable& parallelCfg, variable& offsetCfg, uint32_t maxLoopNum, const std::vector<Loop>& loops);
     LoopGroup(
-        Variable& parallelCfg, Variable& offsetCfg, Variable& varOffsetCfg, uint32_t maxLoopNum,
+        variable& parallelCfg, variable& offsetCfg, variable& varOffsetCfg, uint32_t maxLoopNum,
         const std::vector<Loop>& loops);
     ResourceHandle handle{0};
 };

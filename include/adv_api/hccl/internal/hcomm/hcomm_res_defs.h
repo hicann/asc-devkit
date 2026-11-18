@@ -54,6 +54,17 @@ typedef uint64_t ThreadHandle;
 #endif
 
 /**
+ * @brief 线程类型枚举
+ */
+#ifndef THREAD_TYPE_DEFINED
+#define THREAD_TYPE_DEFINED
+typedef enum {
+    THREAD_TYPE_INVALID = -1,
+    THREAD_TYPE_TS = 0,
+} ThreadType;
+#endif
+
+/**
  * @brief 通信引擎类型枚举
  */
 typedef enum {

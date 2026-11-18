@@ -56,7 +56,6 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.cc
     ${HCCL_CC_SRC_DIR}/ops/reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_2die_mem2mem.cc
-    ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d_multi_jetty.cc
     # kfc_server 的 HALF_ALLTOALLV 分支引用该 kernel 符号，须一并编入
     ${HCCL_CC_SRC_DIR}/ops/all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_half_alltoallv_mesh1d.cc
@@ -76,6 +75,7 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/ops/kfc_server/executor/ins_kfc_server_sole_executor.cc
     ${HCCL_CC_SRC_DIR}/ops/kfc_server/template/ccu/ccu_temp_kfc_server.cc
     ${HCCL_CC_SRC_DIR}/ops/kfc_server/template/ccu/kernel/ccu_kernel_kfc_server.cc
+    ${HCCL_CC_SRC_DIR}/ops/kfc_server/template/ccu/kernel/ccu_kernel_kfc_server_a6.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/op_common.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/selector/auto_selector_base.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/selector/execute_selector.cc
@@ -110,8 +110,10 @@ set(HCCL_SELECTOR_PRODUCT_SOURCES
     ${HCCL_CC_SRC_DIR}/common/hccl_alloc_ctx_res.cc
     ${HCCL_CC_SRC_DIR}/common/hccl_mc2.cc
     ${HCCL_CC_SRC_DIR}/ops/op_common/ccu_log.cc
-    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu_res_dl.cc
-    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hccl_ccu_res_dl.cc
+    # hcomm 动态资源 dlsym 包装不编入：其 DEFINE_WEAK_FUNC 兜底（HcommIsSupport* 恒 false）与
+    # ccu_dynamic_res_stub.h 的 ST 桩强定义冲突，且 ST 世界不 dlopen libhcomm。所需符号
+    # （desc API/InsCreate/Assign/QueryAssigned/支持位）全部由 hcomm_ccu_stub.cc 内的
+    # ccu_dynamic_res_stub.h 提供。
     ${UTILS_DIR}/hccl_proxy/hcomm_dlsym_stub.cc
 )
 
@@ -205,6 +207,14 @@ target_compile_options(
 
 target_compile_definitions(${HCCL_CCU_ST_TARGET} PRIVATE -DUT_TEST -DMC2_CLIENT_ENABLE_CCU=1)
 
+# CcuEventGroup 仅在 alg_base 的 CCU_DATAPLANE_HCOMM 分支定义（PascalCase 原语），ST 桩世界
+# 两个分支头均遮蔽到 ccu_primitives_stub，单源级打开 HCOMM 使 event group 测试可见该类。
+set_source_files_properties(
+    ${HCCL_MC2_CCU_EVENT_GROUP_TESTCASE}
+    PROPERTIES
+    COMPILE_DEFINITIONS "UT_TEST;MC2_CLIENT_ENABLE_CCU=1;CCU_DATAPLANE_HCOMM"
+)
+
 target_link_libraries(
     ${HCCL_CCU_ST_TARGET}
     PRIVATE
@@ -214,6 +224,7 @@ target_link_libraries(
     ${HCCL_CHECKER_KERNEL_TARGET}
     hccl-verifier
     intf_llt_pub_basic
+    asccomm_ccu_headers
     c_sec
     pthread
     dl

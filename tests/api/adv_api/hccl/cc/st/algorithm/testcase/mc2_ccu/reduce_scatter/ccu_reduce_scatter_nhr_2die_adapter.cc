@@ -83,9 +83,9 @@ Result CaptureCcuKfcReduceScatterNhr2DieKernel(void* kernelArg)
         config.stepInfoVector.empty()) {
         return Result::PARAM_ERROR;
     }
-    std::array<AscendC::ccu::Variable, REDUCE_SCATTER_NHR_2DIE_TASK_ARG_COUNT> arguments;
+    std::array<AscendC::ccu::variable, REDUCE_SCATTER_NHR_2DIE_TASK_ARG_COUNT> arguments;
     for (uint32_t index = 0; index < arguments.size(); ++index) {
-        if (AscendC::ccu::LoadArg(arguments[index], index) != Result::SUCCESS) {
+        if (AscendC::ccu::load_arg(arguments[index], index) != Result::SUCCESS) {
             return Result::CONTRACT_ERROR;
         }
     }

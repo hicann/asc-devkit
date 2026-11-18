@@ -371,6 +371,20 @@ HcclResult HcclThreadAcquireWithStream(
     return simComm->independentOpThreadMgr_->HcclThreadAcquireWithStream(engine, stream, notifyNum, thread);
 }
 
+HcclResult HcclThreadResGetInfo(
+    HcclComm comm, ThreadHandle thread, ThreadResType resType, uint32_t infoLen, void** info)
+{
+    (void)comm;
+    (void)thread;
+    CHK_PTR_NULL(info);
+    if (resType != THREAD_RES_TYPE_STREAM || infoLen != sizeof(ThreadResTypeStream)) {
+        return HCCL_E_PARA;
+    }
+    // 返回非空 stream 占位：asccomm launch 桩不消费 stream，仅要求非空校验通过
+    *reinterpret_cast<ThreadResTypeStream*>(info) = reinterpret_cast<ThreadResTypeStream>(0x1U);
+    return HCCL_SUCCESS;
+}
+
 HcclResult HcclEngineCtxGet(HcclComm comm, const char* engineTag, CommEngine engine, void** ctx, uint64_t* size)
 {
     auto simComm = static_cast<HcclSim::SimCommunicator*>(comm);

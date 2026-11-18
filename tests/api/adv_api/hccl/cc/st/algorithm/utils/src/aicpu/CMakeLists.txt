@@ -234,3 +234,5 @@ target_compile_definitions(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE
     -DUT_TEST
     -DAICPU_COMPILE
 )
+
+target_link_libraries(${HCCL_CHECKER_KERNEL_TARGET} PRIVATE asccomm_ccu_headers)

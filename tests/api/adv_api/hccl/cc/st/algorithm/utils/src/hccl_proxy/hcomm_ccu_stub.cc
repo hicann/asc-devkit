@@ -17,6 +17,8 @@
 #include "ccu_types.h"
 #include "hccl_ccu_res.h"
 #include "ccu_kernel_proxy.h"
+#include "ccu/ccu_api/ccu_launch.h"
+#include "ccu_dynamic_res_stub.h"
 #include "sim_communicator.h"
 #include <vector>
 #include <string>
@@ -458,10 +460,91 @@ CcuResult HcommCcuKernelRegisterEnd(CcuInsHandle insHandle)
     return r == HcclSim::CcuSt::Result::SUCCESS ? CCU_SUCCESS : CCU_E_INTERNAL;
 }
 
+extern ccu_result asccomm_ccu_kernel_register_start(void* ins_handle)
+{
+    HcclSim::CcuSt::Result r = HcclSim::CcuSt::RegisterManager::Global().RegisterStart(
+        reinterpret_cast<HcclSim::CcuSt::InstanceHandle>(ins_handle));
+    return r == HcclSim::CcuSt::Result::SUCCESS ? ccu_result::CCU_SUCCESS : ccu_result::CCU_E_INTERNAL;
+}
+extern ccu_result asccomm_ccu_kernel_register(
+    void* ins_handle, uint32_t die_id, const char* kernel_func_name, const void* kernel_func, const void** kernel_args,
+    uint32_t arg_num, ccu_kernel_handle* kernel_handle)
+{
+    (void)die_id;
+    (void)kernel_func;
+    if (kernel_handle == nullptr) {
+        return ccu_result::CCU_E_PTR;
+    }
+    if (arg_num != 0U && kernel_args == nullptr) {
+        return ccu_result::CCU_E_PTR;
+    }
+    auto& registry = GetCaptureRegistry();
+    auto it = registry.find(kernel_func_name);
+    if (it == registry.end()) {
+        *kernel_handle = RecordCcuKernelRegistrationForTest();
+        return ccu_result::CCU_SUCCESS;
+    }
+    void* stArg = it->second.convert(kernel_args[0], arg_num);
+    HcclSim::CcuSt::KernelHandle handle = 0;
+    HcclSim::CcuSt::Result result = HcclSim::CcuSt::RegisterManager::Global().Register(
+        reinterpret_cast<HcclSim::CcuSt::InstanceHandle>(ins_handle), kernel_func_name, it->second.capture, stArg,
+        handle);
+    if (it->second.deleter) {
+        it->second.deleter(stArg);
+    }
+    if (result != HcclSim::CcuSt::Result::SUCCESS) {
+        return ccu_result::CCU_E_INTERNAL;
+    }
+    *kernel_handle = static_cast<ccu_kernel_handle>(handle);
+    return ccu_result::CCU_SUCCESS;
+}
+extern ccu_result asccomm_ccu_kernel_register_end(void* ins_handle)
+{
+    HcclSim::CcuSt::Result r = HcclSim::CcuSt::RegisterManager::Global().RegisterEnd(
+        reinterpret_cast<HcclSim::CcuSt::InstanceHandle>(ins_handle));
+    return r == HcclSim::CcuSt::Result::SUCCESS ? ccu_result::CCU_SUCCESS : ccu_result::CCU_E_INTERNAL;
+}
+// query 桩的版本兼容：asc-devkit 引用的 asc-comm tag（FetchContent 3dd6e71d）尚未包含
+// asccomm_ccu_res_desc 与 query 接口（该接口随 asc-comm 查询 PR 进入更新的 tag，本地源码树已含）。
+// 两种环境都要能编：tag 版头无该类型 → 本地前向声明一个等大小 POD；新版头已声明该类型与
+// 函数原型 → 桩定义必须用真类型签名（C++ 视同名不同参为重载冲突，不能写 void* 版）。
+// 按真接口的参数布局（void*/uint32_t/指针均 ABI 等宽），用宏统一两版签名。
+#ifndef ASCCOMM_CCU_RES_DESC_TYPE_COUNT
+#define ASCCOMM_CCU_RES_DESC_TYPE_COUNT 7U
+typedef struct asccomm_ccu_res_desc_tag_stub {
+    unsigned int dieId;
+    unsigned int resNum[ASCCOMM_CCU_RES_DESC_TYPE_COUNT];
+    unsigned int translatorResNum[ASCCOMM_CCU_RES_DESC_TYPE_COUNT];
+} asccomm_ccu_res_desc;
+#endif
+extern ccu_result asccomm_ccu_kernel_query_res_req(
+    void* ins_handle, uint32_t die_id, const void* kernel_func, const void** kernel_args, uint32_t arg_num,
+    asccomm_ccu_res_desc* res_desc)
+{
+    (void)ins_handle;
+    (void)die_id;
+    (void)kernel_func;
+    (void)kernel_args;
+    (void)arg_num;
+    if (res_desc != nullptr) {
+        *res_desc = asccomm_ccu_res_desc{};
+    }
+    return ccu_result::CCU_SUCCESS;
+}
 CcuResult HcommCcuKernelLaunch(
     ThreadHandle threadHandle, CcuKernelHandle kernelHandle, const void* taskArgs, uint32_t argSize)
 {
     return CCU_SUCCESS;
+}
+
+extern ccu_result asccomm_ccu_kernel_launch(
+    ccu_launch_stream stream, ccu_kernel_handle kernel_handle, const void* task_args, uint32_t arg_num)
+{
+    (void)stream;
+    (void)kernel_handle;
+    (void)task_args;
+    (void)arg_num;
+    return ccu_result::CCU_SUCCESS;
 }
 
 #ifdef __cplusplus

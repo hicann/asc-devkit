@@ -40,23 +40,23 @@ struct KfcAllReduceNhr1DContext : CcuKernelCtxBase {
     const std::map<uint32_t, uint32_t>* rank2ChannelIdx = nullptr;
 
     // 由 dispatch 显式传入的参数
-    ccu::Variable input;
-    std::vector<ccu::Variable> output;
-    std::vector<ccu::Variable> token;
-    ccu::Variable isInputOutputEqual;
-    ccu::Variable die0SliceSize;
-    ccu::Variable die1SliceSize;
-    ccu::Variable die0Size;
-    ccu::Variable die1Size;
-    ccu::Variable die0LastSliceSize;
-    ccu::Variable die1LastSliceSize;
+    ccu::variable input;
+    std::vector<ccu::variable> output;
+    std::vector<ccu::variable> token;
+    ccu::variable isInputOutputEqual;
+    ccu::variable die0SliceSize;
+    ccu::variable die1SliceSize;
+    ccu::variable die0Size;
+    ccu::variable die1Size;
+    ccu::variable die0LastSliceSize;
+    ccu::variable die1LastSliceSize;
 
-    ccu::Event localEvent;
-    std::vector<ccu::Variable> sliceOffset;
+    ccu::event localEvent;
+    std::vector<ccu::variable> sliceOffset;
 
-    ccu::LocalAddr srcMem;
-    ccu::RemoteAddr rmtDstMem;
-    ccu::LocalAddr locDstMem;
+    ccu::local_addr srcMem;
+    ccu::remote_addr rmtDstMem;
+    ccu::local_addr locDstMem;
 };
 
 CcuResult InitResource(KfcAllReduceNhr1DContext& ctx)
@@ -85,8 +85,8 @@ CcuResult InitResource(KfcAllReduceNhr1DContext& ctx)
     ctx.output.resize(localIdx + 1U);
     ctx.token.resize(localIdx + 1U);
     for (uint32_t channelIdx = 0; channelIdx < ctx.channelCount; channelIdx++) {
-        ctx.output[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], OUTPUT_XN_ID);
-        ctx.token[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], TOKEN_XN_ID);
+        ctx.output[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], OUTPUT_XN_ID);
+        ctx.token[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], TOKEN_XN_ID);
     }
     ctx.resourceAllocated = false;
     return CCU_SUCCESS;
@@ -96,14 +96,14 @@ CcuResult PreSync(KfcAllReduceNhr1DContext& ctx)
 {
     const uint32_t localIdx = ctx.channelCount;
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.output[localIdx], OUTPUT_XN_ID, CKE_IDX_0, 1U << OUTPUT_XN_ID));
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.token[localIdx], TOKEN_XN_ID, CKE_IDX_0, 1U << TOKEN_XN_ID));
     }
     const uint32_t allBit = (1U << OUTPUT_XN_ID) | (1U << TOKEN_XN_ID);
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], CKE_IDX_0, allBit));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], CKE_IDX_0, allBit));
     }
     return CCU_SUCCESS;
 }
@@ -111,16 +111,16 @@ CcuResult PreSync(KfcAllReduceNhr1DContext& ctx)
 CcuResult PostSync(KfcAllReduceNhr1DContext& ctx)
 {
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], CKE_IDX_0, 1U << POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_record(ctx.channels[i], CKE_IDX_0, 1U << POST_SYNC_ID));
     }
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], CKE_IDX_0, 1U << POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], CKE_IDX_0, 1U << POST_SYNC_ID));
     }
     return CCU_SUCCESS;
 }
 
 CcuResult DoWriteReduceSlice(
-    KfcAllReduceNhr1DContext& ctx, const u32& toRank, ccu::LocalAddr& src, ccu::RemoteAddr& dst,
+    KfcAllReduceNhr1DContext& ctx, const u32& toRank, ccu::local_addr& src, ccu::remote_addr& dst,
     const u32& sendSliceIdx, u32 signalIndex)
 {
     const u32& toRankIdx = ctx.rank2ChannelIdx->at(toRank);
@@ -134,14 +134,14 @@ CcuResult DoWriteReduceSlice(
 
     // allreduce切片的最后一块slice，大小可能不一致
     const bool islastSlice = (sendSliceIdx + 1 == ctx.rankSize);
-    ccu::Variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
+    ccu::variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
                                                            (islastSlice ? ctx.die1LastSliceSize : ctx.die1SliceSize);
     CCU_IF(sliceSize != 0)
     {
-        ccu::WriteReduce(
+        ccu::write_reduce(
             sendChannel, dst, src, sliceSize, ctx.dataType, ctx.reduceOp, ctx.localEvent, 1U << signalIndex);
     }
-    CCU_IF(sliceSize == 0) { ccu::EventRecord(ctx.localEvent, 1U << signalIndex); }
+    CCU_IF(sliceSize == 0) { ccu::event_record(ctx.localEvent, 1U << signalIndex); }
     return CCU_SUCCESS;
 }
 
@@ -158,10 +158,10 @@ CcuResult DoReduceScatterNHRSingleStep(KfcAllReduceNhr1DContext& ctx, const KfcN
 
     if (nhrStepInfo.step != 0) {
         // 通知fromRank，可以写入
-        CCU_CHK_RET(ccu::NotifyRecord(recvChannel, CKE_IDX_0, 1U << STEP0_PRE_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_record(recvChannel, CKE_IDX_0, 1U << STEP0_PRE_SYNC_ID));
 
         // 等待toRank通知其可以写入
-        CCU_CHK_RET(ccu::NotifyWait(sendChannel, CKE_IDX_0, 1U << STEP0_PRE_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_wait(sendChannel, CKE_IDX_0, 1U << STEP0_PRE_SYNC_ID));
     }
 
     for (u32 i = 0; i < sendSliceIdxList.size(); i++) {
@@ -169,7 +169,7 @@ CcuResult DoReduceScatterNHRSingleStep(KfcAllReduceNhr1DContext& ctx, const KfcN
 
         if (i != 0) {
             if (i % RANK_NUM_PER_CKE == 0) {
-                CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
+                CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
             }
         }
 
@@ -191,13 +191,13 @@ CcuResult DoReduceScatterNHRSingleStep(KfcAllReduceNhr1DContext& ctx, const KfcN
     // 空列表场景下未进入循环，不产生任何event bit，跳过EventWait避免死锁
     if (!sendSliceIdxList.empty()) {
         const u32 lastGroupSize = ((sendSliceIdxList.size() - 1U) % RANK_NUM_PER_CKE) + 1U;
-        CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << lastGroupSize) - 1U));
+        CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << lastGroupSize) - 1U));
     }
 
     // 通知toRank数据写入完毕
-    CCU_CHK_RET(ccu::NotifyRecord(sendChannel, CKE_IDX_0, 1U << STEP0_POST_SYNC_ID));
+    CCU_CHK_RET(ccu::notify_record(sendChannel, CKE_IDX_0, 1U << STEP0_POST_SYNC_ID));
     // 等待fromRank通知数据写入完毕
-    CCU_CHK_RET(ccu::NotifyWait(recvChannel, CKE_IDX_0, 1U << STEP0_POST_SYNC_ID));
+    CCU_CHK_RET(ccu::notify_wait(recvChannel, CKE_IDX_0, 1U << STEP0_POST_SYNC_ID));
     HCCL_DEBUG(
         "[DoReduceScatterNHRSingleStep] rank %u step %u, toRank=%u, fromRank=%u, nSlice=%zu", ctx.rankId,
         nhrStepInfo.step, nhrStepInfo.toRank, nhrStepInfo.fromRank, sendSliceIdxList.size());
@@ -214,7 +214,7 @@ CcuResult DoReduceScatterNHR(KfcAllReduceNhr1DContext& ctx)
 }
 
 CcuResult DoSendRecvSlice(
-    KfcAllReduceNhr1DContext& ctx, const u32& toRank, ccu::LocalAddr& src, ccu::RemoteAddr& dst,
+    KfcAllReduceNhr1DContext& ctx, const u32& toRank, ccu::local_addr& src, ccu::remote_addr& dst,
     const u32& sendSliceIdx, u32 signalIndex)
 {
     const u32& toRankIdx = ctx.rank2ChannelIdx->at(toRank);
@@ -227,10 +227,10 @@ CcuResult DoSendRecvSlice(
     }
 
     const bool islastSlice = (sendSliceIdx + 1 == ctx.rankSize);
-    ccu::Variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
+    ccu::variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
                                                            (islastSlice ? ctx.die1LastSliceSize : ctx.die1SliceSize);
-    CCU_IF(sliceSize != 0) { ccu::Write(sendChannel, dst, src, sliceSize, ctx.localEvent, 1U << signalIndex); }
-    CCU_IF(sliceSize == 0) { ccu::EventRecord(ctx.localEvent, 1U << signalIndex); }
+    CCU_IF(sliceSize != 0) { ccu::write(sendChannel, dst, src, sliceSize, ctx.localEvent, 1U << signalIndex); }
+    CCU_IF(sliceSize == 0) { ccu::event_record(ctx.localEvent, 1U << signalIndex); }
     return CCU_SUCCESS;
 }
 
@@ -250,7 +250,7 @@ CcuResult DoAllGatherNHRSingleStep(KfcAllReduceNhr1DContext& ctx, const KfcNhrSt
 
         if (i != 0) {
             if (i % RANK_NUM_PER_CKE == 0) {
-                CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
+                CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
             }
         }
 
@@ -266,14 +266,14 @@ CcuResult DoAllGatherNHRSingleStep(KfcAllReduceNhr1DContext& ctx, const KfcNhrSt
     // 空列表场景下未进入循环，不产生任何event bit，跳过EventWait避免死锁
     if (!sendSliceIdxList.empty()) {
         const u32 lastGroupSize = ((sendSliceIdxList.size() - 1U) % RANK_NUM_PER_CKE) + 1U;
-        CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << lastGroupSize) - 1U));
+        CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << lastGroupSize) - 1U));
     }
 
     if (nhrStepInfo.step + 1 != ctx.stepInfoVector->size()) { // 最后一步不需要同步
         // 通知toRank，写入完毕
-        CCU_CHK_RET(ccu::NotifyRecord(sendChannel, CKE_IDX_0, 1U << STEP1_POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_record(sendChannel, CKE_IDX_0, 1U << STEP1_POST_SYNC_ID));
         // 等待fromRank通知写入完毕
-        CCU_CHK_RET(ccu::NotifyWait(recvChannel, CKE_IDX_0, 1U << STEP1_POST_SYNC_ID));
+        CCU_CHK_RET(ccu::notify_wait(recvChannel, CKE_IDX_0, 1U << STEP1_POST_SYNC_ID));
     }
 
     HCCL_DEBUG(
@@ -311,7 +311,7 @@ std::vector<u32> GetNonTxSliceIdxs(KfcAllReduceNhr1DContext& ctx, const std::vec
 }
 
 CcuResult DoLocalCopySlice(
-    KfcAllReduceNhr1DContext& ctx, ccu::LocalAddr& src, ccu::LocalAddr& dst, const u32& copySliceIdx, u32 signalIndex)
+    KfcAllReduceNhr1DContext& ctx, ccu::local_addr& src, ccu::local_addr& dst, const u32& copySliceIdx, u32 signalIndex)
 {
     // 添加 die1 偏移
     if (ctx.axisId == SEC_AXIS_ID) {
@@ -320,17 +320,17 @@ CcuResult DoLocalCopySlice(
     }
 
     const bool islastSlice = (copySliceIdx + 1 == ctx.rankSize);
-    ccu::Variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
+    ccu::variable& sliceSize = ctx.axisId == FST_AXIS_ID ? (islastSlice ? ctx.die0LastSliceSize : ctx.die0SliceSize) :
                                                            (islastSlice ? ctx.die1LastSliceSize : ctx.die1SliceSize);
-    CCU_IF(sliceSize != 0) { ccu::LocalCopy(dst, src, sliceSize, ctx.localEvent, 1U << signalIndex); }
-    CCU_IF(sliceSize == 0) { ccu::EventRecord(ctx.localEvent, 1U << signalIndex); }
+    CCU_IF(sliceSize != 0) { ccu::local_copy(dst, src, sliceSize, ctx.localEvent, 1U << signalIndex); }
+    CCU_IF(sliceSize == 0) { ccu::event_record(ctx.localEvent, 1U << signalIndex); }
     return CCU_SUCCESS;
 }
 
 CcuResult LocalCopySlices(KfcAllReduceNhr1DContext& ctx)
 {
     for (u64 i = 0; i < ctx.rankSize; i++) {
-        ctx.sliceOffset.push_back(ccu::Variable());
+        ctx.sliceOffset.push_back(ccu::variable());
         if (i == 0) {
             ctx.sliceOffset[i] = 0;
         } else {
@@ -350,7 +350,7 @@ CcuResult LocalCopySlices(KfcAllReduceNhr1DContext& ctx)
 
             if (i != 0) {
                 if (i % RANK_NUM_PER_CKE == 0) {
-                    CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
+                    CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << RANK_NUM_PER_CKE) - 1U));
                 }
             }
 
@@ -367,7 +367,7 @@ CcuResult LocalCopySlices(KfcAllReduceNhr1DContext& ctx)
         // 空列表场景下未进入循环，不产生任何event bit，跳过EventWait避免死锁
         if (!nonTxSliceIdxList.empty()) {
             const u32 lastGroupSize = ((nonTxSliceIdxList.size() - 1U) % RANK_NUM_PER_CKE) + 1U;
-            CCU_CHK_RET(ccu::EventWait(ctx.localEvent, (1U << lastGroupSize) - 1U));
+            CCU_CHK_RET(ccu::event_wait(ctx.localEvent, (1U << lastGroupSize) - 1U));
         }
     }
     return CCU_SUCCESS;
@@ -375,9 +375,9 @@ CcuResult LocalCopySlices(KfcAllReduceNhr1DContext& ctx)
 } // namespace
 
 CcuResult CcuKernelKfcAllReduceNHR1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable isInputOutputEqual,
-    ccu::Variable die0Size, ccu::Variable die1Size, ccu::Variable die0SliceSize, ccu::Variable die1SliceSize,
-    ccu::Variable die0LastSliceSize, ccu::Variable die1LastSliceSize, const ChannelHandle channels[],
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable isInputOutputEqual,
+    ccu::variable die0Size, ccu::variable die1Size, ccu::variable die0SliceSize, ccu::variable die1SliceSize,
+    ccu::variable die0LastSliceSize, ccu::variable die1LastSliceSize, const ChannelHandle channels[],
     uint32_t channelCount, uint32_t rankSize, uint32_t rankId, uint32_t axisId, uint32_t axisSize,
     const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType,
     const std::vector<KfcNhrStepInfo>& stepInfoVector, const std::map<uint32_t, uint32_t>& rank2ChannelIdx)

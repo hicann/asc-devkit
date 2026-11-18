@@ -39,4 +39,5 @@ target_include_directories(hccl-model-proxy PUBLIC
 
 target_link_libraries(hccl-model-proxy PUBLIC
     ${HCCL_CHECKER_KERNEL_TARGET}
+    asccomm_ccu_headers
 )

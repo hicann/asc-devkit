@@ -20,11 +20,11 @@ namespace mc2_ops_hccl {
 using namespace hcomm;
 
 CcuResult CcuReduceScatterMesh1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable scratch,
-    ccu::Variable currentRankSliceInputOffset, ccu::Variable chunkSize, ccu::Variable chunkLoopNum,
-    ccu::Variable tailSize, ccu::Variable fullGoAddrOffset, ccu::Variable fullGoLoopParam,
-    ccu::Variable fullGoParallelParam, ccu::Variable fullGoResidual, ccu::Variable tailGoAddrOffset,
-    ccu::Variable tailGoLoopParam, ccu::Variable tailGoParallelParam, ccu::Variable tailGoResidual,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable scratch,
+    ccu::variable currentRankSliceInputOffset, ccu::variable chunkSize, ccu::variable chunkLoopNum,
+    ccu::variable tailSize, ccu::variable fullGoAddrOffset, ccu::variable fullGoLoopParam,
+    ccu::variable fullGoParallelParam, ccu::variable fullGoResidual, ccu::variable tailGoAddrOffset,
+    ccu::variable tailGoLoopParam, ccu::variable tailGoParallelParam, ccu::variable tailGoResidual,
     const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId,
     const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType);
 

@@ -15,6 +15,8 @@
 #include "ccu_rep_context_v1.h"
 #include "ccu_types.h"
 #include "hccl_ccu_res.h"
+#include "ccu/ccu_api/ccu_launch.h"
+#include "ccu_dynamic_res_stub.h"
 #include <vector>
 #include <string>
 
@@ -369,16 +371,53 @@ CcuResult HcommCcuKernelRegister(
 
 CcuResult HcommCcuKernelRegisterEnd(CcuInsHandle insHandle) { return CCU_SUCCESS; }
 
-CcuResult HcommCcuKernelLaunch(
-    ThreadHandle threadHandle, CcuKernelHandle kernelHandle, const void* taskArgs, uint32_t argSize)
+// asc-comm 数据面注册链桩（ccu UT 桩世界无 sim RegisterManager/capture registry——那是
+// st/algorithm 系的编译器桩世界；本目标用例只断言注册链被走到与 launch 计数，退化为计数成功桩）
+static uint32_t g_asccommRegisterStartCount = 0U;
+static uint32_t g_asccommRegisterCount = 0U;
+static uint32_t g_asccommRegisterEndCount = 0U;
+extern ccu_result asccomm_ccu_kernel_register_start(void* ins_handle)
 {
+    (void)ins_handle;
+    ++g_asccommRegisterStartCount;
+    return ccu_result::CCU_SUCCESS;
+}
+extern ccu_result asccomm_ccu_kernel_register(
+    void* ins_handle, uint32_t die_id, const char* kernel_func_name, const void* kernel_func, const void** kernel_args,
+    uint32_t arg_num, ccu_kernel_handle* kernel_handle)
+{
+    (void)ins_handle;
+    (void)die_id;
+    (void)kernel_func_name;
+    (void)kernel_func;
+    (void)kernel_args;
+    (void)arg_num;
+    if (kernel_handle == nullptr) {
+        return ccu_result::CCU_E_PTR;
+    }
+    ++g_asccommRegisterCount;
+    *kernel_handle = static_cast<ccu_kernel_handle>(g_asccommRegisterCount);
+    return ccu_result::CCU_SUCCESS;
+}
+extern ccu_result asccomm_ccu_kernel_register_end(void* ins_handle)
+{
+    (void)ins_handle;
+    ++g_asccommRegisterEndCount;
+    return ccu_result::CCU_SUCCESS;
+}
+extern ccu_result asccomm_ccu_kernel_launch(
+    ccu_launch_stream stream, ccu_kernel_handle kernel_handle, const void* task_args, uint32_t arg_num)
+{
+    (void)stream;
+    (void)kernel_handle;
+    (void)task_args;
+    (void)arg_num;
     ++mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount;
     if (mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail) {
-        return CCU_E_INTERNAL;
+        return ccu_result::CCU_E_INTERNAL;
     }
-    return CCU_SUCCESS;
+    return ccu_result::CCU_SUCCESS;
 }
-
 #ifdef __cplusplus
 }
 #endif // __cplusplus

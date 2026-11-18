@@ -376,12 +376,12 @@ void AppendSimple(OpCode code, ResourceHandle destination, ResourceHandle source
 }
 } // namespace
 
-Variable::Variable() : handle(CompilerContext::Current().AllocateVariable()) {}
-Variable::Variable(ResourceHandle existingHandle) : handle(existingHandle) {}
+variable::variable() : handle(CompilerContext::Current().AllocateVariable()) {}
+variable::variable(ResourceHandle existingHandle) : handle(existingHandle) {}
 
-void Variable::operator=(const Variable& other) const { AppendSimple(OpCode::ASSIGN_VAR, handle, other.handle); }
+void variable::operator=(const variable& other) const { AppendSimple(OpCode::ASSIGN_VAR, handle, other.handle); }
 
-void Variable::operator=(const VariableExpr& expr) const
+void variable::operator=(const VariableExpr& expr) const
 {
     static const std::map<ArithmeticOp, OpCode> opCodeMap = {
         {ArithmeticOp::ADD, OpCode::ADD_VAR},
@@ -395,7 +395,7 @@ void Variable::operator=(const VariableExpr& expr) const
     CompilerContext::Current().Append(arithOp);
 }
 
-void Variable::operator=(uint64_t immediate) const
+void variable::operator=(uint64_t immediate) const
 {
     Operation operation;
     operation.code = OpCode::ASSIGN_IMM;
@@ -404,7 +404,7 @@ void Variable::operator=(uint64_t immediate) const
     CompilerContext::Current().Append(operation);
 }
 
-void Variable::operator+=(const Variable& other) const
+void variable::operator+=(const variable& other) const
 {
     Operation operation;
     operation.code = OpCode::ADD_VAR;
@@ -414,26 +414,26 @@ void Variable::operator+=(const Variable& other) const
     CompilerContext::Current().Append(operation);
 }
 
-VariableExpr Variable::operator+(const Variable& other) const { return VariableExpr(handle, other.handle); }
+VariableExpr variable::operator+(const variable& other) const { return VariableExpr(handle, other.handle); }
 
-VariableExpr Variable::operator-(const Variable& other) const
+VariableExpr variable::operator-(const variable& other) const
 {
     return VariableExpr(handle, other.handle, ArithmeticOp::SUB);
 }
 
-VariableExpr Variable::operator*(const Variable& other) const
+VariableExpr variable::operator*(const variable& other) const
 {
     return VariableExpr(handle, other.handle, ArithmeticOp::MUL);
 }
 
-Condition Variable::operator==(uint64_t immediate) const { return Condition{handle, immediate, true}; }
+Condition variable::operator==(uint64_t immediate) const { return Condition{handle, immediate, true}; }
 
-Condition Variable::operator!=(uint64_t immediate) const { return Condition{handle, immediate, false}; }
+Condition variable::operator!=(uint64_t immediate) const { return Condition{handle, immediate, false}; }
 
 Address::Address() : handle(CompilerContext::Current().AllocateAddress()) {}
 Address::Address(ResourceHandle existingHandle) : handle(existingHandle) {}
 
-void Address::operator=(const Variable& variable) const
+void Address::operator=(const variable& variable) const
 {
     AppendSimple(OpCode::ADDRESS_ASSIGN_VAR, handle, variable.handle);
 }
@@ -452,7 +452,7 @@ void Address::operator=(const AddressExpr& expr) const
     CompilerContext::Current().Append(operation);
 }
 
-void Address::operator+=(const Variable& variable) const
+void Address::operator+=(const variable& variable) const
 {
     AppendSimple(OpCode::ADDRESS_ADD_VAR, handle, variable.handle);
 }
@@ -469,7 +469,7 @@ void Address::operator+=(const Address& other) const
 
 AddressExpr Address::operator+(const Address& other) const { return AddressExpr(handle, other.handle, true); }
 
-AddressExpr Address::operator+(const Variable& variable) const { return AddressExpr(handle, variable.handle, true); }
+AddressExpr Address::operator+(const variable& variable) const { return AddressExpr(handle, variable.handle, true); }
 
 LocalAddr::LocalAddr() : addr(0), token(0)
 {
@@ -514,12 +514,12 @@ void RemoteAddr::operator=(const RemoteAddr& other)
 Event::Event() : handle(CompilerContext::Current().AllocateEvent()) {}
 
 template <>
-Variable GetResByChannel<Variable>(ChannelHandle channel, uint32_t varIndex)
+variable GetResByChannel<variable>(ChannelHandle channel, uint32_t varIndex)
 {
-    return Variable(CompilerContext::Current().GetChannelVariable(channel, varIndex));
+    return variable(CompilerContext::Current().GetChannelVariable(channel, varIndex));
 }
 
-Result LoadArg(Variable variable, uint32_t argId)
+Result LoadArg(variable variable, uint32_t argId)
 {
     Operation operation;
     operation.code = OpCode::LOAD_ARG;
@@ -530,7 +530,7 @@ Result LoadArg(Variable variable, uint32_t argId)
     return Result::SUCCESS;
 }
 
-Result Load(Variable address, Variable destination)
+Result Load(variable address, variable destination)
 {
     Operation operation;
     operation.code = OpCode::LOAD_MEMORY;
@@ -540,14 +540,14 @@ Result Load(Variable address, Variable destination)
     return Result::SUCCESS;
 }
 
-Result Load(uint64_t address, Variable destination)
+Result Load(uint64_t address, variable destination)
 {
-    Variable addrVar;
+    variable addrVar;
     addrVar = address;
     return Load(addrVar, destination);
 }
 
-Result Load(Variable address, Array<Variable>& destinations, uint32_t count)
+Result Load(variable address, Array<variable>& destinations, uint32_t count)
 {
     if (count > destinations.size()) {
         return Result::PARAM_ERROR;
@@ -563,14 +563,14 @@ Result Load(Variable address, Array<Variable>& destinations, uint32_t count)
     return Result::SUCCESS;
 }
 
-Result Load(uint64_t address, Array<Variable>& destinations, uint32_t count)
+Result Load(uint64_t address, Array<variable>& destinations, uint32_t count)
 {
-    Variable addrVar;
+    variable addrVar;
     addrVar = address;
     return Load(addrVar, destinations, count);
 }
 
-Result Store(Variable address, Variable source)
+Result Store(variable address, variable source)
 {
     Operation operation;
     operation.code = OpCode::STORE_MEMORY;
@@ -580,15 +580,15 @@ Result Store(Variable address, Variable source)
     return Result::SUCCESS;
 }
 
-Result Store(uint64_t address, Variable source)
+Result Store(uint64_t address, variable source)
 {
-    Variable addrVar;
+    variable addrVar;
     addrVar = address;
     return Store(addrVar, source);
 }
 
 Result WriteVariableWithNotify(
-    ChannelHandle channel, Variable variable, uint32_t remoteVarIndex, uint32_t remoteNotifyIndex, uint16_t mask)
+    ChannelHandle channel, variable variable, uint32_t remoteVarIndex, uint32_t remoteNotifyIndex, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::WRITE_VARIABLE_NOTIFY;
@@ -663,7 +663,7 @@ Result EventWait(const char* notifyTag, uint16_t mask)
     return Result::SUCCESS;
 }
 
-Result Write(ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, Event event, uint16_t mask)
+Result Write(ChannelHandle channel, RemoteAddr remote, LocalAddr local, variable length, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::WRITE;
@@ -677,7 +677,7 @@ Result Write(ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable
     return Result::SUCCESS;
 }
 
-Result LocalCopy(LocalAddr destination, LocalAddr source, Variable length, Event event, uint16_t mask)
+Result LocalCopy(LocalAddr destination, LocalAddr source, variable length, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::LOCAL_COPY;
@@ -690,7 +690,7 @@ Result LocalCopy(LocalAddr destination, LocalAddr source, Variable length, Event
     return Result::SUCCESS;
 }
 
-Result LocalCopy(CcuBuffer destination, LocalAddr source, Variable length, Event event, uint16_t mask)
+Result LocalCopy(CcuBuffer destination, LocalAddr source, variable length, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::LOCAL_COPY;
@@ -703,7 +703,7 @@ Result LocalCopy(CcuBuffer destination, LocalAddr source, Variable length, Event
     return Result::SUCCESS;
 }
 
-Result LocalCopy(LocalAddr destination, CcuBuffer source, Variable length, Event event, uint16_t mask)
+Result LocalCopy(LocalAddr destination, CcuBuffer source, variable length, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::LOCAL_COPY;
@@ -735,21 +735,21 @@ void AppendRead(
 }
 } // namespace
 
-Result Read(ChannelHandle channel, LocalAddr local, RemoteAddr remote, Variable length, Event event, uint16_t mask)
+Result Read(ChannelHandle channel, LocalAddr local, RemoteAddr remote, variable length, Event event, uint16_t mask)
 {
     AppendRead(OpCode::READ, channel, local.handle, remote.handle, length.handle, event.handle, mask);
     return Result::SUCCESS;
 }
 
-Result Read(ChannelHandle channel, CcuBuffer local, RemoteAddr remote, Variable length, Event event, uint16_t mask)
+Result Read(ChannelHandle channel, CcuBuffer local, RemoteAddr remote, variable length, Event event, uint16_t mask)
 {
     AppendRead(OpCode::READ, channel, local.handle, remote.handle, length.handle, event.handle, mask);
     return Result::SUCCESS;
 }
 
 Result ReadReduce(
-    ChannelHandle channel, LocalAddr local, RemoteAddr remote, Variable length, HcclDataType dataType,
-    HcclReduceOp opType, Event event, uint16_t mask)
+    ChannelHandle channel, LocalAddr local, RemoteAddr remote, variable length, ::HcclDataType dataType,
+    ::HcclReduceOp opType, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::READ_REDUCE;
@@ -766,7 +766,8 @@ Result ReadReduce(
 }
 
 Result LocalReduce(
-    LocalAddr dst, LocalAddr src, Variable len, HcclDataType dataType, HcclReduceOp opType, Event event, uint16_t mask)
+    LocalAddr dst, LocalAddr src, variable len, ::HcclDataType dataType, ::HcclReduceOp opType, Event event,
+    uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::LOCAL_REDUCE;
@@ -782,8 +783,8 @@ Result LocalReduce(
 }
 
 Result LocalReduce(
-    CcuBuffer* buffers, uint32_t count, HcclDataType dataType, HcclDataType outputDataType, HcclReduceOp opType,
-    Variable len, Event event, uint16_t mask)
+    CcuBuffer* buffers, uint32_t count, ::HcclDataType dataType, ::HcclDataType outputDataType, ::HcclReduceOp opType,
+    variable len, Event event, uint16_t mask)
 {
     if (buffers == nullptr || count == 0) {
         return Result::PARAM_ERROR;
@@ -805,7 +806,7 @@ Result LocalReduce(
     return Result::SUCCESS;
 }
 
-Result Write(ChannelHandle channel, RemoteAddr remote, CcuBuffer local, Variable length, Event event, uint16_t mask)
+Result Write(ChannelHandle channel, RemoteAddr remote, CcuBuffer local, variable length, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::WRITE;
@@ -820,8 +821,8 @@ Result Write(ChannelHandle channel, RemoteAddr remote, CcuBuffer local, Variable
 }
 
 Result WriteReduce(
-    ChannelHandle channel, RemoteAddr remote, LocalAddr local, Variable length, HcclDataType dataType,
-    HcclReduceOp opType, Event event, uint16_t mask)
+    ChannelHandle channel, RemoteAddr remote, LocalAddr local, variable length, ::HcclDataType dataType,
+    ::HcclReduceOp opType, Event event, uint16_t mask)
 {
     Operation operation;
     operation.code = OpCode::WRITE_REDUCE;
@@ -839,7 +840,7 @@ Result WriteReduce(
 
 Loop::Loop() : handle(0) {}
 
-Loop::Loop(Variable& loopParam, const Func& func)
+Loop::Loop(variable& loopParam, const Func& func)
 {
     handle = CompilerContext::Current().CreateLoop();
     loopParamHandle = loopParam.handle;
@@ -848,7 +849,7 @@ Loop::Loop(Variable& loopParam, const Func& func)
     CompilerContext::Current().LoopBodyExit();
 }
 
-Loop::Loop(Variable& iterNum, Variable& addrOffset, const Func& func)
+Loop::Loop(variable& iterNum, variable& addrOffset, const Func& func)
 {
     handle = CompilerContext::Current().CreateLoop();
     loopParamHandle = iterNum.handle;
@@ -860,7 +861,7 @@ Loop::Loop(Variable& iterNum, Variable& addrOffset, const Func& func)
 
 LoopGroup::LoopGroup() : handle(0) {}
 
-LoopGroup::LoopGroup(Variable& parallelCfg, Variable& offsetCfg, uint32_t maxLoopNum, const std::vector<Loop>& loops)
+LoopGroup::LoopGroup(variable& parallelCfg, variable& offsetCfg, uint32_t maxLoopNum, const std::vector<Loop>& loops)
 {
     std::vector<ResourceHandle> loopHandles;
     std::vector<ResourceHandle> loopParamHandles;
@@ -873,7 +874,7 @@ LoopGroup::LoopGroup(Variable& parallelCfg, Variable& offsetCfg, uint32_t maxLoo
 }
 
 LoopGroup::LoopGroup(
-    Variable& parallelCfg, Variable& offsetCfg, Variable& varOffsetCfg, uint32_t maxLoopNum,
+    variable& parallelCfg, variable& offsetCfg, variable& varOffsetCfg, uint32_t maxLoopNum,
     const std::vector<Loop>& loops)
 {
     std::vector<ResourceHandle> loopHandles;

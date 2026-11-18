@@ -29,6 +29,10 @@ DECL_WEAK_FUNC(
 DECL_SUPPORT_FLAG(HcclChannelQuery);
 DECL_WEAK_FUNC(HcclResult, HcclChannelDestroy, HcclComm comm, const ChannelHandle* channels, uint32_t channelNum);
 DECL_SUPPORT_FLAG(HcclChannelDestroy);
+DECL_WEAK_FUNC(
+    HcclResult, HcclThreadResGetInfo, HcclComm comm, ThreadHandle thread, ThreadResType resType, uint32_t infoLen,
+    void** info);
+DECL_SUPPORT_FLAG(HcclThreadResGetInfo);
 // 动态库管理接口（大驼峰命名）
 void HcclResDlInit(void* libHcommHandle);
 

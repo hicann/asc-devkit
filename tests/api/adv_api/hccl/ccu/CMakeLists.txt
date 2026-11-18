@@ -26,6 +26,7 @@ set(CCU_INCLUDE_LIST
     ${UT_COMMON_INCLUDE_LIST}
     ${CANN_3RD_LIB_PATH}/gtest/include
     ${ASCENDC_DIR}
+    ${ASCENDC_DIR}/include
     ${HCCL_CC_INCLUDE_DIR}
     ${HCCL_CC_INCLUDE_DIR}/hcomm
     ${HCCL_CC_INCLUDE_DIR}/hcomm/hccl
@@ -156,6 +157,7 @@ target_compile_definitions(${CCU_UT_TARGET} PRIVATE
 
 target_link_libraries(${CCU_UT_TARGET} PRIVATE
     intf_llt_pub_basic
+    asccomm_ccu_headers
     c_sec
     pthread
     dl

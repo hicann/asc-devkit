@@ -24,9 +24,9 @@ namespace mc2_ops_hccl {
 // die0/die1 尺寸与分片尺寸为 AIV prepare 运行期计算（MC2 device-driven），经 xnData 传入。
 // outputType 缺省（RESERVED）时归一化为 dataType；NHR 远端 reduce 仅携带单一类型，故要求两者一致。
 CcuResult CcuKernelKfcAllReduceNHR1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable isInputOutputEqual,
-    ccu::Variable die0Size, ccu::Variable die1Size, ccu::Variable die0SliceSize, ccu::Variable die1SliceSize,
-    ccu::Variable die0LastSliceSize, ccu::Variable die1LastSliceSize, const ChannelHandle channels[],
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable isInputOutputEqual,
+    ccu::variable die0Size, ccu::variable die1Size, ccu::variable die0SliceSize, ccu::variable die1SliceSize,
+    ccu::variable die0LastSliceSize, ccu::variable die1LastSliceSize, const ChannelHandle channels[],
     uint32_t channelCount, uint32_t rankSize, uint32_t rankId, uint32_t axisId, uint32_t axisSize,
     const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType,
     const std::vector<KfcNhrStepInfo>& stepInfoVector, const std::map<uint32_t, uint32_t>& rank2ChannelIdx);

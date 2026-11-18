@@ -20,9 +20,9 @@ namespace mc2_ops_hccl {
 using namespace hcomm;
 
 CcuResult CcuReduceScatterMeshMem2Mem1DPeerOnlyKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo,
-    ccu::Variable currentRankSliceInputOffset, ccu::Variable skipLocalRankCopy, ccu::Variable tailSize,
-    ccu::Variable chunkLoopNum, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo,
+    ccu::variable currentRankSliceInputOffset, ccu::variable skipLocalRankCopy, ccu::variable tailSize,
+    ccu::variable chunkLoopNum, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize,
     uint32_t rankId, const HcclDataType& dataType, const HcclReduceOp& reduceType);
 
 } // namespace mc2_ops_hccl

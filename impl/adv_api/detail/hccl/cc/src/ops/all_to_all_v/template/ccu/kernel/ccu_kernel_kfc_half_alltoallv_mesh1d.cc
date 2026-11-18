@@ -39,21 +39,21 @@ struct KfcHalfAlltoAllVMesh1DContext : CcuKernelCtxBase {
     uint32_t rankSize{0};
     uint32_t rankId{0};
 
-    ccu::Variable userInAddr;
-    ccu::Variable recvOffset;
+    ccu::variable userInAddr;
+    ccu::variable recvOffset;
     // 建图期常量：本端 window 基址
-    ccu::Variable localWinAddr;
+    ccu::variable localWinAddr;
     // peerBuffer[peerId] 为对端 cclBuffer 首地址；本 rank 槽位由 myBufferAddr 填入
-    std::vector<ccu::Variable> peerBuffer;
-    std::vector<ccu::Variable> token;
+    std::vector<ccu::variable> peerBuffer;
+    std::vector<ccu::variable> token;
     // 前 rankSize 个为 A 片参数，后 rankSize 个为 B 片参数
-    std::unique_ptr<ccu::Array<ccu::Variable>> sendSize;
-    std::unique_ptr<ccu::Array<ccu::Variable>> sendOffset;
+    std::unique_ptr<ccu::array<ccu::variable>> sendSize;
+    std::unique_ptr<ccu::array<ccu::variable>> sendOffset;
     GroupOpSizeVars goSize;
-    std::vector<ccu::Event> writeDoneEvents;
+    std::vector<ccu::event> writeDoneEvents;
 
-    ccu::Variable missionNum;
-    ccu::Variable missionIndex;
+    ccu::variable missionNum;
+    ccu::variable missionIndex;
     // 构图期常量（CCU_IF 为运行时分支，构图期两分支都会执行，tag/位选择必须用宿主常量）
     uint32_t hostMissionIndex = 0;
     uint32_t hostMissionNum = 1;
@@ -76,14 +76,14 @@ static CcuResult InitResource(KfcHalfAlltoAllVMesh1DContext& ctx)
         if (peerId == ctx.rankId) {
             continue;
         }
-        ctx.peerBuffer[peerId] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], HA2AV_BUFFER_XN_ID);
-        ctx.token[peerId] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], HA2AV_TOKEN_XN_ID);
+        ctx.peerBuffer[peerId] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], HA2AV_BUFFER_XN_ID);
+        ctx.token[peerId] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], HA2AV_TOKEN_XN_ID);
         channelIdx++;
     }
 
     const uint32_t sliceArgNum = ctx.rankSize * NUM_TWO;
-    ctx.sendSize = std::make_unique<ccu::Array<ccu::Variable>>(sliceArgNum);
-    ctx.sendOffset = std::make_unique<ccu::Array<ccu::Variable>>(sliceArgNum);
+    ctx.sendSize = std::make_unique<ccu::array<ccu::variable>>(sliceArgNum);
+    ctx.sendOffset = std::make_unique<ccu::array<ccu::variable>>(sliceArgNum);
 
     const uint32_t eventNum = (ctx.rankSize + HA2AV_BITS_PER_EVENT - 1) / HA2AV_BITS_PER_EVENT;
     ctx.writeDoneEvents.resize(eventNum);
@@ -93,27 +93,27 @@ static CcuResult InitResource(KfcHalfAlltoAllVMesh1DContext& ctx)
 
 // 从设备内存读入 A/B 切片参数（sendSize/sendOffset 各 2*rankSize 个 u64）
 static CcuResult LoadSliceArgs(
-    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::Variable sendSizeAddr, ccu::Variable sendOffsetAddr)
+    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::variable sendSizeAddr, ccu::variable sendOffsetAddr)
 {
     const uint32_t sliceArgNum = ctx.rankSize * NUM_TWO;
-    CCU_CHK_RET(ccu::Load(sendSizeAddr, *ctx.sendSize, sliceArgNum));
-    CCU_CHK_RET(ccu::Load(sendOffsetAddr, *ctx.sendOffset, sliceArgNum));
+    CCU_CHK_RET(ccu::load(sendSizeAddr, *ctx.sendSize, sliceArgNum));
+    CCU_CHK_RET(ccu::load(sendOffsetAddr, *ctx.sendOffset, sliceArgNum));
     return CCU_SUCCESS;
 }
 
 static CcuResult LoadArgsFromMem(
-    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::Variable userInAddr, ccu::Variable sendSizeAddr,
-    ccu::Variable sendOffsetAddr, ccu::Variable goSize0, ccu::Variable goSize1, ccu::Variable goSize2,
-    ccu::Variable goSize3, ccu::Variable recvOffset, ccu::Variable tokenInfo)
+    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::variable userInAddr, ccu::variable sendSizeAddr,
+    ccu::variable sendOffsetAddr, ccu::variable goSize0, ccu::variable goSize1, ccu::variable goSize2,
+    ccu::variable goSize3, ccu::variable recvOffset, ccu::variable tokenInfo)
 {
     ctx.userInAddr = userInAddr;
     // 本端 window 基址来自建图期的 kernelArg，非运行时 xn 参数
     ctx.peerBuffer[ctx.rankId] = ctx.localWinAddr;
     ctx.token[ctx.rankId] = tokenInfo;
     ctx.recvOffset = recvOffset;
-    ctx.goSize.addrOffset = goSize0;
-    ctx.goSize.loopParam = goSize1;
-    ctx.goSize.parallelParam = goSize2;
+    ctx.goSize.addr_offset = goSize0;
+    ctx.goSize.loop_param = goSize1;
+    ctx.goSize.parallel_param = goSize2;
     ctx.goSize.residual = goSize3;
     return LoadSliceArgs(ctx, sendSizeAddr, sendOffsetAddr);
 }
@@ -124,14 +124,14 @@ static CcuResult PreSync(KfcHalfAlltoAllVMesh1DContext& ctx)
     const uint16_t bufferBit = HA2AV_BUFFER_BITS[ctx.hostMissionIndex];
     const uint16_t tokenBit = HA2AV_TOKEN_BITS[ctx.hostMissionIndex];
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.peerBuffer[ctx.rankId], HA2AV_BUFFER_XN_ID, HA2AV_BUFFER_CKE_IDX, bufferBit));
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.token[ctx.rankId], HA2AV_TOKEN_XN_ID, HA2AV_TOKEN_CKE_IDX, tokenBit));
     }
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], HA2AV_BUFFER_CKE_IDX, bufferBit));
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], HA2AV_TOKEN_CKE_IDX, tokenBit));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], HA2AV_BUFFER_CKE_IDX, bufferBit));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], HA2AV_TOKEN_CKE_IDX, tokenBit));
     }
     return CCU_SUCCESS;
 }
@@ -147,10 +147,10 @@ static CcuResult PostSync(KfcHalfAlltoAllVMesh1DContext& ctx)
         {
             // mission 0 执行远程 Post 同步
             for (uint32_t i = 0; i < ctx.channelCount; i++) {
-                CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
+                CCU_CHK_RET(ccu::notify_record(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
             }
             for (uint32_t i = 0; i < ctx.channelCount; i++) {
-                CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
+                CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
             }
         }
         // mission 1: 什么都不做
@@ -159,10 +159,10 @@ static CcuResult PostSync(KfcHalfAlltoAllVMesh1DContext& ctx)
     {
         // 单 mission 模式：执行远程 Post 同步
         for (uint32_t i = 0; i < ctx.channelCount; i++) {
-            CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
+            CCU_CHK_RET(ccu::notify_record(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
         }
         for (uint32_t i = 0; i < ctx.channelCount; i++) {
-            CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
+            CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], HA2AV_POST_SYNC_CKE_IDX, HA2AV_POST_SYNC_BIT));
         }
     }
     return CCU_SUCCESS;
@@ -172,12 +172,12 @@ static CcuResult PostSync(KfcHalfAlltoAllVMesh1DContext& ctx)
 // m1 发 B 片（sendSize 后段，目的地址 += sizeA）；单 mission 合并 A+B 一次搬运。
 // ctx 不可取 const：CCU_IF 宏内部对 missionNum/missionIndex 调用非 const 的比较运算符。
 static void SelectSendSlice(
-    KfcHalfAlltoAllVMesh1DContext& ctx, uint32_t peerId, ccu::Variable& curCount, ccu::Variable& curOffset)
+    KfcHalfAlltoAllVMesh1DContext& ctx, uint32_t peerId, ccu::variable& curCount, ccu::variable& curOffset)
 {
-    const ccu::Variable sizeA = (*ctx.sendSize)[peerId];
-    const ccu::Variable sizeB = (*ctx.sendSize)[ctx.rankSize + peerId];
-    const ccu::Variable offsetA = (*ctx.sendOffset)[peerId];
-    const ccu::Variable offsetB = (*ctx.sendOffset)[ctx.rankSize + peerId];
+    const ccu::variable sizeA = (*ctx.sendSize)[peerId];
+    const ccu::variable sizeB = (*ctx.sendSize)[ctx.rankSize + peerId];
+    const ccu::variable offsetA = (*ctx.sendOffset)[peerId];
+    const ccu::variable offsetB = (*ctx.sendOffset)[ctx.rankSize + peerId];
 
     CCU_IF(ctx.missionNum == 1)
     {
@@ -200,7 +200,7 @@ static void SelectSendSlice(
 }
 
 // 双 mission 下 m1 的接收地址须跳过 m0 的数据段：偏移量是本端发往该 peer 的 A 片大小，
-static void ApplyDualMissionRecvOffset(KfcHalfAlltoAllVMesh1DContext& ctx, ccu::Address& addr, uint32_t peerId)
+static void ApplyDualMissionRecvOffset(KfcHalfAlltoAllVMesh1DContext& ctx, ccu::address& addr, uint32_t peerId)
 {
     CCU_IF(ctx.missionNum == HA2AV_DUAL_MISSION_NUM)
     {
@@ -209,10 +209,10 @@ static void ApplyDualMissionRecvOffset(KfcHalfAlltoAllVMesh1DContext& ctx, ccu::
 }
 
 static CcuResult DoHalfAlltoAllVWrite(
-    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::LocalAddr& localSrc, ccu::LocalAddr& localDst)
+    KfcHalfAlltoAllVMesh1DContext& ctx, ccu::local_addr& localSrc, ccu::local_addr& localDst)
 {
-    ccu::Variable curCount;
-    ccu::Variable curOffset;
+    ccu::variable curCount;
+    ccu::variable curOffset;
     uint32_t channelIdx = 0;
 
     for (uint32_t peerId = 0; peerId < ctx.rankSize; peerId++) {
@@ -221,7 +221,7 @@ static CcuResult DoHalfAlltoAllVWrite(
 
         SelectSendSlice(ctx, peerId, curCount, curOffset);
 
-        ccu::LocalAddr src;
+        ccu::local_addr src;
         src.addr = ctx.userInAddr;
         src.addr += curOffset;
         src.token = ctx.token[ctx.rankId];
@@ -235,11 +235,11 @@ static CcuResult DoHalfAlltoAllVWrite(
             ApplyDualMissionRecvOffset(ctx, localDst.addr, peerId);
 
             localDst.token = ctx.token[ctx.rankId];
-            CCU_CHK_RET(ccu::EventRecord(ctx.writeDoneEvents[eventIdx], peerBit));
+            CCU_CHK_RET(ccu::event_record(ctx.writeDoneEvents[eventIdx], peerBit));
             continue;
         }
 
-        ccu::RemoteAddr dst;
+        ccu::remote_addr dst;
         dst.addr = ctx.peerBuffer[peerId];
         dst.addr += ctx.recvOffset;
 
@@ -251,9 +251,9 @@ static CcuResult DoHalfAlltoAllVWrite(
         CCU_IF(curCount != 0)
         {
             CCU_CHK_RET(
-                ccu::Write(ctx.channels[channelIdx], dst, src, curCount, ctx.writeDoneEvents[eventIdx], peerBit));
+                ccu::write(ctx.channels[channelIdx], dst, src, curCount, ctx.writeDoneEvents[eventIdx], peerBit));
         }
-        CCU_IF(curCount == 0) { CCU_CHK_RET(ccu::EventRecord(ctx.writeDoneEvents[eventIdx], peerBit)); }
+        CCU_IF(curCount == 0) { CCU_CHK_RET(ccu::event_record(ctx.writeDoneEvents[eventIdx], peerBit)); }
         channelIdx++;
     }
     return CCU_SUCCESS;
@@ -267,15 +267,15 @@ static CcuResult DoHalfAlltoAllVWait(KfcHalfAlltoAllVMesh1DContext& ctx)
         const uint32_t bitCount = std::min(remainingRanks, HA2AV_BITS_PER_EVENT);
         const uint16_t eventMask = bitCount == HA2AV_BITS_PER_EVENT ? static_cast<uint16_t>(UINT16_MAX) :
                                                                       static_cast<uint16_t>((1U << bitCount) - 1);
-        CCU_CHK_RET(ccu::EventWait(ctx.writeDoneEvents[eventIdx], eventMask));
+        CCU_CHK_RET(ccu::event_wait(ctx.writeDoneEvents[eventIdx], eventMask));
     }
     return CCU_SUCCESS;
 }
 
 static CcuResult DoHalfAlltoAllV(KfcHalfAlltoAllVMesh1DContext& ctx)
 {
-    ccu::LocalAddr localSrc;
-    ccu::LocalAddr localDst;
+    ccu::local_addr localSrc;
+    ccu::local_addr localDst;
     CCU_CHK_RET(DoHalfAlltoAllVWrite(ctx, localSrc, localDst));
 
     // 本地拷贝仅 mission 0 执行
@@ -286,11 +286,11 @@ static CcuResult DoHalfAlltoAllV(KfcHalfAlltoAllVMesh1DContext& ctx)
     // 收尾栅栏：两 mission 互等对方 writeDone 全清；bit 按 mission 错开
     if (ctx.hostMissionNum == KFC_MAX_MISSION_NUM) {
         if (ctx.hostMissionIndex == 0) {
-            CCU_CHK_RET(ccu::EventRecord("MiFin_m0", 1U << 0));
-            CCU_CHK_RET(ccu::EventWait("MiFin_m1", 1U << 1));
+            CCU_CHK_RET(ccu::event_record("MiFin_m0", 1U << 0));
+            CCU_CHK_RET(ccu::event_wait("MiFin_m1", 1U << 1));
         } else {
-            CCU_CHK_RET(ccu::EventRecord("MiFin_m1", 1U << 1));
-            CCU_CHK_RET(ccu::EventWait("MiFin_m0", 1U << 0));
+            CCU_CHK_RET(ccu::event_record("MiFin_m1", 1U << 1));
+            CCU_CHK_RET(ccu::event_wait("MiFin_m0", 1U << 0));
         }
     }
     return CCU_SUCCESS;
@@ -306,10 +306,10 @@ static CcuResult RunHalfAlltoAllV(KfcHalfAlltoAllVMesh1DContext& ctx)
 }
 
 CcuResult CcuKfcHalfAlltoAllVMesh1DKernel(
-    ccu::Variable userInAddr, ccu::Variable sendSizeAddr, ccu::Variable sendOffsetAddr, ccu::Variable goSize0,
-    ccu::Variable goSize1, ccu::Variable goSize2, ccu::Variable goSize3, ccu::Variable recvOffset,
-    ccu::Variable tokenInfo, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId,
-    uint64_t localWinAddr, ccu::Variable missionNum, ccu::Variable missionIndex, uint32_t hostMissionIndex,
+    ccu::variable userInAddr, ccu::variable sendSizeAddr, ccu::variable sendOffsetAddr, ccu::variable goSize0,
+    ccu::variable goSize1, ccu::variable goSize2, ccu::variable goSize3, ccu::variable recvOffset,
+    ccu::variable tokenInfo, const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId,
+    uint64_t localWinAddr, ccu::variable missionNum, ccu::variable missionIndex, uint32_t hostMissionIndex,
     uint32_t hostMissionNum)
 {
     KfcHalfAlltoAllVMesh1DContext ctx;

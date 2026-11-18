@@ -53,6 +53,7 @@ file(GLOB EXT_ALG_TEMPLATES CONFIGURE_DEPENDS
 # AICPU_COMPILE / HCCL_CANN_COMPAT_850 均未定义，kfc_server 注册行生效），超出
 # 46 行 sidecar 范围，故 GLOB 不收
 list(FILTER EXT_ALG_TEMPLATES EXCLUDE REGEX "kfc_server")
+list(FILTER EXT_ALG_TEMPLATES EXCLUDE REGEX "_a6\.cc$")
 # 与产品构建对齐：all_gather / reduce_scatter 的 Legacy direct-launch ccu 模板产品已停编
 # （对应各 template/ccu/CMakeLists.txt 的注释行，原由：引用已废弃的旧 hcomm::CcuKernelArg
 # API，当前头文件体系下不可编）。46 行 sidecar 的注册行均不引用它们（CCU 注册只引用
@@ -90,6 +91,7 @@ set(EXT_ALG_EXCLUDED_TEMPLATES
     reduce_scatter/template/ccu/kernel/ccu_kernel_reduce_scatter_mesh1d_2die_mem2mem.cc
     reduce_scatter/template/ccu/kernel/ccu_kernel_reduce_scatter_nhr1d_multi_jetty_mem2mem.cc
     reduce_scatter/template/ccu/kernel/ccu_kernel_reduce_scatter_mesh2die.cc
+    all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_all_to_all_mesh1d_multi_jetty.cc
 )
 # 逐项按全路径精确移除（REGEX 片段把文件名当正则用有元字符隐患）
 foreach(_excluded IN LISTS EXT_ALG_EXCLUDED_TEMPLATES)
@@ -116,8 +118,9 @@ set(EXT_ALG_FIXED_SOURCES
     ${HCCL_CC_SRC_DIR}/common/param_check.cc
     ${HCCL_CC_SRC_DIR}/common/alg_type.cc
     ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hcomm_primitives_dl.cc
-    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/ccu_res_dl.cc
-    ${HCCL_CC_SRC_DIR}/common/hcomm_dlsym/hccl_ccu_res_dl.cc
+    # ccu_res_dl.cc / hccl_ccu_res_dl.cc 不编入：其 DEFINE_WEAK_FUNC 兜底（HcommIsSupport* 恒 false）
+    # 与 hcomm_ccu_stub.cc 内 ccu_dynamic_res_stub.h 的 ST 桩强定义冲突，且 ST 世界不 dlopen libhcomm；
+    # 所需动态资源符号（desc API/InsCreate/Assign/QueryAssigned/支持位）全部由 ST 桩提供。
     # ccu_primitives_impl_dl.h（ccu_kernel_utils.h 传递包含）依赖 hcomm_dlsym/ccu/ccu_types_dl.h，
     # 且 GetCcuVersion() 引用 HcommIsSupportCcuV2()——该符号由 hcomm_dlsym_stub.cc 提供 stub 定义
     ${EXT_ALG_UTILS_HCCL_PROXY_DIR}/hcomm_dlsym_stub.cc
@@ -223,6 +226,7 @@ target_include_directories(${HCCL_EXTERNAL_ALG_TARGET} PRIVATE
     ${UT_COMMON_INCLUDE_LIST}
     ${CANN_3RD_LIB_PATH}/gtest/include
     ${ASCENDC_DIR}
+    ${ASCENDC_DIR}/include
     ${HCCL_CC_INCLUDE_DIR}
     ${HCCL_CC_INCLUDE_DIR}/hcomm
     ${HCCL_CC_INCLUDE_DIR}/hcomm/types
@@ -313,6 +317,7 @@ target_compile_definitions(${HCCL_EXTERNAL_ALG_TARGET} PRIVATE
 
 target_link_libraries(${HCCL_EXTERNAL_ALG_TARGET} PRIVATE
     intf_llt_pub_basic
+    asccomm_ccu_headers
     c_sec
     pthread
     dl

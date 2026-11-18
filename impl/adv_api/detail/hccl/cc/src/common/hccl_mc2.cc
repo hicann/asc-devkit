@@ -22,6 +22,7 @@
 #include "adapter_acl.h"
 #include "include/adv_api/hccl/internal/hccl_msg.h"
 #include "kfc_server_protocol.h"
+#include "ccu/ccu_api/ccu_launch.h"
 #include "ccu_launch_dl.h"
 #include "ccu_kernel_utils.h"
 #include <new>
@@ -942,6 +943,27 @@ void LogKernelLaunchArgs(
 }
 } // namespace
 
+static CcuResult ResolveStreamFromCcuThread(HcclComm comm, ThreadHandle threadHandle, aclrtStream& stream)
+{
+    ThreadResTypeStream streamRes = nullptr;
+    HcclResult streamRet = HcclThreadResGetInfo(
+        comm, threadHandle, THREAD_RES_TYPE_STREAM, sizeof(ThreadResTypeStream), reinterpret_cast<void**>(&streamRes));
+    CHK_PRT_RET(
+        streamRet != HCCL_SUCCESS,
+        HCCL_ERROR(
+            "[CcuKernelLaunch] resolve stream from thread failed, threadHandle[0x%llx], ret[%d]",
+            static_cast<unsigned long long>(threadHandle), streamRet),
+        CCU_E_INTERNAL);
+    CHK_PRT_RET(
+        streamRes == nullptr,
+        HCCL_ERROR(
+            "[CcuKernelLaunch] resolved stream is nullptr, threadHandle[0x%llx]",
+            static_cast<unsigned long long>(threadHandle)),
+        CCU_E_PTR);
+    stream = streamRes;
+    return CCU_SUCCESS;
+}
+
 CcuResult LaunchCcuKernel(const HcclComm comm, aclrtStream stream, const OpParam& opParamHost)
 {
     CHK_PRT_RET(comm == nullptr, HCCL_ERROR("[%s] comm is nullptr.", __func__), CCU_E_PTR);
@@ -982,7 +1004,24 @@ CcuResult LaunchCcuKernel(const HcclComm comm, aclrtStream stream, const OpParam
         LogKernelLaunchArgs(resourceCtx, missionIndex, threadHandle, kernelHandle);
         const void* kfcArgs =
             static_cast<const void*>(resourceCtx.kfcServerArgs.data() + missionIndex * KFC_SERVER_ARG_NUM);
-        ret = HcommCcuKernelLaunch(threadHandle, kernelHandle, kfcArgs, resourceCtx.kfcServerArgSize);
+        // 按芯片版本选 launch 通路：Ascend950(CCU_V1)走asc-comm launch；Ascend960(CCU_V2)走hcomm launch。
+        if (GetCcuVersion() == CcuVersion::CCU_V1) {
+            aclrtStream launchStream = nullptr;
+            ret = ResolveStreamFromCcuThread(comm, threadHandle, launchStream);
+            if (ret != CCU_SUCCESS) {
+                return ret;
+            }
+            HCCL_RUN_INFO(
+                "[MC2_DATAPLANE] asccomm ccu kernel launch: mission[%u], stream[%p], kernelHandle[0x%llx], "
+                "argSize[%u].",
+                missionIndex, launchStream, static_cast<unsigned long long>(kernelHandle),
+                resourceCtx.kfcServerArgSize);
+            const ccu_result launchRet = asccomm_ccu_kernel_launch(
+                reinterpret_cast<ccu_launch_stream>(launchStream), kernelHandle, kfcArgs, resourceCtx.kfcServerArgSize);
+            ret = static_cast<CcuResult>(launchRet);
+        } else {
+            ret = HcommCcuKernelLaunch(threadHandle, kernelHandle, kfcArgs, resourceCtx.kfcServerArgSize);
+        }
         if (ret != CCU_SUCCESS) {
             HCCL_ERROR("[CcuKernelLaunch] mission[%u] launch failed, ret[%d]", missionIndex, ret);
             return ret;

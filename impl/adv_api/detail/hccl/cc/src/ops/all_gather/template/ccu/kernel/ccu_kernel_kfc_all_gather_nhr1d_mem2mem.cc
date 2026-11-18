@@ -28,30 +28,30 @@ struct KfcAllGatherNhr1DContext : CcuKernelCtxBase {
     const std::vector<KfcNhrStepInfo>* stepInfoVector = nullptr;
     const std::map<uint32_t, uint32_t>* rank2ChannelIdx = nullptr;
 
-    ccu::Variable input;
-    std::vector<ccu::Variable> output;
-    std::vector<ccu::Variable> token;
-    ccu::Variable die0Size;
-    ccu::Variable die0LastSize;
-    ccu::Variable repeatNum;
-    ccu::Variable inputSliceStride;
-    ccu::Variable outputSliceStride;
-    ccu::Variable inputRepeatStride;
-    ccu::Variable outputRepeatStride;
-    ccu::Event localEvent;
-    ccu::Variable repeatTimeflag;
-    std::vector<ccu::Variable> outputSliceOffset;
-    ccu::Variable myrankInputSliceOffset;
-    ccu::LocalAddr srcMem;
-    ccu::RemoteAddr dstMem;
-    ccu::LocalAddr localDst;
-    ccu::Variable constVar1;
+    ccu::variable input;
+    std::vector<ccu::variable> output;
+    std::vector<ccu::variable> token;
+    ccu::variable die0Size;
+    ccu::variable die0LastSize;
+    ccu::variable repeatNum;
+    ccu::variable inputSliceStride;
+    ccu::variable outputSliceStride;
+    ccu::variable inputRepeatStride;
+    ccu::variable outputRepeatStride;
+    ccu::event localEvent;
+    ccu::variable repeatTimeflag;
+    std::vector<ccu::variable> outputSliceOffset;
+    ccu::variable myrankInputSliceOffset;
+    ccu::local_addr srcMem;
+    ccu::remote_addr dstMem;
+    ccu::local_addr localDst;
+    ccu::variable constVar1;
     GroupOpSizeVars goSize;
-    ccu::Variable groupCopyRepeatNum;
+    ccu::variable groupCopyRepeatNum;
 };
 
 // 对应 hccl ParseKernelArg + InitResource：localSize/myRankIdx == channelCount（每 peer 一条通道）。
-// 通道绑定变量必须以拷贝构造（句柄共享）保存：ccu::Variable 的 operator= 是寄存器值搬运指令，
+// 通道绑定变量必须以拷贝构造（句柄共享）保存：ccu::variable 的 operator= 是寄存器值搬运指令，
 // 会在 PreSync 握手完成前执行，快照到对端写入前的旧槽位值（对端 output 地址/token 陈旧，
 // 远端写将落到错误目的或因 token 失配被丢弃）。hccl 原版 InitResource 即用 push_back 活绑定。
 CcuResult InitResource(KfcAllGatherNhr1DContext& ctx)
@@ -64,12 +64,12 @@ CcuResult InitResource(KfcAllGatherNhr1DContext& ctx)
         return CCU_E_INTERNAL;
     }
     for (uint32_t channelIdx = 0; channelIdx < ctx.channelCount; ++channelIdx) {
-        ctx.output.push_back(ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], AG_NHR_OUTPUT_XN_ID));
-        ctx.token.push_back(ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], AG_NHR_TOKEN_XN_ID));
+        ctx.output.push_back(ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], AG_NHR_OUTPUT_XN_ID));
+        ctx.token.push_back(ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], AG_NHR_TOKEN_XN_ID));
     }
     // 本地槽 [channelCount]：值来自本轮参数帧（kernel 启动前已写入），LoadNhr1DArgs 值赋值无竞争。
-    ctx.output.push_back(ccu::Variable());
-    ctx.token.push_back(ccu::Variable());
+    ctx.output.push_back(ccu::variable());
+    ctx.token.push_back(ccu::variable());
     ctx.outputSliceOffset.resize(ctx.rankSize);
     ctx.myrankInputSliceOffset = 0;
     ctx.repeatTimeflag = 0;
@@ -83,9 +83,9 @@ CcuResult InitResource(KfcAllGatherNhr1DContext& ctx)
 // UINT64_MAX-1）、三 stride=0；isInputOutputEqual 经 goSize 全零表达（in-place 时 AIV 按
 // 0 字节计算 goSize，GroupCopy 内部 CCU_IF 块均不触发），kernel 无需该参数。
 void LoadNhr1DArgs(
-    KfcAllGatherNhr1DContext& ctx, ccu::Variable input, ccu::Variable output, ccu::Variable token,
-    ccu::Variable die0Size, ccu::Variable die1Size, ccu::Variable outputSliceStride, ccu::Variable goSize0,
-    ccu::Variable goSize1, ccu::Variable goSize2, ccu::Variable goSize3, uint32_t axisId)
+    KfcAllGatherNhr1DContext& ctx, ccu::variable input, ccu::variable output, ccu::variable token,
+    ccu::variable die0Size, ccu::variable die1Size, ccu::variable outputSliceStride, ccu::variable goSize0,
+    ccu::variable goSize1, ccu::variable goSize2, ccu::variable goSize3, uint32_t axisId)
 {
     const uint32_t localIdx = ctx.channelCount;
     ctx.input = input;
@@ -109,9 +109,9 @@ void LoadNhr1DArgs(
     ctx.outputSliceStride = outputSliceStride;
     ctx.inputRepeatStride = 0;
     ctx.outputRepeatStride = 0;
-    ctx.goSize.addrOffset = goSize0;
-    ctx.goSize.loopParam = goSize1;
-    ctx.goSize.parallelParam = goSize2;
+    ctx.goSize.addr_offset = goSize0;
+    ctx.goSize.loop_param = goSize1;
+    ctx.goSize.parallel_param = goSize2;
     ctx.goSize.residual = goSize3;
 }
 
@@ -120,14 +120,14 @@ CcuResult PreSync(KfcAllGatherNhr1DContext& ctx)
 {
     const uint32_t localIdx = ctx.channelCount;
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.output[localIdx], AG_NHR_OUTPUT_XN_ID, AG_NHR_CKE_IDX, 1U << AG_NHR_OUTPUT_XN_ID));
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.token[localIdx], AG_NHR_TOKEN_XN_ID, AG_NHR_CKE_IDX, 1U << AG_NHR_TOKEN_XN_ID));
     }
     const uint16_t allBit = (1U << AG_NHR_OUTPUT_XN_ID) | (1U << AG_NHR_TOKEN_XN_ID);
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], AG_NHR_CKE_IDX, allBit));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], AG_NHR_CKE_IDX, allBit));
     }
     return CCU_SUCCESS;
 }
@@ -136,10 +136,10 @@ CcuResult PreSync(KfcAllGatherNhr1DContext& ctx)
 CcuResult PostSync(KfcAllGatherNhr1DContext& ctx)
 {
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], AG_NHR_CKE_IDX, AG_NHR_POST_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_record(ctx.channels[i], AG_NHR_CKE_IDX, AG_NHR_POST_SYNC_BIT));
     }
     for (uint32_t i = 0; i < ctx.channelCount; i++) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], AG_NHR_CKE_IDX, AG_NHR_POST_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], AG_NHR_CKE_IDX, AG_NHR_POST_SYNC_BIT));
     }
     return CCU_SUCCESS;
 }
@@ -147,14 +147,14 @@ CcuResult PostSync(KfcAllGatherNhr1DContext& ctx)
 // 只发射单个 slice 的 Write/占位 EventRecord，不等待；事件位由调用方分配。
 // 流水路径步末批量 EventWait；串行路径逐 slice 等待（mesh DoAllGatherWrite/Wait 先例）。
 CcuResult IssueSendSlice(
-    KfcAllGatherNhr1DContext& ctx, const u32& toRank, ccu::LocalAddr& src, ccu::RemoteAddr& dst, u32 signalIndex,
+    KfcAllGatherNhr1DContext& ctx, const u32& toRank, ccu::local_addr& src, ccu::remote_addr& dst, u32 signalIndex,
     bool islastSlice)
 {
     const ChannelHandle sendChannel = ctx.channels[ctx.rank2ChannelIdx->at(toRank)];
-    ccu::Variable& sliceSize = islastSlice ? ctx.die0LastSize : ctx.die0Size;
+    ccu::variable& sliceSize = islastSlice ? ctx.die0LastSize : ctx.die0Size;
     const uint16_t signalMask = 1U << signalIndex;
-    CCU_IF(sliceSize != 0) { CCU_CHK_RET(ccu::Write(sendChannel, dst, src, sliceSize, ctx.localEvent, signalMask)); }
-    CCU_ELSE { CCU_CHK_RET(ccu::EventRecord(ctx.localEvent, signalMask)); }
+    CCU_IF(sliceSize != 0) { CCU_CHK_RET(ccu::write(sendChannel, dst, src, sliceSize, ctx.localEvent, signalMask)); }
+    CCU_ELSE { CCU_CHK_RET(ccu::event_record(ctx.localEvent, signalMask)); }
     return CCU_SUCCESS;
 }
 
@@ -162,11 +162,11 @@ CcuResult IssueSendSlice(
 // 复用 die0Size/die0LastSize 字段实现，轴语义见其注释）。
 // 串行回退路径：发射单个 slice 并立即等待其完成。
 CcuResult DoRepeatSendRecvSlices(
-    KfcAllGatherNhr1DContext& ctx, const u32& toRank, ccu::LocalAddr& src, ccu::RemoteAddr& dst, u32 signalIndex,
+    KfcAllGatherNhr1DContext& ctx, const u32& toRank, ccu::local_addr& src, ccu::remote_addr& dst, u32 signalIndex,
     bool islastSlice)
 {
     const ChannelHandle sendChannel = ctx.channels[ctx.rank2ChannelIdx->at(toRank)];
-    ccu::Variable tmpRepeatNum;
+    ccu::variable tmpRepeatNum;
     tmpRepeatNum = ctx.repeatNum;
     ctx.repeatTimeflag = 0;
 
@@ -178,13 +178,13 @@ CcuResult DoRepeatSendRecvSlices(
             src.addr += ctx.inputRepeatStride;
             dst.addr += ctx.outputRepeatStride;
         }
-        ccu::Variable& sliceSize = islastSlice ? ctx.die0LastSize : ctx.die0Size;
+        ccu::variable& sliceSize = islastSlice ? ctx.die0LastSize : ctx.die0Size;
 
         const uint16_t signalMask = 1U << signalIndex;
         CCU_IF(sliceSize != 0)
         {
-            CCU_CHK_RET(ccu::Write(sendChannel, dst, src, sliceSize, ctx.localEvent, signalMask));
-            CCU_CHK_RET(ccu::EventWait(ctx.localEvent, signalMask));
+            CCU_CHK_RET(ccu::write(sendChannel, dst, src, sliceSize, ctx.localEvent, signalMask));
+            CCU_CHK_RET(ccu::event_wait(ctx.localEvent, signalMask));
         }
         ctx.repeatTimeflag = 1;
     }
@@ -241,11 +241,11 @@ CcuResult DoRepeatAllGatherNHRSingleStep(KfcAllGatherNhr1DContext& ctx, const Kf
         // 流水路径 repeat 外层、slice 内层：同一 repeat 轮内所有 slice 共享一组事件位，
         // 轮末批量等待清位后再进下一轮；各分片地址 = 基址 + 分片偏移 + 帧偏移。
         const uint16_t waitMask = static_cast<uint16_t>((1U << sliceNum) - 1U);
-        ccu::Variable turnOffsetIn;
-        ccu::Variable turnOffsetOut;
+        ccu::variable turnOffsetIn;
+        ccu::variable turnOffsetOut;
         turnOffsetIn = 0;
         turnOffsetOut = 0;
-        ccu::Variable tmpRepeatNum;
+        ccu::variable tmpRepeatNum;
         tmpRepeatNum = ctx.repeatNum;
         ctx.repeatTimeflag = 0;
         CCU_WHILE(tmpRepeatNum != UINT64_MAX)
@@ -278,7 +278,7 @@ CcuResult DoRepeatAllGatherNHRSingleStep(KfcAllGatherNhr1DContext& ctx, const Kf
                 ctx.localDst.addr += ctx.outputSliceOffset[ctx.rankId];
                 CCU_CHK_RET(DoAllGatherGroupCopy(ctx));
             }
-            CCU_CHK_RET(ccu::EventWait(ctx.localEvent, waitMask));
+            CCU_CHK_RET(ccu::event_wait(ctx.localEvent, waitMask));
             turnOffsetIn += ctx.inputRepeatStride;
             turnOffsetOut += ctx.outputRepeatStride;
             ctx.repeatTimeflag = 1;
@@ -312,8 +312,8 @@ CcuResult DoRepeatAllGatherNHRSingleStep(KfcAllGatherNhr1DContext& ctx, const Kf
 
     // D3：末步也做步间同步——turn-end 提前到 PostSync 前的前置条件（末步接收分片的到达
     // 保证由此承担，与 hccl 仅末步跳过同步不同）；record 先于 wait 且不阻塞，无死锁。
-    CCU_CHK_RET(ccu::NotifyRecord(sendChannel, AG_NHR_CKE_IDX, AG_NHR_STEP_POST_SYNC_BIT));
-    CCU_CHK_RET(ccu::NotifyWait(recvChannel, AG_NHR_CKE_IDX, AG_NHR_STEP_POST_SYNC_BIT));
+    CCU_CHK_RET(ccu::notify_record(sendChannel, AG_NHR_CKE_IDX, AG_NHR_STEP_POST_SYNC_BIT));
+    CCU_CHK_RET(ccu::notify_wait(recvChannel, AG_NHR_CKE_IDX, AG_NHR_STEP_POST_SYNC_BIT));
 
     return CCU_SUCCESS;
 }
@@ -324,7 +324,7 @@ CcuResult DoRepeatAllGatherNHRSingleStep(KfcAllGatherNhr1DContext& ctx, const Kf
 // 本 rank 贡献在各步均由 input 直发，step 循环前不再需要先落位。
 CcuResult DoRepeatAllGatherNHR(KfcAllGatherNhr1DContext& ctx)
 {
-    ccu::Variable tmpSliceOffset;
+    ccu::variable tmpSliceOffset;
     tmpSliceOffset = 0;
 
     for (u64 i = 0; i < ctx.rankId; i++) {
@@ -360,11 +360,11 @@ CcuResult DoRepeatAllGatherNHR(KfcAllGatherNhr1DContext& ctx)
 } // namespace
 
 CcuResult CcuKernelKfcAllGatherNHR1DMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable die0Size,
-    ccu::Variable die1Size, ccu::Variable outputSliceStride, ccu::Variable goSize0, ccu::Variable goSize1,
-    ccu::Variable goSize2, ccu::Variable goSize3, const ChannelHandle channels[], uint32_t channelCount,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable die0Size,
+    ccu::variable die1Size, ccu::variable outputSliceStride, ccu::variable goSize0, ccu::variable goSize1,
+    ccu::variable goSize2, ccu::variable goSize3, const ChannelHandle channels[], uint32_t channelCount,
     uint32_t rankSize, uint32_t rankId, uint32_t axisId, const std::vector<KfcNhrStepInfo>& stepInfoVector,
-    const std::map<uint32_t, uint32_t>& rank2ChannelIdx, ccu::Variable turnEndAddr)
+    const std::map<uint32_t, uint32_t>& rank2ChannelIdx, ccu::variable turnEndAddr)
 {
     KfcAllGatherNhr1DContext ctx;
     ctx.channels = channels;
@@ -388,7 +388,7 @@ CcuResult CcuKernelKfcAllGatherNHR1DMem2MemKernel(
     // 本 rank 写 EventWait；双 die 两 mission 数据不相交，AIV 等齐两个 turn-end 即全量完整），
     // 在 PostSync 前写 turn-end，AIV 提前返回；PostSync 仍在 server 指令流中先于下一轮
     // PreSync 执行，跨轮 XN 保护不变。
-    CCU_CHK_RET(ccu::Store(turnEndAddr, ctx.constVar1));
+    CCU_CHK_RET(ccu::store(turnEndAddr, ctx.constVar1));
 
     CCU_CHK_RET(PostSync(ctx));
 

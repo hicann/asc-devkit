@@ -37,24 +37,24 @@ struct KfcReduceScatterNhrContext : CcuKernelCtxBase {
     const std::vector<KfcNhrStepInfo>* stepInfoVector = nullptr;
     const std::map<uint32_t, uint32_t>* rank2ChannelIdx = nullptr;
 
-    std::vector<ccu::Variable> input;
-    ccu::Variable output;
-    std::vector<ccu::Variable> token;
-    std::vector<ccu::Variable> inputSliceOffset;
-    ccu::Variable sliceSize;
-    ccu::Variable inputSliceStride;
-    ccu::Variable sliceOneJettySize;
-    ccu::Variable sliceLastJettySize;
-    ccu::Variable repeatNumInv;
-    ccu::Variable inputRepeatStride;
-    ccu::Variable outputRepeatStride;
-    ccu::Event event;
-    ccu::Variable repeatNum;
-    ccu::Variable repeatFlag;
-    ccu::Variable constVar1;
-    ccu::LocalAddr localSrc_;
-    ccu::LocalAddr localDst_;
-    ccu::RemoteAddr remoteDst_;
+    std::vector<ccu::variable> input;
+    ccu::variable output;
+    std::vector<ccu::variable> token;
+    std::vector<ccu::variable> inputSliceOffset;
+    ccu::variable sliceSize;
+    ccu::variable inputSliceStride;
+    ccu::variable sliceOneJettySize;
+    ccu::variable sliceLastJettySize;
+    ccu::variable repeatNumInv;
+    ccu::variable inputRepeatStride;
+    ccu::variable outputRepeatStride;
+    ccu::event event;
+    ccu::variable repeatNum;
+    ccu::variable repeatFlag;
+    ccu::variable constVar1;
+    ccu::local_addr localSrc_;
+    ccu::local_addr localDst_;
+    ccu::remote_addr remoteDst_;
 };
 
 CcuResult InitResource(KfcReduceScatterNhrContext& ctx)
@@ -70,8 +70,8 @@ CcuResult InitResource(KfcReduceScatterNhrContext& ctx)
     ctx.input.resize(localIdx + 1U);
     ctx.token.resize(localIdx + 1U);
     for (uint32_t channelIdx = 0; channelIdx < ctx.channelCount; ++channelIdx) {
-        ctx.input[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], RS_NHR_INPUT_XN_ID);
-        ctx.token[channelIdx] = ccu::GetResByChannel<ccu::Variable>(ctx.channels[channelIdx], RS_NHR_TOKEN_XN_ID);
+        ctx.input[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], RS_NHR_INPUT_XN_ID);
+        ctx.token[channelIdx] = ccu::get_res_by_channel<ccu::variable>(ctx.channels[channelIdx], RS_NHR_TOKEN_XN_ID);
     }
     ctx.resourceAllocated = false;
     return CCU_SUCCESS;
@@ -81,14 +81,14 @@ CcuResult PreSync(KfcReduceScatterNhrContext& ctx)
 {
     const uint32_t localIdx = ctx.channelCount;
     for (uint32_t i = 0; i < ctx.channelCount; ++i) {
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.input[localIdx], RS_NHR_INPUT_XN_ID, RS_NHR_CKE_IDX, RS_NHR_INPUT_BIT));
-        CCU_CHK_RET(ccu::WriteVariableWithNotify(
+        CCU_CHK_RET(ccu::write_variable_with_notify(
             ctx.channels[i], ctx.token[localIdx], RS_NHR_TOKEN_XN_ID, RS_NHR_CKE_IDX, RS_NHR_TOKEN_BIT));
     }
     const uint16_t waitMask = RS_NHR_INPUT_BIT | RS_NHR_TOKEN_BIT;
     for (uint32_t i = 0; i < ctx.channelCount; ++i) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], RS_NHR_CKE_IDX, waitMask));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], RS_NHR_CKE_IDX, waitMask));
     }
     return CCU_SUCCESS;
 }
@@ -96,23 +96,23 @@ CcuResult PreSync(KfcReduceScatterNhrContext& ctx)
 CcuResult PostSync(KfcReduceScatterNhrContext& ctx)
 {
     for (uint32_t i = 0; i < ctx.channelCount; ++i) {
-        CCU_CHK_RET(ccu::NotifyRecord(ctx.channels[i], RS_NHR_CKE_IDX, RS_NHR_POST_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_record(ctx.channels[i], RS_NHR_CKE_IDX, RS_NHR_POST_SYNC_BIT));
     }
     for (uint32_t i = 0; i < ctx.channelCount; ++i) {
-        CCU_CHK_RET(ccu::NotifyWait(ctx.channels[i], RS_NHR_CKE_IDX, RS_NHR_POST_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_wait(ctx.channels[i], RS_NHR_CKE_IDX, RS_NHR_POST_SYNC_BIT));
     }
     return CCU_SUCCESS;
 }
 
-// 只发射单个 slice 的 WriteReduce/占位 EventRecord，不等待；事件位从 baseBit 起按 jetty 展开。
-// 流水路径由调用方统一分配 baseBit 并在步末批量 EventWait；串行路径 baseBit=0 且逐 slice 等待。
+// 只发射单个 slice 的 write_reduce/占位 event_record，不等待；事件位从 baseBit 起按 jetty 展开。
+// 流水路径由调用方统一分配 baseBit 并在步末批量 event_wait；串行路径 baseBit=0 且逐 slice 等待。
 CcuResult IssueReduceSlice(KfcReduceScatterNhrContext& ctx, uint32_t toRank, uint32_t baseBit)
 {
     const ChannelHandle channel = ctx.channels[ctx.rank2ChannelIdx->at(toRank)];
     CCU_IF(ctx.sliceOneJettySize != 0)
     {
         for (uint32_t jettyId = 0; jettyId + 1U < ctx.jettyNum; ++jettyId) {
-            CCU_CHK_RET(ccu::WriteReduce(
+            CCU_CHK_RET(ccu::write_reduce(
                 channel, ctx.remoteDst_, ctx.localSrc_, ctx.sliceOneJettySize, ctx.dataType, ctx.reduceOp, ctx.event,
                 1U << (baseBit + jettyId)));
             ctx.remoteDst_.addr += ctx.sliceOneJettySize;
@@ -122,15 +122,15 @@ CcuResult IssueReduceSlice(KfcReduceScatterNhrContext& ctx, uint32_t toRank, uin
     CCU_ELSE
     {
         for (uint32_t jettyId = 0; jettyId + 1U < ctx.jettyNum; ++jettyId) {
-            CCU_CHK_RET(ccu::EventRecord(ctx.event, 1U << (baseBit + jettyId)));
+            CCU_CHK_RET(ccu::event_record(ctx.event, 1U << (baseBit + jettyId)));
         }
     }
     const uint32_t lastJettyId = ctx.jettyNum - 1U;
     const uint16_t lastMask = static_cast<uint16_t>(1U << (baseBit + lastJettyId));
-    CCU_IF(ctx.sliceLastJettySize == 0) { CCU_CHK_RET(ccu::EventRecord(ctx.event, lastMask)); }
+    CCU_IF(ctx.sliceLastJettySize == 0) { CCU_CHK_RET(ccu::event_record(ctx.event, lastMask)); }
     CCU_ELSE
     {
-        CCU_CHK_RET(ccu::WriteReduce(
+        CCU_CHK_RET(ccu::write_reduce(
             channel, ctx.remoteDst_, ctx.localSrc_, ctx.sliceLastJettySize, ctx.dataType, ctx.reduceOp, ctx.event,
             lastMask));
     }
@@ -141,7 +141,7 @@ CcuResult IssueReduceSlice(KfcReduceScatterNhrContext& ctx, uint32_t toRank, uin
 CcuResult WriteReduceSlice(KfcReduceScatterNhrContext& ctx, uint32_t toRank)
 {
     CCU_CHK_RET(IssueReduceSlice(ctx, toRank, 0U));
-    CCU_CHK_RET(ccu::EventWait(ctx.event, static_cast<uint16_t>((1U << ctx.jettyNum) - 1U)));
+    CCU_CHK_RET(ccu::event_wait(ctx.event, static_cast<uint16_t>((1U << ctx.jettyNum) - 1U)));
     return CCU_SUCCESS;
 }
 
@@ -158,8 +158,8 @@ CcuResult RunStep(KfcReduceScatterNhrContext& ctx, const KfcNhrStepInfo& stepInf
 
     // step 非 0 时先做步间就绪同步，保证对端上一轮读取已完成。
     if (stepInfo.step != 0U) {
-        CCU_CHK_RET(ccu::NotifyRecord(recvChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_PRE_SYNC_BIT));
-        CCU_CHK_RET(ccu::NotifyWait(sendChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_PRE_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_record(recvChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_PRE_SYNC_BIT));
+        CCU_CHK_RET(ccu::notify_wait(sendChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_PRE_SYNC_BIT));
     }
     // 发射期分流（宿主期值必须用普通 if，只发射命中分支）：
     // 在途操作数（slice 数 × jetty 数）不超单 event 16 位预算时走步内流水——本轮所有 slice
@@ -172,7 +172,7 @@ CcuResult RunStep(KfcReduceScatterNhrContext& ctx, const KfcNhrStepInfo& stepInf
         const uint16_t waitMask = static_cast<uint16_t>((1U << inflightOps) - 1U);
         // 流水路径 repeat 外层、slice 内层（与串行路径嵌套相反）：同一 repeat 轮内所有 slice
         // 共享一组事件位，轮末批量等待清位后再进下一轮；各位分片地址 = 基址 + 分片偏移 + 帧偏移。
-        ccu::Variable turnOffset;
+        ccu::variable turnOffset;
         turnOffset = 0;
         ctx.repeatNum = ctx.repeatNumInv;
         CCU_WHILE(ctx.repeatNum != UINT64_MAX)
@@ -188,7 +188,7 @@ CcuResult RunStep(KfcReduceScatterNhrContext& ctx, const KfcNhrStepInfo& stepInf
                 ctx.localSrc_.addr += turnOffset;
                 CCU_CHK_RET(IssueReduceSlice(ctx, stepInfo.toRank, sliceSeq * ctx.jettyNum));
             }
-            CCU_CHK_RET(ccu::EventWait(ctx.event, waitMask));
+            CCU_CHK_RET(ccu::event_wait(ctx.event, waitMask));
             turnOffset += ctx.inputRepeatStride;
         }
     } else {
@@ -214,15 +214,15 @@ CcuResult RunStep(KfcReduceScatterNhrContext& ctx, const KfcNhrStepInfo& stepInf
             }
         }
     }
-    CCU_CHK_RET(ccu::NotifyRecord(sendChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_POST_SYNC_BIT));
-    CCU_CHK_RET(ccu::NotifyWait(recvChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_POST_SYNC_BIT));
+    CCU_CHK_RET(ccu::notify_record(sendChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_POST_SYNC_BIT));
+    CCU_CHK_RET(ccu::notify_wait(recvChannel, RS_NHR_CKE_IDX, RS_NHR_STEP_POST_SYNC_BIT));
     return CCU_SUCCESS;
 }
 
 CcuResult RunNhr(KfcReduceScatterNhrContext& ctx)
 {
     const uint32_t localIdx = ctx.channelCount;
-    ccu::Variable tmpSliceOffset;
+    ccu::variable tmpSliceOffset;
     tmpSliceOffset = 0;
     ctx.inputSliceOffset.resize(ctx.rankSize);
     for (uint32_t rank = 0; rank < ctx.rankSize; ++rank) {
@@ -234,7 +234,7 @@ CcuResult RunNhr(KfcReduceScatterNhrContext& ctx)
         CCU_CHK_RET(RunStep(ctx, stepInfo));
     }
 
-    // 收尾：本 rank 的输入分片 LocalCopy 到输出。
+    // 收尾：本 rank 的输入分片 local_copy 到输出。
     ctx.localDst_.addr = ctx.output;
     ctx.localDst_.token = ctx.token[localIdx];
     ctx.localSrc_.addr = ctx.input[localIdx];
@@ -250,9 +250,9 @@ CcuResult RunNhr(KfcReduceScatterNhrContext& ctx)
             ctx.localSrc_.addr += ctx.inputRepeatStride;
             ctx.localDst_.addr += ctx.outputRepeatStride;
         }
-        CCU_IF(ctx.sliceSize == 0) { CCU_CHK_RET(ccu::EventRecord(ctx.event, 1U)); }
-        CCU_ELSE { CCU_CHK_RET(ccu::LocalCopy(ctx.localDst_, ctx.localSrc_, ctx.sliceSize, ctx.event, 1U)); }
-        CCU_CHK_RET(ccu::EventWait(ctx.event, 1U));
+        CCU_IF(ctx.sliceSize == 0) { CCU_CHK_RET(ccu::event_record(ctx.event, 1U)); }
+        CCU_ELSE { CCU_CHK_RET(ccu::local_copy(ctx.localDst_, ctx.localSrc_, ctx.sliceSize, ctx.event, 1U)); }
+        CCU_CHK_RET(ccu::event_wait(ctx.event, 1U));
         ctx.repeatFlag = 1U;
     }
     return CCU_SUCCESS;
@@ -260,9 +260,9 @@ CcuResult RunNhr(KfcReduceScatterNhrContext& ctx)
 } // namespace
 
 CcuResult CcuKfcReduceScatterNHR1DMultiJettyMem2MemKernel(
-    ccu::Variable inputAddr, ccu::Variable outputAddr, ccu::Variable tokenInfo, ccu::Variable sliceSize,
-    ccu::Variable inputSliceStride, ccu::Variable sliceOneJettySize, ccu::Variable sliceLastJettySize,
-    ccu::Variable repeatNumInv, ccu::Variable inputRepeatStride, ccu::Variable outputRepeatStride,
+    ccu::variable inputAddr, ccu::variable outputAddr, ccu::variable tokenInfo, ccu::variable sliceSize,
+    ccu::variable inputSliceStride, ccu::variable sliceOneJettySize, ccu::variable sliceLastJettySize,
+    ccu::variable repeatNumInv, ccu::variable inputRepeatStride, ccu::variable outputRepeatStride,
     const ChannelHandle channels[], uint32_t channelCount, uint32_t rankSize, uint32_t rankId, uint32_t jettyNum,
     const HcclDataType& dataType, const HcclDataType& outputType, const HcclReduceOp& reduceType,
     const std::vector<KfcNhrStepInfo>& stepInfoVector, const std::map<uint32_t, uint32_t>& rank2ChannelIdx)

@@ -10,8 +10,11 @@
 set(src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_peer_only_a6.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_nhr1d_2die_mem2mem.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_kfc_reduce_scatter_mesh1d_mem2mem_a6.cc
+
     # Legacy direct-launch CCU kernels are retained but use APIs unavailable in the KFC-only mc2_client.
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_reduce_scatter_mesh1d_mem2mem.cc
     # ${CMAKE_CURRENT_SOURCE_DIR}/ccu_kernel_reduce_scatter_mesh1d.cc
