@@ -10,3 +10,4 @@
 | ------------------------------------------------------------ | ---------------------------------------------------- | --- |
 |[rtc_hello_world](./rtc_hello_world) |  本样例介绍了使用aclrtc接口实现HelloWorld核函数的调用。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
 |[rtc_template_add](./rtc_template_add) |  基于aclrtc运行时编译 + LocalMemAllocator（静态Tensor）实现Add。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
+| [rtc_kernel_specialization](./rtc_kernel_specialization) | 使用 aclrtcKernelSpecialization 常量化编译 MatmulCustom，加载并执行特化 ELF。 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |

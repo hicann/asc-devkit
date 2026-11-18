@@ -40,6 +40,7 @@ SPECIAL_PREFIXES = (
 
 CUSTOM_OP_PACKAGE_CASE = "01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op"
 PARALLEL_OPS_PACKAGE_CASE = "01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/parallel_ops_package"
+KERNEL_SPECIALIZATION_CASE = "01_simd_cpp_api/02_features/05_aclrtc/rtc_kernel_specialization"
 TILING_SINK_PROGRAMMING_CASE = "04_aicpu/02_features/00_framework/00_pytorch/tiling_sink_programming"
 TILING_SINK_GENERATE_TASK_PATTERN_PREFIX = (
     "GenerateTaskForSinkOp:Node [AddCustomTilingSink, AddCustomTilingSink] starts to generate tasks"
@@ -1024,6 +1025,8 @@ def declared_skip_config(rel: str, scenario_rel: str = "") -> SkipConfig:
 
 def render_runner(spec: RunnerRenderSpec) -> str:
     spec = apply_scenario_to_render_spec(spec)
+    if spec.rel == KERNEL_SPECIALIZATION_CASE:
+        return render_kernel_specialization_runner(spec)
     if spec.rel == PARALLEL_OPS_PACKAGE_CASE:
         return render_parallel_ops_package_runner(spec)
     if spec.rel == TILING_SINK_PROGRAMMING_CASE:
@@ -1058,6 +1061,68 @@ def apply_scenario_to_render_spec(spec: RunnerRenderSpec) -> RunnerRenderSpec:
         run_cmds=[rewrite_command_for_scenario(command, spec.scenario_num) for command in spec.run_cmds],
         verify_cmds=[rewrite_command_for_scenario(command, spec.scenario_num) for command in spec.verify_cmds],
     )
+
+
+def render_kernel_specialization_runner(spec: RunnerRenderSpec) -> str:
+    # Package installation and Manifest arguments must survive across CI stages.
+    lines = [
+        *runner_header(spec),
+        "case_build() {",
+        "    local compute_unit",
+        '    case "${SOC_VERSION,,}" in',
+        "        ascend910b*) compute_unit=ascend910b ;;",
+        "        ascend910_93*) compute_unit=ascend910_93 ;;",
+        "        ascend950*) compute_unit=ascend950 ;;",
+        '        *) echo "Unsupported processor: $SOC_VERSION" >&2; return 2 ;;',
+        "    esac",
+        '    cmake -S "$CASE_DIR/custom_op" -B "$BUILD_DIR/operator" -DASCEND_COMPUTE_UNIT="$compute_unit"',
+        '    cmake --build "$BUILD_DIR/operator" --target binary package -j"${PRESMOKE_MAKE_JOBS:-8}"',
+        '    local packages=("$BUILD_DIR"/operator/custom_opp_*.run)',
+        '    if [[ ${#packages[@]} -ne 1 || ! -f "${packages[0]}" ]]; then',
+        '        echo "Expected one operator package in $BUILD_DIR/operator" >&2',
+        "        return 1",
+        "    fi",
+        '    mkdir -p "$BUILD_DIR/opp"',
+        '    bash "${packages[0]}" --quiet --install-path="$BUILD_DIR/opp"',
+        '    cmake -S "$CASE_DIR" -B "$BUILD_DIR/host"',
+        '    cmake --build "$BUILD_DIR/host" -j"${PRESMOKE_MAKE_JOBS:-8}"',
+        "}",
+        "",
+        "case_run() {",
+        '    local vendor="$BUILD_DIR/opp/vendors/customize"',
+        '    export ASCEND_CUSTOM_OPP_PATH="${ASCEND_CUSTOM_OPP_PATH:-}"',
+        '    source "$vendor/bin/set_env.bash"',
+        '    export ASCEND_CUSTOM_OPP_PATH="$vendor"',
+        "    local manifest resource_id kernel_entry",
+        "    manifest=$(find \"$BUILD_DIR/operator\" -type f -name '*_manifest.json' -print -quit)",
+        '    if [[ -z "$manifest" ]]; then',
+        '        echo "No compilation resource Manifest found in $BUILD_DIR/operator" >&2',
+        "        return 1",
+        "    fi",
+        (
+            "    resource_id=$(python3 -c 'import json,sys; "
+            'print(json.load(open(sys.argv[1]))["resource_id"])\' "$manifest")'
+        ),
+        (
+            "    kernel_entry=$(python3 -c 'import json,sys; "
+            'print(json.load(open(sys.argv[1]))["kernels"][0]["kernel_name"])\' "$manifest")'
+        ),
+        '    "$BUILD_DIR/host/demo" "$resource_id" "$kernel_entry" "$BUILD_DIR/specialized.elf" \\',
+        '        "${ASCEND_DEVICE_ID:-0}" | tee "$BUILD_DIR/result.log"',
+        "}",
+        "",
+        "case_verify() {",
+        '    grep -Fq "Example passed" "$BUILD_DIR/result.log"',
+        "}",
+        "",
+        "case_clean() {",
+        "    presmoke_default_clean",
+        "}",
+        "",
+        'presmoke_case_main "$@"',
+        "",
+    ]
+    return "\n".join(lines)
 
 
 def render_tiling_sink_programming_runner(spec: RunnerRenderSpec) -> str:

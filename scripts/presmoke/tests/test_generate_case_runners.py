@@ -24,6 +24,9 @@ from pathlib import Path
 from presmoke.generate_case_runners import (
     CUSTOM_OP_PACKAGE_DEPENDENTS,
     NO_CMAKE_ARCH_INJECTION_CASES,
+    KERNEL_SPECIALIZATION_CASE,
+    build_runner_render_spec,
+    runner_confidence,
     MS_SANITIZER_SKIP_REASON,
     TILING_SINK_PROGRAMMING_CASE,
     apply_scenario_to_render_spec,
@@ -88,6 +91,31 @@ def render_runner_from_parts(
 
 
 class GenerateCaseRunnersTest(unittest.TestCase):
+    def test_kernel_specialization_runner_covers_build_install_and_execution(self) -> None:
+        root = Path(__file__).resolve().parents[3]
+        spec = parse_readme(root / "examples" / KERNEL_SPECIALIZATION_CASE, root / "examples")
+        cell = cell_for_spec(spec, "dav-3510", "npu")
+        confidence, reasons = runner_confidence(cell, True)
+        render_spec, _ = build_runner_render_spec(cell, confidence, reasons)
+        script = render_runner(render_spec)
+        runner = root / "scripts/presmoke/cases" / KERNEL_SPECIALIZATION_CASE / "run.sh"
+
+        self.assertEqual(script, runner.read_text(encoding="utf-8"))
+        self.assertEqual(spec.modes, ["npu"])
+        self.assertEqual(sorted(spec.archs), ["dav-2201", "dav-3510"])
+        self.assertNotIn("ascendxxx", script)
+        self.assertIn("--target binary package", script)
+        self.assertIn('--install-path="$BUILD_DIR/opp"', script)
+        self.assertIn('cmake --build "$BUILD_DIR/host"', script)
+        self.assertIn('source "$vendor/bin/set_env.bash"', script)
+        self.assertIn('export ASCEND_CUSTOM_OPP_PATH="$vendor"', script)
+        self.assertIn('["resource_id"]', script)
+        self.assertIn('["kernels"][0]["kernel_name"]', script)
+        self.assertIn('"$BUILD_DIR/host/demo" "$resource_id" "$kernel_entry"', script)
+        self.assertIn('grep -Fq "Example passed"', script)
+        result = subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def expected_archs_from_supported_products(self, readme: Path) -> list[str]:
         text = readme.read_text(encoding="utf-8", errors="ignore")
         lines = text.splitlines()

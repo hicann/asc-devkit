@@ -1228,6 +1228,34 @@
     ]
   },
   {
+    "case": "01_simd_cpp_api/02_features/05_aclrtc/rtc_kernel_specialization",
+    "runner": "scripts/presmoke/cases/01_simd_cpp_api/02_features/05_aclrtc/rtc_kernel_specialization/run.sh",
+    "source": "readme",
+    "confidence": "medium",
+    "source_case": "01_simd_cpp_api/02_features/05_aclrtc/rtc_kernel_specialization",
+    "supported_archs": [
+      "dav-2201",
+      "dav-3510"
+    ],
+    "supported_modes": [
+      "npu"
+    ],
+    "target_runnable": true,
+    "skip": false,
+    "skip_reason": "",
+    "skip_modes": [],
+    "skip_archs": [],
+    "reasons": [
+      "no_make_step",
+      "no_run_step"
+    ],
+    "commands": [
+      "rm -rf build/operator",
+      "cmake -S custom_op -B build/operator -DASCEND_COMPUTE_UNIT=ascendxxx -DCMAKE_ASC_ARCHITECTURES=dav-2201",
+      "cmake --build build/operator --target binary package -j8"
+    ]
+  },
+  {
     "case": "01_simd_cpp_api/02_features/05_aclrtc/rtc_template_add",
     "runner": "scripts/presmoke/cases/01_simd_cpp_api/02_features/05_aclrtc/rtc_template_add/run.sh",
     "source": "readme",

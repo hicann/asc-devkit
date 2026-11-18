@@ -5,6 +5,7 @@
 01_simd_cpp_api/04_advanced_api/00_matmul/matmul_l2cache
 01_simd_cpp_api/02_features/05_aclrtc/rtc_hello_world
 01_simd_cpp_api/02_features/05_aclrtc/rtc_template_add
+01_simd_cpp_api/02_features/05_aclrtc/rtc_kernel_specialization
 01_simd_cpp_api/00_introduction/00_quickstart/hello_world
 01_simd_cpp_api/02_features/00_framework/03_ge/triple_chevron_notation
 01_simd_cpp_api/02_features/99_acl_based/00_acl_compilation/custom_op_static_lib
