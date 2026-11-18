@@ -47,6 +47,7 @@ npu_op_package(<package_name>
   - `ENABLE_CPACK <value>`：是否生成run包，仅用于`RUN`模式，默认为`True`。设置为`False`后，执行`install`目标会将目录和文件安装到`INSTALL_PATH`下，不再生成run包。
   - `ENABLE_DEFAULT_PACKAGE_NAME_RULE <value>`：默认为`True`，`RUN`模式下安装包默认命名为`custom_opp_<os>_<arch>.run`；设置为`False`时命名为`<package_name>.run`。
   - `VENDOR_NAME <name>`：算子包的厂商名称，默认为`<package_name>`，用于确定包内的`vendors/<name>`目录名。
+  - `KERNEL_SPEC_MODE <mode>`：配置Kernel常量化编译资源的生成模式，取值区分大小写。`None`（默认）不生成资源；`Normal`生成普通Kernel的编译资源；`SK`还会为符合条件的Kernel记录SuperKernel常量化编译所需的信息。配置为`Normal`或`SK`时，package类型须为`RUN`，且须同时启用源码和二进制打包。配置示例及产物路径请参见[生成Kernel Spec常量化编译资源](../compilation_and_deployment/basic_process.md#kernel-spec)。
 
 **示例：**
 

@@ -72,6 +72,7 @@
 | [aclrtcGetBinDataSize](RTC/aclrtcGetBinDataSize.md) | 获取编译的二进制数据大小。用于在[aclrtcGetBinData](RTC/aclrtcGetBinData.md)获取二进制数据时分配对应大小的内存空间。 |
 | [aclrtcGetCompileLogSize](RTC/aclrtcGetCompileLogSize.md) | 获取编译日志的大小。用于在[aclrtcGetCompileLog](RTC/aclrtcGetCompileLog.md)获取日志内容时分配对应大小的内存空间。 |
 | [aclrtcGetCompileLog](RTC/aclrtcGetCompileLog.md) | 获取编译日志的内容，以字符串形式保存。 |
+| [aclrtcKernelSpecialization](RTC/aclrtcKernelSpecialization.md) | 使用已注册的编译资源和指定的常量参数进行Kernel常量化编译，输出特化Kernel ELF文件。 |
 
 **表6**  log API列表
 

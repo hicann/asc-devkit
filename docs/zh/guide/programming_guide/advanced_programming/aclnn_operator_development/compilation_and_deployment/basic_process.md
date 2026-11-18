@@ -87,6 +87,23 @@ npu_op_package(${vendor_name}
 
 其他配置（如动态库编译、交叉编译等）也可在CMakeLists.txt中通过变量或`npu_op_package` CONFIG参数设置。完整参数说明请参考[CMake函数参考](../appendix/cmake_function_reference.md)。
 
+#### 生成Kernel Spec常量化编译资源<a id="kernel-spec"></a>
+
+要为自定义算子生成常量化编译资源，在顶层`CMakeLists.txt`的`npu_op_package`调用中配置`KERNEL_SPEC_MODE`。以生成普通Kernel的编译资源为例：
+
+```cmake
+npu_op_package(${vendor_name}
+    TYPE RUN
+    CONFIG
+        ENABLE_SOURCE_PACKAGE True
+        ENABLE_BINARY_PACKAGE True
+        KERNEL_SPEC_MODE Normal
+        INSTALL_PATH ${CMAKE_BINARY_DIR}/
+)
+```
+
+按[执行编译](#执行编译)中的步骤构建算子包。生成的资源库`libcust_compile_resource.so`随算子包一起发布；[安装算子包](#安装算子包)后，可在`vendors/<vendor_name>/op_spec/`目录下找到该资源库。启用此配置时，每个算子包只能通过`npu_op_package_add`添加一个由`npu_op_kernel_library`创建的`KERNEL`类型目标，该目标可包含多个算子的核函数源码。
+
 ### 方式二：使用CMakePresets.json<a id="cmake-presets"></a>
 
 如果希望将编译配置与CMakeLists.txt解耦，可以在工程根目录新建以下完整的`CMakePresets.json`，通过`cacheVariables`传入配置。CMakeLists.txt仍保留方式一中的`CACHE`默认值和全部构建声明，无需另一套构建脚本。

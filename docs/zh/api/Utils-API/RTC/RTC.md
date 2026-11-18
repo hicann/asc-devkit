@@ -20,5 +20,7 @@
 
 -   **[aclrtcGetCompileLog](aclrtcGetCompileLog.md)**  
 
+-   **[aclrtcKernelSpecialization](aclrtcKernelSpecialization.md)**
+
 -   **[RTC错误码](RTC_error_code.md)**  
 
