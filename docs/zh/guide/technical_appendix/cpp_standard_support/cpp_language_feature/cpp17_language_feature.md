@@ -39,7 +39,7 @@ Ascend C Device侧对C++17语言特性的支持情况如下表所示：
 | `__has_include` | [P0061R1](https://wg21.link/p0061) | 是 | `#if __has_include(<header>)`按头文件是否存在取值，可用于条件引入。 |
 | 继承构造函数措辞重写 | [P0136R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0136r1.html) | 是 | 继承构造函数按基类构造等价实现。 |
 | 内联变量 | [P0386R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0386r2.pdf) | 是 | 支持`inline constexpr`变量定义。 |
-| 模板模板实参匹配DR150 | [P0522R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0522r0.html) | 是 | 模板模板实参匹配规则放宽。 |
+| 模板模板实参匹配DR150 | [P0522R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0522r0.html) | 条件支持 | 默认编译选项下不可用，增加-frelaxed-template-template-args编译选项后可用。 |
 | 移除动态异常规格 | [P0003R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0003r5.html) | 是 | 动态异常规格语法移除。 |
 | using声明中的包展开 | [P0195R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0195r2.html) | 是 | 支持`using Bs::operator()...;`包展开。 |
 | 字节类型定义 | [P0298R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0298r0.pdf) | 是 | `std::byte`可用，`<cstddef>`可在Device侧包含。 |

@@ -488,24 +488,7 @@ __global__ __vector__ void probe(__gm__ int32_t* output)
 
 ### 递归
 
-编译期递归即constexpr求值递归，constexpr函数需要加上函数标记。
-
-以SIMT编程场景为例，`__aicore__ constexpr`递归函数可在核函数内以编译期结果使用：
-
-    ```cpp
-    __aicore__ constexpr uint32_t rec_sum(uint32_t n)
-    {
-        return n == 0u ? 0u : n + rec_sum(n - 1u);   // 编译期递归求值
-    }
-
-    __global__ __launch_bounds__(128) void probe(float* output, uint32_t count)
-    {
-        constexpr uint32_t s10 = rec_sum(10u);        // 先落constexpr变量：编译期折叠为55
-        output[threadIdx.x] = static_cast<float>(s10);
-    }
-    ```
-
-运行时递归仅在SIMT编程场景可用，其他编程场景均不支持。如下所示，SIMD与SIMT混合编程中使用运行时递归触发编译报错：
+所有场景均不支持编译期递归，运行时递归仅在SIMT编程场景可用，其他编程场景均不支持。如下所示，SIMD与SIMT混合编程中使用运行时递归触发编译报错：
 
 ```cpp
 // SIMD与SIMT混合编程的SIMT VF内：ERROR
