@@ -136,6 +136,8 @@ T atomic_cas_stub(__gm__ T* address, T compare, T desired)
 
 int64_t get_squeeze_status_stub() { return 4; }
 
+int64_t get_icache_preload_status_stub() { return 3; }
+
 } // namespace
 
 TEST_F(tensor_api_new_interfaces_aiv, init_soc_state_forwards_to_asc_init)
@@ -412,7 +414,7 @@ TEST_F(tensor_api_new_interfaces_aiv, cache_control_interfaces_forward_to_c_api)
     MOCKER_CPP(asc_datacache_preload, void(__gm__ uint64_t*, int64_t)).times(1).will(ignoreReturnValue());
     MOCKER_CPP(__asc_aicore::asc_dcci_single, void(__gm__ void*)).times(1).will(ignoreReturnValue());
     MOCKER_CPP(asc_ub_dcci_single, void(__ubuf__ void*)).times(1).will(ignoreReturnValue());
-    MOCKER_CPP(asc_get_icache_preload_status, int64_t(void)).times(1).will(returnValue(3));
+    MOCKER_CPP(asc_get_icache_preload_status, int64_t(void)).times(1).will(invoke(get_icache_preload_status_stub));
     MOCKER_CPP(asc_icache_preload, void(const void*, int64_t)).times(1).will(ignoreReturnValue());
 
     asc::te::datacache_preload(reinterpret_cast<__gm__ uint64_t*>(&data), 8);
