@@ -52,7 +52,7 @@ Returns the bfloat16 value obtained by reinterpreting the bits of the short int 
 | x Value                        | Return Value |
 |-------------------------------|------|
 | 0                             | 0    |
-| 32640(0x7F81)                 | inf  |
+| 32640(0x7F80)                 | inf  |
 | -128(0xFF80)                  | -inf |
 | 32641(0x7F81) ~ 32767(0x7FFF) | nan  |
 | -127(0xFF81) ~ -1(0xFFFF)     | nan  |

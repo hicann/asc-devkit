@@ -54,7 +54,7 @@ Returns the value obtained by reinterpreting the bits of the **unsigned short in
 | 0                              | 0    |
 | 31744(0x7C00)                  | inf  |
 | 64512(0xFC00)                  | -inf |
-| 31745(0x7C01) ~ 32767(0x7FFFF) | nan  |
+| 31745(0x7C01) ~ 32767(0x7FFF) | nan  |
 | 64513(0xFC01) ~ 65535(0xFFFF)  | nan  |
 
 ## Constraints
