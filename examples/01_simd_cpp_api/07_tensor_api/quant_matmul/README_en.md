@@ -75,7 +75,7 @@ This example implements a QuantMatmul operator with an AIC:AIV ratio of 1:2 usin
 </table>
 
 - Invocation:
-  Use the kernel invocation operator <<<>>> to call the kernel.
+  The host derives the Block count from the fixed shape and per-block split, then calls the kernel with the invocation operator <<<>>>. With the default parameters, the Block count is `(1024 / 256) × (1024 / 128) = 4 × 8 = 32`. `__mix__(1, 2)` specifies an AIC:AIV ratio of 1:2 within each Block.
 
 ### Parameters
 
@@ -92,7 +92,7 @@ Default compile-time parameters:
 | `vector_len` | 64 | Maximum number of elements in one Vector computation |
 | `pipe_depth` | 2 | Number of UB slots |
 
-Default runtime parameters are as follows:
+The fixed example specification is as follows. These parameters are compile-time constants in `quant_matmul.asc`; after changing them, rebuild the example. Command-line parameter configuration is not supported:
 
 | Parameter | Default | Description |
 | --- | --- | --- |
@@ -102,7 +102,7 @@ Default runtime parameters are as follows:
 | `single_core_m` | 256 | Single-core M dimension size |
 | `single_core_n` | 128 | Single-core N dimension size |
 | `single_core_k` | 256 | Single-core K dimension size |
-| `num_blocks` | 32 | Number of Blocks launched by Kernel, calculated from the M/N split |
+| `num_blocks` | 32 | Number of Blocks launched by Kernel, derived as `(m / single_core_m) × (n / single_core_n)` |
 
 Parameter constraints are as follows:
 
@@ -150,7 +150,7 @@ Here, the AIV uses `load` to read one row of int32 data from the current UB slot
 
 1. Create GM Tensor views from the runtime `m`, `n`, and `k`.
 2. Divide the output into tiles using `base_m` and `base_n`, and iterate over K in `base_k` blocks.
-3. When `k_iter % step_k == 0`, transfer `step_k` K blocks of A/B data from GM to L1 at once, reducing the GM-to-L1 transfer count.
+3. When `k_iter % step_k == 0`, transfer up to `step_k` K blocks of A/B data from GM to L1 at once, reducing the GM-to-L1 transfer count. The last transfer may contain fewer than `step_k` complete blocks; `cur_step_k` controls the actual transfer length.
 4. In each K iteration, transfer the current A/B blocks from L1 to L0A/L0B.
 5. Before the first K iteration, L0C contains no result for the current output tile. Set `init_with_zero=true` so `mmad` clears L0C before writing the first K block's result.
 6. Set `init_with_zero=false` in the second and later K iterations so the accumulated result in L0C is retained and the operation continues as `C = A * B + C`.
@@ -213,22 +213,16 @@ The flow advances row by row. Within each row, data is processed in `vector_len`
 
 ### Double Buffering and Synchronization
 
-Output tiles are numbered in generation order, and `slot = sequence % pipe_depth`. With the current parameters, `pipe_depth=2`, so two UB slots alternately cache adjacent output tiles. Each slot caches only the M half handled by one AIV; the other M half of the same output tile is received in the other AIV's local UB. The slot number is also used to select the corresponding synchronization flags so that events for different tiles do not interfere. There are two synchronization directions:
+The AIC processes output tiles in generation order. Two UB output buffer groups are reused in rotation using `slot = sequence % pipe_depth`: even-numbered tiles use slot 0, and odd-numbered tiles use slot 1. After `dual_dst_mode::split_m` is enabled for the L0C-to-UB transfer, each output tile is split along the M dimension. The first M half is written to the UB corresponding to AIV 0, and the second M half is written to the UB corresponding to AIV 1. Therefore, the same slot number identifies one M-half buffer in each AIV's UB, and the two AIVs together process one complete output tile.
 
-| Direction | Event Meaning | Pipe and Flags |
-| --- | --- | --- |
-| AIC -> AIV | L0C-to-UB transfer for the current UB slot is complete and the AIVs can read it | `PIPE_FIX`, flags `8` and `9` |
-| AIV -> AIC | Both AIVs finished computation and GM writeback, so the AIC can reuse the UB slot | `PIPE_MTE3`, flags `10` and `11` |
+Each slot group is bound to a pair of synchronization flags: slot 0 uses flags 8/10, and slot 1 uses flags 9/11. The synchronization flow is:
 
-The synchronization flow is:
+1. Before reusing a slot, the AIC waits on `PIPE_MTE2` until both AIVs finish consuming the previous round, preventing unread data from being overwritten.
+2. After the L0C-to-UB transfer for the current slot is complete, the AIC notifies the AIVs on `PIPE_FIX` that the data is ready.
+3. Each AIV waits on `PIPE_S` for the data-ready event of the corresponding slot, then reads and processes its own M half.
+4. After computation and GM writeback are complete, each AIV notifies the AIC on `PIPE_MTE3` that the slot can be reused.
 
-1. When the AIC computes output tile 0, it writes directly to slot 0 without waiting.
-2. After completing the L0C-to-UB transfer for slot 0, the AIC records that slot's data-ready event and continues computing output tile 1 into slot 1.
-3. Each AIV waits for the ready event of slot 0, reads and processes its own M half, and records the consumption-complete event of slot 0 after writing the result back to GM.
-4. Starting from output tile 2, the AIC reuses slot 0. Before writing slot 0, it waits for the slot's consumption-complete event to ensure that both AIVs have finished reading the data.
-5. Later tiles alternate between slot 0 and slot 1 in the same way, allowing the AIC to compute the next tile while the AIVs process the previous tile.
-
-This prevents a UB slot from being overwritten before Vector consumption and allows Cube computation and L0C transfer for the next tile to overlap Vector computation for the current tile.
+As a result, while the AIC computes and transfers the next tile, the AIVs can process the previous tile, forming a pipelined overlap between Cube and Vector.
 
 ### copy Interface Usage
 
@@ -264,11 +258,10 @@ For the L0C-to-UB path, first use `make_copy` to construct a copy atom containin
 constexpr asc::te::l0c_to_ub_trait copy_l0c2ub_trait = {
     // Use the default rounding mode.
     asc::te::round_mode::default_round,
-    // This example does not use compression or compression bypass.
     false,
     false,
-    // Enable M-axis dual-destination mode: the L0C tile is split
-    // along M to the UB of two AIVs.
+    // Enable M-axis dual-destination mode: the L0C tile is split along M
+    // to the UB of two AIVs.
     asc::te::dual_dst_mode::split_m};
 
 // A custom trait must provide the TraitType alias and a compile-time value.
@@ -278,13 +271,11 @@ struct CopyL0C2UBTraitCustom {
     static constexpr const TraitType value = copy_l0c2ub_trait;
 };
 
-// Construct the copy atom from the L0C-to-UB operation object
-// and the custom trait.
+// Construct the copy atom from the L0C-to-UB operation object and custom trait.
 auto l0c_to_ub = make_copy(copy_l0c_to_ub{}, CopyL0C2UBTraitCustom{});
 
-// ub_dst already locates the current slot and M half through slice(),
-// so this uses the full-Tensor transfer form. copy_atom passes the
-// custom trait as the first argument.
+// ub_dst already locates the current slot and M half through slice(), so this
+// uses the full-Tensor transfer form; copy_atom passes the custom trait first.
 copy(l0c_to_ub, ub_dst, l0_c);
 ```
 

@@ -75,7 +75,7 @@
 </table>
 
 - 调用实现：
-  Host侧根据总shape和单核切分计算Block数量，并使用内核调用符<<<>>>调用核函数。
+  Host侧根据固定shape和单核切分推导Block数量，并使用内核调用符<<<>>>调用核函数。默认参数下，Block数量为`(1024 / 256) × (1024 / 128) = 4 × 8 = 32`。`__mix__(1, 2)`表示每个Block内AIC:AIV的配比为1:2。
 
 ### 参数说明
 
@@ -92,7 +92,7 @@
 | `vector_len` | 64 | AIV一次Vector计算的最大元素数 |
 | `pipe_depth` | 2 | UB slot数量 |
 
-运行时参数默认值如下：
+固定样例规格如下。这些参数在`quant_matmul.asc`中为编译期常量；修改参数后需重新编译，本样例不支持命令行参数配置：
 
 | 参数 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -102,7 +102,7 @@
 | `single_core_m` | 256 | 单核M维度大小 |
 | `single_core_n` | 128 | 单核N维度大小 |
 | `single_core_k` | 256 | 单核K维度大小 |
-| `num_blocks` | 32 | Kernel启动的Block数量，由M/N切分自动计算 |
+| `num_blocks` | 32 | Kernel启动的Block数量，由`(m / single_core_m) × (n / single_core_n)`推导 |
 
 参数约束如下：
 
@@ -150,7 +150,7 @@ GM z                               float
 
 1. 根据Kernel运行时传入的`m`、`n`、`k`创建GM Tensor视图。
 2. 按`base_m`、`base_n`划分输出tile，按`base_k`在K维循环。
-3. 每当`k_iter % step_k == 0`，一次性把`step_k`个K分块的A/B数据从GM搬入L1，减少GM到L1的搬运次数。
+3. 每当`k_iter % step_k == 0`，一次性把最多`step_k`个K分块的A/B数据从GM搬入L1，减少GM到L1的搬运次数；最后一次搬运可能少于`step_k`个完整分块，由`cur_step_k`控制实际搬运长度。
 4. 每轮K迭代将当前A/B分块从L1搬入L0A/L0B。
 5. 第一次K迭代前L0C还没有本输出tile的结果，设置`init_with_zero=true`，让`mmad`先把L0C清零再写入首个K分块的乘加结果。
 6. 第二次及后续K迭代设置`init_with_zero=false`，保留L0C中已累加的部分结果，继续执行`C = A * B + C`。
@@ -213,22 +213,16 @@ experimental::store(dst, coord, result);
 
 ### 双缓冲与同步
 
-输出tile按生成顺序编号，`slot = sequence % pipe_depth`。当前参数下`pipe_depth=2`，因此两个UB slot交替缓存相邻的输出tile。每个slot只缓存一个AIV对应的一个M半块；同一个输出tile的另外半个M块由另一个AIV的本地UB接收。slot编号同时用于选择对应的同步flag，避免不同tile的事件相互干扰。同步事件分为两类：
+AIC按输出tile的生成顺序处理数据，两组UB输出缓冲按`slot = sequence % pipe_depth`轮转复用：偶数tile使用slot 0，奇数tile使用slot 1。L0C到UB搬运开启`dual_dst_mode::split_m`后，同一个输出tile会按M轴拆分，前半M写入AIV 0对应的UB，后半M写入AIV 1对应的UB。因此，同一个slot编号在每个AIV的UB中都对应一个M半块缓冲，两个AIV合起来处理一个完整的输出tile。
 
-| 方向 | 事件含义 | 使用的pipe和flag |
-| --- | --- | --- |
-| AIC -> AIV | 当前UB slot的L0C到UB搬运完成，AIV可以读取 | `PIPE_FIX`，flag为`8`、`9` |
-| AIV -> AIC | 两个AIV都完成计算和GM写回，AIC可以复用UB slot | `PIPE_MTE3`，flag为`10`、`11` |
+每组slot绑定一对同步flag：slot 0使用flag 8/10，slot 1使用flag 9/11。同步流程如下：
 
-同步流程如下：
+1. AIC复用slot前，通过`PIPE_MTE2`等待两个AIV完成上一轮消费，避免覆盖未读取的数据。
+2. AIC完成当前slot的L0C到UB搬运后，通过`PIPE_FIX`通知AIV数据已就绪。
+3. AIV在`PIPE_S`等待对应slot的数据就绪事件，读取并处理自己负责的M半块。
+4. AIV完成计算和GM写回后，通过`PIPE_MTE3`通知AIC该slot可以复用。
 
-1. AIC计算第0个输出tile时，不需要等待，直接写入slot 0。
-2. AIC完成slot 0的L0C到UB搬运后，记录该slot的数据就绪事件，随后继续计算第1个输出tile并写入slot 1。
-3. 每个AIV等待slot 0的就绪事件，读取并处理自己负责的M半块，写回GM后记录slot 0的消费完成事件。
-4. AIC从第2个输出tile开始复用slot 0，写入前先等待slot 0的消费完成事件，确保两个AIV都已读完数据。
-5. 后续tile按相同方式在slot 0和slot 1之间交替，使AIC计算下一个tile与AIV处理上一个tile可以并行进行。
-
-这套依赖保证UB slot不会被提前覆盖，同时让下一个tile的Cube计算、L0C搬运和上一个tile的Vector计算可以交叠执行。
+这样，AIC计算和搬运下一个tile时，AIV可以同时处理上一个tile，形成Cube与Vector的流水交叠。
 
 ### copy接口使用方式
 
