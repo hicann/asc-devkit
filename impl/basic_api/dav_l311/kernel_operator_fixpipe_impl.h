@@ -395,16 +395,12 @@ __aicore__ inline void FixpipeL0cToOut(
         return copy_matrix_cc_to_gm_s4(
             (__gm__ void*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), 0, calNSize, intriParams.mSize,
             intriParams.dstStride, intriParams.srcStride, 0, intriParams.unitFlag,
-            static_cast<uint64_t>(intriParams.quantPre), 0, intriParams.isChannelSplit, nz2ndEn,
-            static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
-            nz2dnEn);
-    } else {
+            static_cast<uint64_t>(intriParams.quantPre), 0, intriParams.isChannelSplit, nz2ndEn, false);
+    } else if constexpr (!(IsSameType<SrcT, float>::value || IsSameType<DstT, float>::value)) {
         return copy_matrix_cc_to_gm(
             (__gm__ DstT*)(dst + dstOffset), (__cc__ SrcT*)(src + srcOffset), 0, calNSize, intriParams.mSize,
             intriParams.dstStride, intriParams.srcStride, 0, intriParams.unitFlag,
-            static_cast<uint64_t>(intriParams.quantPre), 0, intriParams.isChannelSplit, nz2ndEn,
-            static_cast<uint64_t>(QuantMode_post::NoConv), 0, false, false, 0, false, false, false, false, false,
-            nz2dnEn);
+            static_cast<uint64_t>(intriParams.quantPre), 0, intriParams.isChannelSplit, nz2ndEn, false);
     }
     ASCENDC_DEBUG_ASSERT(
         !(IsSameType<SrcT, float>::value || IsSameType<DstT, float>::value),
