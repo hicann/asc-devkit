@@ -22,7 +22,7 @@ __aicore__ inline void CopyHcclMsg(const uint8_t* src, __gm__ HcclMsg* dst)
 {
     constexpr uint32_t HCCL_VALID_POS = 12U;
     __gm__ DataBlock* tmpDst = reinterpret_cast<__gm__ DataBlock*>(dst);
-    volatile uint32_t xorCheck = 0U;
+    uint32_t xorCheck = 0U;
     for (uint32_t i = 0; i < HCCL_MSG_DATA_CNT - 1U; ++i) {
         if (i == HCCL_VALID_POS) {
             xorCheck ^= HCCL_MSG_VALID_MASK;
@@ -34,6 +34,33 @@ __aicore__ inline void CopyHcclMsg(const uint8_t* src, __gm__ HcclMsg* dst)
     tmpDst->data[HCCL_MSG_DATA_CNT - 1U] = xorCheck;
     tmpDst->data[HCCL_VALID_POS] = HCCL_MSG_VALID_MASK;
 }
+
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+__aicore__ inline void CopyHcclMsgCompact(const HcclMsg* src, __gm__ HcclMsg* dst)
+{
+    constexpr uint32_t compactValidWord = 12U;
+    constexpr uint32_t compactLastWord = 15U;
+    static_assert(sizeof(HcclMsg) == sizeof(uint64_t) * 8U, "A5 compact message must be eight 64-bit words");
+    static_assert(alignof(HcclMsg) >= alignof(uint64_t), "A5 compact message must support 64-bit access");
+
+    const uint64_t* const srcWords = reinterpret_cast<const uint64_t*>(src);
+    __gm__ uint64_t* const dstWords = reinterpret_cast<__gm__ uint64_t*>(dst);
+    uint64_t xorWords = 0U;
+    for (uint32_t i = 0U; i < compactValidWord / 2U; ++i) {
+        xorWords ^= dstWords[i] = srcWords[i];
+    }
+
+    const uint64_t validWord = static_cast<uint64_t>(HCCL_MSG_VALID_MASK);
+    const uint64_t validPair = (srcWords[compactValidWord / 2U] & ~UINT64_C(0xFFFFFFFF)) | validWord;
+    const uint64_t lastPair = srcWords[compactLastWord / 2U];
+    xorWords ^= validPair;
+    const uint32_t xorCheck =
+        static_cast<uint32_t>(xorWords) ^ static_cast<uint32_t>(xorWords >> 32U) ^ static_cast<uint32_t>(lastPair);
+
+    dstWords[compactValidWord / 2U] = validPair;
+    dstWords[compactLastWord / 2U] = (static_cast<uint64_t>(xorCheck) << 32U) | static_cast<uint32_t>(lastPair);
+}
+#endif
 
 __aicore__ inline void AssembleHcclMsgExt(const AlltoAllVParamExt& param, uint32_t rankDim, __gm__ HcclMsgExt* dst)
 {
@@ -47,6 +74,31 @@ __aicore__ inline void AssembleHcclMsgExt(const AlltoAllVParamExt& param, uint32
     dst->xorCheck = (xorCheck ^ HCCL_MSG_VALID_MASK);
     dst->valid = HCCL_MSG_VALID_MASK;
 }
+
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+// Compact A5 representation. The count and offset are each guaranteed to fit
+// in 32 bits before this function is selected; callers must fall back to the
+// legacy 64-bit arrays when any value exceeds 32 bits.
+__aicore__ inline void AssembleHcclMsgExtCompact(
+    const AlltoAllVParamExt& param, uint32_t rankDim, __gm__ HcclMsgExt* dst, uint64_t& extCtrl, uint64_t& extXor)
+{
+    uint32_t xorCheck = HCCL_MSG_EXT_COMPACT_CTRL;
+    __gm__ uint64_t* const dstSend = reinterpret_cast<__gm__ uint64_t*>(dst->sendCounts);
+    __gm__ uint64_t* const dstRecv = reinterpret_cast<__gm__ uint64_t*>(dst->recvCounts);
+    for (uint32_t i = 0U; i < rankDim; ++i) {
+        const uint64_t sendValue = (param.sendCounts[i] << 32U) | param.sdispls[i];
+        const uint64_t recvValue = (param.recvCounts[i] << 32U) | param.rdispls[i];
+        dstSend[i] = sendValue;
+        dstRecv[i] = recvValue;
+        xorCheck ^= static_cast<uint32_t>(sendValue >> 32U);
+        xorCheck ^= static_cast<uint32_t>(sendValue);
+        xorCheck ^= static_cast<uint32_t>(recvValue >> 32U);
+        xorCheck ^= static_cast<uint32_t>(recvValue);
+    }
+    extCtrl = HCCL_MSG_EXT_COMPACT_CTRL;
+    extXor = xorCheck;
+}
+#endif
 
 constexpr uint32_t HCCL_CONTROL_RESERVED_PRIMITIVE_ID_IDX = 0U;
 constexpr uint32_t HCCL_CONTROL_RESERVED_PRIMITIVE_RESET_IDX = 1U;
@@ -86,14 +138,22 @@ __aicore__ inline void AssembleHcclMsgV2(
     __gm__ ControlHcclMsg* controlMsgGM)
 {
     HcclMsg tmp{};
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+    // A5 derives the sequence number from the Prepare handle. The shared control message is
+    // not consumed by the A5 AICPU server on this path.
+    (void)controlMsgGM;
+#else
     FlushDataCache(controlMsgGM);
     if (controlMsgGM->resetSeq > 0) {
         controlMsgGM->resetSeq = 0;
         ResetPrimitiveIdOnceInControlMsg(controlMsgGM);
     }
+#endif
     tmp.commType.msgType = param.commType.msgType;
     if (param.commType.msgType == ControlMsgType::HCCL_CMD_FINALIZE) {
+#if !(defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510)
         ResetPrimitiveIdStateInControlMsg(controlMsgGM);
+#endif
     } else {
         tmp.opType = param.op;
         tmp.sendBuffer = reinterpret_cast<uint64_t>(param.sendBuf);
@@ -104,20 +164,60 @@ __aicore__ inline void AssembleHcclMsgV2(
             tmp.addMsg.v0Msg.hcclDataType = param.dataType;
             tmp.addMsg.v0Msg.repeatCnt = param.repeat;
             tmp.addMsg.v0Msg.selfHandleID = handle;
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+            tmp.addMsg.v0Msg.seqNum = static_cast<uint8_t>(handle);
+#else
             tmp.addMsg.v0Msg.seqNum = FetchAndIncPrimitiveIdInControlMsg(controlMsgGM);
+#endif
             tmp.addMsg.v0Msg.version = ver;
         } else {
             tmp.addMsg.v1Msg.ccOpTilingData = tiling;
             tmp.addMsg.v1Msg.hcclDataType = param.dataType;
             tmp.addMsg.v1Msg.repeatCnt = param.repeat;
             tmp.addMsg.v1Msg.selfHandleID = handle;
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+            tmp.addMsg.v1Msg.seqNum = static_cast<uint8_t>(handle);
+#else
             tmp.addMsg.v1Msg.seqNum = FetchAndIncPrimitiveIdInControlMsg(controlMsgGM);
+#endif
             tmp.addMsg.v1Msg.version = ver;
         }
     }
     tmp.addMsg.v0Msg.valid = HCCL_MSG_VALID_MASK;
     CopyHcclMsg(reinterpret_cast<const uint8_t*>(&tmp), dst);
 }
+
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+__aicore__ inline void AssembleHcclMsgV2Compact(
+    const CommonPrepareParam& param, HcclTilingVersion ver, HcclHandle handle, uint64_t tiling, __gm__ HcclMsg* dst,
+    uint64_t extCtrl, uint64_t extXor)
+{
+    HcclMsg tmp{};
+    tmp.commType.msgType = param.commType.msgType;
+    tmp.opType = param.op;
+    tmp.sendBuffer = reinterpret_cast<uint64_t>(param.sendBuf);
+    tmp.recvBuffer = reinterpret_cast<uint64_t>(param.recvBuf);
+    tmp.dataCnt = param.count;
+    tmp.strideCount = param.strideCount;
+    if (ver == HcclTilingVersion::DEPRECATED_TILING_VERSION) {
+        tmp.addMsg.v0Msg.hcclDataType = param.dataType;
+        tmp.addMsg.v0Msg.repeatCnt = param.repeat;
+        tmp.addMsg.v0Msg.selfHandleID = handle;
+        tmp.addMsg.v0Msg.seqNum = static_cast<uint8_t>(handle);
+        tmp.addMsg.v0Msg.version = ver;
+    } else {
+        tmp.addMsg.v1Msg.ccOpTilingData = tiling;
+        tmp.addMsg.v1Msg.hcclDataType = param.dataType;
+        tmp.addMsg.v1Msg.repeatCnt = param.repeat;
+        tmp.addMsg.v1Msg.selfHandleID = handle;
+        tmp.addMsg.v1Msg.seqNum = static_cast<uint8_t>(handle);
+        tmp.addMsg.v1Msg.version = ver;
+    }
+    tmp.strideCount = (extCtrl << 32U) | (extXor & 0xFFFFFFFFULL);
+    tmp.addMsg.v0Msg.valid = HCCL_MSG_VALID_MASK;
+    CopyHcclMsgCompact(&tmp, dst);
+}
+#endif
 __aicore__ inline void AssembleHcclMsg(
     const CommonPrepareParam& param, HcclTilingVersion ver, HcclHandle handle, uint64_t tiling, __gm__ HcclMsg* dst,
     __gm__ ControlHcclMsg* controlMsgGM)
@@ -183,6 +283,10 @@ __aicore__ inline HcclContextDef::HcclRankRelationResV2* GetRemoteRankAddrs(
 
 __aicore__ inline void UpdateControlMsgCount(__gm__ HcclMsgArea* hcclMsgArea, ControlMsgType msg)
 {
+#if defined(__NPU_ARCH__) && __NPU_ARCH__ == 3510
+    (void)hcclMsgArea;
+    (void)msg;
+#else
     const uint32_t msgValue = static_cast<uint32_t>(msg);
     const uint32_t firstMsgValue = static_cast<uint32_t>(ControlMsgType::HCCL_CMD_FINALIZE);
     const uint32_t maxMsgValue = static_cast<uint32_t>(ControlMsgType::HCCL_CMD_MAX);
@@ -194,6 +298,7 @@ __aicore__ inline void UpdateControlMsgCount(__gm__ HcclMsgArea* hcclMsgArea, Co
     FlushDataCache(apiInfo);
     ++(apiInfo->cnt);
     FlushDataCache(apiInfo);
+#endif
 }
 } // namespace AscendC
 

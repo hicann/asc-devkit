@@ -253,7 +253,7 @@ TEST_F(HcclCommonTestSuite, AllReduce_Repeat1)
         GenXorForHcclMsg(&hcclMsgArea->commMsg.singleMsg.sendMsgs[0]));
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, 0);
     hccl.Commit(handleId);
-    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, 1);
     ASSERT_EQ(hccl.Query(handleId), 0);
     hcclMsgArea->commMsg.singleMsg.finishedTurnCnt[0].cnt++;
@@ -373,7 +373,7 @@ TEST_F(HcclCommonTestSuite, AlltoAll_Repeat2_CommitWhenPrepare)
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.sendMsgs[0].commType.prepareType, HcclCMDType::HCCL_CMD_ALLTOALL);
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.sendMsgs[0].opType, HcclReduceOp::HCCL_REDUCE_RESERVED);
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, 2);
-    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
     for (int i = 0; i < 2; ++i) {
         ASSERT_EQ(hccl.Query(handleId), i);
         hcclMsgArea->commMsg.singleMsg.finishedTurnCnt[0].cnt++;
@@ -1286,7 +1286,7 @@ TEST_F(HcclCommonTestSuite, TilingV1_AllReduce_Repeat1)
         GenXorForHcclMsg(&hcclMsgArea->commMsg.singleMsg.sendMsgs[0]));
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, 0);
     hccl.Commit(handleId);
-    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, 1);
     ASSERT_EQ(hccl.Query(handleId), 0);
     hcclMsgArea->commMsg.singleMsg.finishedTurnCnt[0].cnt++;
@@ -1433,7 +1433,7 @@ TEST_F(HcclCommonTestSuite, All2AllV_FineGrainedSend)
         EXPECT_EQ(ret, 1);
         EXPECT_EQ(sliceId, sliceList[i]);
         hccl.Commit(handleId);
-        EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+        EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
         EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, i + 1);
         ASSERT_EQ(hccl.Query(handleId), i);
         hcclMsgArea->commMsg.singleMsg.finishedTurnCnt[0].cnt++;
@@ -1471,7 +1471,7 @@ TEST_F(HcclCommonTestSuite, All2AllV_FineGrainedRecv)
     for (int i = 0; i < kRankNum; ++i) {
         EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, i);
         hccl.Commit(handleId);
-        EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+        EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
         EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, i + 1);
         hcclMsgArea->commMsg.singleMsg.finishedTurnCnt[0].cnt++;
         ret = hccl.Iterate<true>(handleId, &sliceId, 1);
@@ -1508,7 +1508,7 @@ TEST_F(HcclCommonTestSuite, All2AllV_FineGrainedRecvWithStepSize)
     EXPECT_EQ(
         hcclMsgArea->commMsg.singleMsg.sendMsgs[0].addMsg.v1Msg.xorCheck,
         GenXorForHcclMsg(&hcclMsgArea->commMsg.singleMsg.sendMsgs[0]));
-    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, COMMIT_VALID_MASK);
+    EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].valid, 0U);
     EXPECT_EQ(hcclMsgArea->commMsg.singleMsg.commitTurnCnt[0].cnt, kRankNum * repeat);
     uint16_t sliceList[kRankNum] = {0, 7, 6, 5, 4, 3, 2, 1};
     uint16_t sliceId[4];

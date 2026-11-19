@@ -91,12 +91,17 @@ public:
 private:
     // Generic implementation for corresponding interface of each Prepare primitive. Return identifier(handleId) of
     // corresponding comm task. HandleId >= 0 when successful, otherwise return -1.
-    template <bool commit = false>
+    template <bool commit = false, HcclCMDType cmdType = HcclCMDType::HCCL_CMD_ALL>
     __aicore__ inline HcclHandle CommonPrepareImpl(const CommonPrepareParam& param);
 
-    __aicore__ inline bool CheckCommonPrepareParamValid(const CommonPrepareParam& param);
+    template <bool commit = false>
+    __aicore__ inline HcclHandle AlltoAllVPrepareImpl(const CommonPrepareParam& param);
 
-    __aicore__ inline bool CheckAlltoAllVPrepareParamValid(const CommonPrepareParam& param);
+    template <HcclCMDType cmdType>
+    __aicore__ inline bool CheckCommonPrepareParamValid(
+        const CommonPrepareParam& param, uint64_t& tiling, uint32_t& rankNum);
+
+    __aicore__ inline bool CheckAlltoAllVPrepareParamValid(const CommonPrepareParam& param, uint32_t& rankNum);
 
     // Clear the finishedTurnCnt before aicore exists to ensure the correctness of next launch.
     __aicore__ inline void ResetFinishedTurnCnt();
@@ -104,11 +109,23 @@ private:
     template <bool sync>
     __aicore__ inline void SendFinalizeMsg();
 
+    template <HcclCMDType cmdType>
     __aicore__ inline void SendMsgToServer(
-        uint16_t queId, const CommonPrepareParam& para, int8_t srcGroupID = -1,
-        HcclHandle srcHandleID = INVALID_HANDLE_ID);
+        uint16_t queId, const CommonPrepareParam& para, int8_t srcGroupID, HcclHandle srcHandleID, uint64_t tiling);
 
-    __aicore__ inline void SendMsgToServer(const AlltoAllVParamExt& para);
+    __aicore__ inline void SendNormalMsgLegacy(
+        uint16_t queId, const CommonPrepareParam& para, uint64_t tiling, bool compactExt, uint64_t extCtrl,
+        uint64_t extXor, bool normalSlotChecked);
+
+    __aicore__ inline void SendExtMsgA5(
+        const AlltoAllVParamExt& para, uint32_t rankNum, uint64_t& extCtrl, uint64_t& extXor, bool& compactExt,
+        bool& normalSlotChecked);
+
+    __aicore__ inline void SendExtMsgLegacy(const AlltoAllVParamExt& para, uint32_t rankNum);
+
+    __aicore__ inline void SendNormalMsgA5(
+        const CommonPrepareParam& para, HcclHandle handle, uint64_t tiling, bool compactExt, uint64_t extCtrl,
+        uint64_t extXor, bool normalSlotChecked);
 
     __aicore__ inline uint16_t GetStepSizeByHandle(HcclHandle handle);
 
@@ -116,7 +133,7 @@ private:
 
     __aicore__ inline void SetCommitTurnCntToGm(uint8_t msgPos, uint64_t turnCnt, HcclHandle handleId);
 
-    __aicore__ inline uint64_t WaitFinishCntFromGm(uint8_t msgPos, uint64_t expectedCnt);
+    __aicore__ inline uint64_t WaitFinishCntFromGm(uint8_t msgPos, uint64_t expectedCnt, HcclHandle handleId);
 
     __aicore__ inline void InitWorkingFlag();
 
@@ -134,10 +151,15 @@ private:
     uint64_t tilingBaseAddr_ = 0UL;
     uint16_t queueNum_ = 0U;
     uint16_t handleId2CurrSliceId_[HCCL_MAX_HANDLE_ID] = {0U};
+    uint16_t handleIdFinishedCnt_[HCCL_MAX_HANDLE_ID] = {0U};
     uint16_t handleIdCommitTurnCnt_[HCCL_MAX_HANDLE_ID] = {0U};
     uint16_t handleIdWaitCallNum_[HCCL_MAX_HANDLE_ID] = {0U};
     uint8_t handleId2CmdType_[HCCL_MAX_HANDLE_ID] = {0U};
+#if __NPU_ARCH__ == 3510
+    alignas(alignof(uint64_t)) int8_t handleIdMsgPosition_[HCCL_MAX_HANDLE_ID + 1];
+#else
     int8_t handleIdMsgPosition_[HCCL_MAX_HANDLE_ID];
+#endif
     uint8_t handleIdRepeat_[HCCL_MAX_HANDLE_ID] = {0U};
     uint8_t curMsgPosition_[MAX_QUE_NUM] = {0U};
     HcclHandle curHandleId_ = INVALID_HANDLE_ID;

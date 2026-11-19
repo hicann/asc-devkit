@@ -641,3 +641,43 @@ HcclResult AicpuKfcUtils::ReadMsgFromMemory(HcclMsgExt* src, u32 rankSize, HcclM
     HCCL_INFO("[AICPU_ORDER_DFX][MsgExt] Read extended message %s", GetMsgSimpleStr(rankSize, dst).c_str());
     return HCCL_SUCCESS;
 }
+
+HcclResult AicpuKfcUtils::ReadCompactExtFromMemory(HcclMsgExt* src, u32 rankSize, const HcclMsg& msg, HcclMsgExt& dst)
+{
+    if (rankSize > HCCL_MAX_RANK_NUM_V2) {
+        return HCCL_E_PARA;
+    }
+
+    const u64 ctrlXor = msg.strideCount;
+    const u32 ctrl = static_cast<u32>(ctrlXor >> 32U);
+    if (ctrl != HCCL_MSG_EXT_COMPACT_CTRL) {
+        return HCCL_E_PARA;
+    }
+    const u32 xorCheck = static_cast<u32>(ctrlXor & 0xFFFFFFFFU);
+
+    u32 actualXor = HCCL_MSG_EXT_COMPACT_CTRL;
+    const u64* send = reinterpret_cast<const u64*>(src->sendCounts);
+    const u64* recv = reinterpret_cast<const u64*>(src->recvCounts);
+    for (u32 i = 0; i < rankSize; ++i) {
+        const u64 sendValue = send[i];
+        const u64 recvValue = recv[i];
+        dst.sendCounts[i] = sendValue >> 32U;
+        dst.sendOffset[i] = sendValue & 0xFFFFFFFFU;
+        dst.recvCounts[i] = recvValue >> 32U;
+        dst.recvOffset[i] = recvValue & 0xFFFFFFFFU;
+        actualXor ^= static_cast<u32>(sendValue >> 32U);
+        actualXor ^= static_cast<u32>(sendValue);
+        actualXor ^= static_cast<u32>(recvValue >> 32U);
+        actualXor ^= static_cast<u32>(recvValue);
+    }
+    if (UNLIKELY(actualXor != xorCheck)) {
+        HCCL_RUN_INFO("Compact extended data is modified, modified_xor:%u, origin_xor:%u.", actualXor, xorCheck);
+        return HCCL_E_AGAIN;
+    }
+
+    src->valid = ~HCCL_MSG_VALID_MASK;
+#ifdef __aarch64__
+    __asm__ __volatile__("dsb st" : : : "memory");
+#endif
+    return HCCL_SUCCESS;
+}

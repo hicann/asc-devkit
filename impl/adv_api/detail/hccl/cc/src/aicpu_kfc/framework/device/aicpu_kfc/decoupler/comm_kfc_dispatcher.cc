@@ -78,8 +78,15 @@ HcclResult GetCurrentMsg(AscCommServerInfo& server)
     }
 
     if (static_cast<HcclCMDType>(server.msg.commType.prepareType) == HCCL_CMD_ALLTOALLV) {
-        ret = AicpuKfcUtils::ReadMsgFromMemory(
-            msgBaseAddr.paramExtMsgList + server.msgPos, server.serverIns.GetRankNum(), *(server.extMsg));
+        const u32 rankNum = server.serverIns.GetRankNum();
+        const u32 extCtrl = static_cast<u32>(server.msg.strideCount >> 32U);
+        if (extCtrl == HCCL_MSG_EXT_COMPACT_CTRL) {
+            ret = AicpuKfcUtils::ReadCompactExtFromMemory(
+                msgBaseAddr.paramExtMsgList + server.msgPos, rankNum, server.msg, *(server.extMsg));
+        } else {
+            ret = AicpuKfcUtils::ReadMsgFromMemory(
+                msgBaseAddr.paramExtMsgList + server.msgPos, rankNum, *(server.extMsg));
+        }
     }
 
     return ret;

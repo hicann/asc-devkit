@@ -44,5 +44,7 @@ public:
     static void PrintHcclCommParamDesc(const HcclApi::CommKfcParamDesc& desc);
     static HcclResult ReadMsgFromMemory(HcclApi::HcclMsg* src, HcclApi::HcclMsg& dst);
     static HcclResult ReadMsgFromMemory(HcclApi::HcclMsgExt* src, u32 rankSize, HcclApi::HcclMsgExt& dst);
+    static HcclResult ReadCompactExtFromMemory(
+        HcclApi::HcclMsgExt* src, u32 rankSize, const HcclApi::HcclMsg& msg, HcclApi::HcclMsgExt& dst);
 };
 #endif // __MC2_AICPU_UTILS_HPP__
