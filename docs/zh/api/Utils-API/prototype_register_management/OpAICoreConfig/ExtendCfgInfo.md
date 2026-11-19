@@ -17,7 +17,7 @@ OpAICoreConfig &OpAICoreConfig::ExtendCfgInfo(const char *key, const char *value
 | 参数名 | 描述 |
 |:-------|:-----|
 | key | 配置项，如"aclnnSupport.value"。 |
-| value | 配置项key对应的取值，如"aclnnSupport.value"，可以填充"support_aclnn"或者"aclnn_only"。 |
+| value | 配置项key对应的取值。例如，当key为"aclnnSupport.value"时，value可为"support_aclnn"或"aclnn_only"。 |
 
 ExtendCfgInfo支持的参数如下表：
 

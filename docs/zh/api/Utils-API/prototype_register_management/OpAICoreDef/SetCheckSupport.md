@@ -86,7 +86,7 @@ OpAICoreDef请参考[OpAICoreDef](OpAICoreDef.md)。
                 .SetTiling(optiling::TilingFunc)
                 .SetTilingParse(optiling::TilingPrepare)
                 .SetOpSelectFormat(optiling::OpSelectFormat)
-                .SetCheckSupport(optiling::CheckSupported);
+                .SetCheckSupport(CheckSupported);
     
             OpAICoreConfig aicConfig;
             aicConfig.DynamicCompileStaticFlag(true)
