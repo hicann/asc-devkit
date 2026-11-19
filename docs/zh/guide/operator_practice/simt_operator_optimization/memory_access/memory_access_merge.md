@@ -52,7 +52,6 @@
 
   【正例】按Thread Block切分输出数据，Warp内相邻thread访问连续地址。
 
-
   ```cpp
   template <typename type_data, typename type_idx>
   __global__ __launch_bounds__(MAX_THREAD_COUNT) void gather_custom(
@@ -130,7 +129,6 @@
   |      36.337      |    34.022    |     56136.2      |     33.568      |     0.987     |        0.442        |      0.013      |
 
   【正例】使用UB中转，将非连续GM写转换为UB内转置读。
-
 
   ```cpp
   __ubuf__ float tile[TILES_PER_BLOCK][TILE_DIM][TILE_DIM];

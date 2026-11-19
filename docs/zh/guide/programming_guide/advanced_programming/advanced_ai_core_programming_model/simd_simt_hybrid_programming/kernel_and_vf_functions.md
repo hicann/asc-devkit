@@ -15,6 +15,7 @@ SIMD与SIMT混合编程中涉及的函数类型如下表所示：<a name="zh-cn_
 | `__callee__` | SIMD VF和SIMT VF的公共子函数 | VF内部调用 |
 
 各层函数间的调用关系如下：
+
 - 核函数（Kernel）：是Device侧的入口函数，可以调用`__aicore__`函数和VF函数。
 - simd vf函数：能被核函数（Kernel）或者`__aicore__`函数通过`asc_vf_call`接口调用。simd vf函数内只能调用`__simd_callee__`函数和`__callee__`函数。
 - simt vf函数：使用__simt_vf__标记，能被核函数（Kernel）或者`__aicore__`函数通过`asc_vf_call`接口调用。simt vf函数内只能调用`__simt_callee__`函数和`__callee__`函数。

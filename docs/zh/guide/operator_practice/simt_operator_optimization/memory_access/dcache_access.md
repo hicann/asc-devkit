@@ -64,6 +64,7 @@ __global__ void sin_table_lookup_optimized(float* input, float* sin_table, float
 ```
 
 上述实现中：
+
 - 输入数据使用`asc_ldcg`加载，输入数据直接从Global Memory读取，不需要占用DCache空间，避免输入数据对DCache的占用；
 - sin查找表使用`asc_ldca`加载，优先为sin表数据分配DCache空间，确保sin表常驻DCache；
 - 输出数据使用`asc_stcg`写入，直接写入Global Memory，不经过DCache缓存，避免输出数据占用DCache影响热点数据的缓存。

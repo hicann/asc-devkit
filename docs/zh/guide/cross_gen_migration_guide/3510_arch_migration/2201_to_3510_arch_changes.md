@@ -26,7 +26,7 @@
     | 新增ND-DMA指令。 | 扩展DataCopy数据搬运接口的能力，相比基础数据搬运接口，可更加自由地配置搬入数据的维度信息及Stride，使用方式具体可参考[DataCopy（GMToUB多维数据搬运NDDMA）](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)。 | DataCopy |
     | 新增L0C Buffer到UB的单向数据通路。 | 支持将数据直接从L0C Buffer搬运到UB，而无需先从L0C Buffer搬运到GM，再从GM搬运到UB，使用方式具体可参考[Fixpipe（L0C到GM数据搬运）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)。 | Fixpipe |
     | 扩展LoadData搬运指令。 | 新增支持MicroScaling（MX）场景的数据搬运，使用方式具体可参考[LoadData](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_MX.md)。 | LoadData |
-    | 新增DN分型、L1Buffer->L0A Buffer不再支持transpose。 | 使用新特性具体可参考[LoadDataWithTranspose](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md)。 | LoadDataWithTranspose |
+    | 新增DN分形、L1 Buffer->L0A Buffer不再支持transpose。 | 使用新特性具体可参考[LoadDataWithTranspose](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md)。 | LoadDataWithTranspose |
     | Fixpipe新增NZ2DN随路转换（实现NZ到DN数据格式的随路变换）。 | 使用方式具体可参考[Fixpipe（L0C到GM数据搬运）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)。 | Fixpipe |
     | DataCopy搬运维度增强。 | DataCopy支持L1 Buffer与GM之间，GM与UB之间通路的loop模式搬运，使用方式具体可参考[SetLoopModePara](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/SetLoopModePara.md)。 | DataCopy |
     | 3510架构版本中删除了与L0A Buffer和L0B Buffer初始化相关的硬件指令。 | 使用基础API [Fill](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_load_aux_config/Fill.md)将特定存储位置的LocalTensor初始化为某一具体数值，不支持直接初始化L0A Buffer、L0B Buffer上的LocalTensor。 | Fill |
@@ -51,7 +51,6 @@
     |----------|------------|---------------|
     | 删除L1 Buffer空间的边界值设定。 | 3510架构硬件删除了L1 Buffer的边界值设定相关寄存器，不再支持SetLoadDataBoundary接口，具体请参考[基础API迁移指导](./2201_to_3510_guide/basic_api_migration.md)。 | SetLoadDataBoundary |
     | UB结构变化。2201架构的UB结构和3510架构的UB结构对比请参考[bank结构对比](../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/overview.md)。 | 2201架构上UB分为16个bank group，每个bank group包含3个bank，每个bank大小为4KB。3510架构上UB分为8个bank group，每个bank group包含2个bank，每个bank大小为16KB。若发生UB冲突，开发者可参考[避免UB的bank冲突](../../operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/overview.md)解决UB冲突。 | / |
-
 
 - 同步
 

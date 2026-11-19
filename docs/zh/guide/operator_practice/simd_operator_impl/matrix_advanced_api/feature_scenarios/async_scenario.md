@@ -19,7 +19,7 @@ Matmul的[Iterate](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kerne
         }
         ```
 
-    -   异步：通过设置Iterate接口的模板参数开启异步模式。调用Iterate后，无需立即调用GetTensorC同步等待矩阵C分块搬运完成，可以先执行其它操作，待需要获取结果时再调用GetTensorC。异步模式可以减少同步等待，提高并行度，开发者对计算性能要求较高时，可以选用该方式。异步场景时，需要使用一块临时空间来缓存Iterate计算结果，否则会覆盖计算结果，调用GetTensorC时会在该临时空间中获取C的矩阵分片。临时空间通过[SetWorkspace](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetWorkspace.md)接口进行设置。SetWorkspace接口需要在Iterate接口之前调用。
+    -   异步：通过设置Iterate接口的模板参数开启异步模式。调用Iterate后，无需立即调用GetTensorC同步等待矩阵C分块搬运完成，可以先执行其他操作，待需要获取结果时再调用GetTensorC。异步模式可以减少同步等待，提高并行度，开发者对计算性能要求较高时，可以选用该方式。异步场景时，需要使用一块临时空间来缓存Iterate计算结果，否则会覆盖计算结果，调用GetTensorC时会在该临时空间中获取C的矩阵分片。临时空间通过[SetWorkspace](../../../../../api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/SetWorkspace.md)接口进行设置。SetWorkspace接口需要在Iterate接口之前调用。
 
         Iterate&GetTensorC异步模式的关键代码示例如下：
 

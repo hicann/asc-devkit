@@ -16,4 +16,3 @@ Ascend C Device侧对C++14语言特性的支持情况如下表所示：
 | 带尺寸的释放 | [N3778](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html) | 否 | Device侧不支持动态内存释放。 |
 | `[[deprecated]]`属性 | [N3760](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3760.html) | 是 | 标注弃用后，使用该实体会产生编译告警。 |
 | 单引号数字分隔符 | [N3781](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3781.pdf) | 是 | `1'000'000`形式可用。 |
-

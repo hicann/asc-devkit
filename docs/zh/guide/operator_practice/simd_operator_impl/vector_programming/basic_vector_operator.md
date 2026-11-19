@@ -40,7 +40,7 @@
 
 4.  确定算子实现所需接口。
     -   实现涉及外部存储和内部存储间的数据搬运，查看Ascend C  API参考中的数据搬运接口，需要使用[DataCopy](../../../../api/SIMD-API/basic_api/data_move_guide/overview/data_move_concept.md)来实现数据搬运。
-    -   本样例只涉及矢量计算的加法操作，查看Ascend C  API参考中的[矢量计算](../../../../api/SIMD-API/basic_api/memory_vector_compute/memory_vector_compute.md)接口，初步分析可使用基础算术Add接口[Add](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)实现x+y。
+    -   本样例只涉及矢量计算的加法操作，查看Ascend C  API参考中的[矢量计算](../../../../api/SIMD-API/basic_api/memory_vector_compute/memory_vector_compute.md)接口，初步分析可使用基础算术[Add接口](../../../../api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Add.md)实现x+y。
     -   使用[Queue队列](../../../../api/SIMD-API/basic_api/resource_management/TQue/TQue_intro.md)管理计算中使用的Tensor数据结构，具体使用[EnQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/EnQue.md)、[DeQue](../../../../api/SIMD-API/basic_api/resource_management/TQue/DeQue.md)等接口。
 
 通过以上分析，得到Ascend C  Add算子的设计规格如下：
@@ -177,7 +177,7 @@ private:
 
 初始化函数主要完成以下内容：
 
--   设置输入输出Global Tensor的Global Memory内存地址。
+-   设置输入输出GlobalTensor的Global Memory内存地址。
 
     本样例中的分配方案是：数据整体长度TOTAL\_LENGTH为1 \* 2048，使用GlobalTensor类的[SetGlobalBuffer](../../../../api/SIMD-API/basic_api/data_structures/GlobalTensor/SetGlobalBuffer.md)接口设定该核上Global Memory的起始地址以及长度。
 

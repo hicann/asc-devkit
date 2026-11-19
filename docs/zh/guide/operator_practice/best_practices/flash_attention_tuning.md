@@ -31,7 +31,7 @@
 **图1**  算子计算流程<a name="fig13370135013413"></a>  
 ![](../../figures/op_compute.png "算子计算流程")
 
-按照FlashAttention反向计算流程的实现，简介整体计算流程如下。对本算子的算法感兴趣的用户可简单了解，无需重点关注。
+按照FlashAttention反向计算流程的实现，简要介绍整体计算流程如下。对本算子的算法感兴趣的用户可简单了解，无需重点关注。
 
 1.  重计算p，本步骤重计算了FlashAttention流程中的softmax结果p，计算结果保存在Unified Buffer（UB）中。
 

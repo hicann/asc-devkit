@@ -83,13 +83,16 @@ host侧自动获取Tiling参数的关键步骤介绍如下：<a name="zh-cn_topi
     ```
 
     >[!NOTE]说明 
-    >Matmul高阶API内部实现时需要使用系统workspace（即对应本步骤中的GetSysWorkSpacePtr接口），开发者需要自行申请系统workspace的空间：
-    >-   在host侧Tiling实现时，设置总的workspace的数值大小（包含用户workspace和系统workspace），workspace空间由框架来申请并管理。系统workspace的空间大小通过[GetLibApiWorkSpaceSize](../../../../api/Utils-API/platform_info/PlatformAscendC/GetLibApiWorkSpaceSize.md)获取。
-    >    ```
-    >    size_t userWorkspaceSize = 0;
-    >    size_t systemWorkspaceSize = static_cast<size_t>(ascendcPlatform.GetLibApiWorkSpaceSize());
-    >    size_t workspaceSize = userWorkspaceSize + systemWorkspaceSize;
-    >    ```
+    > Matmul高阶API内部实现时需要使用系统workspace（即对应本步骤中的GetSysWorkSpacePtr接口），开发者需要自行申请系统workspace的空间。
+    >
+    > 在host侧Tiling实现时，设置总的workspace的数值大小（包含用户workspace和系统workspace），workspace空间由框架来申请并管理。系统workspace的空间大小通过[GetLibApiWorkSpaceSize](../../../../api/Utils-API/platform_info/PlatformAscendC/GetLibApiWorkSpaceSize.md)获取。
+    >
+    > ```
+    > size_t userWorkspaceSize = 0;
+    > size_t systemWorkspaceSize = static_cast<size_t>(ascendcPlatform.GetLibApiWorkSpaceSize());
+    > size_t workspaceSize = userWorkspaceSize + systemWorkspaceSize;
+    > ```
+    >
 
 3.  **设置原始矩阵shape以及当前核使用的左矩阵A、右矩阵B。**
 

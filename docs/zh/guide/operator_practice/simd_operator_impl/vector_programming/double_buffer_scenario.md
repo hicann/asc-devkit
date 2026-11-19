@@ -59,7 +59,7 @@ pipe.InitBuffer(inQueueY, BUFFER_NUM, this->initBufferLength * sizeof(dataType))
 pipe.InitBuffer(outQueueZ, BUFFER_NUM, this->initBufferLength * sizeof(dataType));
 ```
 
-同时在计算核内每个数据块的长度时，考虑DoubleBuffer场景，需要将Buffer数量，即BUFFER\_NUM=2带入计算。
+同时在计算核内每个数据块的长度时，考虑DoubleBuffer场景，需要将Buffer数量，即BUFFER\_NUM=2代入计算。
 
 ```
 this->tileLength = tiling.tileLength / BUFFER_NUM;
@@ -115,7 +115,7 @@ __aicore__ inline void Init(__gm__ uint8_t* x, __gm__ uint8_t* y, __gm__ uint8_t
 }
 ```
 
-由于开启DoubleBuffer后，切分后的主块数据块个数翻倍，在Process函数中，需要将BUFFER\_NUM带入计算循环次数；尾块独立计算，不开启DoubleBuffer。后续主尾块在CopyIn、Compute、CopyOut阶段中的处理，与[尾块均分](multi_core_tiling/tail_block_even_split.md)相同。
+由于开启DoubleBuffer后，切分后的主块数据块个数翻倍，在Process函数中，需要将BUFFER\_NUM代入计算循环次数；尾块独立计算，不开启DoubleBuffer。后续主尾块在CopyIn、Compute、CopyOut阶段中的处理，与[尾块均分](multi_core_tiling/tail_block_even_split.md)相同。
 
 ```
 __aicore__ inline void Process()

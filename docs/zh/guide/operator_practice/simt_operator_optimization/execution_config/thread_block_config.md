@@ -83,7 +83,6 @@ gather_strided_kernel<<<64, MAX_THREAD_NUM, 0, stream>>>(
 | :-------: | :---------------: |
 |    64     |      58.583       |
 
-
 上述两种写法的性能数据汇总如下：
 
 | 写法 | 线程块数量 | Task Duration（us） | 

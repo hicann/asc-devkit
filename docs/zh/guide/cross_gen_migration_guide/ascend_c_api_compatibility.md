@@ -7,7 +7,6 @@
 **图1**  Ascend C API层次结构<a name="fig1912418519815"></a>  
 ![](../figures/api_hierarchy.png "Ascend-C-API层次结构")
 
-
 **表1**  Ascend C API兼容策略<a name="table18109729593"></a>
 
 <table><thead align="left"><tr id="row810952912919"><th class="cellrowborder" valign="top" width="18.01%" id="mcps1.2.3.1.1"><p id="p141091429991"><a name="p141091429991"></a><a name="p141091429991"></a>API层级</p>

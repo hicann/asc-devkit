@@ -328,7 +328,7 @@ OP_ADD(AllGatherMatmulCustom);
 
 除了上述Matmul运算所需的信息外，为了快速实现Matmul矩阵乘法，可以使用Matmul高阶API中的Matmul对象来执行计算。如果Matmul对象在Matmul计算函数中定义，每次调用该函数时都会实例化Matmul对象并释放资源，这将导致较大的运行时开销。因此，将该对象也作为Matmul计算函数的参数，以实现对象的复用。
 
-综上所述，在核函数（Kernel）实现中定义的适用于不同输入形状的Matmul计算函数如下。其中Matmul计算函数函数名定义为MatmulKernel，入参aGM、bGM、cGM表示需要运算的原始输入输出矩阵的地址，入参tiling表示TCubeTiling结构体，入参mm对应Matmul高阶API的实现类。MATMUL\_TYPE是特化了MatmulType模板的类型别名。
+综上所述，在核函数（Kernel）实现中定义的适用于不同输入形状的Matmul计算函数如下。其中Matmul计算函数名定义为MatmulKernel，入参aGM、bGM、cGM表示需要运算的原始输入输出矩阵的地址，入参tiling表示TCubeTiling结构体，入参mm对应Matmul高阶API的实现类。MATMUL\_TYPE是特化了MatmulType模板的类型别名。
 
 ```
 using MATMUL_TYPE = MatmulType<AscendC::TPosition::GM, CubeFormat::ND, half>;
@@ -384,7 +384,7 @@ Matmul核函数（Kernel）的实现步骤如下。
     mm.IterateAll(cGlobal[offsetC]);
     ```
 
-AllGatherMatmul算子的核函数（Kernel）定义如下，aGM、bGM、cGM、gatherOutGM参数含义如[算子分析](#zh-cn_topic_0000002400208581_section59611034123213)中所述，workspaceGM和tilingGM分别表示wrokspace空间和tiling数据在Global Memory的地址。
+AllGatherMatmul算子的核函数（Kernel）定义如下，aGM、bGM、cGM、gatherOutGM参数含义如[算子分析](#zh-cn_topic_0000002400208581_section59611034123213)中所述，workspaceGM和tilingGM分别表示workspace空间和tiling数据在Global Memory的地址。
 
 ```
 extern "C" __global__ __aicore__ void all_gather_matmul_custom(__gm__ uint8_t* aGM, __gm__ uint8_t* bGM, __gm__ uint8_t* cGM, __gm__ uint8_t* gatherOutGM, __gm__ uint8_t* workspaceGM, __gm__ uint8_t* tilingGM)

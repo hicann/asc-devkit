@@ -32,7 +32,7 @@ Matmul计算需要计算出多个singleCoreM \* singleCoreN大小的C矩阵，�
 
 ## 调用示例<a name="zh-cn_topic_0000001726346562_section18018102212"></a>
 
-以下是NORMAL数据排布格式的Batch Matmul调用示例。BSNDG数据排布格式的Batch Matmul完整示例请参考[BatchMatmul样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/batch_matmul)。
+以下是NORMAL数据排布格式的Batch Matmul调用示例。BSNGD数据排布格式的Batch Matmul完整示例请参考[BatchMatmul样例](../../../../../../../examples/01_simd_cpp_api/04_advanced_api/00_matmul/batch_matmul)。
 
 -   Tiling实现
 

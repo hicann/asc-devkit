@@ -202,7 +202,6 @@
             -   [调用算子时出现无法打开config.ini的报错](programming_guide/appendix/faq/config_ini_open_error.md)
             -   [算子包部署时出现权限不足报错](programming_guide/appendix/faq/operator_deploy_permission_error.md)
 
-
 -   [算子实践参考](operator_practice/operator_practice.md)
     -   [本文档组织结构](operator_practice/document_structure.md)
     -   [异构计算](operator_practice/heterogeneous_computing.md)

@@ -6,19 +6,25 @@ Ascend C的核心设计目标之一是实现跨代兼容。然而，每一代芯
 
 > [!NOTE]
 > 为保证兼容性，建议开发者在开发过程中尽量避免使用以下接口或编程方式，否则需自行保证兼容性：
+>
 > - 非Ascend C公开接口、结构体，例如`impl`目录下的接口、结构体等；
 > - 对芯片规格进行硬编码，例如：
+>
 >   ```cpp
 >   uint32_t MAX_UB_SIZE = 256 * 1024;  
 >   ascendcPlatform.GetCoreMemSize(platform_ascendc::CoreMemType::UB, MAX_UB_SIZE);
 >   ...
 >   ```
+>
 > - 编译器内置API（BuiltIn API），例如：
+>
 >   ```cpp
 >   copy_gm_to_ubuf(input_1_local_UB, input_1, 0, 1, 8, 0, 0);
 >   ```
+>
 
 建议开发者采用以下实践：
+
 - 使用兼容的API接口。
 - 若涉及特定领域的扩展特性，应在Device侧通过 [`__NPU_ARCH__`编译宏](../programming_guide/language_extension/simd_builtin_keywords.md)进行隔离，在Host侧通过`SocVersion`进行隔离。
 - 使用`<<<>>>`直调或 [Tiling模板编程](../programming_guide/advanced_programming/aclnn_operator_development/design_and_implementation/multi_branch_strategy.md)。

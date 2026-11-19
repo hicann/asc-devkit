@@ -218,7 +218,7 @@ Ascend C高阶API基本兼容[NPU架构版本3510](../../../programming_guide/la
 </td>
 <td class="cellrowborder" valign="top" width="66.05%" headers="mcps1.2.3.1.2 "><p id="p568413356278"><a name="p568413356278"></a><a name="p568413356278"></a>兼容2201架构。</p>
 <p id="p4684435112711"><a name="p4684435112711"></a><a name="p4684435112711"></a>扩展支持PRE_TOKEN量化、PRE_GROUP量化。</p>
-<p id="p268443516276"><a name="p268443516276"></a><a name="p268443516276"></a>扩展支持从int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t类型到half、bfloat16_t、float、half类型的伪量化。</p>
+<p id="p268443516276"><a name="p268443516276"></a><a name="p268443516276"></a>扩展支持从int8_t、hifloat8_t、fp8_e5m2_t、fp8_e4m3fn_t类型到half、bfloat16_t、float类型的伪量化。</p>
 <p id="p9684153518276"><a name="p9684153518276"></a><a name="p9684153518276"></a>扩展支持从fp4x2_e1m2_t、fp4x2_e2m1_t类型到half、bfloat16_t类型的伪量化。</p>
 </td>
 </tr>

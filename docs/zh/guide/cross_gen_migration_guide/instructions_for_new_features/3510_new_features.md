@@ -30,8 +30,10 @@
 
 > [!NOTE]
 > 除上表中所列特性以外，3510架构还新增SIMT编程模型和SIMD与SIMT混合编程，具体说明请参见：
+>
 > - SIMT编程：[AI Core SIMT编程](../../programming_guide/programming_model/ai_core_simt_programming/ai_core_simt_programming.md)、[SIMT API](../../../api/SIMT-API/overview.md)。
 > - SIMD与SIMT混编：[SIMD与SIMT混合编程](../../programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/overview.md)。
+>
 
 ## 特性说明
 
@@ -61,6 +63,7 @@ CV融合算子场景，L1 Buffer向UB搬运数据。3510架构新增L1 Buffer到
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[DataCopyL1ToUB](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/DataCopyL1ToUB.md)。
 - C API：[asc_copy_l12ub](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l12ub.md)。
 
@@ -73,9 +76,9 @@ CV融合算子场景，矩阵计算后的结果若需要在Vector核侧进行归
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[Fixpipe（L0C Buffer到UB数据搬运）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToUB.md)。使用带有`FixpipeParamsArch3510`参数的Fixpipe接口实现L0C Buffer到UB搬出。
 - C API：[asc_copy_l0c2ub](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)。
-
 
 #### 典型样例说明
 
@@ -90,6 +93,7 @@ Vector算子场景，从GM搬运至UB时，若涉及多维矩阵、不规则Stri
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[DataCopy（GMToUB多维数据搬运NDDMA）](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move/DataCopy_GMToUB_NDDMA.md)、[NdDmaDci](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/NdDmaDci.md)。
 - C API：[asc_ndim_copy_gm2ub](../../../api/SIMD-API/c_api/vector_datamove/asc_ndim_copy_gm2ub.md)。
 
@@ -106,9 +110,9 @@ Vector算子场景，当需要将GM中的多段数据交替搬运至UB的不同�
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[SetLoopModePara](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/SetLoopModePara.md)、[ResetLoopModePara](../../../api/SIMD-API/basic_api/memory_vector_compute/data_move_aux_config/ResetLoopModePara.md)。
 - C API：[asc_set_gm2l1_loop_size](../../../api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_gm2l1_loop_size.md)、[asc_set_ub2gm_loop1_stride](../../../api/SIMD-API/c_api/vector_datamove/asc_set_ub2gm_loop1_stride.md)等。
-
 
 ### 新增MX矩阵搬运与计算<a name="section_mx"></a>
 
@@ -119,6 +123,7 @@ MicroScaling（MX）是一种低比特量化数据格式，例如fp4x2_e2m1_t、
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[LoadData（2D MX搬运）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_MX.md)、[MmadMx](../../../api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md)。
 - C API：[asc_copy_l12l0a_mx](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_mx.md)、[asc_copy_l12l0b_mx](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_mx.md)、[asc_mmad_mx](../../../api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md)。
 
@@ -136,6 +141,7 @@ MicroScaling（MX）是一种低比特量化数据格式，例如fp4x2_e2m1_t、
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[LoadDataWithTranspose](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md)。3510架构使用`LoadData2dTransposeParamsV2`作为参数类型，支持以512字节分形为单位配置源Stride，并可通过`srcFracGap`配置每个迭代内的源分形间隔。
 - C API：[asc_copy_l12l0b_trans（arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_trans_arch_3510.md)。
 
@@ -148,6 +154,7 @@ L0C Buffer中Mmad计算结果为NZ分形格式，部分算子输出需要列主�
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[Fixpipe](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_store/Fixpipe_L0CToGM.md)。
 - C API：[asc_copy_l0c2gm（arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2gm_arch_3510.md)、[asc_copy_l0c2l1（arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2l1_arch_3510.md)、[asc_copy_l0c2ub](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_store/asc_copy_l0c2ub.md)。
 
@@ -160,6 +167,7 @@ L0C Buffer中Mmad计算结果为NZ分形格式，部分算子输出需要列主�
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[LoadData（2D矩阵搬运V2）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_2D_V2.md)、[LoadData（GM到L1 Buffer的2D矩阵搬运V2）](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2DV2.md)。
 - C API：[asc_copy_l12l0a（2D矩阵搬运，arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_2d_arch_3510.md)、[asc_copy_l12l0b（2D矩阵搬运，arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_2d_arch_3510.md)、[asc_copy_gm2l1（arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_gm2l1_2d_arch_3510.md)。
 
@@ -176,6 +184,7 @@ L0C Buffer中Mmad计算结果为NZ分形格式，部分算子输出需要列主�
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[LoadDataWithStride](../../../api/SIMD-API/basic_api/cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md)。
 - C API：[asc_copy_l12l0a（3D矩阵搬运，arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0a_3d_arch_3510.md)、[asc_copy_l12l0b（3D矩阵搬运，arch3510）](../../../api/SIMD-API/c_api/cube_datamove/cube_compute_load/asc_copy_l12l0b_3d_arch_3510.md)、[asc_set_l13d_rpt](../../../api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l13d_rpt.md)和[asc_set_l3d_rpt_b](../../../api/SIMD-API/c_api/cube_datamove/cube_load_aux_config/asc_set_l3d_rpt_b.md)。其中，`asc_set_l13d_rpt`和`asc_set_l3d_rpt_b`分别用于配置左寄存器组和右寄存器组的输出矩阵步长。
 
@@ -197,6 +206,7 @@ L0C Buffer中Mmad计算结果为NZ分形格式，部分算子输出需要列主�
 - MX矩阵计算支持fp4x2_e2m1_t、fp4x2_e1m2_t、fp8_e5m2_t和fp8_e4m3fn_t。MX计算使用fp8_e8m0_t类型的Scale矩阵。
 
 可参考以下资料：
+
 - 基础API：[Mmad](../../../api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/Mmad.md)、[MmadMx](../../../api/SIMD-API/basic_api/cube_compute_ISASI/mmad_compute/MmadMx.md)。
 - C API：[asc_mmad](../../../api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad.md)、[asc_mmad_mx](../../../api/SIMD-API/c_api/cube_compute/mmad_compute/asc_mmad_mx.md)。
 
@@ -243,7 +253,6 @@ L0C Buffer中Mmad计算结果为NZ分形格式，部分算子输出需要列主�
 | [ShiftRight](../../../api/SIMD-API/basic_api/memory_vector_compute/logical_compute/ShiftRight_shift_amount_tensor.md) | 对源操作数中的每个元素按移位量右移，移位量由张量输入指定。 |
 | [Ands](../../../api/SIMD-API/basic_api/memory_vector_compute/logical_compute/Ands.md) | 矢量内每个元素和标量做按位与操作，标量输入支持配置LocalTensor单点元素。 |
 | [Ors](../../../api/SIMD-API/basic_api/memory_vector_compute/logical_compute/Ors.md) | 矢量内每个元素和标量做按位或操作，标量输入支持配置LocalTensor单点元素。 |
-
 
 ### 新增Regbase矢量计算方式<a name="section_regbase"></a>
 
@@ -294,6 +303,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 #### 功能说明
 
 可通过以下两种方式插入DCI指令：
+
 1. 编译选项方式：编译时配置[`--cce-no-dcache-flush`](../../operator_practice/simd_operator_optimization/overhead_optimization/dci_compile_option.md)，编译框架将在算子尾部插入DCI指令，替代默认的DCCI指令。推荐使用该方式开启DCI能力。详细说明请参考[设置DCI编译选项来减少算子尾开销](../../operator_practice/simd_operator_optimization/overhead_optimization/dci_compile_option.md)。
 2. 接口方式：使用[asc_dci](../../../api/SIMD-API/c_api/cache_ctrl/asc_dci.md)接口执行数据缓存失效，调用前需先通过[asc_sync_data_barrier](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_sync_data_barrier.md)插入DSB_ALL指令，等待所有内存访问指令执行结束。
 
@@ -322,8 +332,6 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
   - SSBuffer的初始内容不确定，读取结果不保证全为0。每次通信均应由生产者完整写入数据，消费者不得依赖SSBuffer中的历史内容。
   - 数据布局必须在通信双方（AIC与AIV）保持一致，且数据不得越过SSBuffer末端地址。
   - AIC和AIV启动不同任务时不能访问SSBuffer；当前任务未开启SSBuffer能力时不能访问。
-
-
 
 #### 典型样例说明
 
@@ -391,6 +399,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[Mutex::Lock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[Mutex::Unlock](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/Mutex_ISASI.md)、[AllocMutexID](../../../api/SIMD-API/basic_api/sync_control/intra_core_sync/AllocMutexID_ISASI.md)。
 - C API：[asc_lock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_lock.md)、[asc_unlock](../../../api/SIMD-API/c_api/sync/intra_core_sync/asc_unlock.md)。
 
@@ -407,6 +416,7 @@ Reg矢量计算相关接口的完整接口清单请参考[Reg矢量计算](../..
 #### 功能说明
 
 可参考以下资料：
+
 - 基础API：[CrossCoreSetFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md)、[CrossCoreWaitFlag](../../../api/SIMD-API/basic_api/sync_control/inter_core_sync/CrossCoreWaitFlag_ISASI.md)。
 - C API：[asc_sync_intra_arrive](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_arrive.md)、[asc_sync_intra_wait](../../../api/SIMD-API/c_api/sync/inter_core_sync/asc_sync_intra_wait.md)。
 

@@ -16,7 +16,8 @@
 
 为减少Vector等待时间，Double Buffer为待处理数据准备Ping和Pong两组缓冲区。如下表所示，t0时，MTE2将数据块0的输入搬入Ping；t1时，MTE2将数据块1的输入搬入Pong，Vector同时使用Ping计算数据块0；t2时，MTE2将数据块2的输入搬入Ping，Vector使用Pong计算数据块1，MTE3同时从Ping搬出数据块0的结果。由此，数据搬入、Vector计算和数据搬出可以跨数据块并行执行，缓解Vector计算单元闲置问题。
 
-**表1** Ping/Pong Double Buffer的三个时间点  
+**表1** Ping/Pong Double Buffer的三个时间点
+
 | 执行阶段 | t0 | t1 | t2 |
 | --- | --- | --- | --- |
 | MTE2搬入 | 数据块0输入到Ping输入区 | 数据块1输入到Pong输入区 | 数据块2输入到Ping输入区 |

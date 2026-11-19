@@ -98,7 +98,6 @@ SIMT会提供内置的宏方便用户编写程序。预定义宏一节着重介�
 
 ## 内置变量<a name="section13165113520577"></a>
 
-
 当前提供了以下仅在Device上可用的dim3结构的内置变量：
 
 -   gridDim<a name="li20760123812911"></a>
@@ -253,8 +252,10 @@ SIMT编程提供了一系列运算符，用于执行数学运算。以下是支�
 > **约束说明**：
 >
 > 除法运算符（/）受编译选项[--cce-use-fast-math](../../../guide/programming_guide/compilation_and_execution/operator_compilation/ai_core_operator_compilation.md#常用的编译选项)的影响。
+>
 > -  --cce-use-fast-math=true：开启快速计算模式，不支持Subnormal场景的低精度除法计算，处于Subnormal范围内的输入和输出值，都会被刷新为保留符号的0。
 > -  --cce-use-fast-math=false：支持Subnormal场景的高精度除法计算。
+>
 
 运算符使用示例如下所示：
 
@@ -323,6 +324,7 @@ add_custom<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(x, y, 
 一个核函数（Kernel）所使用的寄存器数量决定了单个线程块内可启动的线程数上限。核函数（Kernel）使用的寄存器数量通过 \_\_launch\_bounds\_\_\(\)限定符或 \_\_maxnreg\_\_\(\)限定符指定。
 
 使用上述两个可选配置的限定符时，请注意如下约束：
+
 -   \_\_launch\_bounds\_\_或\_\_maxnreg\_\_只能在\_\_global\_\_函数中使用。
 -   同一函数不能同时配置\_\_launch\_bounds\_\_和\_\_maxnreg\_\_。
 

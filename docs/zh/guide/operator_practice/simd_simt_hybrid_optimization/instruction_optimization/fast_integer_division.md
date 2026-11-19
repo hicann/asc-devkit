@@ -50,7 +50,7 @@ __simt_vf__ __launch_bounds__(THREAD_LIMIT) inline void simt_normal_div(
 }
 ```
 
-场景0和场景1采用相同的数据搬运和写回流程：每个线程块将负责处理的对应数据从GM搬运到Unified Buffer（UB），在SIMT VF中完成计算并将结果写入UB，随后在核函数（Kernel）中将结果从UB写回GM。两个场景的性能差异主要来自SIMT计算过程中的除法实现方式。
+场景0和场景1采用相同的数据搬运和写回流程：每个线程块将负责处理的数据从GM搬运到Unified Buffer（UB），在SIMT VF中完成计算并将结果写入UB，随后在核函数（Kernel）中将结果从UB写回GM。两个场景的性能差异主要来自SIMT计算过程中的除法实现方式。
 
 【正例】
 

@@ -2,7 +2,7 @@
 
 ## 重执行<a name="zh-cn_topic_0000002400328453_section11795221469"></a>
 
-为避免执行通信任务的环境中硬件闪断导致发生通信中断，通算融合算子可通过配置编译宏与环境变量，开启重执行能力。通算融合算子开启重执行后，AI CPU在检测到环境异常时，通过下图示意的机制，通知AI Core重新下发通信任务，避免由于硬件闪断造成的通信中断，提升通信稳定性。
+为避免执行通信任务的环境中硬件闪断导致通信中断，通算融合算子可通过配置编译宏与环境变量，开启重执行能力。通算融合算子开启重执行后，AI CPU在检测到环境异常时，通过下图示意的机制，通知AI Core重新下发通信任务，避免由于硬件闪断造成的通信中断，提升通信稳定性。
 
 当前，该能力的支持情况如下：
 
@@ -27,7 +27,6 @@ Atlas A2系列产品不支持通算融合算子的重执行。
 -   通算融合算子仅存在Server间通信（Server为计算节点，通常是8卡或16卡的昇腾NPU设备组成的服务器形态的统称）。
 
 -   算子编译时，配置编译宏AICORE\_EXCEPTION\_RESTART，如下所示。具体的编译宏配置阶段和方式请参考[支持自定义编译选项](../../../../programming_guide/advanced_programming/aclnn_operator_development/compilation_and_deployment/basic_process.md#custom-compile-options)。
-
 
     ```
     add_ops_compile_options(ALL OPTIONS -DAICORE_EXCEPTION_RESTART)

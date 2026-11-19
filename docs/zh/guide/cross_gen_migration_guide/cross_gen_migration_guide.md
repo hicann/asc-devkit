@@ -1,7 +1,7 @@
 # 跨代迁移兼容性指南
 
 - [概述](./overview.md)
-- [Ascend C API兼容策略](./ascend_c_api_compatibility.md)
+- [Ascend C API兼容性策略](./ascend_c_api_compatibility.md)
 - [3510架构迁移指导](./3510_arch_migration/3510_arch_migration.md)
   - [2201到3510架构变更](./3510_arch_migration/2201_to_3510_arch_changes.md)
   - [2201迁移3510指导](./3510_arch_migration/2201_to_3510_guide/2201_to_3510_guide.md)

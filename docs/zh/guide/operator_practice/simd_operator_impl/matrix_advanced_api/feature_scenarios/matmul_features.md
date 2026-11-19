@@ -83,7 +83,7 @@
 </tbody>
 </table>
 
-**表2**  BatchMatmul功能特性表<a name="zh-cn_topic_0000002298078557_table1558122415575"></a>
+**表2**  Batch Matmul功能特性表<a name="zh-cn_topic_0000002298078557_table1558122415575"></a>
 
 <table><thead align="left"><tr id="zh-cn_topic_0000002298078557_row1255852419575"><th class="cellrowborder" valign="top" width="24.04%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000002298078557_p4558162445718"><a name="zh-cn_topic_0000002298078557_p4558162445718"></a><a name="zh-cn_topic_0000002298078557_p4558162445718"></a>特性描述</p>
 </th>

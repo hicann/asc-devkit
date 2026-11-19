@@ -8,7 +8,7 @@
 
 ![数据切分示意图](../../../../figures/tailcore_tiling.png "数据切分示意图")
 
-本场景中整核和尾核处理的元素数量、主块数量及尾块情况不同，无法仅用一组`blockLength`、`tileNum`和`lastTileLength`描述所有核。因此Tiling参数新增`formerNum`记录整核数量，并分别使用`former*`和`tail*`参数描述记录整核和尾核相关Tiling信息的参数；由于尾核内只包含主块，无需定义`tailLastTileLength`。Tiling结构体包含以下成员：
+本场景中整核和尾核处理的元素数量、主块数量及尾块情况不同，无法仅用一组`blockLength`、`tileNum`和`lastTileLength`描述所有核。因此Tiling参数新增`formerNum`记录整核数量，并分别使用`former*`和`tail*`参数记录整核和尾核相关Tiling信息的参数；由于尾核内只包含主块，无需定义`tailLastTileLength`。Tiling结构体包含以下成员：
 
 - formerNum：分配到数据量较多的核数，即整核的核数。
 - formerLength：整核计算的元素数量。

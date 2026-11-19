@@ -6,8 +6,10 @@
 
 >[!NOTE]说明 
 >进行数据搬运和Vector计算时，对于搬运的数据长度和操作数的起始地址有如下的对齐要求：
+>
 >- 使用DataCopy接口进行数据搬运，搬运的数据长度和操作数在Unified Buffer（UB）上的起始地址必须保证32字节对齐。
 >- 通常情况下，进行Vector计算时，操作数的起始地址必须保证32字节对齐。具体对齐要求需要查阅对应的API参考进行确认。
+>
 
 下文描述中的Global指Global Memory上的tensor，Local指Local Memory上的tensor。
 
@@ -40,7 +42,6 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
 
 部分型号不支持DataCopyPad接口，可以参考如下的搬运方案处理。
 
-
 首先，使用DataCopy对齐数据搬运接口进行数据搬运，由于搬入时搬运的数据长度必须保证32字节对齐，数据长度非对齐的情况下，从Global逐行搬运Tensor数据到Local中，Local中每行都存在冗余随机数据。
 
 搬入后，进行矢量计算时对冗余数据的处理方式有以下几种：
@@ -49,8 +50,6 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
 
     **图4**  冗余数据参与计算<a name="zh-cn_topic_0000001945665465_fig1622416415109"></a>  
     <img src="../../../figures/redundant_calc.png" alt="冗余数据参与计算" width="600px" height="244px">
-
-
 
 -   **通过mask参数掩掉冗余数据**。一般用于轴归约计算等场景。如下图所示，为只对前4个half数据进行ReduceMin计算，可以通过设置mask参数的方法掩掉冗余数据：
 
@@ -63,7 +62,6 @@ DataCopyPad接口提供非对齐搬运的功能，如果基于该接口支持的
     uint64_t Mask[2] = {((uint64_t)1 << 4) - 1, 0}; // 仅前4位元素参与运算
     AscendC::ReduceMin<half>(output, input, workLocal, Mask, 1, 8);
     ```
-
 
 -   **通过Duplicate逐行清零**。计算前，针对每一行数据，调用基础API [Duplicate](../../../../api/SIMD-API/basic_api/memory_vector_compute/data_padding/Duplicate.md)对冗余数据位置填充0值，通过设置mask值，控制仅后5个元素位置有效，将冗余数据填充为0，如下图所示：
 

@@ -9,6 +9,6 @@
   - [尾块均分](./multi_core_tiling/tail_block_even_split.md)
   - [尾核切分](./multi_core_tiling/tail_core_split.md)
   - [尾核尾块切分](./multi_core_tiling/tail_core_tail_block_split.md)
-- [Double Buffer场景](./double_buffer_scenario.md)
+- [DoubleBuffer场景](./double_buffer_scenario.md)
 - [Broadcast场景](./broadcast_scenario.md)
 - [非对齐场景](./unaligned_scenario.md)

@@ -11,7 +11,7 @@
     - [尾块均分](./vector_programming/multi_core_tiling/tail_block_even_split.md)
     - [尾核切分](./vector_programming/multi_core_tiling/tail_core_split.md)
     - [尾核尾块切分](./vector_programming/multi_core_tiling/tail_core_tail_block_split.md)
-  - [Double Buffer场景](./vector_programming/double_buffer_scenario.md)
+  - [DoubleBuffer场景](./vector_programming/double_buffer_scenario.md)
   - [Broadcast场景](./vector_programming/broadcast_scenario.md)
   - [非对齐场景](./vector_programming/unaligned_scenario.md)
 - [矩阵编程（高阶API）](./matrix_advanced_api/matrix_advanced_api.md)

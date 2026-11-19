@@ -185,7 +185,8 @@ SIMT VF与SIMD VF均通过`asc_vf_call`接口在核函数（Kernel）或`__aicor
 
 ## 内置变量<a name="zh-cn_topic_0000002571575581_section13165113520576"></a>
 
-当前提供了以下仅在SIMT VF内可用的内置变量：  
+当前提供了以下仅在SIMT VF内可用的内置变量：
+
 -   gridDim<a name="zh-cn_topic_0000002571575581_li20760123812911"></a>
 
     内置全局变量，只能在SIMT VF函数中使用，表示整个计算任务在各个维度上分别由多少个线程块构成。gridDim.x <= 65535；gridDim.y、gridDim.z必须为1。

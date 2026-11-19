@@ -3,6 +3,7 @@
 【优先级】中
 
 【描述】AoS（Array of Structures，结构体数组）与SoA（Structure of Arrays，数组结构体）为两种不同内存布局：
+
 - AoS布局：每个结构体中包含一个对象的完整信息，多个结构体排列成数组存储在内存中。
 - SoA布局：将对象的同种信息排列成数组，多个对象的同种信息存储在相邻内存中。
 
@@ -47,7 +48,6 @@ __aicore__ inline uint32_t find_aos(const AoSBucket* table, uint64_t target_key,
 | Case | Task Duration(μs) |
 | ---- | :---------------: |
 | 0    |     1311.297      |
-
 
 【正例】使用SoA布局，key与value分区存储，探测路径与value区解耦，消除value存放在Bucket中对探测访存跨度的干扰。
 

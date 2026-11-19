@@ -96,7 +96,6 @@ __global__ __vector__ void kernel(__gm__ float* input, __gm__ float* output)
 
 SIMD与SIMT混合编程下Lambda捕获的完整样例请参考[混合编程Lambda捕获样例](../../../../../../examples/05_simd_simt_hybrid/03_features/lambda_operator_hybrid/README.md)。
 
-
 ### VF函数内支持的Lambda能力
 
 SIMD与SIMT混合编程场景下，VF函数内Lambda各能力项的支持情况如下表所示：
@@ -183,7 +182,6 @@ SIMD与SIMT混合编程场景下，VF函数内Lambda各能力项的支持情况�
         for (uint32_t i = 0; i < count; ++i) { output[i] = r; }
     }
     ```
-
 
 -   **约束3：无参数列表形式须写显式括号**：省略参数列表的写法，如`[v] __simt_callee__ { ... }`，是C++2b特性；当前默认按C++17编译，该写法可编译但会触发扩展告警，应写显式参数列表`()`：
 

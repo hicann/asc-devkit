@@ -11,6 +11,7 @@ SIMT（Single Instruction Multiple Thread，单指令多线程）编程是AI Cor
 SIMT编程支持业界通用的线程架构：**Grid-Block-Thread**，以线程作为最小执行单元，通过大规模线程并发实现数据并行计算。所有SIMT算子的并行逻辑、数据拆分策略、线程调度机制，均基于该编程范式实现。
 
 **三级线程层级**：
+
 - **网格（Grid）**：由多个线程块（Thread Block）组成，使用内置变量[gridDim](../../language_extension/simt_builtin_keywords.md#li20760123812911)表示启用的线程块个数，Grid维度通过dim3三维结构表示。
 - **线程块（Thread Block）**：由若干线程组成，使用内置变量[blockDim](../../language_extension/simt_builtin_keywords.md#li076017381191)表示一个线程块启用的线程个数（一个线程块最多可启用2048个线程）。各线程块通过线程块索引[blockIdx](../../language_extension/simt_builtin_keywords.md#li1676053814914)进行标识。
 - **线程（Thread）**：最小执行单位，每个线程拥有独立的寄存器，可通过线程索引[threadIdx](../../language_extension/simt_builtin_keywords.md#li7760123814919)标识，负责完成特定的数据计算任务。
@@ -32,7 +33,6 @@ SIMT编程支持业界通用的线程架构：**Grid-Block-Thread**，以线程�
 - **寄存器文件**：每个线程拥有独立的寄存器空间，用于存储局部变量和计算中间结果。寄存器数量受线程块内线程数量影响，线程数量越多，每个线程可用的寄存器数量越少。
 - **共享内存**：线程块内所有线程共享的内存空间，位于AIV核内部，具有高带宽、低延迟特性，可作为用户管理的高速缓存，支持线程间数据交互。
 
-
 ### SIMT编程内存层级体系
 
 SIMT线程可访问多种内存空间，形成「全局内存-共享内存-寄存器」三级内存层级，各层级作用域、生命周期与物理位置差异如下：
@@ -43,7 +43,6 @@ SIMT线程可访问多种内存空间，形成「全局内存-共享内存-寄�
 | **共享内存（UB）** | Block | \_\_ubuf__ | 核函数（Kernel） | AIV核 | 线程块内共享，高带宽低延迟 |
 | **寄存器** | Thread | NA | 核函数（Kernel） | AIV核 | 线程私有，编译器管理，数量受blockDim影响 |
 
-
 ## SIMT编程接口体系
 
 ### SIMT编程接口特点
@@ -51,6 +50,7 @@ SIMT线程可访问多种内存空间，形成「全局内存-共享内存-寄�
 SIMT编程接口遵循业界统一方式，开发者通过Ascend C提供的操作符和接口操作全局内存与共享内存，实现对硬件能力的完全控制，同时SIMT编程也提供部分高阶特性用于特定的应用场景，具体接口可以查询[SIMT-API](../../../../api/SIMT-API/SIMT-API.md)。
 
 SIMT编程接口核心特点：
+
 - **内置关键字扩展**：遵循业界统一方式，提供`__global__`修饰符以及`blockIdx`、`threadIdx`、`blockDim`、`gridDim`等线程索引变量。
 - **共享内存管理**：支持与业界一致的使用方式，通过`__ubuf__`修饰符申请静态共享内存，支持动态内存申请方式。
 - **同步接口支持**：支持与业界一致的同步方式，提供`asc_syncthreads`、`asc_threadfence`等同步接口，确保线程间数据访问正确性。

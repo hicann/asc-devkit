@@ -51,6 +51,7 @@ kernel_name<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(argum
 在核函数（Kernel）内，Ascend C提供了[内置变量](../../language_extension/simt_builtin_keywords.md#内置变量)来获取执行配置的参数以及线程或线程块的索引。
 
 常用的内置索引变量说明如下：
+
 -   threadIdx：获取当前线程在其所属线程块内的索引。threadIdx.x，threadIdx.y，threadIdx.z分别表示当前线程在3个维度的索引，threadIdx.x的范围为[0, blockDim.x)，threadIdx.y的范围为[0, blockDim.y)，threadIdx.z的范围为[0, blockDim.z)。
 -   blockDim：获取线程块中配置的三维层次结构，即核函数（Kernel）启动时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的threads_per_block参数。
 -   blockIdx: 获取当前线程块在其所属网格中的索引，表示当前线程所在的线程块在整个网格中的位置坐标。

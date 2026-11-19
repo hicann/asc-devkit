@@ -49,7 +49,7 @@
     ReadFile("./input/x1_gm.bin", aFileSize, aHost, aFileSize);
     // PrintData(aHost, 16, printDataType::HALF);
     CHECK_ACL(aclrtMemcpy(aDevice, aFileSize, aHost, aFileSize,
-    					ACL_MEMCPY_HOST_TO_DEVICE));
+              ACL_MEMCPY_HOST_TO_DEVICE));
     
     uint8_t *bHost;
     uint8_t *bDevice;
@@ -59,24 +59,24 @@
     ReadFile("./input/x2_gm.bin", bFileSize, bHost, bFileSize);
     // PrintData(bHost, 16, printDataType::HALF);
     CHECK_ACL(aclrtMemcpy(bDevice, bFileSize, bHost, bFileSize,
-    					ACL_MEMCPY_HOST_TO_DEVICE));
+              ACL_MEMCPY_HOST_TO_DEVICE));
     
     uint8_t *workspaceHost;
     uint8_t *workspaceDevice;
     CHECK_ACL(aclrtMallocHost((void **)(&workspaceHost), workspaceSize));
     CHECK_ACL(aclrtMalloc((void **)&workspaceDevice, workspaceSize,
-    					ACL_MEM_MALLOC_HUGE_FIRST));
+              ACL_MEM_MALLOC_HUGE_FIRST));
     
     uint8_t *tilingHost;
     uint8_t *tilingDevice;
     CHECK_ACL(aclrtMallocHost((void **)(&tilingHost), tilingFileSize));
     CHECK_ACL(aclrtMalloc((void **)&tilingDevice, tilingFileSize,
-    					ACL_MEM_MALLOC_HUGE_FIRST));
+              ACL_MEM_MALLOC_HUGE_FIRST));
     CHECK_ACL(aclrtMemcpy(tilingHost, tilingFileSize, GenerateTiling(),
-    					tilingFileSize, ACL_MEMCPY_HOST_TO_HOST));
+              tilingFileSize, ACL_MEMCPY_HOST_TO_HOST));
     // PrintData(tilingHost, 16, printDataType::UINT32_T);
     CHECK_ACL(aclrtMemcpy(tilingDevice, tilingFileSize, tilingHost,
-    					tilingFileSize, ACL_MEMCPY_HOST_TO_DEVICE));
+              tilingFileSize, ACL_MEMCPY_HOST_TO_DEVICE));
     
     uint8_t *cHost;
     uint8_t *cDevice;
