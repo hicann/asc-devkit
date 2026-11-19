@@ -244,3 +244,10 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_reduce_sum](asc_reduce_sum.md) | 需要将所有参与计算的元素归约为一个和值时，使用asc_reduce_sum。asc_pair_reduce_sum保留各相邻元素对的和值。 |
+| [asc_reduce_sum_datablock](asc_reduce_sum_datablock.md) | 需要按32字节DataBlock分组求和时，使用asc_reduce_sum_datablock。asc_pair_reduce_sum按相邻元素对分组求和。 |

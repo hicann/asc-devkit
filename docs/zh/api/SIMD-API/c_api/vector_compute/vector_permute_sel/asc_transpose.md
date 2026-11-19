@@ -161,3 +161,9 @@ int main()
 }
 
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_transto5hd](asc_transto5hd.md) | 转置形状需要随数据类型变化，或需要通过多次Repeat处理时，可使用asc_transto5hd。单次Repeat处理512字节。 |

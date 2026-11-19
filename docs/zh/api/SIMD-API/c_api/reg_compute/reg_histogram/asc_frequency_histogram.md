@@ -218,3 +218,9 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_cumulative_histogram](asc_cumulative_histogram.md) | 需要直接统计不大于各阈值的元素个数时，使用asc_cumulative_histogram。 |

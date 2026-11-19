@@ -231,3 +231,12 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_ceil](asc_ceil.md) | 需要取大于或等于输入值的最小整数时，使用asc_ceil。例如将1.2向上取整为2.0。 |
+| [asc_floor](asc_floor.md) | 需要取小于或等于输入值的最大整数时，使用asc_floor。例如将1.8向下取整为1.0。 |
+| [asc_round](asc_round.md) | 输入恰在两个整数中间时，asc_round向远离0的方向舍入，例如2.5舍入为3.0。asc_rint舍入到偶数。 |
+| [asc_trunc](asc_trunc.md) | 需要直接丢弃小数部分时，使用asc_trunc向0取整。例如将-1.8截断为-1.0。 |

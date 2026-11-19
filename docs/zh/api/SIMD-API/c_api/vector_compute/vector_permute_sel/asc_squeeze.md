@@ -96,3 +96,9 @@ uint8_t src0_repeat_stride = 8;
 uint8_t src1_repeat_stride = 8;
 asc_squeeze(dst, src0, src1, repeat, dst_block_stride, src0_block_stride, src1_block_stride, dst_repeat_stride, src0_repeat_stride, src1_repeat_stride);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_select](asc_select.md) | 需要在两个源矢量间逐位置选择元素时，使用asc_select。asc_squeeze将选中的元素压紧排列。 |

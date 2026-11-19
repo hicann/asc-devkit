@@ -104,3 +104,9 @@ __ubuf__ half src[total_length];
 __ubuf__ half dst[total_length];
 asc_axpy(dst, src, value, total_length);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_fma](asc_fma.md) | 乘数由标量变为逐元素输入时，可用asc_fma将两个源矢量相乘并累加到目的矢量。 |

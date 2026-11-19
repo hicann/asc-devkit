@@ -93,3 +93,9 @@ asc_gather_datablock(dst, src, src_offset, 8, 1, 2);
 // src_offset [0, 32, 64, ..., 416, 448, 480]
 // dst [1, 2, 3, ..., 126, 127, 128]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_gather](asc_gather.md) | 需要按偏移收集单个元素时，使用asc_gather。 |

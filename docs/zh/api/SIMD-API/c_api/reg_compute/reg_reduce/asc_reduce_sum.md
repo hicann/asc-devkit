@@ -255,3 +255,10 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_pair_reduce_sum](asc_pair_reduce_sum.md) | 需要保留各相邻元素对的和值时，使用asc_pair_reduce_sum。 |
+| [asc_reduce_sum_datablock](asc_reduce_sum_datablock.md) | 需要分别对每个32字节DataBlock内参与计算的元素求和时，使用asc_reduce_sum_datablock，每个DataBlock输出一个和值。 |

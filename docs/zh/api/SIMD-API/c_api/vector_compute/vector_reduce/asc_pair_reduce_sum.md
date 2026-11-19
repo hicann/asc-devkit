@@ -109,3 +109,10 @@ asc_pair_reduce_sum(dst, src, 2, 1, 1, 8);
 输入数据src：[1 2 3 ... 16 17 ... 32 ... 225... 256]
 输出数据dst：[3 7 ... 511]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_repeat_reduce_sum](asc_repeat_reduce_sum.md) | 需要为每个Repeat输出一个和值时，使用asc_repeat_reduce_sum。asc_pair_reduce_sum输出相邻元素对的和值。 |
+| [asc_datablock_reduce_sum](asc_datablock_reduce_sum.md) | 需要为每个DataBlock输出一个和值时，使用asc_datablock_reduce_sum。 |

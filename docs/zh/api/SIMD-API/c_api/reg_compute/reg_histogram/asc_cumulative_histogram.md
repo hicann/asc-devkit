@@ -261,3 +261,9 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_frequency_histogram](asc_frequency_histogram.md) | 需要按取值分别统计元素个数时，使用asc_frequency_histogram。累计直方图统计不大于各阈值的元素个数。 |

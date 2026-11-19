@@ -106,3 +106,9 @@ asc_duplicate(dst, val, dst_length);
 ```
 输出数据dst：[18 18 18 ... 18]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_brcb](asc_brcb.md) | 需要为不同DataBlock分别广播输入矢量中的元素时，使用asc_brcb。 |

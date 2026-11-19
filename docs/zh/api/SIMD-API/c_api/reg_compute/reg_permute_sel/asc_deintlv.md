@@ -296,3 +296,9 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_intlv](asc_intlv.md) | 需要将拆开的矢量数据重新交织时，使用asc_intlv。 |

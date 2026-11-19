@@ -103,3 +103,9 @@ __ubuf__ half src0[256];
 __ubuf__ half src1[256];
 asc_fma(dst, src0, src1, 256);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_axpy](asc_axpy.md) | 需要用同一个标量作为所有元素的乘数并累加到目的矢量时，使用asc_axpy。 |

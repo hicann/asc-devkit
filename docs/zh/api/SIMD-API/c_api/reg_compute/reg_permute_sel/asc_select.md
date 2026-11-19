@@ -249,3 +249,8 @@ int main()
 }
 ```
 
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_squeeze](asc_squeeze.md) | 需要将单个源寄存器中被掩码选中的元素压紧排列时，使用asc_squeeze。asc_select按掩码在两个源寄存器间逐位置选取。 |

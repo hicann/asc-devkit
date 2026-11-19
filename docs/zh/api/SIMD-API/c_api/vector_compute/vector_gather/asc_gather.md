@@ -110,3 +110,9 @@ asc_gather(dst, src, src_offset, total_length);
 // src_offset [254, 252, 250, ..., 4, 2, 0]，对应src中每个元素的偏移量，基于src的起始基地址，单位为Bytes
 // dst [128, 127, 126, ..., 3, 2, 1]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_gather_datablock](asc_gather_datablock.md) | 偏移按32字节的DataBlock描述时，使用asc_gather_datablock按块收集数据。 |

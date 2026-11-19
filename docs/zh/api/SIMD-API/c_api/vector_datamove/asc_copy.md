@@ -112,3 +112,9 @@ __ubuf__ int16_t src[total_length];
 __ubuf__ int16_t dst[total_length];
 asc_copy(dst, src, total_length);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_copy_ub2ub](asc_copy_ub2ub.md) | 连续搬运长度以字节给出，或高维切分参数以DataBlock给出时，可使用asc_copy_ub2ub。 |

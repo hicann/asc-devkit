@@ -286,3 +286,9 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_deintlv](asc_deintlv.md) | 需要从交织结果中分离矢量数据时，使用asc_deintlv。该接口也提供掩码解交织模式。 |

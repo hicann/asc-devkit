@@ -239,3 +239,9 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_mula](asc_mula.md) | 需要把乘积累加到已有的目的寄存器时，使用asc_mula。asc_fma使用独立的加数并返回结果。 |

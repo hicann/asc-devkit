@@ -241,3 +241,10 @@ int main()
     return passed ? 0 : 1;
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [asc_mula](asc_mula.md) | 若目的寄存器原值应作为加数，使用asc_mula。asc_madd将目的寄存器原值用作乘数。 |
+| [asc_fma](asc_fma.md) | 需要独立传入三个输入并通过返回值获取结果时，使用asc_fma。 |
