@@ -26,3 +26,7 @@ static void test_host_c_api_cache_ctrl_0()
     using ::asc_ub_dcci_single;
     using __asc_aicore::asc_dcci_single;
 }
+
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
+static void test_host_c_api_cache_ctrl_1() { using ::asc_multi_datacache_preload; }
+#endif

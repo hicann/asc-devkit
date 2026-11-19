@@ -18,6 +18,10 @@
 #ifndef IMPL_C_API_REG_BASE_IMPL_CACHE_CTRL_INTF_IMPL_H
 #define IMPL_C_API_REG_BASE_IMPL_CACHE_CTRL_INTF_IMPL_H
 
+#if defined(__NPU_ARCH__) && (__NPU_ARCH__ == 9201)
+#include "impl/c_api/reg_base_impl/npu_arch_9201/cache_ctrl_intf_impl_arch_9201.h"
+#endif
+
 union ctrl_scalar_cache_bits {
     uint64_t value;
     struct {

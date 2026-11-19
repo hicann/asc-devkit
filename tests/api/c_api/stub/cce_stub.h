@@ -333,6 +333,9 @@ inline void vmadd(vector_bf16& dst, vector_bf16 src0, vector_bf16 src1, vector_b
 // The compiler supports this instruction, but it is missing from the CPU debug stub header.
 inline void vcvt_rcpe6m22bf16(vector_bf16& dst, vector_f8e6m2 src, vector_bool mask, Literal part) {}
 
+// The 9201 compiler supports multi-cacheline data-cache preload, but older CPU debug stubs do not declare it.
+inline void dc_preload(__gm__ uint64_t* address, int64_t offset, uint16_t cacheline_num_minus_one) {}
+
 #ifndef ULL
 #define ULL unsigned long long
 #endif

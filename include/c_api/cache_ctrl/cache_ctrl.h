@@ -135,6 +135,21 @@ __aicore__ inline void asc_datacache_preload(__gm__ uint64_t* address, int64_t o
  */
 __aicore__ inline void asc_dci();
 
+#if (ASC_DEVKIT_VERSION_NUM >= 90300000)
+/**
+ * @ingroup simd_c_api.cache_ctrl
+ * @brief Preloads cacheline_num consecutive 64-byte cache lines from Global Memory into the DCache for later scalar
+ * reads.
+ *
+ * @override_id asc_multi_datacache_preload__PGu64_i64_u32
+ * @archs 9201
+ * @param [in] address Source address in Global Memory; the prefetch base.
+ * @param [in] offset Signed byte offset added to address; the prefetch starts at address + offset.
+ * @param [in] cacheline_num Number of consecutive 64-byte cache lines to preload; valid range [1, 65536].
+ */
+__aicore__ inline void asc_multi_datacache_preload(__gm__ uint64_t* address, int64_t offset, uint32_t cacheline_num);
+#endif
+
 /**
  * @ingroup simd_c_api.cache_ctrl
  * @brief Sets the L2 cache management policy applied by subsequent scalar GM load operations until the mode is changed
