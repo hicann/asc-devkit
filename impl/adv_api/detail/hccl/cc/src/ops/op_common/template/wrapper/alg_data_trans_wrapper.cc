@@ -11,8 +11,8 @@
 #include "hcomm_primitives_dl.h"
 
 #include <atomic>
-#include <cstring>
 #include <cstdint>
+#include <securec.h>
 #include <type_traits>
 
 namespace mc2_ops_hccl {
@@ -895,6 +895,8 @@ HcclResult PostSyncInterThreads(
     return HcclResult::HCCL_SUCCESS;
 }
 
+static_assert(sizeof(float) == sizeof(uint32_t), "FP32 bit conversion requires a 32-bit float.");
+
 float Fp16ToFp32(uint16_t fp16Bits)
 {
     uint32_t sign = (fp16Bits >> 15) & 0x1;
@@ -906,8 +908,9 @@ float Fp16ToFp32(uint16_t fp16Bits)
         if (mantissa == 0) {
             // ±0: 符号位保留，指数和尾数全零
             uint32_t result = sign << 31;
-            float f;
-            std::memcpy(&f, &result, sizeof(f));
+            float f = 0.0F;
+            const auto copyRet = memcpy_s(&f, sizeof(f), &result, sizeof(result));
+            CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp16ToFp32] memcpy_s failed, ret[%d].", copyRet), 0.0F);
             return f;
         }
         // FP16非规格化数: 无隐含1，实际指数为-14
@@ -924,14 +927,16 @@ float Fp16ToFp32(uint16_t fp16Bits)
         int32_t fp32Exp = 127 - 15 + 1 - shift;
         if (fp32Exp <= 0) {
             uint32_t result = sign << 31;
-            float f;
-            std::memcpy(&f, &result, sizeof(f));
+            float f = 0.0F;
+            const auto copyRet = memcpy_s(&f, sizeof(f), &result, sizeof(result));
+            CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp16ToFp32] memcpy_s failed, ret[%d].", copyRet), 0.0F);
             return f;
         }
         // 组装FP32规格化数: 符号 + 偏移后指数 + 尾数左移13位对齐到23位
         uint32_t result = (sign << 31) | (static_cast<uint32_t>(fp32Exp) << 23) | (mantissa << 13);
-        float f;
-        std::memcpy(&f, &result, sizeof(f));
+        float f = 0.0F;
+        const auto copyRet = memcpy_s(&f, sizeof(f), &result, sizeof(result));
+        CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp16ToFp32] memcpy_s failed, ret[%d].", copyRet), 0.0F);
         return f;
     }
     if (exponent == 0x1F) {
@@ -939,16 +944,18 @@ float Fp16ToFp32(uint16_t fp16Bits)
         // mantissa==0: Inf; mantissa!=0: NaN。统一构造FP32的Inf/NaN:
         // 指数=0xFF，尾数=mantissa<<13（mantissa为0时就是Inf，非0时就是NaN）
         uint32_t result = (sign << 31) | (0xFF << 23) | (mantissa << 13);
-        float f;
-        std::memcpy(&f, &result, sizeof(f));
+        float f = 0.0F;
+        const auto copyRet = memcpy_s(&f, sizeof(f), &result, sizeof(result));
+        CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp16ToFp32] memcpy_s failed, ret[%d].", copyRet), 0.0F);
         return f;
     }
     // FP16规格化数（1<=exponent<=30）
     // FP32指数 = exponent - FP16bias(15) + FP32bias(127) = exponent + 112
     // FP32尾数 = FP16尾数左移13位（10位扩展到23位，低位补零）
     uint32_t result = (sign << 31) | ((exponent + 112) << 23) | (mantissa << 13);
-    float f;
-    std::memcpy(&f, &result, sizeof(f));
+    float f = 0.0F;
+    const auto copyRet = memcpy_s(&f, sizeof(f), &result, sizeof(result));
+    CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp16ToFp32] memcpy_s failed, ret[%d].", copyRet), 0.0F);
     return f;
 }
 
@@ -981,8 +988,9 @@ uint16_t Fp32DenormToFp16(uint32_t sign, uint32_t mantissa, int32_t fp16Exp)
 
 uint16_t Fp32ToFp16(float value)
 {
-    uint32_t fp32Bits;
-    std::memcpy(&fp32Bits, &value, sizeof(fp32Bits));
+    uint32_t fp32Bits = 0U;
+    const auto copyRet = memcpy_s(&fp32Bits, sizeof(fp32Bits), &value, sizeof(value));
+    CHK_PRT_RET(copyRet != EOK, HCCL_ERROR("[Fp32ToFp16] memcpy_s failed, ret[%d].", copyRet), 0U);
     uint32_t sign = (fp32Bits >> 31) & 0x1;
     uint32_t exponent = (fp32Bits >> 23) & 0xFF;
     uint32_t mantissa = fp32Bits & 0x7FFFFF;
