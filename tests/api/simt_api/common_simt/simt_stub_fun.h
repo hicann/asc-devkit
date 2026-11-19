@@ -119,6 +119,8 @@ int32_t __all(int32_t predicate);
 
 int32_t __any(int32_t predicate);
 
+int32_t __uni(int32_t predicate);
+
 uint32_t __ballot(int32_t predicate);
 
 uint32_t __activemask();

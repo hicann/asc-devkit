@@ -41,6 +41,7 @@
 | [asc_activemask](../SIMT-API/Warp_functions/Warp_vote_functions/asc_activemask.md) | 否 |
 | [asc_all](../SIMT-API/Warp_functions/Warp_vote_functions/asc_all.md) | 否 |
 | [asc_any](../SIMT-API/Warp_functions/Warp_vote_functions/asc_any.md) | 否 |
+| [asc_uni](../SIMT-API/Warp_functions/Warp_vote_functions/asc_uni.md) | 否 |
 | [asc_ballot](../SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md) | 否 |
 
 ## 协作组

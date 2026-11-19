@@ -1,0 +1,113 @@
+# asc\_uni
+
+## 产品支持情况
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT系列产品：支持
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3系列产品：不支持
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2系列产品：不支持
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2推理产品：不支持
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas推理系列产品AI Core：不支持
+- Atlas推理系列产品Vector Core：不支持
+<!-- end id5 -->
+<!-- npu="910" id6 -->
+- Atlas训练系列产品：不支持
+<!-- end id6 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMT-API/Warp_functions/Warp_vote_functions/asc_uni_res.md#id1 -->
+
+## 功能说明
+
+头文件路径为：`"simt_api/device_warp_functions.h"`。
+
+判断Warp内所有活跃线程的输入是否均为0或均不为0。
+
+当Warp内所有活跃线程执行本接口后，对所有活跃线程的输入操作数`predicate`进行判断，所有活跃线程的`predicate`均为0或均不为0，返回1，否则返回0。Warp内所有活跃线程返回相同的结果。
+
+## 函数原型
+
+```cpp
+inline int32_t asc_uni(int32_t predicate)
+```
+
+## 参数说明
+
+**表1**  参数说明
+
+| 参数名 | 输入/输出 | 描述 |
+| --- | --- | --- |
+| predicate | 输入 | 操作数。 |
+
+## 返回值说明
+
+当Warp内所有活跃线程的输入均为0或均不为0，返回1，否则返回0。
+
+## 约束说明
+
+无
+
+## 调用示例
+
+以下代码示例判断当前Warp内活跃线程的输入是否同为0或同不为0，并由Lane 0将判断结果写入GM。
+
+-   SIMT编程场景：
+
+    ```cpp
+    #include "simt_api/device_warp_functions.h"
+
+    __global__ __launch_bounds__(1024) void KernelUni(
+        const int32_t* input, int32_t* uniform_flags, uint64_t total_length)
+    {
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
+
+        uint32_t lane_id = threadIdx.x % warpSize;
+        uint32_t warp_id = idx / warpSize;
+        int32_t uniform_flag = asc_uni(input[idx] != 0);
+        if (lane_id == 0) {
+            uniform_flags[warp_id] = uniform_flag;
+        }
+    }
+    ```
+
+-   SIMD与SIMT混合编程场景：
+
+    ```cpp
+    #include "simt_api/device_warp_functions.h"
+
+    __simt_vf__ __launch_bounds__(1024) inline void KernelUni(
+        __gm__ const int32_t* input, __gm__ int32_t* uniform_flags, uint64_t total_length)
+    {
+        // asc_vf_call参数：dim3{1024, 1, 1}
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        if (idx >= total_length) {
+            return;
+        }
+
+        uint32_t lane_id = threadIdx.x % warpSize;
+        uint32_t warp_id = idx / warpSize;
+        int32_t uniform_flag = asc_uni(input[idx] != 0);
+        if (lane_id == 0) {
+            uniform_flags[warp_id] = uniform_flag;
+        }
+    }
+    ```
+
+输入输出示例如下：
+
+```text
+input: 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8, 5, 6, 7, 8
+total_length: 32
+uniform_flags: 1
+
+当输入为32个0时，uniform_flags同样为1；当输入中0与非0混合时，uniform_flags为0。
+```

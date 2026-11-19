@@ -19,6 +19,7 @@
 | --- | --- | --- | --- |
 | [asc\_all](../SIMT-API/Warp_functions/Warp_vote_functions/asc_all.md) | int32_t | int32_t | 128 |
 | [asc\_any](../SIMT-API/Warp_functions/Warp_vote_functions/asc_any.md) | int32_t | int32_t | 128 |
+| [asc\_uni](../SIMT-API/Warp_functions/Warp_vote_functions/asc_uni.md) | int32_t | int32_t | 128 |
 | [asc\_ballot](../SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md) | int32_t | uint32_t | 128 |
 | [asc\_activemask](../SIMT-API/Warp_functions/Warp_vote_functions/asc_activemask.md) | - | uint32_t | 128 |
 

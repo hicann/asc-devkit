@@ -57,6 +57,7 @@ TEST_F(WarpFunctionsTestsuite, VoteFunctionsCallApis)
 {
     UseValue(asc_all(WARP_PREDICATE));
     UseValue(asc_any(WARP_PREDICATE));
+    UseValue(asc_uni(WARP_PREDICATE));
     UseValue(asc_ballot(WARP_PREDICATE));
     UseValue(asc_activemask());
 }

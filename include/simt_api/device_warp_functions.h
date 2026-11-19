@@ -23,6 +23,8 @@ __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_all(int32_t predicate);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_any(int32_t predicate);
 
+__SIMT_DEVICE_FUNCTIONS_DECL__ inline int32_t asc_uni(int32_t predicate);
+
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_ballot(int32_t predicate);
 
 __SIMT_DEVICE_FUNCTIONS_DECL__ inline uint32_t asc_activemask();

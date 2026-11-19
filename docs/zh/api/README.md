@@ -2614,6 +2614,7 @@
         -   [Warp Vote类函数](SIMT-API/Warp_functions/Warp_vote_functions/Warp_vote_functions.md)
             -   [asc\_all](SIMT-API/Warp_functions/Warp_vote_functions/asc_all.md)
             -   [asc\_any](SIMT-API/Warp_functions/Warp_vote_functions/asc_any.md)
+            -   [asc\_uni](SIMT-API/Warp_functions/Warp_vote_functions/asc_uni.md)
             -   [asc\_ballot](SIMT-API/Warp_functions/Warp_vote_functions/asc_ballot.md)
             -   [asc\_activemask](SIMT-API/Warp_functions/Warp_vote_functions/asc_activemask.md)
 

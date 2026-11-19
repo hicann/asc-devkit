@@ -41,6 +41,7 @@
 | --- | --- |
 | [asc_all](../Warp_functions/Warp_vote_functions/asc_all.md) | 判断是否所有活跃线程的输入均不为0。 |
 | [asc_any](../Warp_functions/Warp_vote_functions/asc_any.md) | 判断是否有活跃线程的输入不为0。 |
+| [asc_uni](../Warp_functions/Warp_vote_functions/asc_uni.md) | 判断Warp内所有活跃线程的输入是否均为0或均不为0。 |
 | [asc_ballot](../Warp_functions/Warp_vote_functions/asc_ballot.md) | 判断Warp内每个活跃线程的输入是否不为0。 |
 | [asc_activemask](../Warp_functions/Warp_vote_functions/asc_activemask.md) | 查看Warp内所有线程是否为活跃状态。 |
 

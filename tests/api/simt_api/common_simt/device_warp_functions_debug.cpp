@@ -38,6 +38,14 @@ int32_t __any(int32_t predicate)
     return warp.WarpOp(predicate, custom_func);
 }
 
+int32_t __uni(int32_t predicate)
+{
+    uint32_t warp_id = AscendC::Simt::GetWarpId();
+    AscendC::Simt::Warp& warp = AscendC::Simt::ThreadBlock::GetBlockInstance().warps_[warp_id];
+    auto custom_func = [](int32_t a, int32_t b) -> int32_t { return (a != 0 && b != 0) || (a == 0 && b == 0); };
+    return warp.WarpOp(predicate, custom_func);
+}
+
 uint32_t __ballot(int32_t predicate)
 {
     uint32_t warp_id = AscendC::Simt::GetWarpId();
