@@ -4,7 +4,7 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [LocalTensor](data_structures/LocalTensor/LocalTensor.md) | LocalTensor用于存放AI Core中Local Memory（内部存储）的数据，支持逻辑位置TPosition为VECIN、VECOUT、VECCALC、A1、A2、B1、B2、CO1、CO2。 |
+| [LocalTensor](data_structures/LocalTensor/LocalTensor.md) | LocalTensor用于存放AI Core中Local Memory（内部存储）的数据，支持逻辑位置[TPosition](aux_data_structures/TPosition.md)为VECIN、VECOUT、VECCALC、A1、A2、B1、B2、CO1、CO2。 |
 | [GlobalTensor](data_structures/GlobalTensor/GlobalTensor.md) | GlobalTensor用来存放Global Memory（外部存储）的全局数据。 |
 | [Coordinate](aux_data_structures/Coordinate/Coordinate.md) | Coordinate本质上是一个元组（tuple），用于表示张量在不同维度的位置信息，即坐标值。 |
 | [Layout](aux_data_structures/Layout/Layout.md) | Layout数据结构是描述多维张量内存布局的基础模板类，通过编译时的形状（Shape）和步长（Stride）信息，实现逻辑坐标空间到一维内存地址空间的映射。 |
@@ -31,10 +31,10 @@
 | [LoadData（BitMode卷积数据搬运）](cube_compute_ISASI/cube_compute_load/LoadData_3D_BitMode.md) | LoadData（BitMode卷积数据搬运）用于完成image to column操作，将多维feature map转为二维矩阵，是LoadData（卷积数据搬运）的bit模式变体。 |
 | [LoadDataWithStride](cube_compute_ISASI/cube_compute_load/LoadDataWithStride.md) | LoadDataWithStride本质上是用于将NC1HWC0格式的Feature Map完成Image to Column展开，然后再从展开后的二维矩阵中选取指定数据块搬入对应内存位置，支持配置输出矩阵K轴方向偏移量。 |
 | [LoadDataWithTranspose](cube_compute_ISASI/cube_compute_load/LoadDataWithTranspose.md) | LoadDataWithTranspose负责完成普通矩阵计算所需的2D格式的数据的搬运，搬运过程中会伴随转置操作，参考特性分形转置。 |
-| [LoadDataWithSparse](cube_compute_ISASI/cube_compute_load/LoadDataWithSparse.md) | 用于从L1 Buffer中搬运以512字节为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128字节为单位的索引矩阵到内置的专用buffer空间（用于后续MmadWithSparse接口进行读取）。 |
+| [LoadDataWithSparse](cube_compute_ISASI/cube_compute_load/LoadDataWithSparse.md) | 用于从L1 Buffer中搬运以512字节为单位存放的稠密权重矩阵到L0B Buffer里，同时搬运以128字节为单位的索引矩阵到内置的专用buffer空间（用于后续[MmadWithSparse](cube_compute_ISASI/mmad_compute/MmadWithSparse.md)接口进行读取）。 |
 | [BroadCastVecToMM(ISASI)](cube_compute_ISASI/cube_compute_load/BroadCastVecToMM_ISASI.md) | 将矢量数据广播到矩阵中，每个数据块中的每16个元素会被连续复制16次，支持UB到L0C Buffer的数据传输通路。 |
 | [DataCopy（L1ToBiasTable-Buffer数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_L1ToBiasTable.md) | DataCopy数据搬运支持将矩阵计算用到的Bias参数从L1 Buffer移动到BiasTable Buffer。 |
-| [DataCopy（L1ToFixpipe-Buffer数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_L1ToFixpipe.md) | DataCopy数据搬运支持将随路量化参数从L1 Buffer移动到Fixpipe Buffer。 |
+| [DataCopy（L1ToFixpipe-Buffer数据搬运）](cube_compute_ISASI/cube_compute_load/DataCopy_L1ToFixpipe.md) | DataCopy数据搬运支持将[随路量化](cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)参数从L1 Buffer移动到Fixpipe Buffer。 |
 
 ### 矩阵数据搬入至L1-Buffer
 
@@ -62,8 +62,8 @@
 | [SetLoadDataRepeat](cube_compute_ISASI/cube_load_aux_config/SetLoadDataRepeat.md) | 用于设置LoadData（卷积数据搬运）接口的repeat参数。设置repeat参数后，可以通过调用一次LoadData（卷积数据搬运）接口完成多个迭代的数据搬运。 |
 | [SetLoadDataRepeatWithStride](cube_compute_ISASI/cube_load_aux_config/SetLoadDataRepeatWithStride.md) | 用于设置LoadDataWithStride接口的repeat参数。设置repeat参数后，可以通过调用一次LoadData（卷积数据搬运）接口完成多个迭代的数据搬运，且必须配置输出矩阵K轴方向偏移量参数dstStride。 |
 | [SetLoadDataPaddingValue](cube_compute_ISASI/cube_load_aux_config/SetLoadDataPaddingValue.md) | 用于调用LoadData（卷积数据搬运）接口时设置Pad填充的数值。LoadData（卷积数据搬运）的模板参数isSetPadding设置为false时，用户需要通过本接口设置Pad填充的数值，设置为true时，本接口设置的填充值不生效。 |
-| [LoadDataUnzip](cube_compute_ISASI/cube_load_aux_config/LoadDataUnzip.md) | 将GM上的数据解压并搬运到L1 Buffer（A1/B1）或L0B Buffer（B2）上。执行该API前需要执行LoadUnzipIndex加载压缩索引表。 |
-| [LoadImageToLocal](cube_compute_ISASI/cube_load_aux_config/LoadImageToLocal.md) | 将图像数据从Global Memory搬运到Local Memory。搬运过程中可以完成图像预处理操作：包括图像翻转，改变图像尺寸（抠图，裁边，缩放，伸展），以及色域转换，类型转换等。图像预处理的相关参数通过SetAippFunctions进行配置。 |
+| [LoadDataUnzip](cube_compute_ISASI/cube_load_aux_config/LoadDataUnzip.md) | 将GM上的数据解压并搬运到L1 Buffer（A1/B1）或L0B Buffer（B2）上。执行该API前需要执行[LoadUnzipIndex](cube_compute_ISASI/cube_load_aux_config/LoadUnzipIndex.md)加载压缩索引表。 |
+| [LoadImageToLocal](cube_compute_ISASI/cube_load_aux_config/LoadImageToLocal.md) | 将图像数据从Global Memory搬运到Local Memory。搬运过程中可以完成图像预处理操作：包括图像翻转，改变图像尺寸（抠图，裁边，缩放，伸展），以及色域转换，类型转换等。图像预处理的相关参数通过[SetAippFunctions](cube_compute_ISASI/cube_load_aux_config/SetAippFunctions.md)进行配置。 |
 | [LoadUnzipIndex](cube_compute_ISASI/cube_load_aux_config/LoadUnzipIndex.md) | 加载GM上的压缩索引表到内部寄存器。 |
 | [SetAippFunctions](cube_compute_ISASI/cube_load_aux_config/SetAippFunctions.md) | 设置图片预处理（AIPP，AI Core pre-process）相关参数。和LoadImageToLocal接口配合使用。设置后，调用LoadImageToLocal接口可在搬运过程中完成图像预处理操作：包括数据填充、通道交换、单行读取、数据类型转换、通道填充、色域转换。调用SetAippFunctions接口时需传入源图片在Global Memory上的矩阵、源图片的图片格式。 |
 
@@ -80,7 +80,7 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [SetHF32Mode](cube_compute_ISASI/mmad_compute_aux_config/SetHF32Mode.md) | 用于设置Mmad计算是否开启HF32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。 |
+| [SetHF32Mode](cube_compute_ISASI/mmad_compute_aux_config/SetHF32Mode.md) | 用于设置Mmad计算是否开启[HF32](cube_compute_ISASI/mmad_compute_key_features/HF32.md)模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。 |
 | [SetHF32TransMode](cube_compute_ISASI/mmad_compute_aux_config/SetHF32TransMode.md) | 设置HF32模式取整的具体方式，需要先使用SetHF32Mode开启HF32取整模式。 |
 | [SetMMColumnMajor/SetMMRowMajor](cube_compute_ISASI/mmad_compute_aux_config/SetMMColumnMajor-SetMMRowMajor.md) | 控制Mmad/MmadWithSparse优先通过M/N的哪个方向。 |
 
@@ -106,7 +106,7 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [SetFixPipeConfig](cube_compute_ISASI/cube_store_aux_config/SetFixPipeConfig.md) | DataCopy数据搬运（L0C-\>GM、L0C-\>L1）过程中进行随路量化时，通过调用该接口设置量化的参数。 |
+| [SetFixPipeConfig](cube_compute_ISASI/cube_store_aux_config/SetFixPipeConfig.md) | DataCopy数据搬运（L0C-\>GM、L0C-\>L1）过程中进行[随路量化](cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)时，通过调用该接口设置量化的参数。 |
 | [SetFixpipePreQuantFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipePreQuantFlag.md) | DataCopy数据搬运（L0C-\>GM、L0C-\>L1）过程中进行随路量化时，通过调用该接口设置scalar量化参数。 |
 | [SetFixpipeNz2ndFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2ndFlag.md) | DataCopy数据搬运（L0C-\>GM）过程中进行随路格式转换（NZ格式转换为ND格式）时，通过调用该接口设置格式转换的相关配置。 |
 | [SetFixpipeNz2dnFlag](cube_compute_ISASI/cube_store_aux_config/SetFixpipeNz2dnFlag.md) | DataCopy数据搬运（L0C Buffer->UB）过程中进行随路格式转换（Nz格式转换为DN格式）时，通过调用该接口设置格式转换的相关配置。 |
@@ -128,7 +128,7 @@
 | [DataCopyPad（GMToUB非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_GMToUB.md) | 该接口提供将数据从Global Memory非对齐搬运至UB的功能，可以根据开发者的需要自行填充数据。 |
 | [DataCopyPad（UBToGM非对齐数据搬运）](memory_vector_compute/data_move/DataCopyPad_UBToGM.md) | 该接口提供将数据从UB非对齐搬运至Global Memory的功能。 |
 | [SetPadValue(ISASI)](memory_vector_compute/data_move_aux_config/SetPadValue_ISASI.md) | 从Global Memory将数据非对齐搬运至UB时，可根据开发者的需要自行填充数据。SetPadValue用于设置DataCopyPad需要填充的数值。 |
-| [SetLoopModePara](memory_vector_compute/data_move_aux_config/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过ResetLoopModePara重置loop mode的参数。 |
+| [SetLoopModePara](memory_vector_compute/data_move_aux_config/SetLoopModePara.md) | DataCopy、DataCopyPad过程中通过该接口使能loop mode并且设置loop mode的参数，在数据搬运结束后通过[ResetLoopModePara](memory_vector_compute/data_move_aux_config/ResetLoopModePara.md)重置loop mode的参数。 |
 | [ResetLoopModePara](memory_vector_compute/data_move_aux_config/ResetLoopModePara.md) | 重置loop mode的参数。与SetLoopModePara搭配使用，在使能loop mode并且设置loop mode的参数的数据搬运场景下，数据搬运结束后需要调用该函数来重置loop mode参数。 |
 | [DataCopy（UBToUB连续数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_continuous.md) | 支持UB与UB之间的连续数据搬运，数据在传输过程中保持原始格式和内容不变。 |
 | [DataCopy（UBToUB高维切分数据搬运）](memory_vector_compute/data_move/DataCopy_UBToUB_highdim_split.md) | 支持UB与UB之间的高维切分数据搬运，数据在传输过程中保持原始格式和内容不变。 |
@@ -187,7 +187,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Axpy](memory_vector_compute/composite_compute/Axpy.md) | 向量和标量的乘积，并将乘积结果逐元素加到的输出向量上。 |
-| [CastDequant](memory_vector_compute/composite_compute/CastDequant.md) | 对输入做量化并进行精度转换，对输出结果的溢出采用饱和处理。本接口需要与SetDeqScale接口配合使用。 |
+| [CastDequant](memory_vector_compute/composite_compute/CastDequant.md) | 对输入做量化并进行精度转换，对输出结果的溢出采用饱和处理。本接口需要与[SetDeqScale](memory_vector_compute/type_conversion_aux_config/SetDeqScale.md)接口配合使用。 |
 | [AddRelu](memory_vector_compute/composite_compute/AddRelu.md) | 按元素求和，再进行Relu计算（结果和0对比取较大值）。 |
 | [AddReluCast](memory_vector_compute/composite_compute/AddReluCast.md) | 按元素求和，结果和0对比取较大值，并根据源操作数和目的操作数Tensor的数据类型进行精度转换。 |
 | [AddDeqRelu](memory_vector_compute/composite_compute/AddDeqRelu.md) | 依次计算按元素求和、结果进行deq量化后再进行relu计算（结果和0对比取较大值）。 |
@@ -206,7 +206,7 @@
 | 接口名 | 功能描述 |
 | --- | --- |
 | [Compare](memory_vector_compute/compare_and_select/Compare.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。 |
-| [Compare（结果存入寄存器）](memory_vector_compute/compare_and_select/Compare_store_to_register.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。计算结果存入CmpMask 128bit寄存器中，可用于后续Select计算，也可使用GetCmpMask接口获取寄存器保存的数据。 |
+| [Compare（结果存入寄存器）](memory_vector_compute/compare_and_select/Compare_store_to_register.md) | 逐元素比较两个tensor大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。计算结果存入CmpMask 128bit寄存器中，可用于后续[Select](memory_vector_compute/compare_and_select/Select.md)计算，也可使用[GetCmpMask](memory_vector_compute/compare_and_select/GetCmpMask_ISASI.md)接口获取寄存器保存的数据。 |
 | [Compares](memory_vector_compute/compare_and_select/Compares.md) | 逐元素比较一个tensor中的元素和另一个Scalar的大小，如果比较后的结果为真，则输出结果的对应比特位为1，否则为0。 |
 | [Compares（灵活标量位置）](memory_vector_compute/compare_and_select/Compares_flexible_scalar.md) | 提供灵活标量位置的接口，支持标量在前和标量在后两种场景。其中标量输入支持配置LocalTensor单点元素。 |
 | [GetCmpMask(ISASI)](memory_vector_compute/compare_and_select/GetCmpMask_ISASI.md) | 此接口用于获取Compare（结果存入寄存器）指令的比较结果。 |
@@ -276,7 +276,7 @@
 
 | 接口名 | 功能描述 |
 | --- | --- |
-| [SetMaskCount](memory_vector_compute/mask_operations/SetMaskCount.md) | 设置Mask模式为Counter模式。该模式下，不需要开发者去感知迭代次数、处理非对齐的尾块等操作，可直接传入计算数据量，实际迭代次数由Vector计算单元自动推断。本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Counter模式，并通过SetVectorMask设置Counter模式下参与计算的元素个数。 |
+| [SetMaskCount](memory_vector_compute/mask_operations/SetMaskCount.md) | 设置Mask模式为Counter模式。该模式下，不需要开发者去感知迭代次数、处理非对齐的尾块等操作，可直接传入计算数据量，实际迭代次数由Vector计算单元自动推断。本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Counter模式，并通过[SetVectorMask](memory_vector_compute/mask_operations/SetVectorMask.md)设置Counter模式下参与计算的元素个数。 |
 | [SetMaskNorm](memory_vector_compute/mask_operations/SetMaskNorm.md) | 设置Mask模式为Normal模式。该模式为系统默认模式，支持开发者配置迭代次数。本接口推荐配合API中isSetMask模板参数使用，当isSetMask为false时，支持用户调用本接口手动管理Normal模式，并通过SetVectorMask设置Normal模式下的掩码。 |
 | [SetVectorMask](memory_vector_compute/mask_operations/SetVectorMask.md) | 本接口用于在矢量计算时设置mask。 |
 | [ResetMask](memory_vector_compute/mask_operations/ResetMask.md) | 恢复mask的值为默认值（全1），表示矢量计算中每次迭代内的所有元素都将参与运算。 |
@@ -516,7 +516,7 @@
 | [IBSet](sync_control/inter_core_sync/IBSet.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [IBWait](sync_control/inter_core_sync/IBWait.md) | 调用IBSet设置某一个核的标志位，与IBWait成对使用，表示核之间的同步等待指令：被等待核中调用IBSet，通过将值1写入全局内存中某块地址来通知等待核；而等待核中调用IBWait，持续读取全局内存中相应地址块的值，直到其值变为1，从而实现核间同步。 |
 | [SyncAll](sync_control/inter_core_sync/SyncAll.md) | SyncAll是核间同步控制接口。 |
-| [InitDetermineComputeWorkspace](sync_control/inter_core_sync/InitDetermineComputeWorkspace.md) | InitDetermineComputeWorkspace是基于核间顺序执行的确定性计算的初始化配置接口，能够初始化GM共享内存的值，完成初始化后才可以调用WaitPreBlock和NotifyNextBlock。以上三个接口共同完成基于核间顺序执行的确定性计算，确定性计算的具体含义请参考确定性计算。 |
+| [InitDetermineComputeWorkspace](sync_control/inter_core_sync/InitDetermineComputeWorkspace.md) | InitDetermineComputeWorkspace是基于核间顺序执行的[确定性计算](atomic_operations/key_features.md)的初始化配置接口，能够初始化GM共享内存的值，完成初始化后才可以调用[WaitPreBlock](sync_control/inter_core_sync/WaitPreBlock.md)和[NotifyNextBlock](sync_control/inter_core_sync/NotifyNextBlock.md)。以上三个接口共同完成基于核间顺序执行的确定性计算，确定性计算的具体含义请参考确定性计算。 |
 | [NotifyNextBlock](sync_control/inter_core_sync/NotifyNextBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
 | [WaitPreBlock](sync_control/inter_core_sync/WaitPreBlock.md) | WaitPreBlock和NotifyNextBlock是核间同步控制接口。NotifyNextBlock通过写全局内存来通知其他核当前核已执行完成，其他核可以继续往下执行；WaitPreBlock通过读取全局内存，判断当前核是否可以继续往下执行。 |
 | [CrossCoreSetFlag(ISASI)](sync_control/inter_core_sync/CrossCoreSetFlag_ISASI.md) | 在核间同步场景中，CrossCoreSetFlag接口和CrossCoreWaitFlag接口配对工作，使用时需传入核间同步的标记ID（flagId），每个ID对应一个用于控制同步的计数器。CrossCoreSetFlag接口用于通知调度模块“本核的pipe流水任务已经完成”，CrossCoreWaitFlag接口用于阻塞后续指令下发，直到所有相关核均完成同步后方可解除阻塞。 |
@@ -589,7 +589,7 @@
 | [ICPU_SET_TILING_KEY](debug_interface/cpu_twin_debug/ICPU_SET_TILING_KEY.md) | 用于指定本次CPU调测使用的tilingKey。调测执行时，将只执行算子核函数（Kernel）中该tilingKey对应的分支。 |
 | [GmFree](debug_interface/cpu_twin_debug/GmFree.md) | 进行核函数（Kernel）的CPU侧运行验证时，用于释放通过GmAlloc申请的共享内存。 |
 | [SetKernelMode](debug_interface/cpu_twin_debug/SetKernelMode.md) | 针对分离模式，CPU调测时，设置内核模式为单AIV模式，单AIC模式或者MIX模式，以分别支持单AIV矢量算子，单AIC矩阵算子，MIX混合算子的CPU调试。不调用该接口的情况下，默认为MIX模式。为保证算子代码在多个硬件平台兼容，耦合模式下也可以调用，该场景下接口不会生效，不影响正常调试。 |
-| [MetricsProfStart](debug_interface/performance_stats/MetricsProfStart.md) | 用于设置性能数据采集信号启动，和MetricsProfStop配合使用。使用msOpProf工具进行算子上板调优时，可在核函数（Kernel）侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
+| [MetricsProfStart](debug_interface/performance_stats/MetricsProfStart.md) | 用于设置性能数据采集信号启动，和[MetricsProfStop](debug_interface/performance_stats/MetricsProfStop.md)配合使用。使用msOpProf工具进行算子上板调优时，可在核函数（Kernel）侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
 | [MetricsProfStop](debug_interface/performance_stats/MetricsProfStop.md) | 设置性能数据采集信号停止，和MetricsProfStart配合使用。使用msOpProf工具进行算子上板调优时，可在核函数（Kernel）侧代码段前后分别调用MetricsProfStart和MetricsProfStop来指定需要调优的代码段范围。 |
 | [MarkStamp](debug_interface/performance_stats/MarkStamp.md) | 用户通过调用接口，用于在算子执行过程中标记特定位置，便于后期通过流水图分析代码执行路径与性能热点。 |
 

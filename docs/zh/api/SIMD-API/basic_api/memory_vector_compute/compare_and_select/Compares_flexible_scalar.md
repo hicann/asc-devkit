@@ -27,7 +27,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-提供灵活标量位置的接口，支持标量在前和标量在后两种场景。其中标量输入支持配置LocalTensor单点元素，计算公式如下，idx表示LocalTensor单点元素的位置系数。
+提供灵活标量位置的接口，支持标量在前和标量在后两种场景。其中标量输入支持配置[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)单点元素，计算公式如下，idx表示LocalTensor单点元素的位置系数。
 
 $dst_i = Compares(src_i, scalar)$
 

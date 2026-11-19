@@ -51,7 +51,7 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_vec_cmpsel_intf.h"`。
 
-该接口用于逐元素比较源操作数中每个元素与一个标量的大小关系，根据模板参数指定的比较模式（LT/GT/GE/EQ/NE/LE）判断结果是否为真，若为真则输出`MaskReg`对应比特位置1，否则置0。
+该接口用于逐元素比较源操作数中每个元素与一个标量的大小关系，根据模板参数指定的比较模式（LT/GT/GE/EQ/NE/LE）判断结果是否为真，若为真则输出[MaskReg](../register_data_types/MaskReg.md)对应比特位置1，否则置0。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -68,15 +68,15 @@ __simd_callee__ inline void Compares(MaskReg& dst, U& srcReg, S scalarValue, Mas
 | :----- | :--- |
 | T | 矢量源操作数数据类型。 |
 | mode | 比较模式。支持如下取值：<br>• LT：小于<br>• GT：大于<br>• GE：大于或等于<br>• EQ：等于<br>• NE：不等于<br>• LE：小于或等于 |
-| U | 矢量源操作数的`RegTensor`类型，由编译器自动推导，用户不需要填写。 |
+| U | 矢量源操作数的[RegTensor](../register_data_types/RegTensor.md)类型，由编译器自动推导，用户不需要填写。 |
 | S | 标量操作数数据类型。 |
 
 **表2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :----- | :-------- | :--- |
-| dst | 输出 | [MaskReg](../register_data_types/MaskReg.md)类型，目的操作数。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dst | 输出 | MaskReg类型，目的操作数。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | scalarValue | 输入 | 源操作数。<br>类型为标量。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 

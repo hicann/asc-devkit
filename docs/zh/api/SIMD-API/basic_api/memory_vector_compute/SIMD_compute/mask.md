@@ -24,7 +24,7 @@ Mask（掩码）是Ascend C中用于控制数据元素是否参与计算的标�
 > [!NOTE]说明
 >
 > <!-- npu="A3,910b" id1 -->
-> - 针对如下型号，Mask为硬件原生支持能力。调用Tensor前n个数据计算接口时，接口内部会将Mask设置为Counter模式，并在计算完成后恢复为系统默认的Normal模式。
+> - 针对如下型号，Mask为硬件原生支持能力。调用Tensor前n个数据计算接口时，接口内部会将Mask设置为[Counter模式](#mask-mode)，并在计算完成后恢复为系统默认的[Normal模式](#mask-mode)。
 >   <!-- npu="A3" id2 -->
 >   - Atlas A3系列产品
 >   <!-- end id2 -->

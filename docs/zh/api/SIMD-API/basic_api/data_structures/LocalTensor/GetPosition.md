@@ -28,7 +28,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-获取LocalTensor所在的TPosition逻辑位置，支持TPosition为VECIN、VECOUT、VECCALC、A1、A2、B1、B2、CO1、CO2。
+获取LocalTensor所在的[TPosition](../../aux_data_structures/TPosition.md)逻辑位置，支持TPosition为VECIN、VECOUT、VECCALC、A1、A2、B1、B2、CO1、CO2。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

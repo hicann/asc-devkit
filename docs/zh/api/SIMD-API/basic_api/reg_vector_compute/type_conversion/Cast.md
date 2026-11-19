@@ -56,7 +56,7 @@ Cast用于数据类型精度转换，将源操作数数据类型转换成目的�
 - [MaskMergeMode](../aux_data_types/MaskMergeMode.md)：用于指定写入寄存器数据模式，mask未选择的元素在dst中置零或保留dst原值。
 - [RoundMode](../aux_data_types/RoundMode.md)：用于设置舍入模式。
 
-不同数据类型下元素对应的mask位宽不一致，在Cast进行类型转换时，MaskReg根据输入的源操作数进行有效元素筛选。
+不同数据类型下元素对应的mask位宽不一致，在Cast进行类型转换时，[MaskReg](../register_data_types/MaskReg.md)根据输入的源操作数进行有效元素筛选。
 图[b16到b32类型转换过程](#fig1)和图[b32到b16类型转换过程](#fig2)展示了MaskReg和RegLayout同时作用时b16和b32进行类型转换的过程。
 
 **图1** b16到b32类型转换过程<a id="fig1"></a>  
@@ -84,14 +84,14 @@ __simd_callee__ inline void Cast(S& dstReg, V& srcReg, MaskReg& mask);
 | U | 源操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | trait | CastTrait类型，类型转换模式结构体。包括[RegLayout](../aux_data_types/RegLayout.md)、[SatMode](../aux_data_types/SatMode.md)、[MaskMergeMode](../aux_data_types/MaskMergeMode.md)、[RoundMode](../aux_data_types/RoundMode.md)。<br><code>struct CastTrait {<br>    RegLayout layoutMode = RegLayout::UNKNOWN;<br>    SatMode satMode = SatMode::UNKNOWN;<br>    MaskMergeMode mrgMode = MaskMergeMode::UNKNOWN;<br>    RoundMode roundMode = RoundMode::UNKNOWN;<br>};</code><br>使能SatMode生效需与SetCtrlSpr配合使用。不饱和模式和饱和模式的具体配置请参考[表5 饱和模式全局或单指令生效配置表](#表5-饱和模式全局或单指令生效配置表)。<br>注：SetCtrlSpr需在SIMD_VF外调用。 |
 | S | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;float&gt;，由编译器自动推导，用户不需要填写。 |
-| V | 源操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;int32_t&gt;，由编译器自动推导，用户不需要填写。 |
+| V | 源操作数的RegTensor类型，例如RegTensor&lt;int32_t&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表 2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。<br>注：mask会按照输入来筛选。 |
 
 ## 数据类型

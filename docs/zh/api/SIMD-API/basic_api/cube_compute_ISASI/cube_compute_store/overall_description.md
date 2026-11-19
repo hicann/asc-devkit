@@ -2,7 +2,7 @@
 
 矩阵计算的搬出是Ascend C编程框架中用于数据搬运的一类核心接口，主要实现L0C Buffer与Global Memory、L1 Buffer、Unified Buffer（UB）之间的数据高效传输。该接口系列提供了多种数据搬运模式，能够满足矩阵计算中的数据搬运需求，通常在Mmad接口后配合使用。
 
-矩阵计算的搬出接口支持多种随路搬运场景，包括**随路量化、随路ReLU、随路格式转换（NZ2ND、NZ2DN）、随路通道拆分（Channel Split）、随路通道合并（Channel Merge）、UB双目标模式**。通过灵活配置不同的参数结构体，开发者可以精确控制数据的搬运路径、起始位置、搬运长度、随路搬运能力等关键信息，充分利用硬件的数据搬运能力，最大化算子的整体执行性能。
+矩阵计算的搬出接口支持多种随路搬运场景，包括**[随路量化](../cube_store_key_features/accompanying_quantization.md)、[随路ReLU](../cube_store_key_features/accompanying_relu.md)、随路格式转换（[NZ2ND](../cube_store_key_features/NZ2ND.md)、[NZ2DN](../cube_store_key_features/NZ2DN.md)）、随路通道拆分（Channel Split）、随路通道合并（Channel Merge）、UB双目标模式**。通过灵活配置不同的参数结构体，开发者可以精确控制数据的搬运路径、起始位置、搬运长度、随路搬运能力等关键信息，充分利用硬件的数据搬运能力，最大化算子的整体执行性能。
 
 <!-- npu="950,A3,910b" id1 -->
 矩阵计算的搬出整体流程如下图所示：

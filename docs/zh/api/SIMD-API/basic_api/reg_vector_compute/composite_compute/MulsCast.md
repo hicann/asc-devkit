@@ -73,15 +73,15 @@ __simd_callee__ inline void MulsCast(T3& dstReg, T4& srcReg, T2 scalarValue, Mas
 | T1 | 源操作数的数据类型。 |
 | T2 | 标量源操作数的数据类型。 |
 | layout | [RegLayout](../aux_data_types/RegLayout.md)枚举类型。<br>支持RegLayout::ZERO、RegLayout::ONE。 |
-| T3 | 目的操作数的`RegTensor`类型，例如`RegTensor<float>`，由编译器自动推导，用户不需要填写。 |
+| T3 | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如`RegTensor<float>`，由编译器自动推导，用户不需要填写。 |
 | T4 | 源操作数的`RegTensor`类型，例如`RegTensor<float>`，由编译器自动推导，用户不需要填写。 |
 
 **表2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | :----- | :-------- | :--- |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | scalarValue | 输入 | 源操作数。<br>类型为标量。 |
 | mask | 输入 | 源操作数元素级操作的有效性指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 

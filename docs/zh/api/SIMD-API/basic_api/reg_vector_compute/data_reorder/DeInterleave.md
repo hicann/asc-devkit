@@ -69,14 +69,14 @@ __simd_callee__ inline void DeInterleave(U& dstReg0, U& dstReg1, U& srcReg0, U& 
 | 参数名 | 描述 |
 | --- | --- |
 | T | 目的操作数和源操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| U | 源操作数和目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
+| U | 源操作数和目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表 2**  函数参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstReg0<br>dstReg1 | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg0<br>srcReg1 | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。<br>源操作数的数据类型需要与目的操作数保持一致。 |
+| dstReg0<br>dstReg1 | 输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg0<br>srcReg1 | 输入 | 源操作数。<br>类型为RegTensor。<br>源操作数的数据类型需要与目的操作数保持一致。 |
 
 ## 数据类型
 

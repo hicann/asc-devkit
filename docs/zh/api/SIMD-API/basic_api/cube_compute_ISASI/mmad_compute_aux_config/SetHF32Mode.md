@@ -27,7 +27,7 @@
 
 ## 功能说明
 
-用于设置Mmad计算是否开启HF32模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。
+用于设置Mmad计算是否开启[HF32](../mmad_compute_key_features/HF32.md)模式，开启该模式后L0A Buffer/L0B Buffer中的FP32数据将在参与Mmad计算之前被舍入为HF32。
 
 ## 函数原型
 

@@ -73,16 +73,16 @@ __simd_callee__ inline void Gather(T3& dstReg, __ubuf__ T1* baseAddr, T4& index,
 | T0 | 目的操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | T1 | 源操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | T2 | 索引值的数据类型，支持的数据类型请参考[数据类型](#数据类型)。 |
-| T3 | 目的操作数的RegTensor类型。例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
+| T3 | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型。例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
 | T4 | 索引值的RegTensor类型，例如RegTensor\<uint16_t>，由编译器自动推导，用户不需要手动填写。 |
 
 **表 2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 |-----|-----|-----|
-| dstReg | 输出 | 目的操作数，类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数，类型为RegTensor。 |
 | baseAddr | 输入 | 源操作数，Unified Buffer（UB）中的基地址，需要32字节对齐。 |
-| index | 输入 | 索引值，dstReg中的每个元素在UB中相对于baseAddr的位置，单位：元素。类型为[RegTensor](../register_data_types/RegTensor.md)。index中的值可以重复。<br>例：baseAddr：[elem0, elem1, elem2, elem3, elem4, elem5, elem6, elem7, ...]。 <br>每个元素相对于baseAddr的索引位置为：[0, 1, 2, 3, 4, 5, 6, 7, ...]。 |
+| index | 输入 | 索引值，dstReg中的每个元素在UB中相对于baseAddr的位置，单位：元素。类型为RegTensor。index中的值可以重复。<br>例：baseAddr：[elem0, elem1, elem2, elem3, elem4, elem5, elem6, elem7, ...]。 <br>每个元素相对于baseAddr的索引位置为：[0, 1, 2, 3, 4, 5, 6, 7, ...]。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 数据类型

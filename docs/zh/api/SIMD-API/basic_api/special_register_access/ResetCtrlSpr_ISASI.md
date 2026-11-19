@@ -29,7 +29,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_common_intf.h"`。
 
-对CTRL寄存器（控制寄存器）的特定比特位做重置。由模板参数\[startBit, endBit\]指定的比特位重置为默认值，默认值参考[表 常用CTRL寄存器比特位说明](SetCtrlSpr_ISASI.md#tab-950)。
+对[CTRL寄存器](SetCtrlSpr_ISASI.md#tab-950)（控制寄存器）的特定比特位做重置。由模板参数\[startBit, endBit\]指定的比特位重置为默认值，默认值参考[表 常用CTRL寄存器比特位说明](SetCtrlSpr_ISASI.md#tab-950)。
 
 $\text{CTRL}[\,\text{startBit} : \text{endBit}\,] \leftarrow \text{defaultCtrl}[\,\text{startBit} : \text{endBit}\,]$
 

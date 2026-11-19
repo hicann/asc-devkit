@@ -39,7 +39,7 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-DataCopy数据搬运（[L0C Buffer->GM](../cube_compute_store/Fixpipe_L0CToGM.md)）过程中进行随路量化后，通过调用该接口设置Elementwise操作时LocalTensor的地址。
+DataCopy数据搬运（[L0C Buffer->GM](../cube_compute_store/Fixpipe_L0CToGM.md)）过程中进行[随路量化](../cube_store_key_features/accompanying_quantization.md)后，通过调用该接口设置Elementwise操作时LocalTensor的地址。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

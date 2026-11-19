@@ -42,7 +42,7 @@
 
 <!-- npu="950,A3,910b" id10 -->
 
-下图展示了随路量化、随路ReLU、随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
+下图展示了[随路量化](../cube_store_key_features/accompanying_quantization.md)、[随路ReLU](../cube_store_key_features/accompanying_relu.md)、随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
 
 <!-- npu="A3,910b" id11 -->
 **图1** L0C2L1流程图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002511188540_fig8956371257"></a>
@@ -70,7 +70,7 @@
     __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsArch3510<config.format>& intriParams)
     ```
 
-- 通路L0C Buffer(CO1)->L1 Buffer(C1)，开启随路[tensor量化](../cube_store_key_features/accompanying_quantization.md)功能：
+- 通路L0C Buffer(CO1)->L1 Buffer(C1)，开启随路tensor量化功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>
@@ -86,7 +86,7 @@
     __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsV220& intriParams)
     ```
 
-- 通路L0C Buffer(CO1)->L1 Buffer(C1)，开启随路[tensor量化](../cube_store_key_features/accompanying_quantization.md)功能：
+- 通路L0C Buffer(CO1)->L1 Buffer(C1)，开启随路tensor量化功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR, typename S = uint64_t, typename Std::enable_if<Std::is_same<PrimT<S>, uint64_t>::value, bool>::type = true>
@@ -100,7 +100,7 @@
 | 参数名 | 描述 |
 | ---------- | ---------- |
 | T/U | 目的操作数/源操作数的数据类型。支持的数据类型请参考[数据类型](#zh-cn_topic_0000002511188540_section4219135304818)。 |
-| config | Fixpipe相关配置参数，类型为FixpipeConfig。定义如下：<br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // 用于用户指定目的地址的位置是否是Unified Buffer（UB） <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // 输出数据格式仍为NZ格式。<br>    ROW_MAJOR, // 开启NZ2ND，输出数据格式为ND格式。<br>    COLUMN_MAJOR, // 开启NZ2DN，输出数据格式为DN格式。<br>};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR};<br><!-- npu="A3,910b" id17 -->**注意**：针对Atlas A3系列产品，Atlas A2系列产品，NZ2ND在L0C Buffer -> L1 Buffer通路下不生效；不支持NZ2DN。<br><!-- end id17 --> |
+| config | Fixpipe相关配置参数，类型为FixpipeConfig，其中format用于指定搬运模式：[NZ2NZ](../cube_store_key_features/NZ2NZ.md)、[NZ2ND](../cube_store_key_features/NZ2ND.md)或[NZ2DN](../cube_store_key_features/NZ2DN.md)。定义如下：<br>struct FixpipeConfig {<br>    CO2Layout format;<br>    bool isToUB; // 用于用户指定目的地址的位置是否是Unified Buffer（UB） <br>};<br>enum class CO2Layout : uint8_t {<br>    NZ = 0, // 输出数据格式仍为NZ格式。<br>    ROW_MAJOR, // 开启NZ2ND，输出数据格式为ND格式。<br>    COLUMN_MAJOR, // 开启NZ2DN，输出数据格式为DN格式。<br>};<br>constexpr FixpipeConfig CFG_NZ = {CO2Layout::NZ};<br>constexpr FixpipeConfig CFG_ROW_MAJOR = {CO2Layout::ROW_MAJOR};<br>constexpr FixpipeConfig CFG_COLUMN_MAJOR = {CO2Layout::COLUMN_MAJOR};<br><!-- npu="A3,910b" id17 -->**注意**：针对Atlas A3系列产品，Atlas A2系列产品，NZ2ND在L0C Buffer -> L1 Buffer通路下不生效；不支持NZ2DN。<br><!-- end id17 --> |
 | S | 参数cbufWorkspace的数据类型，即随路量化参数的数据类型。<br>&nbsp;&nbsp;&bull;当目的操作数、源操作数、cbufWorkspace使用基础数据类型时，模板参数S必须为uint64_t类型，否则编译失败。<br>&nbsp;&nbsp;&bull;当目的操作数、源操作数、cbufWorkspace使用TensorTrait类型时，模板参数S的LiteType必须为uint64_t类型，否则编译失败。<br>模板参数S后一个模板参数仅用于上述数据类型检查，用户无需关注。 |
 
 **表2** Fixpipe参数说明
@@ -116,10 +116,10 @@
 
 | 参数名称 | 数据类型 | 含义 |
 | --- | --- | --- |
-| nSize | 必选输入 | 源NZ矩阵在N方向上的大小，取值范围为nSize∈[0, 4095]。<br>&nbsp;&nbsp;&bull; 若开启[channelSplit功能](../cube_store_key_features/F32-Channel-Split.md)功能，nSize必须为8的倍数。<br>&nbsp;&nbsp;&bull; 若不开启channelSplit功能，nSize必须为16的倍数。<br>&nbsp;&nbsp;&bull; 若开启NZ2ND，nSize*sizeof(T)必须为32的倍数。<br>**注：nSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
+| nSize | 必选输入 | 源NZ矩阵在N方向上的大小，取值范围为nSize∈[0, 4095]。<br>&nbsp;&nbsp;&bull; 若开启[channelSplit](../cube_store_key_features/F32-Channel-Split.md)功能，nSize必须为8的倍数。<br>&nbsp;&nbsp;&bull; 若不开启channelSplit功能，nSize必须为16的倍数。<br>&nbsp;&nbsp;&bull; 若开启NZ2ND，nSize*sizeof(T)必须为32的倍数。<br>**注：nSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
 | mSize | 必选输入 | 源NZ矩阵在M方向上的大小，取值范围为mSize∈[0, 65535]。若开启NZ2DN，mSize*sizeof(T)必须为32的倍数。<br>**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
 | srcStride | 必选输入 | 源NZ矩阵中相邻Z排布的起始地址偏移，取值范围为srcStride∈[0, 65535]，单位为C0_Size（16*sizeof(T)），T为src的数据类型，其值应填成mSize对16向上取整。 |
-| dstStride | 必选输入 | &bull; 不开启NZ2ND/NZ2DN功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为element。（与Fixpipe搬运参数（FixpipeParamsV220）中的dstStride相比，二者的单位发生了变化，FixpipeParamsV220中dstStride的单位为datablock（32字节），而FixpipeParamsArch3510中dstStride的单位为element。）<br>&bull; 开启[NZ2ND](../cube_store_key_features/NZ2ND.md)/[NZ2DN](../cube_store_key_features/NZ2DN.md)功能：目的ND/DN矩阵每一行中的元素个数，取值不为0，单位为element。 |
+| dstStride | 必选输入 | &bull; 不开启NZ2ND/NZ2DN功能：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为element。（与Fixpipe搬运参数（FixpipeParamsV220）中的dstStride相比，二者的单位发生了变化，FixpipeParamsV220中dstStride的单位为datablock（32字节），而FixpipeParamsArch3510中dstStride的单位为element。）<br>&bull; 开启NZ2ND/NZ2DN功能：目的ND/DN矩阵每一行中的元素个数，取值不为0，单位为element。 |
 | [quantPre](../cube_store_key_features/accompanying_quantization.md) | 可选输入 |用于控制量化模式，QuantMode_t类型，默认值为`QuantMode_t::NoQuant`，具体定义如下：<br>注：此参数需要用户手动配置，不会自动推导配置对应量化模式。<br>enum QuantMode_t<br>{<br>    NoQuant,               // 不开启量化功能<br>    F322F16,               // Float32_2_Float16: float cast成half，cast mode为CAST_RINT模式<br>    F322BF16,              // Float32_2_BFloat16 :float cast成bfloat16_t，cast mode为CAST_RINT模式<br>    DEQF16,                // DeQuant_Float16: int32_t量化成half, scalar量化<br>    VDEQF16,               // Vector_DeQuant_Float16: int32_t量化成half，tensor量化<br>    QF322B8_PRE,           // Quant_Float32_2_B8: float量化成int8_t/uint8_t，scalar量化<br>    VQF322B8_PRE,          // Vector_Quant_Float32_2_B8: float量化成int8_t/uint8_t，tensor量化<br>    REQ8,                  // ReQuant_int8: int32_t量化成int8_t/uint8_t，scalar量化<br>    VREQ8,                 // Vector_ReQuant_int8: int32_t量化成int8_t/uint8_t，tensor量化<br>    QF322FP8_PRE,          // Quant_Float32_2_FP8: float量化成fp8_e4m3fn_t，scalar量化<br>    VQF322FP8_PRE,         // Vector_Quant_Float32_2_FP8: float量化成fp8_e4m3fn_t，tensor量化<br>    QF322HIF8_PRE,         // Quant_Float32_2_HIF8: float量化成hifloat8_t(Half to Away Round)，scalar量化<br>    VQF322HIF8_PRE,        // Vector_Quant_Float32_2_HIF8: float量化成hifloat8_t(Half to Away Round)，tensor量化<br>    QF322HIF8_PRE_HYBRID,  // Quant_Float32_2_HIF8_Hybrid: float量化成hifloat8_t(Hybrid Round)，scalar量化<br>    VQF322HIF8_PRE_HYBRID, // Vector_Quant_Float32_2_HIF8_Hybrid: float量化成hifloat8_t(Hybrid Round)，tensor量化<br>    QS322BF16_PRE,         // Quant_Int32_2_BFloat16: int32_t量化成bfloat16_t，scalar量化<br>    VQS322BF16_PRE,        // Vector_Quant_Int32_2_BFloat16: int32_t量化成bfloat16_t，tensor量化<br>    QF322F16_PRE,          // Quant_Float32_2_Float16: float量化成half，scalar量化<br>    VQF322F16_PRE,         // Vector_Quant_Float32_2_Float16: float量化成half，tensor量化<br>    QF322BF16_PRE,         // Quant_Float32_2_BFloat16: float量化成bfloat16_t，scalar量化<br>    VQF322BF16_PRE,        // Vector_Quant_Float32_2_BFloat16: float量化成bfloat16_t，tensor量化<br>    QF322F32_PRE,          // Quant_Float32_2_Float32: float量化成float，scalar量化，精度可以达到双千分之一，无法达到双万分之一。如果有双万分之一的精度要求，建议使用[AscendDeQuant](../../../adv_api/quantization/AscendDequant.md)高阶API。<br>    VQF322F32_PRE,         // Vector_Quant_Float32_2_Float32: float量化成float，tensor量化，精度可以达到双千分之一，无法达到双万分之一。如果有双万分之一的精度要求，建议使用[AscendDeQuant](../../../adv_api/quantization/AscendDequant.md)高阶API。<br>}; |
 | deqScalar | 可选输入 | scalar量化参数，表示单个scale值，quantPre量化模式为[随路量化](../cube_store_key_features/accompanying_quantization.md)时需要设置该参数。支持的数据类型为`uint64_t`。 |
 | [reluEn](../cube_store_key_features/accompanying_relu.md) | 可选输入 | 是否开启NormReLU的开关：<br>&nbsp;&nbsp;&bull; `false`：不开启NormReLU功能， 默认为`false`；<br>&nbsp;&nbsp;&bull; `true`：开启NormReLU功能。 |

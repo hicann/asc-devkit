@@ -35,7 +35,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-通过Tpipe::InitBufPool接口可划分出整块资源，整块TbufPool资源可以继续通过TBufPool::InitBufPool接口划分成小块资源。
+通过Tpipe::InitBufPool接口可划分出整块资源，整块TbufPool资源可以继续通过[TBufPool](TBufPool.md)::InitBufPool接口划分成小块资源。
 
 资源分配的非共享模式与共享模式：
 - 非共享模式：从Tpipe中划分出一块新的资源池。
@@ -96,7 +96,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="12.379999999999999%" headers="mcps1.2.4.1.2 "><p id="p1842145172415"><a name="p1842145172415"></a><a name="p1842145172415"></a>输入</p>
 </td>
-<td class="cellrowborder" valign="top" width="75.26%" headers="mcps1.2.4.1.3 "><p id="p164211556249"><a name="p164211556249"></a><a name="p164211556249"></a>新划分的资源池，类型为TBufPool。</p>
+<td class="cellrowborder" valign="top" width="75.26%" headers="mcps1.2.4.1.3 "><p id="p164211556249"><a name="p164211556249"></a><a name="p164211556249"></a>新划分的资源池，类型为<a href="TBufPool.md">TBufPool</a>。</p>
 </td>
 </tr>
 <tr id="row03336319398"><td class="cellrowborder" valign="top" width="12.36%" headers="mcps1.2.4.1.1 "><p id="p1042110572411"><a name="p1042110572411"></a><a name="p1042110572411"></a>len</p>

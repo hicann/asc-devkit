@@ -71,7 +71,7 @@ __simd_callee__ inline void Scatter(__ubuf__ T* baseAddr, S& srcReg, V& index, M
 |-----|-----|
 | T | 目的操作数的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | U | 索引值index的数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| S | 源操作数的RegTensor类型。例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
+| S | 源操作数的[RegTensor](../register_data_types/RegTensor.md)类型。例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
 | V | 索引值的RegTensor类型，例如RegTensor\<uint16_t>，由编译器自动推导，用户不需要手动填写。 |
 
 **表 2**  参数说明
@@ -79,8 +79,8 @@ __simd_callee__ inline void Scatter(__ubuf__ T* baseAddr, S& srcReg, V& index, M
 | 参数名 | 输入/输出 | 描述 |
 |-----|-----|-----|
 | baseAddr | 输出 | 目的操作数，UB中的基地址，需要32字节对齐。 |
-| srcReg | 输入 | 源操作数，类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| index | 输入 | 索引值，srcReg中的每个元素在UB中相对于baseAddr的位置，单位：元素个数。类型为[RegTensor](../register_data_types/RegTensor.md)。 <br>注：index中的值必须唯一。若存在重复的index值，系统仅保留其中一个对应的数据，其余将被忽略。无法确定具体保留哪一个，因此必须确保index值不重复。 |
+| srcReg | 输入 | 源操作数，类型为RegTensor。 |
+| index | 输入 | 索引值，srcReg中的每个元素在UB中相对于baseAddr的位置，单位：元素个数。类型为RegTensor。 <br>注：index中的值必须唯一。若存在重复的index值，系统仅保留其中一个对应的数据，其余将被忽略。无法确定具体保留哪一个，因此必须确保index值不重复。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 数据类型

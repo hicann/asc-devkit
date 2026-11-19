@@ -152,7 +152,7 @@ Kirin9030处理器系列产品，支持的数据类型为：half、float。
   - 针对Ascend 950PR&950DT系列产品，该接口通过VF调用[Reg矢量计算API](../../reg_vector_compute/reg_vector_compute.md)实现兼容，当参数count或repeatTime取值为0时，不保证该接口将被视为NOP（空操作）。
   <!-- end id17 -->
 <!-- end id13 -->
-- MulAddRelu指令实际使用会受到bank冲突影响。
+- MulAddRelu指令实际使用会受到[bank冲突](../../../../../guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/overview.md)影响。
 
     地址不重叠场景下，无法在一拍读取dst、src0、src1三块不同地址下的数据，因此只能达到一半的理论并行度，理论并行度将在原有基础上减半；在地址重叠场景下，则保持原有理论并行度。
 <!-- npu="950" id18 -->

@@ -77,13 +77,13 @@ __simd_callee__ inline void Arange(S& dstReg, U scalarValue);
 | T | 目的操作数的数据类型。 |
 | IndexOrder | 递增/递减模式。支持如下取值：<br>• INCREASE_ORDER：递增模式<br>• DECREASE_ORDER：递减模式 |
 | U | 起始索引值的数据类型。 |
-| S | 目的操作数的RegTensor类型，例如`RegTensor<half>`，由编译器自动推导，无需用户显式指定。 |
+| S | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如`RegTensor<half>`，由编译器自动推导，无需用户显式指定。 |
 
 **表2**  函数参数说明
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数。<br>类型为RegTensor。 |
 | scalarValue | 输入 | 源操作数。<br>类型为标量。 |
 
 ## 数据类型

@@ -55,9 +55,9 @@
 
 - [SetFixpipePreQuantFlag](../cube_store_aux_config/SetFixpipePreQuantFlag.md)：寄存器设置接口，通过调用该接口设置Scalar随路量化参数，此元素代表整个输出矩阵使用的量化参数，启用Scalar量化时需要设置。
 
-- [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路Nz2ND格式转换配置，使用随路Nz2ND需要设置。
+- [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路[Nz2ND](../cube_store_key_features/NZ2ND.md)格式转换配置，使用随路Nz2ND需要设置。
 
-- [SetFixpipeNz2dnFlag](../cube_store_aux_config/SetFixpipeNz2dnFlag.md)：寄存器设置接口，通过调用该接口设置随路Nz2DN格式转换配置，使用随路Nz2DN需要设置。
+- [SetFixpipeNz2dnFlag](../cube_store_aux_config/SetFixpipeNz2dnFlag.md)：寄存器设置接口，通过调用该接口设置随路[Nz2DN](../cube_store_key_features/NZ2DN.md)格式转换配置，使用随路Nz2DN需要设置。
 <!-- end id9 -->
 
 <!-- npu="310p" id10 -->

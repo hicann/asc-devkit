@@ -73,15 +73,15 @@ __simd_callee__ inline void Histograms(V& dstReg, S& srcReg, MaskReg& mask)
 | U | 目的操作数的数据类型。 |
 | mode | HistogramsBinType枚举类型，用于选择统计srcReg的低位区间或高位区间。Histograms将uint8_t类型srcReg的[0, 255]取值范围划分为低位、高位两个区间；每个区间包含128个取值，对应uint16_t类型dstReg在一个VL（256Byte）内可保存的128个统计结果。单次调用只统计其中一个区间，并将该区间的统计结果写入传入的dstReg。若需要获得完整[0, 255]范围的统计结果，需要分别以BIN0和BIN1调用两次接口，并使用两个目的寄存器保存结果，例如dst0保存低位区间结果，dst1保存高位区间结果。<br>• BIN0：统计srcReg中[0, 127]范围内的数据，结果写入传入的dstReg。<br>• BIN1：统计srcReg中[128, 255]范围内的数据，结果写入传入的dstReg。 |
 | type | HistogramsType 枚举类型，表示统计模式。<br>• FREQUENCY：频率统计模式，统计srcReg中[0, 255]每个数的数量。每个dst有128个元素，其中低位模式dstReg中每个元素对应src中[0, 127]每个元素的累加个数，高位模式dstReg中每个元素对应src中[128,255]每个元素的累加个数。<br>• ACCUMULATE：累计统计模式，统计srcReg中[0, 255]每个数及其之前出现数的数量总和。每个dst有128个元素，其中低位模式dstReg中每个元素对应src中[0, 127]每个元素区间累加个数，高位模式dstReg中每个元素对应src中[128,255]每个元素区间累加个数。 |
-| S | 源操作数RegTensor类型，由编译器自动推导，用户不需要填写。 |
+| S | 源操作数[RegTensor](../register_data_types/RegTensor.md)类型，由编译器自动推导，用户不需要填写。 |
 | V | 目的操作数RegTensor类型，由编译器自动推导，用户不需要填写。 |
 
 **表2**  参数说明
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| dstReg | 输入/输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输入/输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 返回值说明<a name="section640mcpsimp"></a>

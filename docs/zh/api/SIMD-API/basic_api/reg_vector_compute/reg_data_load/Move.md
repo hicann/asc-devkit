@@ -52,7 +52,7 @@
 
 对srcReg中的有效元素逐个复制写入dstReg中对应位置处，无效位置保留dstReg原值。
 
-如需将RegTensor复制到MaskReg，请参考接口[MaskGenWithRegTensor](MaskGenWithRegTensor_MaskReg.md)。
+如需将[RegTensor](../register_data_types/RegTensor.md)复制到[MaskReg](../register_data_types/MaskReg.md)，请参考接口[MaskGenWithRegTensor](MaskGenWithRegTensor_MaskReg.md)。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -85,7 +85,7 @@
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 数据类型

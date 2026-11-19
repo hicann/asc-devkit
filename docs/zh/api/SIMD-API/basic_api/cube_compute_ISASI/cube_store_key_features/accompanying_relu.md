@@ -8,6 +8,6 @@
 
 - 参数配置为1时，即Normal ReLU，无需配置额外寄存器，对输出数据执行激活处理：`y = max(0, x)`。
 
-- 开启Normal ReLU（reluPre=1）且同时配置clipReluPre=1并调用SetFixPipeClipRelu接口时，即Normal ReLU + ClipReLU，先执行`y = max(0, x)`，再执行`y = min(clipReluMaxVal, y)`，其中clipReluMaxVal通过SetFixPipeClipRelu接口设置。详见[SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)。
+- 开启Normal ReLU（reluPre=1）且同时配置clipReluPre=1并调用[SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)接口时，即Normal ReLU + ClipReLU，先执行`y = max(0, x)`，再执行`y = min(clipReluMaxVal, y)`，其中clipReluMaxVal通过SetFixPipeClipRelu接口设置。
 
 与随路量化组合使用的详细信息请参考[随路量化与随路ReLU场景组合](accompanying_quantization_and_relu_scenario_combination.md)。

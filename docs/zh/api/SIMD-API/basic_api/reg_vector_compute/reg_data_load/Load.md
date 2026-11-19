@@ -41,7 +41,7 @@
 
 头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h"`。
 
-Reg矢量计算数据搬运接口，支持从Unified Buffer（UB）非32字节对齐的源地址srcAddr搬运至RegTensor。当RegTensor模板参数regTrait为RegTraitNumOne时，搬运量为VL（256B）；当regTrait为RegTraitNumTwo时，搬运量为2*VL（512B）。连续搬运时，用户需手动更新srcAddr地址。
+Reg矢量计算数据搬运接口，支持从Unified Buffer（UB）非32字节对齐的源地址srcAddr搬运至[RegTensor](../register_data_types/RegTensor.md)。当RegTensor模板参数regTrait为RegTraitNumOne时，搬运量为VL（256B）；当regTrait为RegTraitNumTwo时，搬运量为2*VL（512B）。连续搬运时，用户需手动更新srcAddr地址。
 
 该接口封装了[LoadUnalignPre和LoadUnalign](LoadUnalign_continuous.md)。
 
@@ -59,13 +59,13 @@ __simd_callee__ inline void Load(U& dstReg, __ubuf__ T* srcAddr)
 | 参数名 | 描述 |
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
-| U | 目的操作数的RegTensor类型，例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
+| U | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor\<half>，由编译器自动推导，用户不需要手动填写。 |
 
 **表2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstReg | 输出 | 目的操作数，类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数，类型为RegTensor。 |
 | srcAddr | 输入 | 源操作数，UB起始地址，不需要32字节对齐。 |
 
 ## 数据类型

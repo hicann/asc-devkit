@@ -33,7 +33,7 @@
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
--   non-inplace接口：将入队的LocalTensor地址从队列中取出赋值给新创建的Tensor并返回
+-   non-inplace接口：将入队的[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)地址从队列中取出赋值给新创建的Tensor并返回
 
     ```cpp
     template <typename T>

@@ -67,15 +67,15 @@ __simd_callee__ inline void Pack(S& dstReg, V& srcReg)
 | T | 目的操作数数据类型。<br> 源操作数和目的操作数的数据类型约束参考见[表 源操作数和目的操作数的数据类型对应表](#table3)。|
 | U | 源操作数数据类型。 |
 | part | 枚举类型，用于控制写入dstReg的低半部分还是高半部分。<br>• HighLowPart::LOWEST，低位模式，写入dstReg的低半部分。<br>• HighLowPart::HIGHEST，高位模式，写入dstReg的高半部分。<br> 注：RegTraitNumTwo只支持LOWEST模式。|
-| S | 目的操作数RegTensor类型，由编译器自动推导，用户不需要填写。 |
+| S | 目的操作数[RegTensor](../register_data_types/RegTensor.md)类型，由编译器自动推导，用户不需要填写。 |
 | V | 源操作数RegTensor类型，由编译器自动推导，用户不需要填写。 |
 
 **表2**  函数参数说明
 
 | 参数名称 | 描述 |
 | ------ | ------ |
-| dstReg | 目的操作数。<br> 类型为[RegTensor](../register_data_types/RegTensor.md)。|
-| srcReg | 源操作数。<br> 类型为[RegTensor](../register_data_types/RegTensor.md)。|
+| dstReg | 目的操作数。<br> 类型为RegTensor。|
+| srcReg | 源操作数。<br> 类型为RegTensor。|
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

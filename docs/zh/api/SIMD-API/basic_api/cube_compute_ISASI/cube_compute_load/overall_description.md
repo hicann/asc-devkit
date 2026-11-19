@@ -73,7 +73,7 @@
 | [LoadData（卷积数据搬运）](LoadData_3D.md) | 将NC1HWC0格式Feature Map完成Image to Column展开后，以512B分形为单位搬入L0A Buffer/L0B Buffer。 | L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | 卷积的im2col展开与矩阵计算数据搬入。 |
 | [LoadDataWithTranspose](LoadDataWithTranspose.md) | 搬运2D格式数据并伴随转置操作，将多个分形拼接为方块矩阵后转置再拆分搬入L0A Buffer/L0B Buffer。 | L1 Buffer->L0A Buffer、L1 Buffer->L0B Buffer | 矩阵计算中需转置的A/B矩阵搬入L0 Buffer。 |
 | [DataCopy（L1ToBiasTable-Buffer数据搬运）](DataCopy_L1ToBiasTable.md) | 将矩阵计算的bias参数从L1 Buffer搬运至BiasTable Buffer。 | L1 Buffer->BiasTable Buffer | 矩阵乘后加偏置（bias add）参数搬入。 |
-| [DataCopy（L1ToFixpipe-Buffer数据搬运）](DataCopy_L1ToFixpipe.md) | 将随路量化和随路ReLU参数从L1 Buffer搬运至Fixpipe Buffer。 | L1 Buffer->Fixpipe Buffer | 矩阵计算结果的随路量化、激活参数搬入。 |
+| [DataCopy（L1ToFixpipe-Buffer数据搬运）](DataCopy_L1ToFixpipe.md) | 将[随路量化](../cube_store_key_features/accompanying_quantization.md)和[随路ReLU](../cube_store_key_features/accompanying_relu.md)参数从L1 Buffer搬运至Fixpipe Buffer。 | L1 Buffer->Fixpipe Buffer | 矩阵计算结果的随路量化、激活参数搬入。 |
 
 <!-- npu="950" id_l12l0_950note -->
 > [!NOTE]说明
@@ -118,7 +118,7 @@
 | [SetLoadDataBoundary](../cube_load_aux_config/SetLoadDataBoundary.md) | 设置L1 Buffer边界值。 | LoadData（卷积数据搬运） |
 | [SetLoadDataRepeat](../cube_load_aux_config/SetLoadDataRepeat.md) | 设置Repeat参数实现多迭代搬运。 | LoadData（卷积数据搬运） |
 | [SetLoadDataPaddingValue](../cube_load_aux_config/SetLoadDataPaddingValue.md) | 设置Padding填充值。 | LoadData（卷积数据搬运） |
-| [LoadDataUnzip](../cube_load_aux_config/LoadDataUnzip.md) | 将GM上的数据解压并搬运到L1 Buffer（A1/B1）或L0B Buffer（B2）上。 | LoadUnzipIndex |
-| [LoadImageToLocal](../cube_load_aux_config/LoadImageToLocal.md) | 将图像数据从Global Memory搬运到Local Memory。 | SetAippFunctions |
 | [LoadUnzipIndex](../cube_load_aux_config/LoadUnzipIndex.md) | 加载GM上的压缩索引表到内部寄存器。 | - |
+| [LoadDataUnzip](../cube_load_aux_config/LoadDataUnzip.md) | 将GM上的数据解压并搬运到L1 Buffer（A1/B1）或L0B Buffer（B2）上。 | LoadUnzipIndex |
+| [LoadImageToLocal](../cube_load_aux_config/LoadImageToLocal.md) | 将图像数据从Global Memory搬运到Local Memory。 | [SetAippFunctions](../cube_load_aux_config/SetAippFunctions.md) |
 | [SetAippFunctions](../cube_load_aux_config/SetAippFunctions.md) | 设置图片预处理（AIPP，AI Core pre-process）相关参数。 | LoadImageToLocal |

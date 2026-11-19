@@ -42,7 +42,7 @@
 
 - 模式0（SELMODE::VSEL\_CMPMASK\_SPR）
 
-    SetCmpMask中传入selMask LocalTensor。
+    SetCmpMask中传入selMask [LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)。
 
 - 模式1（SELMODE::VSEL\_TENSOR\_SCALAR\_MODE）
 

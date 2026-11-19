@@ -129,10 +129,10 @@ MaskReg
 | 编号 | 设置方式 | 涉及接口 | 说明 |
 | :-- | :------------ | :------------ | :------------ |
 | 1 | 调用接口设置 | CreateMask | 调用CreateMask接口以固定的Pattern设置Mask，每次以循环计算均使用此Mask。详见[方式1](#method1)。 |
-| 2 | 调用接口设置 | UpdateMask | 调用UpdateMask设置Mask。详见方式2。<br>&bull; 在循环外调用UpdateMask设置固定的Mask，Mask表示在一次循环计算中前count个元素参与计算，每次以循环计算均使用此Mask。<br>&bull; 在循环内调用UpdateMask设置Mask，表示计算中前count个元素参与计算，每次循环Mask会自动更新。详见[方式2](#method2)。 |
-| 3 | 从UB搬运 | LoadAlign | 从UB搬运Mask到MaskReg。详见[方式3](#method3)。 |
-| 4 | 从RegTensor搬运 | MaskGenWithRegTensor | 从RegTensor搬运Mask到MaskReg。详见[方式4](#method4)。 |
-| 5 | 从掩码寄存器中读取 | MoveMask | 从SetVectorMask设置的掩码寄存器{MASK1,MASK0}中读取Mask值。详见[方式5](#method5)。 |
+| 2 | 调用接口设置 | UpdateMask | 调用UpdateMask设置Mask。详见[方式2](#method2)。<br>&bull; 在循环外调用UpdateMask设置固定的Mask，Mask表示在一次循环计算中前count个元素参与计算，每次以循环计算均使用此Mask。<br>&bull; 在循环内调用UpdateMask设置Mask，表示计算中前count个元素参与计算，每次循环Mask会自动更新。 |
+| 3 | 从UB搬运 | [LoadAlign](../reg_data_load/LoadAlign_MaskReg.md) | 从UB搬运Mask到MaskReg。详见[方式3](#method3)。 |
+| 4 | 从RegTensor搬运 | [MaskGenWithRegTensor](../reg_data_load/MaskGenWithRegTensor_MaskReg.md) | 从RegTensor搬运Mask到MaskReg。详见[方式4](#method4)。 |
+| 5 | 从掩码寄存器中读取 | [MoveMask](../MaskReg_compute/MoveMask.md) | 从SetVectorMask设置的掩码寄存器{MASK1,MASK0}中读取Mask值。详见[方式5](#method5)。 |
 
 Reg矢量计算中，掩码的配置方式由MaskReg寄存器决定，仅支持接口内设置Mask。Mask值可通过MaskReg类型参数，直接作为入参传递给矢量计算API。
 

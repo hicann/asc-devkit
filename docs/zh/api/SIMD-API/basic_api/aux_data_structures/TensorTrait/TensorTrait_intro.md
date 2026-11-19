@@ -1,6 +1,6 @@
 # TensorTrait简介<a name="ZH-CN_TOPIC_0000002337196216"></a>
 
-TensorTrait数据结构是描述Tensor相关信息的基础模板类，包含Tensor的数据类型、逻辑位置和Layout内存布局。借助模板元编程技术，该类在编译时完成计算和代码生成，从而降低运行时开销。
+TensorTrait数据结构是描述Tensor相关信息的基础模板类，包含Tensor的数据类型、逻辑位置和[Layout](../Layout/Layout.md)内存布局。借助模板元编程技术，该类在编译时完成计算和代码生成，从而降低运行时开销。
 
 ## 需要包含的头文件<a name="zh-cn_topic_0000002213064918_section78885814919"></a>
 

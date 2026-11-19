@@ -60,7 +60,7 @@
     Atlas 200I/500 A2推理产品，支持模式1-7。
     <!-- end id12 -->
 
-- 用户自定义模式：对应函数原型中src1Pattern的数据类型为LocalTensor，迭代间间隔由src1RepeatStride决定，迭代内src1Pattern连续消耗。
+- 用户自定义模式：对应函数原型中src1Pattern的数据类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，迭代间间隔由src1RepeatStride决定，迭代内src1Pattern连续消耗。
 
 GatherMask接口计算过程如下图所示，参数设置为：mask=70，repeatTimes=2，src0BlockStride=1，src0RepeatStride=8，src1RepeatStride=0。
 
@@ -142,7 +142,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
 | 参数名称 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | dst | 输出 | 目的操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。 |
-| src0 | 输入 | 源操作数。<br>类型为[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>数据类型需要与目的操作数保持一致。 |
+| src0 | 输入 | 源操作数。<br>类型为LocalTensor，支持的TPosition为VECIN/VECCALC/VECOUT。<br>LocalTensor的起始地址需要32字节对齐。<br>数据类型需要与目的操作数保持一致。 |
 | src1Pattern | 输入 | gather mask（数据收集的掩码），分为内置固定模式和用户自定义模式两种，根据内置固定模式对应的二进制掩码或者用户自定义输入的Tensor数值对应的二进制掩码从源操作数中选取元素写入目的操作数中。1为选取，0为不选取。具体说明请参考[功能说明](#section618mcpsimp)。<br>注：内置固定模式下src1RepeatStride参数无效。 |
 | reduceMode | 输入 | 用于选择mask参数模式，数据类型为bool，支持如下取值：<br>&bull; false：Normal模式。该模式下，每次repeat操作256Bytes数据，总的数据计算量为repeatTimes * 256Bytes。此模式下mask参数无效，建议设置为0。<br>&bull; true：Counter模式。根据mask等参数含义的不同，该模式存在两种配置方式。具体说明请参考[功能说明](#section618mcpsimp)。<br>两种取值都支持：<br>&bull;按需配置src0BlockStride、src0RepeatStride参数。<br>&bull;支持src1Pattern配置为内置固定模式或用户自定义模式。用户自定义模式下可根据实际情况配置src1RepeatStride。<br> |
 | mask | 输入 | 用于控制每次迭代内参与计算的元素。根据reduceMode，分为两种模式：<br>&bull; Normal模式：mask无效，建议设置为0。<br>&bull; Counter模式：取值范围[1, 2<sup>32</sup> – 1]。不同的版本型号Counter模式下，mask参数表示含义不同。具体配置规则参考上文reduceMode参数描述。<br> |

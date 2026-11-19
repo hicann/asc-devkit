@@ -37,7 +37,7 @@
 
 将src中的元素复制到dst中的对应位置。如果有输入mask，则仅复制被mask选定的有效元素，无效元素填0。
 
-如需将RegTensor复制到MaskReg，请参考接口[MaskGenWithRegTensor](../reg_data_load/MaskGenWithRegTensor_MaskReg.md)。
+如需将[RegTensor](../register_data_types/RegTensor.md)复制到[MaskReg](../register_data_types/MaskReg.md)，请参考接口[MaskGenWithRegTensor](../reg_data_load/MaskGenWithRegTensor_MaskReg.md)。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 
@@ -60,8 +60,8 @@
 | 参数名 | 描述 |
 | --- | --- |
 | dst | 目的操作数，类型为[MaskReg](../register_data_types/MaskReg.md)。 |
-| src | 源操作数，类型为[MaskReg](../register_data_types/MaskReg.md)。 |
-| mask | 指示在复制过程中哪些bit有效，类型为[MaskReg](../register_data_types/MaskReg.md)。 |
+| src | 源操作数，类型为MaskReg。 |
+| mask | 指示在复制过程中哪些bit有效，类型为MaskReg。 |
 
 ## 返回值说明<a name="section640mcpsimp"></a>
 

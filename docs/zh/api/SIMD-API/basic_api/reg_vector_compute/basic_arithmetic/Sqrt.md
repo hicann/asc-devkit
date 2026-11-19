@@ -71,14 +71,14 @@ __simd_callee__ inline void Sqrt(U& dstReg, U& srcReg, MaskReg& mask)
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | mode | 可配置为[MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举值或指向SqrtSpecificMode结构体的指针。<br>&bull; 配置MaskMergeMode：选择MERGING模式或ZEROING模式。<br>&nbsp;&nbsp;&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&nbsp;&nbsp;&bull; MERGING模式当前不支持。<br>&bull; 配置SqrtSpecificMode，定义如下：<br><code>enum class SqrtAlgo {<br>    INTRINSIC = 0,<br>    FAST_INVERSE,<br>    PRECISION_1ULP_FTZ_TRUE,<br>    PRECISION_0ULP_FTZ_FALSE,<br>    PRECISION_1ULP_FTZ_FALSE,<br>};<br>struct SqrtSpecificMode {<br>    MaskMergeMode mrgMode = MaskMergeMode::ZEROING;<br>    bool precisionMode = false;<br>    SqrtAlgo algo = SqrtAlgo::INTRINSIC;<br>};</code><br>&bull; mrgMode：选择MERGING模式或ZEROING模式。<br>&bull; precisionMode：用于配置精度模式。当precisionMode为true时，使能更高精度的Sqrt计算，使用快速求逆算法得出结果。该算法目前只针对float数据类型生效。<br>&bull; algo：用于选择Sqrt算法及配置Subnormal模式，详细说明请参考[关键特性说明](#关键特性说明)。<br>&nbsp;&nbsp;&bull; SqrtAlgo::INTRINSIC：默认算法，最大精度误差为1ulp。对于half、float类型，Subnormal处理受编译选项--cce-ftz控制（默认值为true）。<br>&nbsp;&nbsp;&bull; SqrtAlgo::PRECISION_1ULP_FTZ_TRUE：使用单指令计算，最大精度误差为1ulp。<br>&nbsp;&nbsp;&bull; SqrtAlgo::FAST_INVERSE和SqrtAlgo::PRECISION_0ULP_FTZ_FALSE：使用快速求逆算法得出结果。目前，该算法仅支持float类型，并在该模式下支持Subnormal数据计算。<br>&nbsp;&nbsp;&bull; SqrtAlgo::PRECISION_1ULP_FTZ_FALSE：最大精度误差为1ulp，支持half类型的Subnormal数据计算。 |
-| U | 源操作数和目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
+| U | 源操作数和目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表 2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg | 输入 | 源操作数。<br>类型为RegTensor。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 数据类型

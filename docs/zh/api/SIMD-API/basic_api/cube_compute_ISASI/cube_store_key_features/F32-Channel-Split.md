@@ -6,7 +6,7 @@
 
 对于DataCopy接口，可以通过配置**DataCopyCO12DstParams结构体参数**定义中channelSplit为true开启。
 
-对于Fixpipe接口，可以通过配置[Fixpipe搬运参数结构体说明](../cube_compute_store/Fixpipe_L0CToGM.md)中channelSplit为true开启。
+对于[Fixpipe](../cube_compute_store/Fixpipe_L0CToGM.md)接口，可以通过配置Fixpipe搬运参数结构体说明中channelSplit为true开启。
 
 <!-- npu="950,A3,910b" id5 -->
 ## 特性约束

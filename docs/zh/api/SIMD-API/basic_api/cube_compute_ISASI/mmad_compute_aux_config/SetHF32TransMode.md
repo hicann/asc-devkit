@@ -27,7 +27,7 @@
 
 ## 功能说明
 
-设置HF32模式取整的具体方式，需要先使用[SetHF32Mode](SetHF32Mode.md)开启HF32取整模式。
+设置[HF32](../mmad_compute_key_features/HF32.md)模式取整的具体方式，需要先使用[SetHF32Mode](SetHF32Mode.md)开启HF32取整模式。
 
 ## 函数原型
 

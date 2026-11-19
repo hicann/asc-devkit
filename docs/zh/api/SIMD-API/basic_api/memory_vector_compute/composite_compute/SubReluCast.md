@@ -38,7 +38,7 @@
 
 头文件路径为：`"basic_api/kernel_operator_vec_vconv_intf.h"`。
 
-按元素求差，再进行Relu计算（结果和0对比取较大值），并根据源操作数和目的操作数Tensor的数据类型进行精度转换。计算公式如下：
+按元素求差，再进行Relu计算（结果和0对比取较大值），并根据源操作数和目的操作数Tensor的数据类型进行[精度转换](../../data_structures/precision_conversion.md)。计算公式如下：
 
 $$
 dst_i = Cast(Relu(src0_i - src1_i))

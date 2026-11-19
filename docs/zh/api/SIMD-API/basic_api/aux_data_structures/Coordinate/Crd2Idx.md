@@ -27,7 +27,7 @@
 
 ## 功能说明
 
-Crd2Idx函数用于将多维坐标（Coordinate）通过布局（Layout）转换为内存位置索引（Index），这里的Layout包含了Shape和Stride信息。
+Crd2Idx函数用于将多维坐标（Coordinate）通过布局（[Layout](../Layout/Layout.md)）转换为内存位置索引（Index），这里的Layout包含了Shape和Stride信息。
 
 对于一个布局Layout，其Shape为\(d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>\)，Stride为\(s<sub>0</sub>, s<sub>1</sub>, ..., s<sub>n</sub>\)，Coordinate为\(c<sub>0</sub>, c<sub>1</sub>, ..., c<sub>n</sub>\)到线性索引Index的转换公式为：
 

@@ -41,7 +41,7 @@
 矩阵计算的结果存放在L0C Buffer，DataCopy接口用于将结果搬运至L1 Buffer中，并且在搬运过程中支持随路格式转换等操作。
 
 <!-- npu="950,A3,910b" id8 -->
-下图展示了随路量化、随路ReLU、随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
+下图展示了[随路量化](../cube_store_key_features/accompanying_quantization.md)、[随路ReLU](../cube_store_key_features/accompanying_relu.md)、随路通道合并的有效组合、中间数据类型和数据路径。下图中的F32-\>F16与F32-\>BF16为非量化模式，仅为Cast，其余为随路scalar/tensor量化模式。
 
 <!-- npu="A3,910b" id9 -->
 **图1** L0C2L1流程图（[NPU架构版本2201](../../../../../guide/programming_guide/language_extension/simd_builtin_keywords.md)）<a id="zh-cn_topic_0000002511188540_fig8956371257"></a>  
@@ -71,7 +71,7 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 
 - [SetFixpipePreQuantFlag](../cube_store_aux_config/SetFixpipePreQuantFlag.md)：寄存器设置接口，通过调用该接口设置随路量化参数，此元素代表整个输出矩阵使用的量化参数，使用Scalar量化时需要设置。
 
-- [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路NZ2ND格式转换配置，使用随路NZ2ND需要设置。
+- [SetFixpipeNz2ndFlag](../cube_store_aux_config/SetFixpipeNz2ndFlag.md)：寄存器设置接口，通过调用该接口设置随路[NZ2ND](../cube_store_key_features/NZ2ND.md)格式转换配置，使用随路NZ2ND需要设置。
 
 <!-- npu="310b" id12 -->
 针对Atlas 200I/500 A2推理产品，还支持如下两个接口：
@@ -104,8 +104,8 @@ DataCopy矩阵搬出接口支持多种随路能力的组合，需要设置不同
 | ---------- | ---------- |
 | sid | 此参数用户无需关注，设置为0即可。 |
 | nSize | 源NZ矩阵在N方向上的大小。取值范围nSize∈[0, 4095]，nSize必须为16的倍数。<br>**注：nSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR&950DT系列产品支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
-| dstStride | &bull;不开启NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR&950DT系列产品支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
+| mSize | 源NZ矩阵在M方向上的大小。<br>&nbsp;&nbsp;&bull;不开启随路NZ2ND功能（[NZ2NZ搬运](../cube_store_key_features/NZ2NZ.md)）：取值范围为mSize∈[0, 65535]。<br><!-- npu="950" id25 -->&nbsp;&nbsp;&bull;开启随路NZ2ND功能（仅Ascend 950PR&950DT系列产品支持）：取值范围为mSize∈[0, 8192]。<br><!-- end id25 -->**注：mSize=0表示不执行搬运，该接口将被视为NOP（空操作）。** |
+| dstStride | &bull;不开启NZ2ND功能：目的NZ矩阵中相邻Z排布的起始地址偏移，取值不为0，单位为datablock（32字节）。<br><!-- npu="950" id26 -->&bull;开启随路[NZ2ND](../cube_store_key_features/NZ2ND.md)功能（仅Ascend 950PR&950DT系列产品支持）：目的ND矩阵每一行中的元素个数，取值不为0 ，单位为element。<!-- end id26 --> |
 | srcStride | 源NZ矩阵中相邻Z排布的起始地址偏移，取值范围为srcStride∈[0, 65535]，单位为C0_Size（16*sizeof(T)），T为src的数据类型，其值应填成mSize对16向上取整。 |
 | unitFlag | unitFlag是一种Mmad指令和Fixpipe指令细粒度的并行，开启该功能后，硬件每计算完一个分形，计算结果就会被搬出。取值说明如下：<br>&nbsp;&nbsp;&bull; 0（2'b00）：不开启unitFlag。<br>&nbsp;&nbsp;&bull; 2（2'b10）：开启unitFlag，硬件执行完指令之后，不复位单元标记位。<br>&nbsp;&nbsp;&bull; 3（2'b11）：开启unitFlag，硬件执行完指令之后，复位单元标记位。<br>开启该功能时，须将Mmad指令和Fixpipe指令的unitFlag值设置为2或3。<br>参数设置方案和特性细节可参考：Mmad计算中关键特性说明的[UnitFlag](../mmad_compute_key_features/UnitFlag.md)章节。 |
 | clipReluPre | <!-- npu="950,A3,910b" id13 -->该参数仅在Atlas 200I/500 A2推理产品支持。<br><!-- end id13 --><!-- npu="310b" id14 -->用于配置是否开启ClipReLU操作，参数类型为uint8_t，取值如下：0，不开启ClipReLU；1，开启ClipReLU，此时需要调用[SetFixPipeClipRelu](../cube_store_aux_config/SetFixPipeClipRelu.md)来设置ClipReLU的最大值。<br>&nbsp;&nbsp;&bull;该操作在随路量化后进行，quantPre配置后才能使用，当前支持的量化模式有F322F16/DEQF16/VDEQF16/QF322B8_PRE/VQF322B8_PRE/REQ8/VREQ8。<br><!-- end id14 --> |

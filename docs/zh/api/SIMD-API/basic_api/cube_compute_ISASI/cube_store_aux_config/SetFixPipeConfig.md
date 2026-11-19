@@ -39,7 +39,7 @@
 
 ## 功能说明<a name="zh-cn_topic_0000002547729135_section618mcpsimp"></a>
 
-DataCopy数据搬运（[L0C Buffer->GM](../cube_compute_store/Fixpipe_L0CToGM.md)、[L0C Buffer->L1 Buffer](../cube_compute_store/Fixpipe_L0CToL1.md)）过程中进行随路量化时，通过调用该接口设置量化的参数。
+DataCopy数据搬运（[L0C Buffer->GM](../cube_compute_store/Fixpipe_L0CToGM.md)、[L0C Buffer->L1 Buffer](../cube_compute_store/Fixpipe_L0CToL1.md)）过程中进行[随路量化](../cube_store_key_features/accompanying_quantization.md)时，通过调用该接口设置量化的参数。
 
 ## 函数原型<a name="zh-cn_topic_0000002547729135_section620mcpsimp"></a>
 

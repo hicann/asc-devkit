@@ -11,13 +11,13 @@ Global Memory与L1 Buffer/L0 Buffer之间的数据搬运提供了灵活、分层
 | Global Memory与L1 Buffer | 连续数据搬运(DataCopy) | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续数据搬运。 |
 | Global Memory与L1 Buffer | 高维切分数据搬运(DataCopy) | 提供基础的数据搬运能力，数据在传输过程中保持原始格式和内容不变，支持连续和非连续的数据搬运。 |
 | Global Memory->L1 Buffer | 随路转换-[ND2NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#ZH-CN_TOPIC_0000002568950893)搬运(DataCopy) | 支持在数据搬运时进行[ND](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section958745018719)到[NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)格式的转换。 |
-| Global Memory->L1 Buffer | 随路转换-[DN2NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#ZH-CN_TOPIC_0000002568950893)搬运(DataCopy) | 支持在数据搬运时进行[DN](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section958745018719)到[NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)格式的转换。 |
+| Global Memory->L1 Buffer | 随路转换-[DN2NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#ZH-CN_TOPIC_0000002568950893)搬运(DataCopy) | 支持在数据搬运时进行[DN](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section958745018719)到NZ格式的转换。 |
 | Global Memory->L1 Buffer | 非对齐数据搬运(DataCopyPad) | 支持数据非对齐搬运，可以根据开发者的需要自行填充数据。 |
-| Global Memory->L1 Buffer | [NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)数据搬运(LoadData（2D矩阵搬运）) | 负责完成[NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)矩阵的数据搬运。 |
-| Global Memory->L1 Buffer | [NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)数据搬运(LoadData（2D矩阵搬运V2）) | 负责完成[NZ](../cube_compute_ISASI/cube_compute_fractal_intro/key_fractal_format_details.md#zh-cn_topic_0000002545089965_section363412741113)矩阵的数据搬运。 |
+| Global Memory->L1 Buffer | NZ数据搬运([LoadData（2D矩阵搬运）](../cube_compute_ISASI/cube_compute_load/LoadData_GMToL1_2D.md)) | 负责完成NZ矩阵的数据搬运。 |
+| Global Memory->L1 Buffer | NZ数据搬运(LoadData（2D矩阵搬运V2）) | 负责完成NZ矩阵的数据搬运。 |
 | Global Memory->L0A Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
 | Global Memory->L0B Buffer | 2D格式分形矩阵搬运(LoadData（2D矩阵搬运）) | 负责完成普通矩阵计算所需的2D格式数据的搬运。 |
-| L0C Buffer->Global Memory | 随路量化激活搬运(DataCopy) | 支持多种随路能力的组合，需要设置不同的寄存器，配合DataCopy接口使能不同的数据搬运能力。 |
+| L0C Buffer->Global Memory | [随路量化](../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)激活搬运(DataCopy) | 支持多种随路能力的组合，需要设置不同的寄存器，配合DataCopy接口使能不同的数据搬运能力。 |
 | L0C Buffer->Global Memory | 随路量化激活搬运(FixPipe) | 支持多种随路能力的组合，FixPipe接口内包含了设置寄存器与数据搬运能力。 |
 
 ## DataCopy（GM与L1连续数据搬运）<a name="ZH-CN_TOPIC_0000002574022813"></a>
@@ -272,7 +272,7 @@ src和dst分别为源操作数和目的操作数；intriParams为搬运参数，
     __aicore__ inline void Fixpipe(const GlobalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsArch3510<config.format>& intriParams)
     ```
 
-- 开启随路[tensor量化](../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)功能：
+- 开启随路tensor量化功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>

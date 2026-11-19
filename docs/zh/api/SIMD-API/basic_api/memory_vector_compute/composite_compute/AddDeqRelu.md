@@ -79,7 +79,7 @@ $$
     __aicore__ inline void AddDeqRelu(const LocalTensor<half>& dst, const LocalTensor<int32_t>& src0, const LocalTensor<int32_t>& src1, uint64_t mask, const uint8_t repeatTime, const BinaryRepeatParams& repeatParams)
     ```
 
-操作数使用[TensorTrait](../../aux_data_structures/TensorTrait/TensorTrait.md)类型时，LocalTensor需要输入模板参数。提供支持操作数数据类型作为模板参数传入的接口如下：
+操作数使用[TensorTrait](../../aux_data_structures/TensorTrait/TensorTrait.md)类型时，[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)需要输入模板参数。提供支持操作数数据类型作为模板参数传入的接口如下：
 
 - tensor前n个数据计算
 

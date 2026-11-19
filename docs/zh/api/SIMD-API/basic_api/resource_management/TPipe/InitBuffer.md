@@ -35,7 +35,7 @@
 
 头文件路径为：`"basic_api/kernel_tpipe.h"`。
 
-用于为TQue等队列和TBuf分配内存。
+用于为[TQue](../TQue/TQue.md)等队列和[TBuf](../TBuf/TBuf.md)分配内存。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

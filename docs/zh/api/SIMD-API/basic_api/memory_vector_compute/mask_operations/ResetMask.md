@@ -47,7 +47,7 @@ __aicore__ inline void ResetMask()
 
 ## 约束说明<a name="section633mcpsimp"></a>
 
-调用SetVectorMask接口之后，如需恢复mask的值为默认值（全1），可调用本接口实现。
+调用[SetVectorMask](SetVectorMask.md)接口之后，如需恢复mask的值为默认值（全1），可调用本接口实现。
 <!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/mask_operations/ResetMask_res.md#id2 -->
 
 ## 调用示例<a name="section837496171220"></a>

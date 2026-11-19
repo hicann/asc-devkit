@@ -39,9 +39,9 @@
 
 ## 功能说明<a name="section618mcpsimp"></a>
 
-头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_vec_unary_intf.h"`（对`RegTensor`操作）、`"basic_api/reg_compute/kernel_reg_compute_maskreg_intf.h"`（对`MaskReg`操作）。
+头文件路径为：`"basic_api/reg_compute/kernel_reg_compute_vec_unary_intf.h"`（对[RegTensor](../register_data_types/RegTensor.md)操作）、`"basic_api/reg_compute/kernel_reg_compute_maskreg_intf.h"`（对[MaskReg](../register_data_types/MaskReg.md)操作）。
 
-本节介绍两种接口，分别用于对[RegTensor](../register_data_types/RegTensor.md)和[MaskReg](../register_data_types/MaskReg.md)进行操作：
+本节介绍两种接口，分别用于对RegTensor和MaskReg进行操作：
 
 - 对`RegTensor`操作：
 
@@ -83,7 +83,7 @@
   | 参数名 | 输入/输出 | 描述 |
   | :----- | :-------- | :--- |
   | dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-  | srcReg | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。<br>源操作数的数据类型需要与目的操作数保持一致。 |
+  | srcReg | 输入 | 源操作数。<br>类型为RegTensor。<br>源操作数的数据类型需要与目的操作数保持一致。 |
   | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 - 对`MaskReg`进行操作

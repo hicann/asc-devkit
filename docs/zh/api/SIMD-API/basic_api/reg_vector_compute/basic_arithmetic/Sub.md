@@ -52,7 +52,7 @@
 
 该接口根据mask，对源操作数srcReg0、srcReg1进行按元素求差操作，将结果写入目的操作数dstReg。
 
-Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。减法运算在硬件底层通过补码加法实现，该接口可以在carry（MaskReg寄存器）中标记每次补码加法是否产生进位，若srcReg0，~srcReg1，33'b1，按位相加后最高位有进位，在carry中对应位置每4bit设置1，否则写0。
+Carry flag（进位/借位标志）用于表示加法进位或者减法无借位。减法运算在硬件底层通过补码加法实现，该接口可以在carry（[MaskReg](../register_data_types/MaskReg.md)寄存器）中标记每次补码加法是否产生进位，若srcReg0，~srcReg1，33'b1，按位相加后最高位有进位，在carry中对应位置每4bit设置1，否则写0。
 
 计算结果不保留进位，计算公式如下：
 
@@ -94,17 +94,17 @@ $$
 | --- | --- |
 | T | 操作数数据类型。支持的数据类型请参考[数据类型](#数据类型)。 |
 | mode | [MaskMergeMode](../aux_data_types/MaskMergeMode.md)枚举类型，选择MERGING模式或ZEROING模式。<br>&bull; ZEROING模式下，mask未筛选的元素在dstReg中置零。<br>&bull; MERGING模式当前不支持。 |
-| U | 源操作数和目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
+| U | 源操作数和目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表 2**  参数说明
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| dstReg | 输出 | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg0 | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg1 | 输入 | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输出 | 目的操作数。<br>类型为RegTensor。 |
+| srcReg0 | 输入 | 源操作数。<br>类型为RegTensor。 |
+| srcReg1 | 输入 | 源操作数。<br>类型为RegTensor。 |
 | mask | 输入 | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
-| carry | 输出 | 目的操作数。输出进位值。类型为[MaskReg](../register_data_types/MaskReg.md)。 |
+| carry | 输出 | 目的操作数。输出进位值。类型为MaskReg。 |
 
 ## 数据类型
 

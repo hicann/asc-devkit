@@ -64,13 +64,13 @@ __simd_callee__ inline void Unsqueeze(U& dstReg, MaskReg& mask)
 | 参数名称 | 描述 |
 | ------ | ------ |
 | T | 目的操作数的数据类型。 |
-| U | 目的操作数的RegTensor类型，由编译器自动推导，用户不需要填写。 |
+| U | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，由编译器自动推导，用户不需要填写。 |
 
 **表2**  函数参数说明
 
 | 参数名称 | 输入/输出 | 描述 |
 | ------ | ------ | ------ |
-| dstReg | 输入/输出 | 源操作数和目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 输入/输出 | 源操作数和目的操作数。<br>类型为RegTensor。 |
 | mask | 输入 | mask用于提供dstReg解压缩信息。<br>类型为[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 返回值说明

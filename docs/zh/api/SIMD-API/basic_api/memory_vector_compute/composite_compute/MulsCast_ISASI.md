@@ -48,7 +48,7 @@ $$
 dst_i = Cast(scalar \times src1_i)
 $$
 
-其中标量输入也支持配置LocalTensor单点元素，计算公式如下，idx表示LocalTensor单点元素的位置系数。
+其中标量输入也支持配置[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)单点元素，计算公式如下，idx表示LocalTensor单点元素的位置系数。
 
 $$
 dst_i = Cast(src0_i \times src1_{idx})

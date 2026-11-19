@@ -2,7 +2,7 @@
 
 ## 总体说明<a name="ZH-CN_TOPIC_0000002574022823"></a>
 
-L1 Buffer/L0C Buffer与Unified Buffer（UB）之间的数据搬运提供了灵活的接口支持，能够充分适配多样化的计算场景（见[表1](#zh-cn_topic_0000002534897870_table1417935217588)）。其中，UB-\>L1 Buffer的数据搬运用于矩阵计算（参考[矩阵计算的搬入](../cube_compute_ISASI/cube_compute_load/cube_compute_load.md)），L0C Buffer-\>UB、L1 Buffer-\>UB用于将矩阵计算结果搬出，完成矩阵计算的输出流程（参考[矩阵计算的搬出](../cube_compute_ISASI/cube_compute_store/cube_compute_store.md)）。
+L1 Buffer/L0C Buffer与Unified Buffer（UB）之间的数据搬运提供了灵活的接口支持，能够充分适配多样化的计算场景（见[表1](#zh-cn_topic_0000002534897870_table1417935217588)）。其中，UB-\>L1 Buffer的数据搬运用于[矩阵计算](../cube_compute_ISASI/cube_compute_ISASI.md)（参考[矩阵计算的搬入](../cube_compute_ISASI/cube_compute_load/cube_compute_load.md)），L0C Buffer-\>UB、L1 Buffer-\>UB用于将矩阵计算结果搬出，完成矩阵计算的输出流程（参考[矩阵计算的搬出](../cube_compute_ISASI/cube_compute_store/cube_compute_store.md)）。
 
 **表 1**  L1 Buffer/L0C Buffer与UB数据搬运接口概述<a name="zh-cn_topic_0000002534897870_table1417935217588"></a>
 
@@ -155,7 +155,7 @@ src和dst分别为源操作数和目的操作数；intriParams为搬运参数，
     __aicore__ inline void Fixpipe(const LocalTensor<T>& dst, const LocalTensor<U>& src, const FixpipeParamsArch3510<config.format>& intriParams)
     ```
 
-- 开启随路[tensor量化](../cube_compute_ISASI/cube_store_key_features/accompanying_quantization.md)功能：
+- 开启随路tensor量化功能：
 
     ```cpp
     template <typename T, typename U, const FixpipeConfig& config = CFG_ROW_MAJOR>

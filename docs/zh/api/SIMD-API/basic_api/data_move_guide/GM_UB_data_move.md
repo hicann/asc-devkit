@@ -17,7 +17,7 @@ Global Memory（GM）与Unified Buffer（UB）之间的数据搬运提供了多�
 | GM->UB | 切片数据搬运(DataCopy) | 该接口为软仿接口，支持数据的切片搬运，提取多维Tensor数据的子集进行搬运。 |
 | UB->GM | 切片数据搬运(DataCopy) | 该接口为软仿接口，支持数据的切片搬运，提取多维Tensor数据的子集进行搬运。 |
 | GM->UB | 随路转换ND2NZ搬运(DataCopy) | 该接口为软仿接口，支持在从Global Memory到UB的数据搬运过程中进行ND到NZ格式的转换。 |
-| UB->GM | 随路转换NZ2ND搬运(DataCopy) | 该接口为软仿接口，支持在从UB到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
+| UB->GM | 随路转换[NZ2ND](../memory_vector_compute/data_move/DataCopy_UBToGM_NZ2ND.md)搬运(DataCopy) | 该接口为软仿接口，支持在从UB到Global Memory的数据搬运过程中进行NZ到ND格式的转换。 |
 | GM->UB | 多维数据搬运NDDMA(DataCopy) | 多维数据搬运接口，相比于基础数据搬运接口，可更加自由配置搬入的维度信息以及对应的Stride。 |
 | GM->UB | 非对齐数据搬运(DataCopyPad) | 支持数据的非对齐搬运，搬运到UB时可以自行填充数据。 |
 | UB->GM | 非对齐数据搬运(DataCopyPad) | 支持数据的非对齐搬运。 |

@@ -75,15 +75,15 @@ __simd_callee__ inline void Reduce(S& dstReg, V srcReg, MaskReg mask)
 | T | 目的操作数dstReg的数据类型。 |
 | U | 源操作数srcReg的数据类型。 |
 | mode | [MaskMergeMode](../aux_data_types/MaskMergeMode.md)，选择MERGING模式或ZEROING模式。<br>&bull; ZEROING，mask未选中的元素在dst中置零。<br>&bull; MERGING，当前不支持。 |
-| S | 目的操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
+| S | 目的操作数的[RegTensor](../register_data_types/RegTensor.md)类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 | V | 源操作数的RegTensor类型，例如RegTensor&lt;half&gt;，由编译器自动推导，用户不需要填写。 |
 
 **表2** 函数参数说明
 
 | 参数名 | 描述 |
 | --- | --- |
-| dstReg | 目的操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
-| srcReg | 源操作数。<br>类型为[RegTensor](../register_data_types/RegTensor.md)。 |
+| dstReg | 目的操作数。<br>类型为RegTensor。 |
+| srcReg | 源操作数。<br>类型为RegTensor。 |
 | mask | 源操作数元素操作的有效指示，详细说明请参考[MaskReg](../register_data_types/MaskReg.md)。 |
 
 ## 数据类型

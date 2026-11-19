@@ -95,4 +95,4 @@ AI Core内部并行的指令流水类型和解释如下所示：
 
 ## 什么时候需要开发者手动插入同步
 
-TPipe-TQue框架编程范式和毕昇编译器均支持自动同步，可减少开发者手动插入同步的工作量，但部分场景下仍需开发者手动完成。详细说明请参考[自动同步](key_features.md)。
+[TPipe-TQue框架编程范式](../../../../../guide/programming_guide/programming_model/ai_core_simd_programming/tpipe_tque_programming/tpipe_tque_paradigm.md)和毕昇编译器均支持[自动同步](key_features.md)，可减少开发者手动插入同步的工作量，但部分场景下仍需开发者手动完成。

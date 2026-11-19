@@ -5,13 +5,13 @@ Ascend C针对矩阵计算编程模型提供了四类接口，分别承载Cube�
 **图1** 普通矩阵基础计算流程图<a name="zh-cn_topic_0000002535567224_fig135639216485"></a>  
 ![](../../../../figures/matrix_computation_workflow.png "普通矩阵基础计算流程图")
 
-1. 通过DataCopy接口将A、B原始矩阵的GM数据搬运到L1 Buffer中（如果存在Bias/随路量化，则同样通过DataCopy搬运到L1 Buffer中）。详细内容请参考[矩阵数据搬入至L1 Buffer](../cube_compute_load/cube_compute_load.md)。
+1. 通过DataCopy接口将A、B原始矩阵的GM数据搬运到L1 Buffer中（如果存在Bias/[随路量化](../cube_store_key_features/accompanying_quantization.md)，则同样通过DataCopy搬运到L1 Buffer中）。详细内容请参考[矩阵数据搬入至L1 Buffer](../cube_compute_load/cube_compute_load.md)。
 
 2. 通过LoadData接口将A、B矩阵分别加载到L0A Buffer和L0B Buffer上准备计算（如果存在Bias/随路量化，则通过DataCopy将L1 Buffer中的bias数据/量化系数数据搬运到BT Buffer/Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
 
-3. 通过Mmad接口对L0A Buffer、L0B Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[Mmad计算](../mmad_compute/Mmad.md)。
+3. 通过[Mmad](../mmad_compute/Mmad.md)接口对L0A Buffer、L0B Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。
 
-4. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
+4. 通过[Fixpipe](../cube_compute_store/Fixpipe_L0CToGM.md)接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。
 
 <!-- npu="950" id1 -->
 # Mx矩阵计算流程<a name="ZH-CN_TOPIC_0000002568950892"></a>
@@ -27,7 +27,7 @@ MxMmad（全称Microscaling Mmad）为带有量化系数的矩阵乘法，即左
 
 2. 通过[LoadData（MX矩阵搬运）接口](../cube_compute_load/LoadData_2D_MX.md)将A矩阵与scaleA矩阵加载到L0A Buffer与内置L0A_MX Buffer、将B矩阵与scaleB矩阵分别加载到L0B Buffer与L0B_MX Buffer上准备计算（如果存在Bias/随路量化，则通过DataCopy将L1 Buffer中的bias数据/量化系数数据搬运到BT Buffer/Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
 
-3. 通过MmadMx接口对L0A Buffer、L0A_MX Buffer、L0B Buffer、L0B_MX Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[MmadMx计算](../mmad_compute/MmadMx.md)。
+3. 通过[MmadMx](../mmad_compute/MmadMx.md)接口对L0A Buffer、L0A_MX Buffer、L0B Buffer、L0B_MX Buffer、BT Buffer上面的数据进行矩阵计算，并输出结果到L0C Buffer上。
 
 4. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
 <!-- end id1 -->
@@ -46,7 +46,7 @@ MxMmad（全称Microscaling Mmad）为带有量化系数的矩阵乘法，即左
 
 3. 通过LoadData接口将原始矩阵A加载到L0A Buffer，通过[LoadDataWithSparse接口](../cube_compute_load/LoadDataWithSparse.md)将稠密矩阵B与索引矩阵分别加载到L0B Buffer与内置IDX Buffer上准备计算（如果存在随路量化，则通过DataCopy将L1 Buffer中的量化系数数据搬运到Fixpipe Buffer上）。详细内容请参考[矩阵数据搬入至L0A Buffer/L0B Buffer](../cube_compute_load/cube_compute_load.md)。
 
-4. 通过MmadWithSparse接口对L0A Buffer、L0B Buffer、内置IDX Buffer上面的数据进行4选2稀疏矩阵计算，并输出结果到L0C Buffer上。详细内容请参考[MmadWithSparse计算](../mmad_compute/MmadWithSparse.md)。
+4. 通过[MmadWithSparse](../mmad_compute/MmadWithSparse.md)接口对L0A Buffer、L0B Buffer、内置IDX Buffer上面的数据进行4选2稀疏矩阵计算，并输出结果到L0C Buffer上。
 
 5. 通过Fixpipe接口将L0C Buffer的数据进行处理并搬出到GM，Fixpipe接口可以利用Fixpipe Buffer数据进行如随路量化、Relu等操作。详细内容请参考[Fixpipe（L0C到GM数据搬运）](../cube_compute_store/Fixpipe_L0CToGM.md)。
 <!-- end id2 -->

@@ -29,7 +29,7 @@
 
 - 高性能场景。
 
-  在不考虑bank冲突等其它因素的情况下，由于使用复合指令能够减少计算指令的数量，能够带来性能提升。
+  在不考虑[bank冲突](../../../../../guide/operator_practice/simd_operator_optimization/memory_access/avoid_ub_bank_conflict/overview.md)等其它因素的情况下，由于使用复合指令能够减少计算指令的数量，能够带来性能提升。
 
 - 高精度场景。
 

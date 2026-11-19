@@ -56,7 +56,7 @@ TransDataTo5HD接口数据格式转换，一般用于将NCHW格式转换成[NC1H
 
 ## 函数原型<a name="zh-cn_topic_0000001521260417_section620mcpsimp"></a>
 
-- dstList与srcList类型为uint64\_t的数组，数组元素对应LocalTensor的地址值。开发者可以通过LocalTensor的GetPhyAddr接口获取该地址值。如果已知dstList与srcList的地址值，建议使用该接口。
+- dstList与srcList类型为uint64\_t的数组，数组元素对应[LocalTensor](../../data_structures/LocalTensor/LocalTensor.md)的地址值。开发者可以通过LocalTensor的GetPhyAddr接口获取该地址值。如果已知dstList与srcList的地址值，建议使用该接口。
 
   ```cpp
   template <typename T>

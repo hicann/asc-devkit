@@ -38,7 +38,7 @@
 
 头文件路径为 `"basic_api/kernel_operator_vec_vconv_intf.h"`。
 
-根据源操作数和目的操作数tensor的数据类型进行精度转换。
+根据源操作数和目的操作数tensor的数据类型进行[精度转换](../../data_structures/precision_conversion.md)。
 
 ## 函数原型<a name="section620mcpsimp"></a>
 

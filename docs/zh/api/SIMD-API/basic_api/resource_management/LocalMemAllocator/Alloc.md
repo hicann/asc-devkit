@@ -49,7 +49,7 @@
     template <TPosition pos, class DataType> LocalTensor<DataType> __aicore__ inline Alloc(uint32_t tileSize)
     ```
 
--   原型3：使用TensorTrait时使用此接口
+-   原型3：使用[TensorTrait](../../aux_data_structures/TensorTrait/TensorTrait.md)时使用此接口
 
     ```cpp
     template <class DataType> LocalTensor<DataType> __aicore__ inline Alloc()

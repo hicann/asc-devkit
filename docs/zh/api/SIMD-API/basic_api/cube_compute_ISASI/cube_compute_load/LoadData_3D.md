@@ -110,7 +110,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 | 参数名称 | 含义 |
 | ---------- | ------ |
 | T | 源操作数和目的操作数的数据类型。支持的数据类型请参考[数据类型](#zh-cn_topic_0000002512171652_section4219135304818)。 |
-| defaultConfig | 控制是否在LoadData（卷积数据搬运） v1/LoadData（卷积数据搬运） v2接口内部设置相关属性。IsResetLoad3dConfig类型。IsResetLoad3dConfig结构定义如下：<br>struct IsResetLoad3dConfig {<br>   bool isSetFMatrix = true;<br>   bool isSetPadding = true;<br>};<br>isSetFMatrix配置为true，表示在接口内部设置FeatureMap的属性描述（包括l1H、l1W、padList，参数介绍参考[表3](#zh-cn_topic_0000002512171652_table679014222918)、[表4](#zh-cn_topic_0000002512171652_table193501032193419)）；设置为false，表示该接口传入的FeatureMap的属性描述不生效，开发者需要通过SetFmatrix进行设置。<br>isSetPadding配置为true，表示在接口内部设置Pad属性描述（即padValue参数，参数介绍参考[表3](#zh-cn_topic_0000002512171652_table679014222918)、[表4](#zh-cn_topic_0000002512171652_table193501032193419)）；设置为false，表示该接口传入的Pad属性不生效，开发者需要通过SetLoadDataPaddingValue进行设置。可参考样例SetFmatrix调用示例。<br>该参数的默认值如下：<br>constexpr IsResetLoad3dConfig IS_RESER_LOAD3D_DEFAULT_CONFIG = {true, true};<br>特性细节可参考：[Feature Map、Pad属性描述寄存器设置](#zh-cn_topic_0000002512171652_section1881795134015)。 |
+| defaultConfig | 控制是否在LoadData（卷积数据搬运） v1/LoadData（卷积数据搬运） v2接口内部设置相关属性。IsResetLoad3dConfig类型。IsResetLoad3dConfig结构定义如下：<br>struct IsResetLoad3dConfig {<br>   bool isSetFMatrix = true;<br>   bool isSetPadding = true;<br>};<br>isSetFMatrix配置为true，表示在接口内部设置FeatureMap的属性描述（包括l1H、l1W、padList，参数介绍参考[表3](#zh-cn_topic_0000002512171652_table679014222918)、[表4](#zh-cn_topic_0000002512171652_table193501032193419)）；设置为false，表示该接口传入的FeatureMap的属性描述不生效，开发者需要通过[SetFmatrix](../cube_load_aux_config/SetFmatrix.md)进行设置。<br>isSetPadding配置为true，表示在接口内部设置Pad属性描述（即padValue参数，参数介绍参考[表3](#zh-cn_topic_0000002512171652_table679014222918)、[表4](#zh-cn_topic_0000002512171652_table193501032193419)）；设置为false，表示该接口传入的Pad属性不生效，开发者需要通过[SetLoadDataPaddingValue](../cube_load_aux_config/SetLoadDataPaddingValue.md)进行设置。可参考样例SetFmatrix调用示例。<br>该参数的默认值如下：<br>constexpr IsResetLoad3dConfig IS_RESER_LOAD3D_DEFAULT_CONFIG = {true, true};<br>特性细节可参考：[Feature Map、Pad属性描述寄存器设置](#zh-cn_topic_0000002512171652_section1881795134015)。 |
 | U | LoadData3DParamsV1/LoadData3DParamsV2中padValue的数据类型。<br>&nbsp;&nbsp;&bull;当dst、src使用基础数据类型时，U和dst、src的数据类型T需保持一致，否则编译失败。<br>&nbsp;&nbsp;&bull;当dst、src使用TensorTrait类型时，U和dst、src的数据类型T的LiteType需保持一致，否则编译失败。<br>最后一个模板参数仅用于上述数据类型检查，用户无需关注。 |
 
 **表2** 通用参数说明
@@ -244,7 +244,7 @@ __aicore__ inline void LoadData(const LocalTensor<T>& dst, const LocalTensor<T>&
 - 非转置场景下，L1 Buffer->L0B Buffer通路不支持。L1 Buffer->L0B Buffer通路下会自动进行转置，不需要配置enTranspose，此时enTranspose参数无效。
 
 <!-- npu="950" id29 -->
-- 针对Ascend 950PR&950DT系列产品：必须使用辅助配置接口SetLoadDataRepeat配置dstStride参数，若不开启repeat模式，接口内repeat相关参数使用默认构造值。
+- 针对Ascend 950PR&950DT系列产品：必须使用辅助配置接口[SetLoadDataRepeat](../cube_load_aux_config/SetLoadDataRepeat.md)配置dstStride参数，若不开启repeat模式，接口内repeat相关参数使用默认构造值。
 <!-- end id29 -->
 
 <!-- npu="A3,910b" id30 -->

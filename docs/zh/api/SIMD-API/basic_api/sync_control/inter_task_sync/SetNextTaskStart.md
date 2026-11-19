@@ -38,9 +38,9 @@
 
 头文件路径为：`"basic_api/kernel_operator_common_intf.h"`。
 
-算子层面支持SuperKernel特性Early-Start能力的接口，调用后在TorchAir层面：1.GE图模式下进行默认启用; 2.npugraph_ex后端通过early_start选项进行控制启用。
+算子层面支持[SuperKernel](../../../../../guide/programming_guide/advanced_programming/super_kernel/principles.md)特性Early-Start能力的接口，调用后在TorchAir层面：1.GE图模式下进行默认启用; 2.npugraph_ex后端通过early_start选项进行控制启用。
 
-在[SuperKernel](../../../../../guide/programming_guide/advanced_programming/super_kernel/principles.md)的子核函数（Kernel）中调用，调用后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。如[图1](#fig37581010773)所示，SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子核函数（Kernel）<sub>N-1</sub>调用该接口后，之后的指令会和后续子核函数（Kernel）<sub>N</sub>实现并行。
+在SuperKernel的子核函数（Kernel）中调用，调用后的指令可以和后续其他的子核函数（Kernel）实现并行，提升整体性能。如[图1](#fig37581010773)所示，SuperKernel按序调用子核函数（Kernel），为保证子核函数（Kernel）之间数据互不干扰，会在子核函数（Kernel）间插入算子间同步进行保序，子核函数（Kernel）<sub>N-1</sub>调用该接口后，之后的指令会和后续子核函数（Kernel）<sub>N</sub>实现并行。
 
 SuperKernel是一种算子的二进制融合技术，与源码融合不同，它聚焦于核函数（Kernel） \(核函数（Kernel）\)的二进制的调度方案，展开深度优化，于已编译的二进制代码基础上融合创建一个超级核函数（Kernel）（SuperKernel），以调用子函数的方式调用多个其他核函数（Kernel），也就是子核函数（Kernel）。相对于单算子下发，SuperKernel技术可以减少任务调度等待时间和调度开销，同时利用Task间隙资源进一步优化算子头开销。
 
