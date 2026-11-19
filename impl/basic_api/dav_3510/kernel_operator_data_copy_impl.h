@@ -1235,7 +1235,7 @@ __aicore__ inline void DataCopyPadGm2L1Impl(
         return;
     }
     if (padParams.isPad == true) {
-        set_mov_pad_val(padParams.paddingValue);
+        set_pad_val_outtol1(padParams.paddingValue);
     }
     if constexpr (g_gm_overflow_check) {
         __gm__ uint8_t* workSpace = GetSysWorkSpacePtr();
@@ -1260,7 +1260,7 @@ __aicore__ inline void DataCopyPadGm2L1Impl(
         return;
     }
     if (padParams.isPad == true) {
-        set_mov_pad_val(GetScalarBitcodeValue((T)padParams.paddingValue));
+        set_pad_val_outtol1(GetScalarBitcodeValue((T)padParams.paddingValue));
     }
     if constexpr (g_gm_overflow_check) {
         __gm__ uint8_t* workSpace = GetSysWorkSpacePtr();
