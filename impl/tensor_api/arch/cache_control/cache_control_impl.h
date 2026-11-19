@@ -87,6 +87,18 @@ __aicore__ inline void datacache_clean_and_invalid_line(T address)
     }
 }
 
+__aicore__ inline void enable_scalar_ub_dcache()
+{
+    const uint64_t config = static_cast<uint64_t>(asc_get_ctrl()) | scalar_ub_dcache_mask;
+    asc_set_ctrl(config);
+}
+
+__aicore__ inline void disable_scalar_ub_dcache()
+{
+    const uint64_t config = static_cast<uint64_t>(asc_get_ctrl()) & ~scalar_ub_dcache_mask;
+    asc_set_ctrl(config);
+}
+
 __aicore__ inline void datacache_clean() { asc_dci(); }
 
 __aicore__ inline int64_t get_icache_preload_status() { return asc_get_icache_preload_status(); }

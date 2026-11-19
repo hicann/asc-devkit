@@ -304,6 +304,8 @@
 | [datacache_clean](cache_control/datacache_clean.md) | 将整个Data Cache标记为无效，不回写脏数据。 |
 | [datacache_preload](cache_control/datacache_preload.md) | 从Global Memory预取一个Cache Line的数据到DCache。 |
 | [datacache_clean_and_invalid_line](cache_control/datacache_clean_and_invalid_line.md) | 清理并失效Global Memory或Unified Buffer地址所在的Data Cache缓存行。 |
+| [enable_scalar_ub_dcache](cache_control/enable_scalar_ub_dcache.md) | 配置标量单元访问Unified Buffer时经过DCache。 |
+| [disable_scalar_ub_dcache](cache_control/disable_scalar_ub_dcache.md) | 配置标量单元访问Unified Buffer时直接访问UB。 |
 | [get_icache_preload_status](cache_control/get_icache_preload_status.md) | 获取ICache预取状态。 |
 | [icache_preload](cache_control/icache_preload.md) | 从Global Memory预取指令到ICache。 |
 | [get_scalar_load_cache_mode](cache_control/get_scalar_load_cache_mode.md) | 读取标量load路径的L2 Cache管理策略。 |

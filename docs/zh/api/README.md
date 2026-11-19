@@ -1111,6 +1111,8 @@
             -   [datacache_clean](SIMD-API/tensor_api/cache_control/datacache_clean.md)
             -   [datacache_preload](SIMD-API/tensor_api/cache_control/datacache_preload.md)
             -   [datacache_clean_and_invalid_line](SIMD-API/tensor_api/cache_control/datacache_clean_and_invalid_line.md)
+            -   [enable_scalar_ub_dcache](SIMD-API/tensor_api/cache_control/enable_scalar_ub_dcache.md)
+            -   [disable_scalar_ub_dcache](SIMD-API/tensor_api/cache_control/disable_scalar_ub_dcache.md)
             -   [icache_preload](SIMD-API/tensor_api/cache_control/icache_preload.md)
             -   [get_icache_preload_status](SIMD-API/tensor_api/cache_control/get_icache_preload_status.md)
             -   [set_scalar_cache_mode](SIMD-API/tensor_api/cache_control/set_scalar_cache_mode.md)

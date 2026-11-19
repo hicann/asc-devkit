@@ -30,6 +30,13 @@
 
 按目标域清理并失效Data Cache中的缓存行。Clean操作将被修改过的数据写回Global Memory，Invalid操作将缓存行标记为无效，后续访问从Global Memory重新加载数据。
 
+> [!NOTE]说明
+>
+> - Scalar单元读写GM时，若调用[load_dev](../scalar_compute/load_dev.md)和[store_dev](../scalar_compute/store_dev.md)这一对接口，则读写数据不经过DCache，无需调用本接口。
+> - Scalar单元读写UB时是否经过DCache，默认为不经过DCache。可通过[enable_scalar_ub_dcache](enable_scalar_ub_dcache.md)开启，并通过[disable_scalar_ub_dcache](disable_scalar_ub_dcache.md)关闭。
+> - DMA搬运UB与GM不经过DCache，不产生本页所述一致性问题。
+> - DCache与GM缓存一致性成因见[缓存一致性](../../../../guide/programming_guide/advanced_programming/memory_model/cache_coherence.md)。
+
 ## 函数原型
 
 ```cpp
