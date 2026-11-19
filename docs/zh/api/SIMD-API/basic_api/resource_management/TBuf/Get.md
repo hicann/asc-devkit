@@ -129,3 +129,9 @@ AscendC::LocalTensor<int32_t> tensor1 = calcBuf.Get<int32_t>();
 // 用户指定tensor1的第256个int32_t的偏移位置为tensor2的首地址，实际上tensor2可以使用的内存大小为1024字节，两个tensor首地址相差256 * sizeof(int32_t)字节
 auto tensor2 = tensor1[256];
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GetWithOffset](GetWithOffset.md) | 需要从TBuf内的指定偏移开始获取Tensor时，使用GetWithOffset。 |

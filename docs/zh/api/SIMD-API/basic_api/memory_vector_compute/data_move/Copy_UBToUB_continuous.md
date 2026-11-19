@@ -96,3 +96,10 @@ Ascend 950PR&950DT系列产品，支持的数据类型为：int8_t、uint8_t、f
 ```cpp
 AscendC::Copy(dstLocal, srcLocal, 512);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [DataCopy（UBToUB连续数据搬运）](DataCopy_UBToUB_continuous.md) | 连续搬运可按DataCopy支持的类型和对齐约束改用该重载。Copy的count按元素个数指定。 |
+| [DataCopy（UBToUB高维切分数据搬运）](DataCopy_UBToUB_highdim_split.md) | 需要按块搬运并分别指定源和目的块间隔时，使用此DataCopy重载。 |

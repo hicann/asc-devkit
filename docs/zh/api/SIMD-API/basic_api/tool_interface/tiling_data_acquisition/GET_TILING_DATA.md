@@ -97,3 +97,9 @@ ge::graphStatus TilingFunc(gert::TilingContext* context)
     // 其他代码逻辑
 }
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GET_TILING_DATA_WITH_STRUCT](GET_TILING_DATA_WITH_STRUCT.md) | 核函数需要按指定的TilingData结构体类型读取入口参数时，使用GET_TILING_DATA_WITH_STRUCT。 |

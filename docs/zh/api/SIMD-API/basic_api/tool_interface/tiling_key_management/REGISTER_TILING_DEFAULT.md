@@ -79,3 +79,8 @@ extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8
 }
 ```
 
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [REGISTER_TILING_FOR_TILINGKEY](REGISTER_TILING_FOR_TILINGKEY.md) | 不同TilingKey分支需要使用不同的TilingData结构体时，可在默认注册之外，按TilingKey条件注册对应类型。 |

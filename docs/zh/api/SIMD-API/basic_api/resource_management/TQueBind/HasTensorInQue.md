@@ -61,3 +61,9 @@ int len = 1024;
 pipe.InitBuffer(que, num, len);
 bool ret = que.HasTensorInQue();
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GetTensorCountInQue](GetTensorCountInQue.md) | 需要依据已入队Tensor的数量决定后续操作时，使用GetTensorCountInQue。 |

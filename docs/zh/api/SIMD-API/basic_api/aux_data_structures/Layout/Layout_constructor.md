@@ -80,3 +80,9 @@ AscendC::Stride<int,int,int> stride = AscendC::MakeStride(1, 100, 200);
 
 AscendC::Layout<AscendC::Shape<int, int, int>, AscendC::Stride<int, int, int>> layoutInit(shape, stride);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [MakeLayout](MakeLayout.md) | 已有Shape和Stride时，可用MakeLayout推导模板参数并创建Layout对象。 |

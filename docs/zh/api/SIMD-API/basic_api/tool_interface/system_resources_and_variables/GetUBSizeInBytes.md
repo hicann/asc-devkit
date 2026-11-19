@@ -70,3 +70,9 @@ if (totalLength > AscendC::GetUBSizeInBytes() / sizeof(half) / 2) {
 // 需要迭代的分片数量
 this->tileNum = this->totalLength / this->tileLength;
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GetRuntimeUBSize](GetRuntimeUBSize.md) | 需要在运行时获取Unified Buffer（UB）容量时，使用GetRuntimeUBSize。部分架构的Vector Core会按运行时容量扣除预留空间。 |

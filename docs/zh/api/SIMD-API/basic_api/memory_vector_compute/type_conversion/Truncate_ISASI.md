@@ -102,3 +102,9 @@ AscendC::Truncate<T, RoundMode::CAST_FLOOR>(dstLocal, srcLocal, 512);
 输入数据srcLocal：[-37.063736    64.17277    -33.448692 ... ]
 输出数据dstLocal：[-38  64 -34 ... ]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [Cast](Cast.md) | 同时需要改变目标数据类型时，可使用Cast并选择适用的舍入模式。Truncate保持浮点数据类型不变。 |

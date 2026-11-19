@@ -111,3 +111,8 @@ ge::graphStatus TilingFunc(gert::TilingContext* context)
 }
 ```
 
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [TILING_KEY_IS](TILING_KEY_IS.md) | 一个核函数分支只匹配一个TilingKey时，可用TILING_KEY_IS。 |

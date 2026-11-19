@@ -429,3 +429,9 @@ dst_nchw = np.transpose(src_nhwc, axes=(0,3,1,2))
   transposeParams.transposeType = transposeType; 
   AscendC::Transpose(dstLocal, srcLocal, stackBuffer, transposeParams);
   ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [TransDataTo5HD](TransDataTo5HD.md) | 转置形状需要随数据类型变化，或需要通过多次Repeat处理时，可使用TransDataTo5HD。单次Repeat处理512字节。 |

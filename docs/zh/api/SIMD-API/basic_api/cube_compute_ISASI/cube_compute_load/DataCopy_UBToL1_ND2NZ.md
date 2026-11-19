@@ -184,3 +184,9 @@ nd2nzParams.dstNzMatrixStride = 96;
 
 AscendC::DataCopy(dstLocal, srcLocal, nd2nzParams);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [DataCopyPad（UBToL1非对齐数据搬运）](DataCopyPad_UBToL1.md) | 需要非对齐搬运且无需完成ND到NZ格式转换时，可选用DataCopyPad，通过Matmul的Global Memory工作空间中转。 |

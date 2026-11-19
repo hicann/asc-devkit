@@ -97,3 +97,9 @@ for (int32_t i = 0; i < srcLen; ++i) {
 // 示例2结果如下：
 // 数据(inputLocal): [99 99 99  ... 99]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [operator()](operator_call.md) | 需要通过元素引用进行读写时，使用operator()。SetValue直接写入指定索引。 |

@@ -48,3 +48,8 @@ GlobalTensor<T> GetDataObj()
 
 无
 
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GetDataPtr](GetDataPtr.md) | 若下游接口需要原始数据地址，调用GetDataPtr。需要GlobalTensor对象时使用GetDataObj。 |

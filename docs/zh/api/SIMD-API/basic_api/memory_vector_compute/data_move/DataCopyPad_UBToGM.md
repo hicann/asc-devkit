@@ -307,3 +307,10 @@ AscendC::DataCopyPad(dstGlobal, srcLocal, copyParams);
 ```
 
 完整样例请参考[DataCopyPad样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/00_data_movement/data_copy_pad_gm2ub_ub2gm)。
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [DataCopy（UBToGM随路转换NZ2ND搬运）](DataCopy_UBToGM_NZ2ND.md) | 搬出到Global Memory时需要将NZ转换为ND格式，可使用此DataCopy重载。 |
+| [DataCopy（GM与UB连续数据搬运）](DataCopy_GMAndUB_continuous.md) | 对齐条件满足且数据连续时，可用DataCopy将数据搬出到Global Memory，并保持格式不变。 |

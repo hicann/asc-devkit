@@ -82,3 +82,9 @@ __aicore__ inline void DataSyncBarrier()
 ```
 
 完整样例请参考[DataSyncBarrier接口样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/05_sync_control/data_sync_barrier)。
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [PipeBarrier(ISASI)](PipeBarrier_ISASI.md) | 需要等待指定流水的前序指令时，使用PipeBarrier。DataSyncBarrier用于等待指定内存位置的访问完成。 |

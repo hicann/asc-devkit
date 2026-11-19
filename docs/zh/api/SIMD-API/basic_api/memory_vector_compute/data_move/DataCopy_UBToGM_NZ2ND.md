@@ -171,3 +171,9 @@ AscendC::DataCopy(dstGlobal, srcLocal, intriParams);
 输入数据(srcLocal): [1 2 3 ... 1024]
 输出数据(dstGlobal):[1 2 ... 15 16 513 514 ... 527 528 17 18 ... 31 32 529 530 ... 543 544 ...497 498 ...  511 512  1009 1010... 1023 1024]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [DataCopyPad（UBToGM非对齐数据搬运）](DataCopyPad_UBToGM.md) | 若输入已采用所需格式，但每块搬运长度不满足32字节对齐，可使用DataCopyPad。Unified Buffer（UB）侧源地址仍需32字节对齐。 |

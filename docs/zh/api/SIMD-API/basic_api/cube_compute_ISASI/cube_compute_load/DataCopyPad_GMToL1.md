@@ -188,3 +188,11 @@ padParams.paddingValue = static_cast<int8_t>(0);
 
 AscendC::DataCopyPad<int8_t, AscendC::PaddingMode::Compact>(dstLocal, srcGm, copyParams, padParams);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [DataCopy（GMToL1连续数据搬运）](DataCopy_GMToL1_continuous.md) | 对齐条件满足且数据连续时，可使用DataCopy直接搬运，保持数据格式不变。 |
+| [DataCopy（GMToL1高维切分数据搬运）](DataCopy_GMToL1_highdim_split.md) | 对齐条件满足且数据按多块分段排布时，可使用DataCopy通过块数、块长度和间隔描述搬运。 |
+| [DataCopy（GMToL1随路转换-ND2NZ搬运）](DataCopy_GMToL1_ND2NZ.md) | 搬入L1 Buffer时需要将ND转换为NZ格式，可使用此DataCopy重载。 |

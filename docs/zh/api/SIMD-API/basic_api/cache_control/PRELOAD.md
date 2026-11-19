@@ -77,3 +77,9 @@
 // 从当前指令地址开始预加载4个单位的指令。
 PRELOAD(4);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [ICachePreLoad(ISASI)](ICachePreLoad_ISASI.md) | 需要指定指令预取的起始地址时，使用ICachePreLoad。PRELOAD从当前指令所在地址开始预取。 |

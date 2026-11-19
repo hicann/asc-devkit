@@ -125,3 +125,9 @@
     输出数据dst0Local：[1 3 5 ... 511]
     输出数据dst1Local：[2 4 6 ... 512]
     ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [Interleave](Interleave.md) | 需要将分开的元素序列重新交织时，使用Interleave。 |

@@ -133,3 +133,9 @@ outQueueDst.EnQue<float>(dstLocal);
 inQueueSrc0.FreeTensor(srcLocal0);
 inQueueSrc1.FreeTensor(srcLocal1);
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [MrgSort](MrgSort.md) | 可将Sort32输出的有序队列交给MrgSort。MrgSort一次最多合并4条队列。 |

@@ -93,3 +93,9 @@ auto element = inputLocal(1); // 获取inputLocal中第i个位置的数值
 // 示例2结果如下：
 // element为100
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [operator()](operator_call.md) | 需要取得元素引用时，使用operator()。GetValue按值返回元素。 |

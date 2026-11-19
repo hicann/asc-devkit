@@ -63,3 +63,9 @@ uint32_t len = 128;
 pipe.InitBuffer(que, num, len);
 pipe.DestroyWithoutPipeAll();
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [Destroy](Destroy.md) | 若释放资源时需要等待流水完成，请查阅Destroy在目标产品和编译模式下的同步行为。 |

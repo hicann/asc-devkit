@@ -98,3 +98,9 @@ AscendC::Mull(dst0Local, dst1Local, src0Local, src1Local, 512);
 输出数据dst0Local：[-1560359025   212356098  1219226939 ... ]
 输出数据dst1Local：[850752575   -6514620  699800065 ... ]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [Mul](Mul.md) | 只需要单个输出Tensor时使用Mul。需要分别读取乘积结果和溢出部分时使用Mull。 |

@@ -154,3 +154,9 @@ Atlas推理系列产品AI Core，支持的数据类型为：half/float。
      38.47    0.      0.      0. 
      ]
     ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [ProposalExtract](ProposalExtract.md) | 通过ProposalConcat写入Region Proposal的字段，可用ProposalExtract按同一字段位置抽取。 |

@@ -165,3 +165,9 @@ Atlas推理系列产品AI Core，支持的数据类型为：half/float。
      -98.7   0.      0.      0.
      ]
     ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [MrgSort4](MrgSort4.md) | 需要合并多条已由RpSort16排序的Region Proposal队列时，使用MrgSort4。 |

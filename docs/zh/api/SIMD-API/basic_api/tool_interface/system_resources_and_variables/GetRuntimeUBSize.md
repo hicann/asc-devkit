@@ -70,3 +70,9 @@ if (totalLength > AscendC::GetRuntimeUBSize() / sizeof(half) / 2) {
 // 需要迭代的分片数量
 this->tileNum = this->totalLength / this->tileLength;
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [GetUBSizeInBytes](GetUBSizeInBytes.md) | 需要用于编译期计算的Unified Buffer（UB）容量常量时，使用GetUBSizeInBytes。 |

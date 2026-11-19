@@ -107,3 +107,9 @@ AscendC::Prelu(dstLocal, src0Local, src1Local, 512);
 输入数据src1Local：[513 -514 515 ... 1]
 输出数据dstLocal：[1 1028 -1045 ... -512]
 ```
+
+## 另见
+
+| 接口 | 描述 |
+| --- | --- |
+| [LeakyRelu](LeakyRelu.md) | 所有负值元素共用一个标量斜率时，使用LeakyRelu。Prelu的负值斜率可按元素提供。 |
