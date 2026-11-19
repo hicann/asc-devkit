@@ -128,7 +128,7 @@ TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_pcie_mix_all_connected_selects_sole
     EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMesh");
 }
 
-TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_unregistered_algos_stay_not_match)
+TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_selects_concurrent_or_not_match)
 {
     AlltoAllVAutoSelector selector;
     TopoInfoWithNetLayerDetails topo = MakeConcurrentTopo();
@@ -139,11 +139,12 @@ TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_unregistered_algos_stay
     // （该形态 AICPU 同样不支持，断言在框架取消兜底前后一致）
     EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::NOT_MATCH);
 
-    // mesh == clos 且 4P：CCU Concurrent 未注册 → CCU 分支必须拒绝（断言与框架兜底行为无关）
+    // mesh == clos 且 4P：CCU Concurrent 已注册 → CCU 分支命中并发算法
     // （Select 会按降级链改写 opParam.opExecuteConfig，二次调用前需重置，否则 CCU 分支不会进入）
     topo = MakeConcurrentTopo();
     param = MakeCcuParam(HCCL_CMD_ALLTOALLV);
-    EXPECT_TRUE(CcuNotMatched(selector.Select(param, &topo, algName), algName));
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMeshConcurrent");
 }
 
 TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_int8_multilevel_never_matches_ccu)

@@ -206,6 +206,14 @@ TEST_F(TestHcclTilingCcuKfc, AllToAllMultiJettyCcuSchedBareNameKeepsDefaultVersi
         INIT_TILING_VERSION);
 }
 
+// 并发 A2AV 的外部名 concur[mesh,mesh] + CCU 引擎 → CCU 新版本
+// （裸算法名按 36d8eef4c 契约不升版本，见 AllToAllVCcuSchedBareNameKeepsDefaultVersion）
+TEST_F(TestHcclTilingCcuKfc, ConcurrentAllToAllVExternalAlgNameCcuSchedUsesCcuNewVersion)
+{
+    ExpectInitTilingVersion(
+        static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLTOALLV), "concur[mesh,mesh]", 6U, INIT_TILING_CCU_NEW_VERSION);
+}
+
 TEST_F(TestHcclTilingCcuKfc, UnsupportedCommEngineUsesDefaultVersion)
 {
     ExpectInitTilingVersion(

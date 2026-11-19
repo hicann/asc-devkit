@@ -121,6 +121,35 @@ enum KfcConcurrentAllToAllParamIndex : uint32_t {
     KFC_CONCURRENT_A2A_PARAM_NUM = 25,
 };
 
+// 并发 A2AV（CcuSchedAllToAllVSoleMeshConcurrent）单帧 xnData 布局：[0]=opId 哨兵，
+// mission0（mesh 优先链路）与 mission1（CLOS MultiJetty 链路）各占 9 槽（input/output/
+// srcOffset/dstOffset/goSize×4/ext 指针），两 mission 共帧各取各段。per-rank 切分参数
+// （11 字段/rank）在 ext 区，不占 xnData 槽位。AIV prepare 写入、KFC dispatch 逐槽转发，
+// 索引三处一致（hccl_ccu_v0_prepare.h / ccu_kernel_kfc_server.cc）。
+enum KfcConcurrentAllToAllVParamIndex : uint32_t {
+    KFC_CONCURRENT_A2AV_OP_ID = 0,
+    KFC_CONCURRENT_A2AV_MESH_INPUT = 1,
+    KFC_CONCURRENT_A2AV_MESH_OUTPUT = 2,
+    KFC_CONCURRENT_A2AV_MESH_SRC_OFFSET = 3,
+    KFC_CONCURRENT_A2AV_MESH_DST_OFFSET = 4,
+    KFC_CONCURRENT_A2AV_MESH_GO_SIZE_0 = 5,
+    KFC_CONCURRENT_A2AV_MESH_GO_SIZE_1 = 6,
+    KFC_CONCURRENT_A2AV_MESH_GO_SIZE_2 = 7,
+    KFC_CONCURRENT_A2AV_MESH_GO_SIZE_3 = 8,
+    KFC_CONCURRENT_A2AV_MESH_EXT = 9,
+    KFC_CONCURRENT_A2AV_MESH_PARAM_NUM = 10,
+    KFC_CONCURRENT_A2AV_CLOS_INPUT = KFC_CONCURRENT_A2AV_MESH_PARAM_NUM,
+    KFC_CONCURRENT_A2AV_CLOS_OUTPUT = 11,
+    KFC_CONCURRENT_A2AV_CLOS_SRC_OFFSET = 12,
+    KFC_CONCURRENT_A2AV_CLOS_DST_OFFSET = 13,
+    KFC_CONCURRENT_A2AV_CLOS_GO_SIZE_0 = 14,
+    KFC_CONCURRENT_A2AV_CLOS_GO_SIZE_1 = 15,
+    KFC_CONCURRENT_A2AV_CLOS_GO_SIZE_2 = 16,
+    KFC_CONCURRENT_A2AV_CLOS_GO_SIZE_3 = 17,
+    KFC_CONCURRENT_A2AV_CLOS_EXT = 18,
+    KFC_CONCURRENT_A2AV_PARAM_NUM = 19,
+};
+
 enum KfcAllToAllMultiJettyParamIndex : uint32_t {
     KFC_A2A_MJ_OP_ID = 0,
     KFC_A2A_MJ_INPUT = 1,

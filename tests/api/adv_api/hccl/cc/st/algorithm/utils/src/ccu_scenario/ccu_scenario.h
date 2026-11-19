@@ -66,6 +66,10 @@ struct CcuStScenario {
     // L0 链路协议给 UBC_CTP，供 CCU SoleMesh 的 DIE 过滤建链（CalcChannelRequestMesh1DOnDie）
     // 与 selector 纯 CLOS 分支在 sim 下可端到端验证。默认关闭。
     bool pureClosTopo = false;
+    // MESH_1D_CLOS 双链路模式：标记拓扑每对 rank 追加一条非隔离端口 CLOS 链路（SERVER_CLOS
+    // 实例的 endpoint 同步用非隔离端口），mesh/clos 链路经 GetTopoTypeByLink 分别判型，
+    // 供并发算法（mesh 优先建链 + CLOS-only 建链）在 sim 下双平面通道同时产出。默认关闭。
+    bool meshClosDualLink = false;
 };
 
 } // namespace CcuSt

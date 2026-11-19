@@ -17,6 +17,8 @@
 #include "ins_temp_all_to_all_v_mesh_1D.h"
 #if !defined(AICPU_COMPILE) && MC2_CLIENT_ENABLE_CCU
 #include "ccu_temp_all_to_all_mesh1d_multi_jetty.h"
+#include "ccu_temp_all_to_all_v_mesh_1D_multi_jetty.h"
+#include "topo_match_concurrent_v2.h"
 #endif
 #include "alg_meta_registry.h"
 #include "external_alg_rules.h"
@@ -498,6 +500,16 @@ REGISTER_EXECUTOR_BY_TWO_TEMPS(
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllSoleMeshConcurrent, AlgEngine::CCU, "concur[mesh,mesh]", COND_NONE,
     FLAG_UBX, 0);
+// KFC 并发 A2AV：照 hccl InsV2AllToAllVConcurrentExecutor 的注册结构——mission0 = mesh 优先链路
+// （CalcChannelRequestMesh1DWithPriorityTopo），mission1 = CLOS MultiJetty 链路。TopoMatchConcurrentV2
+// 与 hccl 同语义（两组均为全通信域 rank）。带宽比切分（100:96，head 落 mission0）由 AIV
+// CcuPrepareForConcurrentAllToAllV 设备侧完成（hccl SplitA2ASendRecvInfo 的设备侧复刻）。
+REGISTER_EXECUTOR_BY_TWO_TEMPS(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMeshConcurrent, InsV2AllToAllConcurrentExecutor,
+    TopoMatchConcurrentV2, CcuTempAllToAllVMesh1DMultiJetty, CcuTempAllToAllVMesh1DMultiJetty);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMeshConcurrent, AlgEngine::CCU, "concur[mesh,mesh]",
+    COND_NONE, FLAG_UBX, 0);
 #endif
 
 } // namespace mc2_ops_hccl

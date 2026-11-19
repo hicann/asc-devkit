@@ -199,3 +199,64 @@ TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_LogLevel_Control)
     const std::string errorOnlyOutput = testing::internal::GetCapturedStdout();
     EXPECT_EQ(errorOnlyOutput.find("INFO"), std::string::npos);
 }
+
+// ===== 并发 A2AV（MESH_1D_CLOS 双实例：mesh 优先链路 + CLOS MultiJetty 链路，双 mission）=====
+// 单 server 内全部 phyId 携带 MESH_1D_CLOS_PHYID_MARK 时按 MESH_1D_CLOS 建模，
+// selector 判定 meshNum==closNum 且 rankSize<=4 → CcuSchedAllToAllVSoleMeshConcurrent
+
+namespace {
+
+CcuStScenario MakeConcurrentScenario(const TopoMeta& topoMeta, HcclDataType dataType, uint64_t baseSize)
+{
+    CcuStScenario scenario = MakeScenario(topoMeta, dataType, baseSize);
+    scenario.expectedAlgName = "CcuSchedAllToAllVSoleMeshConcurrent";
+    scenario.algConfig = scenario.expectedAlgName;
+    // mesh/clos 双链路：mission0 mesh 优先建链、mission1 CLOS-only 建链同时产出通道
+    scenario.meshClosDualLink = true;
+    return scenario;
+}
+
+TopoMeta MakeMesh1dClosTopo(const std::vector<uint32_t>& phyIds)
+{
+    ServerMeta server;
+    for (auto phyId : phyIds) {
+        server.push_back(phyId | MESH_1D_CLOS_PHYID_MARK);
+    }
+    return TopoMeta{{server}};
+}
+
+} // namespace
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_4Rank_Mesh1DClos_Fp16_100B)
+{
+    VerifyScenario(MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1, 2, 3}), HCCL_DATA_TYPE_FP16, 100));
+}
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_4Rank_Mesh1DClos_Fp32_1KB)
+{
+    VerifyScenario(MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1, 2, 3}), HCCL_DATA_TYPE_FP32, 1024));
+}
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_2Rank_Mesh1DClos_Bfp16_64B)
+{
+    VerifyScenario(MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1}), HCCL_DATA_TYPE_BFP16, 64));
+}
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_4Rank_Mesh1DClos_Int32_128B)
+{
+    VerifyScenario(MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1, 2, 3}), HCCL_DATA_TYPE_INT32, 128));
+}
+
+// 零长度：全部对端 sendSize=0，双 mission 各自空转（尾块为 0，仅 EventRecord）
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_4Rank_Mesh1DClos_Fp16_ZeroLength)
+{
+    VerifyScenario(MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1, 2, 3}), HCCL_DATA_TYPE_FP16, 0));
+}
+
+// selector 自动选算（非 forced）：mesh 实例数==clos 实例数且 4P → Concurrent
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshConcurrent_4Rank_Mesh1DClos_Selector_Fp16_100B)
+{
+    CcuStScenario scenario = MakeConcurrentScenario(MakeMesh1dClosTopo({0, 1, 2, 3}), HCCL_DATA_TYPE_FP16, 100);
+    scenario.algConfig.clear();
+    VerifyScenario(scenario);
+}

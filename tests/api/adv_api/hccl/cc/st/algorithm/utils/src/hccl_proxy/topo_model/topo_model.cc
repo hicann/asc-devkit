@@ -81,6 +81,18 @@ TopoModel::TopoModel(const TopoMeta& topoMeta)
         InitUbxTopo();
     }
 
+    // MESH_1D_CLOS 双链路 opt-in：默认关闭。为标记拓扑的每对 rank 备一份非隔离端口 endpoint，
+    // 供 Create910DLinks 追加 CLOS 链路与 GetEndpointDesc 的 SERVER_CLOS 实例描述使用
+    char* meshClosDualEnv = getenv("ENABLE_MESH_CLOS_DUAL_LINK_FOR_LLT");
+    if (meshClosDualEnv != nullptr && std::string(meshClosDualEnv) == "1") {
+        isMeshClosDualLink_ = true;
+        for (const auto& endpointEntry : rankId2Endpoint_) {
+            EndpointDesc closEndpoint = endpointEntry.second;
+            closEndpoint.commAddr.eid[UBX_PORT_IDX] = UBX_NON_ISOLATED_PORT;
+            rankId2ClosEndpoint_[endpointEntry.first] = closEndpoint;
+        }
+    }
+
     // 双 die L1 双链路 opt-in：默认关闭（每 pair 单 L1 链路 → dieNum=1）。
     char* twoDieEnv = getenv("ENABLE_2DIE_L1_LINK_FOR_LLT");
     if (twoDieEnv != nullptr && std::string(twoDieEnv) == "1") {
@@ -164,6 +176,7 @@ void TopoModel::InitL1L2TopoInsts(uint32_t podNum)
 void TopoModel::InitTopoInstsMap(
     uint32_t serverId, uint32_t rankId, const std::vector<uint32_t>& phyIds, bool mesh1dClos)
 {
+    serverIsMeshClos_[serverId] = mesh1dClos;
     for (auto phyId : phyIds) {
         auto rowId = phyId / GRID_SIZE;
         auto rowInstId = rowId;
@@ -249,6 +262,9 @@ void TopoModel::InitEndpointMap(
     addr.type = CommAddrType::COMM_ADDR_TYPE_IP_V4;
     addr.id = htonl(devIpStart++);
     endpoint.commAddr = addr;
+    // endpoint.protocol 进入 channelDesc.channelProtocol（CreateChannelFromLink），
+    // 是 sim 通道配对键的组成部分，必须确定性初始化（历史未初始化时依赖两侧栈垃圾一致）
+    endpoint.protocol = CommProtocol::COMM_PROTOCOL_UBC_CTP;
     endpoint.loc.device.devPhyId = phyId;
     endpoint.loc.device.superPodIdx = superpodId;
     endpoint.loc.device.serverIdx = serverId;
@@ -467,10 +483,18 @@ void TopoModel::GetEndpointDesc(
             *descNum = 0;
             return;
         }
+        // 双链路模式下 SERVER_CLOS 实例用非隔离端口 endpoint（与追加的 CLOS 链路匹配）
+        const bool useClosEndpoint = isMeshClosDualLink_ && topoInstId == SERVER_CLOS_INSTID;
+        const auto& endpointSource = useClosEndpoint ? rankId2ClosEndpoint_ : rankId2Endpoint_;
         const uint32_t capacity = *descNum;
         const uint32_t count = std::min(capacity, static_cast<uint32_t>(instIt->second.size()));
         for (uint32_t i = 0; i < count; i++) {
-            endpointDesc[i] = rankId2Endpoint_[instIt->second[i]];
+            auto endpointIt = endpointSource.find(instIt->second[i]);
+            if (endpointIt == endpointSource.end()) {
+                *descNum = 0;
+                return;
+            }
+            endpointDesc[i] = endpointIt->second;
         }
         *descNum = count;
         return;
@@ -754,6 +778,17 @@ void TopoModel::Create910DLinks(uint32_t srcRank, uint32_t dstRank)
         // 910D的level0有两条link(横向或纵向的1DMESH+出框的CLOS)
         link.linkAttr.linkProtocol = CommProtocol::COMM_PROTOCOL_UBC_CTP;
         allLinkMap_[rankPair][NetLayerL0].push_back(link);
+    }
+
+    // MESH_1D_CLOS 双链路：同 server 的标记拓扑每对 rank 追加一条非隔离端口 CLOS 链路。
+    // 链路 src endpoint 与 mesh 实例的默认端口 endpoint 不匹配、与 SERVER_CLOS 实例的
+    // 非隔离端口 endpoint 匹配，GetTopoTypeByLink 由此把两条链路分别判为 1DMESH / CLOS
+    if (isMeshClosDualLink_ && serverIsMeshClos_[rankId2ServerId_[srcRank]]) {
+        CommLink closLink;
+        closLink.srcEndpointDesc = rankId2ClosEndpoint_[srcRank];
+        closLink.dstEndpointDesc = rankId2ClosEndpoint_[dstRank];
+        closLink.linkAttr.linkProtocol = CommProtocol::COMM_PROTOCOL_UBC_CTP;
+        allLinkMap_[rankPair][NetLayerL0].push_back(closLink);
     }
 }
 }; // namespace HcclSim

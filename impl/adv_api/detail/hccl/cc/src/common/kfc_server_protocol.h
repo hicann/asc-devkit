@@ -33,6 +33,7 @@ constexpr uint32_t KFC_SERVER_SIGNAL_REGION_NUM = KFC_SIGNAL_REGION_NUM;
 constexpr char KFC_CONCURRENT_ALL_GATHER_ALG_NAME[] = "CcuSchedAllGatherConcurMeshNHRMultiLink";
 constexpr char KFC_PARALLEL_ALL_GATHER_ALG_NAME[] = "CcuSchedAllGatherParallelMeshNHRMultiLink";
 constexpr char KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME[] = "CcuSchedAllToAllSoleMeshConcurrent";
+constexpr char KFC_CONCURRENT_ALL_TO_ALL_V_ALG_NAME[] = "CcuSchedAllToAllVSoleMeshConcurrent";
 constexpr char KFC_A2A_MULTI_JETTY_ALG_NAME[] = "CcuSchedAllToAllMesh1DMultiJetty";
 constexpr char KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME[] = "CcuSchedReduceScatterConcurMeshNHRMultiLink";
 constexpr char KFC_REDUCE_SCATTER_PEER_ONLY_ALG_NAME[] = "CcuSchedReduceScatterSoleMeshPeerOnly";
@@ -61,6 +62,7 @@ inline uint32_t GetKfcServerMissionNum(const char* algName)
     if (std::strcmp(algName, KFC_CONCURRENT_ALL_GATHER_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_PARALLEL_ALL_GATHER_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME) == 0 ||
+        std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_V_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME) == 0 ||
         std::strcmp(algName, KFC_HALF_ALLTOALLV_ALG_NAME) == 0) {
         return KFC_MAX_MISSION_NUM;
@@ -81,6 +83,8 @@ enum class KfcServerRole : uint32_t {
     REDUCE_SCATTER_SOLE_NHR_2DIE = 9,
     ALL_GATHER_SOLE_NHR = 10,
     ALL_REDUCE_SOLE_NHR = 11,
+    ALL_TO_ALL_V_MESH = 12,
+    ALL_TO_ALL_V_CLOS = 13
 };
 
 inline KfcServerRole GetKfcServerRole(const char* algName, uint32_t missionIndex)
@@ -94,6 +98,9 @@ inline KfcServerRole GetKfcServerRole(const char* algName, uint32_t missionIndex
     if (GetKfcServerMissionNum(algName) == KFC_MAX_MISSION_NUM) {
         if (std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_ALG_NAME) == 0) {
             return missionIndex == 0U ? KfcServerRole::ALL_TO_ALL_MESH : KfcServerRole::ALL_TO_ALL_CLOS;
+        }
+        if (std::strcmp(algName, KFC_CONCURRENT_ALL_TO_ALL_V_ALG_NAME) == 0) {
+            return missionIndex == 0U ? KfcServerRole::ALL_TO_ALL_V_MESH : KfcServerRole::ALL_TO_ALL_V_CLOS;
         }
         if (std::strcmp(algName, KFC_CONCURRENT_REDUCE_SCATTER_ALG_NAME) == 0) {
             return (missionIndex == 0U) ? KfcServerRole::REDUCE_SCATTER_MESH : KfcServerRole::REDUCE_SCATTER_NHR;

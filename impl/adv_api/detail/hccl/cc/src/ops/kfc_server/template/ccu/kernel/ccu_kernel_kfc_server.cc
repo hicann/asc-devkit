@@ -22,6 +22,7 @@
 #include "../../../../reduce_scatter/template/ccu/kernel/ccu_kernel_kfc_reduce_scatter_nhr1d_multi_jetty_mem2mem.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d.h"
+#include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_v_mesh1d_multi_jetty.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_all_to_all_mesh1d_multi_jetty.h"
 #include "../../../../all_to_all_v/template/ccu/kernel/ccu_kernel_kfc_half_alltoallv_mesh1d.h"
 #include "ccu_kernel_kfc_server.h"
@@ -45,6 +46,9 @@ static_assert(
 static_assert(
     KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
     "Concurrent AllToAll parameters exceed the KFC server load width");
+static_assert(
+    KFC_CONCURRENT_A2AV_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE,
+    "Concurrent AllToAllV parameters exceed the KFC server load width");
 static_assert(
     KFC_A2A_MJ_PARAM_NUM <= CCU_PARAM_NUM_PER_DIE, "AllToAll MultiJetty parameters exceed the KFC server load width");
 static_assert(
@@ -252,6 +256,17 @@ static bool KernelEmitsEarlyTurnEnd(const KfcServerContext& ctx)
            ctx.arg->role == KfcServerRole::ALL_GATHER_SOLE_NHR;
 }
 
+// 并发 A2AV 双 mission 共帧取段：base 为各 mission 段首槽（MESH_INPUT/CLOS_INPUT），
+// 段内 9 槽布局见 KfcConcurrentAllToAllVParamIndex；jettyNums 经 algArg 透传（注册期值）
+static void DispatchConcurrentAllToAllVMission(ccu::array<ccu::variable>& param, KfcServerContext& ctx, uint32_t base)
+{
+    const auto* jettyNums = static_cast<const std::vector<uint32_t>*>(ctx.arg->algArg.get());
+    CcuAllToAllVMesh1DMultiJettyKernel(
+        param[base], param[base + 1U], ctx.token, param[base + 2U], param[base + 3U], param[base + 4U],
+        param[base + 5U], param[base + 6U], param[base + 7U], param[base + 8U], ctx.arg->channels,
+        ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId, jettyNums->data());
+}
+
 // turnEndAddr：本轮完成信号的 HBM 地址（WAIT 槽 CKE），仅 SoleNHR AG 分支消费（D3）；
 // 双 die 两 mission 共享参数帧、各 server 传入自己的 recordAddr（各写各的完成区）。
 static void DispatchKfcSubKernel(
@@ -436,11 +451,17 @@ static void DispatchKfcSubKernel(
                 ctx.arg->opParam.DataDes.outputType, ctx.arg->opParam.reduceType);
         }
     } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLTOALLV) {
-        CcuAlltoAllVMesh1DKernel(
-            param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], ctx.token, param[HBM_PARAM_IDX_3], param[HBM_PARAM_IDX_4],
-            param[HBM_PARAM_IDX_9], param[HBM_PARAM_IDX_5], param[HBM_PARAM_IDX_6], param[HBM_PARAM_IDX_7],
-            param[HBM_PARAM_IDX_8], ctx.arg->channels, ctx.arg->channelCount, static_cast<uint32_t>(ctx.arg->rankSize),
-            ctx.arg->rankId);
+        if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_V_MESH) {
+            DispatchConcurrentAllToAllVMission(param, ctx, KFC_CONCURRENT_A2AV_MESH_INPUT);
+        } else if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_V_CLOS) {
+            DispatchConcurrentAllToAllVMission(param, ctx, KFC_CONCURRENT_A2AV_CLOS_INPUT);
+        } else {
+            CcuAlltoAllVMesh1DKernel(
+                param[HBM_PARAM_IDX_1], param[HBM_PARAM_IDX_2], ctx.token, param[HBM_PARAM_IDX_3],
+                param[HBM_PARAM_IDX_4], param[HBM_PARAM_IDX_9], param[HBM_PARAM_IDX_5], param[HBM_PARAM_IDX_6],
+                param[HBM_PARAM_IDX_7], param[HBM_PARAM_IDX_8], ctx.arg->channels, ctx.arg->channelCount,
+                static_cast<uint32_t>(ctx.arg->rankSize), ctx.arg->rankId);
+        }
     } else if (ctx.arg->opParam.opType == HcclCMDType::HCCL_CMD_ALLTOALL) {
         if (ctx.arg->role == KfcServerRole::ALL_TO_ALL_MULTI_JETTY) {
             CcuAllToAllMesh1DMultiJettyKernel(

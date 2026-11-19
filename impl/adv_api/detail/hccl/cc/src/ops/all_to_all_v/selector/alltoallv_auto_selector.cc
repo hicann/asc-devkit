@@ -208,10 +208,11 @@ SelectorStatus AlltoAllVAutoSelector::SelectCcuScheduleAlgo(
             CheckMeshNumEqualToClosNum(topoInfo, isMeshNumEqualToClosNum) != HCCL_SUCCESS,
             HCCL_DEBUG("[AlltoAllVAutoSelector] CheckMeshNumEqualToClosNum failed."), SelectorStatus::NOT_MATCH);
         if (isMeshNumEqualToClosNum && topoInfo->userRankSize <= CONCURRENT_RANK_LIMIT) {
+            // 与 hccl 对齐：mesh 实例 rank 数 == clos 实例 rank 数且 ≤4P 走并发算法（双 mission 各走
+            // mesh 优先链路 / CLOS MultiJetty 链路，数据按 100:96 设备侧切分）
             selectAlgName = "CcuSchedAllToAllVSoleMeshConcurrent";
-            HCCL_WARNING(
-                "[AlltoAllVAutoSelector][%s] algo[%s] not registered, not supported.", __func__, selectAlgName.c_str());
-            return SelectorStatus::NOT_MATCH;
+            HCCL_INFO("[AlltoAllVAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
+            return SelectorStatus::MATCH;
         }
         selectAlgName = "CcuSchedAllToAllVSoleMeshMultiJetty";
         HCCL_WARNING(

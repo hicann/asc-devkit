@@ -65,14 +65,21 @@ private:
     bool isUbxTopo_{false};
     bool is2DieL1Link_{false};
     bool isPureClosTopo_{false};
+    // MESH_1D_CLOS 双链路模式：标记拓扑的每对 rank 追加一条非隔离端口 CLOS 链路
+    // （SERVER_CLOS 实例的 endpoint 描述同步用非隔离端口），使 mesh 链路按 src endpoint
+    // 归属 mesh 实例（1DMESH）、clos 链路归属 SERVER_CLOS 实例（CLOS），并发算法的
+    // mesh 优先建链与 CLOS-only 建链（ProcessLinksForChannelMutiJetty expectMesh=false）可同时产出通道
+    bool isMeshClosDualLink_{false};
     std::vector<uint32_t> allRankList_;
     std::map<uint32_t, std::vector<uint32_t>> serverId2RankList_;
     std::map<uint32_t, std::vector<uint32_t>> podId2RankList_;
     std::vector<uint32_t> netLayerList_;
     std::map<uint32_t, EndpointDesc> rankId2Endpoint_;
+    std::map<uint32_t, EndpointDesc> rankId2ClosEndpoint_;
     std::map<uint32_t, uint32_t> rankId2PhyId_;
     std::map<uint32_t, uint32_t> rankId2ServerId_;
     std::map<uint32_t, uint32_t> rankId2PodId_;
+    std::map<uint32_t, bool> serverIsMeshClos_;
 
     std::vector<uint32_t> podServersGroup_;
     std::vector<uint32_t> podRanksGroup_;

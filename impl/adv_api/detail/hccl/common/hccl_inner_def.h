@@ -211,6 +211,19 @@ struct CCUMsgExt { // AllToAllv HcclMsgExt trans for ccu
     uint64_t recvOffset;
 };
 
+// 并发 AllToAllV 的 per-rank 参数（照 hccl AddTaskArgA2AInfo 的 taskArgs 字段集）。
+// 字段顺序与 kernel 侧顺序读取一致，勿改。两 mission 各一份数组，存于同一资源槽内。
+struct CCUMsgExtMultiJetty {
+    uint64_t sliceSize;
+    uint64_t tailSliceSize;
+    uint64_t lastSliceSize;
+    uint64_t lastTailSliceSize;
+    uint64_t loopNum;
+    uint64_t sendOffset;
+    uint64_t recvOffset;
+    uint64_t tailGoSize[4]; // addrOffset, loopParam, parallelParam, residual
+};
+
 struct CcuPrepareParam {
     uint32_t rankNum;
     uint32_t rankId;

@@ -119,6 +119,8 @@ enum class AlgorithmType {
     CcuSchedAllGatherSoleNHR = 159,
     // 与设备侧 hccl_ccu_v0_def.h 的 AlgorithmType 同值（160，AllReduce NHR 1D Mem2Mem）
     CcuSchedAllReduceSoleNHR = 160,
+    // 与设备侧 hccl_ccu_v0_def.h 的 AlgorithmType 同值（161，并发 A2AV；160 已被 AllReduceSoleNHR 占用）
+    CcuSchedAllToAllVSoleMeshConcurrent = 161,
 };
 
 static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
@@ -131,6 +133,7 @@ static const std::unordered_map<std::string, AlgorithmType> algorithmMap = {
     {"CcuSchedAllToAllSoleMesh", AlgorithmType::CcuSchedAllToAllSoleMesh},
     {"CcuSchedAllToAllVSoleMesh", AlgorithmType::CcuSchedAllToAllVSoleMesh},
     {"CcuSchedAllToAllSoleMeshConcurrent", AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent},
+    {"CcuSchedAllToAllVSoleMeshConcurrent", AlgorithmType::CcuSchedAllToAllVSoleMeshConcurrent},
     {"CcuSchedAllToAllMesh1DMultiJetty", AlgorithmType::CcuSchedAllToAllMesh1DMultiJetty},
     {"CcuSchedAllReduceSoleMesh", AlgorithmType::CcuAllReduceMeshMem2Mem1D},
     {"CcuSchedAllGatherMesh1DMem2Mem", AlgorithmType::CcuAllGatherMeshMem2Mem1D},

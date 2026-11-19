@@ -213,6 +213,7 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
         unsetenv("ENABLE_UBX_TOPO_FOR_LLT");
         unsetenv("ENABLE_2DIE_L1_LINK_FOR_LLT");
         unsetenv("ENABLE_PURE_CLOS_TOPO_FOR_LLT");
+        unsetenv("ENABLE_MESH_CLOS_DUAL_LINK_FOR_LLT");
     }};
 
     setenv("HCCL_OP_EXPANSION_MODE", "CCU_SCHED", 1);
@@ -228,6 +229,10 @@ void CcuStFixture::VerifyScenario(const CcuStScenario& scenario)
     if (scenario.pureClosTopo) {
         // 须在 SimWorld init（各 rank TopoModel 构造）前设置，TopoModel 构造期读取
         setenv("ENABLE_PURE_CLOS_TOPO_FOR_LLT", "1", 1);
+    }
+    if (scenario.meshClosDualLink) {
+        // 须在 SimWorld init（各 rank TopoModel 构造）前设置，TopoModel 构造期读取
+        setenv("ENABLE_MESH_CLOS_DUAL_LINK_FOR_LLT", "1", 1);
     }
     mc2_ops_hccl::InitEnvConfig();
     HcclSim::SimWorld::Global()->Init(scenario.topoMeta, scenario.devType);

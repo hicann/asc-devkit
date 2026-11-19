@@ -29,6 +29,7 @@ static_assert(
 static_assert(KFC_AG_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "SoleNHR AllGather parameters exceed XN capacity");
 static_assert(KFC_AR_SOLE_NHR_PARAM_NUM <= CCU_USED_XN_NUM, "SoleNHR AllReduce parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_A2A_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllToAll parameters exceed XN capacity");
+static_assert(KFC_CONCURRENT_A2AV_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent AllToAllV parameters exceed XN capacity");
 static_assert(KFC_CONCURRENT_RS_PARAM_NUM <= CCU_USED_XN_NUM, "Concurrent ReduceScatter parameters exceed XN capacity");
 static_assert(KFC_PARALLEL_AG_STORAGE_NUM <= CCU_USED_XN_NUM, "Parallel AllGather parameters exceed XN capacity");
 static_assert(CCU_USED_XN_NUM <= CCU_MSG_XN_NUM, "KFC loaded parameters exceed the message slot");
@@ -70,6 +71,132 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
         "xn5(goSize):0x%llx, xn9(msgExt):0x%llx",
         (unsigned long long)xnData_[0], (unsigned long long)xnData_[1], (unsigned long long)xnData_[2],
         (unsigned long long)xnData_[5], (unsigned long long)xnData_[9]);
+    return;
+}
+
+// 并发 AllToAllV 逐 rank ext 参数：照 hccl AddTaskArgA2AInfo（jettyNums≡1）设备侧复刻。
+// 切分入参为该 mission 的 (counts, displs)；repeat 契约（hccl.h AlltoAllV 文档）为逐对端
+// displs 推进 r×完整 count（非 mission 份额），故 stride 单独传全量 count。
+__aicore__ inline void AssembleA2avMjExt(
+    __gm__ CCUMsgExtMultiJetty& ext, uint64_t sendCount, uint64_t sendDispls, uint64_t fullSendCount,
+    uint64_t recvCount, uint64_t recvDispls, uint64_t fullRecvCount, uint64_t dataSize, uint64_t repeatIndex,
+    CcuProtocolVersion ccuVersion)
+{
+    const uint64_t sendLength = sendCount * dataSize;
+    constexpr uint64_t blockSize = CCU_MAX_COMM_DATA; // 256MB，与 hccl UB_MAX_TRANS_SIZE 一致
+    constexpr uint64_t jettyNum = 1U;                 // 并发算法 FillMeshJettyNums(false) 恒单 jetty
+    constexpr uint64_t splitAlignment = 128U;         // hccl HCCL_MIN_SLICE_ALIGN
+    const uint64_t fullBlockCount = sendLength / blockSize;
+    ext.loopNum = UINT64_MAX - (fullBlockCount + 1U) * jettyNum;
+
+    uint64_t sliceSize = 0U;
+    uint64_t tailSliceSize = 0U;
+    if (sendLength >= blockSize) {
+        sliceSize = blockSize / jettyNum / splitAlignment * splitAlignment;
+        tailSliceSize = blockSize - sliceSize * (jettyNum - 1U);
+        if (jettyNum == 1U) {
+            sliceSize = 0U;
+            tailSliceSize = blockSize;
+        }
+    }
+    const uint64_t lastBlockSize = sendLength % blockSize;
+    uint64_t lastSliceSize = lastBlockSize / jettyNum / splitAlignment * splitAlignment;
+    uint64_t lastTailSliceSize = lastBlockSize - lastSliceSize * (jettyNum - 1U);
+    if (jettyNum == 1U) {
+        lastSliceSize = 0U;
+        lastTailSliceSize = lastBlockSize;
+    }
+    ext.sliceSize = sliceSize;
+    ext.tailSliceSize = tailSliceSize;
+    ext.lastSliceSize = lastSliceSize;
+    ext.lastTailSliceSize = lastTailSliceSize;
+    ext.sendOffset = sendDispls * dataSize + fullSendCount * dataSize * repeatIndex;
+    ext.recvOffset = recvDispls * dataSize + fullRecvCount * dataSize * repeatIndex;
+    constexpr uint64_t loopCount = 8;
+    // ext 为 __gm__ 指针，不可直接传给取普通指针的 CalcGoSize：先算进本地数组再逐字段写回
+    uint64_t tailGoSize[4] = {0U, 0U, 0U, 0U};
+    CalcGoSize(lastBlockSize, loopCount, CCU_MEMSLICE_SIZE * 8, tailGoSize, ccuVersion);
+    ext.tailGoSize[0] = tailGoSize[0];
+    ext.tailGoSize[1] = tailGoSize[1];
+    ext.tailGoSize[2] = tailGoSize[2];
+    ext.tailGoSize[3] = tailGoSize[3];
+}
+
+// ext 区 DCCI 回刷，照 AssembleHcclMsgExtForCCU 尾部
+__aicore__ inline void FlushA2avMjExt(__gm__ CCUMsgExtMultiJetty* ext, uint32_t rankNum)
+{
+    uint32_t tmpCnt = (sizeof(CCUMsgExtMultiJetty) * rankNum) / MAX_DCCI_CNT;
+    uint32_t copyCnt = (sizeof(CCUMsgExtMultiJetty) * rankNum) % MAX_DCCI_CNT != 0U ? tmpCnt + 1U : tmpCnt;
+    GlobalTensor<int64_t> globalHcclMsgArea;
+    uint64_t tmpSize = 0;
+    for (uint32_t i = 0U; i < copyCnt; ++i) {
+        FlushDataCache(globalHcclMsgArea, (GM_ADDR)(reinterpret_cast<uint64_t>(ext) + tmpSize));
+        tmpSize += MAX_DCCI_CNT;
+    }
+}
+
+template <const auto& config>
+__aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::CcuPrepareForConcurrentAllToAllV(
+    __gm__ CommonPrepareParamCcu* commParam, __gm__ AlltoAllVParamCcu* allToAllVParam)
+{
+    // 带宽比照 hccl InsV2AllToAllVConcurrentExecutor（CCU）：MESH_BW=100 / CLOS_BW=96，
+    // head 段（count/factor*factorClos，96/196）落 mission0（mesh 优先链路）——与 hccl
+    // sendRecvInfoFirst→algTemplateClos(subCommRanks0, mesh 优先链路) 的实际行为一致
+    constexpr uint64_t closBandwidth = 96U;
+    constexpr uint64_t totalBandwidth = 196U;
+    const uint64_t dataSize = GetHcclDataTypeSize(commParam->dataType);
+    const uint64_t repeatOffset = commParam->count * ccuParam_.repeatIndex * dataSize;
+
+    xnData_[KFC_CONCURRENT_A2AV_OP_ID] = GetOpId(commParam);
+    xnData_[KFC_CONCURRENT_A2AV_MESH_INPUT] = (uint64_t)commParam->sendBuf + repeatOffset;
+    xnData_[KFC_CONCURRENT_A2AV_MESH_OUTPUT] = (uint64_t)commParam->recvBuf + repeatOffset;
+    xnData_[KFC_CONCURRENT_A2AV_MESH_SRC_OFFSET] = 0U;
+    xnData_[KFC_CONCURRENT_A2AV_MESH_DST_OFFSET] = 0U;
+    xnData_[KFC_CONCURRENT_A2AV_CLOS_INPUT] = (uint64_t)commParam->sendBuf + repeatOffset;
+    xnData_[KFC_CONCURRENT_A2AV_CLOS_OUTPUT] = (uint64_t)commParam->recvBuf + repeatOffset;
+    xnData_[KFC_CONCURRENT_A2AV_CLOS_SRC_OFFSET] = 0U;
+    xnData_[KFC_CONCURRENT_A2AV_CLOS_DST_OFFSET] = 0U;
+    // 整块 goSize（256MB 口径），两 mission 相同
+    constexpr uint64_t loopCount = 8;
+    CalcGoSize(
+        CCU_MAX_COMM_DATA, loopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_CONCURRENT_A2AV_MESH_GO_SIZE_0],
+        ccuProtocolVersion_);
+    CalcGoSize(
+        CCU_MAX_COMM_DATA, loopCount, CCU_MEMSLICE_SIZE * 8, &xnData_[KFC_CONCURRENT_A2AV_CLOS_GO_SIZE_0],
+        ccuProtocolVersion_);
+
+    // 双 mission ext 数组共用一个资源槽：槽跨度 CCU_MSG_EXT_RANK_OFFSET=8KB，
+    // 2×rankNum×88B 远小于槽容量，mission1 紧随 mission0 之后
+    __gm__ CCUMsgExtMultiJetty* meshExt = reinterpret_cast<__gm__ CCUMsgExtMultiJetty*>(
+        reinterpret_cast<uint64_t>(ccuParam_.ccuMsgExt) + CCU_MSG_EXT_RANK_OFFSET * ccuParam_.alltoallvCnt);
+    __gm__ CCUMsgExtMultiJetty* closExt = meshExt + ccuParam_.rankNum;
+    FlushDataCache(meshExt);
+    FlushDataCache(closExt);
+    for (uint32_t rank = 0U; rank < ccuParam_.rankNum; ++rank) {
+        // 切分照 hccl SplitA2ASendRecvInfo：元素粒度整除（count/factor*factorClos），
+        // 余数全落 mission1；mission1 的 displs 顺移 mission0 份额
+        const uint64_t meshSendCount = allToAllVParam->sendCounts[rank] / totalBandwidth * closBandwidth;
+        const uint64_t meshRecvCount = allToAllVParam->recvCounts[rank] / totalBandwidth * closBandwidth;
+        AssembleA2avMjExt(
+            meshExt[rank], meshSendCount, allToAllVParam->sdispls[rank], allToAllVParam->sendCounts[rank],
+            meshRecvCount, allToAllVParam->rdispls[rank], allToAllVParam->recvCounts[rank], dataSize,
+            ccuParam_.repeatIndex, ccuProtocolVersion_);
+        AssembleA2avMjExt(
+            closExt[rank], allToAllVParam->sendCounts[rank] - meshSendCount,
+            allToAllVParam->sdispls[rank] + meshSendCount, allToAllVParam->sendCounts[rank],
+            allToAllVParam->recvCounts[rank] - meshRecvCount, allToAllVParam->rdispls[rank] + meshRecvCount,
+            allToAllVParam->recvCounts[rank], dataSize, ccuParam_.repeatIndex, ccuProtocolVersion_);
+    }
+    FlushA2avMjExt(meshExt, ccuParam_.rankNum);
+    FlushA2avMjExt(closExt, ccuParam_.rankNum);
+    xnData_[KFC_CONCURRENT_A2AV_MESH_EXT] = reinterpret_cast<uint64_t>(meshExt);
+    xnData_[KFC_CONCURRENT_A2AV_CLOS_EXT] = reinterpret_cast<uint64_t>(closExt);
+    KERNEL_LOG(
+        KERNEL_INFO,
+        "ApiClient CcuPrepareForConcurrentAllToAllV rankNum:%u, meshExt:0x%llx, closExt:0x%llx, xn0(opId):0x%llx",
+        ccuParam_.rankNum, (unsigned long long)reinterpret_cast<uint64_t>(meshExt),
+        (unsigned long long)reinterpret_cast<uint64_t>(closExt),
+        (unsigned long long)xnData_[KFC_CONCURRENT_A2AV_OP_ID]);
     return;
 }
 

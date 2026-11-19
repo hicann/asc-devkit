@@ -322,13 +322,25 @@ __aicore__ inline void HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>::C
             CcuPrepareForAllToAll(&handleParamGM_[handleId]);
         }
     } else if (handleParamGM_[handleId].commType.prepareType == HcclCMDType::HCCL_CMD_ALLTOALLV) {
-        ccuUsedXnNum_ = 10;
-        FlushDataCache(&allToAllVParam_[handleId]);
-        KERNEL_LOG(
-            KERNEL_INFO, "ApiClient CcuPrepareForOp handleId:%u, dataType:%d, dstDataType:%d, count:%llu", handleId,
-            static_cast<int>(handleParamGM_[handleId].dataType), static_cast<int>(handleParamGM_[handleId].dstDataType),
-            (unsigned long long)handleParamGM_[handleId].count);
-        CcuPrepareForAllToAllV(&handleParamGM_[handleId], &allToAllVParam_[handleId]);
+        if (missionNum == KFC_MAX_MISSION_NUM) {
+            ccuUsedXnNum_ = KFC_CONCURRENT_A2AV_PARAM_NUM;
+            FlushDataCache(&allToAllVParam_[handleId]);
+            KERNEL_LOG(
+                KERNEL_INFO, "ApiClient CcuPrepareForOp handleId:%u, dataType:%d, dstDataType:%d, count:%llu", handleId,
+                static_cast<int>(handleParamGM_[handleId].dataType),
+                static_cast<int>(handleParamGM_[handleId].dstDataType),
+                (unsigned long long)handleParamGM_[handleId].count);
+            CcuPrepareForConcurrentAllToAllV(&handleParamGM_[handleId], &allToAllVParam_[handleId]);
+        } else {
+            ccuUsedXnNum_ = 10;
+            FlushDataCache(&allToAllVParam_[handleId]);
+            KERNEL_LOG(
+                KERNEL_INFO, "ApiClient CcuPrepareForOp handleId:%u, dataType:%d, dstDataType:%d, count:%llu", handleId,
+                static_cast<int>(handleParamGM_[handleId].dataType),
+                static_cast<int>(handleParamGM_[handleId].dstDataType),
+                (unsigned long long)handleParamGM_[handleId].count);
+            CcuPrepareForAllToAllV(&handleParamGM_[handleId], &allToAllVParam_[handleId]);
+        }
     } else if (handleParamGM_[handleId].commType.prepareType == HcclCMDType::HCCL_CMD_HALF_ALLTOALLV) {
         ccuUsedXnNum_ = 9;
         FlushDataCache(reinterpret_cast<__gm__ uint8_t*>(&handleParamGM_[handleId]) + MAX_DCCI_CNT);
@@ -584,6 +596,7 @@ __aicore__ inline uint8_t HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, config>
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherParallelMeshNHRMultiLink) ||
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent) ||
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink) ||
+        algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllVSoleMeshConcurrent) ||
         algorithmType == static_cast<uint32_t>(AlgorithmType::CcuHalfAll2AllVMesh1D)) {
         missionNum = KFC_MAX_MISSION_NUM;
     } else if (algorithmType == static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR) && newCcuFlag_) {

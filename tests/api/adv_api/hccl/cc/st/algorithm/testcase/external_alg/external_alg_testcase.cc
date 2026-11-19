@@ -203,8 +203,8 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_REDUCE_SCATTER).size(), 18U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLREDUCE).size(), 10U);
     EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALL).size(), 7U);
-    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALLV).size(), 5U);
-    // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：55 行精确锚
+    EXPECT_EQ(CollAlgExecRegistryV2::Instance().GetRegisteredTags(HcclCMDType::HCCL_CMD_ALLTOALLV).size(), 6U);
+    // 本目标全量编译（MC2_CLIENT_ENABLE_CCU=1，无 AICPU_COMPILE）：56 行精确锚
     size_t total = 0;
     for (HcclCMDType cmd : COLL_CMDS) {
         for (const AlgMetaRow& row : AlgMetaRegistry::Instance().GetAll()) {
@@ -213,7 +213,7 @@ TEST(ExtAlgSurjectivity, V2AndMetaRegistryAreBijective)
             }
         }
     }
-    EXPECT_EQ(total, 55U);
+    EXPECT_EQ(total, 56U);
 }
 
 // 不变量：注册行 externalName 字面量必须自身就是规范形（"与 parser 产出同构"的机器契约）。
@@ -797,7 +797,7 @@ TEST(ExtAlgResolver, CandidateTableIsDeterministic)
         comboCount += engines.size();
     }
     EXPECT_EQ(keyCount, 34U);
-    EXPECT_EQ(comboCount, 45U);
+    EXPECT_EQ(comboCount, 46U);
 }
 
 TEST(ExtAlgResolver, SpecificityOrdering)
