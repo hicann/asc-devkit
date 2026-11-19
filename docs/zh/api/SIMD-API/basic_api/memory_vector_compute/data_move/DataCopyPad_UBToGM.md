@@ -91,6 +91,9 @@
 - 如[图1](#fig_datacopypad3)所示，对于32字节对齐搬运场景，从UB读取的所有数据都会搬运至Global Memory。
 - 如[图2](#fig_datacopypad4)所示，对于非32字节对齐的场景，在读取UB数据时会填入dummy假数据，对齐到32B，搬入Global Memory时会将dummy空数据丢弃，从而实现UB到Global Memory的非对齐搬运。
 
+
+该接口支持数据经PCIe通路搬运，PCIe通路允许Device直接访问Host端内存（或Host直接访问Device内存）。开启PCIe通路搬运时，该接口的各参数均可正常使用；但仅支持normal（普通）操作，不支持atomic（原子）操作，即不能与数据搬运随路原子操作接口（如[SetAtomicAdd](../../atomic_operations/SetAtomicAdd.md)、[SetAtomicMax(ISASI)](../../atomic_operations/SetAtomicMax_ISASI.md)、[SetAtomicMin(ISASI)](../../atomic_operations/SetAtomicMin_ISASI.md)）配合，向PCIe通路侧内存（Host）执行原子写入。完整使用样例请参考[pcie_through样例](https://gitcode.com/cann/cann-samples/tree/master/Samples/1_Features/hardware_features/pcie_through)。
+
 ## 函数原型<a name="section620mcpsimp"></a>
 
 - 不支持配置设置数据搬运模式mode
