@@ -36,7 +36,10 @@ constexpr size_t five_dim_data = 5;
 constexpr size_t fractal_fixed = 16;
 constexpr size_t mx_scale_k0 = 2;
 constexpr uint32_t block_cube = 16;
+// CTRL[45] controls whether the Mmad HiF8 mode is enabled.
 constexpr uint64_t hifloat8_mmad_ctrl_mask = 0x200000000000ULL;
+// CTRL[49] controls whether scalar Unified Buffer accesses go through DCache.
+constexpr uint64_t scalar_ub_dcache_mask = 0x2000000000000ULL;
 constexpr size_t scale_divisor = 16;
 constexpr size_t scale_divisor_hif4 = 8;
 

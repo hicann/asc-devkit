@@ -71,6 +71,9 @@ __aicore__ inline void datacache_clean_and_invalid(clean_target target);
 template <typename T>
 __aicore__ inline void datacache_clean_and_invalid_line(T address);
 
+/** @brief Enable scalar Unified Buffer accesses to go through the DCache. */
+__aicore__ inline void enable_scalar_ub_dcache();
+
 /** @brief Invalidate the entire DCache without writing back dirty lines. */
 __aicore__ inline void datacache_clean();
 
@@ -88,6 +91,9 @@ __aicore__ inline void icache_preload(const void* addr, int64_t prefetch_len);
 
 /** @brief Set the scalar load L2 cache mode. */
 __aicore__ inline void set_scalar_cache_mode(load_l2_cache_mode mode);
+
+/** @brief Disable scalar Unified Buffer accesses from going through the DCache. */
+__aicore__ inline void disable_scalar_ub_dcache();
 
 /** @brief Set the scalar store L2 cache mode. */
 __aicore__ inline void set_scalar_cache_mode(store_l2_cache_mode mode);

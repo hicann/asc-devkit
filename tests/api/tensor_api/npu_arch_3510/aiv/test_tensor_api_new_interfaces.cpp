@@ -92,6 +92,7 @@ asc_saturation_mode g_saturation_mode_capture = asc_saturation_mode::FLOAT;
 bool g_saturation_enable_capture = false;
 int g_saturation_mode_call_count = 0;
 asc_override_strategy g_saturation_strategy_capture = asc_override_strategy::USE_GLOBAL;
+uint64_t g_ctrl_value = 0;
 
 bool get_saturation_flag_stub(asc_saturation_mode mode)
 {
@@ -110,6 +111,10 @@ void set_saturation_flag_stub(asc_saturation_mode mode, bool enable)
 asc_override_strategy get_saturation_strategy_stub() { return asc_override_strategy::USE_GLOBAL; }
 
 void set_saturation_strategy_stub(asc_override_strategy strategy) { g_saturation_strategy_capture = strategy; }
+
+int64_t get_ctrl_stub() { return static_cast<int64_t>(0x123456789ABCDEFULL); }
+
+void set_ctrl_stub(uint64_t config) { g_ctrl_value = config; }
 
 void get_arch_ver_stub(uint32_t& version) { version = 3510U; }
 
@@ -416,12 +421,20 @@ TEST_F(tensor_api_new_interfaces_aiv, cache_control_interfaces_forward_to_c_api)
     MOCKER_CPP(asc_ub_dcci_single, void(__ubuf__ void*)).times(1).will(ignoreReturnValue());
     MOCKER_CPP(asc_get_icache_preload_status, int64_t(void)).times(1).will(invoke(get_icache_preload_status_stub));
     MOCKER_CPP(asc_icache_preload, void(const void*, int64_t)).times(1).will(ignoreReturnValue());
+    MOCKER_CPP(asc_get_ctrl, int64_t(void)).times(2).will(invoke(get_ctrl_stub));
+    MOCKER_CPP(asc_set_ctrl, void(uint64_t)).times(2).will(invoke(set_ctrl_stub));
 
     asc::te::datacache_preload(reinterpret_cast<__gm__ uint64_t*>(&data), 8);
     asc::te::datacache_clean_and_invalid_line(gmAddress);
     asc::te::datacache_clean_and_invalid_line(ubAddress);
     EXPECT_EQ(asc::te::get_icache_preload_status(), 3);
     asc::te::icache_preload(&data, 4);
+    constexpr uint64_t ctrlValue = 0x123456789ABCDEFULL;
+    constexpr uint64_t scalarUbDcacheMask = 0x2000000000000ULL;
+    asc::te::enable_scalar_ub_dcache();
+    EXPECT_EQ(g_ctrl_value, ctrlValue | scalarUbDcacheMask);
+    asc::te::disable_scalar_ub_dcache();
+    EXPECT_EQ(g_ctrl_value, ctrlValue & ~scalarUbDcacheMask);
 
     GlobalMockObject::verify();
 }
