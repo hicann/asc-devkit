@@ -1288,34 +1288,42 @@ TEST_F(ResourceRegistryTest, ReportsMaterializedFileFinalizeFailure)
     EXPECT_EQ(writeStatus, ResourceStatus::IoError);
 }
 
-TEST_F(ResourceRegistryTest, LookupValidatesInputsAndReturnsIndependentMaterializations)
+TEST_F(ResourceRegistryTest, LookupValidatesInputsWithoutMaterializingFiles)
 {
-    ResourceData output;
-    output.resourceDir = "stale";
+    std::unique_ptr<ResourceEntry> entry = MakeEntry(ResourceSourceType::External);
+    const ResourceEntry* output = entry.get();
     EXPECT_EQ(registry_->Lookup(nullptr, output), ResourceStatus::InvalidResource);
-    EXPECT_TRUE(output.json.is_null());
-    EXPECT_TRUE(output.resourceDir.empty());
-    EXPECT_TRUE(output.sourceFilePath.empty());
-    output.resourceDir = "stale";
+    EXPECT_EQ(output, nullptr);
+    output = entry.get();
     EXPECT_EQ(registry_->Lookup("", output), ResourceStatus::InvalidResource);
-    EXPECT_TRUE(output.resourceDir.empty());
-    output.resourceDir = "stale";
+    EXPECT_EQ(output, nullptr);
+    output = entry.get();
     EXPECT_EQ(registry_->Lookup("missing", output), ResourceStatus::NotFound);
-    EXPECT_TRUE(output.resourceDir.empty());
+    EXPECT_EQ(output, nullptr);
+    EXPECT_TRUE(registry_->ownedMaterializationRoot_.GetDirectoryPath().empty());
+}
 
+TEST_F(ResourceRegistryTest, MaterializeReturnsIndependentDirectories)
+{
     std::unique_ptr<ResourceEntry> entry = MakeEntry(ResourceSourceType::External);
     entry->files.push_back({"payload.bin", "nested/payload.bin", {4U, 5U, 6U}});
     const std::string resourceId = "resource/with/slash";
     registry_->externalResources_.emplace(resourceId, std::move(entry));
+    const ResourceEntry* resource = nullptr;
+    ASSERT_EQ(registry_->Lookup(resourceId.c_str(), resource), ResourceStatus::Success);
+    ASSERT_NE(resource, nullptr);
+    EXPECT_EQ(resource, registry_->externalResources_.at(resourceId).get());
+    EXPECT_TRUE(registry_->ownedMaterializationRoot_.GetDirectoryPath().empty());
+    EXPECT_TRUE(resource->data.resourceDir.empty());
     ResourceData firstOutput;
-    EXPECT_EQ(registry_->Lookup(resourceId.c_str(), firstOutput), ResourceStatus::Success);
+    ASSERT_EQ(registry_->Materialize(resourceId, *resource, firstOutput), ResourceStatus::Success);
     const std::string firstDirectory = firstOutput.resourceDir;
     const fs::path firstPath(firstDirectory);
     EXPECT_EQ(firstPath.filename().string().find("materialize-"), 0U);
     EXPECT_EQ(firstPath.parent_path().filename(), "external");
     EXPECT_EQ(ReadFile(fs::path(firstDirectory) / "nested/payload.bin"), std::string("\4\5\6", 3U));
     ResourceData secondOutput;
-    EXPECT_EQ(registry_->Lookup(resourceId.c_str(), secondOutput), ResourceStatus::Success);
+    ASSERT_EQ(registry_->Materialize(resourceId, *resource, secondOutput), ResourceStatus::Success);
     EXPECT_EQ(firstOutput.resourceDir, firstDirectory);
     EXPECT_NE(secondOutput.resourceDir, firstDirectory);
     EXPECT_EQ(ReadFile(fs::path(firstOutput.resourceDir) / "nested/payload.bin"), std::string("\4\5\6", 3U));
@@ -1325,31 +1333,34 @@ TEST_F(ResourceRegistryTest, LookupValidatesInputsAndReturnsIndependentMateriali
     std::unique_ptr<ResourceEntry> unknown = MakeEntry(static_cast<ResourceSourceType>(99));
     registry_->builtInResources_.emplace("unknown", std::move(unknown));
     ResourceData unknownOutput;
-    EXPECT_EQ(registry_->Lookup("unknown", unknownOutput), ResourceStatus::Success);
+    ASSERT_EQ(registry_->Lookup("unknown", resource), ResourceStatus::Success);
+    ASSERT_EQ(registry_->Materialize("unknown", *resource, unknownOutput), ResourceStatus::Success);
     const fs::path unknownPath(unknownOutput.resourceDir);
     EXPECT_EQ(unknownPath.filename().string().find("materialize-"), 0U);
     EXPECT_EQ(unknownPath.parent_path().filename(), "unknown");
 }
 
-TEST_F(ResourceRegistryTest, LookupReportsTemporaryRootAndMaterializationFailures)
+TEST_F(ResourceRegistryTest, MaterializeReportsTemporaryRootAndMaterializationFailures)
 {
     ResourceData output;
     std::unique_ptr<ResourceEntry> entry = MakeEntry(ResourceSourceType::External);
     registry_->externalResources_.emplace("bad-temp", std::move(entry));
+    const ResourceEntry* resource = nullptr;
+    ASSERT_EQ(registry_->Lookup("bad-temp", resource), ResourceStatus::Success);
     output.resourceDir = "stale";
     SetEnvironment("TMPDIR", Path("missing-temp").string());
-    EXPECT_EQ(registry_->Lookup("bad-temp", output), ResourceStatus::IoError);
+    EXPECT_EQ(registry_->Materialize("bad-temp", *resource, output), ResourceStatus::IoError);
     EXPECT_TRUE(output.resourceDir.empty());
 
     output.resourceDir = "stale";
     SetEnvironment("TMPDIR", "/proc");
-    EXPECT_EQ(registry_->Lookup("bad-temp", output), ResourceStatus::IoError);
+    EXPECT_EQ(registry_->Materialize("bad-temp", *resource, output), ResourceStatus::IoError);
     EXPECT_TRUE(output.resourceDir.empty());
 
     ASSERT_TRUE(registry_->ownedMaterializationRoot_.RegisterDirectoryForCleanup(Path("forced-materialize").string()));
     WriteFile(fs::path(registry_->ownedMaterializationRoot_.GetDirectoryPath()) / "external", "blocking file");
     output.resourceDir = "stale";
-    EXPECT_EQ(registry_->Lookup("bad-temp", output), ResourceStatus::IoError);
+    EXPECT_EQ(registry_->Materialize("bad-temp", *resource, output), ResourceStatus::IoError);
     EXPECT_TRUE(output.resourceDir.empty());
     EXPECT_TRUE(registry_->externalResources_.at("bad-temp")->data.resourceDir.empty());
 }
@@ -1359,7 +1370,9 @@ TEST_F(ResourceRegistryTest, DestructorHonorsSaveKernelMetaAtTemporaryRootCreati
     SetEnvironment("ASCEND_OP_COMPILE_SAVE_KERNEL_META", "1");
     registry_->externalResources_.emplace("keep-temp", MakeEntry(ResourceSourceType::External));
     ResourceData output;
-    EXPECT_EQ(registry_->Lookup("keep-temp", output), ResourceStatus::Success);
+    const ResourceEntry* resource = nullptr;
+    ASSERT_EQ(registry_->Lookup("keep-temp", resource), ResourceStatus::Success);
+    EXPECT_EQ(registry_->Materialize("keep-temp", *resource, output), ResourceStatus::Success);
     const std::string retainedRoot = registry_->ownedMaterializationRoot_.GetDirectoryPath();
     ASSERT_TRUE(fs::is_directory(retainedRoot));
     registry_.reset();
@@ -1368,7 +1381,9 @@ TEST_F(ResourceRegistryTest, DestructorHonorsSaveKernelMetaAtTemporaryRootCreati
     registry_.reset(new ResourceRegistry());
     SetEnvironment("ASCEND_OP_COMPILE_SAVE_KERNEL_META", "true");
     registry_->externalResources_.emplace("remove-temp", MakeEntry(ResourceSourceType::External));
-    EXPECT_EQ(registry_->Lookup("remove-temp", output), ResourceStatus::Success);
+    resource = nullptr;
+    ASSERT_EQ(registry_->Lookup("remove-temp", resource), ResourceStatus::Success);
+    EXPECT_EQ(registry_->Materialize("remove-temp", *resource, output), ResourceStatus::Success);
     const std::string removedRoot = registry_->ownedMaterializationRoot_.GetDirectoryPath();
     ASSERT_TRUE(fs::is_directory(removedRoot));
     registry_.reset();
@@ -1383,7 +1398,9 @@ TEST_F(ResourceRegistryTest, SaveKernelMetaTrimsWhitespaceAndKeepsFailedMaterial
     registry_->externalResources_.emplace("failed-materialization", std::move(entry));
 
     ResourceData output;
-    EXPECT_EQ(registry_->Lookup("failed-materialization", output), ResourceStatus::IoError);
+    const ResourceEntry* resource = nullptr;
+    ASSERT_EQ(registry_->Lookup("failed-materialization", resource), ResourceStatus::Success);
+    EXPECT_EQ(registry_->Materialize("failed-materialization", *resource, output), ResourceStatus::IoError);
     EXPECT_TRUE(output.resourceDir.empty());
     EXPECT_TRUE(registry_->retainMaterializedDirectories_);
     const fs::path retainedRoot(registry_->ownedMaterializationRoot_.GetDirectoryPath());
@@ -1414,7 +1431,9 @@ TEST_F(ResourceRegistryTest, LoadExplicitResourceEndToEnd)
 
     EXPECT_EQ(registry_->Load(layout.soPath.c_str()), ResourceStatus::Success);
     ResourceData output;
-    EXPECT_EQ(registry_->Lookup("public", output), ResourceStatus::Success);
+    const ResourceEntry* resource = nullptr;
+    ASSERT_EQ(registry_->Lookup("public", resource), ResourceStatus::Success);
+    EXPECT_EQ(registry_->Materialize("public", *resource, output), ResourceStatus::Success);
     EXPECT_EQ(output.json.at("kind"), "test");
     EXPECT_EQ(output.sourceFilePath, fs::canonical(layout.sourcePath).parent_path().string());
     EXPECT_EQ(ReadFile(fs::path(output.resourceDir) / relative), std::string("\10\11", 2U));
@@ -1468,8 +1487,8 @@ TEST_F(ResourceRegistryTest, LoadRejectsEmptyResourceIdAndDoesNotCommitPartialBu
     AcCompileResourceBundle validBundle = MakeBundle(&validManifest, 1U);
     gBundleHeader = &validBundle.header;
     EXPECT_EQ(registry_->Load(layout.soPath.c_str()), ResourceStatus::Success);
-    ResourceData output;
-    EXPECT_EQ(registry_->Lookup("valid-resource", output), ResourceStatus::Success);
+    const ResourceEntry* resource = nullptr;
+    EXPECT_EQ(registry_->Lookup("valid-resource", resource), ResourceStatus::Success);
 }
 
 TEST_F(ResourceRegistryTest, LoadAutomaticCachesFirstStatus)
@@ -1525,7 +1544,9 @@ TEST_F(ResourceRegistryTest, LoadAutomaticKeepsDuplicateIdAndLoadsOtherResources
         EXPECT_EQ(gDlopenCalls, 3U);
         EXPECT_NE(registry_->FindResource("shared"), nullptr);
         ResourceData output;
-        EXPECT_EQ(registry_->Lookup("valid", output), ResourceStatus::Success);
+        const ResourceEntry* resource = nullptr;
+        ASSERT_EQ(registry_->Lookup("valid", resource), ResourceStatus::Success);
+        EXPECT_EQ(registry_->Materialize("valid", *resource, output), ResourceStatus::Success);
         if (!output.resourceDir.empty()) {
             EXPECT_EQ(ReadFile(fs::path(output.resourceDir) / name), std::string(1U, '\1'));
         }

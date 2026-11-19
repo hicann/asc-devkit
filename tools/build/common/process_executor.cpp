@@ -176,7 +176,7 @@ public:
 
     // Drains currently available data. Each call has a byte budget so a noisy
     // stream cannot indefinitely postpone checking the child state and timeout.
-    bool ForwardAvailableOutput() noexcept
+    bool ForwardAvailableOutput(bool logOutputAsDebug) noexcept
     {
         char readBuffer[4096];
         uint64_t totalReadBytes = 0U;
@@ -186,7 +186,7 @@ public:
                 const size_t outputBytes = static_cast<size_t>(readBytes);
                 totalReadBytes += static_cast<uint64_t>(outputBytes);
                 MirrorOutputToFile(readBuffer, outputBytes);
-                ForwardOutputToPlog(readBuffer, outputBytes);
+                ForwardOutputToPlog(readBuffer, outputBytes, logOutputAsDebug);
                 continue;
             }
             if (readBytes == 0) {
@@ -229,10 +229,14 @@ private:
         }
     }
 
-    void ForwardOutputToPlog(const char* output, size_t outputBytes) noexcept
+    void ForwardOutputToPlog(const char* output, size_t outputBytes, bool logOutputAsDebug) noexcept
     {
         const int plogOutputBytes = static_cast<int>(outputBytes);
-        if (outputKind_ == ProcessOutputKind::StandardOutput) {
+        if (logOutputAsDebug) {
+            ASCENDLOGD(
+                "Process %s: executable=%s output=%.*s", GetOutputKindName(), executablePath_.c_str(), plogOutputBytes,
+                output);
+        } else if (outputKind_ == ProcessOutputKind::StandardOutput) {
             ASCENDLOGI("Process stdout: executable=%s output=%.*s", executablePath_.c_str(), plogOutputBytes, output);
         } else {
             ASCENDLOGE("Process stderr: executable=%s output=%.*s", executablePath_.c_str(), plogOutputBytes, output);
@@ -571,8 +575,10 @@ private:
 
     bool ForwardAvailableOutput() noexcept
     {
-        const bool stdoutForwarded = !stdoutForwarder_.IsOpen() || stdoutForwarder_.ForwardAvailableOutput();
-        const bool stderrForwarded = !stderrForwarder_.IsOpen() || stderrForwarder_.ForwardAvailableOutput();
+        const bool stdoutForwarded =
+            !stdoutForwarder_.IsOpen() || stdoutForwarder_.ForwardAvailableOutput(request_.logOutputAsDebug);
+        const bool stderrForwarded =
+            !stderrForwarder_.IsOpen() || stderrForwarder_.ForwardAvailableOutput(request_.logOutputAsDebug);
         return stdoutForwarded && stderrForwarded;
     }
 

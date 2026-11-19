@@ -72,7 +72,9 @@ struct ResourceEntry {
     std::vector<ResourceFileData> files;
     std::string sourceSoPath;
     ResourceSourceType sourceType = ResourceSourceType::External;
-    std::mutex materializeMutex;
+    mutable std::mutex materializeMutex;
+    mutable std::once_flag cacheIdentityOnce;
+    mutable nlohmann::json cacheIdentity;
 };
 
 using ResourceStore = std::unordered_map<std::string, std::unique_ptr<ResourceEntry>>;
@@ -126,13 +128,13 @@ public:
     ResourceStatus Load(const char* directory);
 
     /**
-     * @brief Looks up a registered compile resource and materializes its bundled files.
+     * @brief Looks up a registered compile resource without materializing its bundled files.
      * @param[in] resourceId Non-empty identifier of the resource to look up.
-     * @param[out] resource Receives the resource data on success. It is reset when the lookup fails.
-     * @return ResourceStatus::Success on success; otherwise, ResourceStatus::NotFound, ResourceStatus::InvalidResource,
-     * or a status describing the materialization failure.
+     * @param[out] resource Receives an entry valid for the registry lifetime, or nullptr on failure.
+     * @return ResourceStatus::Success, ResourceStatus::NotFound, or ResourceStatus::InvalidResource.
      */
-    ResourceStatus Lookup(const char* resourceId, ResourceData& resource);
+    ResourceStatus Lookup(const char* resourceId, const ResourceEntry*& resource);
+    ResourceStatus Materialize(const std::string& resourceId, const ResourceEntry& entry, ResourceData& resource);
 
     ResourceRegistry(const ResourceRegistry&) = delete;
     ResourceRegistry& operator=(const ResourceRegistry&) = delete;
@@ -173,7 +175,6 @@ private:
     static ResourceStatus WriteMaterializedFiles(const std::vector<ResourceFileData>& files, const std::string& root);
 
     ResourceEntry* FindResource(const std::string& resourceId) noexcept;
-    ResourceStatus Materialize(const std::string& resourceId, const ResourceEntry& entry, ResourceData& resource);
     ResourceStatus Commit(StageState& stage);
 
     DirectoryCleanupGuard ownedMaterializationRoot_;

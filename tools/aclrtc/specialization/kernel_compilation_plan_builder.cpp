@@ -12,70 +12,93 @@
 
 #include "ascendc_tool_log.h"
 #include "process_compilation_context.h"
+#include "kernel_compilation_cache_input.h"
 
+#include <algorithm>
 #include <boost/filesystem.hpp>
 #include <boost/system/error_code.hpp>
-#include <cstdlib>
 #include <iomanip>
 #include <set>
 #include <sstream>
+#include <string_view>
 #include <unistd.h>
 
 namespace ascendc {
 namespace aclrtc {
 namespace {
 namespace fs = boost::filesystem;
-constexpr char ENVIRONMENT_REFERENCE_PREFIX[] = "${env:";
-void ReplaceAllLiteralOccurrences(std::string& text, const std::string& literalText, const std::string& replacementText)
-{
-    size_t occurrencePosition = 0U;
-    while ((occurrencePosition = text.find(literalText, occurrencePosition)) != std::string::npos) {
-        text.replace(occurrencePosition, literalText.size(), replacementText);
-        occurrencePosition += replacementText.size();
-    }
-}
+constexpr std::string_view ENVIRONMENT_REFERENCE_PREFIX = "${env:";
+constexpr std::string_view RESOURCE_REFERENCE = "${resource}";
+constexpr std::string_view OUTPUT_REFERENCE = "${output}";
+constexpr std::string_view SOURCE_REFERENCE = "${source_file_path}";
 
-bool ExpandEnvironmentVariablePlaceholders(
-    const std::string& text, const std::string& manifestValueLocation, std::string& resolvedText)
+bool CollectEnvironmentVariables(
+    const std::string& text, const char* location, std::map<std::string, std::string>& environmentValues)
 {
-    resolvedText.clear();
-    size_t sourcePosition = 0U;
-    while (sourcePosition < text.size()) {
-        const size_t referencePosition = text.find(ENVIRONMENT_REFERENCE_PREFIX, sourcePosition);
-        if (referencePosition == std::string::npos) {
-            resolvedText.append(text, sourcePosition, std::string::npos);
-            break;
-        }
-        resolvedText.append(text, sourcePosition, referencePosition - sourcePosition);
-        const size_t namePosition = referencePosition + sizeof(ENVIRONMENT_REFERENCE_PREFIX) - 1U;
-        const size_t closingBracePosition = text.find('}', namePosition);
-        if (closingBracePosition == std::string::npos) {
+    size_t position = 0U;
+    while ((position = text.find(ENVIRONMENT_REFERENCE_PREFIX, position)) != std::string::npos) {
+        const size_t nameStart = position + ENVIRONMENT_REFERENCE_PREFIX.size();
+        const size_t end = text.find('}', nameStart);
+        if (end == std::string::npos || end == nameStart) {
             ASCENDLOGE(
-                "Unterminated environment variable placeholder at %s byte %zu; regenerate the JIT resource "
-                "using the form ${env:NAME}",
-                manifestValueLocation.c_str(), referencePosition);
+                "Invalid environment variable placeholder at %s byte %zu; use the form ${env:NAME}", location,
+                position);
             return false;
         }
-        if (closingBracePosition == namePosition) {
-            ASCENDLOGE(
-                "Environment variable placeholder at %s byte %zu has an empty name; regenerate the JIT resource "
-                "using the form ${env:NAME}",
-                manifestValueLocation.c_str(), referencePosition);
-            return false;
+        const std::string name = text.substr(nameStart, end - nameStart);
+        if (environmentValues.find(name) == environmentValues.end()) {
+            std::string value;
+            if (!ProcessCompilationContext::Instance().GetEnvironmentVariable(name, location, value)) {
+                return false;
+            }
+            environmentValues.emplace(name, std::move(value));
         }
-        const std::string environmentName = text.substr(namePosition, closingBracePosition - namePosition);
-        const char* environmentValue = std::getenv(environmentName.c_str());
-        if (environmentValue == nullptr) {
-            ASCENDLOGE(
-                "Environment variable %s referenced at %s byte %zu is not set; "
-                "set it with: export %s=<value>",
-                environmentName.c_str(), manifestValueLocation.c_str(), referencePosition, environmentName.c_str());
-            return false;
-        }
-        resolvedText.append(environmentValue);
-        sourcePosition = closingBracePosition + 1U;
+        position = end + 1U;
     }
     return true;
+}
+
+std::string ExpandEnvironmentVariables(
+    const std::string& text, const std::map<std::string, std::string>& environmentValues)
+{
+    std::string result;
+    size_t position = 0U;
+    size_t reference = 0U;
+    while ((reference = text.find(ENVIRONMENT_REFERENCE_PREFIX, position)) != std::string::npos) {
+        result.append(text, position, reference - position);
+        const size_t nameStart = reference + ENVIRONMENT_REFERENCE_PREFIX.size();
+        const size_t end = text.find('}', nameStart);
+        result.append(environmentValues.at(text.substr(nameStart, end - nameStart)));
+        position = end + 1U;
+    }
+    result.append(text, position, std::string::npos);
+    return result;
+}
+
+bool CollectCompilationEnvironment(PreparedKernelCompilationPlan& plan)
+{
+    bool usesSourceDirectory = false;
+    for (const PreparedCompilationCommand& command : plan.compilationCommands) {
+        if (!CollectEnvironmentVariables(command.executable, command.diagnosticLabel.c_str(), plan.environmentValues)) {
+            return false;
+        }
+        usesSourceDirectory |= command.executable.find(SOURCE_REFERENCE) != std::string::npos;
+        for (const std::string& argument : command.arguments) {
+            if (!CollectEnvironmentVariables(argument, command.diagnosticLabel.c_str(), plan.environmentValues)) {
+                return false;
+            }
+            usesSourceDirectory |= argument.find(SOURCE_REFERENCE) != std::string::npos;
+        }
+    }
+    for (const ManifestConstant& constant : plan.constants) {
+        const std::string& targetFile = constant.GetTargetFile();
+        if (!CollectEnvironmentVariables(targetFile, constant.GetName().c_str(), plan.environmentValues)) {
+            return false;
+        }
+        usesSourceDirectory |= targetFile.find(SOURCE_REFERENCE) != std::string::npos;
+    }
+    return !usesSourceDirectory ||
+           CollectEnvironmentVariables(plan.sourceDirectory, "source_file_path", plan.environmentValues);
 }
 
 bool IsAbsoluteExecutableRegularFile(const fs::path& executablePath)
@@ -138,178 +161,165 @@ bool AppendCompilerTargetOptions(const std::vector<std::string>& arguments, std:
     return foundTarget;
 }
 
+bool ReplaceCompilationSourceWithPreprocessed(CompilationCommand& command, const PreprocessedCompilationSource& source)
+{
+    const auto sourceArgument =
+        std::find(command.arguments.begin(), command.arguments.end(), source.sourcePath.string());
+    if (sourceArgument == command.arguments.end()) {
+        ASCENDLOGE(
+            "Preprocessed source does not match formal compilation command: label=%s source=%s",
+            command.diagnosticLabel.c_str(), source.sourcePath.c_str());
+        return false;
+    }
+    *sourceArgument = source.preprocessedPath.string();
+    bool languageSpecified = false;
+    for (size_t index = 0U; index < command.arguments.size(); ++index) {
+        std::string& argument = command.arguments[index];
+        if (argument == "-x" && index + 1U < command.arguments.size()) {
+            command.arguments[++index] = "cce-cpp-output";
+            languageSpecified = true;
+        } else if (argument.compare(0U, 2U, "-x") == 0U) {
+            argument = "-xcce-cpp-output";
+            languageSpecified = true;
+        }
+    }
+    if (!languageSpecified) {
+        command.arguments.insert(sourceArgument, {"-x", "cce-cpp-output"});
+    }
+    // Preprocessing consumed include and macro options; suppress unused-option warnings while retaining -Werror.
+    command.arguments.emplace_back("-Qunused-arguments");
+    return true;
+}
+
 } // namespace
 
-bool KernelCompilationPlanBuilder::ExpandPathAndEnvironmentReferences(
-    const std::string& text, const std::string& location, std::string& resolvedText) const
+std::string KernelCompilationPlanBuilder::ExpandPathAndEnvironmentReferences(
+    const std::string& text, const PreparedKernelCompilationPlan& plan) const
 {
-    std::string pathResolvedText = text;
-    ReplaceAllLiteralOccurrences(pathResolvedText, "${resource}", resourceWorktreePath_.string());
-    ReplaceAllLiteralOccurrences(pathResolvedText, "${output}", outputDirectoryPath_.string());
-    ReplaceAllLiteralOccurrences(pathResolvedText, "${source_file_path}", externalSourceDirectoryPath_.string());
-    return ExpandEnvironmentVariablePlaceholders(pathResolvedText, location, resolvedText);
+    std::string result;
+    size_t position = 0U;
+    size_t reference = 0U;
+    // Expand only the original template; keep placeholders in replacement values literal.
+    while ((reference = text.find("${", position)) != std::string::npos) {
+        result.append(text, position, reference - position);
+        const std::string_view tail(text.data() + reference, text.size() - reference);
+        if (tail.compare(0, RESOURCE_REFERENCE.size(), RESOURCE_REFERENCE) == 0) {
+            result.append(resourceWorktreePath_.string());
+            position = reference + RESOURCE_REFERENCE.size();
+        } else if (tail.compare(0, OUTPUT_REFERENCE.size(), OUTPUT_REFERENCE) == 0) {
+            result.append(outputDirectoryPath_.string());
+            position = reference + OUTPUT_REFERENCE.size();
+        } else if (tail.compare(0, SOURCE_REFERENCE.size(), SOURCE_REFERENCE) == 0) {
+            result.append(ExpandEnvironmentVariables(plan.sourceDirectory, plan.environmentValues));
+            position = reference + SOURCE_REFERENCE.size();
+        } else if (tail.compare(0, ENVIRONMENT_REFERENCE_PREFIX.size(), ENVIRONMENT_REFERENCE_PREFIX) == 0) {
+            const size_t nameStart = reference + ENVIRONMENT_REFERENCE_PREFIX.size();
+            const size_t end = text.find('}', nameStart);
+            result.append(plan.environmentValues.at(text.substr(nameStart, end - nameStart)));
+            position = end + 1U;
+        } else {
+            result.append("${");
+            position = reference + 2U;
+        }
+    }
+    result.append(text, position, std::string::npos);
+    return result;
 }
 
-aclError KernelCompilationPlanBuilder::BuildConstantSourcePatches(KernelCompilationPlan& plan) const
+void KernelCompilationPlanBuilder::BuildConstantSourcePatches(
+    const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
+    KernelCompilationPlan& plan) const
 {
-    auto constants = borrowedManifest_.constants;
     std::vector<KernelSourcePatch> patches;
-    for (ManifestConstant& constant : constants) {
-        if (!constant.BindArgument(
-                specializationRequest_.kernelArgumentCount, specializationRequest_.borrowedKernelArgumentDataPointers,
-                specializationRequest_.borrowedKernelArgumentByteCounts)) {
-            return ACLRTC_ERROR_INVALID_INPUT;
-        }
-        std::string targetFile;
-        if (!ExpandPathAndEnvironmentReferences(constant.GetTargetFile(), constant.GetName(), targetFile)) {
-            return ACLRTC_ERROR_FAILURE;
-        }
-        patches.push_back({targetFile, constant.GetTemplateText(), {}});
-    }
-    // Avoid reading caller-owned buffers if any constant binding or target expansion fails.
-    for (size_t index = 0; index < constants.size(); ++index) {
-        patches[index].replacementText =
-            FormatBytesAsCppInitializerList(constants[index].GetBoundData(), constants[index].GetBoundByteSize());
+    for (size_t index = 0U; index < preparedPlan.constants.size(); ++index) {
+        const ManifestConstant& constant = preparedPlan.constants[index];
+        const KernelConstantBindingValue& binding = constants.bindings[index];
+        const auto& bytes = constants.argumentBytes.at(binding.parameterIndex);
+        patches.push_back(
+            {ExpandPathAndEnvironmentReferences(constant.GetTargetFile(), preparedPlan), constant.GetTemplateText(),
+             FormatBytesAsCppInitializerList(bytes.data(), binding.byteCount)});
     }
     plan.sourcePatches = std::move(patches);
-    return ACLRTC_SUCCESS;
-}
-
-aclError KernelCompilationPlanBuilder::BindManifestCommand(
-    const ManifestCommand& spec, CompilationCommand& compilationCommand) const
-{
-    compilationCommand.commandKind = spec.commandKind;
-    compilationCommand.parallelStage = spec.parallelStage;
-    compilationCommand.diagnosticLabel = spec.diagnosticLabel;
-    std::string executable;
-    if (!ExpandPathAndEnvironmentReferences(spec.executable, spec.diagnosticLabel, executable)) {
-        return ACLRTC_ERROR_FAILURE;
-    }
-    compilationCommand.executablePath = std::move(executable);
-    if (!IsAbsoluteExecutableRegularFile(compilationCommand.executablePath)) {
-        ASCENDLOGE(
-            "Manifest command %s requires an absolute path to an existing executable regular file: path=%s; "
-            "check the referenced environment variable and tool installation",
-            compilationCommand.diagnosticLabel.c_str(), compilationCommand.executablePath.c_str());
-        return ACLRTC_ERROR_FAILURE;
-    }
-
-    for (const std::string& argument : spec.arguments) {
-        std::string resolvedArgument;
-        if (!ExpandPathAndEnvironmentReferences(argument, spec.diagnosticLabel, resolvedArgument)) {
-            return ACLRTC_ERROR_FAILURE;
-        }
-        compilationCommand.arguments.emplace_back(std::move(resolvedArgument));
-    }
-
-    if (compilationCommand.commandKind == CompilationCommandKind::Compile) {
-        size_t outputOptionPosition = 0U;
-        if (!FindSeparatedCompilerOutputOptionPosition(compilationCommand.arguments, outputOptionPosition)) {
-            ASCENDLOGE(
-                "Manifest compile command %s must contain a valid separated '-o' output option and a non-empty "
-                "output path; regenerate the JIT resource with '-o' followed by its output path",
-                compilationCommand.diagnosticLabel.c_str());
-            return ACLRTC_ERROR_FAILURE;
-        }
-        const auto& options = spec.objectKind == ManifestObjectKind::Basic ?
-                                  specializationRequest_.compilerOptions.basicOptions :
-                                  specializationRequest_.compilerOptions.superKernelOptions;
-        compilationCommand.arguments.insert(
-            compilationCommand.arguments.begin() + static_cast<std::ptrdiff_t>(outputOptionPosition), options.begin(),
-            options.end());
-    }
-    return ACLRTC_SUCCESS;
 }
 
 aclError KernelCompilationPlanBuilder::BuildSpecializationMetadata(
-    const CompilationCommand& basicCompileCommand, fs::path& objectPath) const
+    const PreparedKernelCompilationPlan& preparedPlan, const CompilationCommand& basicCommand,
+    fs::path& objectPath) const
 {
-    std::string ascendHome;
-    if (!ExpandPathAndEnvironmentReferences("${env:ASCEND_HOME_PATH}", "specialization flag compiler", ascendHome)) {
-        return ACLRTC_ERROR_FAILURE;
-    }
-    if (!IsAbsoluteExecutableRegularFile(fs::path(ascendHome) / "bin/bisheng")) {
+    const fs::path ascendHome = preparedPlan.environmentValues.at("ASCEND_HOME_PATH");
+    if (!IsAbsoluteExecutableRegularFile(ascendHome / "bin/bisheng")) {
         ASCENDLOGE("Specialization metadata requires an executable bisheng under ASCEND_HOME_PATH");
         return ACLRTC_ERROR_FAILURE;
     }
     std::vector<std::string> targetOptions;
-    if (!AppendCompilerTargetOptions(basicCompileCommand.arguments, targetOptions)) {
+    if (!AppendCompilerTargetOptions(basicCommand.arguments, targetOptions)) {
         ASCENDLOGE(
             "Basic compile command %s requires an explicit target architecture for specialization metadata",
-            basicCompileCommand.diagnosticLabel.c_str());
+            basicCommand.diagnosticLabel.c_str());
         return ACLRTC_ERROR_FAILURE;
     }
     return ProcessCompilationContext::Instance().GetSpecializationFlagObject(ascendHome, targetOptions, objectPath);
 }
 
-aclError KernelCompilationPlanBuilder::BindLinkCommand(
-    const CompilationManifest& manifest, const fs::path& metadataObjectPath, KernelCompilationPlan& plan) const
+void KernelCompilationPlanBuilder::AppendLinkCommand(
+    const CompilationManifest& manifest, PreparedKernelCompilationPlan& plan) const
 {
-    CompilationCommand linkCommand;
-    std::set<fs::path> requiredOutputDirectories{outputDirectoryPath_};
-    linkCommand.commandKind = CompilationCommandKind::Link;
-    linkCommand.diagnosticLabel = "link";
-    std::string linkerPath;
-    if (!ExpandPathAndEnvironmentReferences(
-            "${env:ASCEND_HOME_PATH}/bin/ld.lld", "internal linker executable", linkerPath)) {
-        return ACLRTC_ERROR_FAILURE;
-    }
-    linkCommand.executablePath = linkerPath;
-
-    for (const std::string& option : manifest.linkOptions) {
-        std::string resolvedOption;
-        if (!ExpandPathAndEnvironmentReferences(option, "link_options", resolvedOption)) {
-            return ACLRTC_ERROR_FAILURE;
-        }
-        linkCommand.arguments.emplace_back(std::move(resolvedOption));
-    }
-    for (const std::string& input : manifest.linkInputs) {
-        std::string resolvedInput;
-        if (!ExpandPathAndEnvironmentReferences(input, "link_inputs", resolvedInput)) {
-            return ACLRTC_ERROR_FAILURE;
-        }
-        requiredOutputDirectories.emplace(fs::path(resolvedInput).parent_path());
-        linkCommand.arguments.emplace_back(std::move(resolvedInput));
-    }
-    linkCommand.arguments.emplace_back(metadataObjectPath.string());
-    plan.linkedKernelElfPath = outputDirectoryPath_ / "linked_kernel.elf";
-    linkCommand.arguments.emplace_back("-o");
-    linkCommand.arguments.emplace_back(plan.linkedKernelElfPath.string());
-    if (!IsAbsoluteExecutableRegularFile(linkCommand.executablePath)) {
-        ASCENDLOGE(
-            "Linker requires an absolute path to an existing executable regular file: path=%s; verify "
-            "ASCEND_HOME_PATH points to a complete CANN installation",
-            linkCommand.executablePath.c_str());
-        return ACLRTC_ERROR_FAILURE;
-    }
-    plan.compilationCommands.emplace_back(std::move(linkCommand));
-    plan.requiredOutputDirectoryPaths.assign(requiredOutputDirectories.begin(), requiredOutputDirectories.end());
-    return ACLRTC_SUCCESS;
+    PreparedCompilationCommand command{CompilationCommandKind::Link, {}, "link", "${env:ASCEND_HOME_PATH}/bin/ld.lld",
+                                       manifest.linkOptions,         {}, {}};
+    command.arguments.insert(command.arguments.end(), manifest.linkInputs.begin(), manifest.linkInputs.end());
+    plan.compilationCommands.emplace_back(std::move(command));
 }
 
-aclError KernelCompilationPlanBuilder::BindOutputKernelNameCommand(KernelCompilationPlan& plan) const
+void KernelCompilationPlanBuilder::AppendKernelRenameCommand(PreparedKernelCompilationPlan& plan) const
 {
     const auto& outputName = specializationRequest_.outputKernelName;
     if (outputName.empty() || outputName == specializationRequest_.kernelName) {
-        return ACLRTC_SUCCESS;
+        return;
     }
-    std::string objectCopyPath;
-    if (!ExpandPathAndEnvironmentReferences(
-            "${env:ASCEND_HOME_PATH}/bin/llvm-objcopy", "kernel symbol renaming", objectCopyPath)) {
-        return ACLRTC_ERROR_FAILURE;
-    }
-    CompilationCommand command;
-    command.commandKind = CompilationCommandKind::ObjectCopy;
-    command.diagnosticLabel = "rename_output_kernel";
-    command.executablePath = std::move(objectCopyPath);
+    // The executor inspects symbols and metadata sections after linking.
+    plan.compilationCommands.push_back(
+        {CompilationCommandKind::ObjectCopy,
+         {},
+         "rename_output_kernel",
+         "${env:ASCEND_HOME_PATH}/bin/llvm-objcopy",
+         {"${output}/linked_kernel.elf"},
+         {},
+         KernelSymbolRename{specializationRequest_.kernelName, outputName}});
+}
+
+aclError KernelCompilationPlanBuilder::BindCompilationCommand(
+    const PreparedCompilationCommand& preparedCommand, const PreparedKernelCompilationPlan& preparedPlan,
+    CompilationCommand& command) const
+{
+    command.commandKind = preparedCommand.commandKind;
+    command.parallelStage = preparedCommand.parallelStage;
+    command.diagnosticLabel = preparedCommand.diagnosticLabel;
+    command.kernelSymbolRename = preparedCommand.kernelSymbolRename;
+    command.executablePath = ExpandPathAndEnvironmentReferences(preparedCommand.executable, preparedPlan);
     if (!IsAbsoluteExecutableRegularFile(command.executablePath)) {
-        ASCENDLOGE("Kernel symbol renaming requires an executable llvm-objcopy: %s", command.executablePath.c_str());
+        ASCENDLOGE(
+            "Compilation command %s requires an absolute path to an existing executable regular file: path=%s; "
+            "check the referenced environment variable and tool installation",
+            command.diagnosticLabel.c_str(), command.executablePath.c_str());
         return ACLRTC_ERROR_FAILURE;
     }
-    // Inspect symbols and metadata sections after the preceding link command has produced the ELF.
-    command.kernelSymbolRename = KernelSymbolRename{specializationRequest_.kernelName, outputName};
-    command.arguments.emplace_back(plan.linkedKernelElfPath.string());
-    plan.compilationCommands.emplace_back(std::move(command));
+    for (const std::string& argument : preparedCommand.arguments) {
+        command.arguments.emplace_back(ExpandPathAndEnvironmentReferences(argument, preparedPlan));
+    }
+    if (command.commandKind == CompilationCommandKind::Compile) {
+        size_t outputOptionPosition = 0U;
+        if (!FindSeparatedCompilerOutputOptionPosition(command.arguments, outputOptionPosition)) {
+            ASCENDLOGE(
+                "Manifest compile command %s must contain a valid separated '-o' output option and a non-empty "
+                "output path; regenerate the JIT resource with '-o' followed by its output path",
+                command.diagnosticLabel.c_str());
+            return ACLRTC_ERROR_FAILURE;
+        }
+        // Caller-supplied compiler options are literal arguments, without manifest placeholder expansion.
+        command.arguments.insert(
+            command.arguments.begin() + static_cast<std::ptrdiff_t>(outputOptionPosition),
+            preparedCommand.compilerOptions.begin(), preparedCommand.compilerOptions.end());
+    }
     return ACLRTC_SUCCESS;
 }
 
@@ -340,33 +350,33 @@ aclError KernelCompilationPlanBuilder::CheckResourceWorktreeDirectory() const
 }
 
 KernelCompilationPlanBuilder::KernelCompilationPlanBuilder(
-    const NormalizedKernelSpecializationRequest& specializationRequest, const CompilationManifest& manifest,
-    fs::path resourceWorktreePath, fs::path externalSourceDirectoryPath)
+    const NormalizedKernelSpecializationRequest& specializationRequest, fs::path resourceWorktreePath,
+    fs::path externalSourceDirectoryPath)
     : specializationRequest_(specializationRequest),
-      borrowedManifest_(manifest),
       resourceWorktreePath_(std::move(resourceWorktreePath)),
       externalSourceDirectoryPath_(std::move(externalSourceDirectoryPath)),
       outputDirectoryPath_(
           resourceWorktreePath_ / (".aclrtc_" + specializationRequest_.specializationSessionId) / "outputs")
 {}
 
-aclError KernelCompilationPlanBuilder::BuildCompilationPlan(KernelCompilationPlan& compilationPlan) const
+aclError KernelCompilationPlanBuilder::PrepareCompilationPlan(
+    const CompilationManifest& manifest, PreparedKernelCompilationPlan& compilationPlan) const
 {
-    aclError result = CheckResourceWorktreeDirectory();
-    if (result != ACLRTC_SUCCESS) {
-        return result;
-    }
-    KernelCompilationPlan plan;
+    PreparedKernelCompilationPlan plan{};
+    plan.sourceDirectory = externalSourceDirectoryPath_.string();
+    plan.constants = manifest.constants;
+    plan.linkInputs = manifest.linkInputs;
     std::optional<size_t> basicCompileCommandIndex;
-    for (const ManifestCommand& spec : borrowedManifest_.commands) {
-        CompilationCommand command;
-        result = BindManifestCommand(spec, command);
-        if (result != ACLRTC_SUCCESS) {
-            return result;
-        }
-        if (!basicCompileCommandIndex.has_value() && spec.objectKind == ManifestObjectKind::Basic &&
-            spec.commandKind == CompilationCommandKind::Compile) {
-            basicCompileCommandIndex = plan.compilationCommands.size();
+    for (const ManifestCommand& spec : manifest.commands) {
+        PreparedCompilationCommand command{
+            spec.commandKind, spec.parallelStage, spec.diagnosticLabel, spec.executable, spec.arguments, {}, {}};
+        if (spec.commandKind == CompilationCommandKind::Compile) {
+            const bool basic = spec.objectKind == ManifestObjectKind::Basic;
+            command.compilerOptions = basic ? specializationRequest_.compilerOptions.basicOptions :
+                                              specializationRequest_.compilerOptions.superKernelOptions;
+            if (basic && !basicCompileCommandIndex.has_value()) {
+                basicCompileCommandIndex = plan.compilationCommands.size();
+            }
         }
         plan.compilationCommands.emplace_back(std::move(command));
     }
@@ -374,22 +384,104 @@ aclError KernelCompilationPlanBuilder::BuildCompilationPlan(KernelCompilationPla
         ASCENDLOGE("Specialization metadata requires a basic compile command in the selected manifest");
         return ACLRTC_ERROR_FAILURE;
     }
-    fs::path metadataObjectPath;
-    result = BuildSpecializationMetadata(plan.compilationCommands[*basicCompileCommandIndex], metadataObjectPath);
+    plan.basicCompileCommandIndex = *basicCompileCommandIndex;
+    AppendLinkCommand(manifest, plan);
+    AppendKernelRenameCommand(plan);
+    if (!CollectCompilationEnvironment(plan)) {
+        return ACLRTC_ERROR_FAILURE;
+    }
+    plan.compilerEnvironment = ProcessCompilationContext::Instance().GetCompilerEnvironment();
+    compilationPlan = std::move(plan);
+    return ACLRTC_SUCCESS;
+}
+
+aclError KernelCompilationPlanBuilder::BuildPreprocessingPlan(
+    const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
+    KernelCompilationPlan& compilationPlan) const
+{
+    aclError status = CheckResourceWorktreeDirectory();
+    if (status != ACLRTC_SUCCESS) {
+        return status;
+    }
+    KernelCompilationPlan plan;
+    plan.compilerEnvironment = preparedPlan.compilerEnvironment;
+    for (const auto& variable : preparedPlan.environmentValues) {
+        plan.compilerEnvironment[variable.first] = variable.second;
+    }
+    for (const PreparedCompilationCommand& preparedCommand : preparedPlan.compilationCommands) {
+        if (preparedCommand.commandKind != CompilationCommandKind::Compile) {
+            continue;
+        }
+        CompilationCommand command;
+        status = BindCompilationCommand(preparedCommand, preparedPlan, command);
+        if (status != ACLRTC_SUCCESS) {
+            return status;
+        }
+        command.arguments.emplace_back("-E");
+        size_t outputOptionPosition = 0U;
+        (void)FindSeparatedCompilerOutputOptionPosition(command.arguments, outputOptionPosition);
+        command.arguments[outputOptionPosition + 1U] =
+            (outputDirectoryPath_ / ("preprocessed_" + std::to_string(plan.compilationCommands.size()) + ".i"))
+                .string();
+        plan.compilationCommands.emplace_back(std::move(command));
+    }
+    plan.requiredOutputDirectoryPaths = {outputDirectoryPath_};
+    BuildConstantSourcePatches(preparedPlan, constants, plan);
+    compilationPlan = std::move(plan);
+    return ACLRTC_SUCCESS;
+}
+
+aclError KernelCompilationPlanBuilder::BuildCompilationPlan(
+    const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
+    KernelCompilationPlan& compilationPlan, const std::vector<PreprocessedCompilationSource>* preprocessedSources) const
+{
+    aclError result = CheckResourceWorktreeDirectory();
     if (result != ACLRTC_SUCCESS) {
         return result;
     }
-    result = BindLinkCommand(borrowedManifest_, metadataObjectPath, plan);
-    if (result != ACLRTC_SUCCESS) {
-        return result;
+    KernelCompilationPlan plan;
+    plan.compilerEnvironment = preparedPlan.compilerEnvironment;
+    for (const auto& variable : preparedPlan.environmentValues) {
+        plan.compilerEnvironment[variable.first] = variable.second;
     }
-    result = BindOutputKernelNameCommand(plan);
-    if (result != ACLRTC_SUCCESS) {
-        return result;
+    plan.linkedKernelElfPath = outputDirectoryPath_ / "linked_kernel.elf";
+    size_t preprocessedSourceIndex = 0U;
+    for (const PreparedCompilationCommand& preparedCommand : preparedPlan.compilationCommands) {
+        CompilationCommand command;
+        result = BindCompilationCommand(preparedCommand, preparedPlan, command);
+        if (result != ACLRTC_SUCCESS) {
+            return result;
+        }
+        if (command.commandKind == CompilationCommandKind::Compile && preprocessedSources != nullptr) {
+            if (preprocessedSourceIndex >= preprocessedSources->size() ||
+                !ReplaceCompilationSourceWithPreprocessed(command, (*preprocessedSources)[preprocessedSourceIndex++])) {
+                return ACLRTC_ERROR_COMPILATION;
+            }
+        }
+        if (command.commandKind == CompilationCommandKind::Link) {
+            fs::path metadataObjectPath;
+            result = BuildSpecializationMetadata(
+                preparedPlan, plan.compilationCommands[preparedPlan.basicCompileCommandIndex], metadataObjectPath);
+            if (result != ACLRTC_SUCCESS) {
+                return result;
+            }
+            command.arguments.insert(
+                command.arguments.end(), {metadataObjectPath.string(), "-o", plan.linkedKernelElfPath.string()});
+        }
+        plan.compilationCommands.emplace_back(std::move(command));
     }
-    result = BuildConstantSourcePatches(plan);
-    if (result != ACLRTC_SUCCESS) {
-        return result;
+    std::set<fs::path> requiredOutputDirectories{outputDirectoryPath_};
+    for (const std::string& input : preparedPlan.linkInputs) {
+        requiredOutputDirectories.emplace(
+            fs::path(ExpandPathAndEnvironmentReferences(input, preparedPlan)).parent_path());
+    }
+    plan.requiredOutputDirectoryPaths.assign(requiredOutputDirectories.begin(), requiredOutputDirectories.end());
+    if (preprocessedSources == nullptr) {
+        BuildConstantSourcePatches(preparedPlan, constants, plan);
+    }
+    if (preprocessedSources != nullptr && preprocessedSourceIndex != preprocessedSources->size()) {
+        ASCENDLOGE("Preprocessed source count does not match formal compilation command count");
+        return ACLRTC_ERROR_COMPILATION;
     }
     compilationPlan = std::move(plan);
     return ACLRTC_SUCCESS;

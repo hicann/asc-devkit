@@ -39,7 +39,8 @@ public:
 
     // Each object writes one temporary file. Success means all I/O is complete and
     // all descriptors are closed; the destination remains untouched until ReplaceDestinationAtomically succeeds.
-    bool WriteTextToTemporaryFile(const std::string& destinationPath, const std::string& text);
+    bool WriteBytesToTemporaryFile(
+        const std::string& destinationPath, const void* bytes, size_t size, mode_t permissions);
     bool CopyFileToTemporaryFile(const std::string& sourcePath, const std::string& destinationPath);
     bool ReplaceDestinationAtomically() noexcept;
 
@@ -165,14 +166,14 @@ int32_t AtomicFileWriter::CreateUniqueTemporaryFile(const std::string& destinati
     return -1;
 }
 
-bool AtomicFileWriter::WriteTextToTemporaryFile(const std::string& destinationPath, const std::string& text)
+bool AtomicFileWriter::WriteBytesToTemporaryFile(
+    const std::string& destinationPath, const void* bytes, size_t size, mode_t permissions)
 {
-    constexpr mode_t privateTextPermissions = 0600;
-    OwnedFileDescriptor output(CreateUniqueTemporaryFile(destinationPath, privateTextPermissions));
+    OwnedFileDescriptor output(CreateUniqueTemporaryFile(destinationPath, permissions));
     if (output.Get() < 0) {
         return false;
     }
-    const bool writeSucceeded = WriteAllBytes(output.Get(), text.data(), text.size());
+    const bool writeSucceeded = WriteAllBytes(output.Get(), static_cast<const char*>(bytes), size);
     const bool closeSucceeded = output.Close();
     temporaryFileWriteSucceeded_ = writeSucceeded && closeSucceeded;
     if (!temporaryFileWriteSucceeded_) {
@@ -613,7 +614,15 @@ bool FileUtils::FinalizeOutput(std::ofstream& output)
 bool FileUtils::WriteTextFileAtomically(const std::string& destinationPath, const std::string& text)
 {
     AtomicFileWriter writer;
-    return writer.WriteTextToTemporaryFile(destinationPath, text) && writer.ReplaceDestinationAtomically();
+    return writer.WriteBytesToTemporaryFile(destinationPath, text.data(), text.size(), 0600) &&
+           writer.ReplaceDestinationAtomically();
+}
+
+bool FileUtils::WriteBinaryFileAtomically(const std::string& destinationPath, const std::vector<uint8_t>& bytes)
+{
+    AtomicFileWriter writer;
+    return writer.WriteBytesToTemporaryFile(destinationPath, bytes.data(), bytes.size(), 0644) &&
+           writer.ReplaceDestinationAtomically();
 }
 
 bool FileUtils::CopyFileAtomically(

@@ -33,10 +33,14 @@ class ProcessCompilationContextTest : public testing::Test {
 protected:
     void SetUp() override
     {
-        if (const char* previous = std::getenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META")) {
-            previousSaveMeta_ = previous;
+        for (const char* name :
+             {"ASCEND_OP_COMPILE_SAVE_KERNEL_META", "ASCEND_RTC_SPECIALIZE_CACHE_DISABLE",
+              "ASCEND_RTC_SPECIALIZE_CACHE_PATH", "ASCEND_RTC_SPECIALIZE_CACHE_SIZE",
+              "ASCEND_RTC_SPECIALIZE_CACHE_CLEAN_RATIO", "HOME"}) {
+            const char* previous = std::getenv(name);
+            previousEnvironment_[name] = previous == nullptr ? std::nullopt : std::optional<std::string>(previous);
+            unsetenv(name);
         }
-        unsetenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META");
         root_ = fs::temp_directory_path() / fs::unique_path("aclrtc_context_%%%%-%%%%");
         fs::create_directories(root_ / "bin");
         std::ofstream script((root_ / "bin/bisheng").string());
@@ -58,10 +62,12 @@ protected:
 
     void TearDown() override
     {
-        if (previousSaveMeta_) {
-            setenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META", previousSaveMeta_->c_str(), 1);
-        } else {
-            unsetenv("ASCEND_OP_COMPILE_SAVE_KERNEL_META");
+        for (const auto& variable : previousEnvironment_) {
+            if (variable.second.has_value()) {
+                setenv(variable.first.c_str(), variable.second->c_str(), 1);
+            } else {
+                unsetenv(variable.first.c_str());
+            }
         }
         (void)context_.specializationFlagDirectory_.RemoveDirectory();
         boost::system::error_code ignored;
@@ -76,7 +82,7 @@ protected:
     // Local instance gives each test the same initial state as a fresh process.
     ProcessCompilationContext context_;
     fs::path root_;
-    std::optional<std::string> previousSaveMeta_;
+    std::map<std::string, std::optional<std::string>> previousEnvironment_;
 };
 
 TEST_F(ProcessCompilationContextTest, CompilesLazilyAndReturnsTheSameObjectPath)
@@ -95,6 +101,112 @@ TEST_F(ProcessCompilationContextTest, CompilesLazilyAndReturnsTheSameObjectPath)
     EXPECT_EQ(ReadFile(root_ / "bin/bisheng.calls"), "compile\n");
     const auto replay = ReadFile(first.parent_path() / "aclrtc_replay.sh");
     EXPECT_NE(replay.find("-DTILING_KEY_VAR=0"), std::string::npos);
+}
+
+TEST_F(ProcessCompilationContextTest, KeepsFirstEnvironmentValueIncludingUnsetAndEmpty)
+{
+    for (const char* initial : std::vector<const char*>{nullptr, "", "first"}) {
+        SCOPED_TRACE(initial == nullptr ? "unset" : initial);
+        ProcessCompilationContext context;
+        constexpr char name[] = "ACLRTC_TEST_PROCESS_CONTEXT_VALUE";
+        initial == nullptr ? unsetenv(name) : setenv(name, initial, 1);
+        const auto expected = initial == nullptr ? std::nullopt : std::optional<std::string>(initial);
+        EXPECT_EQ(context.GetEnvironmentVariable(name), expected);
+        for (const char* changed : {"second", ""}) {
+            ASSERT_EQ(setenv(name, changed, 1), 0);
+            EXPECT_EQ(context.GetEnvironmentVariable(name), expected);
+        }
+        ASSERT_EQ(unsetenv(name), 0);
+        EXPECT_EQ(context.GetEnvironmentVariable(name), expected);
+    }
+}
+
+TEST_F(ProcessCompilationContextTest, ParsesCacheSwitchOnceAndDefaultsInvalidValuesToEnabled)
+{
+    for (const char* value : std::vector<const char*>{nullptr, "0", "1", "", "-1", "+1", " 1", "1 ", "2", "abc"}) {
+        SCOPED_TRACE(value == nullptr ? "unset" : value);
+        value == nullptr ? unsetenv("ASCEND_RTC_SPECIALIZE_CACHE_DISABLE") :
+                           setenv("ASCEND_RTC_SPECIALIZE_CACHE_DISABLE", value, 1);
+        ProcessCompilationContext context;
+        const bool expected = value == nullptr || std::string(value) != "1";
+        EXPECT_EQ(context.IsCacheEnabled(), expected);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_DISABLE", expected ? "1" : "0", 1), 0);
+        EXPECT_EQ(context.IsCacheEnabled(), expected);
+    }
+}
+
+TEST_F(ProcessCompilationContextTest, ResolvesAndSavesDiskCacheConfigurationWithoutCreatingDirectories)
+{
+    ASSERT_EQ(setenv("HOME", root_.c_str(), 1), 0);
+    for (const bool explicitPath : {false, true}) {
+        SCOPED_TRACE(explicitPath);
+        ProcessCompilationContext context;
+        const fs::path relative = root_.filename() / "nested/../cache";
+        if (explicitPath) {
+            ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_PATH", relative.c_str(), 1), 0);
+            ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_SIZE", "2", 1), 0);
+            ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_CLEAN_RATIO", "25", 1), 0);
+        }
+        const auto config = context.GetDiskCacheConfig();
+        EXPECT_EQ(
+            config.directory, explicitPath ? fs::current_path() / root_.filename() / "cache" :
+                                             root_ / ".cache/aclrtc/kernel_specialization");
+        EXPECT_EQ(config.maximumSizeBytes, explicitPath ? 2097152U : 524288000U);
+        EXPECT_EQ(config.cleanupRatio, explicitPath ? 25U : 50U);
+        EXPECT_FALSE(fs::exists(config.directory));
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_PATH", "/changed", 1), 0);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_SIZE", "10", 1), 0);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_CLEAN_RATIO", "75", 1), 0);
+        EXPECT_EQ(context.GetDiskCacheConfig().directory, config.directory);
+        EXPECT_EQ(context.GetDiskCacheConfig().maximumSizeBytes, config.maximumSizeBytes);
+        EXPECT_EQ(context.GetDiskCacheConfig().cleanupRatio, config.cleanupRatio);
+    }
+}
+
+TEST_F(ProcessCompilationContextTest, UsesSavedHomeAndAllowsExplicitDirectoryWithoutHome)
+{
+    EXPECT_TRUE(context_.GetDiskCacheConfig().directory.empty());
+    EXPECT_TRUE(context_.IsCacheEnabled());
+    ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_PATH", root_.c_str(), 1), 0);
+    ProcessCompilationContext explicitContext;
+    EXPECT_EQ(explicitContext.GetDiskCacheConfig().directory, root_);
+    ASSERT_EQ(setenv("HOME", "", 1), 0);
+    ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_PATH", "", 1), 0);
+    ProcessCompilationContext emptyContext;
+    EXPECT_TRUE(emptyContext.GetDiskCacheConfig().directory.empty());
+    ASSERT_EQ(setenv("HOME", root_.c_str(), 1), 0);
+    ProcessCompilationContext savedContext;
+    EXPECT_EQ(savedContext.GetEnvironmentVariable("HOME"), std::optional<std::string>(root_.string()));
+    ASSERT_EQ(setenv("HOME", "/changed-home", 1), 0);
+    EXPECT_EQ(savedContext.GetDiskCacheConfig().directory, root_ / ".cache/aclrtc/kernel_specialization");
+}
+
+TEST_F(ProcessCompilationContextTest, ValidatesDiskCacheNumbersAndConversionBoundaries)
+{
+    for (const char* value : {"", "0", "-1", "+1", " 1", "1 ", "abc", "1.5", "500MB", "50%", "18446744073709551616"}) {
+        SCOPED_TRACE(value);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_SIZE", value, 1), 0);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_CLEAN_RATIO", value, 1), 0);
+        ProcessCompilationContext context;
+        EXPECT_EQ(context.GetDiskCacheConfig().maximumSizeBytes, 524288000U);
+        EXPECT_EQ(context.GetDiskCacheConfig().cleanupRatio, 50U);
+    }
+    struct Boundary {
+        const char* size;
+        const char* ratio;
+        uint64_t expectedBytes;
+        uint32_t expectedRatio;
+    };
+    for (const auto& boundary :
+         {Boundary{"1", "1", 1048576U, 1U}, Boundary{"17592186044415", "100", 18446744073708503040ULL, 100U},
+          Boundary{"17592186044416", "101", 524288000U, 50U}}) {
+        SCOPED_TRACE(boundary.size);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_SIZE", boundary.size, 1), 0);
+        ASSERT_EQ(setenv("ASCEND_RTC_SPECIALIZE_CACHE_CLEAN_RATIO", boundary.ratio, 1), 0);
+        ProcessCompilationContext context;
+        EXPECT_EQ(context.GetDiskCacheConfig().maximumSizeBytes, boundary.expectedBytes);
+        EXPECT_EQ(context.GetDiskCacheConfig().cleanupRatio, boundary.expectedRatio);
+    }
 }
 
 TEST_F(ProcessCompilationContextTest, ConcurrentRequestsCompileOnce)

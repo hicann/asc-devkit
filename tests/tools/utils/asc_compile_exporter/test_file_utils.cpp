@@ -235,6 +235,23 @@ TEST_F(ModuleTest, FileUtilsWritesTextAtomicallyWithPrivatePermissions)
     EXPECT_EQ(status.st_mode & 0777U, 0600U);
 }
 
+TEST_F(ModuleTest, FileUtilsWritesBinaryAtomicallyWithOrdinaryOutputPermissions)
+{
+    const std::string destination = root_ + "/binary-output";
+    WriteTestFile(destination, "original");
+    const std::vector<uint8_t> bytes{0x7fU, 0U, 0xffU};
+    const mode_t previousMask = umask(0022);
+    const bool written = FileUtils::WriteBinaryFileAtomically(destination, bytes);
+    umask(previousMask);
+    ASSERT_TRUE(written);
+    EXPECT_EQ(ReadTestFile(destination), std::string("\x7f\0\xff", 3U));
+    struct stat status {};
+    ASSERT_EQ(stat(destination.c_str(), &status), 0);
+    EXPECT_EQ(status.st_mode & 0777U, 0644U);
+    EXPECT_FALSE(FileUtils::WriteBinaryFileAtomically(root_, bytes));
+    EXPECT_EQ(ReadTestFile(destination), std::string("\x7f\0\xff", 3U));
+}
+
 TEST_F(ModuleTest, FileUtilsRemovesTemporaryCopyOnCallbackException)
 {
     const std::string source = root_ + "/source";
@@ -302,14 +319,25 @@ TEST_F(ModuleTest, FileUtilsKeepsExistingFilesWhenTemporaryNamesCollide)
     const std::string destination = root_ + "/output";
     const std::string victim = root_ + "/victim";
     WriteTestFile(victim, "preserve");
-    for (uint64_t sequence = 0U; sequence < 128U; ++sequence) {
+    uint64_t nextSequence = 0U;
+    ASSERT_TRUE(FileUtils::CopyFileAtomically(victim, root_ + "/probe", [&]() {
+        for (const auto& entry : fs::directory_iterator(root_)) {
+            const std::string name = entry.path().filename().string();
+            if (name.find("probe.asc_tmp_") == 0U) {
+                nextSequence = std::stoull(name.substr(name.find_last_of('_') + 1U)) + 1U;
+            }
+        }
+        return true;
+    }));
+    ASSERT_NE(nextSequence, 0U);
+    for (uint64_t sequence = nextSequence; sequence < nextSequence + 32U; ++sequence) {
         const std::string collision =
             destination + ".asc_tmp_" + std::to_string(getpid()) + "_" + std::to_string(sequence);
         ASSERT_EQ(symlink(victim.c_str(), collision.c_str()), 0);
     }
     EXPECT_FALSE(FileUtils::WriteTextFileAtomically(destination, "unexpected"));
     EXPECT_EQ(ReadTestFile(victim), "preserve");
-    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 129);
+    EXPECT_EQ(std::distance(fs::directory_iterator(root_), fs::directory_iterator()), 34);
 }
 
 TEST_F(ModuleTest, FileUtilsRejectsMissingCopySourceBeforeCallingCleanup)

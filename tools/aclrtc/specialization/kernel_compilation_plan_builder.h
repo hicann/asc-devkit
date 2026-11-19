@@ -14,33 +14,71 @@
 #include "compilation_manifest.h"
 
 #include <boost/filesystem/path.hpp>
+#include <map>
 
 namespace ascendc {
 namespace aclrtc {
 
+struct KernelConstantSnapshot;
+
+struct PreprocessedCompilationSource {
+    boost::filesystem::path sourcePath;
+    boost::filesystem::path preprocessedPath;
+};
+
+struct PreparedCompilationCommand {
+    CompilationCommandKind commandKind;
+    std::optional<uint32_t> parallelStage;
+    std::string diagnosticLabel;
+    std::string executable;
+    std::vector<std::string> arguments;
+    std::vector<std::string> compilerOptions;
+    std::optional<KernelSymbolRename> kernelSymbolRename;
+};
+
+struct PreparedKernelCompilationPlan {
+    std::vector<ManifestConstant> constants;
+    std::vector<PreparedCompilationCommand> compilationCommands;
+    std::vector<std::string> linkInputs;
+    size_t basicCompileCommandIndex{0U};
+    std::string sourceDirectory;
+    std::map<std::string, std::string> environmentValues;
+    std::map<std::string, std::optional<std::string>> compilerEnvironment;
+};
+
 class KernelCompilationPlanBuilder final {
 public:
     KernelCompilationPlanBuilder(
-        const NormalizedKernelSpecializationRequest& specializationRequest, const CompilationManifest& manifest,
+        const NormalizedKernelSpecializationRequest& specializationRequest,
         boost::filesystem::path resourceWorktreePath, boost::filesystem::path externalSourceDirectoryPath);
 
-    aclError BuildCompilationPlan(KernelCompilationPlan& compilationPlan) const;
+    aclError PrepareCompilationPlan(
+        const CompilationManifest& manifest, PreparedKernelCompilationPlan& compilationPlan) const;
+    aclError BuildPreprocessingPlan(
+        const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
+        KernelCompilationPlan& compilationPlan) const;
+    aclError BuildCompilationPlan(
+        const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
+        KernelCompilationPlan& compilationPlan,
+        const std::vector<PreprocessedCompilationSource>* preprocessedSources = nullptr) const;
 
 private:
     aclError CheckResourceWorktreeDirectory() const;
-    bool ExpandPathAndEnvironmentReferences(
-        const std::string& text, const std::string& location, std::string& resolvedText) const;
-    aclError BuildConstantSourcePatches(KernelCompilationPlan& plan) const;
-    aclError BindManifestCommand(const ManifestCommand& spec, CompilationCommand& compilationCommand) const;
-    aclError BuildSpecializationMetadata(
-        const CompilationCommand& basicCompileCommand, boost::filesystem::path& objectPath) const;
-    aclError BindLinkCommand(
-        const CompilationManifest& manifest, const boost::filesystem::path& metadataObjectPath,
+    std::string ExpandPathAndEnvironmentReferences(
+        const std::string& text, const PreparedKernelCompilationPlan& plan) const;
+    void BuildConstantSourcePatches(
+        const PreparedKernelCompilationPlan& preparedPlan, const KernelConstantSnapshot& constants,
         KernelCompilationPlan& plan) const;
-    aclError BindOutputKernelNameCommand(KernelCompilationPlan& plan) const;
+    void AppendLinkCommand(const CompilationManifest& manifest, PreparedKernelCompilationPlan& plan) const;
+    void AppendKernelRenameCommand(PreparedKernelCompilationPlan& plan) const;
+    aclError BuildSpecializationMetadata(
+        const PreparedKernelCompilationPlan& preparedPlan, const CompilationCommand& basicCommand,
+        boost::filesystem::path& objectPath) const;
+    aclError BindCompilationCommand(
+        const PreparedCompilationCommand& preparedCommand, const PreparedKernelCompilationPlan& preparedPlan,
+        CompilationCommand& command) const;
 
     const NormalizedKernelSpecializationRequest& specializationRequest_;
-    const CompilationManifest& borrowedManifest_;
     boost::filesystem::path resourceWorktreePath_;
     boost::filesystem::path externalSourceDirectoryPath_;
     boost::filesystem::path outputDirectoryPath_;

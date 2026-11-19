@@ -61,9 +61,9 @@ bool ReadElfName(
             static_cast<unsigned long long>(strings.sh_offset), static_cast<unsigned long long>(strings.sh_size));
         return false;
     }
-    const auto* name = reinterpret_cast<const char*>(elf.data() + strings.sh_offset + offset);
+    const auto* name = elf.data() + strings.sh_offset + offset;
     const auto* limit = name + (strings.sh_size - offset);
-    const auto* end = std::find(name, limit, '\0');
+    const auto* end = std::find(name, limit, static_cast<uint8_t>(0));
     if (end == limit) {
         ASCENDLOGE(
             "ELF name is not NUL-terminated within the string table: name_offset=%u table_offset=%llu table_size=%llu",
@@ -228,8 +228,10 @@ CompilationPlanExecutor::CompilationPlanExecutor(
     : specializationDiagnostics_(specializationDiagnostics), commandExecutionLimits_(executionLimits)
 {}
 
-aclError CompilationPlanExecutor::ExecuteCompilationPlan(const KernelCompilationPlan& compilationPlan) const
+aclError CompilationPlanExecutor::ExecuteCompilationPlan(
+    const KernelCompilationPlan& compilationPlan, const std::string& preprocessingKernelName) const
 {
+    const bool isPreprocessing = !preprocessingKernelName.empty();
     try {
         for (const CompilationCommand& plannedCommand : compilationPlan.compilationCommands) {
             CompilationCommand compilationCommand = plannedCommand;
@@ -238,19 +240,33 @@ aclError CompilationPlanExecutor::ExecuteCompilationPlan(const KernelCompilation
                 return preparationStatus;
             }
             ASCENDLOGI(
-                "Executing command %s with %s", compilationCommand.diagnosticLabel.c_str(),
-                compilationCommand.executablePath.c_str());
-            specializationDiagnostics_.AppendCommandToReplayScript(compilationCommand);
+                "Executing command %s with %s: session=%s", compilationCommand.diagnosticLabel.c_str(),
+                compilationCommand.executablePath.c_str(),
+                specializationDiagnostics_.GetSpecializationSessionId().c_str());
+            specializationDiagnostics_.AppendCommandToReplayScript(
+                compilationCommand, compilationPlan.compilerEnvironment);
             specializationDiagnostics_.AppendCommandExecutionHeaderToLog(compilationCommand);
             ProcessExecutorResult executorResult;
-            const aclError commandExecutionStatus = ExecuteCompilationCommand(compilationCommand, executorResult);
+            const aclError commandExecutionStatus = ExecuteCompilationCommand(
+                compilationCommand, compilationPlan.compilerEnvironment, isPreprocessing, executorResult);
             specializationDiagnostics_.AppendCommandExecutionResultToLog(compilationCommand, executorResult);
             if (commandExecutionStatus != ACLRTC_SUCCESS) {
-                ASCENDLOGE(
-                    "Command %s failed: outcome=%s code=%d elapsed_ms=%lld", compilationCommand.diagnosticLabel.c_str(),
-                    executorResult.GetOutcomeName(), static_cast<int>(executorResult.terminationCode),
-                    static_cast<long long>(executorResult.elapsedTime.count()));
-                specializationDiagnostics_.LogCommandFailureRecoveryHint();
+                if (isPreprocessing) {
+                    ASCENDLOGW(
+                        "Kernel %s preprocessing failed: command=%s outcome=%s code=%d elapsed_ms=%lld; "
+                        "skip cache and use normal compilation",
+                        preprocessingKernelName.c_str(), compilationCommand.diagnosticLabel.c_str(),
+                        executorResult.GetOutcomeName(), static_cast<int>(executorResult.terminationCode),
+                        static_cast<long long>(executorResult.elapsedTime.count()));
+                } else {
+                    ASCENDLOGE(
+                        "Command %s failed: session=%s outcome=%s code=%d elapsed_ms=%lld",
+                        compilationCommand.diagnosticLabel.c_str(),
+                        specializationDiagnostics_.GetSpecializationSessionId().c_str(),
+                        executorResult.GetOutcomeName(), static_cast<int>(executorResult.terminationCode),
+                        static_cast<long long>(executorResult.elapsedTime.count()));
+                    specializationDiagnostics_.LogCommandFailureRecoveryHint();
+                }
                 return commandExecutionStatus;
             }
         }
@@ -268,14 +284,25 @@ aclError CompilationPlanExecutor::ExecuteCompilationPlan(const KernelCompilation
 }
 
 aclError CompilationPlanExecutor::ExecuteCompilationCommand(
-    const CompilationCommand& compilationCommand, ProcessExecutorResult& executorResult) const
+    const CompilationCommand& compilationCommand,
+    const std::map<std::string, std::optional<std::string>>& compilerEnvironment, bool isPreprocessing,
+    ProcessExecutorResult& executorResult) const
 {
+    // Preserve environment inheritance; a captured nullopt explicitly unsets the variable.
     ProcessExecutorRequest executorRequest;
+    for (const auto& variable : compilerEnvironment) {
+        if (variable.second.has_value()) {
+            executorRequest.environmentOverrides.emplace_back(variable.first, *variable.second);
+        } else {
+            executorRequest.removedEnvironmentVariables.emplace_back(variable.first);
+        }
+    }
     executorRequest.arguments.reserve(compilationCommand.arguments.size() + 1U);
     executorRequest.arguments.emplace_back(compilationCommand.executablePath.string());
     executorRequest.arguments.insert(
         executorRequest.arguments.end(), compilationCommand.arguments.begin(), compilationCommand.arguments.end());
     executorRequest.mirroredOutputLogFilePath = specializationDiagnostics_.GetCompilationLogFilePath();
+    executorRequest.logOutputAsDebug = isPreprocessing;
     executorRequest.executionTimeout = compilationCommand.commandKind == CompilationCommandKind::Compile ?
                                            commandExecutionLimits_.compileCommandTimeout :
                                            commandExecutionLimits_.objectCopyAndLinkCommandTimeout;

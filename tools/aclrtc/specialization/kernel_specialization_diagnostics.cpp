@@ -11,8 +11,10 @@
 #include "kernel_specialization_diagnostics.h"
 
 #include "ascendc_tool_log.h"
+#include "directory_cleanup_guard.h"
 #include "file_utils.h"
 #include "process_executor.h"
+#include "process_compilation_context.h"
 
 #include <boost/filesystem.hpp>
 #include <cerrno>
@@ -141,15 +143,61 @@ void KernelSpecializationDiagnostics::WriteManifestSnapshot(const nlohmann::json
         });
 }
 
-void KernelSpecializationDiagnostics::AppendCommandToReplayScript(const CompilationCommand& compilationCommand) noexcept
+void KernelSpecializationDiagnostics::WriteCacheInputSnapshot(
+    const fs::path& resourceWorktreePath, const nlohmann::json& cacheInput) noexcept
+{
+    if (cacheInput.is_null()) {
+        return;
+    }
+    try {
+        DirectoryCleanupGuard directory;
+        if (!directory.CreateUniqueSubdirectory(resourceWorktreePath.parent_path().string(), "cache-inputs")) {
+            ASCENDLOGW(
+                "Failed to create cache input diagnostics directory: parent=%s",
+                resourceWorktreePath.parent_path().c_str());
+            return;
+        }
+        const std::string path = (fs::path(directory.GetDirectoryPath()) / "aclrtc_cache_inputs.json").string();
+        if (!FileUtils::WriteTextFileAtomically(path, cacheInput.dump(2) + '\n')) {
+            ASCENDLOGW(
+                "Failed to save kernel compilation cache inputs: path=%s; keep specialization result", path.c_str());
+            return;
+        }
+        directory.PreserveDirectory();
+        ASCENDLOGI("Kernel compilation cache inputs saved: path=%s", path.c_str());
+    } catch (const std::exception& exception) {
+        ASCENDLOGW(
+            "Failed to save kernel compilation cache inputs: resource_worktree=%s error=%s",
+            resourceWorktreePath.c_str(), exception.what());
+    }
+}
+
+void KernelSpecializationDiagnostics::AppendCommandToReplayScript(
+    const CompilationCommand& compilationCommand,
+    const std::map<std::string, std::optional<std::string>>& compilerEnvironment) noexcept
 {
     if (!diagnosticsEnabled_) {
         return;
     }
     WriteDiagnosticTextBestEffort(
         resourceWorktreePath_, DIAGNOSTIC_REPLAY_SCRIPT_FILE_NAME, std::ios::app,
-        compilationCommand.diagnosticLabel.c_str(), [&compilationCommand]() {
-            std::string replayLine = QuoteArgumentForReplayScript(compilationCommand.executablePath.string());
+        compilationCommand.diagnosticLabel.c_str(), [&compilationCommand, &compilerEnvironment]() {
+            std::string replayLine;
+            if (!compilerEnvironment.empty()) {
+                replayLine = "env";
+                for (const auto& variable : compilerEnvironment) {
+                    if (!variable.second.has_value()) {
+                        replayLine += " -u " + QuoteArgumentForReplayScript(variable.first);
+                    }
+                }
+                for (const auto& variable : compilerEnvironment) {
+                    if (variable.second.has_value()) {
+                        replayLine += " " + QuoteArgumentForReplayScript(variable.first + "=" + *variable.second);
+                    }
+                }
+                replayLine += " ";
+            }
+            replayLine += QuoteArgumentForReplayScript(compilationCommand.executablePath.string());
             for (const std::string& argument : compilationCommand.arguments) {
                 replayLine += " " + QuoteArgumentForReplayScript(argument);
             }
@@ -194,6 +242,12 @@ void KernelSpecializationDiagnostics::AppendCommandExecutionResultToLog(
 
 void KernelSpecializationDiagnostics::LogCommandFailureRecoveryHint() const noexcept
 {
+    if (ProcessCompilationContext::Instance().IsCacheEnabled()) {
+        ASCENDLOGW("Intermediate compilation artifacts are not retained while caching is enabled; "
+                   "set ASCEND_RTC_SPECIALIZE_CACHE_DISABLE=1 and ASCEND_OP_COMPILE_SAVE_KERNEL_META=1 "
+                   "to save compilation diagnostics");
+        return;
+    }
     if (!diagnosticsEnabled_) {
         ASCENDLOGI("Set ASCEND_OP_COMPILE_SAVE_KERNEL_META=1 and retry to retain the resource worktree and save "
                    "specialization diagnostics");
@@ -207,19 +261,21 @@ void KernelSpecializationDiagnostics::LogCommandFailureRecoveryHint() const noex
 }
 
 void KernelSpecializationDiagnostics::WriteSpecializationResult(
-    const fs::path& outputElfPath, KernelElfPublicationStatus publicationStatus) noexcept
+    const fs::path& outputElfPath, aclError specializationStatus, const char* stage) noexcept
 {
     if (!diagnosticsEnabled_) {
         return;
     }
     WriteDiagnosticTextBestEffort(
         resourceWorktreePath_, DIAGNOSTIC_RESULT_FILE_NAME, std::ios::trunc, "",
-        [this, &outputElfPath, publicationStatus]() {
+        [this, &outputElfPath, specializationStatus, stage]() {
             constexpr int32_t diagnosticJsonIndentationWidth = 2;
             nlohmann::json resultJson{
                 {"specialization_session_id", specializationSessionId_},
                 {"output_path", outputElfPath.string()},
-                {"output_published", publicationStatus == KernelElfPublicationStatus::Published},
+                {"output_published", specializationStatus == ACLRTC_SUCCESS},
+                {"status", specializationStatus},
+                {"stage", stage},
             };
             return resultJson.dump(diagnosticJsonIndentationWidth) + '\n';
         });
