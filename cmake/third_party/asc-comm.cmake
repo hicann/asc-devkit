@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------------------------------------
 
 # 后续如果更新asc-comm代码需要同步更新至devkit run包需要更新change id
-set(ASC_COMM_TAG_ID ac5a9022c8787c5b104513166093014ef4e5ff85)
+set(ASC_COMM_TAG_ID f702a65bbfec65b8c0983cfd320606a89cf4a374)
 
 # asc-comm 与 asc-devkit 按同级目录放置。路径以本文件所在目录(<devkit>/cmake/third_party)为锚，
 # 对于CI环境已经存在asc-comm代码, 不去拉取代码否则使用submodule方式拉取asc-comm仓代码
@@ -53,9 +53,12 @@ else()
     get_filename_component(ASC_COMM_SOURCE_PATH ${ASC_COMM_SOURCE_DIR} REALPATH)
 endif()
 
-# asc-comm 迁出后，将 src 与 include 目录统一打包到 comm_api（hcomm 除外）；
-# hcomm 的 include 和 impl 代码分别打包到 adv_api 和 adv_api/detail 下，
-# 并在 comm_api 下建立 hcomm 的软链接指向 adv_api。
+# asc-comm 迁出后，src 与 include 的公共头统一打包到 comm_api（ain/jetty/asccomm）；
+# hcomm 已下沉到 src/aicore/legacy/hcomm（仅保留兼容旧接口所需内容）：
+#   - legacy 公开头打包到 asc/include/adv_api/hcomm/，安装路径与软链接保持不变
+#   - 引擎实现（src/aicore/asccomm）随 src 扫描打包到 asc/impl/comm_api/aicore/asccomm/
+#   - legacy 适配层打包到 asccomm/impl/，新旧公开头以相对路径包含 comm_api 下实现源码
+#   - asccomm 公开头实体在 asc/include/comm_api/aicore/asccomm/（无软链接）
 set(ASC_COMM_SRC_DIR ${ASC_COMM_SOURCE_PATH}/src)
 set(ASC_COMM_INCLUDE_DIR ${ASC_COMM_SOURCE_PATH}/include)
 if(NOT EXISTS ${ASC_COMM_SRC_DIR})
@@ -65,43 +68,53 @@ if(NOT EXISTS ${ASC_COMM_INCLUDE_DIR})
     message(FATAL_ERROR "[ThirdPartyLib][asc-comm] Missing include dir: ${ASC_COMM_INCLUDE_DIR}")
 endif()
 
-# 将 src 下代码（hcomm 除外）统一打包到 asc/impl/comm_api/
+# 将 src 下代码（legacy 除外）统一打包到 asc/impl/comm_api/
+# （aicore/asccomm 引擎实现随扫描进入 asc/impl/comm_api/aicore/asccomm/）
 install(DIRECTORY ${ASC_COMM_SRC_DIR}/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/comm_api
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
-    REGEX "aicore/hcomm" EXCLUDE
+    REGEX "legacy" EXCLUDE
 )
 
-# 将 include 下代码（hcomm 和 direct_drive 除外）统一打包到 asc/include/comm_api/
+# 将 legacy jetty 公开头实体打包到 asc/include/comm_api/aicore/jetty/（原路径不变）
+install(DIRECTORY ${ASC_COMM_SRC_DIR}/aicore/legacy/jetty/
+    DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore/jetty
+    COMPONENT asc-devkit
+    FILES_MATCHING PATTERN "*.h"
+)
+
+# 将 include 下代码（direct_drive 除外）统一打包到 asc/include/comm_api/
+# （ain/jetty/asccomm 公开头实体随扫描进入 asc/include/comm_api/aicore/）
 install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
-    PATTERN "hcomm" EXCLUDE
-    REGEX "aicore/hcomm" EXCLUDE
     REGEX "direct_drive" EXCLUDE
 )
 
-# 将 hcomm 的 include 打包到 asc/include/adv_api/hcomm/
-install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/aicore/hcomm/
+
+# （安装路径与原版本一致，asc/include/comm_api/aicore/hcomm 为兼容软链接）
+install(DIRECTORY ${ASC_COMM_SRC_DIR}/aicore/legacy/hcomm/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/adv_api/hcomm
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
+    REGEX "impl" EXCLUDE
 )
 
-# 将 hcomm 的 impl 代码打包到 asc/impl/adv_api/detail/hcomm/
-install(DIRECTORY ${ASC_COMM_SRC_DIR}/aicore/hcomm/
-    DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/adv_api/detail/hcomm
+# 将 legacy hcomm 适配层打包到 asc/impl/comm_api/aicore/asccomm/impl/
+# （引擎实现已在 asc/impl/comm_api/aicore/asccomm/；新旧公开头均以相对路径
+#   指向 comm_api 下的实现源码，适配层与引擎同树解析）
+install(DIRECTORY ${ASC_COMM_SRC_DIR}/aicore/legacy/hcomm/impl/
+    DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore/asccomm/impl
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
 )
 
-# 在 comm_api 下为 hcomm 建立软链接，指向 adv_api 下的实际内容
+# 为 legacy hcomm 建立 adv_api 兼容软链接（实体在 comm_api/aicore/hcomm）；
+# 引擎与 asccomm 公开头均为 comm_api 下的实际文件，无需软链接
 install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore)" COMPONENT asc-devkit)
-install(CODE "file(MAKE_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore)" COMPONENT asc-devkit)
 install(CODE "file(CREATE_LINK ../../adv_api/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/include/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
-install(CODE "file(CREATE_LINK ../../adv_api/detail/hcomm \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBRARY_DIR}/asc/impl/comm_api/aicore/hcomm SYMBOLIC)" COMPONENT asc-devkit)
 
 # AICPU 公共 API 头由 asc-devkit 直接交付；运行期库仍由 runtime 包提供。
 set(ASC_COMM_AICPU_HEADER_DIR ${ASC_COMM_SOURCE_PATH}/include/aicpu/hcomm)

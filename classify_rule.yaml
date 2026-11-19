@@ -35,14 +35,14 @@ asc-devkit:
       - impl/adv_api/detail/activation/**/*.h
       - impl/adv_api/detail/normalization/**/*.h
       - impl/adv_api/detail/common/common.h
-      - impl/adv_api/detail/hcomm/impl/hcomm_impl_def.h
-      - impl/adv_api/detail/hcomm/impl/hcomm_v220_impl.h
-      - impl/adv_api/detail/hcomm/impl/hcomm_v310_impl.h
-      - impl/adv_api/detail/hcomm/common/hcomm_base.h
-      - impl/adv_api/detail/hcomm/common/hcomm_inner_def.h
-      - impl/adv_api/detail/hcomm/impl/platform_v220/hcomm_aiv_def.h
-      - impl/adv_api/detail/hcomm/impl/platform_v310/hcomm_aiv_roce_def.h
-      - impl/adv_api/detail/hcomm/impl/platform_v310/hcomm_aiv_urma_def.h
+      - impl/comm_api/aicore/asccomm/impl/asccomm_impl_def.h
+      - impl/comm_api/aicore/asccomm/impl/asccomm_v220_impl.h
+      - impl/comm_api/aicore/asccomm/impl/asccomm_v310_impl.h
+      - impl/comm_api/aicore/asccomm/common/asccomm_base.h
+      - impl/comm_api/aicore/asccomm/common/asccomm_inner_def.h
+      - impl/comm_api/aicore/asccomm/impl/platform_v220/asccomm_aiv_def.h
+      - impl/comm_api/aicore/asccomm/impl/platform_v310/asccomm_aiv_roce_def.h
+      - impl/comm_api/aicore/asccomm/impl/platform_v310/asccomm_aiv_urma_def.h
       - impl/basic_api/dav_c100/kernel_operator_dump_tensor_impl.h
       - impl/basic_api/dav_m310/kernel_operator_dump_tensor_impl.h
       - impl/basic_api/dav_m310/kernel_operator_common_impl.h
