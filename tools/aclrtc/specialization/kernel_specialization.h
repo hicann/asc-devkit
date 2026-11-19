@@ -12,26 +12,14 @@
 #define ASCENDC_ACLRTC_KERNEL_SPECIALIZATION_H
 
 #include "kernel_specialization_types.h"
-#include "kernel_compilation_memory_cache.h"
-
-#include <memory>
 
 #include <nlohmann/json.hpp>
 
 namespace ascendc {
-namespace specialization_compile {
-struct ResourceEntry;
-} // namespace specialization_compile
 namespace aclrtc {
 
 class KernelCompilationWorkspace;
 class KernelSpecializationDiagnostics;
-struct PreparedKernelCompilationPlan;
-struct KernelCompilationCacheInput;
-struct KernelSpecializationInputs;
-struct KernelElfBuildOutput;
-struct KernelPreprocessingSnapshot;
-struct PreprocessedCompilationSource;
 
 struct MaterializedKernelCompilationResource {
     nlohmann::json manifest;
@@ -44,38 +32,16 @@ public:
     aclError RunKernelSpecialization(const aclrtcKernelSpecRequest* apiRequest, const char* outputElfPath) const;
 
 private:
-    static bool BuildPreprocessedCacheInput(
-        const KernelSpecializationInputs& inputs, KernelPreprocessingSnapshot& snapshot);
-    static aclError PrepareSpecializationInputs(
-        const NormalizedKernelSpecializationRequest& specializationRequest,
-        const specialization_compile::ResourceEntry*& resource, PreparedKernelCompilationPlan& preparedPlan,
-        KernelCompilationCacheInput& cacheInput, aclError& preparationStatus);
-
-    aclError RunUncachedKernelSpecialization(
-        const KernelSpecializationInputs& inputs, aclError preparationStatus) const;
-    aclError GetAndPublishKernelElf(const KernelSpecializationInputs& inputs) const;
-    aclError GetOrBuildKernelElf(
-        const KernelSpecializationInputs& inputs, KernelPreprocessingSnapshot& snapshot,
-        KernelElfBuildOutput& output) const;
-    static aclError CompileKernelPlan(
-        const NormalizedKernelSpecializationRequest& request, const MaterializedKernelCompilationResource& resource,
-        const PreparedKernelCompilationPlan& preparedPlan, const KernelCompilationCacheInput& cacheInput,
-        const std::vector<PreprocessedCompilationSource>* preprocessedSources, KernelElfBuildOutput& output);
-
-    static aclError LoadCompilationResource(
-        const std::string& resourceId, const specialization_compile::ResourceEntry*& resource);
-    static aclError MaterializeCompilationResource(
-        const std::string& resourceId, const specialization_compile::ResourceEntry& resource,
-        MaterializedKernelCompilationResource& compilationResource);
+    static aclError LoadAndMaterializeCompilationResource(
+        const std::string& resourceId, MaterializedKernelCompilationResource& compilationResource);
 
     aclError RunSpecializationWithMaterializedResource(
         const NormalizedKernelSpecializationRequest& specializationRequest,
-        MaterializedKernelCompilationResource compilationResource, const PreparedKernelCompilationPlan& preparedPlan,
-        const KernelCompilationCacheInput& cacheInput, aclError preparationStatus) const;
+        MaterializedKernelCompilationResource compilationResource) const;
 
     static aclError ReportSpecializationStatus(
         const NormalizedKernelSpecializationRequest& specializationRequest,
-        KernelSpecializationDiagnostics* diagnostics, aclError specializationStatus, const char* stage) noexcept;
+        KernelSpecializationDiagnostics& diagnostics, aclError specializationStatus) noexcept;
 
     aclError PublishKernelElf(
         const boost::filesystem::path& linkedKernelElfPath, const boost::filesystem::path& outputElfPath,

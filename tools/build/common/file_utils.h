@@ -55,7 +55,6 @@ public:
 
     static bool ReadRegularFile(const std::string& path, uintmax_t maximum, std::vector<uint8_t>& data);
     static bool FinalizeOutput(std::ofstream& output);
-    static bool WriteBinaryFileAtomically(const std::string& destinationPath, const std::vector<uint8_t>& bytes);
     static bool WriteTextFileAtomically(const std::string& destinationPath, const std::string& text);
     // Runs beforeReplacement after copying and closing both files, before replacing
     // the destination. A false result or exception leaves the destination unchanged;

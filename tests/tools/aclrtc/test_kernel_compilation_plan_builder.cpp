@@ -9,8 +9,6 @@
  */
 
 #include "specialization/kernel_compilation_plan_builder.h"
-#include "specialization/kernel_compilation_cache_input.h"
-#include "specialization/resource_registry.h"
 #include "specialization/process_compilation_context.h"
 #include "specialization/compilation_manifest_parser.h"
 
@@ -29,7 +27,6 @@
 
 namespace {
 namespace fs = boost::filesystem;
-using namespace ascendc::aclrtc;
 using Json = nlohmann::json;
 using ascendc::aclrtc::CompilationCommandKind;
 using ascendc::aclrtc::KernelCompilationPlan;
@@ -70,9 +67,6 @@ public:
         auto& metadata = ascendc::aclrtc::ProcessCompilationContext::Instance();
         (void)metadata.specializationFlagDirectory_.RemoveDirectory();
         metadata.specializationFlagConfiguration_.clear();
-        metadata.environmentValues_.clear();
-        metadata.toolchainTimestampsRead_ = false;
-        metadata.toolchainTimestamps_.reset();
         static uint64_t sequence = 0;
         rootPath_ = fs::temp_directory_path() /
                     ("aclrtc_plan_test_" + std::to_string(getpid()) + "_" + std::to_string(sequence++));
@@ -208,18 +202,7 @@ aclError BuildPlanFromManifest(
     if (status != ascendc::aclrtc::ACLRTC_SUCCESS) {
         return status;
     }
-    KernelCompilationPlanBuilder builder(request, worktree, sourceDirectory);
-    PreparedKernelCompilationPlan preparedPlan;
-    const aclError preparationStatus = builder.PrepareCompilationPlan(manifest, preparedPlan);
-    if (preparationStatus != ACLRTC_SUCCESS) {
-        return preparationStatus;
-    }
-    KernelConstantSnapshot constants;
-    const aclError snapshotStatus = CaptureKernelConstants(request, preparedPlan.constants, constants);
-    if (snapshotStatus != ACLRTC_SUCCESS) {
-        return snapshotStatus;
-    }
-    return builder.BuildCompilationPlan(preparedPlan, constants, plan);
+    return KernelCompilationPlanBuilder(request, manifest, worktree, sourceDirectory).BuildCompilationPlan(plan);
 }
 
 TEST(CompilationManifestParserTest, RepeatedSelectionsDoNotRetainPartialResults)
@@ -242,7 +225,7 @@ TEST(KernelCompilationPlanBuilderTest, BuildsRepeatedPlansWithoutMutatingParsedC
     KernelPlanTestWorkspace workspace;
     ScopedEnvironmentVariable toolchain("ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string());
     ScopedEnvironmentVariable ascendHome("ASCEND_HOME_PATH", workspace.ToolchainPath().string());
-    uint8_t bytes[] = {1, 2};
+    const uint8_t bytes[] = {1, 2};
     const void* addresses[] = {bytes};
     auto request = CreateRequest(workspace, addresses, nullptr);
     ascendc::aclrtc::CompilationManifest manifest;
@@ -251,109 +234,14 @@ TEST(KernelCompilationPlanBuilderTest, BuildsRepeatedPlansWithoutMutatingParsedC
         ascendc::aclrtc::CompilationManifestParser(json).ParseSelected(
             request.kernelName, request.enableSuperKernel, manifest),
         ascendc::aclrtc::ACLRTC_SUCCESS);
-    KernelCompilationPlanBuilder builder(request, workspace.ResourcePath(), workspace.SourceDirectoryPath());
-    PreparedKernelCompilationPlan preparedPlan;
-    ASSERT_EQ(builder.PrepareCompilationPlan(manifest, preparedPlan), ACLRTC_SUCCESS);
-    KernelConstantSnapshot constants;
-    ASSERT_EQ(CaptureKernelConstants(request, preparedPlan.constants, constants), ACLRTC_SUCCESS);
-    bytes[0] = 99U;
-    request.borrowedKernelArgumentDataPointers = nullptr;
-    request.borrowedKernelArgumentByteCounts = nullptr;
+    KernelCompilationPlanBuilder builder(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath());
     KernelCompilationPlan plan;
-    ASSERT_EQ(builder.BuildCompilationPlan(preparedPlan, constants, plan), ACLRTC_SUCCESS);
-    ASSERT_EQ(builder.BuildCompilationPlan(preparedPlan, constants, plan), ACLRTC_SUCCESS);
+    ASSERT_EQ(builder.BuildCompilationPlan(plan), ascendc::aclrtc::ACLRTC_SUCCESS);
+    ASSERT_EQ(builder.BuildCompilationPlan(plan), ascendc::aclrtc::ACLRTC_SUCCESS);
     ASSERT_EQ(plan.sourcePatches.size(), 1U);
     EXPECT_EQ(plan.sourcePatches[0].replacementText, "{0x01, 0x02}");
     EXPECT_EQ(manifest.constants[0].GetBoundData(), nullptr);
     EXPECT_EQ(manifest.constants[0].GetBoundByteSize(), 0U);
-}
-
-class KernelCompilationPreparationTest : public testing::Test {
-protected:
-    aclError Prepare(const Json& json, const fs::path& sourceDirectory = {})
-    {
-        const auto status =
-            CompilationManifestParser(json).ParseSelected(request.kernelName, request.enableSuperKernel, manifest);
-        if (status != ACLRTC_SUCCESS) {
-            return status;
-        }
-        return KernelCompilationPlanBuilder(
-                   request, {}, sourceDirectory.empty() ? workspace.SourceDirectoryPath() : sourceDirectory)
-            .PrepareCompilationPlan(manifest, prepared);
-    }
-
-    KernelPlanTestWorkspace workspace;
-    ScopedEnvironmentVariable home{"ASCEND_HOME_PATH", workspace.ToolchainPath().string()};
-    ScopedEnvironmentVariable toolchain{"ACLRTC_TEST_TOOLCHAIN", workspace.ToolchainPath().string()};
-    ScopedEnvironmentVariable skToolchain{"ACLRTC_TEST_SK_TOOLCHAIN", workspace.ToolchainPath().string()};
-    const uint8_t bytes[2]{1U, 2U};
-    const void* addresses[1]{bytes};
-    const uint64_t sizes[1]{sizeof(bytes)};
-    NormalizedKernelSpecializationRequest request = CreateRequest(workspace, addresses, sizes);
-    CompilationManifest manifest;
-    PreparedKernelCompilationPlan prepared;
-    KernelConstantSnapshot constants;
-};
-
-TEST_F(KernelCompilationPreparationTest, CompilesPreprocessedInputsWithoutApplyingConstantsAgain)
-{
-    for (const std::vector<std::string>& languages :
-         {std::vector<std::string>{}, {"-x", "cce"}, {"-xcce"}, {"-x", "cce", "-xcce"}}) {
-        auto json = CreateManifest();
-        for (const std::string& language : languages) {
-            json["options"]["common_compile"].push_back(language);
-        }
-        ASSERT_EQ(Prepare(json), ACLRTC_SUCCESS);
-        ASSERT_EQ(CaptureKernelConstants(request, prepared.constants, constants), ACLRTC_SUCCESS);
-        KernelCompilationPlanBuilder builder(request, workspace.ResourcePath(), workspace.SourceDirectoryPath());
-        const fs::path source = workspace.ResourcePath() / "resources/src/basic.cpp";
-        const fs::path preprocessed = workspace.ResourcePath() / "basic.i";
-        const std::vector<PreprocessedCompilationSource> sources{{source, preprocessed}};
-        KernelCompilationPlan plan;
-        ASSERT_EQ(builder.BuildCompilationPlan(prepared, constants, plan, &sources), ACLRTC_SUCCESS);
-        EXPECT_TRUE(plan.sourcePatches.empty());
-        const auto& arguments = plan.compilationCommands.front().arguments;
-        EXPECT_EQ(std::count(arguments.begin(), arguments.end(), source.string()), 0U);
-        EXPECT_EQ(std::count(arguments.begin(), arguments.end(), preprocessed.string()), 1U);
-        for (size_t index = 0U; index < arguments.size(); ++index) {
-            if (arguments[index] == "-x") {
-                ASSERT_LT(index + 1U, arguments.size());
-                EXPECT_EQ(arguments[index + 1U], "cce-cpp-output");
-            } else if (arguments[index].compare(0U, 2U, "-x") == 0U) {
-                EXPECT_EQ(arguments[index], "-xcce-cpp-output");
-            }
-        }
-    }
-}
-
-TEST_F(KernelCompilationPreparationTest, KeysOnlyEffectiveOptionsFromTheSelectedCommands)
-{
-    for (const char* package : {"bisheng-compiler", "asc-devkit"}) {
-        const fs::path directory = workspace.ToolchainPath() / "share/info" / package;
-        fs::create_directories(directory);
-        std::ofstream((directory / "version.info").string()) << "timestamp=first\n";
-    }
-    ascendc::specialization_compile::ResourceEntry resource;
-    resource.data.json = CreateManifest();
-    const auto prepareKey = [&]() {
-        EXPECT_EQ(Prepare(resource.data.json), ACLRTC_SUCCESS);
-        KernelCompilationCacheInput input;
-        EXPECT_EQ(CaptureKernelConstants(request, prepared.constants, input.constants), ACLRTC_SUCCESS);
-        BuildKernelCompilationCacheIdentity(request, resource, prepared, input);
-        return input.key;
-    };
-    const std::string first = prepareKey();
-    ASSERT_EQ(first.size(), 64U);
-    request.compilerOptions.superKernelOptions = {"-DSK=1"};
-    EXPECT_EQ(first, prepareKey());
-    request.compilerOptions.basicOptions = {"-O3"};
-    EXPECT_NE(first, prepareKey());
-    request.compilerOptions.basicOptions.clear();
-    request.enableSuperKernel = true;
-    const std::string withSuperKernel = prepareKey();
-    EXPECT_NE(first, withSuperKernel);
-    request.compilerOptions.superKernelOptions = {"-DSK=2"};
-    EXPECT_NE(withSuperKernel, prepareKey());
 }
 
 TEST(CompilationManifestParserTest, OwnsSelectedFieldsWithoutResolvingRuntimeEnvironment)
@@ -375,102 +263,6 @@ TEST(CompilationManifestParserTest, OwnsSelectedFieldsWithoutResolvingRuntimeEnv
     EXPECT_EQ(spec.commands[0].executable, "${env:ACLRTC_TEST_TOOLCHAIN}/bin/bisheng");
     ASSERT_GE(spec.commands[0].arguments.size(), 3U);
     EXPECT_EQ(spec.commands[0].arguments[2], "-I${env:ACLRTC_TEST_TOOLCHAIN}/include");
-}
-
-TEST_F(KernelCompilationPreparationTest, PreparesCommandsWithoutWorktreeConstantDataOrCompilerExecution)
-{
-    request.borrowedKernelArgumentDataPointers = nullptr;
-    request.borrowedKernelArgumentByteCounts = nullptr;
-    request.enableSuperKernel = true;
-    request.outputKernelName = "specialized_add";
-    request.compilerOptions.basicOptions = {"-g", "-DBASIC=1"};
-    request.compilerOptions.superKernelOptions = {"-DSK=1"};
-    fs::remove_all(workspace.ResourcePath());
-    ASSERT_EQ(Prepare(CreateManifest()), ACLRTC_SUCCESS);
-    EXPECT_FALSE(fs::exists(workspace.ResourcePath()));
-    EXPECT_TRUE(workspace.CompilerArguments().empty());
-    EXPECT_TRUE(ProcessCompilationContext::Instance().specializationFlagDirectory_.GetDirectoryPath().empty());
-    ASSERT_EQ(prepared.compilationCommands.size(), 5U);
-    const auto& basic = prepared.compilationCommands[0];
-    EXPECT_EQ(basic.executable, "${env:ACLRTC_TEST_TOOLCHAIN}/bin/bisheng");
-    EXPECT_EQ(basic.compilerOptions, (std::vector<std::string>{"-g", "-DBASIC=1"}));
-    EXPECT_EQ(basic.arguments.back(), "${output}/basic.o");
-    const auto& sk = prepared.compilationCommands[1];
-    EXPECT_EQ(sk.compilerOptions, (std::vector<std::string>{"-DSK=1"}));
-    EXPECT_EQ(sk.arguments.back(), "${output}/sk.o");
-    EXPECT_EQ(prepared.compilationCommands[2].commandKind, CompilationCommandKind::ObjectCopy);
-    EXPECT_EQ(prepared.compilationCommands[3].commandKind, CompilationCommandKind::Link);
-    ASSERT_TRUE(prepared.compilationCommands[4].kernelSymbolRename.has_value());
-    EXPECT_EQ(prepared.compilationCommands[4].kernelSymbolRename->renamed, "specialized_add");
-    EXPECT_EQ(prepared.basicCompileCommandIndex, 0U);
-    EXPECT_EQ(prepared.environmentValues.at("ASCEND_HOME_PATH"), workspace.ToolchainPath().string());
-    ASSERT_EQ(prepared.constants.size(), 1U);
-    EXPECT_EQ(prepared.constants[0].GetTargetFile(), "${resource}/resources/include/constants.h");
-}
-
-TEST_F(KernelCompilationPreparationTest, BindsTemplatesUsingCapturedEnvironmentAndLiteralUserOptions)
-{
-    const std::string literalValue = "${resource}/${output}/${env:NOT_REEXPANDED}";
-    ScopedEnvironmentVariable literalEnvironment("ACLRTC_TEST_LITERAL", literalValue);
-    ScopedEnvironmentVariable sourceSuffix("ACLRTC_TEST_SOURCE_SUFFIX", "resolved");
-    request.compilerOptions.basicOptions = {"-DUSER=" + literalValue};
-    Json json = CreateManifest();
-    json["options"]["common_compile"].push_back("${env:ACLRTC_TEST_LITERAL}");
-    json["options"]["common_compile"].push_back("--paths=${resource}|${output}|${resource}");
-    json["kernels"][1]["link_options"].push_back("${env:ACLRTC_TEST_LITERAL}");
-    const fs::path sourceDirectory =
-        workspace.SourceDirectoryPath() / "${resource}_${output}_${env:ACLRTC_TEST_SOURCE_SUFFIX}";
-    ASSERT_EQ(Prepare(json, sourceDirectory), ACLRTC_SUCCESS);
-    const auto preparedPlan = prepared;
-    EXPECT_EQ(preparedPlan.environmentValues.at("ACLRTC_TEST_LITERAL"), literalValue);
-    EXPECT_EQ(preparedPlan.environmentValues.at("ACLRTC_TEST_SOURCE_SUFFIX"), "resolved");
-    EXPECT_EQ(preparedPlan.sourceDirectory, sourceDirectory.string());
-    manifest = {};
-    json.clear();
-    ScopedEnvironmentVariable changedToolchain("ACLRTC_TEST_TOOLCHAIN", "/missing/toolchain");
-    ScopedEnvironmentVariable changedAscendHome("ASCEND_HOME_PATH", "/missing/ascend");
-    ScopedEnvironmentVariable changedLiteral("ACLRTC_TEST_LITERAL", "changed");
-    ScopedEnvironmentVariable changedSuffix("ACLRTC_TEST_SOURCE_SUFFIX", "changed");
-
-    ASSERT_EQ(Prepare(CreateManifest(), sourceDirectory), ACLRTC_SUCCESS);
-    const auto& nextPlan = prepared;
-    EXPECT_EQ(
-        nextPlan.environmentValues.at("ACLRTC_TEST_TOOLCHAIN"),
-        preparedPlan.environmentValues.at("ACLRTC_TEST_TOOLCHAIN"));
-    EXPECT_EQ(nextPlan.environmentValues.at("ASCEND_HOME_PATH"), preparedPlan.environmentValues.at("ASCEND_HOME_PATH"));
-    EXPECT_EQ(nextPlan.environmentValues.at("ACLRTC_TEST_SOURCE_SUFFIX"), "resolved");
-    EXPECT_EQ(nextPlan.environmentValues.count("ACLRTC_TEST_LITERAL"), 0U);
-
-    ASSERT_EQ(CaptureKernelConstants(request, preparedPlan.constants, constants), ACLRTC_SUCCESS);
-    for (const std::string& sessionId : {"first", "second"}) {
-        request.specializationSessionId = sessionId;
-        const fs::path worktree = workspace.ResourcePath() / sessionId;
-        fs::create_directories(worktree);
-        KernelCompilationPlan plan;
-        ASSERT_EQ(
-            KernelCompilationPlanBuilder(request, worktree, {}).BuildCompilationPlan(preparedPlan, constants, plan),
-            ACLRTC_SUCCESS);
-        const auto& arguments = plan.compilationCommands.front().arguments;
-        const fs::path output = worktree / (".aclrtc_" + sessionId) / "outputs";
-        EXPECT_EQ(arguments[1], (workspace.SourceDirectoryPath() / "${resource}_${output}_resolved").string());
-        EXPECT_NE(std::find(arguments.begin(), arguments.end(), literalValue), arguments.end());
-        EXPECT_NE(std::find(arguments.begin(), arguments.end(), "-DUSER=" + literalValue), arguments.end());
-        EXPECT_NE(
-            std::find(
-                arguments.begin(), arguments.end(),
-                "--paths=" + worktree.string() + "|" + output.string() + "|" + worktree.string()),
-            arguments.end());
-        EXPECT_EQ(arguments.back(), (output / "basic.o").string());
-        EXPECT_EQ(plan.compilationCommands.back().executablePath, workspace.ToolchainPath() / "bin/ld.lld");
-        EXPECT_NE(
-            std::find(
-                plan.compilationCommands.back().arguments.begin(), plan.compilationCommands.back().arguments.end(),
-                literalValue),
-            plan.compilationCommands.back().arguments.end());
-        EXPECT_EQ(plan.sourcePatches[0].targetFilePath, worktree / "resources/include/constants.h");
-        EXPECT_EQ(plan.sourcePatches[0].replacementText, "{0x01, 0x02}");
-    }
-    EXPECT_EQ(preparedPlan.compilationCommands.front().arguments.back(), "${output}/basic.o");
 }
 
 TEST(KernelCompilationPlanBuilderTest, BuildsBasicPlanFromOnlySelectedManifestFields)
@@ -1035,8 +827,7 @@ TEST(KernelCompilationPlanBuilderTest, RejectsInvalidInputsBeforeReadingAnyConst
                 if (unreadable == MAP_FAILED) {
                     _exit(2);
                 }
-                const uint16_t readable = 1U;
-                const void* addresses[] = {invalidInputKind == 0 ? unreadable : &readable};
+                const void* addresses[] = {unreadable};
                 const uint64_t sizes[] = {2U};
                 auto request = CreateRequest(workspace, addresses, sizes);
                 Json manifest = CreateManifest();
@@ -1244,7 +1035,6 @@ TEST(KernelCompilationPlanBuilderTest, RejectsUnresolvableLinkInputs)
 
     ScopedEnvironmentVariable missingLinkerEnvironment(
         "ASCEND_HOME_PATH", (workspace.ResourcePath() / "missing-toolchain").string());
-    ProcessCompilationContext::Instance().environmentValues_.clear();
     EXPECT_EQ(
         BuildPlanFromManifest(
             request, CreateManifest(), workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),
@@ -1315,7 +1105,6 @@ TEST(KernelCompilationPlanBuilderTest, RejectsMissingEnvironmentVariablesAtEachE
         ascendc::aclrtc::ACLRTC_SUCCESS);
 
     ASSERT_EQ(unsetenv("ASCEND_HOME_PATH"), 0);
-    ProcessCompilationContext::Instance().environmentValues_.clear();
     manifest = CreateManifest();
     EXPECT_NE(
         BuildPlanFromManifest(request, manifest, workspace.ResourcePath(), workspace.SourceDirectoryPath(), plan),

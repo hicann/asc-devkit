@@ -34,6 +34,7 @@ using ascendc::ProcessExecutorResult;
 using ascendc::ProcessOutcome;
 using ascendc::aclrtc::CompilationCommand;
 using ascendc::aclrtc::CompilationCommandKind;
+using ascendc::aclrtc::KernelElfPublicationStatus;
 using ascendc::aclrtc::KernelSpecializationDiagnostics;
 using namespace mockcpp;
 
@@ -115,7 +116,7 @@ TEST(KernelSpecializationDiagnosticsTest, SavesOnlyReviewedDiagnosticFiles)
         diagnostics.AppendCommandToReplayScript(workingDirectoryCheck);
         ProcessExecutorResult executorResult;
         diagnostics.AppendCommandExecutionResultToLog(command, executorResult);
-        diagnostics.WriteSpecializationResult("/tmp/kernel.elf", ascendc::aclrtc::ACLRTC_SUCCESS, "publish");
+        diagnostics.WriteSpecializationResult("/tmp/kernel.elf", KernelElfPublicationStatus::Published);
     }
 
     const fs::path replayScriptPath = testRoot / "aclrtc_replay.sh";
@@ -137,8 +138,6 @@ TEST(KernelSpecializationDiagnosticsTest, SavesOnlyReviewedDiagnosticFiles)
     EXPECT_EQ(result.at("specialization_session_id"), "session_1");
     EXPECT_EQ(result.at("output_path"), "/tmp/kernel.elf");
     EXPECT_TRUE(result.at("output_published"));
-    EXPECT_EQ(result.at("status"), ascendc::aclrtc::ACLRTC_SUCCESS);
-    EXPECT_EQ(result.at("stage"), "publish");
     EXPECT_FALSE(result.contains("result"));
 
     boost::system::error_code ignoredError;
@@ -156,7 +155,7 @@ TEST(KernelSpecializationDiagnosticsTest, DisablesDiagnosticsWhenReplayScriptCan
     diagnostics.AppendCommandToReplayScript(command);
     diagnostics.AppendCommandExecutionResultToLog(command, ProcessExecutorResult{});
     diagnostics.LogCommandFailureRecoveryHint();
-    diagnostics.WriteSpecializationResult("/tmp/kernel.elf", ascendc::aclrtc::ACLRTC_ERROR_FAILURE, "publish");
+    diagnostics.WriteSpecializationResult("/tmp/kernel.elf", KernelElfPublicationStatus::NotPublished);
 
     EXPECT_FALSE(fs::exists(missingWorktreePath));
 }
@@ -246,10 +245,8 @@ TEST(KernelSpecializationDiagnosticsTest, IgnoresManifestSerializationFailure)
     const nlohmann::json invalidUtf8Manifest = {{"invalid_utf8", std::string(1U, static_cast<char>(0xff))}};
 
     diagnostics.WriteManifestSnapshot(invalidUtf8Manifest);
-    KernelSpecializationDiagnostics::WriteCacheInputSnapshot(testRoot / "worktree", invalidUtf8Manifest);
 
     EXPECT_FALSE(fs::exists(testRoot / "aclrtc_manifest.json"));
-    EXPECT_EQ(std::distance(fs::directory_iterator(testRoot), fs::directory_iterator()), 1);
     boost::system::error_code ignoredError;
     fs::remove_all(testRoot, ignoredError);
 }
@@ -270,8 +267,7 @@ TEST(KernelSpecializationDiagnosticsTest, RecordsTerminationKindsAndUnpublishedR
     executorResult.outcome = static_cast<ProcessOutcome>(UINT32_MAX);
     diagnostics.AppendCommandExecutionResultToLog(command, executorResult);
     diagnostics.LogCommandFailureRecoveryHint();
-    diagnostics.WriteSpecializationResult(
-        "/tmp/not_published.elf", ascendc::aclrtc::ACLRTC_ERROR_COMPILATION, "compile");
+    diagnostics.WriteSpecializationResult("/tmp/not_published.elf", KernelElfPublicationStatus::NotPublished);
 
     const std::string compilationLog = ReadTextFile(testRoot / "aclrtc_compile.log");
     EXPECT_NE(compilationLog.find("outcome=signaled"), std::string::npos);
@@ -279,8 +275,6 @@ TEST(KernelSpecializationDiagnosticsTest, RecordsTerminationKindsAndUnpublishedR
     EXPECT_NE(compilationLog.find("outcome=unknown"), std::string::npos);
     const nlohmann::json result = nlohmann::json::parse(ReadTextFile(testRoot / "aclrtc_result.json"));
     EXPECT_FALSE(result.at("output_published"));
-    EXPECT_EQ(result.at("status"), ascendc::aclrtc::ACLRTC_ERROR_COMPILATION);
-    EXPECT_EQ(result.at("stage"), "compile");
 
     boost::system::error_code ignoredError;
     fs::remove_all(testRoot, ignoredError);
@@ -300,7 +294,7 @@ TEST(KernelSpecializationDiagnosticsTest, IgnoresDiagnosticWriteFailuresAfterWor
     diagnostics.WriteManifestSnapshot(nlohmann::json{{"schema_version", "1.0"}});
     diagnostics.AppendCommandToReplayScript(command);
     diagnostics.AppendCommandExecutionResultToLog(command, ProcessExecutorResult{});
-    diagnostics.WriteSpecializationResult("/tmp/kernel.elf", ascendc::aclrtc::ACLRTC_ERROR_FAILURE, "publish");
+    diagnostics.WriteSpecializationResult("/tmp/kernel.elf", KernelElfPublicationStatus::NotPublished);
 
     EXPECT_FALSE(fs::exists(testRoot));
 }

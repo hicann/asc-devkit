@@ -33,7 +33,6 @@ struct ProcessExecutorRequest {
     std::string mirroredOutputLogFilePath;
     std::chrono::milliseconds executionTimeout{0};
     std::chrono::milliseconds terminationGracePeriod{0};
-    bool logOutputAsDebug{false};
 };
 
 struct ProcessExecutorResult {

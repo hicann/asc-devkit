@@ -15,7 +15,6 @@
 
 #include <boost/filesystem/path.hpp>
 #include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
 #include <vector>
@@ -80,7 +79,6 @@ struct KernelCompilationPlan {
     std::vector<CompilationCommand> compilationCommands;
     std::vector<boost::filesystem::path> requiredOutputDirectoryPaths;
     boost::filesystem::path linkedKernelElfPath;
-    std::map<std::string, std::optional<std::string>> compilerEnvironment;
 };
 
 aclError NormalizeKernelSpecializationRequest(
