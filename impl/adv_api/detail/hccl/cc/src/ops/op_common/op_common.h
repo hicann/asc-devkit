@@ -37,9 +37,14 @@ HcclResult HcclExecOp(
 
 HcclResult HcclCalcTopoInfo(HcclComm comm, OpParam& param, std::unique_ptr<TopoInfoWithNetLayerDetails>& topoInfo);
 
+HcclResult CalcAlgResourceRequest(
+    HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
+    AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resRequest);
+
 HcclResult HcclGetAlgRes(
     HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxSequence, bool& isResourceReused);
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxSequence, bool& isResourceReused,
+    AlgResourceRequest* request = nullptr, const std::string& resourceTag = "");
 
 HcclResult GetAlgResAICPU(
     HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest,
@@ -73,13 +78,17 @@ HcclResult HcclGetCcuKernel(
 
 HcclResult HcclGetChannelForCcu(HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest);
 
+HcclResult BuildKfcServer(
+    AlgResourceRequest& resRequest, std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, const OpParam& param);
+
 HcclResult HcclAllocAlgResourceCcu(
     HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest,
     std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost);
 HcclResult GetAlgResCcu(
     HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest,
     std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, TopoInfoWithNetLayerDetails* topoInfo,
-    AlgHierarchyInfoForAllLevel& algHierarchyInfo, void** resCtxSequence, uint64_t& ctxSize);
+    AlgHierarchyInfoForAllLevel& algHierarchyInfo, void** resCtxSequence, uint64_t& ctxSize,
+    const std::string& resourceTag = "");
 
 HcclResult SetOpParamFastLaunchTag(OpParam& param);
 

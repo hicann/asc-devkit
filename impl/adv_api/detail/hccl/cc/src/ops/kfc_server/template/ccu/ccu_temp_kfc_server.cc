@@ -337,6 +337,50 @@ HcclResult CcuTempKfcServer::CalcRes(
     return HcclResult::HCCL_SUCCESS;
 }
 
+HcclResult BuildKfcServer(
+    AlgResourceRequest& resRequest, std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, const OpParam& param)
+{
+    auto arg = std::make_shared<CcuKernelArgKfcServer>();
+    CHK_PRT_RET(
+        param.isMultiTiling &&
+            (resRequest.ccuKernelInfos.empty() || resCtxHost->kfcServerArgs.size() < KFC_SERVER_ARG_NUM),
+        HCCL_ERROR("Invalid multi-tiling KFC resource request."), HCCL_E_PARA);
+    CcuKernelInfo server{};
+    CHK_SAFETY_FUNC_RET(strcpy_s(server.kernelFuncName, sizeof(server.kernelFuncName), "CcuKernelKfcServer"));
+    server.kernelFunc = reinterpret_cast<void*>(CcuKfcServerKernel);
+    if (param.isMultiTiling) {
+        server.dieId = resRequest.ccuKernelInfos.front().dieId;
+    }
+    for (const auto& source : resRequest.ccuKernelInfos) {
+        CHK_PRT_RET(
+            source.kernelArg == nullptr || std::strcmp(source.kernelFuncName, "CcuKernelKfcServer") != 0,
+            HCCL_ERROR("Invalid multi-tiling KFC source kernel."), HCCL_E_PARA);
+        CHK_PRT_RET(
+            param.isMultiTiling && source.dieId != server.dieId,
+            HCCL_ERROR("Multi-tiling KFC requires all tilings on the same die."), HCCL_E_NOT_SUPPORT);
+        auto* sourceArg = static_cast<CcuKernelArgKfcServer*>(source.kernelArg);
+        auto& tilingArgs = param.isMultiTiling ? arg->tilingArgs : sourceArg->tilingArgs;
+        tilingArgs.push_back(std::make_shared<CcuKernelArgKfcServer>(*sourceArg));
+    }
+    HCCL_INFO(
+        "[BuildKfcServer] tilingArgs prepared, isMultiTiling[%u], sourceKernelNum[%zu]",
+        static_cast<uint32_t>(param.isMultiTiling), resRequest.ccuKernelInfos.size());
+    if (!param.isMultiTiling) {
+        return HCCL_SUCCESS;
+    }
+    server.setKernelArg(arg);
+    resRequest.ccuKernelInfos.clear();
+    resRequest.ccuKernelInfos.push_back(std::move(server));
+    resRequest.ccuKernelNum.assign(1U, 1U);
+    resRequest.slaveThreadNum = 0U;
+    resRequest.notifyNumPerThread.clear();
+    resCtxHost->notifyNumPerThread.clear();
+    resCtxHost->kfcServerArgs.resize(KFC_SERVER_ARG_NUM);
+    resCtxHost->kfcServerArgs[KFC_SERVER_MISSION_NUM_ARG_INDEX] = 1U;
+    resCtxHost->kfcServerArgs[KFC_SERVER_MISSION_INDEX_ARG_INDEX] = 0U;
+    return HCCL_SUCCESS;
+}
+
 HcclResult CcuTempKfcServer::KernelRun(
     const OpParam& param, const TemplateDataParams& templateDataParams, TemplateResource& templateResource)
 {

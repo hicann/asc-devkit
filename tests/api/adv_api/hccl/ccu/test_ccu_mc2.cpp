@@ -43,15 +43,13 @@ extern HcclResult g_stubHcomCheckReductionOpResult;
 extern HcclResult g_stubCalcTopoInfoResult;
 extern bool g_stubHcommCcuKernelLaunchFail;
 extern uint32_t g_stubHcommCcuKernelLaunchCallCount;
+extern std::vector<std::vector<uint64_t>> g_stubHcommCcuKernelLaunchArgs;
 extern std::string g_stubCcuAlgNotRegisteredName;
 extern bool g_stubHcommIsSupportCcuV2;
 } // namespace mc2_ops_hccl
 
 // 夹具：本目标不编 executor 文件（-DAICPU_COMPILE 裁掉产品 CCU sidecar 注册行），
 // 按产品现场同款注册供 EXTERNAL 用例使用。
-// (AR, sole[mesh]) 键两条 CCU 候选；闸门 B 全量校验用例
-// （GateBRejectsDriftedExternalCandidate）以按名桩把其中一条打成双名单不过，
-// 验证"任一候选未过即整体拒绝"（D8）。
 namespace mc2_ops_hccl {
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLGATHER, CcuSchedAllGatherSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
@@ -59,8 +57,6 @@ REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLGATHER, InsAllGatherMesh1D, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLREDUCE, CcuSchedAllReduceSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
-REGISTER_ALG_META(
-    HcclCMDType::HCCL_CMD_ALLREDUCE, CcuSchedAllGatherSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLREDUCE, InsAllReduceMesh1D, AlgEngine::AICPU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_ALG_META(
@@ -108,6 +104,7 @@ static void StubCleanup()
     mc2_ops_hccl::g_stubCcuAlgNotRegisteredName.clear();
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail = false;
     mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount = 0U;
+    mc2_ops_hccl::g_stubHcommCcuKernelLaunchArgs.clear();
     mc2_ops_hccl::g_stubHcommIsSupportCcuV2 = true;
     unsetenv("HCCL_OP_EXPANSION_MODE");
 }
@@ -485,7 +482,7 @@ TEST_F(CcuMc2TestSuite, CcuSelectAlg_ReduceScatterRejectsProd)
     EXPECT_EQ(RunCcuSelectAlg(comm_, stream_, topoTag, ccTilingList, 1, resCtx), HCCL_E_NOT_SUPPORT);
 }
 
-TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_RejectsMixedOps)
+TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_AcceptsMixedOps)
 {
     Mc2InitTilingInner initTiling{};
     initTiling.version = INIT_TILING_CCU_NEW_VERSION;
@@ -497,7 +494,10 @@ TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_RejectsMixedOps)
     allReduce.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE);
     const void* ccTilingList[] = {&allGather, &allReduce};
 
-    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 2U, g_stubRankSize), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 2U, g_stubRankSize), HCCL_SUCCESS);
+    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 1U, g_stubRankSize), HCCL_E_NOT_SUPPORT);
+    initTiling.mc2HcommCnt = 0U;
+    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 0U, g_stubRankSize), HCCL_E_NOT_SUPPORT);
 }
 
 TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_AcceptsReduceScatter)
@@ -514,7 +514,7 @@ TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_AcceptsReduceScatter)
     EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 2U, g_stubRankSize), HCCL_SUCCESS);
 }
 
-TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_RejectsAllGatherReduceScatterMix)
+TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_AcceptsAllGatherReduceScatterMix)
 {
     Mc2InitTilingInner initTiling{};
     initTiling.version = INIT_TILING_CCU_NEW_VERSION;
@@ -526,7 +526,7 @@ TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_RejectsAllGatherReduceScatterMix)
     reduceScatter.opType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_REDUCE_SCATTER);
     const void* ccTilingList[] = {&allGather, &reduceScatter};
 
-    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 2U, g_stubRankSize), HCCL_E_NOT_SUPPORT);
+    EXPECT_EQ(CheckCcuKfcFlow(&initTiling, ccTilingList, 2U, g_stubRankSize), HCCL_SUCCESS);
 }
 
 TEST_F(CcuMc2TestSuite, CheckCcuKfcFlow_RejectsPeerOnlyOutsideTp2)
@@ -975,13 +975,53 @@ TEST_F(CcuMc2TestSuite, InitOpParamByTiling_SetsExpansionMode)
     EXPECT_EQ(ccuOpParam.commOpExpansionMode, HcclOpExpansionMode::HCCL_OP_EXPANSION_CCU_SCHED);
 }
 
-TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_MixedOpsRejected)
+TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_SingleAndMultiTiling)
 {
     uint32_t opTypes[] = {
         static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE)};
-    Mc2TilingTestData tiling = BuildMc2Tiling(2, static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), opTypes, nullptr);
-    void* opResCtx = nullptr;
-    EXPECT_EQ(HcclAllocComResourceByTiling(comm_, stream_, &tiling, &opResCtx), HCCL_E_ALG_NOT_SUPPORTED);
+    const OpParam* singleParam = nullptr;
+    void* singleResCtx = nullptr;
+    for (uint32_t tilingNum : {1U, 2U}) {
+        SCOPED_TRACE(::testing::Message() << "tilingNum=" << tilingNum);
+        auto tiling = BuildMc2Tiling(tilingNum, static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), opTypes, nullptr);
+        for (auto& cc : tiling.ccTiling) {
+            strcpy(cc.algConfig, "sole[mesh]");
+        }
+        void* opResCtx = nullptr;
+        const HcclResult ret = HcclAllocComResourceByTiling(comm_, stream_, &tiling, &opResCtx);
+        if (tilingNum > 1U) {
+            EXPECT_EQ(ret, HCCL_E_ALG_NOT_SUPPORTED);
+            EXPECT_EQ(opResCtx, nullptr);
+            ASSERT_NE(singleParam, nullptr);
+            EXPECT_EQ(singleParam->resCtx, singleResCtx);
+            continue;
+        }
+        ASSERT_EQ(ret, HCCL_SUCCESS);
+        ASSERT_NE(opResCtx, nullptr);
+        const auto& ctx = *static_cast<OpResCtx*>(opResCtx);
+        EXPECT_EQ(ctx.resCtx, 0U);
+        const auto& first = *reinterpret_cast<const OpParam*>(ctx.algInfo[0].opParam);
+        singleParam = &first;
+        singleResCtx = first.resCtx;
+        for (uint32_t i = 0; i < tilingNum; ++i) {
+            const auto& param = *reinterpret_cast<const OpParam*>(ctx.algInfo[i].opParam);
+            EXPECT_EQ(ctx.algInfo[i].offset, tiling.offset[i]);
+            EXPECT_EQ(param.resCtx, first.resCtx);
+            std::vector<char> seq(
+                static_cast<const char*>(param.resCtx), static_cast<const char*>(param.resCtx) + param.ctxSize);
+            AlgResourceCtxSerializable resources;
+            resources.DeSerialize(seq);
+            EXPECT_EQ(resources.kfcServerArgs[0], ctx.xnAddr);
+            EXPECT_EQ(resources.kfcServerArgs[1], ctx.ckeAddr);
+        }
+        EXPECT_EQ(ctx.res[1], 1000U);
+        const uint32_t launches = mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount;
+        ASSERT_EQ(CcuKernelLaunch(comm_, opResCtx), CCU_SUCCESS);
+        EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount, launches + 1U);
+        ASSERT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchArgs.size(), launches + 1U);
+        EXPECT_EQ(mc2_ops_hccl::g_stubHcommCcuKernelLaunchArgs.back()[0], ctx.xnAddr);
+        EXPECT_EQ(Mc2CcKernelLaunch(stream_, opResCtx, sizeof(OpResCtx)), HCCL_SUCCESS);
+    }
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_NullComm)
@@ -1074,8 +1114,14 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_AllGatherMesh1D_KfcServerArgs)
     ASSERT_FALSE(skipGetRes);
 
     // 3. 调用GetCcuOpParamResCtx
+    auto executor = CollAlgExecRegistryV2::Instance().GetAlgExec(opParam.opType, algName);
+    ASSERT_NE(executor, nullptr);
+    AlgHierarchyInfoForAllLevel hierarchy;
+    AlgResourceRequest request;
+    ASSERT_EQ(CalcAlgResourceRequest(comm_, opParam, executor, topoInfo.get(), hierarchy, request), HCCL_SUCCESS);
     void* resCtxOut = nullptr;
-    EXPECT_EQ(GetCcuOpParamResCtx(comm_, algName, opParam, topoInfo.get(), opResCtx, &resCtxOut), HCCL_SUCCESS);
+    EXPECT_EQ(
+        GetCcuOpParamResCtx(comm_, algName, opParam, topoInfo.get(), opResCtx, &resCtxOut, &request), HCCL_SUCCESS);
     EXPECT_NE(resCtxOut, nullptr);
     EXPECT_EQ(opParam.resCtx, resCtxOut);
 
@@ -1149,7 +1195,13 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
     ASSERT_FALSE(skipGetRes);
 
     void* resCtxOut1 = nullptr;
-    EXPECT_EQ(GetCcuOpParamResCtx(comm_, algName, opParam1, topoInfo.get(), opResCtx1, &resCtxOut1), HCCL_SUCCESS);
+    auto executor1 = CollAlgExecRegistryV2::Instance().GetAlgExec(opParam1.opType, algName);
+    ASSERT_NE(executor1, nullptr);
+    AlgHierarchyInfoForAllLevel hierarchy1;
+    AlgResourceRequest request1;
+    ASSERT_EQ(CalcAlgResourceRequest(comm_, opParam1, executor1, topoInfo.get(), hierarchy1, request1), HCCL_SUCCESS);
+    EXPECT_EQ(
+        GetCcuOpParamResCtx(comm_, algName, opParam1, topoInfo.get(), opResCtx1, &resCtxOut1, &request1), HCCL_SUCCESS);
     EXPECT_NE(resCtxOut1, nullptr);
 
     // 验证第一次的token
@@ -1176,7 +1228,13 @@ TEST_F(CcuMc2TestSuite, GetCcuOpParamResCtx_TokenUpdateOnReuse)
     ASSERT_FALSE(skipGetRes);
 
     void* resCtxOut2 = nullptr;
-    EXPECT_EQ(GetCcuOpParamResCtx(comm_, algName, opParam2, topoInfo.get(), opResCtx2, &resCtxOut2), HCCL_SUCCESS);
+    auto executor2 = CollAlgExecRegistryV2::Instance().GetAlgExec(opParam2.opType, algName);
+    ASSERT_NE(executor2, nullptr);
+    AlgHierarchyInfoForAllLevel hierarchy2;
+    AlgResourceRequest request2;
+    ASSERT_EQ(CalcAlgResourceRequest(comm_, opParam2, executor2, topoInfo.get(), hierarchy2, request2), HCCL_SUCCESS);
+    EXPECT_EQ(
+        GetCcuOpParamResCtx(comm_, algName, opParam2, topoInfo.get(), opResCtx2, &resCtxOut2, &request2), HCCL_SUCCESS);
     EXPECT_NE(resCtxOut2, nullptr);
 
     // 验证资源复用（相同的ctx地址）
@@ -1304,13 +1362,15 @@ TEST_F(CcuMc2TestSuite, CheckOpResSufficient_AlgNotRegistered)
     EXPECT_EQ(ret, HCCL_E_ALG_NOT_SUPPORTED);
 }
 
-TEST_F(CcuMc2TestSuite, CheckOpResSufficient_MixedOpsRejected)
+TEST_F(CcuMc2TestSuite, CheckOpResSufficient_MixedOps)
 {
     uint32_t opTypes[] = {
         static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLGATHER), static_cast<uint32_t>(HcclCMDType::HCCL_CMD_ALLREDUCE)};
     Mc2TilingTestData tiling = BuildMc2Tiling(2, static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED), opTypes, nullptr);
 
-    // 多算子场景先被CheckCcuAlgorithmsRegistered拒绝（tilingNum>1），不进入逐算子校验
+    for (auto& cc : tiling.ccTiling) {
+        strcpy(cc.algConfig, "sole[mesh]");
+    }
     EXPECT_EQ(CheckOpResSufficient(comm_, stream_, &tiling), HCCL_E_ALG_NOT_SUPPORTED);
 }
 
@@ -1777,7 +1837,7 @@ TEST_F(CcuMc2TestSuite, Mc2AcquireCcResCtx_PropagatesAlgorithmFailure)
     EXPECT_EQ(
         Mc2AcquireCcResCtx(
             comm_, static_cast<uint8_t>(HcclCMDType::HCCL_CMD_ALLGATHER), ccArgs, &ccResCtx, &ccResCtxSize),
-        HCCL_E_PARA);
+        HCCL_E_PTR);
     EXPECT_EQ(ccResCtx, nullptr);
     EXPECT_EQ(ccResCtxSize, 0U);
     EXPECT_EQ(Mc2FreeCcArgs(ccArgs), HCCL_SUCCESS);

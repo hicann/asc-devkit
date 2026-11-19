@@ -178,7 +178,15 @@ KernelHandle CcuStFixture::RegisterKernelForRank(
     }
 
     void* resCtxOut = nullptr;
-    if (GetCcuOpParamResCtx(comm, algName, opParam, topoInfo.get(), resCtx, &resCtxOut) != HCCL_SUCCESS) {
+    auto executor = CollAlgExecRegistryV2::Instance().GetAlgExec(opParam.opType, algName);
+    AlgHierarchyInfoForAllLevel hierarchy;
+    AlgResourceRequest request;
+    if (executor == nullptr ||
+        CalcAlgResourceRequest(comm, opParam, executor, topoInfo.get(), hierarchy, request) != HCCL_SUCCESS) {
+        CleanupHostEnv(comm);
+        return 0;
+    }
+    if (GetCcuOpParamResCtx(comm, algName, opParam, topoInfo.get(), resCtx, &resCtxOut, &request) != HCCL_SUCCESS) {
         CleanupHostEnv(comm);
         return 0;
     }

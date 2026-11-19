@@ -816,63 +816,11 @@ void CompReqChannelWithExistChannel(
     return;
 }
 
-HcclResult HcclGetAlgRes(
+HcclResult CalcAlgResourceRequest(
     HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxSequence, bool& isResourceReused)
+    AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resRequest)
 {
-    CHK_PTR_NULL(topoInfo);
-    CHK_PTR_NULL(resCtxSequence);
-    *resCtxSequence = nullptr;
-    HCCL_INFO(
-        "[asc][AlgoResource][HcclGetAlgRes] start, opType[%d], algName[%s], algTag[%s], engine[%d], opMode[%d].",
-        param.opType, param.algName, param.algTag, param.engine, param.opMode);
-
-    void* ctx = nullptr;
-    bool increCreateChannelFlag = false;
-    if (param.opType == HcclCMDType::HCCL_CMD_BATCH_SEND_RECV && param.opMode == OpMode::OPBASE) {
-        // 增量建链模式
-        increCreateChannelFlag = true;
-    }
-    uint64_t size = 0;
-    // 图模式不支持资源复用，且不存在增量建链场景
-    if (!increCreateChannelFlag && param.opMode == OpMode::OPBASE) {
-        void* ctx = nullptr;
-        // 这种情况下资源已经有了
-        CommEngine ctxEngine = param.engine;
-        if (param.engine == COMM_ENGINE_CPU) {
-            // host dpu申请device内存用于存放resctx
-            ctxEngine = COMM_ENGINE_AICPU_TS;
-        } else if (param.engine == COMM_ENGINE_CCU) {
-            // ccu申请aiv内存用于存放resctx
-            ctxEngine = COMM_ENGINE_AIV;
-        }
-        HCCL_INFO(
-            "[asc][AlgoResource][HcclGetAlgRes] before HcclEngineCtxGet, algTag[%s], engine[%d], ctxEngine[%d].",
-            param.algTag, param.engine, ctxEngine);
-        if (HcclEngineCtxGet(comm, param.algTag, ctxEngine, &ctx, &size) == HCCL_SUCCESS) {
-            HCCL_INFO(
-                "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet HIT cache, algTag[%s], engine[%d], ctxEngine[%d], "
-                "ctxSize[%llu].",
-                param.algTag, param.engine, ctxEngine, static_cast<unsigned long long>(size));
-            HCCL_DEBUG("Already have context, skip create, ctxSize is %u", param.ctxSize);
-            isResourceReused = true;
-            *resCtxSequence = ctx;
-            param.ctxSize = size;
-
-            if (param.engine == COMM_ENGINE_CCU) {
-                CHK_RET(UpdateCcuCtxTokenOnReuse(comm, ctx, size, resCtxHost));
-            }
-
-            return HCCL_SUCCESS;
-        }
-        HCCL_INFO(
-            "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet MISS cache, algTag[%s], engine[%d], ctxEngine[%d], "
-            "will alloc new resource.",
-            param.algTag, param.engine, ctxEngine);
-    }
-
     // 计算AlgHierarchyInfo
-    AlgHierarchyInfoForAllLevel algHierarchyInfo; // 分级通信域信息{localRankId, localRankSize}
     HCCL_INFO(
         "[asc][AlgoResource][HcclGetAlgRes] before CalcAlgHierarchyInfo, opType[%d], algTag[%s].", param.opType,
         param.algTag);
@@ -892,7 +840,6 @@ HcclResult HcclGetAlgRes(
         CHK_RET(calcHierarchyRet);
     }
     // 资源计算
-    AlgResourceRequest resRequest;
     HCCL_INFO(
         "[asc][AlgoResource][HcclGetAlgRes] before CalcRes, opType[%d], algTag[%s], engine[%d].", param.opType,
         param.algTag, param.engine);
@@ -919,6 +866,77 @@ HcclResult HcclGetAlgRes(
             "[asc][AlgoResource][HcclGetAlgRes] after CcuKfcServer CalcRes, "
             "ccuKernelInfos.size()[%zu], ccuKernelNum.size()[%zu]",
             resRequest.ccuKernelInfos.size(), resRequest.ccuKernelNum.size());
+    }
+    return HCCL_SUCCESS;
+}
+
+HcclResult HcclGetAlgRes(
+    HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxSequence, bool& isResourceReused,
+    AlgResourceRequest* request, const std::string& resourceTag)
+{
+    CHK_PTR_NULL(topoInfo);
+    CHK_PTR_NULL(resCtxSequence);
+    *resCtxSequence = nullptr;
+    HCCL_INFO(
+        "[asc][AlgoResource][HcclGetAlgRes] start, opType[%d], algName[%s], algTag[%s], engine[%d], opMode[%d].",
+        param.opType, param.algName, param.algTag, param.engine, param.opMode);
+
+    void* ctx = nullptr;
+    bool increCreateChannelFlag = false;
+    if (param.opType == HcclCMDType::HCCL_CMD_BATCH_SEND_RECV && param.opMode == OpMode::OPBASE) {
+        // 增量建链模式
+        increCreateChannelFlag = true;
+    }
+    uint64_t size = 0;
+    const std::string contextTag = resourceTag.empty() ? std::string(param.algTag) : resourceTag;
+    // 图模式不支持资源复用，且不存在增量建链场景
+    if (!increCreateChannelFlag && !param.isMultiTiling && param.opMode == OpMode::OPBASE) {
+        void* ctx = nullptr;
+        // 这种情况下资源已经有了
+        CommEngine ctxEngine = param.engine;
+        if (param.engine == COMM_ENGINE_CPU) {
+            // host dpu申请device内存用于存放resctx
+            ctxEngine = COMM_ENGINE_AICPU_TS;
+        } else if (param.engine == COMM_ENGINE_CCU) {
+            // ccu申请aiv内存用于存放resctx
+            ctxEngine = COMM_ENGINE_AIV;
+        }
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] before HcclEngineCtxGet, algTag[%s], engine[%d], ctxEngine[%d].",
+            contextTag.c_str(), param.engine, ctxEngine);
+        if (HcclEngineCtxGet(comm, contextTag.c_str(), ctxEngine, &ctx, &size) == HCCL_SUCCESS) {
+            HCCL_INFO(
+                "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet HIT cache, algTag[%s], engine[%d], ctxEngine[%d], "
+                "ctxSize[%llu].",
+                contextTag.c_str(), param.engine, ctxEngine, static_cast<unsigned long long>(size));
+            HCCL_DEBUG("Already have context, skip create, ctxSize is %u", param.ctxSize);
+            isResourceReused = true;
+            *resCtxSequence = ctx;
+            param.ctxSize = size;
+
+            if (param.engine == COMM_ENGINE_CCU) {
+                CHK_RET(UpdateCcuCtxTokenOnReuse(comm, ctx, size, resCtxHost));
+            }
+
+            return HCCL_SUCCESS;
+        }
+        HCCL_INFO(
+            "[asc][AlgoResource][HcclGetAlgRes] HcclEngineCtxGet MISS cache, algTag[%s], engine[%d], ctxEngine[%d], "
+            "will alloc new resource.",
+            contextTag.c_str(), param.engine, ctxEngine);
+    }
+
+    AlgHierarchyInfoForAllLevel algHierarchyInfo;
+    AlgResourceRequest localRequest;
+    AlgResourceRequest& resRequest = request != nullptr ? *request : localRequest;
+    if (request == nullptr) {
+        CHK_RET(CalcAlgResourceRequest(comm, param, executor, topoInfo, algHierarchyInfo, resRequest));
+    } else {
+        CHK_RET(executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo));
+    }
+
+    if (param.isKfc && param.engine == COMM_ENGINE_CCU) {
         // SoleNHR 动态 mission（RS 2Die / AG SoleNHR D4）：mission 数由 dieNum（模板 CalcRes 通道探测）
         // 决定，AcquireAlgResources 构造 kfcServerArgs 时按静态 GetKfcServerMissionNum（=1）生成——
         // 双 die 时此处按源 kernel 数修正 missionNum 与 dieNum（ccuKernelNum 尾值即模板 push 的
@@ -984,8 +1002,8 @@ HcclResult HcclGetAlgRes(
         HCCL_INFO(
             "[asc][AlgoResource][HcclGetAlgRes] before GetAlgResCcu, opType[%d], algTag[%s].", param.opType,
             param.algTag);
-        HcclResult ccuRet =
-            GetAlgResCcu(comm, param, resRequest, resCtxHost, topoInfo, algHierarchyInfo, resCtxSequence, size);
+        HcclResult ccuRet = GetAlgResCcu(
+            comm, param, resRequest, resCtxHost, topoInfo, algHierarchyInfo, resCtxSequence, size, resourceTag);
         HCCL_INFO(
             "[asc][AlgoResource][HcclGetAlgRes] after GetAlgResCcu, ret[%d], ctxSize[%llu], "
             "resCtxSequence[%p].",
@@ -1427,7 +1445,8 @@ HcclResult GetGraphModeBuffers(
 HcclResult GetAlgResCcu(
     HcclComm comm, const OpParam& param, AlgResourceRequest& resRequest,
     std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, TopoInfoWithNetLayerDetails* topoInfo,
-    AlgHierarchyInfoForAllLevel& algHierarchyInfo, void** resCtxSequence, uint64_t& ctxSize)
+    AlgHierarchyInfoForAllLevel& algHierarchyInfo, void** resCtxSequence, uint64_t& ctxSize,
+    const std::string& resourceTag)
 {
 #if !MC2_CLIENT_ENABLE_CCU
     (void)comm;
@@ -1438,6 +1457,7 @@ HcclResult GetAlgResCcu(
     (void)algHierarchyInfo;
     (void)resCtxSequence;
     (void)ctxSize;
+    (void)resourceTag;
     HCCL_ERROR("[GetAlgResCcu] CCU resource is not supported by mc2_client.");
     return HCCL_E_NOT_SUPPORT;
 #else
@@ -1447,6 +1467,7 @@ HcclResult GetAlgResCcu(
     HCCL_INFO("[GetAlgResCcu]start GetAlgResCcu!");
     resCtxHost->topoInfo = *topoInfo;
     resCtxHost->algHierarchyInfo = algHierarchyInfo;
+    std::string contextTag = resourceTag.empty() ? std::string(param.algTag) : resourceTag;
 
     // 创建资源，并填充到Host内存上
     HcclResult ret = HcclAllocAlgResourceCcu(comm, param, resRequest, resCtxHost);
@@ -1467,7 +1488,7 @@ HcclResult GetAlgResCcu(
     uint64_t size = seq.size();
 
     void* ctx = nullptr;
-    CHK_RET(GetOrCreateCcuCtx(comm, param.algTag, size, &ctx));
+    CHK_RET(GetOrCreateCcuCtx(comm, contextTag, size, &ctx));
     const size_t copySize = static_cast<size_t>(size);
     HcclResult copyRet = haclrtMemcpy(ctx, copySize, seq.data(), copySize, ACL_MEMCPY_HOST_TO_DEVICE);
     if (copyRet != HCCL_SUCCESS) {
@@ -1542,12 +1563,23 @@ HcclResult HcclAllocAlgResourceCcu(
     resCtxHost->parallelPortInfo = resRequest.parallelPortInfo;
     resCtxHost->dieSplitRatio = resRequest.dieSplitRatio;
     if (!param.checkRes) {
-        CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
         CHK_RET(HcclGetChannelForCcu(comm, param, resRequest));
+        if (param.isKfc) {
+            const HcclResult buildRet = BuildKfcServer(resRequest, resCtxHost, param);
+            if (buildRet != HCCL_SUCCESS) {
+                ReleaseCcuAcquiredChannels(comm, resRequest);
+                return buildRet;
+            }
+        }
+        resCtxHost->slaveThreadNum = resRequest.slaveThreadNum;
+        CHK_RET(HcclGetThread(comm, param, resRequest, resCtxHost));
         CHK_RET(HcclGetCcuKernel(comm, param, resRequest, resCtxHost));
         return HCCL_SUCCESS;
     }
     HcclResult ret = HcclGetChannelForCcu(comm, param, resRequest);
+    if (ret == HCCL_SUCCESS && param.isKfc) {
+        ret = BuildKfcServer(resRequest, resCtxHost, param);
+    }
     if (ret == HCCL_SUCCESS) {
         ret = HcclGetCcuKernel(comm, param, resRequest, resCtxHost);
     }

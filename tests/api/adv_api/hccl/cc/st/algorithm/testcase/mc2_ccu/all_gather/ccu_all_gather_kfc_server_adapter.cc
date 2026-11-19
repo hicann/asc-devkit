@@ -17,6 +17,7 @@
 #include "kfc_server_protocol.h"
 
 #include <limits>
+#include <memory>
 #include <vector>
 
 namespace HcclSim {
@@ -33,6 +34,7 @@ constexpr uint32_t KFC_PARAMETER_WORDS = KFC_CKE_WORD_OFFSET + 2 * KFC_CKE_REGIO
 constexpr uint64_t SOURCE_BASE_OFFSET = 7;
 constexpr uint64_t DESTINATION_BASE_OFFSET = 11;
 constexpr uint64_t GUARD_SIZE = 32;
+constexpr uint64_t KFC_OP_ID = 1U;
 
 struct AllGatherKfcServerConfig {
     mc2_ops_hccl::CcuKernelArgKfcServer kernelArg;
@@ -49,6 +51,9 @@ void* ConvertAllGatherKfcServerArg(const void* productArg, uint32_t argNum)
     }
     auto* config = new AllGatherKfcServerConfig();
     config->kernelArg = *source;
+    config->kernelArg.opId = KFC_OP_ID;
+    config->kernelArg.tilingArgs.clear();
+    config->kernelArg.tilingArgs.push_back(std::make_shared<mc2_ops_hccl::CcuKernelArgKfcServer>(config->kernelArg));
     return config;
 }
 
@@ -90,7 +95,7 @@ void FillKfcQueue(RankMemory& memory, uint32_t rank, uint64_t sliceSize, uint64_
     }
 
     // Keep this payload in lockstep with CcuTempKfcAllGatherMesh1DMem2Mem::KernelRun.
-    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_OP_ID] = 1U;
+    memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_OP_ID] = KFC_OP_ID;
     memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_INPUT] = inputAddress;
     memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_OUTPUT] = outputAddress;
     memory.parameter[HcclKfcProtocol::KFC_CONCURRENT_AG_MESH_OUTPUT_OFFSET] =

@@ -349,6 +349,7 @@ uint16_t CcuBuf::Id() const { return 0; }
 namespace mc2_ops_hccl {
 bool g_stubHcommCcuKernelLaunchFail = false;
 uint32_t g_stubHcommCcuKernelLaunchCallCount = 0U;
+std::vector<std::vector<uint64_t>> g_stubHcommCcuKernelLaunchArgs;
 bool g_stubHcommIsSupportCcuV2 = true;
 } // namespace mc2_ops_hccl
 
@@ -413,6 +414,8 @@ extern ccu_result asccomm_ccu_kernel_launch(
     (void)task_args;
     (void)arg_num;
     ++mc2_ops_hccl::g_stubHcommCcuKernelLaunchCallCount;
+    const auto* args = static_cast<const uint64_t*>(task_args);
+    mc2_ops_hccl::g_stubHcommCcuKernelLaunchArgs.emplace_back(args, args + arg_num);
     if (mc2_ops_hccl::g_stubHcommCcuKernelLaunchFail) {
         return ccu_result::CCU_E_INTERNAL;
     }

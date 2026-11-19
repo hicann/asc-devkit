@@ -14,6 +14,7 @@
 #include "kfc_server_protocol.h"
 #include "mc2_comm_info_reporter.h"
 #include "hccl_res.h"
+#include "../ops/kfc_server/template/ccu/kernel/ccu_kernel_kfc_server.h"
 
 #include <limits>
 
@@ -170,7 +171,6 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
         HCCL_ERROR("Invalid CCU KFC tiling number %u, init tiling number %u.", tilingNum, initTiling->mc2HcommCnt);
         return HCCL_E_NOT_SUPPORT;
     }
-    uint32_t expectedOpType = static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID);
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const auto* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
         CHK_PTR_NULL(ccTiling);
@@ -179,12 +179,8 @@ HcclResult CheckCcuKfcFlow(const void* mc2Tiling, const void* ccTilingList[], ui
                 "Peer-only ReduceScatter requires rankSize 2, but got rankSize %u at tiling index %u.", rankSize, i);
             return HCCL_E_NOT_SUPPORT;
         }
-        if (expectedOpType == static_cast<uint32_t>(HcclCMDType::HCCL_CMD_INVALID)) {
-            expectedOpType = ccTiling->opType;
-        }
         if (!IsCcuKfcSupportedOp(ccTiling->opType) ||
-            ccTiling->commEngine != static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED) ||
-            ccTiling->opType != expectedOpType) {
+            ccTiling->commEngine != static_cast<uint8_t>(OpExecuteConfig::CCU_SCHED)) {
             HCCL_ERROR(
                 "Unsupported CCU KFC tiling at index %u, opType %u, commEngine %u.", i, ccTiling->opType,
                 ccTiling->commEngine);
@@ -944,7 +940,8 @@ HcclResult HandleSingleRankAndCommMode(HcclComm comm, OpParam& opParam, bool& sk
 
 static HcclResult AcquireAlgResources(
     HcclComm comm, OpParam& opParam, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, OpResCtx& opResCtx, void** resCtxOut)
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, OpResCtx& opResCtx, void** resCtxOut,
+    AlgResourceRequest* request, const std::string& resourceTag)
 {
     HCCL_INFO("[AcquireAlgResources]start AcquireAlgResources!");
     bool isResourceReused = false;
@@ -968,7 +965,8 @@ static HcclResult AcquireAlgResources(
             "ckeAddr[0x%llx]",
             missionNum, resCtxHost->kfcServerArgSize, static_cast<unsigned long long>(opResCtx.xnAddr),
             static_cast<unsigned long long>(opResCtx.ckeAddr));
-        auto resRet = HcclGetAlgRes(comm, opParam, executor, topoInfo, resCtxHost, resCtxOut, isResourceReused);
+        HcclResult resRet = HcclGetAlgRes(
+            comm, opParam, executor, topoInfo, resCtxHost, resCtxOut, isResourceReused, request, resourceTag);
         if (opParam.checkRes && resRet == HCCL_E_UNAVAIL) {
             HCCL_WARNING("[%s] HCCL_E_UNAVAIL, resource unavailable.", __func__);
             return HCCL_E_RES_NOT_SUFFICIENT;
@@ -1026,7 +1024,7 @@ HcclResult GetOpParamResCtx(
 
 HcclResult GetCcuOpParamResCtx(
     HcclComm comm, const std::string& algName, OpParam& opParam, TopoInfoWithNetLayerDetails* topoInfo,
-    OpResCtx& opResCtx, void** resCtxOut)
+    OpResCtx& opResCtx, void** resCtxOut, AlgResourceRequest* request, const std::string& resourceTag)
 {
     CHK_PTR_NULL(topoInfo);
     CHK_PTR_NULL(resCtxOut);
@@ -1040,7 +1038,8 @@ HcclResult GetCcuOpParamResCtx(
     CHK_PRT_RET(
         executor.get() == nullptr, HCCL_ERROR("Fail to find executor for algName[%s]", algName.c_str()), HCCL_E_PARA);
     std::unique_ptr<AlgResourceCtxSerializable> resCtxHost = std::make_unique<AlgResourceCtxSerializable>();
-    CHK_RET(AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut));
+    CHK_RET(
+        AcquireAlgResources(comm, opParam, executor, topoInfo, resCtxHost, opResCtx, resCtxOut, request, resourceTag));
     // die 切分比例走 res[1] 预留槽（不动 OpResCtx 布局：新旧 op 包/host lib 混搭时旧侧读 0=不切分，安全降级）
     opResCtx.res[1] = DieSplitRatioToPermille(resCtxHost->dieSplitRatio);
     // KFC mission 数（2die 为动态 dieNum）经 res[2] 下发，AIV 逐 mission commit/wait 消费；非 KFC 为 0（AIV 回退 1）
@@ -1224,7 +1223,7 @@ void FillCcuAlgorithmInfo(
 
 HcclResult PrepareCcuAlgorithmResource(
     HcclComm comm, uint32_t tilingIndex, const std::string& algName, OpParam& opParam,
-    TopoInfoWithNetLayerDetails* topoInfo, OpResCtx& opResCtx, bool& skipGetRes)
+    TopoInfoWithNetLayerDetails* topoInfo, bool& skipGetRes, AlgResourceRequest& request)
 {
     uint32_t userRank = 0;
     HcclGetRankId(comm, &userRank);
@@ -1234,16 +1233,14 @@ HcclResult PrepareCcuAlgorithmResource(
         return HCCL_SUCCESS;
     }
     HCCL_INFO("[CcuSelectAlg]HandleSingleRankAndCommMode[%u] successfully! rank[%u]", tilingIndex, userRank);
-
-    void* resCtxSequence = nullptr;
-    HcclResult ret = GetCcuOpParamResCtx(comm, algName, opParam, topoInfo, opResCtx, &resCtxSequence);
-    if (ret != HCCL_SUCCESS) {
-        HCCL_ERROR(
-            "[CcuSelectAlg] rank[%u] GetCcuOpParamResCtx FAILED, ret[%d], algName[%s]", userRank, static_cast<int>(ret),
-            algName.c_str());
-        return ret;
-    }
-    HCCL_INFO("[CcuSelectAlg]GetCcuOpParamResCtx[%u] successfully! rank[%u]", tilingIndex, userRank);
+    auto executor = CollAlgExecRegistryV2::Instance().GetAlgExec(opParam.opType, algName);
+    CHK_PTR_NULL(executor);
+    AlgHierarchyInfoForAllLevel hierarchy;
+    const size_t kernelNum = request.ccuKernelInfos.size();
+    CHK_RET(CalcAlgResourceRequest(comm, opParam, executor, topoInfo, hierarchy, request));
+    CHK_PRT_RET(
+        opParam.isMultiTiling && request.ccuKernelInfos.size() != kernelNum + 1U,
+        HCCL_ERROR("Multi-tiling KFC requires one mission per tiling, tiling[%u].", tilingIndex), HCCL_E_NOT_SUPPORT);
     return HCCL_SUCCESS;
 }
 
@@ -1265,10 +1262,11 @@ HcclResult CopyCcuOpParamToDevice(
     return HCCL_SUCCESS;
 }
 
-// 逐tiling处理：checkOnly时走真实资源链探测资源是否充足（UNAVAIL映射为HCCL_E_RES_NOT_SUFFICIENT）
+// 逐tiling准备算法参数和资源需求，最终资源申请及预检查统一在PrepareCcuTilingResources完成。
 HcclResult ProcessCcuTiling(
     HcclComm comm, void* stream, const std::string& topoTag, const Mc2CcTilingInner* ccTiling, uint32_t tilingIndex,
-    const Mc2InitTilingInner* initTiling, OpResCtx& opResCtx, bool checkOnly = false)
+    OpResCtx& opResCtx, OpParam& opParam, AlgResourceRequest& request, uint32_t tilingNum, bool checkOnly,
+    bool& skipGetRes, std::unique_ptr<TopoInfoWithNetLayerDetails>& topoInfo)
 {
     uint32_t userRank = 0;
     HcclGetRankId(comm, &userRank);
@@ -1277,29 +1275,75 @@ HcclResult ProcessCcuTiling(
 
     RunCcuSelectAlgCheck(ccTiling, tilingIndex);
 
-    OpParam opParam{};
     opParam.checkRes = checkOnly;
     std::string algName;
-    auto topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
+    topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
     AlgorithmType algorithmType;
     CHK_RET(SelectCcuAlgorithm(
         comm, stream, topoTag, ccTiling, tilingIndex, opParam, algName, topoInfo, algorithmType, checkOnly));
+    opParam.isMultiTiling = tilingNum > 1U;
+
+    const std::string tag = std::string(opParam.algTag) + "_tiling_" + std::to_string(tilingNum) + "_" +
+                            std::to_string(ccTiling->srcDataType) + "_" + std::to_string(ccTiling->dstDataType) + "_" +
+                            std::to_string(ccTiling->reduceType);
+    CHK_SAFETY_FUNC_RET(strcpy_s(opParam.algTag, sizeof(opParam.algTag), tag.c_str()));
 
     FillCcuAlgorithmInfo(tilingIndex, ccTiling, algName, algorithmType, opParam, opResCtx);
 
-    bool skipGetRes = false;
-    CHK_RET(PrepareCcuAlgorithmResource(comm, tilingIndex, algName, opParam, topoInfo.get(), opResCtx, skipGetRes));
-    if (skipGetRes || checkOnly) {
-        HCCL_INFO(
-            "[CcuSelectAlg] rank[%u] ProcessCcuTiling[%u] DONE (skipGetRes), opType[%u]", userRank, tilingIndex,
-            ccTiling->opType);
+    const size_t kernelNum = request.ccuKernelInfos.size();
+    CHK_RET(PrepareCcuAlgorithmResource(comm, tilingIndex, algName, opParam, topoInfo.get(), skipGetRes, request));
+    constexpr uint64_t fieldMask = 0x7fU;
+    constexpr uint32_t dataTypeShift = 8U;
+    constexpr uint32_t reduceTypeShift = 16U;
+    constexpr uint32_t outputTypeShift = 24U;
+    const bool isReduceType = opParam.opType == HcclCMDType::HCCL_CMD_REDUCE ||
+                              opParam.opType == HcclCMDType::HCCL_CMD_REDUCE_SCATTER ||
+                              opParam.opType == HcclCMDType::HCCL_CMD_ALLREDUCE;
+    const uint64_t reduceType = isReduceType ? ccTiling->reduceType : 0U;
+    const uint64_t opId = (static_cast<uint64_t>(ccTiling->opType) & fieldMask) |
+                          ((static_cast<uint64_t>(ccTiling->srcDataType) & fieldMask) << dataTypeShift) |
+                          ((reduceType & fieldMask) << reduceTypeShift) |
+                          ((static_cast<uint64_t>(ccTiling->dstDataType) & fieldMask) << outputTypeShift);
+    for (size_t i = kernelNum; i < request.ccuKernelInfos.size(); ++i) {
+        auto* arg = static_cast<CcuKernelArgKfcServer*>(request.ccuKernelInfos[i].kernelArg);
+        arg->opId = opId;
+    }
+    return HCCL_SUCCESS;
+}
+HcclResult PrepareCcuTilingResources(
+    HcclComm comm, const Mc2InitTilingInner* initTiling, std::vector<OpParam>& opParamVec, AlgResourceRequest& request,
+    OpResCtx& opResCtx, bool checkOnly, bool skipGetRes, std::unique_ptr<TopoInfoWithNetLayerDetails>& topoInfo)
+{
+    if (skipGetRes) {
         return HCCL_SUCCESS;
     }
-    HcclResult copyRet = CopyCcuOpParamToDevice(comm, tilingIndex, initTiling, opParam, opResCtx);
+    void* ctx = nullptr;
+    topoInfo = std::make_unique<TopoInfoWithNetLayerDetails>();
+    CHK_RET(HcclCalcTopoInfo(comm, opParamVec[0], topoInfo));
+    std::string resourceTag = opParamVec[0].algTag;
+    if (!checkOnly) {
+        for (uint32_t i = 0U; i < opParamVec.size(); ++i) {
+            const std::string tagParam = std::to_string(i) + "_" + std::string(opParamVec[i].algTag);
+            void* opParamPtr = nullptr;
+            CHK_RET(GetOrCreateCcuCtx(comm, tagParam, sizeof(OpParam), &opParamPtr));
+            resourceTag += "_" + std::to_string(reinterpret_cast<uint64_t>(opParamPtr));
+        }
+    }
+    CHK_RET(GetCcuOpParamResCtx(
+        comm, opParamVec[0].algName, opParamVec[0], topoInfo.get(), opResCtx, &ctx, &request, resourceTag));
     HCCL_INFO(
-        "[CcuSelectAlg] rank[%u] ProcessCcuTiling[%u] DONE, opType[%u], ret[%d]", userRank, tilingIndex,
-        ccTiling->opType, static_cast<int>(copyRet));
-    return copyRet;
+        "[PrepareCcuTilingResources] resource preparation completed, tilingNum[%zu], checkOnly[%u], "
+        "kernelNum[%zu], resCtx[%p]",
+        opParamVec.size(), static_cast<uint32_t>(checkOnly), request.ccuKernelInfos.size(), ctx);
+    if (checkOnly) {
+        return HCCL_SUCCESS;
+    }
+    for (uint32_t i = 0U; i < opParamVec.size(); ++i) {
+        opParamVec[i].resCtx = ctx;
+        opParamVec[i].ctxSize = opParamVec[0].ctxSize;
+        CHK_RET(CopyCcuOpParamToDevice(comm, i, initTiling, opParamVec[i], opResCtx));
+    }
+    return HCCL_SUCCESS;
 }
 } // namespace
 
@@ -1313,17 +1357,17 @@ HcclResult CcuSelectAlg(
         "[CcuSelectAlg]received: workspace[%p], size[%llu]", reinterpret_cast<void*>(opResCtx.workSpace),
         opResCtx.workSpaceSize);
     Mc2InitTilingInner* initTiling = static_cast<Mc2InitTilingInner*>(mc2Tiling);
+    std::vector<OpParam> opParamVec(tilingNum);
+    AlgResourceRequest request;
+    bool skipGetRes = false;
+    std::unique_ptr<TopoInfoWithNetLayerDetails> topoInfo;
     for (uint32_t i = 0U; i < tilingNum; ++i) {
         const Mc2CcTilingInner* ccTiling = static_cast<const Mc2CcTilingInner*>(ccTilingList[i]);
-        CHK_RET(ProcessCcuTiling(comm, stream, topoTag[i], ccTiling, i, initTiling, opResCtx, checkOnly));
-        if (i > 0U && opResCtx.algorithmType[i] != opResCtx.algorithmType[0]) {
-            HCCL_ERROR(
-                "[CcuSelectAlg] all tilings in one KFC context must use the same static server algorithm, "
-                "algorithmType[0]=[%u], tiling[%u] algorithmType=[%u], opType[%u], algConfig[%s].",
-                opResCtx.algorithmType[0], i, opResCtx.algorithmType[i], ccTiling->opType, ccTiling->algConfig);
-            return HCCL_E_NOT_SUPPORT;
-        }
+        CHK_RET(ProcessCcuTiling(
+            comm, stream, topoTag[i], ccTiling, i, opResCtx, opParamVec[i], request, tilingNum, checkOnly, skipGetRes,
+            topoInfo));
     }
-
+    CHK_RET(
+        PrepareCcuTilingResources(comm, initTiling, opParamVec, request, opResCtx, checkOnly, skipGetRes, topoInfo));
     return HCCL_SUCCESS;
 }

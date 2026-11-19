@@ -10,9 +10,10 @@
 
 #include <cstddef>
 #include <gtest/gtest.h>
+#include <mockcpp/mockcpp.hpp>
 #include <vector>
 #define private public
-#include "kernel_operator.h"
+#include "include/adv_api/hccl/hccl.h"
 #undef private
 
 using namespace AscendC;
@@ -203,4 +204,155 @@ TEST_F(CommonPrepareCheckTest, PrepareRejectsBatchWriteWithZeroSizedDtype)
     EXPECT_EQ(impl.CommonPrepareImpl<false>(param), INVALID_HANDLE_ID);
     EXPECT_EQ(impl.curHandleId_, 0);
 }
+class CcuMultiTilingTest : public ::testing::Test {
+protected:
+    using Impl = HcclImpl<HcclServerType::HCCL_SERVER_TYPE_CCU, DEFAULT_CFG>;
+    struct TilingBlock {
+        Mc2InitTilingInner init{};
+        Mc2CcTilingInner cc[2]{};
+    } block;
+    Impl impl;
+    HcclApi::OpResCtx context{};
+    CommonPrepareParamCcu handles[HCCL_MAX_HANDLE_ID]{};
+    std::vector<uint64_t> signals;
+    std::vector<uint64_t> params;
+    uint64_t finished = 0;
+
+    static void StoreSignal(uint64_t* address, uint64_t value) { *address = value; }
+    static uint8_t LoadSignal(uint8_t* address) { return *address; }
+
+    void SetUp() override
+    {
+        MOCKER(AscendC::WriteGmBypassDCache<uint64_t>).stubs().will(invoke(StoreSignal));
+        MOCKER(AscendC::ReadGmBypassDCache<uint8_t>).stubs().will(invoke(LoadSignal));
+        signals.resize(HcclKfcProtocol::KFC_SIGNAL_REGION_NUM * CCU_MAX_MSG_NUM);
+        params.resize(CCU_MSG_XN_NUM * CCU_MAX_MSG_NUM);
+        context.ckeAddr = reinterpret_cast<uint64_t>(signals.data());
+        context.xnAddr = reinterpret_cast<uint64_t>(params.data());
+        context.rankSize = 2;
+        context.res[1] = 1000;
+        context.res[2] = 1;
+        for (uint32_t i = 0; i < 2; ++i) {
+            block.cc[i].opType =
+                static_cast<uint32_t>(i == 0 ? HcclCMDType::HCCL_CMD_ALLREDUCE : HcclCMDType::HCCL_CMD_REDUCE_SCATTER);
+            context.opType[i] = block.cc[i].opType;
+            block.cc[i].srcDataType = HCCL_DATA_TYPE_FP16;
+            block.cc[i].dstDataType = HCCL_DATA_TYPE_FP16;
+            block.cc[i].reduceType = i == 0 ? HCCL_REDUCE_SUM : HCCL_REDUCE_MAX;
+            context.algInfo[i].offset = offsetof(TilingBlock, cc) + i * sizeof(Mc2CcTilingInner);
+            context.algorithmType[i] = i + 10;
+            handles[i].commType.prepareType = static_cast<HcclCMDType>(block.cc[i].opType);
+            handles[i].dataType = HCCL_DATA_TYPE_FP16;
+            handles[i].dstDataType = HCCL_DATA_TYPE_FP16;
+            handles[i].count = 32;
+            impl.InitHandleInfo(i);
+            impl.handleMissionNum_[i] = context.res[2];
+            impl.handleReqId_[i] = i;
+        }
+        for (auto& available : impl.msgQueueIsAvailable_) {
+            available = true;
+        }
+        impl.newCcuFlag_ = true;
+        impl.isInited_ = true;
+        impl.workingFlag_ = true;
+        impl.hcclNewContext_ = &context;
+        impl.handleParamGM_ = handles;
+        impl.finishCntGM_ = &finished;
+        impl.curVersion_ = HcclTilingVersion::ONLINE_COMPILATION_TILING_VERSION;
+        impl.tilingBaseAddr_ = reinterpret_cast<uint64_t>(&block);
+    }
+    void TearDown() override { GlobalMockObject::verify(); }
+};
+
+TEST_F(CcuMultiTilingTest, SelectionAndHandleSnapshot)
+{
+    impl.curHandleId_ = 0;
+    CommonPrepareParam param{};
+    param.commType.prepareType = HcclCMDType::HCCL_CMD_ALLREDUCE;
+    param.dataType = HCCL_DATA_TYPE_FP16;
+    param.dstDataType = HCCL_DATA_TYPE_FP16;
+    param.count = 32;
+    ASSERT_EQ(impl.SetCcTilingV2(context.algInfo[0].offset), HCCL_SUCCESS);
+    ASSERT_EQ(impl.CommonPrepareImpl<false>(param), 0);
+    ASSERT_EQ(impl.SetCcTilingV2(context.algInfo[1].offset), HCCL_SUCCESS);
+    param.commType.prepareType = HcclCMDType::HCCL_CMD_REDUCE_SCATTER;
+    ASSERT_EQ(impl.CommonPrepareImpl<false>(param), 1);
+    impl.CcuPrepareForOp(0);
+    EXPECT_EQ(handles[0].op, HCCL_REDUCE_SUM);
+    EXPECT_EQ(impl.GetAlgorithmType(0), 10U);
+    EXPECT_EQ(impl.ccuParam_.dieSplitRatioPermille, 1000U);
+    impl.CcuPrepareForOp(1);
+    EXPECT_EQ(handles[1].op, HCCL_REDUCE_MAX);
+    EXPECT_EQ(impl.GetAlgorithmType(1), 11U);
+    EXPECT_EQ(impl.handleMissionNum_[0], 1U);
+    EXPECT_EQ(impl.handleMissionNum_[1], 1U);
+    EXPECT_EQ(impl.ccuParam_.dieSplitRatioPermille, 1000U);
+    EXPECT_NE(GetOpId(&handles[0]), GetOpId(&handles[1]));
+    impl.ccuUsedXnNum_ = 1;
+    impl.xnData_[0] = GetOpId(&handles[0]);
+    impl.CcuSendMsg(0, 0);
+    impl.xnData_[0] = GetOpId(&handles[1]);
+    impl.CcuSendMsg(1, 1);
+    EXPECT_EQ(params[0], GetOpId(&handles[0]));
+    EXPECT_EQ(params[CCU_MSG_XN_NUM], GetOpId(&handles[1]));
+}
+
+TEST_F(CcuMultiTilingTest, SequentialTilingsWrapTheSharedQueue)
+{
+    impl.workingFlag_ = false;
+    impl.curHandleId_ = 0;
+    CommonPrepareParam param{};
+    param.commType.prepareType = HcclCMDType::HCCL_CMD_ALLREDUCE;
+    param.dataType = HCCL_DATA_TYPE_FP16;
+    param.count = 32;
+    param.repeat = 2;
+    for (uint32_t turn = 0; turn < HCCL_MAX_HANDLE_ID; ++turn) {
+        ASSERT_EQ(impl.SetCcTilingV2(context.algInfo[turn % 2U].offset), HCCL_SUCCESS);
+        param.commType.prepareType = static_cast<HcclCMDType>(block.cc[turn % 2U].opType);
+        const auto handle = impl.CommonPrepareImpl<true>(param);
+        ASSERT_NE(handle, INVALID_HANDLE_ID);
+        ASSERT_EQ(impl.Wait(handle), HCCL_SUCCESS);
+        ASSERT_EQ(impl.Wait(handle), HCCL_SUCCESS);
+    }
+    EXPECT_EQ(impl.globalCurResId_, (2U * HCCL_MAX_HANDLE_ID) % CCU_MAX_MSG_NUM);
+    EXPECT_EQ(impl.globalCurWaitId_, impl.globalCurResId_);
+    for (auto available : impl.msgQueueIsAvailable_) {
+        EXPECT_TRUE(available);
+    }
+}
+
+TEST_F(CcuMultiTilingTest, RepeatRefillAndFinalizeUseTheSharedCursor)
+{
+    impl.workingFlag_ = false;
+    impl.curHandleId_ = 1;
+    impl.handleRepeatCnt_[0] = CCU_MAX_MSG_NUM + 1U;
+    impl.CommitMsgInner(0);
+    EXPECT_EQ(impl.handleCommitCnt_[0], CCU_MAX_MSG_NUM);
+    for (uint32_t turn = 0; turn < CCU_MAX_MSG_NUM + 1U; ++turn) {
+        ASSERT_EQ(impl.Wait(0), HCCL_SUCCESS);
+    }
+    EXPECT_EQ(impl.handleFinishCnt_[0], CCU_MAX_MSG_NUM + 1U);
+    EXPECT_EQ(impl.globalCurResId_, 1U);
+    impl.workingFlag_ = true;
+    impl.Finalize();
+    EXPECT_EQ(params[CCU_MSG_XN_NUM], UINT64_MAX);
+    EXPECT_EQ(*reinterpret_cast<uint64_t*>(impl.GetCommitCkeAddr(1, 0)), 1U);
+    EXPECT_EQ(*reinterpret_cast<uint64_t*>(impl.GetCommitCkeAddr(1, 1)), 0U);
+}
+
+TEST_F(CcuMultiTilingTest, FinalizeAfterSerialWaitsWritesOneSentinel)
+{
+    impl.workingFlag_ = false;
+    impl.curHandleId_ = 2;
+    impl.Commit(0);
+    ASSERT_EQ(impl.Wait(0), HCCL_SUCCESS);
+    impl.Commit(1);
+    ASSERT_EQ(impl.Wait(1), HCCL_SUCCESS);
+    impl.workingFlag_ = true;
+    impl.Finalize();
+    EXPECT_EQ(params[2U * CCU_MSG_XN_NUM], UINT64_MAX);
+    EXPECT_EQ(params[0], 0U);
+    EXPECT_EQ(params[CCU_MSG_XN_NUM], 0U);
+}
+
 } // namespace

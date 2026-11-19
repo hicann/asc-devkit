@@ -549,13 +549,20 @@ CcuResult KfcServerGenCircularQueue(KfcServerContext& ctx)
         CCU_IF(param[HBM_PARAM_IDX_0] == INVALID_U64) { repeatCond = 1; }
         CCU_IF(param[HBM_PARAM_IDX_0] != INVALID_U64)
         {
-            CCU_CHK_RET(MissionPreSync(param[HBM_PARAM_IDX_0], ctx));
-            DispatchKfcSubKernel(param, ctx, recordAddr);
-            CCU_CHK_RET(MissionPostSync(ctx));
-            // D3：SoleNHR AG kernel 已在末步同步后、PostSync 前写 turn-end（AIV 提前返回），
-            // 其余角色维持 dispatch 后统一发放。条件为宿主侧常量，不产生运行时分支指令。
-            if (!KernelEmitsEarlyTurnEnd(ctx)) {
-                CCU_CHK_RET(SetTurnEndSig(recordAddr, turnEndSig, ctx));
+            const auto* serverArg = ctx.arg;
+            for (const auto& arg : serverArg->tilingArgs) {
+                CCU_IF(param[HBM_PARAM_IDX_0] == arg->opId)
+                {
+                    ctx.arg = arg.get();
+                    CCU_CHK_RET(MissionPreSync(param[HBM_PARAM_IDX_0], ctx));
+                    DispatchKfcSubKernel(param, ctx, recordAddr);
+                    CCU_CHK_RET(MissionPostSync(ctx));
+                    // SoleNHR AG may emit turn-end inside its subkernel.
+                    if (!KernelEmitsEarlyTurnEnd(ctx)) {
+                        CCU_CHK_RET(SetTurnEndSig(recordAddr, turnEndSig, ctx));
+                    }
+                    ctx.arg = serverArg;
+                }
             }
         }
         waitAddr += ckeSize;

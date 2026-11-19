@@ -16,6 +16,7 @@
 #include "coll_alg_v2_exec_registry.h"
 #include "executor_base.h"
 #include "executor_v2_base.h"
+#include "ops/kfc_server/template/ccu/kernel/ccu_kernel_kfc_server.h"
 #include "alg_env_config.h"
 #include "param_check.h"
 #include "sal.h"
@@ -104,7 +105,8 @@ AlgAttrs InsCollAlgBase::GetAlgoMeta(const std::string& algName) const
 
 class MockInsCollAlgBase : public InsCollAlgBase {
 public:
-    MockInsCollAlgBase() = default;
+    explicit MockInsCollAlgBase(bool server = false) : server_(server) {}
+    bool server_;
     ~MockInsCollAlgBase() override = default;
 
     std::string Describe() const override { return "MockInsCollAlgBase"; }
@@ -121,6 +123,14 @@ public:
         HcclComm comm, const OpParam& param, const TopoInfoWithNetLayerDetails* topoInfo,
         const AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resourceRequest) override
     {
+        if (!server_) {
+            resourceRequest.ccuKernelInfos.emplace_back();
+            resourceRequest.ccuKernelNum.push_back(1U);
+        } else {
+            auto arg = std::make_shared<CcuKernelArgKfcServer>();
+            arg->opParam = param;
+            resourceRequest.ccuKernelInfos.back().setKernelArg(arg);
+        }
         return HCCL_SUCCESS;
     }
 
@@ -385,12 +395,27 @@ std::unique_ptr<InsCollAlgBase> CollAlgExecRegistryV2::GetAlgExec(HcclCMDType op
     if (g_stubCcuAlgExecNull && (g_stubCcuAlgExecNullName.empty() || algTag == g_stubCcuAlgExecNullName)) {
         return nullptr;
     }
-    return std::make_unique<MockInsCollAlgBase>();
+    return std::make_unique<MockInsCollAlgBase>(opType == HcclCMDType::HCCL_CMD_KFC_SERVER);
+}
+
+HcclResult CalcAlgResourceRequest(
+    HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
+    AlgHierarchyInfoForAllLevel& algHierarchyInfo, AlgResourceRequest& resRequest)
+{
+    CHK_RET(executor->CalcAlgHierarchyInfo(comm, topoInfo, algHierarchyInfo));
+    CHK_RET(executor->CalcRes(comm, param, topoInfo, algHierarchyInfo, resRequest));
+    if (param.isKfc && param.engine == COMM_ENGINE_CCU) {
+        auto server = CollAlgExecRegistryV2::Instance().GetAlgExec(HcclCMDType::HCCL_CMD_KFC_SERVER, "CcuKfcServer");
+        CHK_PTR_NULL(server);
+        CHK_RET(server->CalcRes(comm, param, topoInfo, algHierarchyInfo, resRequest));
+    }
+    return HCCL_SUCCESS;
 }
 
 HcclResult HcclGetAlgRes(
     HcclComm comm, OpParam& param, std::unique_ptr<InsCollAlgBase>& executor, TopoInfoWithNetLayerDetails* topoInfo,
-    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxDevice, bool& isResourceReused)
+    std::unique_ptr<AlgResourceCtxSerializable>& resCtxHost, void** resCtxDevice, bool& isResourceReused,
+    AlgResourceRequest*, const std::string&)
 {
     if (resCtxDevice == nullptr) {
         return HCCL_E_PTR;
@@ -451,5 +476,17 @@ HcclResult HcclGetAlgRes(
     param.ctxSize = newSize;
 
     return HCCL_SUCCESS;
+}
+HcclResult GetAlgResCcu(
+    HcclComm comm, const OpParam& param, AlgResourceRequest& request,
+    std::unique_ptr<AlgResourceCtxSerializable>& resources, TopoInfoWithNetLayerDetails* topo,
+    AlgHierarchyInfoForAllLevel&, void** ctx, uint64_t& size, const std::string&)
+{
+    OpParam copy = param;
+    std::unique_ptr<InsCollAlgBase> executor;
+    bool reused = false;
+    const HcclResult ret = HcclGetAlgRes(comm, copy, executor, topo, resources, ctx, reused, nullptr, "");
+    size = copy.ctxSize;
+    return ret;
 }
 } // namespace mc2_ops_hccl

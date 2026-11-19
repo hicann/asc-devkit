@@ -20,10 +20,19 @@
 #include "external_alg_resolver.h"
 #include "external_alg_rules.h"
 #include "gtest/gtest.h"
+#include "op_common.h"
 #include "sim_communicator.h"
 #include "sim_world.h"
 
 #include "acl/acl_rt.h"
+
+namespace mc2_ops_hccl {
+// 本目标不链接 KFC server，实现桩仅用于补齐 op_common.cc 的链接依赖。
+HcclResult BuildKfcServer(AlgResourceRequest&, std::unique_ptr<AlgResourceCtxSerializable>&, const OpParam&)
+{
+    return HCCL_E_NOT_SUPPORT;
+}
+} // namespace mc2_ops_hccl
 
 using namespace mc2_ops_hccl;
 

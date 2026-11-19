@@ -232,7 +232,7 @@ HcclResult GetOpParamResCtx(
 
 HcclResult GetCcuOpParamResCtx(
     HcclComm comm, const std::string& algName, OpParam& opParam, TopoInfoWithNetLayerDetails* topoInfo,
-    OpResCtx& opResCtx, void** resCtxOut);
+    OpResCtx& opResCtx, void** resCtxOut, AlgResourceRequest* request, const std::string& resourceTag = "");
 
 HcclResult GetOpParam(
     HcclComm comm, void* stream, const std::string& tag, const Mc2CcTilingInner* ccTiling, OpParam& opParam);

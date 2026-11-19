@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <memory>
 
 namespace HcclSim {
 namespace CcuSt {
@@ -37,6 +38,7 @@ protected:
     template <typename T>
     void Verify(HcclDataType type, HcclReduceOp op, uint64_t count, bool paddedStride)
     {
+        constexpr uint64_t opId = 1U;
         const uint64_t bytes = count * sizeof(T);
         const uint64_t stride = bytes + (paddedStride ? 128 : 0);
         const uint64_t requestSpan = 2 * stride + GUARD;
@@ -81,7 +83,7 @@ protected:
                     std::fill_n(memory.input.data() + inBase + rank * stride, bytes, 0x7f);
                 }
                 auto* p = memory.parameter.data() + request * QUEUE_WORDS;
-                p[0] = 1;
+                p[0] = opId;
                 p[1] = memory.InputAddress() + inBase;
                 p[2] = memory.OutputAddress() + outBase;
                 p[4] = rank * stride;
@@ -95,6 +97,7 @@ protected:
             memory.parameter[CKE_WORD + REQUESTS] = 1;
 
             mc2_ops_hccl::CcuKernelArgKfcServer arg;
+            arg.opId = opId;
             arg.opParam.opType = HCCL_CMD_REDUCE_SCATTER;
             arg.opParam.DataDes.dataType = type;
             arg.opParam.reduceType = op;
@@ -103,6 +106,7 @@ protected:
             arg.rankId = rank;
             arg.channelCount = 1;
             arg.channels[0] = MakeChannel(rank, rank ^ 1U);
+            arg.tilingArgs.push_back(std::make_shared<mc2_ops_hccl::CcuKernelArgKfcServer>(arg));
             std::vector<ChannelHandle> channels{arg.channels[0]};
             auto& registry = RegisterManager::Global();
             ASSERT_EQ(registry.RegisterStart(rank + 1), Result::SUCCESS);

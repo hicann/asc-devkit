@@ -47,6 +47,9 @@ struct CcuKernelArgKfcServer : CcuKernelArgBase {
     // 会导致双 mission 两个 kernel 各自 export 同一对 tag，注册期 ProcessInterCtxRes
     // 合并 exported sharedNotifies 时同名冲突（HCCL_E_PARA）。
     uint32_t hostMissionIndex = 0;
+    uint64_t opId = 0U;
+    // Multi-tiling subgraphs have distinct opTypes and one mission each on the same die.
+    std::vector<std::shared_ptr<CcuKernelArgKfcServer>> tilingArgs;
 };
 
 class CcuTaskArgKfcServer : public hcomm::CcuTaskArg {

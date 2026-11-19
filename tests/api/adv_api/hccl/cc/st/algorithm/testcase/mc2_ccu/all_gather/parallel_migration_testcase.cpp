@@ -13,9 +13,12 @@
 #include "ccu_temp_kfc_all_gather_nhr_1D_multi_jetty_mem2mem.h"
 #include "sim_world.h"
 #include "acl/acl_rt.h"
+#include "op_common.h"
+#include <cstring>
 
 #include <algorithm>
 #include <functional>
+#include <memory>
 #include <numeric>
 
 namespace HcclSim {
@@ -67,6 +70,7 @@ protected:
     // 覆盖双 mission 的真实并发、GM 可见性或硬件资源容量。
     void VerifyMission(uint32_t meshSize, uint32_t nhrSize, uint64_t count, uint64_t elementSize, bool mesh)
     {
+        constexpr uint64_t opId = 1U;
         const uint32_t ranks = meshSize * nhrSize;
         const uint64_t bytes = count * elementSize;
         const uint64_t part0 = count / 2 * elementSize;
@@ -133,7 +137,7 @@ protected:
             }
             for (uint32_t entry = 0; entry < 2; ++entry) {
                 auto* p = memory.parameter.data() + entry * QUEUE_WORDS;
-                p[KFC_PARALLEL_AG_OP_ID] = 1;
+                p[KFC_PARALLEL_AG_OP_ID] = opId;
                 p[KFC_PARALLEL_AG_INPUT] = memory.InputAddress() + GUARD + entry * bytes;
                 p[KFC_PARALLEL_AG_OUTPUT] = memory.OutputAddress() + GUARD + entry * bytes;
                 p[KFC_PARALLEL_AG_TOTAL_SIZE] = bytes;
@@ -166,6 +170,7 @@ protected:
             }
 
             CcuKernelArgKfcServer arg;
+            arg.opId = opId;
             arg.algSubType = mc2_ops_hccl::KFC_PARALLEL_ALL_GATHER_SUB_TYPE;
             auto parallel = std::make_shared<mc2_ops_hccl::KfcParallelAllGatherArg>();
             arg.algArg = parallel;
@@ -191,6 +196,7 @@ protected:
             ASSERT_LE(channels.size(), sizeof(arg.channels) / sizeof(arg.channels[0]));
             std::copy(channels.begin(), channels.end(), arg.channels);
             arg.channelCount = channels.size();
+            arg.tilingArgs.push_back(std::make_shared<CcuKernelArgKfcServer>(arg));
             auto& registry = RegisterManager::Global();
             // Register 在调用线程同步执行 kernel lambda，GetCcuVersion() 经
             // thread_local 的 curr_dev_id 查 SimNpu，须先绑定当前 rank 的设备
@@ -246,6 +252,177 @@ TEST_F(ParallelAllGatherMigrationTest, NonPowerOfTwoNhr)
 {
     VerifyMission(4, 3, 67, 1, true);
     VerifyMission(4, 3, 67, 1, false);
+}
+
+TEST_F(ParallelAllGatherMigrationTest, SharedQueueSelectsOpIdsAndDifferentSubgraphs)
+{
+    constexpr uint32_t ranks = 2;
+    constexpr uint32_t count = 16;
+    constexpr uint64_t bytes = count * sizeof(int32_t);
+    constexpr uint32_t signalBase = mc2_ops_hccl::CCU_TASK_NUM_MAX * QUEUE_WORDS;
+    constexpr uint32_t scratchBase = signalBase + 4 * CKE_REGION;
+    struct SimGuard {
+        ~SimGuard() { HcclSim::SimWorld::Global()->Deinit(); }
+    } guard;
+    SuperPodMeta pod{ServerMeta(ranks)};
+    std::iota(pod[0].begin(), pod[0].end(), 0U);
+    HcclSim::SimWorld::Global()->Init(TopoMeta{pod}, DevType::DEV_TYPE_950);
+    std::vector<RankMemory> memories(ranks);
+    std::vector<RankLaunch> launches(ranks);
+    for (uint32_t rank = 0; rank < ranks; ++rank) {
+        auto& memory = memories[rank];
+        memory.input.assign(GUARD + bytes + GUARD, 0x5a);
+        memory.output.assign(GUARD + 3 * bytes + GUARD, 0xa5);
+        memory.parameter.assign(scratchBase + bytes / sizeof(uint64_t), 0);
+        for (uint32_t i = 0; i < count; ++i) {
+            const int32_t value = (rank + 1) * 10 + i;
+            std::memcpy(memory.input.data() + GUARD + i * sizeof(value), &value, sizeof(value));
+        }
+        std::vector<ChannelHandle> channels{MakeChannel(rank, 1U - rank)};
+        CcuKernelArgKfcServer server;
+        for (uint32_t i = 0; i < 2; ++i) {
+            auto arg = std::make_shared<CcuKernelArgKfcServer>();
+            arg->rankSize = ranks;
+            arg->rankId = rank;
+            arg->channels[0] = channels[0];
+            arg->channelCount = channels.size();
+            arg->opParam.opType = i == 1 ? HCCL_CMD_ALLGATHER : HCCL_CMD_ALLREDUCE;
+            arg->opParam.DataDes.dataType = HCCL_DATA_TYPE_INT32;
+            arg->opParam.DataDes.outputType = HCCL_DATA_TYPE_INT32;
+            arg->opParam.reduceType = i == 0 ? HCCL_REDUCE_SUM : HCCL_REDUCE_MAX;
+            constexpr uint32_t dataTypeShift = 8U;
+            constexpr uint32_t outputTypeShift = 24U;
+            arg->opId = static_cast<uint64_t>(arg->opParam.opType) |
+                        (static_cast<uint64_t>(HCCL_DATA_TYPE_INT32) << dataTypeShift) |
+                        (static_cast<uint64_t>(HCCL_DATA_TYPE_INT32) << outputTypeShift);
+            server.tilingArgs.push_back(arg);
+        }
+        // AllGather -> AllReduce differs from host registration order.
+        for (uint32_t entry = 0; entry < 2; ++entry) {
+            auto* frame = memory.parameter.data() + entry * QUEUE_WORDS;
+            constexpr uint32_t dataTypeShift = 8U;
+            constexpr uint32_t outputTypeShift = 24U;
+            frame[0] = static_cast<uint64_t>(entry == 0 ? HCCL_CMD_ALLGATHER : HCCL_CMD_ALLREDUCE) |
+                       (static_cast<uint64_t>(HCCL_DATA_TYPE_INT32) << dataTypeShift) |
+                       (static_cast<uint64_t>(HCCL_DATA_TYPE_INT32) << outputTypeShift);
+            frame[1] = memory.InputAddress() + GUARD;
+            frame[2] = memory.OutputAddress() + GUARD + entry * 2 * bytes;
+            mc2_ops_hccl::LoopGroupConfig config{};
+            config.msInterleave = mc2_ops_hccl::CCU_MS_INTERLEAVE;
+            config.loopCount =
+                entry == 0 ? mc2_ops_hccl::CCU_MS_LOCAL_COPY_LOOP_COUNT : mc2_ops_hccl::CCU_M2M_LOCAL_COPY_LOOP_COUNT;
+            config.memSlice = mc2_ops_hccl::CCU_MS_SIZE * (entry == 0 ? mc2_ops_hccl::LOCAL_COPY_MS_PER_LOOP : 1U);
+            const auto go = mc2_ops_hccl::CalGoSize(entry == 0 ? bytes : bytes / ranks, config);
+            if (entry == 0) {
+                frame[3] = rank * bytes;
+                frame[4] = bytes;
+                std::copy(go.begin(), go.end(), frame + 5);
+                frame[10] = UINT64_MAX - 1;
+                frame[13] = bytes;
+            } else {
+                frame[3] = memory.ParameterAddress() + scratchBase * sizeof(uint64_t);
+                frame[6] = frame[7] = frame[8] = bytes / ranks;
+                frame[9] = rank * bytes / ranks;
+                std::copy(go.begin(), go.end(), frame + 11);
+                frame[15] = frame[16] = bytes / ranks;
+                frame[17] = UINT64_MAX - 1;
+                std::copy(go.begin(), go.end(), frame + 18);
+                std::copy(go.begin(), go.end(), frame + 22);
+            }
+            memory.parameter[signalBase + entry] = 1;
+        }
+        memory.parameter[2 * QUEUE_WORDS] = UINT64_MAX;
+        memory.parameter[signalBase + 2] = 1;
+        ASSERT_EQ(aclrtSetDevice(rank), ACL_SUCCESS);
+        auto& registry = RegisterManager::Global();
+        ASSERT_EQ(registry.RegisterStart(rank + 1), Result::SUCCESS);
+        KernelHandle handle = 0;
+        ASSERT_EQ(
+            registry.Register(
+                rank + 1, "shared-kfc",
+                [&](void*) {
+                    CompilerContext::Current().ConfigureProgram(rank, ranks, channels);
+                    return mc2_ops_hccl::CcuKfcServerKernel(&server) == CCU_SUCCESS ? Result::SUCCESS :
+                                                                                      Result::CONTRACT_ERROR;
+                },
+                nullptr, handle),
+            Result::SUCCESS);
+        ASSERT_EQ(registry.RegisterEnd(rank + 1), Result::SUCCESS);
+        launches[rank] = {
+            handle,
+            {memory.ParameterAddress(), memory.ParameterAddress() + signalBase * sizeof(uint64_t), 1, 1, 0,
+             0x1000U + rank},
+            &memory};
+    }
+    RuntimeWorld runtime;
+    ASSERT_EQ(runtime.Launch(launches), Result::SUCCESS) << runtime.LastError();
+    for (const auto& memory : memories) {
+        for (uint32_t i = 0; i < 3 * count; ++i) {
+            int32_t actual;
+            std::memcpy(&actual, memory.output.data() + GUARD + i * sizeof(actual), sizeof(actual));
+            const int32_t expected = i < count ? 10 + i : i < 2 * count ? 20 + i - count : 30 + 2 * (i - 2 * count);
+            EXPECT_EQ(actual, expected) << "element " << i;
+        }
+        EXPECT_TRUE(std::all_of(
+            memory.output.begin(), memory.output.begin() + GUARD, [](uint8_t value) { return value == 0xa5; }));
+        EXPECT_TRUE(
+            std::all_of(memory.output.end() - GUARD, memory.output.end(), [](uint8_t value) { return value == 0xa5; }));
+        for (uint32_t entry = 0; entry < 2; ++entry) {
+            EXPECT_EQ(memory.parameter[signalBase + CKE_REGION + entry], 1U);
+        }
+        EXPECT_EQ(memory.parameter[signalBase + CKE_REGION + 2], 0U);
+    }
+}
+
+TEST_F(ParallelAllGatherMigrationTest, BuildPreservesPerTilingResourcesOnSameDie)
+{
+    mc2_ops_hccl::OpParam param;
+    param.isMultiTiling = true;
+    mc2_ops_hccl::AlgResourceRequest request;
+    auto resources = std::make_unique<mc2_ops_hccl::AlgResourceCtxSerializable>();
+    resources->kfcServerArgSize = 6;
+    resources->kfcServerArgs = {0x1000, 0x2000, 1, 1, 0, 0x3000};
+    constexpr uint64_t opIdBase = 0x1000U;
+    // Three single-mission tilings share die 1 and one persistent server.
+    for (uint32_t i = 0; i < 3; ++i) {
+        mc2_ops_hccl::CcuKernelInfo info{};
+        std::strcpy(info.kernelFuncName, "CcuKernelKfcServer");
+        auto arg = std::make_shared<CcuKernelArgKfcServer>();
+        arg->channels[0] = 100 + i;
+        arg->channelCount = 1;
+        arg->opParam.opType = i == 0 ? HCCL_CMD_ALLREDUCE : (i == 1 ? HCCL_CMD_ALLGATHER : HCCL_CMD_REDUCE_SCATTER);
+        arg->opParam.reduceType = HCCL_REDUCE_MAX;
+        arg->opId = opIdBase + i;
+        info.dieId = 1;
+        info.setKernelArg(arg);
+        request.ccuKernelInfos.push_back(info);
+    }
+    auto crossDieRequest = request;
+    crossDieRequest.ccuKernelInfos.back().dieId = 0;
+    ASSERT_EQ(mc2_ops_hccl::BuildKfcServer(request, resources, param), HCCL_SUCCESS);
+    ASSERT_EQ(request.ccuKernelInfos.size(), 1U);
+    EXPECT_EQ(request.ccuKernelInfos[0].dieId, 1U);
+    EXPECT_EQ(request.ccuKernelNum, std::vector<uint32_t>({1U}));
+    EXPECT_EQ(request.slaveThreadNum, 0U);
+    EXPECT_TRUE(request.notifyNumPerThread.empty());
+    EXPECT_TRUE(resources->notifyNumPerThread.empty());
+    EXPECT_EQ(resources->kfcServerArgs, std::vector<uint64_t>({0x1000, 0x2000, 1, 1, 0, 0x3000}));
+    const auto* first = static_cast<const CcuKernelArgKfcServer*>(request.ccuKernelInfos[0].kernelArg);
+    EXPECT_STREQ(request.ccuKernelInfos[0].kernelFuncName, "CcuKernelKfcServer");
+    EXPECT_EQ(first->hostMissionIndex, 0U);
+    ASSERT_EQ(first->tilingArgs.size(), 3U);
+    ASSERT_NE(first->tilingArgs[0], nullptr);
+    EXPECT_EQ(first->tilingArgs[0]->channels[0], 100U);
+    EXPECT_EQ(first->tilingArgs[0]->opParam.reduceType, HCCL_REDUCE_MAX);
+    EXPECT_EQ(first->tilingArgs[0]->opId, opIdBase);
+    ASSERT_NE(first->tilingArgs[1], nullptr);
+    EXPECT_EQ(first->tilingArgs[1]->channels[0], 101U);
+    EXPECT_EQ(first->tilingArgs[1]->opId, opIdBase + 1U);
+    ASSERT_NE(first->tilingArgs[2], nullptr);
+    EXPECT_EQ(first->tilingArgs[2]->channels[0], 102U);
+    EXPECT_EQ(first->tilingArgs[2]->opId, opIdBase + 2U);
+    EXPECT_EQ(first->tilingArgs[2]->hostMissionIndex, 0U);
+    EXPECT_EQ(mc2_ops_hccl::BuildKfcServer(crossDieRequest, resources, param), HCCL_E_NOT_SUPPORT);
 }
 
 TEST_F(ParallelAllGatherMigrationTest, NhrRankBeyondEventMaskWidth) { VerifyMission(2, 17, 9, 1, false); }
