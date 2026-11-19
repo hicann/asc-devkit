@@ -10,6 +10,7 @@
 #ifndef _STUB_K3_PVWRAP_H_
 #define _STUB_K3_PVWRAP_H_
 
+#include <cstdint>
 #include <vector>
 #include <map>
 #include <deque>
