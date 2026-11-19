@@ -39,6 +39,16 @@ def SetCurrentSocInfo(soc: str):
 
 
 class TestGetOpTiling(unittest.TestCase):
+    def test_static_zero_workspace_with_computed_output_shape(self):
+        context = mock.Mock()
+        run_info = {"workspaces": []}
+        with mock.patch.object(CommonUtility, "is_c310", return_value=True):
+            static_post_process_of_workspace(context, run_info, 0, False)
+            context.add_workspace.assert_not_called()
+
+            static_post_process_of_workspace(context, run_info, 0, True)
+            context.add_workspace.assert_called_once_with("total_workspace", size=0)
+
     def setUp(self):
         # operator before each testcase
         print("-------------------SetUp----------------")

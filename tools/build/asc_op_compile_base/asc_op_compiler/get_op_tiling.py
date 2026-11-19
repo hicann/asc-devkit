@@ -1724,7 +1724,9 @@ def get_tiling_info_isolate(op_info: OpInfo, input_tiling_info_dict: dict):
             tiling_info = get_isolate_tiling_info(op_info.op_type, isolate_json_path)
             if tiling_info.tiling_info_completed:
                 if is_static_flag:
-                    static_post_process_of_workspace(context, run_info, tiling_info.static_workspace_size)
+                    static_post_process_of_workspace(
+                        context, run_info, tiling_info.static_workspace_size, op_info.output_shape_depend_on_compute
+                    )
                 else:
                     context.add_workspace("total_workspace", size=-1)
                 CommonUtility.print_compile_log(
@@ -1963,12 +1965,12 @@ def generate_static_tiling_struct_file(
     return
 
 
-def static_post_process_of_workspace(context, run_info, workspace_size):
+def static_post_process_of_workspace(context, run_info, workspace_size, is_static_output_shape_depend_on_compute=False):
     if workspace_size >= 0:
         if len(run_info["workspaces"]) > 1:
             msg = "the num of workspace can not large than 1"
             raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, msg)
-        if CommonUtility.is_c310() and workspace_size == 0:
+        if CommonUtility.is_c310() and workspace_size == 0 and not is_static_output_shape_depend_on_compute:
             return
         context.add_workspace("total_workspace", size=workspace_size)
 
@@ -2002,7 +2004,9 @@ def process_tiling_info(
         generate_static_tiling_struct_file(
             optype, run_info, tiling_info, tiling_key_list, tiling_key_group_map, tiling_const_propagation
         )
-        static_post_process_of_workspace(context, run_info, tiling_info.static_workspace_size)
+        static_post_process_of_workspace(
+            context, run_info, tiling_info.static_workspace_size, op_info.output_shape_depend_on_compute
+        )
     else:
         tiling_info.static_shape_flag = False
         generate_dynamic_tiling_struct_file(optype, tiling_info, tiling_key_list, tiling_key_group_map)
