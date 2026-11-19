@@ -29,13 +29,3 @@ add_executable(demo
 target_compile_options(demo PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
 )
-
-option(FA_DEBUG_PV "Build with the PV update bypassed for board debugging" OFF)
-if(FA_DEBUG_PV)
-    target_compile_definitions(demo PRIVATE FA_DEBUG_PV)
-endif()
-
-option(FA_DEBUG_AIC_ONLY "Build with only the QK matmul and CV synchronization" OFF)
-if(FA_DEBUG_AIC_ONLY)
-    target_compile_definitions(demo PRIVATE FA_DEBUG_AIC_ONLY)
-endif()

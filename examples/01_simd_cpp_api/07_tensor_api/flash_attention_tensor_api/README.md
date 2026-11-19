@@ -50,7 +50,7 @@ $$
 
 标准softmax必须先得到当前Query head与全部4160行Key的score，才能知道全局最大值并计算归一化分母。在线softmax改变执行顺序：它把KV序列切分成小块，每处理一块就更新一次状态，因此不需要保存完整的score矩阵。
 
-本样例把4160行KV切分为13个KV split，每个split再切分为5个`64 × 128`tile。对每个Query head和KV split，split kernel维护三个`float`状态：当前最大值`m`、softmax分母`l`和未归一化输出`o`。进入新tile时，先用新tile的score更新最大值：
+本样例把4160行KV切分为13个KV split，每个split再切分为5个`64 × 128`tile。对每个Query head和KV split，decode阶段维护三个`float`状态：当前最大值`m`、softmax分母`l`和未归一化输出`o`。进入新tile时，先用新tile的score更新最大值：
 
 $$
 m_{\mathrm{new}} = \max(m_{\mathrm{old}}, \max_t S_t)
@@ -72,7 +72,7 @@ $$
 o_{\mathrm{new}} = \alpha o_{\mathrm{old}} + \sum_t \exp(S_t - m_{\mathrm{new}}) V_t
 $$
 
-处理完该KV split的全部5个tile后，得到该split的局部`m/l/o`。merge kernel再用同样的关系合并13个split的局部状态，最终输出为：
+处理完该KV split的全部5个tile后，得到该split的局部`m/l/o`。merge阶段再用同样的关系合并13个split的局部状态，最终输出为：
 
 $$
 O = \frac{o_{\mathrm{total}}}{l_{\mathrm{total}}}
@@ -114,6 +114,13 @@ $$
   <tr><td align="left">output</td><td align="left">[32, 128]</td><td align="left">bfloat16_t</td><td align="left">每个Query head的注意力输出</td></tr>
 </table>
 
+样例运行时还会在Device GM上申请两个内部工作区：
+
+- `partial` workspace：大小为`32 × 4 × 256 × 4 = 131072 bytes`，保存decode阶段每个`(head, range)`的局部`m/l/o`状态。
+- `completed`计数器：大小为`4 bytes`，记录已经写完局部状态的block数量。
+
+这两个工作区由Host侧申请并在kernel内更新，属于中间状态，不是样例的输入或输出接口。
+
 ### 样例规格
 
 <table border="2">
@@ -126,41 +133,38 @@ $$
   <tr><td align="left">`tile_rows`</td><td align="right">64</td><td align="left">每次处理的KV行数</td></tr>
   <tr><td align="left">`splits`</td><td align="right">13</td><td align="left">KV序列切分数；每个切分称为一个KV split</td></tr>
   <tr><td align="left">`tiles_per_split`</td><td align="right">5</td><td align="left">每个KV split内的64行tile数量，13 × 5 × 64 = 4160</td></tr>
-  <tr><td align="left">`head_group`</td><td align="right">2</td><td align="left">一个split block同时处理的Query head数量</td></tr>
-  <tr><td align="left">`partial_size`</td><td align="right">256</td><td align="left">每个head每个KV split的float状态区大小，单位为float</td></tr>
-  <tr><td align="left">`split_blocks`</td><td align="right">208</td><td align="left">split kernel启动的Vector block数量，32 / 2 × 13</td></tr>
-  <tr><td align="left">`merge_blocks`</td><td align="right">32</td><td align="left">merge kernel启动的Vector block数量，每个Query head一个</td></tr>
+  <tr><td align="left">`head_group`</td><td align="right">2</td><td align="left">一个block同时处理的相邻Query head数量，两个head共享同一份K/V tile</td></tr>
+  <tr><td align="left">`range_count`</td><td align="right">4</td><td align="left">每个Query head组划分出的KV range数量，13个split被划分为4/3/3/3个split</td></tr>
+  <tr><td align="left">`partial_size`</td><td align="right">256</td><td align="left">每个head每个KV range的float状态区大小，单位为float</td></tr>
+  <tr><td align="left">Vector block数量</td><td align="right">64</td><td align="left">16个Query head组 × 4个KV range；block可分波执行，最后完成的block负责merge</td></tr>
   <tr><td align="left">`softmax_scale`</td><td align="right">1/sqrt(128)</td><td align="left">QK点积后的缩放系数</td></tr>
 </table>
 
-Vector block是kernel启动时的一个并行执行实例；本样例的每个Vector block独立处理自己的Query head和KV范围。
+Vector block是kernel启动时的一个并行执行实例；本样例的每个Vector block独立处理一个Query head组和一个KV range。
 
 ### 计算流程
 
-样例分两阶段执行：split kernel并行计算每个KV split的局部softmax状态，merge kernel合并同一个Query head的13个局部状态并生成最终输出。
+样例在一个kernel内完成两阶段计算：decode阶段按KV range和tile计算局部softmax状态，merge阶段合并同一个Query head的4个局部状态并生成最终输出。每个Vector block负责2个相邻Query head和1个KV range。13个KV split被划分为4个range，各range包含4/3/3/3个split。
 
 1. Host侧程序从`input/query.bin`、`input/key.bin`和`input/value.bin`读取三个输入Tensor。
 2. Host侧程序调用`aclrtMemcpy`，把query、key和value从Host内存拷贝到Device GM。
-3. Host侧程序向stream提交`flash_attention_split`，共启动208个Vector block。每个block根据`block_idx`得到2个Query head和1个KV split，并通过`g(h) = h / 8`确定这2个Query head对应的KV head。
-4. Split kernel为GM输入、GM workspace、UB输入缓冲和UB状态缓冲创建Tensor视图。
-5. Split kernel用`copy<copy_gm_to_ub>`把该block负责的2行Query从Device GM拷贝到UB中的Query Tensor。
-6. 对当前KV split内的5个`64 × 128`tile，split kernel依次执行：
-   1. split kernel根据split编号、tile编号和GQA映射计算当前Key/Value tile在Device GM中的地址。
-   2. split kernel用`copy<copy_gm_to_ub>`把当前Key tile和Value tile从Device GM拷贝到UB中的Key Tensor和Value Tensor。
+3. Host侧程序向stream提交`flash_attention`，共启动64个Vector block。kernel按`head_pair = block_idx / range_count`得到Query head组，按`range = block_idx % range_count`得到KV range，再按`head = head_pair * head_group`得到组内第一个Query head，最后通过`g(h) = h / 8`确定该组对应的KV head。
+4. Kernel为GM输入、UB输入缓冲、UB状态缓冲、GM workspace和UB Output Tensor创建Tensor视图。
+5. Kernel用`copy(make_copy(copy_gm_to_ub{}), ...)`把该block负责的2行Query从Device GM拷贝到UB中的Query Tensor。
+6. 对当前KV range内的全部tile，kernel依次执行decode阶段。每个`64 × 128`tile的处理步骤为：
+   1. kernel根据range编号、range内tile编号和GQA映射计算当前Key/Value tile在Device GM中的地址。
+   2. kernel用`copy(make_copy(copy_gm_to_ub{}), ...)`把当前Key tile和Value tile从Device GM拷贝到UB中的Key Tensor和Value Tensor。
    3. `compute_decode_pair_tile`函数用`load<unpack>`从UB Query Tensor和Key Tensor读取`bfloat16_t`元素，并用`cast`把它们转换为`float`。
-   4. 对Key tile中的每一行，kernel用乘法和`fma`计算2个Query head的QK点积，再用`reduce_sum`把每个点积归约成1个score。
-   5. kernel把64行score写入UB中的Score Tensor，并维护每个Query head在当前tile内的最大score。
-   6. 如果当前tile不是第一个tile，kernel从UB State Tensor读取上一tile保存的`m/l/o`，用新旧最大值差把历史`l/o`缩放到新基准。
-   7. kernel从UB Value Tensor读取`bfloat16_t`的Value行，用`cast`转换为`float`，用`exp_diff`计算当前tile权重，用`fma`累加`weight × Value`，同时更新softmax分母`l`和未归一化输出`o`。
-   8. kernel把更新后的`m/l/o`保存在UB State Tensor中，供下一个tile使用。
-7. 当前KV split的5个tile全部处理完成后，split kernel用`copy<copy_ub_to_gm>`把2个Query head的局部`m/l/o`从UB写入Device GM workspace。每个`(head, split)`占用256个float：偏移0开始是128个未归一化输出，偏移128开始是max，偏移192开始是sum；workspace总大小为`32 × 13 × 256 × 4 = 425984 bytes`。
-8. Host侧程序在同一个stream上提交`flash_attention_merge`，共启动32个Vector block，每个block处理1个Query head。
-9. Merge kernel根据`block_idx`确定Query head编号，用`copy<copy_gm_to_ub>`把该head的13个局部状态从Device GM workspace拷贝到UB Partial Tensor。
-10. Merge kernel从UB Partial Tensor读取13个局部max，得到全局max。
-11. 对每个KV split，merge kernel从UB Partial Tensor读取局部sum和128个未归一化输出，用`exp_diff`计算`exp(local_max - global_max)`，把局部sum和局部输出缩放到全局max基准，并累加得到全局sum和全局未归一化输出。
-12. Merge kernel用全局未归一化输出除以全局sum，得到`float`注意力输出。
-13. Merge kernel用`cast`把`float`输出转换为`bfloat16_t`，用`deinterleave`提取有效结果，用`store`写入UB Output Tensor，再用`copy<copy_ub_to_gm>`把128个`bfloat16_t`输出元素写入Device GM的output Tensor。
-14. Host侧程序同步stream，调用`aclrtMemcpy`把输出从Device GM拷贝回Host内存，并写入`output/output.bin`。
+   4. 对Key tile中的每一行，kernel用乘法和`fma`同时计算2个Query head的QK点积，再用`reduce_sum`把每个点积归约成1个score。因此每个K/V tile只加载一次，即可同时服务2个Query head。
+   5. kernel把128行score写入UB中的Score Tensor，并维护2个Query head在当前tile内的最大score。
+   6. 如果当前tile不是该KV range的第一个tile，kernel从UB State Tensor读取上一tile保存的`m/l/o`，用新旧最大值差把历史`l/o`缩放到新基准。
+   7. kernel从UB Value Tensor读取`bfloat16_t`的Value行，用`cast`转换为`float`，用`exp_diff`计算当前tile权重，用`fma`累加`weight × Value`，同时更新2个head的softmax分母`l`和未归一化输出`o`。
+7. 当前KV range处理完成后，kernel把2个head的range局部`m/l/o`从UB写入Device GM workspace。每个`(head, range)`占用256个float：偏移0开始是128个未归一化输出，偏移128开始是max，偏移192开始是sum；workspace总大小为`32 × 4 × 256 × 4 = 131072 bytes`。
+8. 每个block写完range局部状态后，先用`sync_data_barrier`保证GM写入完成，再对GM中的完成计数执行一次`atomic_add`；前63个block随后退出，释放AIV给后续block调度。
+9. 第64个完成的block是唯一merge block。前序block已经用`sync_data_barrier`保证partial写入GM后才开始merge，该block从GM workspace依次读回每个Query head的4个range局部状态。`compute_merge_decode`函数先得到全局max。
+10. 对每个KV range，merge阶段读取局部sum和128个未归一化输出，用`exp_diff`计算`exp(local_max - global_max)`，把局部sum和局部输出缩放到全局max基准，并累加得到全局sum和全局未归一化输出。
+11. merge阶段用全局未归一化输出除以全局sum，得到`float`注意力输出，用`cast`转换为`bfloat16_t`，用`deinterleave`提取有效结果，用`store`写入UB Output Tensor，再用`copy(copy_out, ...)`把128个输出元素写入Device GM的output Tensor。
+12. Host侧程序同步stream，调用`aclrtMemcpy`把输出从Device GM拷贝回Host内存，并写入`output/output.bin`。
 
 ## 编译运行
 

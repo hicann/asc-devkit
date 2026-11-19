@@ -50,7 +50,7 @@ $$
 
 Standard softmax must obtain the scores between the current Query head and all 4160 Key rows before it knows the global maximum and can compute the normalization denominator. Online softmax changes the execution order: it processes KV rows in blocks and updates the state after each block, so it never stores the complete score matrix.
 
-This sample divides the 4160 KV rows into 13 KV splits. Each split is further divided into five `64 × 128` tiles. For each Query head and KV split, the split kernel maintains three `float` states: current maximum `m`, softmax denominator `l`, and unnormalized output `o`. When a new tile starts, the maximum is updated first:
+This sample divides the 4160 KV rows into 13 KV splits. Each split is further divided into five `64 × 128` tiles. For each Query head and KV split, the decode stage maintains three `float` states: current maximum `m`, softmax denominator `l`, and unnormalized output `o`. When a new tile starts, the maximum is updated first:
 
 $$
 m_{\mathrm{new}} = \max(m_{\mathrm{old}}, \max_t S_t)
@@ -72,7 +72,7 @@ $$
 o_{\mathrm{new}} = \alpha o_{\mathrm{old}} + \sum_t \exp(S_t - m_{\mathrm{new}}) V_t
 $$
 
-After all five tiles in a KV split are processed, the kernel has the local `m/l/o` state for that split. The merge kernel combines the 13 local states with the same relation and produces:
+After all five tiles in a KV split are processed, the kernel has the local `m/l/o` state for that split. The merge stage combines the 13 local states with the same relation and produces:
 
 $$
 O = \frac{o_{\mathrm{total}}}{l_{\mathrm{total}}}
@@ -114,6 +114,13 @@ Therefore, online softmax and standard softmax have the same mathematical result
   <tr><td align="left">output</td><td align="left">[32, 128]</td><td align="left">bfloat16_t</td><td align="left">Attention output of each Query head</td></tr>
 </table>
 
+The sample also allocates two internal workspaces in device GM:
+
+- The `partial` workspace is `32 × 4 × 256 × 4 = 131072 bytes` and stores the range-local `m/l/o` state of each `(head, range)` produced by the decode stage.
+- The `completed` counter is `4 bytes` and counts blocks that have finished writing their local states.
+
+The host program allocates both workspaces and the kernel updates them. They are intermediate state and are not part of the sample input or output interfaces.
+
 ### Sample Specifications
 
 <table border="2">
@@ -126,41 +133,38 @@ Therefore, online softmax and standard softmax have the same mathematical result
   <tr><td align="left">`tile_rows`</td><td align="right">64</td><td align="left">Number of KV rows processed at a time</td></tr>
   <tr><td align="left">`splits`</td><td align="right">13</td><td align="left">Number of KV sequence splits; each split is called a KV split</td></tr>
   <tr><td align="left">`tiles_per_split`</td><td align="right">5</td><td align="left">Number of 64-row tiles in each KV split; 13 × 5 × 64 = 4160</td></tr>
-  <tr><td align="left">`head_group`</td><td align="right">2</td><td align="left">Number of Query heads processed by one split block</td></tr>
-  <tr><td align="left">`partial_size`</td><td align="right">256</td><td align="left">float state size for each head and KV split, in floats</td></tr>
-  <tr><td align="left">`split_blocks`</td><td align="right">208</td><td align="left">Number of Vector blocks launched by the split kernel, 32 / 2 × 13</td></tr>
-  <tr><td align="left">`merge_blocks`</td><td align="right">32</td><td align="left">Number of Vector blocks launched by the merge kernel, one per Query head</td></tr>
+  <tr><td align="left">`head_group`</td><td align="right">2</td><td align="left">Number of adjacent Query heads processed by one block; the two heads share each K/V tile</td></tr>
+  <tr><td align="left">`range_count`</td><td align="right">4</td><td align="left">Number of KV ranges for each Query-head group; the 13 splits are grouped as 4/3/3/3 splits</td></tr>
+  <tr><td align="left">`partial_size`</td><td align="right">256</td><td align="left">float state size for each head and KV range, in floats</td></tr>
+  <tr><td align="left">Vector block count</td><td align="right">64</td><td align="left">16 Query-head groups × 4 KV ranges; blocks may run in waves, and the last completed block performs the merge</td></tr>
   <tr><td align="left">`softmax_scale`</td><td align="right">1/sqrt(128)</td><td align="left">Scaling factor after the QK dot product</td></tr>
 </table>
 
-A Vector block is a parallel execution instance of a launched kernel. Each Vector block in this sample independently handles its Query heads and KV range.
+A Vector block is a parallel execution instance of a launched kernel. Each Vector block in this sample independently handles one Query-head group and one KV range.
 
 ### Computation Flow
 
-The sample runs in two phases: split kernels compute local softmax states for different KV ranges in parallel, and merge kernels combine the 13 local states of each Query head to produce the final output.
+The sample runs one kernel with two phases: the decode stage computes local softmax states by KV range and tile, and the merge stage combines the four local states of each Query head to produce the final output. Each Vector block owns two adjacent Query heads and one KV range. The 13 KV splits are grouped into four ranges containing 4/3/3/3 splits.
 
 1. The host program reads the three input tensors from `input/query.bin`, `input/key.bin`, and `input/value.bin`.
 2. The host program calls `aclrtMemcpy` to copy query, key, and value from host memory to device GM.
-3. The host program submits `flash_attention_split` to the stream with 208 Vector blocks. Each block derives 2 Query heads and 1 KV split from `block_idx` and determines its KV head with `g(h) = h / 8`.
-4. The split kernel creates Tensor views for GM inputs, the GM workspace, UB input buffers, and the UB state buffer.
-5. The split kernel uses `copy<copy_gm_to_ub>` to copy the 2 Query rows handled by the block from device GM to the Query Tensor in UB.
-6. For each of the 5 `64 × 128` tiles in the current KV split, the split kernel performs the following steps:
-   1. The split kernel computes the device GM addresses of the current Key and Value tiles from the split index, tile index, and GQA mapping.
-   2. The split kernel uses `copy<copy_gm_to_ub>` to copy the current Key and Value tiles from device GM to the Key Tensor and Value Tensor in UB.
+3. The host program submits `flash_attention` to the stream with 64 Vector blocks. The kernel obtains the Query-head group with `head_pair = block_idx / range_count`, the KV range with `range = block_idx % range_count`, and the first Query head in the group with `head = head_pair * head_group`; it then determines the KV head with `g(h) = h / 8`.
+4. The kernel creates Tensor views for GM inputs, UB input buffers, the UB state buffer, the GM workspace, and the UB Output Tensor.
+5. The kernel uses `copy(make_copy(copy_gm_to_ub{}), ...)` to copy the two Query rows owned by the block from device GM to the Query Tensor in UB.
+6. The kernel runs the decode stage for every tile in the current KV range. Each `64 × 128` tile is processed as follows:
+   1. The kernel computes the device GM addresses of the current Key and Value tiles from the range index, in-range tile index, and GQA mapping.
+   2. The kernel uses `copy(make_copy(copy_gm_to_ub{}), ...)` to copy the current Key and Value tiles from device GM to the Key Tensor and Value Tensor in UB.
    3. The `compute_decode_pair_tile` function reads `bfloat16_t` elements from the UB Query Tensor and Key Tensor with `load<unpack>` and converts them to `float` with `cast`.
-   4. For every row in the Key tile, the kernel computes QK dot products for both Query heads with multiplication and `fma`, then reduces each dot product to one score with `reduce_sum`.
-   5. The kernel writes the 64 scores to the Score Tensor in UB and maintains the maximum score of the current tile for each Query head.
-   6. If the tile is not the first tile, the kernel reads the previous `m/l/o` state from the UB State Tensor and rescales historical `l/o` to the new maximum using the old and new maxima.
-   7. The kernel reads a `bfloat16_t` Value row from the UB Value Tensor, converts it to `float` with `cast`, computes current-tile weights with `exp_diff`, accumulates `weight × Value` with `fma`, and updates softmax denominator `l` and unnormalized output `o`.
-   8. The kernel saves the updated `m/l/o` state in the UB State Tensor for the next tile.
-7. After all 5 tiles in the KV split are processed, the split kernel uses `copy<copy_ub_to_gm>` to write the local `m/l/o` states of both Query heads from UB to the device GM workspace. Each `(head, split)` occupies 256 floats: offset 0 is the 128-value unnormalized output, offset 128 is the maximum, and offset 192 is the sum. The workspace size is `32 × 13 × 256 × 4 = 425984 bytes`.
-8. The host program submits `flash_attention_merge` on the same stream with 32 Vector blocks, one for each Query head.
-9. The merge kernel determines the Query head index from `block_idx` and uses `copy<copy_gm_to_ub>` to copy the 13 local states of that head from device GM workspace to the UB Partial Tensor.
-10. The merge kernel reads the 13 local maxima from the UB Partial Tensor and computes the global maximum.
-11. For each KV split, the merge kernel reads the local sum and 128 unnormalized output values from the UB Partial Tensor, computes `exp(local_max - global_max)` with `exp_diff`, rescales the local sum and output to the global-maximum reference, and accumulates the global sum and global unnormalized output.
-12. The merge kernel divides the global unnormalized output by the global sum to obtain the `float` attention output.
-13. The merge kernel converts the `float` output to `bfloat16_t` with `cast`, extracts the valid results with `deinterleave`, writes them to the UB Output Tensor with `store`, and copies the 128 `bfloat16_t` output elements to the output Tensor in device GM with `copy<copy_ub_to_gm>`.
-14. The host program synchronizes the stream, calls `aclrtMemcpy` to copy the output from device GM back to host memory, and writes it to `output/output.bin`.
+   4. For every row in the Key tile, the kernel computes the QK dot products of both Query heads with multiplication and `fma`, then reduces each dot product to one score with `reduce_sum`. Each K/V tile is therefore loaded once and serves two Query heads.
+   5. The kernel writes the 128 scores to the Score Tensor in UB and maintains the maximum score of the current tile for both Query heads.
+   6. If the tile is not the first tile in the KV range, the kernel reads the previous `m/l/o` state from the UB State Tensor and rescales historical `l/o` to the new maximum using the old and new maxima.
+   7. The kernel reads a `bfloat16_t` Value row from the UB Value Tensor, converts it to `float` with `cast`, computes current-tile weights with `exp_diff`, accumulates `weight × Value` with `fma`, and updates the softmax denominator `l` and unnormalized output `o` of both heads.
+7. After the current KV range is processed, the kernel writes the range-local `m/l/o` states of both heads from UB to the GM workspace. Each `(head, range)` occupies 256 floats: offset 0 is the 128-value unnormalized output, offset 128 is the maximum, and offset 192 is the sum. The workspace size is `32 × 4 × 256 × 4 = 131072 bytes`.
+8. After writing its range-local states, each block calls `sync_data_barrier` to ensure the GM writes complete, then performs one `atomic_add` on a GM completion counter. The first 63 blocks exit immediately and release their AIVs for later blocks.
+9. The 64th completed block is the only merge block. Earlier blocks use `sync_data_barrier` to ensure their partial states have reached GM before merging starts. The merge block sequentially reads the four range-local states of every Query head from the GM workspace. The `compute_merge_decode` function first obtains the global maximum.
+10. For each KV range, the merge stage reads the local sum and 128 unnormalized output values, computes `exp(local_max - global_max)` with `exp_diff`, rescales the local sum and output to the global-maximum reference, and accumulates the global sum and global unnormalized output.
+11. The merge stage divides the global unnormalized output by the global sum, converts the `float` attention output to `bfloat16_t` with `cast`, extracts the valid results with `deinterleave`, writes them to the UB Output Tensor with `store`, and copies the 128 output elements to the output Tensor in device GM with `copy(copy_out, ...)`.
+12. The host program synchronizes the stream, calls `aclrtMemcpy` to copy the output from device GM back to host memory, and writes it to `output/output.bin`.
 
 ## Build and Run
 
