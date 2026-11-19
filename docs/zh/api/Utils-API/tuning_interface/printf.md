@@ -69,8 +69,8 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
 
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
-| fmt | 输入 | 格式控制字符串，包含两种类型的对象：普通字符和转换说明。<br><br>普通字符将原样不动地打印输出。<br>转换说明并不直接输出而是用于控制printf中参数的转换和打印。每个转换说明都由一个百分号字符（%）开始，以转换说明结束，从而说明输出数据的类型。<br>支持的转换类型包括：<br>%d、%ld、%lld、%i、%li、%lli：输出十进制数，支持打印的数据类型：int8_t（char）、int16_t、int32_t、int64_t<br>%f、%F：输出浮点数，支持打印的数据类型：float、half、bfloat16_t<br>%x、%lx、%llx：输出十六进制整数，支持打印的数据类型：int8_t（char）、int16_t、int32_t、int64_t、uint8_t（unsigned char）、uint16_t、uint32_t、uint64_t<br>%s：输出字符串<br>%u、%lu、%llu：输出unsigned类型数据，支持打印的数据类型：uint8_t（unsigned char）、uint16_t、uint32_t、uint64_t<br>%p：输出指针地址<br><br>注意：上文列出的数据类型是NPU域调试支持的数据类型，CPU域调试时，支持的数据类型和C/C++规范保持一致。 |
-| args | 输入 | 附加参数，个数和类型可变的参数列表：根据不同的fmt字符串，函数可能需要一系列的附加参数，每个参数包含了一个要被插入的值，替换了fmt参数中指定的每个%标签。参数的个数应与%标签的个数相同。 |
+| fmt | 输入 | 格式控制字符串。普通字符原样输出；以`%`开始的转换说明用于指定参数的输出格式。<br><br>支持的输出类型包括：<br>· `%d`、`%i`：有符号十进制整数，支持`int8_t`、`int16_t`、`int32_t`、`int64_t`。<br>· `%u`：无符号十进制整数，支持`uint8_t`、`uint16_t`、`uint32_t`、`uint64_t`。<br>· `%o`、`%x`、`%X`：八进制、十六进制整数，支持上述无符号整数类型。<br>· `%f`、`%F`、`%e`、`%E`、`%g`、`%G`、`%a`、`%A`：浮点数，支持`float`、`half`、`bfloat16_t`。<br>· `%c`、`%s`、`%p`：字符、字符串、指针。<br><br>整数转换支持`hh`、`h`、`l`、`ll`、`j`、`z`、`t`等适用的长度修饰符，例如`%hhd`用于8位有符号整数，`%lld`用于`long long`，`%zu`用于`size_t`。转换说明还支持符号、对齐、宽度和精度等常用写法，例如`%+d`、`% d`、`%08d`、`%-8s`、`%.2f`、`%8.2f`。宽度和精度可通过`*`指定，例如`%*.*f`；`%%`表示输出一个`%`。<br><br>以上为NPU域调试支持的数据类型；CPU域调试遵循C/C++规范。 |
+| args | 输入 | 与`fmt`中转换说明对应的参数，数量和类型应匹配。每个用于指定宽度或精度的`*`额外对应一个整数参数；`%%`不对应参数。 |
 
 ## 返回值说明
 
@@ -92,7 +92,7 @@ static __attribute__((noinline)) void printf(const char* fmt, Args&&... args);
 <!-- end id14 -->
 -   SIMT中printf功能需要占用额外的Global Memory空间用于数据缓存，缓存空间大小默认为2MB。您可以通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的"simt\_printf\_fifo\_size"字段进行配置，配置范围为`[1MB,64MB]`。当打印数据量较大时，建议增加缓存空间。
 -   SIMT中使用printf接口会增加算子运行时间，请控制打印数据量，避免算子超时。建议在代码中判断线程ID，仅在部分线程中打印调试信息，减少重复内容的打印，更有利于调试。
--   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为30KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围为`[1KB,64MB]`。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
+-   SIMD场景下，单次调用本接口打印的数据总量不可超过打印大小限制，默认为32KB。使用时应注意，如果超出这个限制，则数据不会被打印。您可以通过[aclInit接口](https://gitcode.com/cann/runtime/blob/master/docs/zh/api_ref/02_initialization_and_deinitialization.md#aclinit)中的"simd\_printf\_fifo\_size\_per\_core"字段进行配置，配置范围为`[1KB,64MB]`。当打印数据量较大时，建议增加缓存空间。pytorch调用和算子入图场景暂不支持该配置。
 -   如果需要使用"AscendC::printf"形式的打印，则必须额外包含"kernel\_operator.h"头文件，示例如下。
 
     ```cpp

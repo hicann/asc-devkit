@@ -2,7 +2,7 @@
 
 ## 概述
 
-本样例展示超大 Tensor 打印功能。超大 Tensor 打印是指单次打印的 Tensor 数据超过当前核 FIFO 容量的场景，此时框架自动完成数据分片传输和 FIFO 空间复用。
+本样例展示超大 Tensor 打印功能。默认单次传输容量为 32 KiB，无法一次传输的 Tensor 数据由框架自动分片传输。
 
 ## 本样例支持的产品及CANN软件版本
 
@@ -30,7 +30,7 @@ large_tensor_dump
 
 - 样例功能：
 
-  在一个 Vector 核上执行向量加标量计算，打印计算过程中的 UB Tensor 和计算完成后的 GM Tensor，展示超过每核 FIFO 容量的数据输出。
+  在一个 Vector 核上执行向量加标量计算，打印计算过程中的 UB Tensor 和计算完成后的 GM Tensor。
 
   计算公式为：
 
@@ -40,7 +40,7 @@ large_tensor_dump
 
 - 样例规格：
 
-  输入和输出均为 float32，包含 65,536 个元素。输入数据为 `x[i] = i % 256`。每核 FIFO 使用默认的 32 KiB，打印数据规格如下：
+  输入和输出均为 float32，包含 65,536 个元素。输入数据为 `x[i] = i % 256`。打印数据规格如下：
 
   | 打印对象 | desc | 元素个数 | 数据量 |
   | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ large_tensor_dump
   | UB | `__ubuf__ float *` | `asc_dump<float>(ubPtr, 100, 16384);` |
   | GM | `__gm__ float *` | `asc_dump<float>(gmPtr, 200, 65536);` |
 
-  超大 Tensor 打印场景下，打屏最多展示前 32 KiB 原始数据，超出部分以 `...` 省略并输出告警。如需查看完整数据，可设置 `ASCEND_DUMP_PATH` 开启落盘，再使用 `show_kernel_debug_data` 离线解析。具体方法参见[工具说明](../../../../../docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool.md)及[工具使用样例](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data)。
+  超大 Tensor 数据量超过 32 KiB 时，仅打印前 32 KiB 数据对应的内容，超出部分以 `...` 表示，并输出告警。完整数据解析参见[工具说明](../../../../../docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool.md)及[工具使用样例](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data)。
 
 - 调用实现：
 

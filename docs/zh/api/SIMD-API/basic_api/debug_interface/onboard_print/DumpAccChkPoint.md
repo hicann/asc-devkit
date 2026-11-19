@@ -99,7 +99,34 @@ __aicore__ inline void DumpAccChkPoint(const GlobalTensor<T> &tensor, uint32_t i
 - 针对Ascend 950PR&950DT系列产品，使用该接口打印L1 Tensor数据时，HDK版本需要至少升级到25.7.RC1.6以上。
 <!-- end id100 -->
 - 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md#alignment_requirements)。
-- 单次调用DumpAccChkPoint打印的数据总量不可超过30KB（还包括少量框架需要的头尾信息，通常可忽略）。使用时应注意，如果超出这个限制，则数据不会被打印。
+<!-- npu="950,A3,910b,310p" id109 -->
+- 针对以下产品，支持超大Tensor打印：
+  <!-- npu="950" id110 -->
+  - Ascend 950PR&950DT系列产品
+  <!-- end id110 -->
+  <!-- npu="A3" id111 -->
+  - Atlas A3系列产品
+  <!-- end id111 -->
+  <!-- npu="910b" id112 -->
+  - Atlas A2系列产品
+  <!-- end id112 -->
+  <!-- npu="310p" id113 -->
+  - Atlas推理系列产品AI Core
+  <!-- end id113 -->
+
+  SIMD场景下，NPU上板调试支持打印超大Tensor，即单次调用可打印数据量超过每核打印缓冲区大小的Tensor。数据分片传输由框架自动完成。超大Tensor数据量超过32KB时，仅打印前32KB数据对应的内容，超出部分以`...`表示，并输出告警。如需查看完整数据，可启用调测信息落盘，并使用[show_kernel_debug_data工具](../../../../../guide/programming_guide/appendix/show_kernel_debug_data_tool.md)解析。
+<!-- end id109 -->
+<!-- npu="x90,9030" id114 -->
+- 针对以下产品：
+  <!-- npu="x90" id115 -->
+  - KirinX90处理器系列产品
+  <!-- end id115 -->
+  <!-- npu="9030" id116 -->
+  - Kirin9030处理器系列产品
+  <!-- end id116 -->
+
+  单次调用DumpAccChkPoint打印的数据总量不可超过每核打印缓冲区大小，默认为32KB（还包括少量框架需要的头尾信息，通常可忽略）。使用时应注意，如果超出这个限制，则数据不会被打印。
+<!-- end id114 -->
 
 ## 调用示例<a name="section82241477610"></a>
 

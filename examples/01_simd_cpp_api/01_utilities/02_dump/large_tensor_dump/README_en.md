@@ -2,7 +2,7 @@
 
 ## Overview
 
-This sample demonstrates large tensor printing. Large tensor printing refers to a single tensor print whose data exceeds the FIFO capacity of the current core. The framework automatically transfers the data in segments and reuses FIFO space.
+This sample demonstrates large tensor printing. The default capacity of a single transfer is 32 KiB. Tensor data that cannot be transferred at once is automatically transferred in segments by the framework.
 
 ## Supported Products and CANN Software Versions
 
@@ -30,7 +30,7 @@ large_tensor_dump
 
 - Example functionality:
 
-  One Vector core performs vector-scalar addition and prints the intermediate UB tensor and the final GM tensor to demonstrate output larger than the per-core FIFO.
+  One Vector core performs vector-scalar addition and prints the intermediate UB tensor and the final GM tensor.
 
   The computation formula is:
 
@@ -40,7 +40,7 @@ large_tensor_dump
 
 - Example specifications:
 
-  Input and output contain 65,536 float32 elements. The input data is `x[i] = i % 256`. The per-core FIFO uses the default size of 32 KiB. The printed tensors are listed below:
+  Input and output contain 65,536 float32 elements. The input data is `x[i] = i % 256`. The printed tensors are listed below:
 
   | Tensor | desc | Elements | Payload |
   | --- | --- | --- | --- |
@@ -56,7 +56,7 @@ large_tensor_dump
   | UB | `__ubuf__ float *` | `asc_dump<float>(ubPtr, 100, 16384);` |
   | GM | `__gm__ float *` | `asc_dump<float>(gmPtr, 200, 65536);` |
 
-  For large tensor printing, at most the first 32 KiB of raw tensor data is displayed on screen. The remaining data is replaced with `...` and a warning. To view the complete data, set `ASCEND_DUMP_PATH` to enable dumping to disk, then parse the files with `show_kernel_debug_data`. See the [tool guide (Chinese)](../../../../../docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool.md) and [tool example](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data).
+  When a large tensor contains more than 32 KiB of data, only the contents corresponding to the first 32 KiB are printed. The remaining data is replaced with `...`, and a warning is issued. For parsing the complete data, see the [tool guide (Chinese)](../../../../../docs/zh/guide/programming_guide/appendix/show_kernel_debug_data_tool.md) and [tool example](https://gitcode.com/cann/asc-tools/tree/master/examples/01_show_kernel_debug_data).
 
 - Invocation implementation:
 

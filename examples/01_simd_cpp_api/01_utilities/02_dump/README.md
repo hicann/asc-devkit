@@ -9,4 +9,4 @@
 | [simd_vf_dump](./simd_vf_dump) | 使用vector编程模式，展示simd_vf侧asc_dump_ubuf/asc_dump/asc_dump_reg接口的基本使用方法 | Ascend 950PR&950DT系列产品 |
 | [cube_buffer_dump](./cube_buffer_dump) | 以HiFloat8量化MatMul为背景，使用DumpTensor打印HiFloat8输入矩阵、Bias和per-channel scale在L1 Buffer、Bias Table Buffer和Fixpipe Buffer中的数据 | Ascend 950PR&950DT系列产品 |
 | [python_exception_dump](./experimental/python_exception_dump) | NPU kernel运行时异常发生时，自动dump问题算子的异常上下文与kernel参数（args）用于离线问题定位，另提供纯Python的输入/输出tensor dump；外挂库方案，算子源码零改动 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
-| [large_tensor_dump](./large_tensor_dump) | 展示超大 Tensor 打印功能，使用 32 KiB 每核 FIFO 输出 64 KiB UB Tensor 和 256 KiB GM Tensor | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
+| [large_tensor_dump](./large_tensor_dump) | 展示超过单次传输容量的 Tensor 数据打印，数据分片传输由框架自动完成 | Ascend 950PR&950DT系列产品<br>Atlas A3系列产品<br>Atlas A2系列产品 |
