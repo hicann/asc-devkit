@@ -55,8 +55,8 @@ public:
         if constexpr (current_arch_version == arch_version::v9201) {
             asc_copy_l0c2ub(
                 dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
-                static_cast<uint16_t>(src_stride), 0, unit_flag, quant_pre, relu_pre, is_channel_split, nz2nd_en,
-                nz2dn_en, false);
+                static_cast<uint16_t>(src_stride), unit_flag, quant_pre, relu_pre, is_channel_split, nz2nd_en, nz2dn_en,
+                false);
         } else {
             asc_copy_l0c2ub(
                 dst, src, static_cast<uint16_t>(n_size), static_cast<uint16_t>(m_size), dst_stride,
