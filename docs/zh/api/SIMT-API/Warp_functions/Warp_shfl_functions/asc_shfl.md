@@ -93,7 +93,7 @@ inline bfloat16x2_t asc_shfl(bfloat16x2_t var, int32_t src_lane, int32_t width =
 | --- | --- | --- |
 | var | 输入 | 线程用于交换的输入操作数。 |
 | src_lane | 输入 | 期望获取的var值所在线程的Lane ID。 |
-| width | 输入 | Warp内参与交换的线程的分组宽度，默认值为32。width的取值范围为(0, 32]，width必须是2的倍数。 |
+| width | 输入 | Warp内参与交换的线程的分组宽度，默认值为warpSize即32。width的取值范围为(0, 32]，width必须是2的倍数。 |
 
 ## 返回值说明
 

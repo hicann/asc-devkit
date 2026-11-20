@@ -27,7 +27,7 @@
 
 头文件路径为：`"simt_api/device_functions.h"`。
 
-将浮点数四舍五入取整，并遵循CAST\_CEIL模式。
+将浮点数向上取整，并遵循CAST\_CEIL模式。
 
 ## 函数原型
 

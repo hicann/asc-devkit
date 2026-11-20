@@ -44,12 +44,12 @@ inline void sincosf(float x, float *s, float *c)
 | 参数名 | 输入/输出 | 描述 |
 | --- | --- | --- |
 | x | 输入 | 源操作数。 |
-| s | 输出 | UB、Global Memory或栈空间的地址，用于存储输入数据的三角函数正弦值。 |
-| c | 输出 | UB、Global Memory或栈空间的地址，用于存储输入数据的三角函数余弦值。 |
+| s | 输出 | UB、Global Memory或栈空间的地址，用于存储输入数据的三角函数正弦值。当输入x为inf、-inf、nan时，s为nan。 |
+| c | 输出 | UB、Global Memory或栈空间的地址，用于存储输入数据的三角函数余弦值。当输入x为inf、-inf、nan时，c为nan。 |
 
 ## 返回值说明
 
--   当输入x为inf、-inf、nan时，输出值为nan。
+无
 
 ## 约束说明
 
