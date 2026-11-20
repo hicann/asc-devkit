@@ -277,8 +277,8 @@ KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t�
 
   ```cpp
   AscendC::TransDataTo5HDParams transDataParams;
-  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
-  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
   transDataParams.repeatTimes = 1; // 重复迭代次数，每次repeat处理16个DataBlock
   transDataParams.dstRepStride = 0;
   transDataParams.srcRepStride = 0;
@@ -298,8 +298,8 @@ KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t�
 
   ```cpp
   AscendC::TransDataTo5HDParams transDataParams;
-  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
-  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
   transDataParams.repeatTimes = 1; // 重复迭代次数，每次repeat处理16个DataBlock
   transDataParams.dstRepStride = 0;
   transDataParams.srcRepStride = 0;
@@ -319,8 +319,8 @@ KirinDev0003处理器系列产品，支持的数据类型为：int8_t、uint8_t�
 
   ```cpp
   AscendC::TransDataTo5HDParams transDataParams;
-  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
-  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.dstHighHalf = true; // 只对int8_t/uint8_t的入参有效，写入dstLocalList的高半位
+  transDataParams.srcHighHalf = true; // 只对int8_t/uint8_t的入参有效，从srcLocalList的高半位读取数据
   transDataParams.repeatTimes = 1; // 重复迭代次数，每次repeat处理16个DataBlock
   transDataParams.dstRepStride = 0;
   transDataParams.srcRepStride = 0;

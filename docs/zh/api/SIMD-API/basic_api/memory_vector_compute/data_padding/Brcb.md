@@ -176,8 +176,10 @@ dstRepStride为16：说明相邻迭代间目的操作数中首尾DataBlock地址
 本调用示例中只展示完整样例中的接口部分代码。如果您需要运行示例代码，请直接参考完整样例[Brcb样例](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/brcb)进行编译执行。
 
 ```cpp
-// repeatTime = 2, 128 elements one repeat, 256 elements total
-// srcLocal数据类型为half，dstLocal数据类型为half
+// srcLocal and dstLocal : half
+// Each repeat reads 8 input elements and fills 8 DataBlocks, one per input element.
+// Each DataBlock contains 16 half elements: 128 output elements per repeat.
+// repeatTime = 2: 16 input elements and 256 output elements in 16 DataBlocks.
 // dstBlkStride = 1, no gap between blocks in one repeat
 // dstRepStride = 8, no gap between repeats
 AscendC::Brcb(dstLocal, srcLocal, 2, {1, 8});
