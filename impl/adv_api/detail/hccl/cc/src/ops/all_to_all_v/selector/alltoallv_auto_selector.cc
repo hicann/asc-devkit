@@ -214,10 +214,18 @@ SelectorStatus AlltoAllVAutoSelector::SelectCcuScheduleAlgo(
             HCCL_INFO("[AlltoAllVAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
             return SelectorStatus::MATCH;
         }
+        // 与多级分支上限同源：MultiJetty 与 SoleMesh 绑定同一模板（CcuTempAlltoAllVMesh1D），
+        // 模板 CalcRes 的 CCU_MAX_RANK_SIZE=64 元数据守卫超限即在资源阶段报错且 CCU 路径无回退；
+        // hccl 因 infra 上限 128 无需此守卫，devkit 前置拒绝
+        if (topoInfo->userRankSize > A2AV_CCU_MAX_RANK_SIZE) {
+            HCCL_WARNING(
+                "[AlltoAllVAutoSelector][%s] rankSize[%u] exceeds A2AV_CCU_MAX_RANK_SIZE[%u].", __func__,
+                topoInfo->userRankSize, A2AV_CCU_MAX_RANK_SIZE);
+            return SelectorStatus::NOT_MATCH;
+        }
         selectAlgName = "CcuSchedAllToAllVSoleMeshMultiJetty";
-        HCCL_WARNING(
-            "[AlltoAllVAutoSelector][%s] algo[%s] not registered, not supported.", __func__, selectAlgName.c_str());
-        return SelectorStatus::NOT_MATCH;
+        HCCL_INFO("[AlltoAllVAutoSelector][%s] Algo match[%s].", __func__, selectAlgName.c_str());
+        return SelectorStatus::MATCH;
     }
     HCCL_DEBUG("[AlltoAllVAutoSelector] algo is not supported yet for ccu_schedule mode.");
     return SelectorStatus::NOT_MATCH;

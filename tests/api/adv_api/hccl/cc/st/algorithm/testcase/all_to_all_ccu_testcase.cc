@@ -128,16 +128,16 @@ TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_pcie_mix_all_connected_selects_sole
     EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMesh");
 }
 
-TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_selects_concurrent_or_not_match)
+TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_selects_multijetty_and_concurrent)
 {
     AlltoAllVAutoSelector selector;
+    // mesh != clos：MultiJetty（已注册）→ MATCH
     TopoInfoWithNetLayerDetails topo = MakeConcurrentTopo();
     topo.topoInstDetailsOfLayer[0].rankNumForTopoType[COMM_TOPO_CLOS] = {3U}; // mesh != clos
     OpParam param = MakeCcuParam(HCCL_CMD_ALLTOALLV);
     std::string algName;
-    // CCU: MultiJetty 未注册 NOT_MATCH；AICPU: mesh!=clos 也 NOT_MATCH → 整链 NOT_MATCH
-    // （该形态 AICPU 同样不支持，断言在框架取消兜底前后一致）
-    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::NOT_MATCH);
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMeshMultiJetty");
 
     // mesh == clos 且 4P：CCU Concurrent 已注册 → CCU 分支命中并发算法
     // （Select 会按降级链改写 opParam.opExecuteConfig，二次调用前需重置，否则 CCU 分支不会进入）
@@ -145,6 +145,29 @@ TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_selects_concurrent_or_n
     param = MakeCcuParam(HCCL_CMD_ALLTOALLV);
     EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
     EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMeshConcurrent");
+}
+
+TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_8rank_multijetty_matches_ccu)
+{
+    // rankSize=8 > CONCURRENT_RANK_LIMIT(4)，Concurrent 让位条件必然不满足 → MultiJetty MATCH
+    AlltoAllVAutoSelector selector;
+    TopoInfoWithNetLayerDetails topo = MakeConcurrentTopo(8U);
+    OpParam param = MakeCcuParam(HCCL_CMD_ALLTOALLV);
+    std::string algName;
+    EXPECT_EQ(selector.Select(param, &topo, algName), SelectorStatus::MATCH);
+    EXPECT_EQ(algName, "CcuSchedAllToAllVSoleMeshMultiJetty");
+}
+
+TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_mesh1d_clos_multijetty_over_rank_limit_never_matches_ccu)
+{
+    AlltoAllVAutoSelector selector;
+    TopoInfoWithNetLayerDetails topo = MakeConcurrentTopo(65U); // 非 pcieMix MESH_1D_CLOS，超 CCU rank 上限
+    OpParam param = MakeCcuParam(HCCL_CMD_ALLTOALLV);
+    std::string algName;
+    // MultiJetty 与 SoleMesh 命中同一模板（CcuTempAlltoAllVMesh1D）：模板 CalcRes 的
+    // CCU_MAX_RANK_SIZE=64 守卫与 channels[CCU_MAX_RANK_SIZE]（HcclGetChannelForCcu）同限，
+    // 超限在资源阶段报错且 CCU 路径无回退，selector 需前置拒绝（与多级分支 A2AV_CCU_MAX_RANK_SIZE 同源）
+    EXPECT_TRUE(CcuNotMatched(selector.Select(param, &topo, algName), algName));
 }
 
 TEST_F(ST_ALL_TO_ALL_CCU_TEST, ccu_alltoallv_int8_multilevel_never_matches_ccu)

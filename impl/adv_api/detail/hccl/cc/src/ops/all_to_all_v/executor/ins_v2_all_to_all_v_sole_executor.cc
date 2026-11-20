@@ -367,6 +367,12 @@ REGISTER_EXEC_V2(
 REGISTER_ALG_META(
     HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMesh, AlgEngine::CCU, "sole[mesh]", COND_NONE, FLAG_NONE, 0);
 REGISTER_EXEC_V2(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMeshMultiJetty, InsV2AlltoAllVSoleExecutor, TopoMatchUBX1d,
+    CcuTempAlltoAllVMesh1D);
+REGISTER_ALG_META(
+    HcclCMDType::HCCL_CMD_ALLTOALLV, CcuSchedAllToAllVSoleMeshMultiJetty, AlgEngine::CCU, "sole[mesh.multi_channel]",
+    COND_NONE, FLAG_UBX, 0);
+REGISTER_EXEC_V2(
     HcclCMDType::HCCL_CMD_ALLTOALL, CcuSchedAllToAllMesh1DMultiJetty, InsV2AlltoAllVSoleExecutor, TopoMatchUBX1d,
     CcuTempAllToAllMesh1DMultiJetty);
 REGISTER_ALG_META(

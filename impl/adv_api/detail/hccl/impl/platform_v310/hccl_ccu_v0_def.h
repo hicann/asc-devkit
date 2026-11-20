@@ -48,7 +48,8 @@ enum class AlgorithmType : uint8_t {
     // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（160，AllReduce NHR 1D Mem2Mem）
     CcuSchedAllReduceSoleNHR = 160,
     // 与宿主侧 hccl_alloc_ctx_res.h 的 AlgorithmType 同值（161，并发 A2AV；160 已被 AllReduceSoleNHR 占用）
-    CcuSchedAllToAllVSoleMeshConcurrent = 161
+    CcuSchedAllToAllVSoleMeshConcurrent = 161,
+    CcuSchedAllToAllVSoleMeshMultiJetty = 162
 };
 
 template <const auto& config>

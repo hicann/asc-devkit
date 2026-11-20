@@ -36,6 +36,24 @@ CcuStScenario MakeScenario(const TopoMeta& topoMeta, HcclDataType dataType, uint
     return scenario;
 }
 
+// 单server内全部 phyId 携带 MESH_1D_CLOS_PHYID_MARK 时，TopoModel 按 MESH_1D_CLOS 建模
+// （单方向 1D Mesh 实例 + 覆盖 server 全部 rank 的 CLOS 实例）
+TopoMeta MakeMesh1dClosTopo(const std::vector<uint32_t>& phyIds)
+{
+    ServerMeta server;
+    for (auto phyId : phyIds) {
+        server.push_back(phyId | MESH_1D_CLOS_PHYID_MARK);
+    }
+    return TopoMeta{{server}};
+}
+
+// MultiJetty 与 SoleMesh 共用模板与内核（CcuTempAlltoAllVMesh1D→CcuKernelAlltoAllVMesh1D，hccl 同构），
+// scenario 数据构造同款，复用 SoleMesh 构造器。
+const bool g_multiJettyVariantRegistered = []() {
+    CcuStAllToAllV::RegisterVariant("CcuSchedAllToAllVSoleMeshMultiJetty", BuildAllToAllVMesh1DScenario);
+    return true;
+}();
+
 } // namespace
 
 TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_2Rank_Fp16_100B)
@@ -200,6 +218,32 @@ TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMesh_LogLevel_Control)
     EXPECT_EQ(errorOnlyOutput.find("INFO"), std::string::npos);
 }
 
+// ===== MultiJetty（MESH_1D_CLOS 双实例：单方向 Mesh + CLOS）=====
+// selector 语义（alltoallv_auto_selector.cc SelectCcuScheduleAlgo）：
+// mesh==clos 且 rankSize<=4 → Concurrent（已注册，见下方并发用例），否则 MultiJetty——
+// 与 alltoall 不同（无 dataSize 让位条件），4P 同组形态走 Concurrent，故 V 版 MultiJetty E2E 仅用 8P
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshMultiJetty_8Rank_Mesh1DClos_Fp16_64B)
+{
+    // rankSize=8 > CONCURRENT_RANK_LIMIT(4) → MultiJetty；sizes 为变长矩阵（V 语义）
+    TopoMeta topo = MakeMesh1dClosTopo({0, 1, 2, 3, 4, 5, 6, 7});
+    CcuStScenario scenario = MakeScenario(topo, HCCL_DATA_TYPE_FP16, 64);
+    scenario.expectedAlgName = "CcuSchedAllToAllVSoleMeshMultiJetty";
+    // 强制被测算法：直测 TopoMatchUBX1d 双实例 hierarchy + MultiJetty 建链分支
+    // （默认残留 SoleMesh 会强制必败的扁平 hierarchy 后回退 selector，间接且误导）
+    scenario.algConfig = scenario.expectedAlgName;
+    VerifyScenario(scenario);
+}
+
+TEST_F(CcuStAllToAllV, CcuSchedAllToAllVSoleMeshMultiJetty_8Rank_Mesh1DClos_Fp32_1KB)
+{
+    TopoMeta topo = MakeMesh1dClosTopo({0, 1, 2, 3, 4, 5, 6, 7});
+    CcuStScenario scenario = MakeScenario(topo, HCCL_DATA_TYPE_FP32, 1024);
+    scenario.expectedAlgName = "CcuSchedAllToAllVSoleMeshMultiJetty";
+    scenario.algConfig = scenario.expectedAlgName;
+    VerifyScenario(scenario);
+}
+
 // ===== 并发 A2AV（MESH_1D_CLOS 双实例：mesh 优先链路 + CLOS MultiJetty 链路，双 mission）=====
 // 单 server 内全部 phyId 携带 MESH_1D_CLOS_PHYID_MARK 时按 MESH_1D_CLOS 建模，
 // selector 判定 meshNum==closNum 且 rankSize<=4 → CcuSchedAllToAllVSoleMeshConcurrent
@@ -214,15 +258,6 @@ CcuStScenario MakeConcurrentScenario(const TopoMeta& topoMeta, HcclDataType data
     // mesh/clos 双链路：mission0 mesh 优先建链、mission1 CLOS-only 建链同时产出通道
     scenario.meshClosDualLink = true;
     return scenario;
-}
-
-TopoMeta MakeMesh1dClosTopo(const std::vector<uint32_t>& phyIds)
-{
-    ServerMeta server;
-    for (auto phyId : phyIds) {
-        server.push_back(phyId | MESH_1D_CLOS_PHYID_MARK);
-    }
-    return TopoMeta{{server}};
 }
 
 } // namespace

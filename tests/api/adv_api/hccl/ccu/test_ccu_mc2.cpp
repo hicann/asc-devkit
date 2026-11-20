@@ -601,6 +601,8 @@ TEST_F(CcuMc2TestSuite, algorithmMap_AllEntries)
     EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllSoleMesh"), AlgorithmType::CcuSchedAllToAllSoleMesh);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllMesh1DMultiJetty"), AlgorithmType::CcuSchedAllToAllMesh1DMultiJetty);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllVSoleMesh"), AlgorithmType::CcuSchedAllToAllVSoleMesh);
+    EXPECT_EQ(
+        algorithmMap.at("CcuSchedAllToAllVSoleMeshMultiJetty"), AlgorithmType::CcuSchedAllToAllVSoleMeshMultiJetty);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllToAllSoleMeshConcurrent"), AlgorithmType::CcuSchedAllToAllSoleMeshConcurrent);
     EXPECT_EQ(
         algorithmMap.at("CcuSchedAllToAllVSoleMeshConcurrent"), AlgorithmType::CcuSchedAllToAllVSoleMeshConcurrent);
@@ -617,7 +619,7 @@ TEST_F(CcuMc2TestSuite, algorithmMap_AllEntries)
     EXPECT_EQ(algorithmMap.at("CcuSchedAllGatherSoleNHR"), AlgorithmType::CcuSchedAllGatherSoleNHR);
     EXPECT_EQ(algorithmMap.at("CcuSchedAllReduceSoleNHR"), AlgorithmType::CcuSchedAllReduceSoleNHR);
     EXPECT_EQ(algorithmMap.at("CcuHalfAll2AllVMesh1D"), AlgorithmType::CcuHalfAll2AllVMesh1D);
-    EXPECT_EQ(algorithmMap.size(), 20U);
+    EXPECT_EQ(algorithmMap.size(), 21U);
 }
 
 TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
@@ -642,7 +644,9 @@ TEST_F(CcuMc2TestSuite, AlgorithmType_EnumValues)
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterConcurMeshNHRMultiLink), 156U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedReduceScatterSoleNHR), 158U);
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllGatherSoleNHR), 159U);
+    // 161 已被 upstream 并发 A2AV（Concurrent）占用，MultiJetty 顺延 162
     EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllVSoleMeshConcurrent), 161U);
+    EXPECT_EQ(static_cast<uint32_t>(AlgorithmType::CcuSchedAllToAllVSoleMeshMultiJetty), 162U);
 }
 
 TEST_F(CcuMc2TestSuite, HcclAllocComResourceByTiling_CcuPath)
