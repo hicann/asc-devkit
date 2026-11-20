@@ -207,7 +207,7 @@
 
 - 操作数地址对齐要求请参见[通用地址对齐约束](../../../general_description_and_constraints.md)。
 
-- dst按照小端顺序排序成二进制结果，对应src中相应位置的数据比较结果。
+- dst按照小端顺序排序成二进制结果，对应src0和src1中相应位置的数据比较结果。
 
 <!-- npu="A3,910b,950" id27 -->
 - 当参数count或repeatTime取值为0时，该接口的行为如下：

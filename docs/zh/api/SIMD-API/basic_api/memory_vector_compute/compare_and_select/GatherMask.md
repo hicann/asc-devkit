@@ -305,7 +305,7 @@ repeatTimes值不生效，指令的迭代次数由源操作数和mask共同决�
     // src0BlockStride = 1;单次迭代内数据间隔1个Block，即数据连续读取和写入
     // repeatTimes = 4;重复迭代4次
     // src0RepeatStride = 8;源操作数迭代数据间隔8个DataBlock
-    // src1RepeatStride = 0;重复一次，故设置为0
+    // src1RepeatStride = 0;内置固定模式下src1RepeatStride参数无效
     AscendC::GatherMask(src0Local, src0Local, src1Pattern, false, mask, { 1, 4, 8, 0 }, rsvdCnt);
     ```
 
