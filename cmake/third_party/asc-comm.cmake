@@ -74,6 +74,11 @@ install(DIRECTORY ${ASC_COMM_SRC_DIR}/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/impl/comm_api
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
+    # 这些目录只有源码（.cc/CMakeLists/README），FILES_MATCHING 过滤后只剩空目录，直接排除
+    PATTERN "cc" EXCLUDE
+    PATTERN "cpu" EXCLUDE
+    PATTERN "ccu/ccu_api/primitives" EXCLUDE
+    PATTERN "aicpu/asccomm/experimental" EXCLUDE
     REGEX "legacy" EXCLUDE
 )
 
@@ -90,6 +95,7 @@ install(DIRECTORY ${ASC_COMM_INCLUDE_DIR}/
     DESTINATION ${INSTALL_LIBRARY_DIR}/asc/include/comm_api
     COMPONENT asc-devkit
     FILES_MATCHING PATTERN "*.h"
+    PATTERN "cc" EXCLUDE
     REGEX "direct_drive" EXCLUDE
 )
 

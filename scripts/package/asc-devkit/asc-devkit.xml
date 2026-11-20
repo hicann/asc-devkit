@@ -56,8 +56,6 @@
         <path value="$(TARGET_ENV)/ascendc/include/highlevel_api/utils"/>
         <path value="$(TARGET_ENV)/ascendc/include/highlevel_api/utils/log"/>
         <path value="$(TARGET_ENV)/include/acl"/>
-        <path value="$(TARGET_ENV)/include/ccu"/>
-        <path value="$(TARGET_ENV)/include/ccu/hcomm"/>
         <path value="$(TARGET_ENV)/include/ascendc"/>
         <path value="$(TARGET_ENV)/include/ascendc/include"/>
         <path value="$(TARGET_ENV)/include/ascendc/highlevel_api"/>
