@@ -29,6 +29,7 @@
 #include "hcomm_host_profiling_dl.h"
 #include "runtime/rt.h"
 #include <cmath>
+#include <ccu/ccu_api/ccu_types.h>
 
 using namespace mc2_ops_hccl;
 

@@ -12,8 +12,7 @@
 
 #include <hccl/hccl_types.h>
 #include <hccl/hccl_res.h>
-#include <ccu/ccu_api/ccu_types.h>
-#include "adv_api/hccl/internal/hcomm/ccu/ccu_types.h"
+#include <ccu/ccu_types.h>
 
 using Mc2Result = uint32_t;
 
