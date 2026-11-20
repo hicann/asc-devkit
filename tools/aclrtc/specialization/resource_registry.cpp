@@ -67,8 +67,7 @@ namespace {
 namespace fs = boost::filesystem;
 using Json = nlohmann::json;
 
-constexpr char RELATIVE_JIT_ROOT[] = "op_impl/ai_core/tbe/kernel/jit";
-constexpr char LIBRARY_NAME_SUFFIX[] = "_compile_database.so";
+constexpr char RESOURCE_LIBRARY_NAME[] = "libcust_compile_resource.so";
 constexpr uint64_t MAX_MANIFEST_SIZE = 8U * 1024U * 1024U;
 constexpr uint64_t MAX_PATH_SIZE = 4096U;
 constexpr uint64_t MAX_RESOURCE_FILE_SIZE = 256U * 1024U * 1024U;
@@ -618,7 +617,6 @@ AutomaticRoots ResourceRegistry::AutomaticSearchRoots()
 {
     AutomaticRoots roots;
     for (const std::string& path : SplitList(std::getenv("ASCEND_CUSTOM_OPP_PATH"), ':')) {
-        roots.custom.push_back(FileUtils::JoinPath(path, RELATIVE_JIT_ROOT));
         roots.custom.push_back(FileUtils::JoinPath(path, "op_spec"));
     }
     const char* environment = std::getenv("ASCEND_OPP_PATH");
@@ -660,7 +658,6 @@ AutomaticRoots ResourceRegistry::AutomaticSearchRoots()
             for (const std::string& vendor : SplitList(line.substr(separator + 1U).c_str(), ',')) {
                 if (IsPlainName(vendor)) {
                     const std::string vendorRoot = FileUtils::JoinPath(oppRoot, "vendors/" + vendor);
-                    roots.custom.push_back(FileUtils::JoinPath(vendorRoot, RELATIVE_JIT_ROOT));
                     roots.custom.push_back(FileUtils::JoinPath(vendorRoot, "op_spec"));
                 } else {
                     ASCENDLOGW(
@@ -671,7 +668,6 @@ AutomaticRoots ResourceRegistry::AutomaticSearchRoots()
             break;
         }
     }
-    roots.builtIn.push_back(FileUtils::JoinPath(FileUtils::JoinPath(oppRoot, "built-in"), RELATIVE_JIT_ROOT));
     roots.builtIn.push_back(FileUtils::JoinPath(FileUtils::JoinPath(oppRoot, "built-in"), "op_spec"));
     ASCENDLOGD(
         "Automatic compile resource roots collected: custom_roots=%zu built_in_roots=%zu opp_root=%s",
@@ -681,14 +677,7 @@ AutomaticRoots ResourceRegistry::AutomaticSearchRoots()
 
 bool ResourceRegistry::IsLibraryName(const std::string& path)
 {
-    const std::string name = FileUtils::FileName(path);
-    if (name == "libcust_compile_resource.so" && !InstalledSourceRoot(path).empty()) {
-        return true;
-    }
-    return name.size() > std::strlen("lib") + std::strlen(LIBRARY_NAME_SUFFIX) && name.rfind("lib", 0U) == 0U &&
-           name.compare(
-               name.size() - std::strlen(LIBRARY_NAME_SUFFIX), std::strlen(LIBRARY_NAME_SUFFIX), LIBRARY_NAME_SUFFIX) ==
-               0;
+    return FileUtils::FileName(path) == RESOURCE_LIBRARY_NAME && !InstalledSourceRoot(path).empty();
 }
 
 void ResourceRegistry::AddLibrary(const std::string& path, std::set<std::string>& found)
@@ -801,8 +790,8 @@ ResourceStatus ResourceRegistry::DiscoverLibraries(const char* directory, std::v
     if (libraries.empty()) {
         ASCENDLOGW(
             "No compile resource libraries found by automatic discovery: custom_roots=%zu built_in_roots=%zu "
-            "pattern=lib*%s",
-            roots.custom.size(), roots.builtIn.size(), LIBRARY_NAME_SUFFIX);
+            "name=%s",
+            roots.custom.size(), roots.builtIn.size(), RESOURCE_LIBRARY_NAME);
         return ResourceStatus::NotFound;
     }
     ASCENDLOGI(
@@ -950,7 +939,7 @@ ResourceStatus ResourceRegistry::LocateSourceFile(
         return ResourceStatus::Success;
     }
     // Relative path example:
-    //   kernel/jit/ascend910b/libfoo_compile_database.so  <- resource SO
+    //   kernel/jit/ascend910b/libfoo.so                  <- explicit resource SO
     //   kernel/ascend910b/impl/foo.cpp                    <- source file
     // Derive the SoC and kernel root from the SO path, then recursively search the sibling kernel/<soc> tree.
     // Exactly one regular-file match is required; located is set to that file's parent directory.
@@ -1377,6 +1366,8 @@ ResourceStatus ResourceRegistry::Load(const char* directory)
 ResourceStatus ResourceRegistry::Materialize(
     const std::string& resourceId, const ResourceEntry& entry, ResourceData& resource)
 {
+    resource = ResourceData{};
+    std::lock_guard<std::mutex> materializeLock(entry.materializeMutex);
     ASCENDLOGI(
         "Materializing compile resource: resource_id=%s source_type=%s so=%s files=%zu", resourceId.c_str(),
         SourceTypeName(entry.sourceType), entry.sourceSoPath.c_str(), entry.files.size());
@@ -1411,9 +1402,9 @@ ResourceStatus ResourceRegistry::Materialize(
         if (retainMaterializedDirectories_) {
             materializedResourceDirectory.PreserveDirectory();
         }
-        resource.resourceDir.clear();
         return status;
     }
+    resource = entry.data;
     resource.resourceDir = materializedResourceDirectory.GetDirectoryPath();
     materializedResourceDirectory.PreserveDirectory();
     ASCENDLOGI(
@@ -1422,9 +1413,9 @@ ResourceStatus ResourceRegistry::Materialize(
     return ResourceStatus::Success;
 }
 
-ResourceStatus ResourceRegistry::Lookup(const char* resourceId, ResourceData& resource)
+ResourceStatus ResourceRegistry::Lookup(const char* resourceId, const ResourceEntry*& resource)
 {
-    resource = ResourceData{};
+    resource = nullptr;
     if (resourceId == nullptr) {
         ASCENDLOGE("Compile resource lookup rejected: resource_id=<null> reason=identifier pointer is null");
         return ResourceStatus::InvalidResource;
@@ -1434,28 +1425,18 @@ ResourceStatus ResourceRegistry::Lookup(const char* resourceId, ResourceData& re
         return ResourceStatus::InvalidResource;
     }
     ASCENDLOGD("Looking up compile resource: resource_id=%s", resourceId);
-    ResourceEntry* entry = nullptr;
     {
         std::lock_guard<std::mutex> lock(registryMutex_);
-        entry = FindResource(resourceId);
+        resource = FindResource(resourceId);
     }
-    if (entry == nullptr) {
+    if (resource == nullptr) {
         ASCENDLOGD("Compile resource lookup missed: resource_id=%s reason=not registered", resourceId);
         return ResourceStatus::NotFound;
     }
     ASCENDLOGD(
         "Compile resource lookup matched: resource_id=%s source_type=%s so=%s", resourceId,
-        SourceTypeName(entry->sourceType), entry->sourceSoPath.c_str());
-    std::lock_guard<std::mutex> materializeLock(entry->materializeMutex);
-    ResourceData materialized = entry->data;
-    materialized.resourceDir.clear();
-    const ResourceStatus status = Materialize(resourceId, *entry, materialized);
-    if (status == ResourceStatus::Success) {
-        resource = std::move(materialized);
-        ASCENDLOGD(
-            "Compile resource lookup completed: resource_id=%s directory=%s", resourceId, resource.resourceDir.c_str());
-    }
-    return status;
+        SourceTypeName(resource->sourceType), resource->sourceSoPath.c_str());
+    return ResourceStatus::Success;
 }
 
 } // namespace specialization_compile

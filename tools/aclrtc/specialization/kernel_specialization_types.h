@@ -15,6 +15,7 @@
 
 #include <boost/filesystem/path.hpp>
 #include <cstdint>
+#include <map>
 #include <optional>
 #include <string>
 #include <vector>
@@ -29,6 +30,10 @@ constexpr aclError ACLRTC_ERROR_COMPILATION = 176003;
 constexpr aclError ACLRTC_ERROR_LINKING = 176004;
 constexpr aclError ACLRTC_ERROR_OUT_OF_MEMORY = 276001;
 constexpr aclError ACLRTC_ERROR_FAILURE = 576000;
+
+constexpr uint64_t BYTES_PER_MEBIBYTE = 1024U * 1024U;
+constexpr uint32_t PERCENTAGE_BASE = 100U;
+constexpr uint64_t MAXIMUM_CACHED_KERNEL_ELF_BYTES = 512U * BYTES_PER_MEBIBYTE;
 
 enum class CompilationCommandKind : uint32_t {
     Compile,
@@ -79,6 +84,7 @@ struct KernelCompilationPlan {
     std::vector<CompilationCommand> compilationCommands;
     std::vector<boost::filesystem::path> requiredOutputDirectoryPaths;
     boost::filesystem::path linkedKernelElfPath;
+    std::map<std::string, std::optional<std::string>> compilerEnvironment;
 };
 
 aclError NormalizeKernelSpecializationRequest(

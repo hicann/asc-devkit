@@ -37,11 +37,17 @@ public:
     CompilationPlanExecutor(
         KernelSpecializationDiagnostics& specializationDiagnostics, CompilationCommandExecutionLimits executionLimits);
 
-    aclError ExecuteCompilationPlan(const KernelCompilationPlan& compilationPlan) const;
+    aclError ExecuteCompilationPlan(
+        const KernelCompilationPlan& compilationPlan, const std::string& preprocessingKernelName = {}) const;
 
 private:
+    void LogCommandFailure(
+        const CompilationCommand& compilationCommand, const std::string& preprocessingKernelName,
+        const ProcessExecutorResult& executorResult) const;
     aclError ExecuteCompilationCommand(
-        const CompilationCommand& compilationCommand, ProcessExecutorResult& executorResult) const;
+        const CompilationCommand& compilationCommand,
+        const std::map<std::string, std::optional<std::string>>& compilerEnvironment, bool isPreprocessing,
+        ProcessExecutorResult& executorResult) const;
 
     KernelSpecializationDiagnostics& specializationDiagnostics_;
     CompilationCommandExecutionLimits commandExecutionLimits_;

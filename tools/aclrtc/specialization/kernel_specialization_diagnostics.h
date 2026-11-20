@@ -14,7 +14,6 @@
 #include "kernel_specialization_types.h"
 
 #include <boost/filesystem/path.hpp>
-#include <cstdint>
 #include <nlohmann/json.hpp>
 #include <string>
 
@@ -24,24 +23,24 @@ struct ProcessExecutorResult;
 
 namespace aclrtc {
 
-enum class KernelElfPublicationStatus : uint32_t {
-    NotPublished,
-    Published,
-};
-
 class KernelSpecializationDiagnostics final {
 public:
     KernelSpecializationDiagnostics(boost::filesystem::path resourceWorktreePath, std::string specializationSessionId);
 
     void WriteManifestSnapshot(const nlohmann::json& resourceManifest) noexcept;
-    void AppendCommandToReplayScript(const CompilationCommand& compilationCommand) noexcept;
+    static void WriteCacheInputSnapshot(
+        const boost::filesystem::path& resourceWorktreePath, const nlohmann::json& cacheInput) noexcept;
+    void AppendCommandToReplayScript(
+        const CompilationCommand& compilationCommand,
+        const std::map<std::string, std::optional<std::string>>& compilerEnvironment = {}) noexcept;
     void AppendCommandExecutionHeaderToLog(const CompilationCommand& compilationCommand) noexcept;
     std::string GetCompilationLogFilePath() const;
+    const std::string& GetSpecializationSessionId() const noexcept { return specializationSessionId_; }
     void AppendCommandExecutionResultToLog(
         const CompilationCommand& compilationCommand, const ProcessExecutorResult& executorResult) noexcept;
     void LogCommandFailureRecoveryHint() const noexcept;
     void WriteSpecializationResult(
-        const boost::filesystem::path& outputElfPath, KernelElfPublicationStatus publicationStatus) noexcept;
+        const boost::filesystem::path& outputElfPath, aclError specializationStatus, const char* stage) noexcept;
 
 private:
     std::string specializationSessionId_;
