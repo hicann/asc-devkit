@@ -167,7 +167,7 @@ __aicore__ inline float ToFloat(const bfloat16_t& bVal) { return Cast(bVal); }
 template <typename T>
 __aicore__ constexpr inline float Cast(const T& bVal)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupport Cast to float"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported Cast to float"); });
     return 0.0f;
 }
 
@@ -175,13 +175,13 @@ __aicore__ constexpr inline float Cast(const T& bVal)
 template <typename T>
 __aicore__ constexpr inline float ToFloat(const T& bVal)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupport ToFloat"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported ToFloat"); });
     return 0.0f;
 }
 
 __aicore__ inline bfloat16_t Cast(const float& fVal)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupport Cast to bfloat16"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported Cast to bfloat16"); });
     bfloat16_t bNum;
     return bNum;
 }
@@ -189,7 +189,7 @@ __aicore__ inline bfloat16_t Cast(const float& fVal)
 // ToBfloat16 has been updated, please use Cast instead.
 __aicore__ inline bfloat16_t ToBfloat16(const float& fVal)
 {
-    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupport ToBfloat"); });
+    ASCENDC_ASSERT((false), { KERNEL_LOG(KERNEL_ERROR, "unsupported ToBfloat"); });
     bfloat16_t bNum;
     return bNum;
 }
