@@ -204,21 +204,21 @@
         msobjdump --dump-elf ${build_dir}/demo
         ```
 
-        执行上述命令，终端打印基础device信息，示例如下：
+        执行上述命令，终端打印基础device信息，输出节选如下：
 
         ```
         .ascend.meta META INFO
-        RUNTIME_IMPLICIT_INFO: L2Cache Hint Flag
-        RUNTIME_IMPLICIT_INFO: Hardware Sync Flag
+        RUNTIME_IMPLICIT_INFO: L2Cache Hint Flag (3)
+        RUNTIME_IMPLICIT_INFO: Hardware Sync Flag (2)
         VERSION: 1
-        RUNTIME_IMPLICIT_INFO: SIMD Printf Flag
+        RUNTIME_IMPLICIT_INFO: SIMD Printf Flag (1)
         .ascend.meta. [0]: _Z23matmul_leakyrelu_customPhS_S_S_S_N7AscendC6tiling11TCubeTilingE_mix_aic
-        KERNEL_TYPE: MIX_AIC_MAIN
-        CROSS_CORE_SYNC: USE_SYNC
+        CROSS_CORE_SYNC: USE_SYNC (1)
+        KERNEL_TYPE: MIX_AIC_MAIN (4)
         MIX_TASK_RATION: [1:2]
         .ascend.meta. [1]: _Z23matmul_leakyrelu_customPhS_S_S_S_N7AscendC6tiling11TCubeTilingE_mix_aiv
-        KERNEL_TYPE: MIX_AIC_MAIN
-        CROSS_CORE_SYNC: USE_SYNC
+        CROSS_CORE_SYNC: USE_SYNC (1)
+        KERNEL_TYPE: MIX_AIC_MAIN (4)
         MIX_TASK_RATION: [1:2]
         ```
 
@@ -311,7 +311,7 @@ cmake .. && make -j binary package
 msobjdump --dump-elf ${sample_dir}/build/op_kernel/ascendc_kernels/binary/ascend950/add_custom/AddCustom_*.o
 ```
 
-执行上述命令，终端打印基础device信息，示例如下：
+执行上述命令，终端打印基础device信息，输出节选如下：
 
 ```text
 .ascend.meta META INFO
@@ -319,11 +319,11 @@ VERSION: 1
 DEBUG: debugBufSize=0, debugOptions=0
 DYNAMIC_PARAM: dynamicParamMode=0
 OPTIONAL_PARAM: optionalInputMode=1, optionalOutputMode=1
-.ascend.meta. [0]: AddCustom_ab1b6750d7f510985325b603cb06dc8b_0
-KERNEL_TYPE: AIV
+.ascend.meta. [0]: AddCustom_ab1b6750d7f510985325b603cb06dc8b_1
+KERNEL_TYPE: AIV (3)
 DETERMINISTIC_INFO: 1
 BLOCK_NUM: 0xFFFFFFFF
-FUNCTION_ENTRY: 0
+FUNCTION_ENTRY: 1, flag=0x00
 ```
 
 如需查看ELF头、Section和Symbol等详细信息，可在上述命令中增加`--verbose`参数。
