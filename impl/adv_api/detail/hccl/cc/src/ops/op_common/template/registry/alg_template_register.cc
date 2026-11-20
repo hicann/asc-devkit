@@ -26,7 +26,7 @@ HcclResult AlgTemplateRegistry::Register(const TemplateType type, const AlgTempl
 {
     if ((type >= TemplateType::TEMPLATE_NATIVE_MAX_NUM && type <= TemplateType::TEMPLATE_CUSTOM_BEGIN) ||
         type >= TemplateType::TEMPLATE_CUSTOM_MAX_NUM) {
-        HCCL_ERROR("[AlgTemplateRegistry]template type[%d] out of range.", type);
+        HCCL_ERROR("[AlgTemplateRegistry]template type[%d] out of range, valid range is [0,5) and (1000, 2000).", type);
         return HcclResult::HCCL_E_INTERNAL;
     }
 
@@ -43,7 +43,7 @@ std::unique_ptr<AlgTemplateBase> AlgTemplateRegistry::GetAlgTemplate(const Templ
 {
     if ((type >= TemplateType::TEMPLATE_NATIVE_MAX_NUM && type <= TemplateType::TEMPLATE_CUSTOM_BEGIN) ||
         type >= TemplateType::TEMPLATE_CUSTOM_MAX_NUM) {
-        HCCL_ERROR("[AlgTemplateRegistry]template type[%d] out of range.", type);
+        HCCL_ERROR("[AlgTemplateRegistry]template type[%d] out of range, valid range is [0,5) and (1000, 2000).", type);
         return nullptr;
     }
 

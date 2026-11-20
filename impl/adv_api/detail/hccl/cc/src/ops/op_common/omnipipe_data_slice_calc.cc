@@ -468,10 +468,10 @@ double CalcBandwidth2D(double xB, double yB, u64 xRankSize, u64 yRankSize, int m
 {
     HCCL_INFO("[CalcBandwidth2D] start");
     if (yRankSize == 1) {
-        HCCL_INFO("[CalcBandwidth2D] xB=[%f]", xB);
+        HCCL_INFO("[CalcBandwidth2D] xB=[%f]GB/s", xB);
         return xB;
     } else if (xRankSize == 1) {
-        HCCL_INFO("[CalcBandwidth2D] yB=[%f]", yB);
+        HCCL_INFO("[CalcBandwidth2D] yB=[%f]GB/s", yB);
         return yB;
     } else {
         double xAGDataSize[maxStepNum];
@@ -485,7 +485,7 @@ double CalcBandwidth2D(double xB, double yB, u64 xRankSize, u64 yRankSize, int m
         for (int i = 0; i < stepNum2d; i++) {
             xds = xds + xAGDataSize[i];
         }
-        HCCL_INFO("[CalcBandwidth2D] Bandwidth2D=[%f]", xB * ds / xds);
+        HCCL_INFO("[CalcBandwidth2D] Bandwidth2D=[%f]GB/s", xB * ds / xds);
         HCCL_INFO("[CalcBandwidth2D] end");
         return xB * ds / xds;
     }
@@ -2142,12 +2142,16 @@ HcclResult CalLocalCopySlice(
 
     if (tempAlgParams.buffInfo.inBuffType != BufferType::INPUT &&
         tempAlgParams.buffInfo.inBuffType != BufferType::HCCL_BUFFER) {
-        HCCL_ERROR("[CalLocalCopySlice] buffInfo.inBuffType[%d], error", tempAlgParams.buffInfo.inBuffType);
+        HCCL_ERROR(
+            "[CalLocalCopySlice] buffInfo.inBuffType[%d] is invalid, expected INPUT or HCCL_BUFFER",
+            tempAlgParams.buffInfo.inBuffType);
         return HCCL_E_PARA;
     }
 
     if (allRankSplitData.size() != curLoopAllRankSplitData.size()) {
-        HCCL_ERROR("[CalLocalCopySlice] allRankSplitData.size != curLoopAllRankSplitData.size");
+        HCCL_ERROR(
+            "[CalLocalCopySlice] allRankSplitData.size[%zu] != curLoopAllRankSplitData.size[%zu]",
+            allRankSplitData.size(), curLoopAllRankSplitData.size());
         return HCCL_E_PARA;
     }
 

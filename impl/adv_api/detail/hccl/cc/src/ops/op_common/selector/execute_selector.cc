@@ -45,11 +45,11 @@ HcclResult ExecuteSelector::Run(
             opParam.opType);
         for (auto iter : selectors) {
             HCCL_DEBUG(
-                "[asc][AlgoSelect][ExecuteSelector::Run] try selector priority[%llu], opType[%d].", iter.first,
+                "[asc][AlgoSelect][ExecuteSelector::Run] try selector priority[%u], opType[%d].", iter.first,
                 opParam.opType);
             if (iter.second->Select(opParam, topoInfo, selectAlgName) == SelectorStatus::MATCH) {
                 HCCL_INFO(
-                    "[asc][AlgoSelect][ExecuteSelector::Run] matched, priority[%llu], algName[%s], "
+                    "[asc][AlgoSelect][ExecuteSelector::Run] matched, priority[%u], algName[%s], "
                     "opExecuteConfig[%d], engine[%d].",
                     iter.first, selectAlgName.c_str(), opParam.opExecuteConfig, opParam.engine);
                 return HcclResult::HCCL_SUCCESS;

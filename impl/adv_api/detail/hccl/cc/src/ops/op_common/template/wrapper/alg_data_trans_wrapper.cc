@@ -338,16 +338,16 @@ HcclResult SendWriteReduce(const DataReduceInfo& sendInfo, const ThreadHandle& t
         CHK_PRT_RET(
             srcSlice.count_ * DATATYPE_SIZE_TABLE[sendInfo.dataType_] != srcSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%u] is not mate to src slice size "
-                "[%u], dataType is [%d].",
-                srcSlice.size_, srcSlice.size_, sendInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%llu] is not mate to src slice size "
+                "[%llu], dataType is [%d].",
+                srcSlice.count_, srcSlice.size_, sendInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         CHK_PRT_RET(
             dstSlice.count_ * DATATYPE_SIZE_TABLE[sendInfo.dataType_] != dstSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%u] is not mate to dst slice size "
-                "[%u], dataType is [%d].",
-                dstSlice.size_, dstSlice.size_, sendInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%llu] is not mate to dst slice size "
+                "[%llu], dataType is [%d].",
+                dstSlice.count_, dstSlice.size_, sendInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         void* dst = static_cast<void*>(static_cast<s8*>(dstSlice.addr_) + dstSlice.offset_);
         void* src = static_cast<void*>(static_cast<s8*>(srcSlice.addr_) + srcSlice.offset_);
@@ -421,16 +421,16 @@ HcclResult SendRecvWriteReduce(const SendRecvReduceInfo& sendRecvInfo, const Thr
         CHK_PRT_RET(
             srcSlice.count_ * DATATYPE_SIZE_TABLE[sendRecvInfo.dataType_] != srcSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%u] is not mate to src slice size "
-                "[%u], dataType is [%d].",
-                srcSlice.size_, srcSlice.size_, sendRecvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%llu] is not mate to src slice size "
+                "[%llu], dataType is [%d].",
+                srcSlice.count_, srcSlice.size_, sendRecvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         CHK_PRT_RET(
             dstSlice.count_ * DATATYPE_SIZE_TABLE[sendRecvInfo.dataType_] != dstSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%u] is not mate to dst slice size "
-                "[%u], dataType is [%d].",
-                dstSlice.size_, dstSlice.size_, sendRecvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%llu] is not mate to dst slice size "
+                "[%llu], dataType is [%d].",
+                dstSlice.count_, dstSlice.size_, sendRecvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         void* dst = static_cast<void*>(static_cast<s8*>(dstSlice.addr_) + dstSlice.offset_);
         void* src = static_cast<void*>(static_cast<s8*>(srcSlice.addr_) + srcSlice.offset_);
@@ -591,16 +591,16 @@ HcclResult RecvReadReduce(const DataReduceInfo& recvInfo, const ThreadHandle& th
         CHK_PRT_RET(
             srcSlice.count_ * DATATYPE_SIZE_TABLE[recvInfo.dataType_] != srcSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%u] is not mate to src slice size "
-                "[%u], dataType is [%d].",
-                srcSlice.size_, srcSlice.size_, recvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%llu] is not mate to src slice size "
+                "[%llu], dataType is [%d].",
+                srcSlice.count_, srcSlice.size_, recvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         CHK_PRT_RET(
             dstSlice.count_ * DATATYPE_SIZE_TABLE[recvInfo.dataType_] != dstSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%u] is not mate to dst slice size "
-                "[%u], dataType is [%d].",
-                dstSlice.size_, dstSlice.size_, recvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%llu] is not mate to dst slice size "
+                "[%llu], dataType is [%d].",
+                dstSlice.count_, dstSlice.size_, recvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         void* dst = static_cast<void*>(static_cast<s8*>(dstSlice.addr_) + dstSlice.offset_);
         void* src = static_cast<void*>(static_cast<s8*>(srcSlice.addr_) + srcSlice.offset_);
@@ -665,16 +665,16 @@ HcclResult SendRecvReadReduce(const SendRecvReduceInfo& sendRecvInfo, const Thre
         CHK_PRT_RET(
             srcSlice.count_ * DATATYPE_SIZE_TABLE[sendRecvInfo.dataType_] != srcSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%u] is not mate to src slice size "
-                "[%u], dataType is [%d].",
-                srcSlice.size_, srcSlice.size_, sendRecvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: src slice count [%llu] is not mate to src slice size "
+                "[%llu], dataType is [%d].",
+                srcSlice.count_, srcSlice.size_, sendRecvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         CHK_PRT_RET(
             dstSlice.count_ * DATATYPE_SIZE_TABLE[sendRecvInfo.dataType_] != dstSlice.size_,
             HCCL_ERROR(
-                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%u] is not mate to dst slice size "
-                "[%u], dataType is [%d].",
-                dstSlice.size_, dstSlice.size_, sendRecvInfo.dataType_),
+                "[AlgDataTransWrapper] SendWriteReduce: dst slice count [%llu] is not mate to dst slice size "
+                "[%llu], dataType is [%d].",
+                dstSlice.count_, dstSlice.size_, sendRecvInfo.dataType_),
             HcclResult::HCCL_E_INTERNAL);
         void* dst = static_cast<void*>(static_cast<s8*>(dstSlice.addr_) + dstSlice.offset_);
         void* src = static_cast<void*>(static_cast<s8*>(srcSlice.addr_) + srcSlice.offset_);
@@ -770,8 +770,8 @@ HcclResult LocalCopySlices(
     CHK_PRT_RET(
         srcSlices.size() != dstSlices.size(),
         HCCL_ERROR(
-            "[InsCollAlgFactory] [AlgDataTrans] LocalCopySlices: num of src slices [%u], is not equal "
-            "to num of dst slices [%u].",
+            "[InsCollAlgFactory] [AlgDataTrans] LocalCopySlices: num of src slices [%zu], is not equal "
+            "to num of dst slices [%zu].",
             srcSlices.size(), dstSlices.size()),
         HcclResult::HCCL_E_INTERNAL);
 
@@ -836,14 +836,14 @@ HcclResult PreSyncInterThreads(
     CHK_PRT_RET(
         subThreads.size() == 0 || notifyIdxMainToSub.size() == 0,
         HCCL_ERROR(
-            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%u], notifyIdxMainToSub size [%u] "
+            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%zu], notifyIdxMainToSub size [%zu] "
             "0 is not correct.",
             subThreads.size(), notifyIdxMainToSub.size()),
         HcclResult::HCCL_E_INTERNAL);
     CHK_PRT_RET(
         subThreads.size() != notifyIdxMainToSub.size(),
         HCCL_ERROR(
-            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%u], notifyIdxMainToSub size [%u] "
+            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%zu], notifyIdxMainToSub size [%zu] "
             "is not equal.",
             subThreads.size(), notifyIdxMainToSub.size()),
         HcclResult::HCCL_E_INTERNAL);
@@ -869,14 +869,14 @@ HcclResult PostSyncInterThreads(
     CHK_PRT_RET(
         subThreads.size() == 0 || notifyIdxSubToMain.size() == 0,
         HCCL_ERROR(
-            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%u], notifyIdxSubToMain size [%u] "
+            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%zu], notifyIdxSubToMain size [%zu] "
             "0 is not correct.",
             subThreads.size(), notifyIdxSubToMain.size()),
         HcclResult::HCCL_E_INTERNAL);
     CHK_PRT_RET(
         subThreads.size() != notifyIdxSubToMain.size(),
         HCCL_ERROR(
-            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%u], notifyIdxSubToMain size [%u] "
+            "[AlgDataTransWrapper] [PreSyncInterThreads] subThreads size: [%zu], notifyIdxSubToMain size [%zu] "
             "is not equal.",
             subThreads.size(), notifyIdxSubToMain.size()),
         HcclResult::HCCL_E_INTERNAL);

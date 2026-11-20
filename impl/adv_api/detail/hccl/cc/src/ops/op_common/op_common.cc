@@ -1010,7 +1010,7 @@ HcclResult HcclGetAlgRes(
             ccuRet, size, *resCtxSequence);
         CHK_RET(ccuRet);
     } else {
-        HCCL_ERROR("fail to get engine.", HCCL_E_PARA);
+        HCCL_ERROR("fail to get engine.");
     }
     param.ctxSize = size;
     HCCL_INFO(
@@ -1231,7 +1231,7 @@ HcclResult SaveMainThreadInfo(HcclComm comm, const OpParam& param, ThreadHandle 
 
 HcclResult SaveUnfoldThreadInfo(HcclComm comm, const OpParam& param, ThreadHandle unfoldThread)
 {
-    CHK_PRT_RET(unfoldThread == 0, HCCL_ERROR("[%s] invalid unfold thread", __func__), HCCL_E_PARA);
+    CHK_PRT_RET(unfoldThread == 0, HCCL_ERROR("[%s] thread should not be zero", __func__), HCCL_E_PARA);
     uint64_t size = sizeof(ThreadHandle);
     void* ctx = nullptr;
     // 申请一块host类型内存，保存展开流信息
@@ -1269,7 +1269,7 @@ HcclResult GetUnfoldThreadInfo(HcclComm comm, const OpParam& param, ThreadHandle
     // 获取展开流handle信息
     ThreadHandle* threadPtr = reinterpret_cast<ThreadHandle*>(ctx);
     unfoldThread = *threadPtr;
-    CHK_PRT_RET(unfoldThread == 0, HCCL_ERROR("[%s] invalid unfold thread", __func__), HCCL_E_PARA);
+    CHK_PRT_RET(unfoldThread == 0, HCCL_ERROR("[%s] thread should not be zero", __func__), HCCL_E_PARA);
     HCCL_INFO(
         "[GetUnfoldThreadInfo]unfoldAlgTag[%s], threadPtr[%p], unfoldThread[%lu]", unfoldAlgTag, threadPtr,
         unfoldThread);
@@ -1595,7 +1595,8 @@ HcclResult HcclGetChannelForCcu(HcclComm comm, const OpParam& param, AlgResource
     for (const CcuKernelInfo& kernelInfo : resRequest.ccuKernelInfos) {
         CHK_PRT_RET(
             kernelInfo.channels.size() > CCU_MAX_RANK_SIZE,
-            HCCL_ERROR("[HcclGetChannelForCcu] too many channels[%zu].", kernelInfo.channels.size()), HCCL_E_PARA);
+            HCCL_ERROR("[HcclGetChannelForCcu] channels[%zu] shoule be less than 64.", kernelInfo.channels.size()),
+            HCCL_E_PARA);
     }
 
     // OpParam.userRank 并非所有算子路径都会赋值（仅 Reduce 赋值），这里直接从 comm 查询本端全局 rank
@@ -2090,7 +2091,10 @@ static HcclResult RegisterCcuKernels(
 {
     u32 totalKernelNum = std::accumulate(resRequest.ccuKernelNum.begin(), resRequest.ccuKernelNum.end(), 0u);
     CHK_PRT_RET(
-        totalKernelNum != resRequest.ccuKernelInfos.size(), HCCL_ERROR("[RegisterCcuKernels]ccuKernel num not match!"),
+        totalKernelNum != resRequest.ccuKernelInfos.size(),
+        HCCL_ERROR(
+            "[RegisterCcuKernels]ccuKernel num[%u] not match resRequest.ccuKernelInfos.size[%zu]!", totalKernelNum,
+            resRequest.ccuKernelInfos.size()),
         HCCL_E_INTERNAL);
     HCCL_INFO("[RegisterCcuKernels][asccomm] start, totalKernelNum[%u], insEntity[%p].", totalKernelNum, insEntity);
 
@@ -2860,7 +2864,7 @@ HcclResult CheckDataType(const HcclDataType dataType, bool needReduce)
             HCCL_ERROR(
                 "[Check][DataType]errNo[0x%016llx] data type[%s] not supported, support range=[%s]",
                 HCCL_ERROR_CODE(HCCL_E_NOT_SUPPORT), GetDataTypeEnumStr(dataType).c_str(),
-                GetSupportDataType(needReduce));
+                GetSupportDataType(needReduce).c_str());
             return HCCL_E_NOT_SUPPORT;
         }
     }
@@ -2910,7 +2914,8 @@ HcclResult SetCommEngine(OpParam& param)
     }
 
     HCCL_ERROR(
-        "[op_common][SetCommEngine] Unsupported or unknown opExecuteConfig: {%d}",
+        "[op_common][SetCommEngine] Unsupported or unknown opExecuteConfig: {%d}, opExecuteConfig should be HOSTCPU_TS,"
+        "AICPU_TS, CCU_MS, CCU_SCHED, AICPU or HOSTCPU",
         static_cast<int>(param.opExecuteConfig));
     return HCCL_E_NOT_SUPPORT;
 }
@@ -2964,7 +2969,8 @@ HcclResult HcclCheckTag(const char* tag)
 
     u32 tagLen = strnlen(tag, TAG_MAX_LEN + 1);
     if (UNLIKELY((tagLen == (TAG_MAX_LEN + 1) || tagLen == 0))) {
-        HCCL_ERROR("[Check][Tag]errNo[0x%016llx] tag is too long", HCOM_ERROR_CODE(HCCL_E_PARA));
+        HCCL_ERROR(
+            "[Check][Tag]errNo[0x%016llx] tag length[%u] is zero or exceeds 191", HCOM_ERROR_CODE(HCCL_E_PARA), tagLen);
         return HCCL_E_PARA;
     }
     return HCCL_SUCCESS;
@@ -3135,7 +3141,7 @@ HcclResult HcclGetRemoteBuff(
             *bufferPtr = remoteMemList[i].addr;
             *bufferSize = remoteMemList[i].size;
             HCCL_INFO(
-                "[%s] Found %u memNum[%u/%u] is %u at index %u: addr=%p, size=%llu", __func__, *memTag, i + 1, memNum,
+                "[%s] Found memTag[%s] at memNum[%u/%u] : addr=%p, size=%llu", __func__, memTag, i + 1, memNum,
                 remoteMemList[i].addr, remoteMemList[i].size);
             break;
         }
@@ -3226,7 +3232,7 @@ HcclResult CheckHostDPUOnly(const HcclComm comm, const TopoInfoWithNetLayerDetai
         }
         for (uint32_t topoInsIdx = 0; topoInsIdx < topoInsNum; topoInsIdx++) {
             uint32_t topoInstId = topoInsts[topoInsIdx];
-            HCCL_INFO("Start checking topoInstId[%u]", topoInstId);
+            HCCL_DEBUG("Start checking topoInstId[%u]", topoInstId);
             CommTopo topoType;
             CHK_RET(HcclRankGraphGetTopoType(comm, netLayer, topoInstId, &topoType));
             if (topoType != COMM_TOPO_CLOS) {
@@ -3250,7 +3256,8 @@ HcclResult CheckHostDPUOnly(const HcclComm comm, const TopoInfoWithNetLayerDetai
             }
             CHK_RET(HcclRankGraphGetEndpointDesc(comm, netLayer, topoInstId, &endPointNums, endPointDescs.data()));
             CHK_PRT_RET(
-                endPointNums > endPointDescs.size(), HCCL_ERROR("Invalid endpoint num[%u].", endPointNums),
+                endPointNums > endPointDescs.size(),
+                HCCL_ERROR("Endpoint num[%u] should be less than [%zu].", endPointNums, endPointDescs.size()),
                 HCCL_E_INTERNAL);
             for (uint32_t endPointIdx = 0; endPointIdx < endPointNums; endPointIdx++) {
                 EndpointDesc endPointDesc = endPointDescs[endPointIdx];

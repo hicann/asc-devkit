@@ -49,7 +49,7 @@ HcclResult LoadAICPUKernel(void)
     CHK_PRT_RET(
         ret != HCCL_SUCCESS,
         HCCL_ERROR(
-            "[LoadAICPUKernel]errNo[0x%016llx]load aicpu file fail, path[%s] optionType[%u]"
+            "[LoadAICPUKernel]errNo[%d]load aicpu file fail, path[%s] optionType[%u]"
             "cpuKernelMode[%u].",
             ret, jsonPath.c_str(), ACL_RT_BINARY_LOAD_OPT_CPU_KERNEL_MODE, 0),
         ret);

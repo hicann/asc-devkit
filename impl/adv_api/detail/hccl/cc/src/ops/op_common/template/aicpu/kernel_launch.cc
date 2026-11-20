@@ -571,11 +571,11 @@ HcclResult mc2_ops_hccl::RestoreVarDataAllGatherV(OpParam& param, const AlgResou
     u64* data = reinterpret_cast<u64*>(param.varData);
     param.vDataDes.counts = data;
     for (u64 i = 0; i < rankSize; i++) {
-        HCCL_INFO("param.vDataDes.counts[%u]:%u", i, reinterpret_cast<u64*>(param.vDataDes.counts)[i]);
+        HCCL_INFO("param.vDataDes.counts[%llu]:%llu", i, reinterpret_cast<u64*>(param.vDataDes.counts)[i]);
     }
     param.vDataDes.displs = data + rankSize;
     for (u64 i = 0; i < rankSize; i++) {
-        HCCL_INFO("param.vDataDes.displs[%u]:%u", i, reinterpret_cast<u64*>(param.vDataDes.displs)[i]);
+        HCCL_INFO("param.vDataDes.displs[%llu]:%llu", i, reinterpret_cast<u64*>(param.vDataDes.displs)[i]);
     }
     return HCCL_SUCCESS;
 }

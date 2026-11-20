@@ -89,7 +89,9 @@ HcclResult CalcDataSplitByPortGroupZAxisDetour(
 
     CHK_PRT_RET(
         level0DataRatio < 0.0f || level0DataRatio > 1.0f,
-        HCCL_ERROR("[CalcDataSplitByPortGroupZAxisDetour] level0DataRatio[%f] is invalid.", level0DataRatio),
+        HCCL_ERROR(
+            "[CalcDataSplitByPortGroupZAxisDetour] level0DataRatio[%f] is invalid, valid range is [0.0, 1.0].",
+            level0DataRatio),
         HcclResult::HCCL_E_PARA);
 
     u64 level0DataCount = totalDataCount;

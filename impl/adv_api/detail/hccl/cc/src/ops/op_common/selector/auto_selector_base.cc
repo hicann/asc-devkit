@@ -201,7 +201,7 @@ HcclResult AutoSelectorBase::CheckHostDPUOnly(
         }
         for (uint32_t topoInsIdx = 0; topoInsIdx < topoInsNum; topoInsIdx++) {
             uint32_t topoInstId = topoInsts[topoInsIdx];
-            HCCL_INFO("Start checking topoInstId[%u]", topoInstId);
+            HCCL_DEBUG("Start checking topoInstId[%u]", topoInstId);
             CommTopo topoType;
             CHK_RET(HcclRankGraphGetTopoType(opParam.hcclComm, netLayer, topoInstId, &topoType));
             if (topoType != COMM_TOPO_CLOS) {
@@ -222,7 +222,8 @@ HcclResult AutoSelectorBase::CheckHostDPUOnly(
             std::vector<EndpointDesc> endPointDescs;
             CHK_PRT_RET(
                 static_cast<size_t>(endPointCapacity) > endPointDescs.max_size(),
-                HCCL_ERROR("endpoint num[%u] exceeds vector capacity", endPointCapacity), HCCL_E_PARA);
+                HCCL_ERROR("endpoint num[%u] exceeds vector capacity[%zu]", endPointCapacity, endPointDescs.max_size()),
+                HCCL_E_PARA);
             EXECEPTION_CATCH(endPointDescs.resize(endPointCapacity), return HCCL_E_MEMORY);
             if (endPointCapacity == 0) {
                 continue;
@@ -363,8 +364,8 @@ bool AutoSelectorBase::IsTwoLevelNetLayer(const TopoInfoWithNetLayerDetails* top
     if (topoInfo->netLayerDetails.localNetInsSizeOfLayer.empty() ||
         topoInfo->netLayerDetails.localNetInsSizeOfLayer[0] <= 1) {
         HCCL_INFO(
-            "[AutoSelectorBase][IsTwoLevelNetLayer] level0 localNetInsSizeOfLayer[%zu] <= 1, not two level "
-            "net layer.",
+            "[AutoSelectorBase][IsTwoLevelNetLayer] localNetInsSizeOfLayer is empty or "
+            "level0 localNetInsSizeOfLayer[%zu] <= 1, not two level net layer.",
             topoInfo->netLayerDetails.localNetInsSizeOfLayer.size());
         return false;
     }
