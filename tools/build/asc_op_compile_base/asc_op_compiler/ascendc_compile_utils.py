@@ -109,7 +109,11 @@ def tpl_tilingkey_deterministic_extract(tiling_key_list, decode_tiling_result, t
             deter_flag = deter_flag or deterministic_flag
             if deterministic_flag == cur_deterministic_flag:
                 expect_tilingkey_set.add(str(k))
-    if len(tiling_key_deterministic) > 0 and deter_flag is False:
+    if (
+        len(tiling_key_deterministic) > 0
+        and deter_flag is False
+        and not any("deterministicLevels" in value for value in decode_tiling_result.values())
+    ):
         tiling_key_deterministic.clear()
         expect_tilingkey_set.clear()
     if len(expect_tilingkey_set) > 0 and len(decode_tiling_result) > 0:

@@ -498,6 +498,12 @@ def generate_simplified_key(opc_compile_args, op, op_info, deterministic, simpli
         logger.warn("op_type is null, will not generate simplified key.")
         return simplified_key, simplified_key_mode
 
+    from asc_op_compile_base.common.deterministic import parse_levels, level_simplified_keys, normalize_deterministic
+
+    levels = parse_levels(op_info.get("_deterministic_level_filter"))
+    if levels is not None:
+        flag, _ = normalize_deterministic(None if deterministic in {None, "ignore"} else deterministic, levels)
+        deterministic = "true" if flag else "false"
     deterministic_list = generate_deterministic_for_simpilified_key(deterministic)
     if len(deterministic_list) == 0:
         logger.warn("deterministic_list is null, will not generate simplified key.")
@@ -506,7 +512,7 @@ def generate_simplified_key(opc_compile_args, op, op_info, deterministic, simpli
     impl_mode_list = generate_impl_mode_for_simpilified_key(op_info)
     if len(impl_mode_list) == 0:
         logger.warn("impl_mode_list is null, will not generate simplified key.")
-        return simplified_key, simplified_key_mode
+        return level_simplified_keys(simplified_key, levels), simplified_key_mode
 
     # simplified key is defined by Op, add op_type and deterministic
     op_simplified_key = op.get(CompileParam.SIMPLE_KEY)
@@ -516,7 +522,7 @@ def generate_simplified_key(opc_compile_args, op, op_info, deterministic, simpli
             op_type, op_simplified_key, deterministic_list, impl_mode_list
         )
 
-        return simplified_key, simplified_key_mode
+        return level_simplified_keys(simplified_key, levels), simplified_key_mode
 
     if opc_compile_args.get(OpcOptions.SIMPLE_KEY_MODE) == 0:
         attr_str = str()
@@ -528,15 +534,15 @@ def generate_simplified_key(opc_compile_args, op, op_info, deterministic, simpli
 
     if has_invalid_option and opc_compile_args.get(OpcOptions.SIMPLE_KEY_MODE) != 0:
         simplified_key_mode = None
-        return simplified_key, simplified_key_mode
+        return level_simplified_keys(simplified_key, levels), simplified_key_mode
 
     has_invalid_option, has_dynamic_param, has_optional_input, _ = check_input_and_output_for_simplified_key(op)
     if has_invalid_option:
         simplified_key_mode = None
-        return simplified_key, simplified_key_mode
+        return level_simplified_keys(simplified_key, levels), simplified_key_mode
     res_tuple = generate_simplified_key_mode(opc_compile_args, has_non_null_attr, has_dynamic_param, has_optional_input)
     simplified_key_mode = res_tuple[0]
     simlified_info_tuple = (deterministic_list, impl_mode_list, attr_str)
     simplified_key = generate_simplified_key_str(res_tuple, simlified_info_tuple, op, op_type)
 
-    return simplified_key, simplified_key_mode
+    return level_simplified_keys(simplified_key, levels), simplified_key_mode

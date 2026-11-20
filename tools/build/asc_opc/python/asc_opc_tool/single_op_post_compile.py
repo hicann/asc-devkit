@@ -362,6 +362,12 @@ class SingleOpPostCompile(PostCompilation):
         deterministic, optional_input_mode, optional_output_mode, dynamic_param_mode = (
             self.parse_info_from_compiled_json(json_file_path)
         )
+        from asc_op_compile_base.common.deterministic import parse_levels, normalize_deterministic
+
+        levels = parse_levels(op_info.get("_deterministic_level_filter"))
+        if levels is not None:
+            flag, _ = normalize_deterministic(None if deterministic in {None, "ignore"} else deterministic, levels)
+            deterministic = "true" if flag else "false"
         simplified_key = self.__generate_simplified_key(op, op_info, deterministic)
         if self._simplified_key_mode is not None and len(simplified_key) > 0:
             super().gen_notnone_param(support_info, "simplifiedKeyMode", self._simplified_key_mode)
@@ -393,6 +399,8 @@ class SingleOpPostCompile(PostCompilation):
         if self._simplified_key_mode == 1:
             self.__add_mode_in_attrs(support_info)
         super().gen_notnone_param(support_info, "tilingKey", self._opc_compile_args.get(OpcOptions.TILING_KEY, None))
+        if levels is not None:
+            support_info["deterministicLevels"] = list(levels)
         if deterministic is not None:
             support_info["deterministic"] = deterministic
         op_debug_config = self._opc_compile_args.get(OpcOptions.OP_DEBUG_CONFIG)

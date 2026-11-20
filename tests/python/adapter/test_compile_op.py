@@ -6771,7 +6771,11 @@ Contents of section
         with mock.patch.object(compile_op_module, "get_tiling_info", return_value=tiling_info):
             with tbe.common.context.op_context.OpContext():
                 with buildcfg.build_config():
-                    with mock.patch.object(tbe.common.context.get_context(), "get_addition", return_value=["2"]):
+                    with mock.patch.object(
+                        tbe.common.context.get_context(),
+                        "get_addition",
+                        side_effect=lambda key: None if key.startswith("deterministic_") else ["2"],
+                    ):
                         self.assertRaises(
                             Exception,
                             compile_op,
@@ -6782,7 +6786,11 @@ Contents of section
                             code_channel,
                             op_compile_option,
                         )
-                    with mock.patch.object(tbe.common.context.get_context(), "get_addition", return_value=["3"]):
+                    with mock.patch.object(
+                        tbe.common.context.get_context(),
+                        "get_addition",
+                        side_effect=lambda key: None if key.startswith("deterministic_") else ["3"],
+                    ):
                         self.assertRaises(
                             SystemExit,
                             compile_op,

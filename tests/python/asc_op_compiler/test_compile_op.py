@@ -7785,7 +7785,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
             with asc_op_compile_base.common.context.op_context.OpContext():
                 with buildcfg.build_config():
                     with mock.patch.object(
-                        asc_op_compile_base.common.context.get_context(), "get_addition", return_value=["2"]
+                        asc_op_compile_base.common.context.get_context(),
+                        "get_addition",
+                        side_effect=lambda key: None if key.startswith("deterministic_") else ["2"],
                     ):
                         self.assertRaises(
                             Exception,
@@ -7798,7 +7800,9 @@ Contents of section .ascendc_tiling.struct1_1234UL.0:
                             op_compile_option,
                         )
                     with mock.patch.object(
-                        asc_op_compile_base.common.context.get_context(), "get_addition", return_value=["3"]
+                        asc_op_compile_base.common.context.get_context(),
+                        "get_addition",
+                        side_effect=lambda key: None if key.startswith("deterministic_") else ["3"],
                     ):
                         self.assertRaises(
                             SystemExit,

@@ -207,7 +207,10 @@ class SingleOpCompile:
                 context.add_addition(OpcOptions.SPK_OPT, sub_kernel_option)
                 context.add_addition(OpcOptions.OUTPUT, output_path)
                 context.add_addition(OpcOptions.KERNEL_TEMPLATE_INPUT, kernel_template_input)
+                self.set_deterministic_context(context)
                 op_func(*inputs, *outputs, *new_attrs, self.__op_info.get(OpcOptions.KERNEL_NAME), **kwargs)
+                if self.__op_info.get("_deterministic_discovery_only"):
+                    return self.get_deterministic_discovery_result(context)
 
                 # fetch json file path for build result.
                 json_file_path = context.get_build_res("json_file_path")
@@ -231,7 +234,10 @@ class SingleOpCompile:
                 context.add_addition(OpcOptions.SPK_OPT, sub_kernel_option)
                 context.add_addition(OpcOptions.OUTPUT, output_path)
                 context.add_addition(OpcOptions.KERNEL_TEMPLATE_INPUT, kernel_template_input)
+                self.set_deterministic_context(context)
                 op_func(*inputs, *outputs, *new_attrs, self.__op_info.get(OpcOptions.KERNEL_NAME), **kwargs)
+                if self.__op_info.get("_deterministic_discovery_only"):
+                    return self.get_deterministic_discovery_result(context)
 
                 # fetch json file path for build result.
                 json_file_path = context.get_build_res("json_file_path")
@@ -253,7 +259,10 @@ class SingleOpCompile:
                 context.add_addition(OpcOptions.SPK_OPT, sub_kernel_option)
                 context.add_addition(OpcOptions.OUTPUT, output_path)
                 context.add_addition(OpcOptions.KERNEL_TEMPLATE_INPUT, kernel_template_input)
+                self.set_deterministic_context(context)
                 op_func(*inputs, *outputs, *new_attrs, self.__op_info.get(OpcOptions.KERNEL_NAME), **kwargs)
+                if self.__op_info.get("_deterministic_discovery_only"):
+                    return self.get_deterministic_discovery_result(context)
 
                 # fetch json file path for build result.
                 json_file_path = context.get_build_res("json_file_path")
@@ -263,6 +272,19 @@ class SingleOpCompile:
                     json_file_path = get_json_file_path(self.__op_info)
                     logger.debug("json_file_path is %s.", json_file_path)
         return json_file_path
+
+    def set_deterministic_context(self, context):
+        """Pass the same task controls through dynamic, static and prestatic calls."""
+        context.add_addition("deterministic_level_filter", self.__op_info.get("_deterministic_level_filter"))
+        for name in ("deterministic_discovery_only", "deterministic_declared_legacy"):
+            context.add_addition(name, self.__op_info.get("_" + name, False))
+
+    def get_deterministic_discovery_result(self, context):
+        """Return groups and preserve the operator's explicit legacy declaration."""
+        if not context.get_addition("deterministic_discovery_complete"):
+            raise RuntimeError("AscendC wrapper did not complete selector preprocessing")
+        self.__op_info["_deterministic_declares_legacy"] = bool(context.get_addition("declared_legacy_selector"))
+        return context.get_addition("declared_deterministic_level_groups") or []
 
     def update_jit_compile_info(self):
         jit_compile_mode = self.__op_info.get(OpcOptions.JIT_COMPILE_MODE)

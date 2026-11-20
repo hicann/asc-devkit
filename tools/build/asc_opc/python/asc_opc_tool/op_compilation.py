@@ -15,11 +15,13 @@ op compile
 """
 
 import os
+import copy
 import sys
 import stat
 import shutil
 import importlib
 import inspect
+import json
 import re
 
 from asc_op_compile_base.common.buildcfg import build_config
@@ -267,10 +269,15 @@ class OpCompilation:
             return
         if impl_mode_default is not None:
             logger.debug("impl_mode_cfg [%s]. impl_mode_default: [%s].", impl_mode_cfg, impl_mode_default)
+        previously_optional = op_info.get("_normalized_impl_mode") == impl_mode_cfg and op_info.get(
+            "optional_impl_mode_flag", False
+        )
         op_info[OpcOptions.IMPL_MODE], opt_impl_mode_flag = self.__check_update_impl_mode(
             impl_mode_cfg, impl_mode_default
         )
+        opt_impl_mode_flag = opt_impl_mode_flag or previously_optional
         op_info["optional_impl_mode_flag"] = opt_impl_mode_flag
+        op_info["_normalized_impl_mode"] = op_info[OpcOptions.IMPL_MODE]
         logger.debug(
             "ImplMode of Op[%s] is %s, opt_impl_mode_flag is %d.",
             op_info.get(CompileParam.OP_TYPE),
@@ -316,6 +323,27 @@ class OpCompilation:
                     self.__compile_res = False
                     return
 
+            # The preprocess-only level discovery protocol only exists for native
+            # AscendC entries. A real PyPTO implementation is recognized here,
+            # after the explicit or registry lookup resolved the function that
+            # will really run, and only its extra discovery task is skipped:
+            # report no declared groups so the caller falls back to the ordinary
+            # boolean compilation, which keeps the impl's own infer/preprocess
+            # pipeline untouched. Detection inspects the unwrapped code object
+            # instead of entry-file text: the generated APT keeps the name as a
+            # co_consts string inside its globals() guard, while a real PyPTO
+            # implementation loads or calls the symbol, so the name appears in
+            # co_names. Boundaries: functools.wraps wrappers are pierced through
+            # __wrapped__, aliases share the code object, plain callables are
+            # inspected through __call__; closures that only return an inner
+            # PyPTO function and wrappers without __wrapped__ are not recognized
+            # and keep the legacy boolean behavior.
+            if op_info.get("_deterministic_discovery_only"):
+                impl_mode = getattr(inspect.unwrap(op_func_attr), "__code__", None)
+                if impl_mode is not None and "pypto_compile_op" in impl_mode.co_names:
+                    self.__compile_res = True
+                    return []
+
             self.__set_int64_mode(op_info)
             self.__set_impl_mode(op_info)
             op_info[OpcOptions.KERNEL_NAME] = op_info_parser.generate_kernel_name()
@@ -332,6 +360,9 @@ class OpCompilation:
             single_op_obj = SingleOpCompile(op, op_info, self.__opc_compile_args)
             logger.debug("Call SingleOpCompile.")
             json_file_path = single_op_obj.op_compile()
+            if op_info.get("_deterministic_discovery_only"):
+                self.__compile_res = True
+                return json_file_path
             self.__single_op_post_compile(op, op_info, json_file_path)
 
             logger.debug(
@@ -349,6 +380,50 @@ class OpCompilation:
         finally:
             # delete compile result(.o\.json) files by kernel_name if necessary
             self.__del_compile_res_files(op_info)
+
+    def __auto_split_levels(self, op, op_info, idx, declared_groups, declared_legacy=False):
+        """Build grade artifacts plus independent boolean compatibility objects."""
+        from asc_op_compile_base.common.deterministic import normalize_deterministic
+
+        if not declared_groups:
+            return False
+        groups = [normalize_deterministic(None, group)[1] for group in declared_groups]
+        allowed_groups = {(0,), (1,), (2,), (3,), (1, 2)}
+        if any(group not in allowed_groups for group in groups):
+            raise ValueError("Automatic level splitting requires groups [0], [1], [2], [3], [1, 2]")
+        occupied_levels = set()
+        for group in groups:
+            if occupied_levels & set(group):
+                raise ValueError("Automatic level splitting requires non-overlapping groups")
+            occupied_levels.update(group)
+        if not declared_legacy:
+            raise ValueError("Automatic level splitting requires an ASCENDC_TPL_LEGACY_SEL selector")
+        for group in groups:
+            group_op, group_info = copy.deepcopy(op), copy.deepcopy(op_info)
+            group_op[OpcOptions.BIN_FILENAME] = op[OpcOptions.BIN_FILENAME] + "_level" + "_".join(map(str, group))
+            group_info[OpcOptions.DETERMINISTIC] = "false" if group == (0,) else "true"
+            group_info[OpcOptions.DETERMINISTIC_LEVEL] = ",".join(map(str, group))
+            # Offline level selection is orchestration-internal: it must never be
+            # seeded from the json metadata field the entry task carries.
+            group_info["_deterministic_level_filter"] = group
+            self.__single_op_compile(group_op, group_info, idx)
+            if self.__compile_res is not True:
+                return True
+
+        # Compile the explicitly declared untagged subset for old consumers;
+        # a grade object may not contain both legacy batch instances.
+        legacy_op, legacy_info = copy.deepcopy(op), copy.deepcopy(op_info)
+        for name in (
+            OpcOptions.DETERMINISTIC_LEVEL,
+            "_deterministic_discovery_only",
+            "_deterministic_level_filter",
+            "declared_deterministic_level_groups",
+            "deterministicLevelGroups",
+        ):
+            legacy_info.pop(name, None)
+        legacy_info["_deterministic_declared_legacy"] = True
+        self.__single_op_compile_all_deterministic(legacy_op, legacy_info, idx)
+        return True
 
     def __single_op_compile_all_deterministic(self, op, op_info, idx):
         def rename_output_op(output_name, new_output_name):
@@ -504,6 +579,30 @@ class OpCompilation:
                     CompileParam.EXTRA_SETTINGS: op.get(CompileParam.EXTRA_SETTINGS, None),
                     OpcOptions.DETERMINISTIC_LEVEL: op.get(OpcOptions.DETERMINISTIC_LEVEL, ""),
                 }
+                # The json deterministic_level stays online-channel metadata; the
+                # offline entry never routes by it. AscendC discovers capability by
+                # preprocessing, never by first compiling a large boolean compatibility object.
+                # object. Real PyPTO implementations are recognized on the actually
+                # loaded function inside __single_op_compile and skip only this
+                # discovery probe, then fall back to the boolean dispatch below.
+                if self.__is_ascendc:
+                    probe_op, probe_info = copy.deepcopy(op), copy.deepcopy(op_info)
+                    probe_op[OpcOptions.BIN_FILENAME] = op[OpcOptions.BIN_FILENAME] + "_level_discovery"
+                    probe_info["_deterministic_discovery_only"] = True
+                    declared_groups = self.__single_op_compile(probe_op, probe_info, idx)
+                    if self.__compile_res is not True:
+                        return
+                    if self.__auto_split_levels(
+                        op,
+                        op_info,
+                        idx,
+                        declared_groups or [],
+                        declared_legacy=bool(probe_info.get("_deterministic_declares_legacy")),
+                    ):
+                        if self.__compile_res is not True:
+                            return
+                        continue
+                # Operators without declared level selectors retain legacy dispatch.
                 deterministic = self.__opc_compile_args.get(OpcOptions.DETERMINISTIC)
                 if deterministic is None:
                     self.__single_op_compile(op, op_info, idx)
@@ -512,6 +611,8 @@ class OpCompilation:
                     self.__single_op_compile(op, op_info, idx)
                 elif deterministic == "all":
                     self.__single_op_compile_all_deterministic(op, op_info, idx)
+                if self.__compile_res is not True:
+                    return
         else:
             logger.warn("Current opc only support single op compile, comment is %s.", str(comment))
             self.__compile_res = False

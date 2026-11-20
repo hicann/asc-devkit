@@ -347,6 +347,12 @@ def localize_symbol_of_sk(split_mode, sks, spk_dst_file, compile_log_path):
 
 
 def compile_super_kernel(kernel_info, compile_log_path, enable_features: dict = None):
+    from asc_op_compile_base.common.deterministic import get_level_discovery_context
+
+    discovery_context = get_level_discovery_context()
+    if discovery_context is not None:
+        discovery_context.add_addition("deterministic_discovery_complete", True)
+        return
     global_var_storage.set_variable("super_kenel_save_sub_op_files", True)
     kernel_info["kernel_type"] = KernelMetaType(kernel_info["kernel_type"])
     op_info = OpInfo()

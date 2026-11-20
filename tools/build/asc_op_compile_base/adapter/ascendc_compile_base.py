@@ -46,6 +46,10 @@ from tbe.tvm.runtime.cce_runtime import tvm_callback_cce_postproc
 
 
 def compile_pre_process(op_info: OpInfo, compile_options: list):
+    from .deterministic import deterministic_compile_options
+
+    # 切片赋值原地更新，保持入参与返回值为同一对象，兼容依赖原地副作用的既有调用方式
+    compile_options[:] = deterministic_compile_options(compile_options)
     cce_runtime.TBE_WORKSPACE_SIZE_LIST.local_list = []
     cce_runtime.TBE_WORKSPACE_IND_LIST.local_list = []
     cce_runtime.MULTI_CORE_SYNC_WORKSPACE_SIZE_LIST.local_list = []

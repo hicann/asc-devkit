@@ -225,7 +225,31 @@ def insert_simplified_keys(json_file):
     overflow = str(get_overflow_value(support_info))
     input_parameters = get_all_input_parameters(support_info)
     key = "{}/d={},p={},o={}/{}/".format(op_type, deterministic, precision, overflow, input_parameters)
-    result = '"simplifiedKey": "' + key + '",\n'
+    levels = support_info.get("deterministicLevels", contents.get("deterministicLevels"))
+    if levels is None:
+        result = '"simplifiedKey": "' + key + '",\n'
+    else:
+        # This utility is also distributed standalone, without the compiler package.
+        if (
+            not isinstance(levels, list)
+            or not levels
+            or any(type(level) is not int or level not in range(4) for level in levels)
+            or len(levels) != len(set(levels))
+            or (0 in levels and levels != [0])
+        ):
+            raise ValueError("invalid deterministicLevels")
+        if "deterministicLevels" in contents and contents["deterministicLevels"] != levels:
+            raise ValueError("conflicting top-level and supportInfo deterministicLevels")
+        expected = "false" if levels == [0] else "true"
+        configured = support_info.get("deterministic")
+        if configured not in (None, "ignore", expected):
+            raise ValueError("deterministic conflicts with deterministicLevels")
+        deterministic = "0" if levels == [0] else "1"
+        keys = [
+            "{}/d={},p={},o={},dt={}/{}/".format(op_type, int(level != 0), precision, overflow, level, input_parameters)
+            for level in levels
+        ]
+        result = '"simplifiedKey": ' + json.dumps(keys) + ",\n"
     insert_content_into_file(json_file, result)
 
 

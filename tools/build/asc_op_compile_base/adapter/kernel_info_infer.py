@@ -21,7 +21,8 @@ from tbe.common.buildcfg import get_current_build_config
 from tbe.common.buildcfg.buildcfg_mapping import enable_vector_core
 from tbe.tvm.error_mgr import raise_tbe_python_err, TBE_DEFAULT_PYTHON_ERROR_CODE
 from .get_op_tiling import OpInfo
-from .template_tiling import extract_template_tiling_info, decode_tiling
+from .template_tiling import extract_template_tiling_info, decode_tiling, discover_deterministic_groups
+from .deterministic import get_level_discovery_context
 from .log_utils import AscendCLogLevel, CompileStage
 from .global_storage import global_var_storage
 from .ascendc_constants import (
@@ -373,6 +374,12 @@ REGISTER_TILING_DEFAULT"
                 fd.close()
         except Exception as err:
             raise_tbe_python_err(TBE_DEFAULT_PYTHON_ERROR_CODE, ("read dst_i_file failed, reason is:", err))
+        discovery_context = get_level_discovery_context()
+        if discovery_context is not None:
+            groups = discover_deterministic_groups(content)
+            discovery_context.add_addition("declared_deterministic_level_groups", groups)
+            discovery_context.add_addition("deterministic_discovery_complete", True)
+            return None
         hard_sync = KernelInfoInfer.get_hard_sync_instr_from_i_file(content)
         global_var_storage.set_variable("ascendc_op_with_syncall", hard_sync)
         if global_var_storage.get_variable("ascendc_enable_super_kernel") is True:
@@ -643,19 +650,8 @@ REGISTER_TILING_DEFAULT"
             raise Exception(f"must set kernel type for tiling_key {tiling_key} in group")
 
     @staticmethod
-    def get_tiling_key_list_and_simple_infer_code_channel(
-        op_info: OpInfo,
-        cce_file: str,
-        dst_i_file: str,
-        compile_option_tuple: CompileOptionTuple,
-        compile_log_path,
-        origin_func_name,
-    ):
-        """
-        get tiling key list and simple infer code channel
-        :param cce_file:
-        :return:InferedInfo
-        """
+    def _preprocess_source(cce_file, dst_i_file, compile_option_tuple, compile_log_path):
+        """Run the existing native preprocessing path without parsing its output"""
         compile_option_tuple_pre = copy.deepcopy(compile_option_tuple)
         compile_option_tuple_pre.compile_options = (
             compile_option_tuple_pre.compile_options
@@ -684,7 +680,7 @@ REGISTER_TILING_DEFAULT"
             # chmod sub core .i file permission
             os.chmod(dis_i_file_cube, stat.S_IRUSR + stat.S_IWUSR)
             os.chmod(dis_i_file_vec, stat.S_IRUSR + stat.S_IWUSR)
-        elif any((CommonUtility.is_m510(), CommonUtility.is_516r2())):
+        elif CommonUtility.is_m510() or CommonUtility.is_516r2():
             pre_compile_cmd = gen_compile_cmd_v220(cce_file, dst_i_file, compile_option_tuple_pre, None, "", False)
             CommonUtility.run_cmd_inner(pre_compile_cmd, CompileStage.PRECOMPILE, compile_log_path)
         else:
@@ -693,5 +689,32 @@ REGISTER_TILING_DEFAULT"
         if not os.path.exists(dst_i_file):
             raise Exception(f"Geneate file {dst_i_file} failed, probably due to error in compile")
         os.chmod(dst_i_file, stat.S_IRUSR + stat.S_IWUSR)
+
+    @staticmethod
+    def get_tiling_key_list_and_simple_infer_code_channel(
+        op_info: OpInfo,
+        cce_file: str,
+        dst_i_file: str,
+        compile_option_tuple: CompileOptionTuple,
+        compile_log_path,
+        origin_func_name,
+    ):
+        """
+        Preprocess with the single task switch, then infer kernel info.
+        Grade-related tasks (discovery or explicit grades) inject the enable
+        unconditionally; legacy compat and boolean tasks never receive it.
+        Device compilation consumes this exact option tuple too.
+        """
+        from .deterministic import deterministic_compile_options, deterministic_level_request
+
+        compile_option_tuple.compile_options = deterministic_compile_options(compile_option_tuple.compile_options)
+        context, requested, _ = deterministic_level_request()
+        if context is not None:
+            context.add_addition("deterministic_level_enabled", False)
+        if requested:
+            compile_option_tuple.compile_options.append("-DASCENDC_TPL_ENABLE_DETERMINISTIC_LEVEL=1")
+            if context is not None:
+                context.add_addition("deterministic_level_enabled", True)
+        KernelInfoInfer._preprocess_source(cce_file, dst_i_file, compile_option_tuple, compile_log_path)
         # get tiling key list and simpel infer code channel
         return KernelInfoInfer.infer_info_from_ifile(op_info, dst_i_file, compile_log_path, cce_file, origin_func_name)

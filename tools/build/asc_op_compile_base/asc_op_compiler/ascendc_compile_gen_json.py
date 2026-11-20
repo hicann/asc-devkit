@@ -775,6 +775,12 @@ the superkernel cannot be integrated with the operator.",
     if aicore_num is not None and vectorcore_num is not None:
         js["platformInfo"] = {"cubeCoreCnt": int(aicore_num), "vectorCoreCnt": int(vectorcore_num)}
         has_platform_info = True
+    from asc_op_compile_base.common.deterministic import parse_levels
+
+    level_context = get_context()
+    levels = parse_levels(level_context.get_addition("deterministic_level_filter") if level_context else None)
+    if levels is not None:
+        js["deterministicLevels"] = list(levels)
     deterministic_level = _safe_int_conversion(get_current_build_config("deterministic_level"))
     if deterministic_level != -1:
         if not has_platform_info:

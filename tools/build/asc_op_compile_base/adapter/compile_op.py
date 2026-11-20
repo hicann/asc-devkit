@@ -1338,6 +1338,10 @@ def compile_op(
         compile_log_path,
         origin_func_name,
     )
+    from .deterministic import get_level_discovery_context
+
+    if get_level_discovery_context(get_context()) is not None:
+        return
     CommonUtility.print_compile_log(
         op_info.kernel_name, "precompile to get some simple kernel info success", AscendCLogLevel.LOG_INFO
     )
@@ -1366,6 +1370,12 @@ def compile_op_with_customized_config(
         compile_options (list): compile options for bisheng
         code_channel (int): one of CORE_TYPE_MIX/CORE_TYPE_CUBE/CORE_TYPE_VEC
     """
+    from asc_op_compile_base.common.deterministic import get_level_discovery_context
+
+    discovery_context = get_level_discovery_context()
+    if discovery_context is not None:
+        discovery_context.add_addition("deterministic_discovery_complete", True)
+        return
     LogUtil.detail_log_print(op_info.kernel_name, COMPILE_STAGE_MSG_INFO["compile_op_start"], AscendCLogLevel.LOG_INFO)
     LogUtil.detail_log_print(op_info.kernel_name, COMPILE_STAGE_MSG_INFO["preprocess_start"], AscendCLogLevel.LOG_INFO)
     # online compile reuses thread, dfx infos need to be reset.

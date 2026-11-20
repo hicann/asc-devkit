@@ -151,7 +151,8 @@ static bool CheckSelectParamsValid(const TilingDeclareParams& declareParams, con
     for (const auto& selectParamVec : selectParams) {
         for (const auto& selectParam : selectParamVec) {
             if (selectParam.paramType == ASCENDC_TPL_KERNEL_TYPE ||
-                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC) {
+                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC ||
+                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC_LEVEL) {
                 continue;
             }
             if (!CheckSelectParamValid(declareParams, selectParam)) {
@@ -178,7 +179,8 @@ static bool CheckInputTilingParamValid(
     for (auto& selectParams : selectParamsList) {
         // 删除paramType为{ASCENDC_TPL_KERNEL_TYPE, ASCENDC_TPL_DETERMINISTIC}的元素
         auto newEnd = std::remove_if(selectParams.begin(), selectParams.end(), [](const ParamStruct& param) {
-            return param.paramType == ASCENDC_TPL_KERNEL_TYPE || param.paramType == ASCENDC_TPL_DETERMINISTIC;
+            return param.paramType == ASCENDC_TPL_KERNEL_TYPE || param.paramType == ASCENDC_TPL_DETERMINISTIC ||
+                   param.paramType == ASCENDC_TPL_DETERMINISTIC_LEVEL;
         });
         selectParams.erase(newEnd, selectParams.end());
         // sort selectParam in the order of ASCENDC_TPL_DECL
@@ -260,7 +262,8 @@ uint64_t EncodeTilingKey(
         std::unordered_set<std::string> selectParamNameSet{};
         for (auto& selectParam : selectParams) {
             if (selectParam.paramType == ASCENDC_TPL_KERNEL_TYPE ||
-                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC) {
+                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC ||
+                selectParam.paramType == ASCENDC_TPL_DETERMINISTIC_LEVEL) {
                 continue;
             }
             std::string name = selectParam.name;
