@@ -106,7 +106,7 @@
         </table>
 
 4.  明确SIMT核函数（Kernel）gridDim、blockDim等动态参数设置方案。
-    -   本样例采用均匀切分方案，根据可用核数和最大线程数的限制，计算和调整gridDim（启用的线程块的个数）、blockDim（一个线程块启用的线程个数），同时保证gridDim不超过65535、blockDim不超过最大线程数2048。
+    -   本样例采用均匀切分方案，根据可用核数和最大线程数的限制，计算和调整gridDim（启用的线程块的个数）、blockDim（一个线程块启用的线程个数），保证blockDim不超过最大线程数2048。
     -   本算子实现逻辑中无需使用动态Unified Buffer（UB）空间。
 
 通过以上分析，得到SIMT Gather算子的设计规格如下：
@@ -221,7 +221,6 @@ __global__ __launch_bounds__(MAX_THREAD_COUNT) void gather_custom(
 
 ```cpp
 constexpr uint32_t MAX_THREAD_COUNT = 2048;
-constexpr uint32_t MAX_BLOCK_COUNT = 65535;
 
 bool block_split(uint32_t index_total_length, uint32_t &blocks_per_grid, uint32_t &threads_per_block) {
     uint32_t real_core_num = 0;
@@ -236,11 +235,6 @@ bool block_split(uint32_t index_total_length, uint32_t &blocks_per_grid, uint32_
     if (threads_per_block > MAX_THREAD_COUNT) {
         threads_per_block = MAX_THREAD_COUNT;
         blocks_per_grid = (index_total_length + threads_per_block - 1) / threads_per_block;
-        if (blocks_per_grid > MAX_BLOCK_COUNT) {
-            std::cout << "[ERROR] index_total_length: "<< index_total_length << " can not be bigger than "
-                << MAX_THREAD_COUNT * MAX_BLOCK_COUNT<< "."<< std::endl;
-            return false;
-        }
     }
     return true;
 }
@@ -274,7 +268,6 @@ bool block_split(uint32_t index_total_length, uint32_t &blocks_per_grid, uint32_
 
 ```cpp
 constexpr uint32_t MAX_THREAD_COUNT = 2048;
-constexpr uint32_t MAX_BLOCK_COUNT = 65535;
 
 template <typename type_data, typename type_idx>
 __global__ __launch_bounds__(MAX_THREAD_COUNT) void gather_custom(

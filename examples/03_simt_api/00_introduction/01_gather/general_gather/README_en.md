@@ -8,7 +8,7 @@ This example implements a generalized shape Gather operator based on the Ascend 
 
 | Products | CANN Versions |
 |---|---|
-| Ascend 950PR&950DT products | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT products | \>= CANN 9.3.0 |
 
 ## Directory Structure
 
@@ -36,16 +36,15 @@ This example implements a generalized shape Gather operator based on the Ascend 
   <tr><td rowspan="1" align="center">Operator Type(OpType)</td><td colspan="4" align="center">gather</td></tr>
   <tr><td rowspan="3" align="center">Operator Input</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td align="center">input</td><td align="center">[M,N]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center">index</td><td align="center">[m] (m < M, m <= 65535 * 2048)</td><td align="center">uint32_t</td><td align="center">ND</td></tr>
+  <tr><td align="center">index</td><td align="center">[m] (m < M)</td><td align="center">uint32_t</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">Operator Output</td><td align="center">output</td><td align="center">[m,N]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">Kernel Function Name</td><td colspan="4" align="center">gather_custom</td></tr>
   </table>
 
 - Data Partitioning:
-  * gridDim: Dynamically allocated based on the specific input shape, with a maximum of 65535
+  * gridDim: Dynamically allocated based on the specific input shape
   * blockDim: Dynamically allocated based on the specific input shape, with a maximum of 2048
   * Single thread processing: 1 row
-  * Maximum processing capacity: 65535 * 2048 = 134215680 rows
 
 - Operator Implementation:   
   The gather operator retrieves data at specified indices from the input (Global Memory). Based on the data partitioning described above, the implementation first calculates the data index that each thread should process, then stores one row of data to Global Memory through an assignment operation. Since the computation process is relatively simple, the kernel function limits the maximum number of threads to 2048.

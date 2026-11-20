@@ -26,15 +26,13 @@ Grid是SIMT线程层次结构的最顶层，由多个Thread Block组成。使用
 -   同一Grid中的线程块相互独立，按任意顺序执行；
 -   基于SIMT编程模型的程序，在AIV核上执行多个结构相同的线程块，执行的总线程数等于gridDim.x\*gridDim.y\*gridDim.z\*blockDim.x\*blockDim.y\*blockDim.z。
 
-当前Grid中线程块总数不能超过65535。
-
 **线程索引**
 
 在SIMT线程架构下，每个线程都有唯一的标识，开发者可以通过内置变量获取线程的身份信息，从而确定每个线程负责处理的数据，相关内置变量如下表所示：
 
 | 内置变量 | 说明 | 数据类型 | 约束 |
 | --- | --- | --- | --- |
-| gridDim | Grid的维度大小。 | dim3 | gridDim.x \* gridDim.y \* gridDim.z <= 65535 |
+| gridDim | Grid的维度大小。 | dim3 | gridDim.x \* gridDim.y \* gridDim.z <= UINT64_MAX |
 | blockDim | Thread Block的维度大小。 | dim3 | blockDim.x \* blockDim.y \* blockDim.z <= 2048 |
 | blockIdx | 当前Thread Block在Grid中的索引。 | dim3 | 无 |
 | threadIdx | 当前线程在Thread Block内的索引。 | dim3 | 无 |

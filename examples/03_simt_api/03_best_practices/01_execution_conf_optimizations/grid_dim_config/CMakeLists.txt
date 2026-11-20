@@ -16,7 +16,7 @@ set(CMAKE_ASC_ENABLE_SIMT ON)
 find_package(ASC REQUIRED)
 project(kernel_samples LANGUAGES ASC CXX)
 
-set(SCENARIO_NUM "1" CACHE STRING "Scenario number (1-13)")
+set(SCENARIO_NUM "1" CACHE STRING "Scenario number (1-17)")
 
 add_executable(grid_config
     grid_config.asc

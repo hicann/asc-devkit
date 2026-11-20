@@ -41,7 +41,7 @@ kernel_name<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(argum
 
 `<<<...>>>`内的参数为核函数（Kernel）的执行配置，由4个参数决定，详细用法请参考[核函数（Kernel）配置](../../language_extension/simt_builtin_keywords.md#section97005415463)：
 
--   blocks\_per\_grid：[dim3](../../language_extension/simt_builtin_keywords.md#内置结构体)类型，用于指定网格（grid）的维度与规模，blocks\_per\_grid.x \* blocks\_per\_grid.y \* blocks\_per\_grid.z等于启动的线程块总数，不得大于65535。
+-   blocks\_per\_grid：[dim3](../../language_extension/simt_builtin_keywords.md#内置结构体)类型，用于指定网格（grid）的维度与规模，blocks\_per\_grid.x \* blocks\_per\_grid.y \* blocks\_per\_grid.z等于启动的线程块总数。
 -   threads\_per\_block：[dim3](../../language_extension/simt_builtin_keywords.md#内置结构体)类型，用于指定每个线程块（block）的维度与规模，threads\_per\_block.x \* threads\_per\_block.y \* threads\_per\_block.z等于每个线程块包含的线程数，需要小于等于\_\_launch\_bounds\_\_配置。
 -   <a name="li12421238101815"></a>dyn\_ubuf\_size：size_t类型，该参数指定除静态分配的内存外，本次调用为每个线程块动态分配的共享内存字节数，单位为bytes，默认设置为0。具体用法请参考[共享内存](./memory_hierarchy.md#section66329146410)中的“动态申请”方式；
 -   stream：aclrtStream类型指针，指定关联的流，用于维护异步操作的执行顺序。
@@ -55,7 +55,7 @@ kernel_name<<<blocks_per_grid, threads_per_block, dyn_ubuf_size, stream>>>(argum
 -   threadIdx：获取当前线程在其所属线程块内的索引。threadIdx.x，threadIdx.y，threadIdx.z分别表示当前线程在3个维度的索引，threadIdx.x的范围为[0, blockDim.x)，threadIdx.y的范围为[0, blockDim.y)，threadIdx.z的范围为[0, blockDim.z)。
 -   blockDim：获取线程块中配置的三维层次结构，即核函数（Kernel）启动时配置的dim3结构体实例值。blockDim.x，blockDim.y，blockDim.z分别表示线程块中三个维度的线程数。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的threads_per_block参数。
 -   blockIdx: 获取当前线程块在其所属网格中的索引，表示当前线程所在的线程块在整个网格中的位置坐标。
--   gridDim：表示整个计算任务在各个维度上分别由多少个线程块构成。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的blocks_per_grid参数。各个维度上线程块关系需满足gridDim.x * gridDim.y * gridDim.z <= 65535。
+-   gridDim：表示整个计算任务在各个维度上分别由多少个线程块构成。在核函数（Kernel）启动的执行配置中指定，对应核函数（Kernel）配置中的blocks_per_grid参数。各个维度上线程块关系需满足gridDim.x * gridDim.y * gridDim.z <= UINT64_MAX。
 
 开发者可通过组合上述变量，计算出当前线程在整个庞大计算网格空间中的全局唯一数据索引（Global Index）。这使得成千上万个执行相同代码的线程能够精准地定位并处理属于自己的特定数据分片。
 

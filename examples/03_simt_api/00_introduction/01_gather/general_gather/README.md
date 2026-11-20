@@ -8,7 +8,7 @@
 
 | 产品 | CANN软件版本 |
 |---|---|
-| Ascend 950PR&950DT系列产品 | \>= CANN 9.1.0 |
+| Ascend 950PR&950DT系列产品 | \>= CANN 9.3.0 |
 
 ## 目录结构介绍
 
@@ -36,16 +36,15 @@
   <tr><td rowspan="1" align="center">算子类型(OpType)</td><td colspan="4" align="center">gather</td></tr>
   <tr><td rowspan="3" align="center">算子输入</td><td align="center">name</td><td align="center">shape</td><td align="center">data type</td><td align="center">format</td></tr>
   <tr><td align="center">input</td><td align="center">[M,N]</td><td align="center">float</td><td align="center">ND</td></tr>
-  <tr><td align="center">index</td><td align="center">[m] (m < M, m <= 65535 * 2048)</td><td align="center">uint32_t</td><td align="center">ND</td></tr>
+  <tr><td align="center">index</td><td align="center">[m] (m < M)</td><td align="center">uint32_t</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">算子输出</td><td align="center">output</td><td align="center">[m,N]</td><td align="center">float</td><td align="center">ND</td></tr>
   <tr><td rowspan="1" align="center">核函数名</td><td colspan="4" align="center">gather_custom</td></tr>
   </table>
 
 - 数据切分：
-  * gridDim：根据具体输入shape动态分配，最大不超过65535
+  * gridDim：根据具体输入shape动态分配
   * blockDim：根据具体输入shape动态分配，最大不超过2048
   * 单线程处理：1行
-  * 最大处理能力：65535 * 2048 = 134215680行
 
 - 算子实现：   
   gather算子的实现流程为从输入input（Global Memory）中获取指定索引的数据。基于上述数据切分，首先计算线程应处理数据的索引，然后通过赋值操作将一行数据存储到Global Memory上。由于计算过程相对简单，设置核函数的最大线程数限制为2048。
