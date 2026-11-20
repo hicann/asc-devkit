@@ -25,6 +25,24 @@
 #include "../../../include/basic_api/kernel_operator_block_sync_intf.h"
 #include "../kernel_process_lock.h"
 
+#define ASCENDC_FIXPIPE_SET_L0C_PARA_()                                                       \
+    SetLoop3Para<config>(intriParams);                                                        \
+    /* nz2dn mode need set CHANNEL_PARA extra */                                              \
+    /* Loop0 dst(src) stride in unit of CO_SIZE */                                            \
+    if constexpr (config.format == CO2Layout::COLUMN_MAJOR) {                                 \
+        /* CHANNEL_PARA[63:48] */                                                             \
+        uint64_t channelPara = static_cast<uint64_t>(intriParams.params.srcNzC0Stride) << 48; \
+        set_channel_para(channelPara);                                                        \
+    }                                                                                         \
+    /* make code for scalar quant mode: */                                                    \
+    /* 1. copy deq scalar u64 immediate */                                                    \
+    /* 2. code gen: move data from l0c to l1/ub/gm */                                         \
+    if (IsScalarQuantMode(intriParams.quantPre)) {                                            \
+        /* deq factor: bits[31:13] is deq value of fp32 */                                    \
+        set_quant_pre(intriParams.deqScalar);                                                 \
+    }                                                                                         \
+    PipeBarrier<PIPE_FIX>()
+
 namespace AscendC {
 __aicore__ inline void SetFixPipeClipReluImpl(uint64_t config)
 {
@@ -598,24 +616,7 @@ __aicore__ inline void FixpipeL0C2L1Impl(
     if ASCEND_IS_AIC {
         CheckFixpipeL0C2L1Param<DstT, SrcT, config>(dst, src, intriParams);
         // nz2nd/nz2dn need set LOOP3_PARA
-        SetLoop3Para<config>(intriParams);
-
-        // nz2dn mode need set CHANNEL_PARA extra
-        if constexpr (config.format == CO2Layout::COLUMN_MAJOR) {
-            // Loop0_dst_stride in uint of CO_SIZE
-            uint64_t channelPara = static_cast<uint64_t>(intriParams.params.srcNzC0Stride) << 48; // CHANNEL_PARA[63:48]
-            set_channel_para(channelPara);
-        }
-        /*
-        make code for scalar quant mode:
-        1. copy deq scalar u64 immediate
-        2. code gen: move data from l0c to l1
-        */
-        if (IsScalarQuantMode(intriParams.quantPre)) {
-            // deq factor of uint64 bits describe: bits[31:13] is deq value of fp32,
-            set_quant_pre(intriParams.deqScalar);
-        }
-        PipeBarrier<PIPE_FIX>();
+        ASCENDC_FIXPIPE_SET_L0C_PARA_();
         FixpipeTiling fixpipeTiling;
         // LOC -> L1
         FixpipeL0cToL1<DstT, SrcT, config>(dst, src, intriParams, fixpipeTiling, intriParams.nSize);
@@ -668,23 +669,7 @@ __aicore__ inline void FixpipeL0C2UBImpl(
     if ASCEND_IS_AIC {
         CheckFixpipeL0C2UBParam<DstT, SrcT, config>(dst, src, intriParams);
         // nz2nd/nz2dn need set LOOP3_PARA
-        SetLoop3Para<config>(intriParams);
-        // nz2dn mode need set CHANNEL_PARA extra
-        if constexpr (config.format == CO2Layout::COLUMN_MAJOR) {
-            // Loop0_src_stride in uint of CO_SIZE
-            uint64_t channelPara = static_cast<uint64_t>(intriParams.params.srcNzC0Stride) << 48; // CHANNEL_PARA[63:48]
-            set_channel_para(channelPara);
-        }
-        /*
-        make code for scalar quant mode:
-        1. copy deq scalar u64 immediate
-        2. code gen: move data from l0c to ub
-        */
-        if (IsScalarQuantMode(intriParams.quantPre)) {
-            // deq factor of uint64 bits describe: bits[31:13] is deq value of fp32
-            set_quant_pre(intriParams.deqScalar); // float32->uint64_t
-        }
-        PipeBarrier<PIPE_FIX>();
+        ASCENDC_FIXPIPE_SET_L0C_PARA_();
         // LOC->UB
         FixpipeTiling fixpipeTiling;
         FixpipeL0cToUB<DstT, SrcT, config>(dst, src, intriParams, fixpipeTiling, intriParams.nSize);
@@ -737,21 +722,7 @@ __aicore__ inline void FixpipeL0C2GMImpl(
     if ASCEND_IS_AIC {
         CheckFixpipeL0C2GMParam<DstT, SrcT, config>(dst, src, intriParams);
         // nz2nd/nz2dn need set LOOP3_PARA
-        SetLoop3Para<config>(intriParams);
-        // nz2dn mode need set CHANNEL_PARA extra
-        if constexpr (config.format == CO2Layout::COLUMN_MAJOR) {
-            uint64_t channelPara = static_cast<uint64_t>(intriParams.params.srcNzC0Stride) << 48; // CHANNEL_PARA[63:48]
-            set_channel_para(channelPara);
-        }
-        /*
-        make code for scalar quant mode:
-        1. copy deq scalar u64 immediate
-        2. code gen: move data from l0c to gm
-        */
-        if (IsScalarQuantMode(intriParams.quantPre)) {
-            set_quant_pre(intriParams.deqScalar);
-        }
-        PipeBarrier<PIPE_FIX>();
+        ASCENDC_FIXPIPE_SET_L0C_PARA_();
         // LOC -> GM
         FixpipeTiling fixpipeTiling;
         FixpipeL0cToOut<DstT, SrcT, config>(dst, src, intriParams, fixpipeTiling, intriParams.nSize, cacheMode);
@@ -876,3 +847,5 @@ __aicore__ inline void FixpipeL0C2GMImpl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_FIXPIPE_IMPL_H__
 #endif
+
+#undef ASCENDC_FIXPIPE_SET_L0C_PARA_

@@ -28,6 +28,23 @@
 #include <utility>
 #include "../../utils/base/compat_utils.h"
 
+#define ASCENDC_COPY_LOOP_PARAM_CHK_()                                                                   \
+    ASCENDC_ASSERT((loopParams.loop1Size < (1ul << 21)), {                                               \
+        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1Size is too big and needs to be less than 2^21");      \
+    });                                                                                                  \
+    ASCENDC_ASSERT((loopParams.loop1DstStride < (1ul << 21)), {                                          \
+        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1DstStride is too big and needs to be less than 2^21"); \
+    });                                                                                                  \
+    ASCENDC_ASSERT((loopParams.loop2DstStride < (1ul << 21)), {                                          \
+        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2DstStride is too big and needs to be less than 2^21"); \
+    });                                                                                                  \
+    ASCENDC_ASSERT((loopParams.loop1SrcStride < (1ul << 40)), {                                          \
+        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1SrcStride is too big and needs to be less than 2^40"); \
+    });                                                                                                  \
+    ASCENDC_ASSERT((loopParams.loop2SrcStride < (1ul << 40)), {                                          \
+        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2SrcStride is too big and needs to be less than 2^40"); \
+    })
+
 namespace AscendC {
 
 // all input params: C220 version, not C310 version, thus need conversion by *32
@@ -677,21 +694,7 @@ __aicore__ inline void SetLoopModeOutParaImpl(const LoopModeParams& loopParams)
     ASCENDC_ASSERT((loopParams.loop2Size < (1ul << 21)), {
         KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2Size is too big and needs to be less than 2^21");
     });
-    ASCENDC_ASSERT((loopParams.loop1Size < (1ul << 21)), {
-        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1Size is too big and needs to be less than 2^21");
-    });
-    ASCENDC_ASSERT((loopParams.loop1DstStride < (1ul << 21)), {
-        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1DstStride is too big and needs to be less than 2^21");
-    });
-    ASCENDC_ASSERT((loopParams.loop2DstStride < (1ul << 21)), {
-        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2DstStride is too big and needs to be less than 2^21");
-    });
-    ASCENDC_ASSERT((loopParams.loop1SrcStride < (1ul << 40)), {
-        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1SrcStride is too big and needs to be less than 2^40");
-    });
-    ASCENDC_ASSERT((loopParams.loop2SrcStride < (1ul << 40)), {
-        KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2SrcStride is too big and needs to be less than 2^40");
-    });
+    ASCENDC_COPY_LOOP_PARAM_CHK_();
     uint64_t loopSizePara = static_cast<uint64_t>(loopParams.loop2Size) << 21; // LOOP_SIZE_OUTTOUB[42:21]
     loopSizePara |= static_cast<uint64_t>(loopParams.loop1Size);               // LOOP_SIZE_OUTTOUB[20:0]
 
@@ -760,21 +763,7 @@ __aicore__ inline void SetLoopModeOutToL1ParaImpl(const LoopModeParams& loopPara
         ASCENDC_ASSERT((loopParams.loop2Size < (1ul << 22)), {
             KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2Size is too big and needs to be less than 2^22");
         });
-        ASCENDC_ASSERT((loopParams.loop1Size < (1ul << 21)), {
-            KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1Size is too big and needs to be less than 2^21");
-        });
-        ASCENDC_ASSERT((loopParams.loop1DstStride < (1ul << 21)), {
-            KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1DstStride is too big and needs to be less than 2^21");
-        });
-        ASCENDC_ASSERT((loopParams.loop2DstStride < (1ul << 21)), {
-            KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2DstStride is too big and needs to be less than 2^21");
-        });
-        ASCENDC_ASSERT((loopParams.loop1SrcStride < (1ul << 40)), {
-            KERNEL_LOG(KERNEL_ERROR, "loopParams.loop1SrcStride is too big and needs to be less than 2^40");
-        });
-        ASCENDC_ASSERT((loopParams.loop2SrcStride < (1ul << 40)), {
-            KERNEL_LOG(KERNEL_ERROR, "loopParams.loop2SrcStride is too big and needs to be less than 2^40");
-        });
+        ASCENDC_COPY_LOOP_PARAM_CHK_();
         uint64_t loopSizePara = static_cast<uint64_t>(loopParams.loop2Size) << 21;
         loopSizePara |= static_cast<uint64_t>(loopParams.loop1Size);
 
@@ -1169,16 +1158,7 @@ __aicore__ inline void VecCopyLevel0Template(
     __ubuf__ T* dst, __ubuf__ T* src, const uint64_t maskArray[], const uint64_t maskCount, const uint8_t repeatTime,
     const CopyRepeatParams& repeatParams)
 {
-    BasicAPIMaskStruct maskArrayStruct;
-    if constexpr (isMaskBitMode) {
-        ASCENDC_ASSERT(
-            maskCount == 0, { KERNEL_LOG(KERNEL_ERROR, "maskCount must be 0 when isMaskBitMode is true."); });
-        maskArrayStruct = *(reinterpret_cast<const BasicAPIMaskStruct*>(maskArray));
-    } else {
-        ASCENDC_ASSERT(maskArray == nullptr, {
-            KERNEL_LOG(KERNEL_ERROR, "maskArray must be nullptr when isMaskBitMode is false.");
-        });
-    }
+    BasicAPIMaskStruct maskArrayStruct = GetVecMaskArrayStruct<isMaskBitMode>(maskArray, maskCount);
     __ubuf__ uint64_t* maskBuf = nullptr;
 
     if (Internal::IsCounterMode()) {
@@ -1915,3 +1895,5 @@ __aicore__ inline void DataCopyWithNDDMAB64Impl(
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_OPERATOR_DATA_COPY_IMPL_H__
 #endif
+
+#undef ASCENDC_COPY_LOOP_PARAM_CHK_

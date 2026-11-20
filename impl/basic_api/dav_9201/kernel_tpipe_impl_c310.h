@@ -58,6 +58,31 @@
 #include "stub_fun.h"
 #endif
 
+#define ASCENDC_TPIPE_TBUF_STATE_INIT_()                       \
+    ptr->state = TBufState::FREE;                              \
+    ptr->freeBufEvt = T::freeBufEvt;                           \
+    if ASCEND_IS_AIV {                                         \
+        ptr->bufId = AllocMutexID();                           \
+        if constexpr (useAltBufId) {                           \
+            ptr->bufIdAlt = AllocMutexID();                    \
+        } else {                                               \
+            ptr->bufIdAlt = INVALID_TBUFID;                    \
+        }                                                      \
+    } else {                                                   \
+        /* c310 aic quedepth=0 will setflag */                 \
+        if constexpr (T::queDepth == 0) {                      \
+            ptr->enQueEvtID = AllocEventID<T::enQueEvt>();     \
+            ptr->freeBufEvtID = AllocEventID<T::freeBufEvt>(); \
+            SetFlag<T::freeBufEvt>(ptr->freeBufEvtID);         \
+        } else if constexpr (T::config.enableStaticEvtId) {    \
+            ptr->bufId = AllocMutexID();                       \
+            ptr->bufIdAlt = INVALID_TBUFID;                    \
+        } else {                                               \
+            ptr->enQueEvtID = INVALID_TEVENTID;                \
+            ptr->freeBufEvtID = INVALID_TEVENTID;              \
+        }                                                      \
+    }
+
 namespace AscendC {
 namespace Std {
 template <typename... Tps>
@@ -165,29 +190,7 @@ __aicore__ inline void TPipe::AllocAddrs(TBufType* ptr, const First& addr, const
         Std::is_tuple_v<First> && Std::tuple_size_v<First> == 2,
         "input Addrs must be Std::tuple type and tuple_size must be 2");
     constexpr bool useAltBufId = T::config.consumerSize > 1;
-    ptr->state = TBufState::FREE;
-    ptr->freeBufEvt = T::freeBufEvt;
-    if ASCEND_IS_AIV {
-        ptr->bufId = AllocMutexID();
-        if constexpr (useAltBufId) {
-            ptr->bufIdAlt = AllocMutexID();
-        } else {
-            ptr->bufIdAlt = INVALID_TBUFID;
-        }
-    } else {
-        // c310 aic quedepth=0 will setflag
-        if constexpr (T::queDepth == 0) {
-            ptr->enQueEvtID = AllocEventID<T::enQueEvt>();
-            ptr->freeBufEvtID = AllocEventID<T::freeBufEvt>();
-            SetFlag<T::freeBufEvt>(ptr->freeBufEvtID);
-        } else if constexpr (T::config.enableStaticEvtId) {
-            ptr->bufId = AllocMutexID();
-            ptr->bufIdAlt = INVALID_TBUFID;
-        } else {
-            ptr->enQueEvtID = INVALID_TEVENTID;
-            ptr->freeBufEvtID = INVALID_TEVENTID;
-        }
-    }
+    ASCENDC_TPIPE_TBUF_STATE_INIT_()
     // process specifically for better static_assert message
     if constexpr ((Std::tuple_size_v<First>) > 1) {
         ptr->address = Std::get<0>(addr);
@@ -283,29 +286,7 @@ __aicore__ inline bool TPipe::InitBuffer(T& que, uint8_t num, uint32_t len)
         AscendCBufInit(static_cast<uint8_t>(pos_), 0, num, reinterpret_cast<uint64_t>(curPoolAddr + absAddr), len);
 #endif
         for (int32_t i = 0; i < num; i++, ptr++) {
-            ptr->state = TBufState::FREE;
-            ptr->freeBufEvt = T::freeBufEvt;
-            if ASCEND_IS_AIV {
-                ptr->bufId = AllocMutexID();
-                if constexpr (useAltBufId) {
-                    ptr->bufIdAlt = AllocMutexID();
-                } else {
-                    ptr->bufIdAlt = INVALID_TBUFID;
-                }
-            } else {
-                // c310 aic quedepth=0 will setflag
-                if constexpr (T::queDepth == 0) {
-                    ptr->enQueEvtID = AllocEventID<T::enQueEvt>();
-                    ptr->freeBufEvtID = AllocEventID<T::freeBufEvt>();
-                    SetFlag<T::freeBufEvt>(ptr->freeBufEvtID);
-                } else if constexpr (T::config.enableStaticEvtId) {
-                    ptr->bufId = AllocMutexID();
-                    ptr->bufIdAlt = INVALID_TBUFID;
-                } else {
-                    ptr->enQueEvtID = INVALID_TEVENTID;
-                    ptr->freeBufEvtID = INVALID_TEVENTID;
-                }
-            }
+            ASCENDC_TPIPE_TBUF_STATE_INIT_()
             ptr->address = curPoolAddr;
             ptr->dataLen = len;
             ptr->usertag = -1;
@@ -1024,3 +1005,5 @@ __aicore__ inline bool TPipe::TscmInitBuffer(T& que, uint8_t num, uint32_t len)
 #undef __ASCENDC_INCLUDE_INTERNAL_HEADERS__
 #undef __UNDEF_ASCENDC_INCLUDE_INTERNAL_HEADERS_KERNEL_TPIPE_IMPL_C310_H__
 #endif
+
+#undef ASCENDC_TPIPE_TBUF_STATE_INIT_
