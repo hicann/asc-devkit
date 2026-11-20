@@ -54,9 +54,9 @@ Matmul量化场景：在Matmul计算时，左、右矩阵的输入为half或bflo
     <!-- npu="310p" id9 -->
     -   Atlas推理系列产品AI Core暂不支持量化参数的存储位置为L1 Buffer。
     <!-- end id9 -->
-    <!-- npu="x90" id2 -->
+    <!-- npu="x90" id10 -->
     -   KirinX90处理器系列产品暂不支持量化参数的存储位置为L1 Buffer。
-    <!-- end id2 -->
+    <!-- end id10 -->
 
 ## 参数说明
 

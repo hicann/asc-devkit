@@ -1,0 +1,83 @@
+# REGISTER\_TILING\_DEFAULT<a name="ZH-CN_TOPIC_0000002123262037"></a>
+
+<!-- md-trans-meta sourceCommit=22a41aa8a74d7a2c3f454ea4bd5f0f8fb27aee29 translatedAt=2026-11-19T03:09:14.568Z pushedAt=2026-11-19T05:58:49.125Z nl=2 -->
+
+## Supported Products<a name="section1550532418810"></a>
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: Supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: Supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: Supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: Supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: Supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: Supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: Not supported
+<!-- end id7 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/tool_interface/tiling_key_management/REGISTER_TILING_DEFAULT_res.md#id1 -->
+
+
+## Function Description<a name="zh-cn_topic_0000001526206862_section212607105720"></a>
+
+The header file path is `"utils/base/sys_macros.h"`.
+
+It is used to register, on the kernel function (Kernel) side, the default TilingData structure that the user defines using standard C++ syntax.
+
+Registering the TilingData structure informs the framework side that the user defines TilingData using standard C++ syntax, and also informs the framework of the TilingData structure type for tiling data parsing.
+
+## Prototype<a name="zh-cn_topic_0000001526206862_section1630753514297"></a>
+
+```
+REGISTER_TILING_DEFAULT(TILING_STRUCT)
+```
+
+## Parameters<a name="zh-cn_topic_0000001526206862_section129451113125413"></a>
+
+<a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_table111938719446"></a>
+<table><thead align="left"><tr id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_row6223476444"><th class="cellrowborder" valign="top" width="17.22%" id="mcps1.1.4.1.1"><p id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p10223674448"><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p10223674448"></a><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p10223674448"></a>Parameter</p>
+</th>
+<th class="cellrowborder" valign="top" width="15.32%" id="mcps1.1.4.1.2"><p id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p645511218169"><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p645511218169"></a><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p645511218169"></a>Input/Output</p>
+</th>
+<th class="cellrowborder" valign="top" width="67.46%" id="mcps1.1.4.1.3"><p id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p1922337124411"><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p1922337124411"></a><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p1922337124411"></a>Description</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_row152234713443"><td class="cellrowborder" valign="top" width="17.22%" headers="mcps1.1.4.1.1 "><p id="p18315519741"><a name="p18315519741"></a><a name="p18315519741"></a><span>TILING_STRUCT</span></p>
+</td>
+<td class="cellrowborder" valign="top" width="15.32%" headers="mcps1.1.4.1.2 "><p id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p320343694214"><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p320343694214"></a><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p320343694214"></a>Input</p>
+</td>
+<td class="cellrowborder" valign="top" width="67.46%" headers="mcps1.1.4.1.3 "><p id="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p2684123934216"><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p2684123934216"></a><a name="zh-cn_topic_0000001526206862_zh-cn_topic_0000001389783361_p2684123934216"></a><span>The default custom</span><span>TilingData structure</span> registered by the user.</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+## Constraints<a name="zh-cn_topic_0000001526206862_section65498832"></a>
+
+-   If the TilingData structure is inside a namespace, the corresponding namespace scope qualifier must be carried during registration.
+-   The kernel function (Kernel) direct invocation project is not supported yet.
+
+## Example<a name="zh-cn_topic_0000001526206862_section97001499599"></a>
+
+```
+extern "C" __global__ __aicore__ void add_custom(__gm__ uint8_t *x, __gm__ uint8_t *y, __gm__ uint8_t *z, __gm__ uint8_t *tiling)
+{
+    REGISTER_TILING_DEFAULT(optiling::TilingData); // Register the default TilingData structure that the user defines using standard C++ syntax on the kernel function (Kernel) side.
+    GET_TILING_DATA(tilingData, tiling);
+    KernelAdd op;
+    op.Init(x, y, z, tilingData.blkDim, tilingData.totalSize, tilingData.splitTile);
+    op.Process();
+}
+```
+

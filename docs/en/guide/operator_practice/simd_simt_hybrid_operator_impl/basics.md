@@ -1,0 +1,11 @@
+# Basic Knowledge<a name="ZH-CN_TOPIC_0000002532388147"></a>
+
+<!-- md-trans-meta sourceCommit=7ef8ad7bdbdb0cef0f561d391759ecb8b4e4043a translatedAt=2026-11-09T10:39:03.254Z pushedAt=2026-11-19T06:32:19.809Z nl=2 -->
+
+This section guides you through SIMD and SIMT mixed programming using the [Reg vector computation APIs](../../../api/SIMD-API/basic_api/reg_vector_compute/reg_vector_compute.md) and [SIMT APIs](../../../api/SIMT-API/SIMT-API.md).
+
+In the [Vector Core](../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md), the SIMT unit and the SIMD unit share on-chip storage. Therefore, the on-chip storage Unified Buffer (UB) can be used to implement SIMD and SIMT mixed programming. For details about the hardware architecture, see [NPU Architecture Version 3510](../../programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_3510.md). Before proceeding with the following content, understand the programming model of SIMD and SIMT hybrid programming: [SIMD and SIMT Hybrid Programming](../../programming_guide/advanced_programming/advanced_ai_core_programming_model/simd_simt_hybrid_programming/overview.md).
+
+[SIMD programming](../../programming_guide/programming_model/ai_core_simd_programming/cpp_tensor_programming/reg_vector_computation.md) provides Reg vector computation APIs developed based on registers (Regbase). The Reg vector computation APIs can directly operate the SIMD registers in the Vector Core. The maximum amount of data processed by an API in a single call equals the register size, which can be obtained through the [GetVecLen](../../../api/SIMD-API/basic_api/tool_interface/system_resources_and_variables/GetVecLen.md) API. In operator implementation, the Reg vector computation APIs need to be called multiple times to process the data of a single core.
+
+Unlike SIMD programming, in SIMT programming, data in Global Memory can be directly read and used. SIMT programming typically implements data partitioning by organizing the thread hierarchy, and uses [SIMT Built-In Keywords](../../programming_guide/language_extension/simt_builtin_keywords.md) such as **threadIdx** to compute the data index that each thread should process, thereby completing the computation on the corresponding data and simplifying the function implementation into scalar computation.

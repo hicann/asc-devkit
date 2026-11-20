@@ -1,0 +1,181 @@
+# Subs<a name="ZH-CN_TOPIC_0000002167791269"></a>
+
+<!-- md-trans-meta sourceCommit=f266635ab179c912cc9641061c2d27246be9170c translatedAt=2026-11-02T07:05:43.800Z pushedAt=2026-11-18T01:25:07.047Z nl=2 -->
+
+## Applicable Products<a name="section1550532418810"></a>
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: not supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: not supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: not supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: not supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: not supported
+<!-- end id7 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Subs_flexible_scalar_res.md#id1 -->
+
+## Description<a name="section618mcpsimp"></a>
+
+The header file path is `"basic_api/kernel_operator_vec_binary_scalar_intf.h"`.
+
+Subs is a binary scalar computation API that subtracts a scalar from each element of a vector, supporting both scalar-first and scalar-last scenarios. The scalar input supports configuring a LocalTensor single-point element. The calculation formulas are as follows:
+
+$dst_i = src_i - scalar$
+
+$dst_i = scalar - src_i$
+
+## Prototype<a name="section620mcpsimp"></a>
+
+- Tensor first n elements computation
+
+    ```cpp
+    template <typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG, typename U, typename S, typename V>
+    __aicore__ inline void Subs(const U& dst, const S& src0, const V& src1, const int32_t& count)
+    ```
+
+- Tensor high-dimensional slicing computation
+    - **mask** bit-by-bit mode
+
+        ```cpp
+        template <typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG, typename U, typename S, typename V>
+        __aicore__ inline void Subs(const U& dst, const S& src0, const V& src1, uint64_t mask[], const uint8_t repeatTime, const UnaryRepeatParams& repeatParams)
+        ```
+
+    - **mask** continuous mode
+
+        ```cpp
+        template <typename T = BinaryDefaultType, bool isSetMask = true, const BinaryConfig& config = DEFAULT_BINARY_CONFIG, typename U, typename S, typename V>
+        __aicore__ inline void Subs(const U& dst, const S& src0, const V& src1, uint64_t mask, const uint8_t repeatTime, const UnaryRepeatParams& repeatParams)
+        ```
+
+## Parameters<a name="section622mcpsimp"></a>
+
+**Table 1** Template parameters
+
+| Parameter | Description |
+| ---- | ---- |
+| T | Operand data type.<br>For the flexible scalar position API, this is a reserved parameter that is not yet enabled and is kept for future feature extension. When a value must be specified, pass the default value BinaryDefaultType. |
+| isSetMask | Whether to set the mask mode and mask value inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. You need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode, the mask value in the API input parameters must be set to the placeholder MASK_PLACEHOLDER.<br>For details about how to use it, see [Mask](../SIMD_compute/mask.md). |
+| config | Type: BinaryConfig. It takes effect when the scalar is a LocalTensor single point element, and is used to specify the position of the single point element operand. The default value DEFAULT_BINARY_CONFIG indicates that the right operand is a scalar.<br>struct BinaryConfig {<br>    int8_t scalarTensorIndex = 1; // Specifies the position of the scalar when the scalar is a LocalTensor single point element. 0 indicates the left operand, and 1 indicates the right operand.<br>};<br>constexpr BinaryConfig DEFAULT_BINARY_CONFIG = {1}; |
+| U | LocalTensor type. The corresponding data type is automatically inferred based on the input parameter dst. You do not need to configure this parameter. You only need to ensure that dst satisfies the data type constraint. |
+| S | LocalTensor type or scalar type. The corresponding data type is automatically inferred based on the input parameter src0. You do not need to configure this parameter. You only need to ensure that src0 satisfies the data type constraint. |
+| V | LocalTensor type or scalar type. The corresponding data type is automatically inferred based on the input parameter src1. You do not need to configure this parameter. You only need to ensure that src1 satisfies the data type constraint. |
+
+**Table 2** Parameters
+
+| Parameter | Type | Description |
+| ---- | ---- | ---- |
+| dst | Output | Destination operand.<br>Type LocalTensor. Supported TPosition values are VECIN/VECCALC/VECOUT.<br>For address alignment constraints, see [Address Alignment Constraints](../../../general_description_and_constraints.md). |
+| src0/src1 | Input | Source operands in the flexible scalar position API.<br>&bull; Type LocalTensor: Can be used as a vector operand or a scalar single-point element. Supported TPosition values are VECIN/VECCALC/VECOUT. For address alignment constraints, see [Address Alignment Constraints](../../../general_description_and_constraints.md). <br>&bull; Type scalar. |
+| count | Input | Number of elements involved in the calculation. For details about this parameter, see [Continuous Compute](../SIMD_compute/continuous_compute.md). |
+| mask/mask[] | Input | mask controls the elements involved in the calculation in each iteration. For details, see [Mask](../SIMD_compute/mask.md). |
+| repeatTime | Input | Number of repeated iterations. The vector compute unit reads 256 consecutive bytes of data for calculation each time. To process all input data, multiple iterations (repeat) are required to read and compute all data. repeatTime indicates the number of iterations.<br>For details about this parameter, see [High-Dimensional Split](../SIMD_compute/high_dim_split.md). |
+| repeatParams | Input | Parameter that controls the address stride of operands. Type: [UnaryRepeatParams](../../aux_data_structures/UnaryRepeatParams.md). It contains parameters such as the address stride of the same DataBlock between adjacent iterations of an operand and the address stride of different DataBlocks within the same iteration of an operand.<br>For details about the address stride between adjacent iterations, see [repeatStride](../SIMD_compute/high_dim_split.md). For details about the address stride of DataBlocks within the same iteration, see [dataBlockStride](../SIMD_compute/high_dim_split.md). |
+
+## Data Type
+
+<!-- npu="950" id8 -->
+For Ascend 950PR&950DT products, the supported data types are int16_t, half, bfloat16_t, int32_t, float, complex32, int64_t, uint64_t, and complex64. Among them, complex32, int64_t, uint64_t, and complex64 are supported only by the tensor first-n data computation API.
+<!-- end id8 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Subs_flexible_scalar_res.md#id2 -->
+
+## Return Value<a name="section640mcpsimp"></a>
+
+None
+
+## Constraints<a name="section633mcpsimp"></a>
+
+- For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md).
+- For operand address overlap constraints, see [General Address Overlap Constraints](../../../general_description_and_constraints.md).
+- When using the tensor high-dimensional slicing computation API, to save address space, you can define a single tensor shared by the source operand and the destination operand (that is, address overlap). The related constraints are as follows:
+    - For a single repeat (repeatTime=1), the source operand and the destination operand must overlap 100% completely. Partial overlap is not supported.
+    - For multiple repeats (repeatTime\>1), when a dependency exists between the operand and the destination operand, that is, when the destination operand of the Nth iteration is the source operand of the (N+1)th iteration, address overlap is not supported.
+    - When the source operand is a LocalTensor single-point element, address overlap between the source operand and the destination operand is not supported.
+- At least one of the left operand and the right operand must be a vector. Both operands being scalars at the same time is not supported.
+- When this API passes a single-point LocalTensor data element as a scalar, the idx parameter must be a compile-time constant. If a variable is passed, it must be declared as constexpr.
+
+<!-- npu="950" id9 -->
+- For Ascend 950PR&950DT products: This API is implemented for compatibility by calling the [Reg vector computation API](../../reg_vector_compute/reg_vector_compute.md) through VF. When the count or repeatTime parameter is 0, the software simulation behavior does not guarantee that this API is treated as a NOP (no operation).
+- Notes on Unified Buffer (UB) space usage. For Ascend 950PR&950DT products:
+  - High-dimensional split computation of the tensor occupies 8 KB of UB.
+  - Continuous computation of the first n data elements of the tensor does not involve the 8 KB UB usage.
+- For Ascend 950PR&950DT products, the isSetMask parameter in the API for computing the first n tensor data does not take effect. Keep the default value.
+<!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/basic_arithmetic/Subs_flexible_scalar_res.md#id3 -->
+
+## Example<a name="section642mcpsimp"></a>
+
+For more examples, see [LINK](more_examples.md).
+
+- Tensor high-dimensional split calculation example - mask continuous mode
+
+    ```cpp
+    // dstLocal: output tensor.
+    // src0Local: input tensor.
+    // src1Local: input tensor.
+
+    uint64_t mask = 128;
+    // repeatTime = 4, 128 numbers are processed per iteration, so 4 iterations are required to process 512 numbers.
+    // dstBlkStride, srcBlkStride = 1, the address stride of the data in src0 involved in the computation within each iteration is 1 datablock, indicating that data is read and written continuously within a single iteration.
+    // dstRepStride, srcRepStride = 8, the address stride between adjacent iterations is 8 datablocks, indicating that data is read and written continuously between adjacent iterations.
+    // Example with the scalar at the end.
+    AscendC::Subs(dstLocal, src0Local, src1Local[0], mask, 4, {1, 1, 8, 8});
+
+    // Example with the scalar at the beginning.
+    static constexpr AscendC::BinaryConfig config = { 0 };
+    AscendC::Subs<BinaryDefaultType, true, config>(dstLocal, src0Local[0], src1Local, mask, 4, {1, 1, 8, 8});
+    ```
+
+- Tensor high-dimensional split calculation example - mask bit-by-bit mode
+
+    ```cpp
+    // dstLocal: output tensor.
+    // src0Local: input tensor.
+    // src1Local: input tensor.
+
+    uint64_t mask[2] = { UINT64_MAX, UINT64_MAX };
+    // repeatTime = 4. Each iteration processes 128 numbers, so computing 512 numbers requires 4 iterations.
+    // dstBlkStride, srcBlkStride = 1. Within each iteration, the address interval of the data in src0 participating in the computation is 1 datablock, indicating that data is read and written continuously within a single iteration.
+    // dstRepStride, srcRepStride = 8. The address interval between adjacent iterations is 8 datablocks, indicating that data is read and written continuously between adjacent iterations.
+    // Example with the scalar at the end.
+    AscendC::Subs(dstLocal, src0Local, src1Local[0], mask, 4, {1, 1, 8, 8});
+
+    // Example with the scalar at the beginning.
+    static constexpr AscendC::BinaryConfig config = { 0 };
+    AscendC::Subs<BinaryDefaultType, true, config>(dstLocal, src0Local[0], src1Local, mask, 4, {1, 1, 8, 8});
+    ```
+
+- Example of computing the first n tensor data
+
+    ```cpp
+    // Example with the scalar at the end.
+    AscendC::Subs(dstLocal, src0Local, src1Local[0], 512);
+
+    // Example with the scalar at the beginning.
+    static constexpr AscendC::BinaryConfig config = { 0 };
+    AscendC::Subs<BinaryDefaultType, true, config>(dstLocal, src0Local[0], src1Local, 512);
+    ```
+
+The result is as follows:
+
+```bash
+Input data src0Local: [1 2 3 ... 512]
+Input data src1Local: [1 2 3 ... 512]
+// Scalar first, src0Local[0] as the scalar.
+Output data dstLocal: [0 1 2 ... 511]
+// Scalar last, src1Local[0] as the scalar.
+Output data dstLocal: [0 1 2 ... 511]
+```

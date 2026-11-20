@@ -75,10 +75,10 @@
 | [DataCopy（L1ToBiasTable-Buffer数据搬运）](DataCopy_L1ToBiasTable.md) | 将矩阵计算的bias参数从L1 Buffer搬运至BiasTable Buffer。 | L1 Buffer->BiasTable Buffer | 矩阵乘后加偏置（bias add）参数搬入。 |
 | [DataCopy（L1ToFixpipe-Buffer数据搬运）](DataCopy_L1ToFixpipe.md) | 将[随路量化](../cube_store_key_features/accompanying_quantization.md)和[随路ReLU](../cube_store_key_features/accompanying_relu.md)参数从L1 Buffer搬运至Fixpipe Buffer。 | L1 Buffer->Fixpipe Buffer | 矩阵计算结果的随路量化、激活参数搬入。 |
 
-<!-- npu="950" id_l12l0_950note -->
+<!-- npu="950" id5 -->
 > [!NOTE]说明
 > 针对Ascend 950PR&950DT系列产品，LoadDataWithTranspose仅支持L1 Buffer->L0B Buffer通路，不支持L1 Buffer->L0A Buffer通路。
-<!-- end id_l12l0_950note -->
+<!-- end id5 -->
 
 <!-- npu="910b,A3" id3 -->
 针对Atlas A2系列产品和Atlas A3系列产品，支持L1 Buffer->L0B Buffer如下接口，请开发者参考表6。

@@ -1,0 +1,198 @@
+# ProposalConcat<a name="ZH-CN_TOPIC_0000001442977962"></a>
+
+<!-- md-trans-meta sourceCommit=f266635ab179c912cc9641061c2d27246be9170c translatedAt=2026-11-05T02:04:04.095Z pushedAt=2026-11-18T01:25:30.765Z nl=2 -->
+
+## Applicable Products<a name="section1550532418810"></a>
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: not supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: not supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: not supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: not supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: supported
+<!-- end id7 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/ProposalConcat_res.md#id1 -->
+
+
+## Description<a name="section618mcpsimp"></a>
+
+Merges continuous elements into the corresponding positions within Region Proposals. Each iteration merges 16 continuous elements into the corresponding positions of 16 Region Proposals.
+
+**Region Proposal description:**
+
+Currently, only two data types are supported: half and float.
+
+Each Region Proposal occupies eight consecutive elements of the half/float type. The format is defined as follows:
+
+```
+[x1, y1, x2, y2, score, label, reserved_0, reserved_1]
+```
+
+For the half data type, each Region Proposal occupies 16 bytes. Byte\[15:12\] is invalid data, and Byte\[11:0\] contains six half-type elements, where Byte\[11:10\] is defined as label, Byte\[9:8\] is defined as score, Byte\[7:6\] is defined as y2, Byte\[5:4\] is defined as x2, Byte\[3:2\] is defined as y1, and Byte\[1:0\] is defined as x1.
+
+As shown in the following figure, there are 16 Region Proposals in total.
+
+![](../../../../figures/image_0000001820284977.png)
+
+For the float data type, each Region Proposal occupies 32 bytes. Byte\[31:24\] is invalid data, and Byte\[23:0\] contains six float-type elements, where Byte\[23:20\] is defined as label, Byte\[19:16\] is defined as score, Byte\[15:12\] is defined as y2, Byte\[11:8\] is defined as x2, Byte\[7:4\] is defined as y1, and Byte\[3:0\] is defined as x1.
+
+As shown in the following figure, there are 16 Region Proposals in total.
+
+![](../../../../figures/image_0000001820324937.png)
+
+## Prototype<a name="section620mcpsimp"></a>
+
+```
+template <typename T>
+__aicore__ inline void ProposalConcat(const LocalTensor<T>& dst, const LocalTensor<T>& src, const int32_t repeatTime, const int32_t modeNumber)
+```
+
+## Parameters<a name="section622mcpsimp"></a>
+
+**Table 1** Template parameter description
+
+<a name="table4835205712588"></a>
+<table><thead align="left"><tr id="zh-cn_topic_0000001429830437_row118356578583"><th class="cellrowborder" valign="top" width="13.58%" id="mcps1.2.3.1.1"><p id="zh-cn_topic_0000001429830437_p48354572582"><a name="zh-cn_topic_0000001429830437_p48354572582"></a><a name="zh-cn_topic_0000001429830437_p48354572582"></a>Parameter</p>
+</th>
+<th class="cellrowborder" valign="top" width="86.42%" id="mcps1.2.3.1.2"><p id="zh-cn_topic_0000001429830437_p583535795817"><a name="zh-cn_topic_0000001429830437_p583535795817"></a><a name="zh-cn_topic_0000001429830437_p583535795817"></a>Description</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="zh-cn_topic_0000001429830437_row1835857145817"><td class="cellrowborder" valign="top" width="13.58%" headers="mcps1.2.3.1.1 "><p id="zh-cn_topic_0000001429830437_p5835457165816"><a name="zh-cn_topic_0000001429830437_p5835457165816"></a><a name="zh-cn_topic_0000001429830437_p5835457165816"></a>T</p>
+</td>
+<td class="cellrowborder" valign="top" width="86.42%" headers="mcps1.2.3.1.2 "><p id="zh-cn_topic_0000001429830437_p168351657155818"><a name="zh-cn_topic_0000001429830437_p168351657155818"></a><a name="zh-cn_topic_0000001429830437_p168351657155818"></a>Operand data type.</p>
+<p id="p7265124521915"><a name="p7265124521915"></a><a name="p7265124521915"></a><span id="ph194756336178"><a name="ph194756336178"></a><a name="ph194756336178"></a><term id="zh-cn_topic_0000001312391781_term71949488213_1"><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a><a name="zh-cn_topic_0000001312391781_term71949488213_1"></a>Atlas training products</term></span>, supported data types: half</p>
+<p id="p12659457192"><a name="p12659457192"></a><a name="p12659457192"></a><span id="ph750620211814"><a name="ph750620211814"></a><a name="ph750620211814"></a><term id="zh-cn_topic_0000001312391781_term1964153212227_1"><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a><a name="zh-cn_topic_0000001312391781_term1964153212227_1"></a>Atlas inference products</term></span>AI Core, supported data types: half/float</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+**Table 2**  Parameters
+
+<a name="table62161631132810"></a>
+<table><thead align="left"><tr id="row12216103118284"><th class="cellrowborder" valign="top" width="13.661366136613662%" id="mcps1.2.4.1.1"><p id="p1421643114288"><a name="p1421643114288"></a><a name="p1421643114288"></a>Parameter</p>
+</th>
+<th class="cellrowborder" valign="top" width="12.591259125912593%" id="mcps1.2.4.1.2"><p id="p82165310285"><a name="p82165310285"></a><a name="p82165310285"></a>Input/Output</p>
+</th>
+<th class="cellrowborder" valign="top" width="73.74737473747375%" id="mcps1.2.4.1.3"><p id="p1121663111288"><a name="p1121663111288"></a><a name="p1121663111288"></a>Description</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="row82161131182810"><td class="cellrowborder" valign="top" width="13.661366136613662%" headers="mcps1.2.4.1.1 "><p id="p62165318282"><a name="p62165318282"></a><a name="p62165318282"></a>dst</p>
+</td>
+<td class="cellrowborder" valign="top" width="12.591259125912593%" headers="mcps1.2.4.1.2 "><p id="p102161931162814"><a name="p102161931162814"></a><a name="p102161931162814"></a>Output</p>
+</td>
+<td class="cellrowborder" valign="top" width="73.74737473747375%" headers="mcps1.2.4.1.3 "><p id="p541935917913"><a name="p541935917913"></a><a name="p541935917913"></a>Destination operand.</p>
+<p id="p16703131355116"><a name="p16703131355116"></a><a name="p16703131355116"></a><span id="zh-cn_topic_0000001530181537_ph173308471594"><a name="zh-cn_topic_0000001530181537_ph173308471594"></a><a name="zh-cn_topic_0000001530181537_ph173308471594"></a><span id="zh-cn_topic_0000001530181537_ph9902231466"><a name="zh-cn_topic_0000001530181537_ph9902231466"></a><a name="zh-cn_topic_0000001530181537_ph9902231466"></a><span id="zh-cn_topic_0000001530181537_ph1782115034816"><a name="zh-cn_topic_0000001530181537_ph1782115034816"></a><a name="zh-cn_topic_0000001530181537_ph1782115034816"></a>Type: <a href="../../data_structures/LocalTensor/LocalTensor.md">LocalTensor</a>. Supported TPosition: VECIN/VECCALC/VECOUT.</span></span></span></p>
+<p id="p2735747102716"><a name="p2735747102716"></a><a name="p2735747102716"></a><span id="ph1479701815419"><a name="ph1479701815419"></a><a name="ph1479701815419"></a>The start address of LocalTensor must be 32-byte aligned.</span></p>
+</td>
+</tr>
+<tr id="row5216163192815"><td class="cellrowborder" valign="top" width="13.661366136613662%" headers="mcps1.2.4.1.1 "><p id="p13216193192813"><a name="p13216193192813"></a><a name="p13216193192813"></a>src</p>
+</td>
+<td class="cellrowborder" valign="top" width="12.591259125912593%" headers="mcps1.2.4.1.2 "><p id="p7217031182818"><a name="p7217031182818"></a><a name="p7217031182818"></a>Input</p>
+</td>
+<td class="cellrowborder" valign="top" width="73.74737473747375%" headers="mcps1.2.4.1.3 "><p id="p12791103312108"><a name="p12791103312108"></a><a name="p12791103312108"></a>Source operand.</p>
+<p id="p86181935151016"><a name="p86181935151016"></a><a name="p86181935151016"></a><span id="zh-cn_topic_0000001530181537_ph173308471594_1"><a name="zh-cn_topic_0000001530181537_ph173308471594_1"></a><a name="zh-cn_topic_0000001530181537_ph173308471594_1"></a><span id="zh-cn_topic_0000001530181537_ph9902231466_1"><a name="zh-cn_topic_0000001530181537_ph9902231466_1"></a><a name="zh-cn_topic_0000001530181537_ph9902231466_1"></a><span id="zh-cn_topic_0000001530181537_ph1782115034816_1"><a name="zh-cn_topic_0000001530181537_ph1782115034816_1"></a><a name="zh-cn_topic_0000001530181537_ph1782115034816_1"></a>Type: <a href="../../data_structures/LocalTensor/LocalTensor.md">LocalTensor</a>. Supported TPosition: VECIN/VECCALC/VECOUT.</span></span></span></p>
+<p id="p149990310282"><a name="p149990310282"></a><a name="p149990310282"></a><span id="ph133625442815"><a name="ph133625442815"></a><a name="ph133625442815"></a>The start address of LocalTensor must be 32-byte aligned.</span></p>
+<p id="p1521763119281"><a name="p1521763119281"></a><a name="p1521763119281"></a>The data type of the source operand must be the same as that of the destination operand.</p>
+</td>
+</tr>
+<tr id="row221753112285"><td class="cellrowborder" valign="top" width="13.661366136613662%" headers="mcps1.2.4.1.1 "><p id="p221713318283"><a name="p221713318283"></a><a name="p221713318283"></a>repeatTime</p>
+</td>
+<td class="cellrowborder" valign="top" width="12.591259125912593%" headers="mcps1.2.4.1.2 "><p id="p02174318282"><a name="p02174318282"></a><a name="p02174318282"></a>Input</p>
+</td>
+<td class="cellrowborder" valign="top" width="73.74737473747375%" headers="mcps1.2.4.1.3 "><p id="p12217153111284"><a name="p12217153111284"></a><a name="p12217153111284"></a>Number of repeated iterations, of the int32_t type. Each iteration merges 16 elements into 16 Region Proposals. The next iteration jumps to the adjacent next group of 16 Region Proposals and the next group of 16 elements. Value range: repeatTime∈[0,255].</p>
+</td>
+</tr>
+<tr id="row521753120287"><td class="cellrowborder" valign="top" width="13.661366136613662%" headers="mcps1.2.4.1.1 "><p id="p3217133122812"><a name="p3217133122812"></a><a name="p3217133122812"></a>modeNumber</p>
+</td>
+<td class="cellrowborder" valign="top" width="12.591259125912593%" headers="mcps1.2.4.1.2 "><p id="p021763116285"><a name="p021763116285"></a><a name="p021763116285"></a>Input</p>
+</td>
+<td class="cellrowborder" valign="top" width="73.74737473747375%" headers="mcps1.2.4.1.3 "><div class="p" id="p132171431112815"><a name="p132171431112815"></a><a name="p132171431112815"></a>Merge position parameter, of the int32_t type. Value range: modeNumber∈[0, 5]. Only the following configurations are supported:<a name="ul14217183111284"></a><a name="ul14217183111284"></a><ul id="ul14217183111284"><li>0 – Merge into x1</li><li>1 – Merge into y1</li><li>2 – Merge into x2</li><li>3 – Merge into y2</li><li>4 – Merge into score</li><li>5 – Merge into label</li></ul>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+
+## Return Value<a name="section1719311422244"></a>
+
+None
+
+## Constraints<a name="section633mcpsimp"></a>
+
+-   You must ensure that the number of proposals stored in dst is greater than or equal to the actual required number. Otherwise, a tensor out-of-bounds error occurs.
+-   You must ensure that the number of elements stored in src is greater than or equal to the actual required number. Otherwise, a tensor out-of-bounds error occurs.
+-   For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/sort_and_merge_ISASI/ProposalConcat_res.md#id2 -->
+
+## Example<a name="section642mcpsimp"></a>
+
+For a detailed example, see [RegionProposalSort example](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/region_proposal_sort).
+
+-   API usage example
+
+    ```
+    // repeatTime = 2, modeNumber = 4. Merge 32 numbers into the score field of 32 Region Proposals.
+    AscendC::ProposalConcat(dstLocal, srcLocal, 2, 4);
+    ```
+
+    ```
+    Example result 
+    Input data (src_gm):
+    [ 33.3    67.56   68.5   -11.914  25.19  -72.8    11.79  -49.47   49.44
+      84.4   -14.36   45.97   52.47   -5.387 -13.12  -88.9    54.    -51.62
+     -20.67   59.56   35.72   -6.12  -39.4   -11.46   -7.066  30.23  -11.18
+     -35.84  -40.88   60.9   -73.3    38.47 ]
+    Output data (dst_gm):
+    Because modeNumber=4, the starting position of the first element 33.3 is 4. Each Region Proposal occupies 8 consecutive elements of the half/float type. The type used here is half. Each subsequently inserted element is spaced 8 elements apart. repeat is 2, and each iteration completes 16 elements, for a total of 32 elements.
+    [ 0.      0.      0.      0. 
+      33.3    0.      0.      0.      0.      0.      0.      0.
+      67.56   0.      0.      0.      0.      0.      0.      0.
+      68.5    0.      0.      0.      0.      0.      0.      0.
+      -11.914 0.      0.      0.      0.      0.      0.      0.
+      25.19   0.      0.      0.      0.      0.      0.      0.
+      -72.8   0.      0.      0.      0.      0.      0.      0.
+      11.79   0.      0.      0.      0.      0.      0.      0.
+      -49.47  0.      0.      0.      0.      0.      0.      0.
+      49.44   0.      0.      0.      0.      0.      0.      0.
+      84.4    0.      0.      0.      0.      0.      0.      0.
+      -14.36  0.      0.      0.      0.      0.      0.      0.
+      45.97   0.      0.      0.      0.      0.      0.      0.
+      52.47   0.      0.      0.      0.      0.      0.      0.
+      -5.387  0.      0.      0.      0.      0.      0.      0.
+      -13.12  0.      0.      0.      0.      0.      0.      0.
+      -88.9   0.      0.      0.      0.      0.      0.      0.
+      54.     0.      0.      0.      0.      0.      0.      0.
+      -51.62  0.      0.      0.      0.      0.      0.      0.
+     -20.67   0.      0.      0.      0.      0.      0.      0.
+     59.56    0.      0.      0.      0.      0.      0.      0.
+     35.72    0.      0.      0.      0.      0.      0.      0.
+     -6.12    0.      0.      0.      0.      0.      0.      0.
+     -39.4    0.      0.      0.      0.      0.      0.      0.
+     -11.46   0.      0.      0.      0.      0.      0.      0.
+     -7.066   0.      0.      0.      0.      0.      0.      0.
+     30.23    0.      0.      0.      0.      0.      0.      0.
+     -11.18   0.      0.      0.      0.      0.      0.      0.
+     -35.84   0.      0.      0.      0.      0.      0.      0.
+     -40.88   0.      0.      0.      0.      0.      0.      0.
+     60.9     0.      0.      0.      0.      0.      0.      0.
+     -73.3    0.      0.      0.      0.      0.      0.      0.
+     38.47    0.      0.      0. 
+     ]
+    ```

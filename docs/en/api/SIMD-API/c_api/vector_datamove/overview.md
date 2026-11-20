@@ -1,0 +1,37 @@
+# Overview
+
+<!-- md-trans-meta sourceCommit=1398d4baddf82d4b412922bb4a32a05abf2ada8a translatedAt=2026-11-18T07:40:48.325220+00:00 pushedAt=2026-11-18T07:42:30.262Z nl=2 -->
+
+## API List
+
+**Table 1** Vector data movement APIs
+
+| API Name | API Description | Finest-Grained Common Header File |
+| --- | --- | --- |
+| [asc_copy](asc_copy.md) | Copies data from Unified Buffer to Unified Buffer. Supports high-dimensional slicing. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2l1](asc_copy_ub2l1.md) | Copies data from Unified Buffer to L1 Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2ub](asc_copy_ub2ub.md) | Copies data from Unified Buffer to Unified Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_ndim_copy_gm2ub](asc_ndim_copy_gm2ub.md) | Multi-dimensional data movement API that copies data from global memory (GM) to Unified Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_ndim_copy_dci](asc_ndim_copy_dci.md) | Performs the data cache invalidate (DCI) operation required for N-dimensional movement scenarios. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_copy_pad_val](asc_set_copy_pad_val.md) | Used with `asc_copy_gm2ub_align` to set the padding values on the left and right sides of the moved data block. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_gm2ub_loop1_stride](asc_set_gm2ub_loop1_stride.md) | Sets the interval between data blocks of adjacent iterations in the inner loop when using [asc_copy_gm2ub_align](asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) to copy data from global memory (GM) to Unified Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_gm2ub_loop2_stride](asc_set_gm2ub_loop2_stride.md) | Sets the interval between data blocks of adjacent iterations in the outer loop when using [asc_copy_gm2ub_align](asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) to copy data from global memory (GM) to Unified Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_gm2ub_loop_size](asc_set_gm2ub_loop_size.md) | Sets the number of loops in the data movement process when using [asc_copy_gm2ub_align](asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) to copy data from global memory (GM) to Unified Buffer. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ndim_loop_stride](asc_set_ndim_loop_stride.md) | Sets the interval between elements of the source operand and the destination operand in each dimension when [asc_ndim_copy_gm2ub](asc_ndim_copy_gm2ub.md) performs multi-dimensional movement, for up to 5 dimensions. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ndim_pad_count](asc_set_ndim_pad_count.md) | Sets the number of padding elements on the left and right sides of each dimension for the [asc_ndim_copy_gm2ub](asc_ndim_copy_gm2ub.md) API. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ndim_pad_value](asc_set_ndim_pad_value.md) | Sets the fixed padding value for the [asc_ndim_copy_gm2ub](asc_ndim_copy_gm2ub.md) API. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ub2gm_loop1_stride](asc_set_ub2gm_loop1_stride.md) | Sets the data block interval of the source operand between adjacent iterations and the data block interval of the destination operand between adjacent iterations in the inner loop when using [asc_copy_ub2gm_align](asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) to copy data from Unified Buffer to global memory (GM). | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ub2gm_loop2_stride](asc_set_ub2gm_loop2_stride.md) | Sets the data block interval of the source operand between adjacent iterations and the data block interval of the destination operand between adjacent iterations in the outer loop when using [asc_copy_ub2gm_align](asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) to copy data from Unified Buffer to global memory (GM). | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_set_ub2gm_loop_size](asc_set_ub2gm_loop_size.md) | Sets the number of inner loops and outer loops when using [asc_copy_ub2gm_align](asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) to copy data from Unified Buffer to global memory (GM). | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub](asc_copy_gm2ub/asc_copy_gm2ub.md) | Copies data from GM to Unified Buffer. The specific API form varies by NPU architecture version. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub (NPU architecture version 2201)](asc_copy_gm2ub/asc_copy_gm2ub_arch_2201.md) | Copies data from global memory (GM) to Unified Buffer (UB). | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub (NPU architecture version 3510)](asc_copy_gm2ub/asc_copy_gm2ub_arch_3510.md) | Copies GM data to Unified Buffer continuously or by high-dimensional slicing; when the valid length is not 32-byte aligned, pads the write on the Unified Buffer side. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub_align](asc_copy_gm2ub_align/asc_copy_gm2ub_align.md) | Copies data from GM to Unified Buffer, supporting movement of lengths that are not multiples of 32 bytes and alignment padding. The specific API form varies by NPU architecture version. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub_align (NPU architecture version 2201)](asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_2201.md) | Moves data from Global Memory (GM) to Unified Buffer (UB), supports moving data whose length is not an integer multiple of 32 bytes, and performs 32-byte alignment padding during the move. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_gm2ub_align (NPU architecture version 3510)](asc_copy_gm2ub_align/asc_copy_gm2ub_align_arch_3510.md) | Moves data from Global Memory (GM) to Unified Buffer (UB), supports moving data whose length is not an integer multiple of 32 bytes, and performs 32-byte alignment padding during the move. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm](asc_copy_ub2gm/asc_copy_ub2gm.md) | Moves data from UB to GM. The specific API form varies by NPU architecture version. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm (NPU architecture version 2201)](asc_copy_ub2gm/asc_copy_ub2gm_arch_2201.md) | Moves data from Unified Buffer (UB) to Global Memory (GM). | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm (NPU architecture version 3510)](asc_copy_ub2gm/asc_copy_ub2gm_arch_3510.md) | Moves UB data to GM continuously or by high-dimensional slicing; when the valid length is not 32-byte aligned, reads UB with padding and writes only the valid data to GM. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm_align](asc_copy_ub2gm_align/asc_copy_ub2gm_align.md) | Moves data from UB to GM, supports moving lengths that are not integer multiples of 32 bytes. The specific API form varies by NPU architecture version. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm_align (NPU architecture version 2201)](asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_2201.md) | Moves UB data to GM, supports moves whose length is not 32-byte aligned, and writes only the valid data to GM. | `c_api/vector_datamove/vector_datamove.h` |
+| [asc_copy_ub2gm_align (NPU architecture version 3510)](asc_copy_ub2gm_align/asc_copy_ub2gm_align_arch_3510.md) | Moves UB data to GM, supports moves whose length is not 32-byte aligned, and writes only the valid data to GM. | `c_api/vector_datamove/vector_datamove.h` |

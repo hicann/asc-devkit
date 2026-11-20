@@ -158,7 +158,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
     ```
 <!-- end id3 -->
 
-<!-- npu="950" id1 -->
+<!-- npu="950" id13 -->
 
 ## L1ToL0A 3D格式分形矩阵搬运（LoadDataWithStride）<a name="ZH-CN_TOPIC_0000002573312819"></a>
 
@@ -179,7 +179,7 @@ src和dst分别为源操作数和目的操作数；loadDataParams为搬运参数
     template <typename T, const IsResetLoad3dConfig& defaultConfig = IS_RESER_LOAD3D_DEFAULT_CONFIG, typename U = PrimT<T>,typename Std::enable_if<Std::is_same<PrimT<T>, U>::value, bool>::type = true>
     __aicore__ inline void LoadDataWithStride(const LocalTensor<T>& dst, const LocalTensor<T>& src, const LoadData3DParamsV2<U>& loadDataParams)
     ```
-<!-- end id1 -->
+<!-- end id13 -->
 
 ## L1ToL0B 2D格式分形矩阵搬运（LoadData（2D矩阵搬运））<a name="ZH-CN_TOPIC_0000002543262922"></a>
 

@@ -1,0 +1,106 @@
+---
+okftype: reference.api
+description: "Basic API that performs linear rectification ReLU element-wise and writes the result to the destination vector. Supports half, int32_t, and float, and provides two computation forms: first n elements and high-dimensional slicing."
+tag:
+  - roles: [compute]
+  - operations: [relu]
+dependencies:
+  - path: docs/zh/api/SIMD-API/c_api/general_description_and_constraints.md
+    kind: constrained_by
+    condition: "Must comply with the general address overlap constraints"
+version: ">=9.0.0"
+version_changes: []
+---
+# asc_relu
+
+<!-- md-trans-meta sourceCommit=54f1d966cfcc22290ddc2c6312bbe4c6ac2a9232 translatedAt=2026-11-16T01:40:03.887028+00:00 pushedAt=2026-11-16T02:10:58.880Z nl=2 -->
+
+## Applicable Products
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: Not supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: Supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: Supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: Not supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: Not supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: Not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: Not supported
+<!-- end id7 -->
+
+## Description
+
+The header file path is `"c_api/vector_compute/compute/vector_fused.h"`.
+
+Performs element-wise linear rectification (Relu). The calculation formula is as follows:
+$$
+dst_i = relu(src_i)
+$$
+
+## Prototype
+
+- Computation on the first n elements
+
+  ```cpp
+  __aicore__ inline void asc_relu(__ubuf__ half* dst, __ubuf__ half* src, uint32_t count)
+  __aicore__ inline void asc_relu(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, uint32_t count)
+  __aicore__ inline void asc_relu(__ubuf__ float* dst, __ubuf__ float* src, uint32_t count)
+  ```
+
+- High-dimensional slicing computation
+
+  ```cpp
+  __aicore__ inline void asc_relu(__ubuf__ half* dst, __ubuf__ half* src, uint8_t repeat, uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
+  __aicore__ inline void asc_relu(__ubuf__ int32_t* dst, __ubuf__ int32_t* src, uint8_t repeat, uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
+  __aicore__ inline void asc_relu(__ubuf__ float* dst, __ubuf__ float* src, uint8_t repeat, uint16_t dst_block_stride, uint16_t src_block_stride, uint16_t dst_repeat_stride, uint16_t src_repeat_stride)
+  ```
+
+## Parameters
+
+**Table 1** Parameters
+
+|Parameter|Input/Output|Description|
+| ------------ | ------------ | ------------ |
+|dst|Output|Start address of the destination operand (vector).|
+|src|Input|Start address of the source operand (vector).|
+|count|Input|Number of elements involved in the computation.|
+| repeat | Input | Number of iterations. |
+| dst_block_stride | Input | Address stride between different DataBlocks of the destination operand within a single iteration. |
+| src_block_stride | Input | Address stride between different DataBlocks of the source operand within a single iteration. |
+| dst_repeat_stride | Input | Address stride of the same DataBlock of the destination operand between adjacent iterations. |
+| src_repeat_stride | Input | Address stride of the same DataBlock of the source operand between adjacent iterations. |
+
+## Return Value
+
+None
+
+## Pipeline Type
+
+PIPE_V
+
+## Constraints
+
+- For operand address overlap constraints, see [General Address Overlap Constraints](../../general_description_and_constraints.md#general-address-overlap-constraints).
+- The start addresses of dst and src must be 32-byte aligned.
+
+## Examples
+
+```cpp
+constexpr int total_length = 256; // total_length refers to the total length of the data involved in the computation.
+__ubuf__ half src[total_length];
+__ubuf__ half dst[total_length];
+asc_relu(dst, src, total_length);
+// src : [6.938, -8.86, -0.2263, ..., 1.778]
+// dst : [6.938, 0, 0, ..., 1.778]
+```

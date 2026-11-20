@@ -103,7 +103,7 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
 
 | 参数名 | 描述 |
 | --- | --- |
-| sync | 设置同步或者异步模式：同步模式设置为true；异步模式设置为false。<!-- npu="950" id9 --><br><br>Ascend 950PR&950DT系列产品支持异步模式。<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3系列产品支持异步模式。<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2系列产品支持异步模式。<!-- end id11 --><!-- npu="310p" id12 --><br><br>Atlas推理系列产品AI Core不支持异步模式。<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2推理产品不支持异步模式。<!-- end id13 --><!-- npu="x90" id3 --><br><br>KirinX90处理器系列产品支持异步模式。<!-- end id3 --> |
+| sync | 设置同步或者异步模式：同步模式设置为true；异步模式设置为false。<!-- npu="950" id9 --><br><br>Ascend 950PR&950DT系列产品支持异步模式。<!-- end id9 --><!-- npu="A3" id10 --><br><br>Atlas A3系列产品支持异步模式。<!-- end id10 --><!-- npu="910b" id11 --><br><br>Atlas A2系列产品支持异步模式。<!-- end id11 --><!-- npu="310p" id12 --><br><br>Atlas推理系列产品AI Core不支持异步模式。<!-- end id12 --><!-- npu="310b" id13 --><br><br>Atlas 200I/500 A2推理产品不支持异步模式。<!-- end id13 --><!-- npu="x90" id29 --><br><br>KirinX90处理器系列产品支持异步模式。<!-- end id29 --> |
 
 **表2**  接口参数说明
 
@@ -154,13 +154,13 @@ __aicore__ inline void GetTensorC(const LocalTensor<DstT>& c, uint8_t enAtomic =
     Atlas 200I/500 A2推理产品，支持的数据类型为：half、float、bfloat16_t、int32_t。
     <!-- end id18 -->
 
-    <!-- npu="x90" id4 -->
+    <!-- npu="x90" id30 -->
     KirinX90处理器系列产品，支持的数据类型为：half、int8_t、int32_t。
-    <!-- end id4 -->
+    <!-- end id30 -->
 
-    <!-- npu="9030" id5 -->
+    <!-- npu="9030" id31 -->
     Kirin9030处理器系列产品，支持的数据类型为：half。
-    <!-- end id5 -->
+    <!-- end id31 -->
 
 -   支持的数据格式<a id="li12616155731721"></a>
 

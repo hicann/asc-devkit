@@ -96,13 +96,13 @@ Atlas 200I/500 A2推理产品，不支持SetTensorA\(SrcAT aScalar\)接口原型
     Atlas 200I/500 A2推理产品，支持的数据类型为：half、bfloat16_t、int8_t、float。
     <!-- end id13 -->
 
-    <!-- npu="x90" id3 -->
+    <!-- npu="x90" id25 -->
     KirinX90处理器系列产品，支持的数据类型为：half、int8_t。
-    <!-- end id3 -->
+    <!-- end id25 -->
 
-    <!-- npu="9030" id4 -->
+    <!-- npu="9030" id26 -->
     Kirin9030处理器系列产品，支持的数据类型为：half。
-    <!-- end id4 -->
+    <!-- end id26 -->
 
 -   aScalar支持的数据类型<a id="li12616155731723"></a>
 
@@ -126,13 +126,13 @@ Atlas 200I/500 A2推理产品，不支持SetTensorA\(SrcAT aScalar\)接口原型
     Atlas 200I/500 A2推理产品，不支持该参数。
     <!-- end id18 -->
 
-    <!-- npu="x90" id5 -->
+    <!-- npu="x90" id27 -->
     KirinX90处理器系列产品，支持的数据类型为：half。
-    <!-- end id5 -->
+    <!-- end id27 -->
 
-    <!-- npu="9030" id6 -->
+    <!-- npu="9030" id28 -->
     Kirin9030处理器系列产品，支持的数据类型为：half。
-    <!-- end id6 -->
+    <!-- end id28 -->
 
 <!-- end id24 -->
 

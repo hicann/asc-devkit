@@ -1,0 +1,118 @@
+# MaskReg Unaligned Store Out (StoreUnAlign)<a name="ZH-CN_TOPIC_0000002554449396"></a>
+
+<!-- md-trans-meta sourceCommit=af3f6adafe94d121d34283378bfbe7e348767ea3 translatedAt=2026-11-05T03:37:20.584Z pushedAt=2026-11-18T01:25:30.946Z nl=2 -->
+
+## Applicable Products
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: not supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: not supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: not supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: not supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: not supported
+<!-- end id7 -->
+<!-- npu="9050" id8 -->
+- Kirin 9050 processor products: Supported
+<!-- end id8 -->
+<!-- npu="kirin1" id9 -->
+- KirinDev0001 processor products: Supported
+<!-- end id9 -->
+<!-- npu="kirin2" id10 -->
+- KirinDev0002 processor products: Supported
+<!-- end id10 -->
+<!-- npu="kirin3" id11 -->
+- KirinDev0003 processor products: Supported
+<!-- end id11 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/reg_vector_compute/reg_data_store/StoreUnAlign_MaskReg_res.md#id1 -->
+
+## Description
+
+The header file path is: `"basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h"`.
+
+**StoreUnAlign** transfers data continuously from [MaskReg](../register_data_types/MaskReg.md) to an unaligned Unified Buffer (UB). It uses the unaligned register **UnalignRegForStore** as a temporary buffer to hold data that crosses alignment boundaries, thereby enabling efficient continuous unaligned data transfer.
+
+## Function Prototype
+
+```cpp
+template <typename T>
+__simd_callee__ inline void StoreUnAlign(__ubuf__ T*& dstAddr, MaskReg& mask, UnalignRegForStore& ureg)
+
+template <typename T, PostLiteral postMode = PostLiteral::POST_MODE_UPDATE>
+__simd_callee__ inline void StoreUnAlignPost(__ubuf__ T*& dstAddr, UnalignRegForStore& ureg, int32_t postUpdateStride)
+```
+
+## Parameters
+
+**Table 1** Template parameter description
+
+| Parameter | Description |
+|-----|-----|
+| T | Data type of the destination operand. For supported data types, see [Data Type](#data-type). |
+| postMode | Controls whether to enable the UB address automatic update function (post update). Type: **PostLiteral**. For specific parameter description, see [PostLiteral](../aux_data_types/PostLiteral.md). |
+
+**Table 2** Parameter description
+
+| Parameter | Input/Output | Description |
+|-----|-----|-----|
+| dstAddr | Input/Output | Destination operand, UB start address, which does not require 32-byte alignment. For the **b16** data type, 16-byte alignment is required; for the **b32** data type, 8-byte alignment is required. |
+| mask | Input | Source operand, type is [MaskReg](../register_data_types/MaskReg.md). |
+| ureg | Input/Output | Unaligned register, of the **UnalignRegForStore** type, used to store data that is not 32B-aligned. The register size is 32 bytes. |
+| postUpdateStride | Input | Address update stride, of the **uint32_t** type. Unit: number of elements. Depending on the value of **postMode**, there are two cases:<br>&bull; **POST_MODE_NORMAL**: not supported.<br>&bull; **POST_MODE_UPDATE**: The actual transfer UB start address is **dstAddr**. After the transfer, the address is updated as **dstAddr** += **postUpdateStride**. |
+
+## Data Type
+
+The data types supported by the destination operand are **b16** and **b32**.
+
+## Return Value
+
+None
+
+## Constraints
+
+- When the data type is **b16**, the address in UB must be 16-byte aligned. After the transfer is complete, the UB address is updated by a 16B offset, and no manual address update is required.
+- When the data type is **b32**, the address in UB must be 8-byte aligned. After the transfer is complete, the UB address is updated by an 8B offset, and no manual address update is required.
+
+## Key Features
+
+**Unaligned Data Store Principle**
+
+According to [MaskReg principle](../register_data_types/MaskReg.md), when the operand type is b16, each element corresponds to 2 bits of MaskReg, and only the lowest bit of the 2 bits is valid; when the operand type is b32, each element corresponds to 4 bits of MaskReg, and only the lowest bit of the 4 bits is valid.
+
+Store the source register MaskReg (32B) to unaligned UB:
+
+- When the data type at the UB address is b16, the hardware instruction extracts the least significant bit (LSB) from every 2 bits of data, packs the 32B data in MaskReg into 16B, and writes it to UB. After the transfer is complete, the UB address is updated by a 16B offset.
+- When the data type at the UB address is b32, the hardware instruction extracts the least significant bit (LSB) from every 4 bits of data, packs the 32B data in MaskReg into 8B, and writes it to UB. After the transfer is complete, the UB address is updated by an 8B offset.
+
+## Example
+
+```cpp
+template <typename T>
+__simd_vf__ inline void StoreUnAlignVF(__ubuf__ T* dstAddr, __ubuf__ T* srcAddr, uint32_t count, uint16_t oneRepeatSize, uint16_t offset, uint16_t repeatTimes)
+{
+    AscendC::Reg::MaskReg mask;
+    AscendC::Reg::UnalignRegForStore ureg;
+    for (uint16_t i = 0; i < repeatTimes; ++i) {
+        AscendC::Reg::LoadAlign(mask, srcAddr + i * oneRepeatSize);
+        // MaskReg unaligned store automatically offsets the address.
+        // When the data type is b16, 32 bytes are packed into 16 bytes, with an offset of 16 bytes.
+        // When the data type is b32, 32 bytes are packed into 8 bytes, with an offset of 8 bytes.
+        AscendC::Reg::StoreUnAlign(dstAddr, mask, ureg);
+    }
+    AscendC::Reg::StoreUnAlignPost(dstAddr, ureg, 0);
+}
+```
+

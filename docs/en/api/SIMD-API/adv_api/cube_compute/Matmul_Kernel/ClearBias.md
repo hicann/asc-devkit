@@ -1,0 +1,63 @@
+# ClearBias
+
+<!-- md-trans-meta sourceCommit=8fa2928a9ba79777fe5da4f7c9987e59a88f273e translatedAt=2026-11-02T06:05:39.571Z pushedAt=2026-11-18T04:52:16.642Z nl=2 -->
+
+## Applicable Products
+
+<!-- npu="950" id2 -->
+- Ascend 950PR&950DT products: Supported
+<!-- end id2 -->
+<!-- npu="A3" id3 -->
+- Atlas A3 products: Supported
+<!-- end id3 -->
+<!-- npu="910b" id4 -->
+- Atlas A2 products: Supported
+<!-- end id4 -->
+<!-- npu="310b" id5 -->
+- Atlas 200I/500 A2 inference products: Supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- AI Core of Atlas inference products: Supported
+- Vector Core of Atlas inference products: Not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: Not supported
+<!-- end id7 -->
+<!-- npu="x90" id1 -->
+- Kirin X90 processor products: Supported
+<!-- end id1 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/adv_api/cube_compute/Matmul_Kernel/ClearBias_res.md#id1 -->
+
+## Description
+
+The [DisableBias](DisableBias.md) API has the same function as this API. It is recommended to use [DisableBias](DisableBias.md).
+
+Clears the Bias flag, indicating that no Bias is involved in Matmul computation. If the **isBias** parameter in the **TCubeTiling** structure is configured to enable Bias when calling [Init](Init.md), calling this API clears the Bias flag and disables Bias.
+
+## Prototype
+
+```
+__aicore__ inline void ClearBias()
+```
+
+## Parameters
+
+None
+
+## Return Value
+
+None
+
+## Constraints
+
+None
+
+## Examples
+
+```
+REGIST_MATMUL_OBJ(&pipe, GetSysWorkSpacePtr(), mm, &tiling);
+mm.SetTensorA(gm_a);
+mm.SetTensorB(gm_b);
+mm.ClearBias();    // Clear the Bias flag in tiling.
+mm.IterateAll(gm_c);
+```

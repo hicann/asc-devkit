@@ -1,0 +1,647 @@
+# Cast<a name="ZH-CN_TOPIC_0000001554785181"></a>
+
+<!-- md-trans-meta sourceCommit=f266635ab179c912cc9641061c2d27246be9170c translatedAt=2026-11-05T02:10:31.263Z pushedAt=2026-11-18T01:25:30.778Z nl=2 -->
+
+## Applicable Products<a name="section1550532418810"></a>
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: supported
+<!-- end id5 -->
+<!-- npu="310p" id6 -->
+- Atlas inference products Vector Core: not supported
+<!-- end id6 -->
+<!-- npu="910" id7 -->
+- Atlas training products: supported
+<!-- end id7 -->
+<!-- npu="x90" id8 -->
+- Kirin X90 processor products: Supported
+<!-- end id8 -->
+<!-- npu="9030" id9 -->
+- Kirin 9030 processor products: Supported
+<!-- end id9 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/type_conversion/Cast_res.md#id1 -->
+
+## Description<a name="section618mcpsimp"></a>
+
+The header file path is `"basic_api/kernel_operator_vec_vconv_intf.h"`.
+
+Performs precision conversion based on the data types of the source operand and destination operand tensors.
+
+## Prototype<a name="section620mcpsimp"></a>
+
+- Computes the first n elements of the tensor.
+
+  ```cpp
+  template <typename T, typename U>
+  __aicore__ inline void Cast(const LocalTensor<T>& dst, const LocalTensor<U>& src, const RoundMode& roundMode, const uint32_t count)
+  ```
+
+- Tensor high-dimensional splitting computation.
+  - **mask** bit-by-bit mode.
+
+    ```cpp
+    template <typename T, typename U, bool isSetMask = true>
+    __aicore__ inline void Cast(const LocalTensor<T>& dst, const LocalTensor<U>& src, const RoundMode& roundMode, const uint64_t mask[], const uint8_t repeatTime, const UnaryRepeatParams& repeatParams)
+    ```
+
+  - **mask** continuous mode.
+
+    ```cpp
+    template <typename T, typename U, bool isSetMask = true>
+    __aicore__ inline void Cast(const LocalTensor<T>& dst, const LocalTensor<U>& src, const RoundMode& roundMode, const uint64_t mask, const uint8_t repeatTime, const UnaryRepeatParams& repeatParams)
+    ```
+
+## Parameters<a name="section622mcpsimp"></a>
+
+**Table 1** Template parameter description
+
+| Parameter | Description |
+| ------ | ---- |
+| T | Data type of the output tensor. |
+| U | Data type of the input tensor. |
+| isSetMask | Whether to set the mask inside the API.<br>&bull; true: The mask is set inside the API.<br>&bull; false: The mask is set outside the API. You need to use the [SetVectorMask](../mask_operations/SetVectorMask.md) API to set the mask value. In this mode, the mask value in the API input parameter is set to the placeholder `MASK_PLACEHOLDER`, which is used only as a placeholder and has no actual meaning. |
+
+**Table 2**  Parameters
+
+| Parameter | Input/Output | Description |
+| ------ | --------- | ---- |
+| dst    |  Output     | Destination operand.<br>Type: LocalTensor. Supported TPosition: VECIN/VECCALC/VECOUT. |
+| src | Input | Source operand.<br>Type: LocalTensor. Supported TPosition: VECIN/VECCALC/VECOUT.|
+| roundMode | Input | Precision conversion processing mode. Type: RoundMode.<br>RoundMode is an enumeration type that controls the precision conversion processing mode. For details, see [Precision Conversion Rules](../../data_structures/precision_conversion.md). For the value description of RoundMode, see [RoundMode Value Description](#roundmode-value-description). |
+| count | Input | Number of elements involved in the computation.<br>**Note: The value range of this parameter depends on the data type of the operand. Different data types support different maximum numbers of elements. The maximum amount of data to be processed cannot exceed the Unified Buffer (UB) size limit.** |
+| mask/mask[] | Input | mask controls the elements involved in the computation in each iteration.<br>Note: For data type conversion, the mask filters elements based on the larger sizeof(dtype) between the input and output types.<br>For details, see [Mask Operations](../SIMD_compute/mask.md). |
+| repeatTime | Input| Number of repeated iterations.<br>The vector computation unit reads 256 consecutive bytes of data for computation each time. To process all input data, multiple iterations (repeats) are required. repeatTime specifies the number of iterations.<br>For details about this parameter, see [High-Dimensional Splitting](../SIMD_compute/high_dim_split.md). |
+| repeatParams | Input | Parameters that control the address stride of the operand. Type: [UnaryRepeatParams](../../aux_data_structures//UnaryRepeatParams.md), which contains the address stride between the same DataBlock in adjacent iterations and the address stride between different DataBlocks in the same iteration.<br>For details about the address stride between adjacent iterations, see [repeatStride](../SIMD_compute/high_dim_split.md). For details about the address stride of DataBlock in the same iteration, see [dataBlockStride](../SIMD_compute/high_dim_split.md). |
+
+### RoundMode Value Description<a name="li5470114514"></a>
+
+The enum type is defined as follows:
+
+```cpp
+enum class RoundMode {
+  CAST_NONE = 0,  // Indicates CAST_RINT mode when the conversion involves precision loss, and no rounding when no precision loss is involved.
+  CAST_RINT,      // rint, round half to even.
+  CAST_FLOOR,     // floor, round toward negative infinity.
+  CAST_CEIL,      // ceil, round toward positive infinity.
+  CAST_ROUND,     // round, round half away from zero.
+  CAST_TRUNC,     // trunc, round toward zero.
+  CAST_ODD,       // Von Neumann rounding, round to the nearest odd number
+  CAST_HYBRID,    // hybrid, currently a random rounding used when the output result is hifloat8_t data
+};
+```
+
+**Note**: The CAST_HYBRID conversion mode is supported only on hardware platforms that support the hifloat8_t data type.
+
+## Data Types
+
+Different data type conversions support different rounding modes. For details, see [precision conversion rules](../../data_structures/precision_conversion.md).
+
+<!-- npu="950" id10 -->
+
+**Table**  Data type combinations supported by Ascend 950PR&950DT products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int4b_t | int16_t | CAST_NONE |
+| int4b_t | half | CAST_NONE |
+| int4b_t | bfloat16_t | CAST_NONE |
+| int8_t | int16_t | CAST_NONE |
+| int8_t | half | CAST_NONE |
+| int8_t | int32_t | CAST_NONE |
+| uint8_t | uint16_t | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| uint8_t | uint32_t | CAST_NONE |
+| fp4x2_e2m1_t | bfloat16_t | CAST_NONE |
+| fp4x2_e1m2_t | bfloat16_t | CAST_NONE |
+| hifloat8_t | half | CAST_NONE |
+| hifloat8_t | float | CAST_NONE |
+| fp8_e5m2_t | float | CAST_NONE |
+| fp8_e4m3fn_t | float | CAST_NONE |
+| int16_t | int4b_t | CAST_NONE |
+| int16_t | uint8_t | CAST_NONE |
+| int16_t | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int16_t | int32_t | CAST_NONE |
+| int16_t | uint32_t | CAST_NONE |
+| int16_t | float | CAST_NONE |
+| uint16_t | uint8_t | CAST_NONE |
+| uint16_t | uint32_t | CAST_NONE |
+| half | int4b_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | int8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | uint8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | hifloat8_t | CAST_ROUND/CAST_HYBRID |
+| half | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| bfloat16_t | fp4x2_e2m1_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | fp4x2_e1m2_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | float | CAST_NONE |
+| int32_t | uint8_t | CAST_NONE |
+| int32_t | int16_t | CAST_NONE |
+| int32_t | uint16_t | CAST_NONE |
+| int32_t | half | roundMode does not take effect. It is used together with the [SetDeqScale(half scale)](../type_conversion_aux_config/SetDeqScale.md) API. |
+| int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int32_t | int64_t | CAST_NONE |
+| uint32_t | uint8_t | CAST_NONE |
+| uint32_t | int16_t | CAST_NONE |
+| uint32_t | uint16_t | CAST_NONE |
+| float | hifloat8_t | CAST_ROUND/CAST_HYBRID |
+| float | fp8_e5m2_t | CAST_RINT |
+| float | fp8_e4m3fn_t | CAST_RINT |
+| float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_ODD/CAST_NONE |
+| float | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| complex32 | complex64 | CAST_NONE |
+| int64_t | int32_t | CAST_NONE |
+| int64_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int64_t | double | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| double | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| double | int32_t | CAST_TRUNC |
+| double | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| double | int64_t | CAST_TRUNC |
+| complex64 | complex32 | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_ODD/CAST_NONE |
+| complex64 | complex64 | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id10 -->
+
+<!-- npu="A3" id11 -->
+
+**Table**  Data type combinations supported by Atlas A3 products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int4b_t | half | CAST_NONE |
+| int8_t | half | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| int16_t | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int16_t | float | CAST_NONE |
+| half | int4b_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | uint8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | float | CAST_NONE |
+| int32_t | int16_t | CAST_NONE |
+| int32_t | half | roundMode does not take effect. It is used together with the [SetDeqScale(half scale)](../type_conversion_aux_config/SetDeqScale.md) API. |
+| int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int32_t | int64_t | CAST_NONE |
+| float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_ODD/CAST_NONE |
+| float | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int64_t | int32_t | CAST_NONE |
+| int64_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id11 -->
+
+<!-- npu="910b" id12 -->
+
+**Table**  Data type combinations supported by Atlas A2 products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int4b_t | half | CAST_NONE |
+| int8_t | half | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| int16_t | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int16_t | float | CAST_NONE |
+| half | int4b_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | uint8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | float | CAST_NONE |
+| int32_t | int16_t | CAST_NONE |
+| int32_t | half | roundMode does not take effect. It is used together with the [SetDeqScale(half scale)](../type_conversion_aux_config/SetDeqScale.md) API. |
+| int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int32_t | int64_t | CAST_NONE |
+| float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_ODD/CAST_NONE |
+| float | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int64_t | int32_t | CAST_NONE |
+| int64_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id12 -->
+
+<!-- npu="310b" id13 -->
+
+**Table**  Data type combinations supported by Atlas 200I/500 A2 inference products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int8_t | half | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| int16_t | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int16_t | float | CAST_NONE |
+| half | int8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | uint8_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| bfloat16_t | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| bfloat16_t | float | CAST_NONE |
+| int32_t | int16_t | CAST_NONE |
+| int32_t | half | CAST_NONE |
+| int32_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| int32_t | int64_t | CAST_NONE |
+| float | int16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | half | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_ODD/CAST_NONE |
+| float | bfloat16_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| int64_t | int32_t | CAST_NONE |
+| int64_t | float | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id13 -->
+
+<!-- npu="310p" id14 -->
+
+**Table** Data type combinations supported by Atlas inference products on the AI Core
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int8_t | half | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| int16_t | half | CAST_NONE |
+| half | int4b_t | CAST_NONE |
+| half | int8_t | CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | uint8_t | CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int16_t | CAST_RINT |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| int32_t | int16_t | CAST_NONE |
+| int32_t | half | roundMode does not take effect. It is used together with the [SetDeqScale(half scale)](../type_conversion_aux_config/SetDeqScale.md) API. |
+| int32_t | float | CAST_NONE |
+| float | half | CAST_ODD/CAST_NONE |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id14 -->
+
+<!-- npu="910" id15 -->
+
+**Table** Data type combinations supported by Atlas training products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| int8_t | half | CAST_NONE |
+| uint8_t | half | CAST_NONE |
+| int16_t | half | CAST_NONE |
+| half | int8_t | CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | uint8_t | CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC/CAST_NONE |
+| half | int32_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+| half | float | CAST_NONE |
+| int32_t | float | CAST_NONE |
+| float | half | CAST_ODD/CAST_NONE |
+| float | int64_t | CAST_RINT/CAST_FLOOR/CAST_CEIL/CAST_ROUND/CAST_TRUNC |
+
+<!-- end id15 -->
+
+<!-- npu="x90" id16 -->
+
+**Table**  Supported data type combinations for Kirin X90 processor products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| half | uint8_t | CAST_CEIL |
+| half | int32_t | CAST_FLOOR |
+| int32_t | float | CAST_CEIL |
+| float | bfloat16_t | CAST_ROUND |
+| bfloat16_t | float | CAST_NONE |
+
+<!-- end id16 -->
+
+<!-- npu="9030" id17 -->
+
+**Table**  Supported data type combinations for Kirin 9030 processor products
+
+| src data type | dst data type | supported roundMode |
+| :---------- | :---------- | :-------------- |
+| half | uint8_t | CAST_CEIL |
+| half | int32_t | CAST_FLOOR |
+| int32_t | float | CAST_CEIL |
+| float | bfloat16_t | CAST_ROUND |
+| bfloat16_t | float | CAST_NONE |
+
+<!-- end id17 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/type_conversion/Cast_res.md#id2 -->
+
+## Return Value
+
+None.
+
+## Constraints
+
+- For operand address alignment requirements, see [General Address Alignment Constraints](../../../general_description_and_constraints.md#section796754519912).
+- For operand address overlap constraints, see [General Address Overlap Constraints](../../../general_description_and_constraints.md#section668772811100). In particular, when converting a data type of a smaller length to a data type of a larger length, address overlap may cause incorrect results.
+
+- When the source operand and destination operand have different bit widths, the input parameter is calculated based on the data type with the larger byte size. For example, when the source operand is of the half type and the destination operand is of the int32\_t type, each iteration operates on at most 64 elements. To ensure that the output and input are continuous, dstRepStride should be set to 8 and srcRepStride should be set to 4.
+- When dst or src is int4b\_t, because one int4b\_t occupies only half a byte, when applying for Tensor space, you only need to apply for half of the space of the same number of int8\_t data. The host side currently does not support int4b\_t. Therefore, when applying for a tensor of the int4b\_t type, first apply for a tensor of the int8\_t type, then use the Reinterpretcast API to convert it to a tensor of the int4b\_t type, and then call the Cast API.
+- When dst or src is int4b\_t, the mask of the continuous mode of the tensor high-dimensional splitting computation API and the count of the tensor first-n-data computation API must be even. For the bit-by-bit mode of the tensor high-dimensional splitting computation API, the values of two adjacent bits corresponding to the same byte must be consistent, that is, bits 0 and 1 must have the same value, bits 2 and 3 must have the same value, bits 4 and 5 must have the same value, and so on.
+- For conversion from int32\_t to the half data type, setting the rounding mode is invalid. It must be used together with the [SetDeqScale](../type_conversion_aux_config/SetDeqScale.md) API.
+<!-- npu="950" id18 -->
+- For Ascend 950PR&950DT products, the complex32/complex64/double data types support only the tensor first-n-data computation API.
+<!-- end id18 -->
+<!-- npu="A3,910b,950" id23 -->
+- When the count or repeatTime parameter is set to 0, this API behaves as follows:
+    <!-- npu="A3,910b" id21 -->
+    - For the following models, when the count or repeatTime parameter is set to 0, no computation is performed and no data is written to the destination operand. This API is treated as a NOP (no operation).
+       <!-- npu="A3" id19 -->
+       - Atlas A3 products
+       <!-- end id19 -->
+       <!-- npu="910b" id20 -->
+       - Atlas A2 products
+       <!-- end id20 -->
+    <!-- end id21 -->
+    <!-- npu="950" id22 -->
+    - For Ascend 950PR&950DT products, this API is implemented for compatibility by calling the [Reg vector computation](../../reg_vector_compute/reg_vector_compute.md) API through VF. When the count or repeatTime parameter is set to 0, it is not guaranteed that this API is treated as a NOP (no operation).
+    <!-- end id22 -->
+<!-- end id23 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMD-API/basic_api/memory_vector_compute/type_conversion/Cast_res.md#id3 -->
+
+## Example<a name="section642mcpsimp"></a>
+
+This sample shows only part of the key code. In this sample, srcLocal is of the half type, dstLocal is of the int32\_t type, and the mask is computed based on int32\_t.
+
+To run the sample code, see [Cast sample](../../../../../../../examples/01_simd_cpp_api/03_basic_api/01_memory_vector_compute/cast) for the complete calling sample.
+
+- Tensor high-dimensional splitting computation sample - mask continuous mode.
+
+  ```cpp
+  uint64_t mask = 256 / sizeof(int32_t);
+  // repeatTime = 8, 64 elements one repeat, 512 elements total
+  // dstBlkStride, srcBlkStride = 1, no gap between blocks in one repeat
+  // dstRepStride = 8, srcRepStride = 4, no gap between repeats
+  AscendC::Cast(dstLocal, srcLocal, AscendC::RoundMode::CAST_CEIL, mask, 8, { 1, 1, 8, 4 });
+  ```
+
+- Tensor high-dimensional splitting computation sample - mask bit-by-bit mode.
+
+  ```cpp
+  uint64_t mask[2] = { 0, UINT64_MAX };
+  // repeatTime = 8, 64 elements one repeat, 512 elements total
+  // dstBlkStride, srcBlkStride = 1, no gap between blocks in one repeat
+  // dstRepStride = 8, srcRepStride = 4, no gap between repeats
+  AscendC::Cast(dstLocal, srcLocal, AscendC::RoundMode::CAST_CEIL, mask, 8, { 1, 1, 8, 4 });
+  ```
+
+- Tensor first-n-data computation sample.
+
+  ```cpp
+  uint32_t count = 512; // Number of elements involved in the computation.
+  AscendC::Cast(dstLocal, srcLocal, AscendC::RoundMode::CAST_CEIL, count);
+  ```
+
+The output result varies with the roundMode value. The following sample uses RoundMode::CAST\_CEIL (round toward positive infinity) as an example.
+
+The result is as follows:
+
+```plain
+Input data (srcLocal): 
+[1.4, 1.5, 1.6, 2.4, 2.5, 2.6, ... 2.6]
+Output data (dstLocal): 
+[2, 2, 2, 3, 3, 3, ... 3]
+```
+
+When roundMode is RoundMode::CAST\_NONE (converting half to int32\_t incurs precision loss, in which case it is the same as the CAST\_RINT mode) or RoundMode::CAST\_RINT (round half to even), the result example is as follows:
+
+```plain
+Input data (srcLocal): 
+[1.4, 1.5, 1.6, 2.4, 2.5, 2.6, ... 2.6]
+Output data (dstLocal): 
+[1, 2, 2, 2, 2, 3, ... 3]
+```
+
+When roundMode is RoundMode::CAST\_FLOOR (round toward negative infinity), the result example is as follows:
+
+```plain
+Input data (srcLocal): 
+[1.4, 1.5, 1.6, 2.4, 2.5, 2.6, ... 2.6]
+Output data (dstLocal): 
+[1, 1, 1, 2, 2, 2, ... 2]
+```
+
+When roundMode is RoundMode::CAST\_ROUND (round half away from zero), the result example is as follows:
+
+```plain
+Input data (srcLocal): 
+[1.4, 1.5, 1.6, 2.4, 2.5, 2.6, ... 2.6]
+Output data (dstLocal): 
+[1, 2, 2, 2, 3, 3, ... 3]
+```
+
+When roundMode is RoundMode::CAST\_TRUNC (round toward zero), the result example is as follows:
+
+```plain
+Input data (srcLocal): 
+[1.4, 1.5, 1.6, 2.4, 2.5, 2.6, ... 2.6]
+Output data (dstLocal): 
+[1, 1, 1, 2, 2, 2, ... 2]
+```
+
+- When Cast involves int4b\_t, the call example is as follows:
+
+  dstLocal is of the int8\_t type, and srcLocal is of the half type.
+
+  ```cpp
+  inBufferSize_ = srcSize;  // src buffer size
+  outBufferSize_ = srcSize / 2;   //dst buffer size
+  uint64_t mask = 128;
+  AscendC::LocalTensor<half> srcLocal;
+  srcLocal.SetSize(inBufferSize_);
+  AscendC::LocalTensor<int8_t> dstLocal;
+  dstLocal.SetSize(outBufferSize_);
+  AscendC::LocalTensor<AscendC::int4b_t> dstLocalTmp = dstLocal.ReinterpretCast<AscendC::int4b_t>();
+  // repeatTime = 1, 128 elements one repeat, 128 elements total
+  // dstBlkStride, srcBlkStride = 1, no gap between blocks in one repeat
+  // dstRepStride = 2, srcRepStride = 8, no gap between repeats
+  AscendC::Cast<AscendC::int4b_t, half>(dstLocalTmp, srcLocal, AscendC::RoundMode::CAST_CEIL, mask, 1, {1, 1, 2, 8});
+  ```
+
+## More Examples
+
+You can refer to the following examples to learn how to use the tensor high-dimensional splitting computation API of the Cast instruction for more flexible operations and advanced features.
+
+Use the mask continuous mode of the tensor high-dimensional splitting computation API to implement non-continuous data computation.
+
+```plain
+uint64_t mask = 32;  // Only the first 32 numbers are computed in each iteration.
+AscendC::Cast(dstLocal, srcLocal, AscendC::RoundMode::CAST_CEIL, mask, 8, { 1, 1, 8, 4 });
+```
+
+The result example is as follows. In the output data, the data beyond the first 32 numbers in each iteration is uninitialized data:
+
+```plain
+Input data (srcLocal): 
+[37.4     7.11   53.5    19.44   22.66   43.     43.16    5.316  74.2
+ 15.7    87.75   86.94   92.56   25.45   36.06   94.6    73.6    30.48
+ 48.16   12.55   27.81   14.67    6.58   48.38   67.5    57.5    63.3
+ 85.2     3.654  68.7    52.53   16.38   13.945  63.84   87.2    82.5
+ 85.7    27.78   15.41   41.66   31.38   14.65   88.25    0.0332 43.06
+ 46.88   15.57   87.1    53.16   33.5    91.06   36.5    55.34   60.53
+  3.238  23.92   97.5    91.1    78.44   54.47   82.     53.8    72.1
+ 25.06   32.12   15.88   33.38   36.7    33.3    84.4    19.25    1.743
+ 46.16   22.06    4.582  71.1    15.94   22.23   53.47   17.05   48.56
+ 94.44   77.4    90.2    46.56   92.4     9.45   68.44   35.7    31.62
+ 68.1    63.7    77.     92.06   20.45   27.67   93.4    22.39   17.22
+ 73.06    7.12   25.34   36.34   13.54   38.12   24.56   86.56   69.7
+ 68.3    30.38   68.4    86.1    54.44   70.     55.3    48.6    59.03
+ 64.44   15.45   66.5    92.7    60.7    52.22   47.     99.75   41.94
+ 43.06   89.5    36.9    62.5     1.306  48.06    9.37   62.25   20.61
+ 43.8    69.25   27.22   71.44   52.75   11.82   80.6    63.44   53.22
+ 85.44   25.25    2.309  26.88   84.5    29.83    9.93   81.9    97.75
+ 75.75   97.7    72.     19.86   26.62   88.7    74.06    9.24   42.5
+ 14.      39.44   98.56   66.94   89.     57.12   39.     11.57   19.05
+ 86.56   32.66   19.25   99.3    95.6    58.7    79.6    37.38   65.
+ 75.7     8.586  77.7     2.68   75.7    77.56   39.1    39.72   64.06
+ 98.44   30.27   31.9    94.4    85.94    4.965   2.758  92.4    49.53
+ 50.75    5.7    19.69   87.6    20.08   88.8    87.4    63.6    68.3
+ 78.9    45.66   10.01   35.25   71.9    37.38   39.7    43.47   11.67
+ 64.3    35.62   74.3    59.3    28.69   29.56   23.14   36.22    4.88
+ 70.5    25.05   72.6    71.6    32.28   34.66   80.     96.1    98.7
+ 12.91   95.4    61.97   87.94   19.1    40.47   89.6    84.     29.72
+ 17.8    81.44   23.25   33.03   18.67   78.     49.62   63.1    72.75
+ 77.25    3.74   38.9    17.92   76.     25.62   34.53   84.     32.03
+ 57.3     9.21    6.836  68.9    35.78   96.75   56.3    96.1    23.45
+ 78.75   94.25   12.44   56.7    24.55   25.11   90.7    50.94   78.4
+  3.576  21.81   53.28   26.2    43.1     7.742  13.4    86.44   86.9
+ 13.93   16.48   91.06   42.3    95.5    66.8    40.6    98.06   71.9
+ 67.6    55.9    82.44   93.75   41.53   23.62   40.12   40.53   80.7
+ 80.25   96.3    51.38   93.6    91.3    32.84   88.     69.7    63.16
+ 41.75   43.22   43.22   31.73   84.9    91.6    80.     53.34   27.12
+ 76.6    97.25   44.5    30.28   74.3    76.06   40.     41.28   37.72
+ 99.56   18.73   16.45   92.75   79.1    40.3    68.     23.98   88.7
+ 86.6    24.97   59.6    28.25   82.94   46.12   60.12   34.53   79.7
+ 11.086  20.25   44.88   39.97   42.12   62.7    30.66   42.56   16.69
+ 85.2    90.8    78.75   26.16   18.14   94.06   40.3    20.16   38.
+ 12.99   95.44   76.25   26.03   76.     30.06   27.25   84.56   30.45
+ 66.1    83.25    3.732  39.1    54.22   82.8    43.22   53.03   11.66
+ 88.1     6.83   66.8    44.4     7.5    24.77   74.4    35.9    79.75
+ 41.62   37.06   60.12   57.9    96.94   84.25   39.88   22.55   72.7
+ 58.9    44.75   90.4    46.34   71.3    16.4    26.12   21.45   10.27
+ 2.      41.53   39.03   80.25    2.11    7.88   72.2    27.83   88.1
+ 67.56   10.72   52.84   91.2    97.6    51.44   74.7     3.527  79.25
+ 11.3    19.16   39.53    3.469  98.7    45.72   40.16   47.1    71.8
+ 11.81   52.97   71.44   37.7    26.81   46.22   26.94    4.805  12.18
+ 70.4    51.4    24.2    83.9     9.62   12.445  57.6    85.8    55.12
+ 88.25   32.38   62.88    1.903  47.72   35.9    48.94   86.06   32.44
+  1.219  35.56   49.78   49.97   24.45   94.5    99.94   44.72    3.404
+ 83.6    23.14   76.7    91.7    24.33   20.62   24.72    4.55   88.94
+ 87.44   95.75   41.56   13.77   34.6    95.94   77.1    24.28   70.06
+ 10.06   11.38   88.8    57.22   94.56   35.     79.8    58.22   44.06
+ 26.9    16.25   99.94   51.1    42.38   84.25    0.9604 48.1   ]
+
+Output data (dstLocal): 
+[        38          8         54         20         23         43
+         44          6         75         16         88         87
+         93         26         37         95         74         31
+         49         13         28         15          7         49
+         68         58         64         86          4         69
+         53         17 1879993057 1827499998 1823960025 1570990114
+ 1828150463 1811639312 1794470101 1754296176 1888841335 1715628997
+ 1839753994 1850888497 1889364175 1891068936 1823369913 1769105534
+ 1815638091 1808559970 1601662785 1739089473 1863146361 1694785989
+ 1597138938 1836478181 1888774249 1637707434 1877372650 1796304934
+ 1887530885 1839295471 1707240971 1873242695         33         16
+         34         37         34         85         20          2
+         47         23          5         72         16         23
+         54         18         49         95         78         91
+         47         93         10         69         36         32
+         69         64         77         93         21         28
+ 1753837732 1488743807 1711632378 1799581711 1818783215 1891790695
+ 1837723802 1752132873 1727950918 1760390205 1866887130 1824876865
+ 1807839436 1890544910 1889755550 1787129270 1502702106 1841065201
+ 1820156583 1779396288 1760521448 1844604520 1831039103 1843491014
+ 1891199259 1839493317 1801349958 1577807434 1811377215 1879404734
+ 1826057367 1837853054         37         63          2         49
+         10         63         21         44         70         28
+         72         53         12         81         64         54
+         86         26          3         27         85         30
+         10         82         98         76         98         72
+         20         27         89         75 1890086927 1826517134
+ 1814783944 1824156809 1875733079 1842114682 1845456975 1830120794
+ 1787980861 1807380585 1535469972 1883860884 1889167601 1747872128
+ 1888317235 1720937006 1836806331 1654152236 1695309475 1892773593
+ 1840737395 1868392748 1833724316 1600153936 1869310159 1883467778
+ 1892641857 1776248953 1833201514 1886743848 1745972258 1860657622
+         95         86          5          3         93         50
+         51          6         20         88         21         89
+         88         64         69         79         46         11
+         36         72         38         40         44         12
+         65         36         75         60         29         30
+         24         37 1733652589 1756325317 1685744372 1780772214
+ 1660252348 1629973784 1847815925 1828941229 1683778661 1519480967
+ 1762160488 1844801381 1832742021 1891724641 1761701480 1695312651
+ 1429433841 1774275423 1828349211 1779786303 1835953259 1784896595
+ 1858432988 1413442268 1893363867 1886679050 1872588913 1473866635
+ 1793158916 1762946052 1719627087 1893231666         76         26
+         35         84         33         58         10          7
+         69         36         97         57         97         24
+         79         95         13         57         25         26
+         91         51         79          4         22         54
+         27         44          8         14         87         87
+ 1208960410 1208567888 1215973275 1214859418 1210992732 1208305714
+ 1165379704 1215252623 1197033625 1212172318 1217415148 1211058280
+ 1206798479 1215645776 1209223143 1217611809 1212500082 1215383615
+ 1208567769 1200179260 1216694386 1218070398 1195526187 1211516213
+ 1213089850 1213941743 1216825148 1212565573 1216694248 1217546087
+ 1200178778 1215973524         92         80         54         28
+         77         98         45         31         75         77
+         40         42         38        100         19         17
+         93         80         41         68         24         89
+         87         25         60         29         83         47
+         61         35         80         12 1189759014 1218070662
+ 1211057953 1216825400 1215121414 1214596952 1216169420 1210075102
+ 1209157633 1213941279 1195984973 1211648118 1201686666 1212041360
+ 1216103688 1212500024 1173112887 1194608648 1216825427 1209747582
+ 1207191587 1214859224 1203980407 1215711379 1213155353 1203259396
+ 1214859350 1211779156 1217218713 1202473003 1216628529 1196771437
+         44         54         12         89          7         67
+         45          8         25         75         36         80
+         42         38         61         58         97         85
+         40         23         73         59         45         91
+         47         72         17         27         22         11
+         91         42 1211516990 1198213215 1203848735 1217349746
+ 1212303398 1217808150 1215514752 1209878647 1214138433 1215711277
+ 1212041273 1215383541 1214728294 1197754500 1169574019 1208371214
+ 1214269569 1216301092 1216563283 1213548677 1217873970 1203128459
+ 1209812695 1218136029 1194805359 1204439186 1218005120 1213941626
+ 1217153046 1208109091 1215055928 1215318166          5         13
+         71         52         25         84         10         13
+         58         86         56         89         33         63
+          2         48         36         49         87         33
+          2         36         50         50         25         95
+        100         45          4         84         24         77
+ 1202210969 1213679767 1209288847 1217480263 1184319410 1214072674
+ 1188382819 1217283870 1200769107 1217939416 1199327294 1213351841
+ 1206667407 1217153163 1215580283 1214138474 1206798167 1194477696
+ 1193690499 1214072706 1216825421 1216693888 1217611496 1198540949
+ 1199654414 1206405188 1214203847 1165183076 1213745302 1208830102
+ 1209944118 1215121459]
+```

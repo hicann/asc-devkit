@@ -1,0 +1,77 @@
+# Scalar Read/Write Data<a name="ZH-CN_TOPIC_0000002375401226"></a>
+
+<!-- md-trans-meta sourceCommit=49eda737d7d7268a9ddb02fcaba4732176bfc076 translatedAt=2026-11-09T11:10:28.835Z pushedAt=2026-11-19T06:32:19.989Z nl=2 -->
+
+In the AI Core, the Scalar computation unit is responsible for scalar data operations of various types and program flow control. According to the [hardware architecture](../../../programming_guide/advanced_programming/hardware_implementation/basic_architecture.md) design, Scalar supports only read/write operations on Global Memory and Unified Buffer (UB), and does not support access to other types of storage such as L1 Buffer, L0A Buffer, L0B Buffer, and L0C Buffer. The following describes how Scalar reads/writes Global Memory and UB, as well as the synchronization mechanism when Scalar reads/writes data.
+
+## Scalar Read/Write of Global Memory<a name="section7480536235"></a>
+
+<img src="../../../figures/aicore_31.png" alt="" width="600px" height="475px">
+
+As shown in the preceding figure, when the Scalar reads/writes GM data, it passes through the DataCache. The DataCache is mainly used to improve the execution efficiency of scalar memory access instructions. Each AIC/AIV core has an independent DataCache. The following uses a specific example to explain the working mechanism of the DataCache.
+
+globalTensor1 is a Tensor located in GM:
+
+-   After GetValue\(0\) is executed, the first eight elements of globalTensor1 enter the DataCache. Subsequent GetValue\(1\)~GetValue\(7\) calls no longer need to access GM and can directly read data from the Cache Line of the DataCache, improving the efficiency of continuous scalar access.
+-   After SetValue\(8, val\) is executed, the elements with indexes 8~15 of globalTensor1 enter the DataCache. SetValue only modifies the Cache Line data in the DataCache and sets the Cache Line status to Dirty, indicating that the data in the Cache Line is inconsistent with the data in GM.
+
+```
+AscendC::GlobalTensor<int64_t> globalTensor1;
+globalTensor1.SetGlobalBuffer((__gm__ int64_t *)input);
+// A total of 8 uint64_t values from 0 to 7. The DataCache cache line length is 64 bytes.
+// After GetValue(0) is executed, GetValue(1) to GetValue(7) can be read directly from the cache line without accessing GM again.
+globalTensor1.GetValue(0);
+globalTensor1.GetValue(1);
+globalTensor1.GetValue(2);
+globalTensor1.GetValue(3);
+globalTensor1.GetValue(4);
+globalTensor1.GetValue(5);
+globalTensor1.GetValue(6);
+globalTensor1.GetValue(7);
+
+// After SetValue(8) is executed, the data in GM is not modified. Only the cache line data in DataCache is modified.
+// The cache line state is set to dirty, indicating that the cache line data in DataCache is inconsistent with the data in GM.
+int64_t val = 32;
+globalTensor1.SetValue(8, val);
+globalTensor1.GetValue(8);
+```
+
+Based on the working mechanism described above (as shown in the following figure), accessing globalTensor1 across multiple cores may cause data inconsistency. If other cores need to obtain the changes to the GM data, the developer must manually call [DataCacheCleanAndInvalid](../../../../api/SIMD-API/basic_api/cache_control/DataCacheCleanAndInvalid.md) to ensure data consistency.
+
+<img src="../../../figures/aicore_32.png" alt="" width="600px" height="269px">
+
+## Scalar Read/Write of UB<a name="section8156161471119"></a>
+
+When Scalar reads/writes the Unified Buffer, you can use the SetValue and GetValue APIs of LocalTensor. The following is an example:
+
+```
+for (int32_t i = 0; i < 16; ++i) {
+    inputLocal.SetValue(i, i); // Assign i to the i-th position in inputLocal.
+}
+
+for (int32_t i = 0; i < srcLen; ++i) {
+    auto element = inputLocal.GetValue(i); // Obtain the value at the i-th position in inputLocal.
+}
+```
+
+## Synchronization When a Scalar Reads/Writes Data<a name="section554364118119"></a>
+
+Reading/writing Global Memory and Unified Buffer by Scalar is a PIPE\_S (Scalar pipeline) operation. When you use the SetValue or GetValue API and automatic synchronization is enabled for the operator project, you do not need to manually insert synchronization events.
+
+If automatic synchronization is disabled for the operator project, you need to manually insert synchronization events:
+
+```
+// GetValue is a Scalar operation and has a data dependency on the subsequent Duplicate.
+// Therefore, the Vector pipeline must wait for the Scalar operation to complete.
+float inputVal = srcLocal.GetValue(0);
+SetFlag<HardEvent::S_V>(eventID1);
+WaitFlag<HardEvent::S_V>(eventID1);
+AscendC::Duplicate(dstLocal, inputVal, srcDataSize); 
+
+// SetValue is a Scalar operation and has a data dependency on the subsequent data transfer operation.
+// Therefore, the MTE3 pipeline needs to wait for the Scalar operation to complete.
+srcLocal.SetValue(0, value);
+SetFlag<HardEvent::S_MTE3>(eventID2);
+WaitFlag<HardEvent::S_MTE3>(eventID2);
+AscendC::DataCopy(dstGlobal, srcLocal, srcDataSize); 
+```

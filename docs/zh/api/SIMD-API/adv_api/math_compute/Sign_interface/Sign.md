@@ -121,13 +121,13 @@
     Atlas推理系列产品AI Core，支持的数据类型为：half、float。
     <!-- end id12 -->
 
-    <!-- npu="x90" id3 -->
+    <!-- npu="x90" id13 -->
     KirinX90处理器系列产品，支持的数据类型为：half、float。
-    <!-- end id3 -->
+    <!-- end id13 -->
 
-    <!-- npu="9030" id4 -->
+    <!-- npu="9030" id14 -->
     Kirin9030处理器系列产品，支持的数据类型为：half、float。
-    <!-- end id4 -->
+    <!-- end id14 -->
 
 ## 调用示例
 

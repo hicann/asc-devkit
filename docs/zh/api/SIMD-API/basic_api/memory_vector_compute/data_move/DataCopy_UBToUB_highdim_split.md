@@ -135,29 +135,29 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 
 ## 数据类型<a name="section4219135304818"></a>
 
-<!-- npu="950" id10 -->
+<!-- npu="950" id27 -->
 
 - Ascend 950PR&950DT系列产品，支持的数据类型为：bool、int8_t、uint8_t、hifloat8_t、fp8_e8m0_t、fp8_e5m2_t、fp8_e4m3fn_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、complex32、int64_t、uint64_t、double、complex64。
 
-<!-- end id10 -->
+<!-- end id27 -->
 
-<!-- npu="A3" id11 -->
+<!-- npu="A3" id28 -->
 
 - Atlas A3系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 
-<!-- end id11 -->
+<!-- end id28 -->
 
-<!-- npu="910b" id12 -->
+<!-- npu="910b" id29 -->
 
 - Atlas A2系列产品，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、bfloat16_t、int32_t、uint32_t、float、int64_t、uint64_t、double。
 
-<!-- end id12 -->
+<!-- end id29 -->
 
-<!-- npu="310p" id13 -->
+<!-- npu="310p" id30 -->
 
 - Atlas推理系列产品AI Core，支持的数据类型为：int8_t、uint8_t、int16_t、uint16_t、half、int32_t、uint32_t、float、int64_t、uint64_t、double。
 
-<!-- end id13 -->
+<!-- end id30 -->
 
 <!-- npu="910" id14 -->
 
@@ -219,18 +219,18 @@ __aicore__ inline void DataCopy(const LocalTensor<T>& dst, const LocalTensor<T>&
 ## 约束说明<a name="section633mcpsimp"></a>
 
 - 位于UB的地址必须32字节对齐。
-<!-- npu="A3,910b,950" id18 -->
+<!-- npu="A3,910b,950" id31 -->
 - 当DataCopyParams结构体参数blockCount、blockLen任意一个值为0时，该接口将被视为NOP（空操作）。该说明针对如下型号生效：
-  <!-- npu="A3" id15 -->
+  <!-- npu="A3" id32 -->
   - Atlas A3系列产品
-  <!-- end id15 -->
-  <!-- npu="910b" id16 -->
+  <!-- end id32 -->
+  <!-- npu="910b" id33 -->
   - Atlas A2系列产品
-  <!-- end id16 -->
-  <!-- npu="950" id17 -->
+  <!-- end id33 -->
+  <!-- npu="950" id34 -->
   - Ascend 950PR&950DT系列产品
-  <!-- end id17 -->
-<!-- end id18 -->
+  <!-- end id34 -->
+<!-- end id31 -->
 - DataCopyParams结构体参数的值需在取值范围内：
 
     **表4**  DataCopyParams结构体参数取值范围

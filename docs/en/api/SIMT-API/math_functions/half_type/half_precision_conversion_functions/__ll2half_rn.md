@@ -1,0 +1,98 @@
+# \_\_ll2half\_rn
+
+<!-- md-trans-meta sourceCommit=1deaafd74cfce7bb2c24fdeae01adde70629d44c translatedAt=2026-10-26T13:18:09.822Z pushedAt=2026-10-27T02:14:54.068Z nl=2 -->
+
+## Applicable Products
+
+<!-- npu="950" id1 -->
+- Ascend 950PR&950DT products: Supported
+<!-- end id1 -->
+<!-- npu="A3" id2 -->
+- Atlas A3 products: Not supported
+<!-- end id2 -->
+<!-- npu="910b" id3 -->
+- Atlas A2 products: Not supported
+<!-- end id3 -->
+<!-- npu="310b" id4 -->
+- Atlas 200I/500 A2 inference products: Not supported
+<!-- end id4 -->
+<!-- npu="310p" id5 -->
+- Atlas inference products AI Core: Not supported
+- Atlas inference products Vector Core: Not supported
+<!-- end id5 -->
+<!-- npu="910" id6 -->
+- Atlas training products: Not supported
+<!-- end id6 -->
+<!-- @ref: asc-devkit/res/docs/zh/api/SIMT-API/math_functions/half_type/half_precision_conversion_functions/__ll2half_rn_res.md#id1 -->
+
+## Description
+
+The header file path is: `"simt_api/asc_fp16.h"`.
+
+Follows the CAST\_RINT mode to convert int64 type data to half type data and returns the converted value.
+
+## Prototype
+
+```cpp
+inline half __ll2half_rn(const long long int x)
+```
+
+## Parameters
+
+**Table 1**  Parameters
+
+| Parameter Name | Input/Output | Description |
+| --- | --- | --- |
+| x | Input | Source operand. |
+
+## Return Value
+
+Returns half type data converted from the input following the CAST\_RINT mode. This API is affected by the global saturation register. The special values are as follows:
+
+| x Value | Return Value in Non-saturation Mode | Return Value in Saturation Mode |
+| --- | --- | --- |
+| 9223372036854775807 (maximum long long value) | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| -9223372036854775808 (minimum long long value) | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| x>9223372036854775807 (maximum long long value) | inf | ASCRT\_MAX\_NORMAL\_FP16 |
+| x<-9223372036854775808 (minimum long long value) | -inf | -ASCRT\_MAX\_NORMAL\_FP16 |
+| ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 | ASCRT\_MAX\_NORMAL\_FP16 |
+| -ASCRT\_MAX\_NORMAL\_FP16 | -ASCRT\_MAX\_NORMAL\_FP16 | -ASCRT\_MAX\_NORMAL\_FP16 |
+| 2049 | 2048 | 2048 |
+| 2051 | 2052 | 2052 |
+
+## Constraints
+
+None
+
+## Examples
+
+-   SIMT programming scenario:
+
+    ```cpp
+    #include "simt_api/asc_fp16.h"
+
+    __global__ __launch_bounds__(1024) void kernel__ll2half_rn(half* dst, int64_t* x)
+    {
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        dst[idx] = __ll2half_rn(x[idx]);
+    }
+    ```
+
+-   SIMD and SIMT mixed programming scenario:
+
+    ```cpp
+    #include "simt_api/asc_fp16.h"
+
+    __simt_vf__ __launch_bounds__(1024) inline void kernel__ll2half_rn(__gm__ half* dst, __gm__ int64_t* x)
+    {
+        int idx = threadIdx.x + blockIdx.x * blockDim.x;
+        dst[idx] = __ll2half_rn(x[idx]);
+    }
+    ```
+
+The input and output examples are as follows:
+
+```text
+x: 0, 1, -1, 2049, 4097, -4097
+result: 0, 1, -1, 2048, 4096, -4096
+```

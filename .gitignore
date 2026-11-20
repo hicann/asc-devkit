@@ -40,3 +40,5 @@ oat_reports/
 log/
 
 docs/migration/
+
+!/docs/en/api/Utils-API/log/

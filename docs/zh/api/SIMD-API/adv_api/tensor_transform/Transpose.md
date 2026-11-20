@@ -290,10 +290,10 @@ enum class TransposeType : uint8_t {
 ## 约束说明
 
 -   操作数地址对齐要求请参见[通用地址对齐约束](../../general_description_and_constraints.md#alignment_requirements)。
-<!-- npu="950" id7 -->
+<!-- npu="950" id11 -->
 -   场景13到场景16仅在Ascend 950PR&950DT系列产品上支持。
 -   Ascend 950PR&950DT系列产品，场景13到场景16不支持dst和src空间复用。
-<!-- end id7 -->
+<!-- end id11 -->
 
 ## 调用示例
 
