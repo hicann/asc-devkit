@@ -115,14 +115,14 @@ When reproducing anomaly scenarios, modify the code in `ms_sanitizer.asc` accord
 
 - **Race Condition Detection**
 
-  Race detection locates concurrent memory access errors. Comment out the MTE2 `asc_unlock` and Vector `asc_lock` to reproduce a race: this pair ensures the GM-to-UB transfer finishes before Add reads `xLocal` and `yLocal`.
+  Race detection locates concurrent memory access errors. Uncomment the erroneous example at the end of `add_custom` to reproduce a WAR race between MTE3 and MTE2. While MTE3 transfers `zLocal` to GM, MTE2 writes to the same UB buffer without a matching inter-pipeline synchronization, so the race is deterministic.
 
   Notice: Pass `--tool=racecheck` when calling `mssanitizer` to enable race condition detection.
 
   ```cpp
-  // Removing this pair lets Add read UB before the MTE2 transfer finishes.
-  asc_unlock(PIPE_MTE2, mutexId);
-  asc_lock(PIPE_V, mutexId);
+  asc_unlock(PIPE_MTE3, mutex_id);
+  // Error example: MTE2 writes z_local while MTE3 is still reading it, triggering a WAR race.
+  asc_copy_gm2ub(z_local, x_gm, BLOCK_LENGTH * sizeof(float));
   ```
 
   Rebuild and run detection:

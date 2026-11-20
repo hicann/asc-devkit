@@ -281,9 +281,9 @@ C语言编程提供了一系列`asc_mmad`重载接口，支持不同数据类型
 constexpr uint32_t l0_m_size = 64;
 constexpr uint32_t l0_k_size = 64;
 constexpr uint32_t l0_n_size = 64;
-__ca__ a_matrix[l0_m_size * l0_k_size];
-__cb__ b_matrix[l0_k_size * l0_n_size];
-__cc__ c_matrix[l0_m_size * l0_n_size];
+__ca__ half a_matrix[l0_m_size * l0_k_size];
+__cb__ half b_matrix[l0_k_size * l0_n_size];
+__cc__ float c_matrix[l0_m_size * l0_n_size];
 
 // 2. Configure asc_mmad parameters
 // 2.1. Actual matrix sizes participating in computation (m, n, k)
@@ -304,7 +304,7 @@ bool enable_cube_init = false;
 // enable_cube_zero_init: Enables C matrix default zero initialization. true: initialize to 0; false: control initialization via enable_cube_init parameter.
 bool enable_cube_zero_init = true;
 
-asc_mmad(c_matrix, a_matrix, b_matrix, m, n, k, unit_flag, disable_gemv, enable_cube_init, enable_cube_zero_init);
+asc_mmad(c_matrix, a_matrix, b_matrix, m, k, n, unit_flag, disable_gemv, enable_cube_init, enable_cube_zero_init);
 ```
 
 ## 矩阵计算的同步

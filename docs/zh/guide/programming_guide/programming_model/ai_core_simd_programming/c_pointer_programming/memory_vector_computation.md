@@ -323,8 +323,8 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     // ...
     // 1. Step 1: Data transfer in, execution pipeline is PIPE_MTE2
     asc_lock(PIPE_MTE2, mutex_id);
-    asc_copy_gm2ub_align(x_local, x_gm, 1, 48 * sizeof(half), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
-    asc_copy_gm2ub_align(y_local, y_gm, 1, 48 * sizeof(half), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+    asc_copy_gm2ub_align(x_local, x_gm, 1, 4096 * sizeof(float), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+    asc_copy_gm2ub_align(y_local, y_gm, 1, 4096 * sizeof(float), 0, 0, false, asc_load_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     asc_unlock(PIPE_MTE2, mutex_id);
 
     // 2. Step 2: Compute, execution pipeline is PIPE_V
@@ -334,7 +334,7 @@ __global__ __vector__ void add_kernel(__gm__ float* x, __gm__ float* y, __gm__ f
     
     // 3. Step 3: Data transfer out, execution pipeline is PIPE_MTE3
     asc_lock(PIPE_MTE3, mutex_id);
-    asc_copy_ub2gm_align(z_gm, z_local, 1, 48 * sizeof(int8_t), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
+    asc_copy_ub2gm_align(z_gm, z_local, 1, 4096 * sizeof(float), asc_store_l2_cache_mode::NORMAL_FIRST_VICTIM, 0, 0);
     asc_unlock(PIPE_MTE3, mutex_id);
 }
 ```

@@ -14,7 +14,7 @@ okftype: reference.index
 - **[基础算术](reg_arith/reg_arith.md)**
 - **[逻辑计算](reg_logic/reg_logic.md)**
 - **[归约计算](reg_reduce/reg_reduce.md)**
-- **[聚合操作](reg_gather/gather.md)**
+- **[聚合操作](reg_gather/reg_gather.md)**
 - **[广播操作](reg_broadcast/reg_broadcast.md)**
 - **[复合计算](reg_fused/reg_fused.md)**
 - **[比较计算](reg_compare/reg_compare.md)**

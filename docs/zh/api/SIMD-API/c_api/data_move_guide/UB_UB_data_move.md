@@ -13,7 +13,7 @@ NPU架构版本3510通过[asc_copy_ub2ub](../vector_datamove/asc_copy_ub2ub.md)�
 | 连续 | 源、目的均为一段连续UB数据 | `size`：字节 |
 | 高维切分 | 源或目的由多个等长数据块组成，块间存在固定间隔 | 块长、源/目的间隔：32字节DataBlock |
 
-需要在UB中按掩码选择元素、广播或完成数据类型相关的重排时，可在Vector Function中使用Reg加载、计算和存储接口，参见[Reg与UB数据搬运](reg_ub_data_move.md)。
+需要在UB中按掩码选择元素、广播或完成数据类型相关的重排时，可在Vector Function中使用Reg加载、计算和存储接口，参见[Reg与UB数据搬运](Reg_UB_data_move.md)。
 
 ## 连续数据搬运
 

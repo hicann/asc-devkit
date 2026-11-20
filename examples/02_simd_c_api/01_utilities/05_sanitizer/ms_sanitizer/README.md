@@ -115,14 +115,14 @@ z = x + y
 
 - **竞争检测**
 
-  竞争检测用于定位并行执行中的内存访问竞争问题。用户可以注释掉MTE2阶段的`asc_unlock`和Vector阶段的`asc_lock`来复现该场景。这组互斥同步保证GM到UB搬运完成后，Vector才读取`xLocal`和`yLocal`执行Add。
+  竞争检测用于定位并行执行中的内存访问竞争问题。用户可以取消`add_custom`末尾错误示例的注释，复现MTE3与MTE2之间对同一UB缓冲区的竞争。MTE3将`zLocal`搬运到GM时，MTE2同时向`zLocal`写入数据；两条流水访问同一地址且没有配对的互斥同步，因此可以稳定触发竞争检测。
 
   注意：调用`mssanitizer`时需要传入`--tool=racecheck`来开启竞争检测。
 
   ```cpp
-  // 删除MTE2解锁和Vector加锁后，Add可能在数据搬运完成前读取UB。
-  asc_unlock(PIPE_MTE2, mutexId);
-  asc_lock(PIPE_V, mutexId);
+  asc_unlock(PIPE_MTE3, mutex_id);
+  // 错误示例：MTE3读取z_local尚未完成时，MTE2写入同一UB缓冲区，触发竞争。
+  asc_copy_gm2ub(z_local, x_gm, BLOCK_LENGTH * sizeof(float));
   ```
 
   重新编译并执行检测：

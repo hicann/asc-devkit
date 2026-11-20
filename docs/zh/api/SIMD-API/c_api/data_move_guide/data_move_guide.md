@@ -18,14 +18,14 @@ description: "数据搬运章节导览：按源与目的存储单元列出3510�
 
 | 数据通路 | NPU架构版本3510支持的主要能力 | 详细说明 |
 | --- | --- | --- |
-| GM与L1/L0 | GM到L1连续/切分、二维分形、ND2Nz、DN2Nz、非对齐；L0C到GM随路处理 | [GM与L1/L0数据搬运](gm_l1_or_l0_data_move.md) |
-| GM与UB | 双向连续/切分、双向非对齐、GM到UB五维NDDMA | [GM与UB数据搬运](gm_ub_data_move.md) |
-| L1与L0 | L1到L0A/L0B二维、三维、转置和MX；L0C到L1随路处理 | [L1与L0数据搬运](l1_l0_data_move.md) |
-| L1/L0C与UB | L1到UB、UB到L1、L0C到UB随路处理及双目标写入 | [L1/L0C与UB数据搬运](l1_or_l0c_ub_data_move.md) |
-| L1到BiasTable | 连续或高维切分bias搬运，支持指定类型转换 | [L1到BiasTable数据搬运](l1_bias_table_data_move.md) |
-| L1到Fixpipe Buffer | 连续或高维切分装载量化、ReLU参数 | [L1到Fixpipe Buffer数据搬运](l1_fixpipe_data_move.md) |
-| UB与UB | 连续或高维切分复制 | [UB与UB数据搬运](ub_ub_data_move.md) |
-| Reg与UB | 对齐/非对齐加载、存储、广播、交织、压缩和Post Update | [Reg与UB数据搬运](reg_ub_data_move.md) |
+| GM与L1/L0 | GM到L1连续/切分、二维分形、ND2Nz、DN2Nz、非对齐；L0C到GM随路处理 | [GM与L1/L0数据搬运](GM_L1_or_L0_data_move.md) |
+| GM与UB | 双向连续/切分、双向非对齐、GM到UB五维NDDMA | [GM与UB数据搬运](GM_UB_data_move.md) |
+| L1与L0 | L1到L0A/L0B二维、三维、转置和MX；L0C到L1随路处理 | [L1与L0数据搬运](L1_L0_data_move.md) |
+| L1/L0C与UB | L1到UB、UB到L1、L0C到UB随路处理及双目标写入 | [L1/L0C与UB数据搬运](L1_or_L0C_UB_data_move.md) |
+| L1到BiasTable | 连续或高维切分bias搬运，支持指定类型转换 | [L1到BiasTable数据搬运](L1_BiasTable_data_move.md) |
+| L1到Fixpipe Buffer | 连续或高维切分装载量化、ReLU参数 | [L1到Fixpipe Buffer数据搬运](L1_Fixpipe_data_move.md) |
+| UB与UB | 连续或高维切分复制 | [UB与UB数据搬运](UB_UB_data_move.md) |
+| Reg与UB | 对齐/非对齐加载、存储、广播、交织、压缩和Post Update | [Reg与UB数据搬运](Reg_UB_data_move.md) |
 
 ## 接口选择原则
 
